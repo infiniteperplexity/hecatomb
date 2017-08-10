@@ -16,7 +16,7 @@ HTomb = (function(HTomb) {
         AI: {
           team: "PlayerTeam"
         },
-        Master: {tasks: ["DigTask","BuildTask","DismantleTask","PatrolTask","Undesignate","HostileTask"]},
+        Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
         //Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","ForbidTask","Undesignate"]},
         //Master: {tasks: ["DigTask","BuildTask","CraftTask","DismantleTask","PatrolTask","FarmTask","WorkshopTask","ForbidTask","HoardTask","Undesignate"]},
         //SpellCaster: {spells: ["RaiseZombie","AcidBolt","ParticleTest"]},
