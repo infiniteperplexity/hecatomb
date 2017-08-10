@@ -57,7 +57,7 @@ HTomb = (function(HTomb) {
   };
   HTomb.World.init = function() {
     this.reset();
-    HTomb.World.generators.bestSoFar();
+    HTomb.World.generators.revised();
     HTomb.World.validate.all();
     HTomb.Time.unlockTime();
   };

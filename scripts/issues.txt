@@ -1,0 +1,10 @@
+Is this still true?
+]* examineSquare doesn't show non-visible items even though you can see them on the screen.
+
+*Should make larger veins of minerals, so they will have more impact on excavation.
+
+*Should add granite or something.
+
+*Rebalance combat and add genuine threats, soon.
+
+*Make aquifers easy to get through, or nonexistent.

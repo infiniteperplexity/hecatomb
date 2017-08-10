@@ -49,8 +49,15 @@ HTomb = (function(HTomb) {
     template: "Iron",
     name: "iron",
     symbol: "\u2234",
-    fg: "gray",
+    fg: "#C0C0C0",
     metallic: true
+  });
+
+  HTomb.Types.defineMineral({
+    template: "Coal",
+    name: "coal",
+    symbol: "\u2234",
+    fg: "gray"
   });
 
 

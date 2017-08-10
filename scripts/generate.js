@@ -83,46 +83,87 @@ HTomb = (function(HTomb) {
   HTomb.World.generators = {};
 
   HTomb.World.generators.bestSoFar = function() {
-timeIt("elevation", function() {
-    assignElevation(50);
-}); timeIt("lava", function() {
-    placeLava(10);
-}); timeIt("water", function() {
-    waterTable(48,4);
-}); timeIt("slopes", function() {
-    addSlopes();
-}); timeIt("caverns", function() {
-    cavernLevels(3);
-}); timeIt("labyrinths", function() {
-    labyrinths();
-}); timeIt("minerals", function() {
-    placeMinerals({template: "IronVein", p: 0.0025});
-    placeMinerals({template: "BloodstoneCluster", p: 0.001});
-    placeMinerals({template: "GoldVein", p: 0.0025});
-    placeMinerals({template: "MoonstoneCluster", p: 0.001});
-    placeMinerals({template: "JadeCluster", p: 0.0025});
-}); timeIt("grass", function() {
-    grassify();
-}); timeIt("plants", function() {
-    growPlants({template: "Tree", p: 0.05});
-    growPlants({template: "Shrub", p: 0.05});
-    growPlants({template: "WolfsbanePlant", p: 0.001});
-    growPlants({template: "AmanitaPlant", p: 0.001});
-    growPlants({template: "MandrakePlant", p: 0.001});
-    growPlants({template: "WormwoodPlant", p: 0.001});
-    growPlants({template: "BloodwortPlant", p: 0.001});
-}); timeIt("graveyards", function() {
-    graveyards();
-}); timeIt("critters", function() {
-    placeCritters();
-}); timeIt("resolving", function() {
-    placement.resolve();
-}); timeIt("no hauling", function() {
-    notOwned();
-}); timeIt("player", function() {
-    placePlayer();
-});
+    timeIt("elevation", function() {
+        assignElevation(50);
+    }); timeIt("lava", function() {
+        placeLava(10);
+    }); timeIt("water", function() {
+        waterTable(48,4);
+    }); timeIt("slopes", function() {
+        addSlopes();
+    }); timeIt("caverns", function() {
+        cavernLevels(3);
+    }); timeIt("labyrinths", function() {
+        labyrinths();
+    }); timeIt("minerals", function() {
+        placeMinerals({template: "IronVein", p: 0.0025});
+        placeMinerals({template: "BloodstoneCluster", p: 0.001});
+        placeMinerals({template: "GoldVein", p: 0.0025});
+        placeMinerals({template: "MoonstoneCluster", p: 0.001});
+        placeMinerals({template: "JadeCluster", p: 0.0025});
+    }); timeIt("grass", function() {
+        grassify();
+    }); timeIt("plants", function() {
+        growPlants({template: "Tree", p: 0.05});
+        growPlants({template: "Shrub", p: 0.05});
+        growPlants({template: "WolfsbanePlant", p: 0.001});
+        growPlants({template: "AmanitaPlant", p: 0.001});
+        growPlants({template: "MandrakePlant", p: 0.001});
+        growPlants({template: "WormwoodPlant", p: 0.001});
+        growPlants({template: "BloodwortPlant", p: 0.001});
+    }); timeIt("graveyards", function() {
+        graveyards();
+    }); timeIt("critters", function() {
+        placeCritters();
+    }); timeIt("resolving", function() {
+        placement.resolve();
+    }); timeIt("no hauling", function() {
+        notOwned();
+    }); timeIt("player", function() {
+        placePlayer();
+    });
   };
+
+  HTomb.World.generators.revised = function() {
+    timeIt("elevation", function() {
+        assignElevation(50);
+    }); timeIt("lava", function() {
+        placeLava(10);
+    }); timeIt("water", function() {
+        waterTable(48,4);
+    }); timeIt("slopes", function() {
+        addSlopes();
+    }); timeIt("caverns", function() {
+        cavernLevels(3);
+    }); timeIt("labyrinths", function() {
+        labyrinths();
+    }); timeIt("minerals", function() {
+        placeMinerals({template: "IronVein", p: 0.01});
+        placeMinerals({template: "CoalCluster", p: 0.01});
+    }); timeIt("grass", function() {
+        grassify();
+    }); timeIt("plants", function() {
+        growPlants({template: "Tree", p: 0.05});
+        growPlants({template: "Shrub", p: 0.05});
+        growPlants({template: "WolfsbanePlant", p: 0.001});
+        growPlants({template: "AmanitaPlant", p: 0.001});
+        growPlants({template: "MandrakePlant", p: 0.001});
+        growPlants({template: "WormwoodPlant", p: 0.001});
+        growPlants({template: "BloodwortPlant", p: 0.001});
+    }); timeIt("graveyards", function() {
+        graveyards();
+    }); timeIt("critters", function() {
+        placeCritters();
+    }); timeIt("resolving", function() {
+        placement.resolve();
+    }); timeIt("no hauling", function() {
+        notOwned();
+    }); timeIt("player", function() {
+        placePlayer();
+    });
+  };
+
+
 
   var lowest;
   var highest;
@@ -265,66 +306,6 @@ timeIt("elevation", function() {
     }
   }
 
-/*
-  function graveyards(options) {
-    options = options || {};
-    var p = options.p || 0.01;
-    var n = options.n || 3;
-    var born = options.born || [0,0.1,0.2,0.3,0.5,0.3,0.2,0];
-    var survive = options.survive || [0.7,0.8,0.8,0.8,0.6,0.4,0.2,0.1];
-    var cells = new HTomb.Cells({
-      born: born,
-      survive: survive
-    });
-    cells.randomize(p);
-    cells.iterate(n);
-    function fallables(x,y,z) {return HTomb.World.tiles[z][x][y].fallable;}
-    cells.apply(function(x,y,val) {
-      if (val) {
-        var z = HTomb.Tiles.groundLevel(x,y);
-        if (z>lowest+4) {
-          if (HTomb.Tiles.countNeighborsWhere(x,y,z,fallables)===0
-              && HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover
-              && HTomb.World.covers[z-1][x][y]===HTomb.Covers.NoCover) {
-            var grave = HTomb.Things["Tombstone"]();
-            placement.stack(grave,x,y,z);
-          }
-        }
-      }
-    });
-  }*/
-
-  function graveyards2(options) {
-    options = options || {};
-    let gen = new GreuterGenerator();
-    for (let i=0; i<40; i++) {
-      let x = HTomb.Utils.dice(1,LEVELW-2);
-      let y = HTomb.Utils.dice(1,LEVELH-2);
-      gen.spawn(x,y);
-    }
-    gen.resolve();
-  }
-
-  function voronoi() {
-    let routes = HTomb.Path.citygen();
-    for (let i=0; i<routes.length; i++) {
-      let route = routes[i];
-      for (let j=0; j<route.length-1; j++) {
-        let x0 = route[j][0];
-        let y0 = route[j][1];
-        let x1 = route[j+1][0];
-        let y1 = route[j+1][1];
-        let line = HTomb.Path.line(x0,y0,x1,y1);
-        for (let k=0; k<line.length; k++) {
-          let x = line[k][0];
-          let y = line[k][1];
-          let z = HTomb.Tiles.groundLevel(x,y);
-          HTomb.Things.Bloodstone().place(x,y,z);
-        }
-      }
-    }
-  };
-
 
   function cavernLevels(n) {
     n = n || 4;
@@ -360,7 +341,8 @@ timeIt("elevation", function() {
       }
     }
     HTomb.World.validate.clean();
-  }
+   }
+
   function labyrinths(n) {
     n = n || 12;
     n = parseInt(ROT.RNG.getNormal(n,n/4));
@@ -478,6 +460,29 @@ timeIt("elevation", function() {
       items.forEach(function(e,a,i) {e.item.owner=null});
     }
   }
+
+  function placeCritters(p) {
+    p = p || 0.01;
+    var landCritters = ["Bat","Spider"];
+    var waterCritters = ["Fish"];
+    var template;
+    for (var x=1; x<LEVELW-1; x++) {
+      for (var y=1; y<LEVELH-1; y++) {
+        if (Math.random()<p) {
+          var z = HTomb.Tiles.groundLevel(x,y);
+          var t = HTomb.World.covers[z][x][y]
+          if (t.liquid) {
+            template = HTomb.Utils.shuffle(waterCritters)[0];
+          } else {
+            template = HTomb.Utils.shuffle(landCritters)[0];
+          }
+          var critter = HTomb.Things[template]();
+          placement.stack(critter,x,y,z);
+        }
+      }
+    }
+  }
+
   function placePlayer() {
     var placed = false;
     let padding = 25;
@@ -511,7 +516,7 @@ timeIt("elevation", function() {
       alert("no valid starting locations!");
       return;
     }
-    while (placed===false) {
+      while (placed===false) {
       HTomb.Utils.shuffle(graves);
       let grave = graves[0];
       let xdiff = HTomb.Utils.dice(2,6)-7;
@@ -548,137 +553,6 @@ timeIt("elevation", function() {
       placed = true;
     }
   }
-
-  function placeCritters(p) {
-    p = p || 0.01;
-    var landCritters = ["Bat","Spider"];
-    var waterCritters = ["Fish"];
-    var template;
-    for (var x=1; x<LEVELW-1; x++) {
-      for (var y=1; y<LEVELH-1; y++) {
-        if (Math.random()<p) {
-          var z = HTomb.Tiles.groundLevel(x,y);
-          var t = HTomb.World.covers[z][x][y]
-          if (t.liquid) {
-            template = HTomb.Utils.shuffle(waterCritters)[0];
-          } else {
-            template = HTomb.Utils.shuffle(landCritters)[0];
-          }
-          var critter = HTomb.Things[template]();
-          placement.stack(critter,x,y,z);
-        }
-      }
-    }
-  }
-
-  function GreuterGenerator(table) {
-  	// convex vertices that can spawn new shapes
-  	this.vertices = [];
-  	// all squares visited by this Greuter generation process
-  	this.used = {};
-  	// list of shapes generated by this Greuter process
-  	this.shapes = [];
-  	// frequency table of Greuter shapes
-  	this.table = table;
-  }
-  GreuterGenerator.prototype.getVertex = function() {
-  	HTomb.Utils.shuffle(this.vertices);
-  	return this.vertices.pop();
-  }
-  GreuterGenerator.prototype.spawn = function(x,y,n,padding) {
-  	// not sure how to propagate this
-  	padding = padding || 10;
-  	// choose how many shapes to spawn
-  	n = n || HTomb.Utils.dice(2,3)-1;
-    let that = this;
-  	let _recurse = function(x,y) {
-  		// pick a new shape from the frequency table
-  		//let shape = new (this.table.roll())(this);
-      let shape = new GreuterShape(that);
-  		// generate the shape centered around x,y
-  		shape.generate(x,y,that);
-  		// decrement and re-run
-  		if (n>0) {
-  			n-=1;
-  			// grab a random vertex
-  			let v = that.getVertex();
-  			_recurse(v[0],v[1]);
-  		}
-  	};
-  	// kick off recursive generation
-  	_recurse(x,y);
-  	// reset the vertices list
-  	this.vertices = [];
-  };
-  GreuterGenerator.prototype.resolve = function() {
-  	this.resolved = {};
-  	this.shapes.sort(function(a,b) {
-  		if (a.zindex<b.zindex) {
-  			return +1;
-  		} else if (a.zindex>b.zindex) {
-  			return -1;
-  		} else {
-  			return 0;
-  		}
-  	});
-  	for (let i=0; i<this.shapes.length; i++) {
-  		this.shapes[i].resolve(this);
-  	}
-  }
-
-  function GreuterShape(gen) {
-  	gen.shapes.push(this);
-  	this.id = gen.shapes.length;
-  }
-  GreuterShape.prototype.generate = function(x0,y0,gen) {
-    let w = (HTomb.Utils.dice(1,3)+1)*2;
-    let h = (HTomb.Utils.dice(1,3)+1)*2;
-  	this.zindex = 0;
-  	this.graves = [];
-  	this.walls = [];
-  	for (let x=0; x<w; x++) {
-  		for (let y=0; y<h; y++) {
-  			let x1 = x0+x-w/2;
-  			let y1 = y0+y-h/2;
-        if (x1>0 && x1<LEVELW-1 && y1>0 && y1<LEVELH-1) {
-          let z = HTomb.Tiles.groundLevel(x1,y1);
-  			  //if (x1%2===0) {
-  					this.graves.push([x1,y1,z]);
-          //}
-          if ((x===0 || x===w-1) && (y===0 || y===h-1)) {
-    				if (gen.used[coord(x1,y1,z)]===undefined) {
-    					gen.vertices.push([x1,y1]);
-    				}
-    			}
-    			gen.used[coord(x1,y1)] = this.id;
-  			}
-  		}
-  	}
-  };
-  GreuterShape.prototype.resolve = function(gen) {
-  	for (let i=0; i<this.graves.length; i++) {
-  		let g = this.graves[i];
-  		if (gen.resolved[coord(g[0],g[1],g[2])]===undefined) {
-  			//HTomb.Things.Tombstone().place(g[0],g[1],g[2]);
-        HTomb.Things.Bloodstone().place(g[0],g[1],g[2]);
-  			gen.resolved[coord(g[0],g[1],g[2])] = this.id;
-  		}
-  	}
-  	for (let i=0; i<this.walls.length; i++) {
-  		let w = this.walls[i];
-  		if (gen.resolved[coord(w[0],w[1],w[2])]===undefined) {
-  			HTomb.World.tiles[w[2]][w[0]][w[1]] = HTomb.Tiles.UpSlopeTile;
-  			HTomb.World.tiles[w[2]+1][w[0]][w[1]] = HTomb.Tiles.DownSlopeTile;
-  			gen.resolved[coord(w[0],w[1],w[2])] = this.id;
-  		}
-  	}
-  };
-
-
-
-  // faster to track this as globally rather than in grass
-
-
 
   return HTomb;
 })(HTomb);
