@@ -1,0 +1,16 @@
+{
+  "name": "hecatomb",
+  "productName": "hecatomb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Glenn Wright",
+  "license": "ISC",
+  "devDependencies": {
+    "electron-packager": "^8.7.2",
+    "electron": "1.4.13"
+  }
+}

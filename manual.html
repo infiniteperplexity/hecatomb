@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+
+<title>Hecatomb Manual</title>
+
+<style>
+
+</style></head>
+
+<body>
+
+<h1>
+
+Hecatomb: A brief manual
+
+</h1>
+
+<p>
+
+Hecatomb is a rogue-like fortress-building game, inspired by the likes of <a href="http://www.bay12games.com/dwarves/">Dwarf Fortress</a> and <a href="http://keeperrl.com/">KeeperRL</a>. The current version is something like a demo - it has the game's core functionality and a full tutorial, but the content is limited to the minimum necessary to test the game's appeal.  In this game, you play the role of a necromancer, raising zombies to build a fortress.  You will gather resources, build structures and goods, and defend your fortress from wandering monsters, adventurers, rival necromancers, and the like.
+
+</p>
+
+<h2>
+
+What am I looking at?
+
+</h2>
+
+<p>
+
+Hecatomb is a takes place on a three-dimensional grid of tiles.  The x-axis and y-axis represent movement to the north, south, east, and west; the z-axis represents depth/elevation/altitude.  Because you are looking at a three-dimensional grid on a two-dimensional screen, you can only see one z-level clearly at a time; tiles on the next level down may be visible but darkened.  Instead of graphics, Hecatomb uses unicode characters.  The character on a tile might represent a terrain type, or it may represent a creature, a landscape feature, or an object lying on the ground, depending on what's occupying that tile.  Tiles that have not yet been explored are solid black.  A tile that you or one of your minions can see, and is in area with good lighting, may have a colorful foreground.  Tiles you have explored but can't currently see ("fog of war") have gray foregrounds, and tiles in unlit areas have black foregrounds.
+
+</p>
+
+<h2>
+
+How do I do stuff?
+
+</h2>
+
+<p>
+
+Hecatomb uses mostly keyboard inputs, with optional mouse functionality for some tasks.  Your necromancer can walk around using the number pad or the arrow keys.  To travel between different z-levels, you'll typically need to climb a slope.  To go up or down a slope, press "&lt;" (or "/"), or "&gt;" (or "/".)  In most cases, if you try to walk into a cliff or off a cliff, you'll automatically climb up or down the slope instead.  On keyboards without a numeric keypad, you can still walk diagonally, by holding down the Control key and pressing two arrow keys.
+
+</p>
+<p>
+Hecatomb is a turn-based game.  Depending on your preference and the circumstance, you might want time (turns) to pass only when you take an action, or you might want them to pass in realtime.  To adjust this, turn "auto-pause" on or off, using the Return or Enter key.  You can also adjust the speed that turns pass when auto-pause is off, using the "-" and "+"/"=" keys.  You can always force a turn to pass by pressing one of the wait buttons (Space Bar, or 5 on the numeric keypad.)
+</p>
+
+<p>
+Sometimes, especially once you have several zombies serving you, you might wish to leave your necromancer behind and move your viewing window across your domain.  Do this using Navigation mode, which you can toggle by pressing Tab.  In navigation mode, the direction and up/down keys move the viewing window instead of the necromancer.  You cxan still press Space in navigation mode to pass turns, although it is safer to press Control-Space, because Space alone doubles as a selection button in navigation mode.  The controls for navigation mode also temporarily become active when you are targeting a spell or job.
+</p>
+<p>
+<h2>Spells & Tasks </h2>
+<p>
+The most important things your necromancer does are summoning zombies and assigning tasks.
+</p>
+<h3>
+Raise Zombie
+</h3>
+<p>
+To summon a zombie, press Z to cast a spell, then press A to select "Raise Zombie", and finally use the mouse and/or directional keys (arrows or numeric keypad) to move the cursor to a tile that contains a corpse or a tombstone, then click or press Space Bar to select it.  The spell currently has infinite range; you don't need to be standing next to the target.  You do need to have the view on the same z-level as the tombstone or corpse; for example, you may be able to dimly see a tombstone from one levels above, but you'll have to zoom down a level in order to cast a spell on it.
+</p>
+<p>
+Tasks are assigned in a similar way - press J to select a job, press a letter key to select the task, and then use the mouse or direction keys to select the target(s).  Some tasks target a single square, some target a creature, and some target a box of fixed size, and some target a rectangular area of variable size, selected by choosing two corners one after the other.
+</p>
+<h3>
+
+A) Dig
+
+</h3>
+
+<p>
+
+The dig task has different effects based on the type of tile you assign it on.  If you assign it on a wall tile, your zombies will dig a roofed corridor.  If you assign it on an upward slope, your zombies will level the slope into a floor tile.  If you assign it on a floor tile, your zombies will dig a downward slope (if there is solid rock below) or dig a hole in the floor (if there is a corridor below.)  If you assign it on a downward slope, your zombies will dig away the slope on the floor below.  Lastly, if you dig in a wall tile that can only be accessed from a slope directly below it, your zombies will dig upward.
+
+</p>
+
+<h3>
+
+B) Build
+
+</h3>
+
+<p>
+
+The build task, like the dig task, has different effects on different tile types.  On a floor tile, your zombies will build an upward slope.  On an upward slope, your zombies will build a wall.  On an empty tile or a downward slope, your zombies will build a floor.
+
+</p>
+
+<h3>
+
+C) Create a structure
+
+</h3>
+
+<p>
+
+This task presents a menu of available structures.  Some structures are squares of fixed size, whereas others are adjustable rectangles.  At the carpenter, you can set up a queue of goods for your zombies to produce.  At the warehouse, you can designate certain types of goods for your zombies to stockpile.  At the farm, you can designate certain kinds of seeds to plant and grow as crops.
+
+</p>
+
+<h3>
+
+D) Harvest or remove feature
+
+</h3>
+
+<p>
+
+This task removes a special landscape feature or fixture, like a shrub, torch, et cetera.  Certain features, such as trees or crops, will be harvested to yield resources.
+
+</p>
+
+<h3>
+
+E) Patrol
+
+</h3>
+
+<p>
+
+This task designates a square that a single zombie will patrol around.
+
+</p>
+
+<h3>
+
+F) Furnish
+
+</h3>
+
+<p>
+
+This task takes a finished good - say, a throne that has not yet been installed - and furnishes it as an immobile installation.
+
+</p>
+
+<h3>
+
+  G) Undesignate tasks.
+
+</h3>
+
+This task cancels all tasks assigned with a rectangular area you select.
+
+<h3>
+
+  H) Declare hostility.
+
+</h3>
+
+<p>
+
+This task declares that the targeted creature should be treated as an enemy by you and your minions.  It will likely become angry and try to attack.
+
+</p>
+<h2>
+
+Other Controls:
+
+</h2>
+
+<p>
+
+Moving the mouse around the screen hovers your cursor and reveals information about the tile you are hovering over, plus the tiles immediately above and below it.  Clicking the mouse button on a creature enters the "Creature View" mode, and clicking on one of your structures enters the "Structure View" mode.  In those modes, you can use the Tab key to scroll through your various minions and structures.  You can also enter Minion View by pressing M or Structure View by pressing S.  Press Escape to return to the normal mode.
+</p>
+<p>
+
+Page Up and Page Down scroll your messages (Fn+Up/Down Arrow on most Macs.)  Pressing the U key shows an overall summary of your minions, structures, and tasks.  The A key shows which achievements you have unlocked.  The "?" (or "/") key toggles the tutorial on or off.  The F key opens a page that allows you to submit feedback on the game to me.  The Escape key takes you to a system view, where you can save, quit, restore a game, or open this manual.
+
+</p>
+
+<h2>
+
+Saved Games:
+
+</h2>
+
+<p>
+
+Unlike in a typical roguelike game, the demo version of Hecatomb does not feature permadeath - if you die, you can restore from an old saved game.
+
+</p>
+<p>
+Send questions and comments to infinite DOT perplexity AT gmail.
+</p>
+</body></html>
