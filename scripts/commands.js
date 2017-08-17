@@ -310,6 +310,66 @@ HTomb = (function(HTomb) {
       );
     }
   };
+  Commands.equip = function() {
+    var p = HTomb.Player.player.delegate;
+    if (!p.equipper) {
+      HTomb.GUI.pushMessage("You cannot equip items.");
+    } else {
+      let slots = p.equipper.slots;
+      let choices = [];
+      for (let slot in p.equipper.slots) {
+        choices.push([slot, p.equipper.slots[slot]]);
+      }
+      GUI.choosingMenu("Change equipment:",choices,
+        function(choice) {
+          return function() {
+            //equip an item
+            if (choice[1]===null) {
+              let equippable = [];
+              //HTomb.Player.inventory.add(HTomb.Things.WorkAxe());
+              for (let i=0; i<p.inventory.items.items.length; i++) {
+                let item = p.inventory.items.items[i];
+                if (item.equipment && item.equipment.slot===choice[0]) {
+                  equippable.push(item);
+                }
+              }
+              GUI.choosingMenu("Equip an item:",equippable,
+                function(item) {
+                  return function() {
+                    p.equipper.equipItem(item);
+                    HTomb.GUI.reset();
+                    HTomb.GUI.pushMessage("You equip " + item.describe({article: "indefinite"}));
+                  }
+                },
+                {
+                  contextName: "EquipItem"
+                }
+              );
+            // unequip an item
+            } else {
+              let item = p.equipper.slots[choice[0]];
+              p.equipper.unequipItem(choice[0]);
+              HTomb.GUI.reset();
+              HTomb.GUI.pushMessage("You unequip " + item.describe({article: "indefinite"}));
+            }
+          }
+        },
+        {
+          contextName: "ViewEquipment",
+          format: function(choice) {
+            let slot = choice[0];
+            let item = choice[1];
+            if (item===null) {
+              return slot + ": Nothing.";
+            }
+            return slot + ": " + item.describe({article: "indefinite"});
+          }
+        }
+      );
+
+      // need some kind of inventory interface
+    }
+  }
   // Show a menu of the spells the player can cast
   Commands.showSpells = function() {
     let p = HTomb.Player.player.delegate;

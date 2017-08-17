@@ -386,10 +386,11 @@ HTomb = (function(HTomb) {
     " ",
     "Z: Cast spell, J: Assign job.",
     "M: Minions, S: Structures, U: Summary.",
-    "G: Pick Up, D: Drop, I: Inventory.",
+    "G: Pick Up, D: Drop.",
+    "I: Inventory, E: Equip/Unequip.",
     " ",
     "PageUp/Down: Scroll messages.",
-    "A: Achievements, ?: Toggle tutorial."
+    "A: Achievements, /: Toggle tutorial."
     //,
     //"F: Submit Feedback."
   ];

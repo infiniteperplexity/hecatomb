@@ -205,7 +205,6 @@ HTomb = (function(HTomb) {
     HTomb.Time.dailyCycle.onTurnBegin();
     HTomb.Events.publish({type: "TurnBegin"});
     // 3) Assign tasks
-    HTomb.Utils.shuffle(HTomb.Player.master.taskList);
     HTomb.Player.master.assignTasks();
     // 4) Deal with actors
     queue = [];

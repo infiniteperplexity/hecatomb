@@ -313,36 +313,54 @@ HTomb = (function(HTomb) {
       tsk.designate(this.entity);
     },
     assignTasks: function() {
+      let priorities = {
+        DigTask: 1,
+        BuildTask: 1,
+        ConstructTask: 1,
+        DismantleTask: 1,
+        FurnishTask: 1,
+        ProduceTask: 1,
+        HaulTask: 2,
+        PatrolTask: 3
+      };
+      HTomb.Utils.shuffle(this.taskList);
+      //count down dormant tasks
       for (let i=0; i<this.taskList.length; i++) {
-        var tsk = this.taskList[i].task;
-        if (tsk.dormant>0) {
-          tsk.dormant-=1;
+        let task = this.taskList[i].task;
+        if (task.dormant>0) {
+          task.dormant-=1;
+        }
+      }
+      let failed = [];
+      for (let i=0; i<this.minions.length; i++) {
+        let minion = this.minions[i];
+        if (minion.worker===undefined) {
           continue;
-        }
-        if (tsk.assignee!==null) {
+        } else if (minion.worker.task!==null) {
           continue;
+        } else {
+          let MAXPRIORITY = 3;
+          for (let j=0; j<=MAXPRIORITY; j++) {
+            let tasks = this.taskList.filter(function(e,i,a) {return (priorities[e.task.template]===j && !e.dormant)});
+            // for hauling tasks, this gives misleading results...but I could fix that
+            tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
+            for (let k=0; k<tasks.length; k++) {
+              let task = tasks[k].task;
+              if (minion.worker.allowedTasks.indexOf(task.template)!==-1 && task.canAssign(minion)) {
+                task.assignTo(minion);
+                //very ad hoc
+                let j = MAXPRIORITY+1;
+                break;
+              } else if (fails.indexOf(task)===-1) {
+                failed.push(task);
+              }
+            }
+          }
         }
-        var master = this.entity;
-        var minions = this.minions;
-        for (let j=0; j<minions.length; j++) {
-          if (minions[j].worker===undefined) {
-            continue;
-          }
-          if (minions[j].worker.task!==null) {
-            continue;
-          }
-          if (minions[j].worker.allowedTasks.indexOf(tsk.template)===-1) {
-            continue;
-          }
-          if (tsk.canAssign(minions[j])) {
-            tsk.assignTo(minions[j]);
-            break;
-          }
-        }
-        // if assignment failed, go dormant for a while
-        if (tsk.assignee===null) {
-          tsk.dormant = HTomb.Utils.perturb(tsk.dormancy);
-        }
+      }
+      for (let i=0; i<failed.length; i++) {
+        let task = failed[i];
+        task.dormant = HTomb.Utils.perturb(task.dormancy);
       }
     },
     listTasks: function() {
@@ -607,6 +625,68 @@ HTomb = (function(HTomb) {
   });
 
 
+  HTomb.Things.defineBehavior({
+    template: "Equipment",
+    name: "equipment",
+    slot: null,
+    labor: 1,
+    onEquip: function(equipper) {},
+    onUnequip: function(equipper) {}
+  });
+
+  HTomb.Things.defineBehavior({
+    template: "Equipper",
+    name: "equipper",
+    items: null,
+    slots: {
+      MainHand: null,
+      OffHand: null    
+    },
+    onCreate: function(args) {
+      this.items = HTomb.Things.Container();
+      this.slots = HTomb.Utils.copy(this.slots);
+      return this;
+    },
+    unequipItem: function(slot_or_item) {
+      let item;
+      if (typeof(slot_or_item)==="string") {
+        item = this.slots[slot];
+      } else {
+        item = slot_or_item;
+      }
+      if (item) {
+        this.items.remove(item);
+        item.equipment.onUnequip(this);
+        if (this.entity.inventory) {
+          this.entity.inventory.add(item);
+        } else {
+          let e = this.entity;
+          item.place(e.x,e.y,e.z);
+        }
+        this.entity.slot = null;
+      }
+      return item;
+    },
+    equipItem: function(item) {
+      let e = item.equipment;
+      if (e) {
+        let slot = e.slot;
+        if (this.slots[slot]!==undefined) {
+          if (this.slots[slot]!==null) {
+            this.unequipItem(slot);
+          }
+          this.items.push(item);
+          e.onEquip(this);
+          this.slots[slot] = item;
+        }
+      }
+    },
+    onDespawn: function() {
+      if (this.items) {
+        this.items.despawn();
+      }
+    }
+  });
 
   return HTomb;
 })(HTomb);

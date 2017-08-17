@@ -16,6 +16,7 @@ HTomb = (function(HTomb) {
         AI: {
           team: "PlayerTeam"
         },
+        Equipper: {},
         Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
         SpellCaster: {spells: ["RaiseZombie"]},
         Body: {
@@ -109,6 +110,7 @@ HTomb = (function(HTomb) {
         goals: ["ServeMaster"]
       },
       Movement: {swims: true},
+      Equipper: {},
       Sight: {},
       Worker: {},
       Inventory: {capacity: 2},

@@ -170,7 +170,7 @@ HTomb = (function(HTomb) {
       "%c{cyan}Move: NumPad/Arrows.",
       "(Control+Arrows for diagonal.)",
       " ",
-      "?: Toggle tutorial."
+      "/: Toggle tutorial."
     ],
     instructions: [
       "%c{yellow}Welcome to the Hecatomb in-game tutorial.  Follow the instructions on this panel to proceed through the tutorial, or press ? to turn off these messages and play without the tutorial.",
@@ -210,7 +210,7 @@ HTomb = (function(HTomb) {
       "%c{cyan}Move: NumPad/Arrows.",
       "(Control+Arrows for diagonal.)",
       " ",
-      "?: Toggle tutorial."
+      "/: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -256,7 +256,7 @@ HTomb = (function(HTomb) {
       "Move: NumPad/Arrows, %c{cyan},/.: Up/Down.",
       "(Control+Arrows for diagonal.)",
       " ",
-      "?: Toggle tutorial."
+      "/: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -314,7 +314,7 @@ HTomb = (function(HTomb) {
       " ",
       "%c{cyan}Z: Cast spell.",
       " ",
-      "?: Toggle tutorial."
+      "/: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -397,7 +397,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell.",
       " ",
       "%c{cyan}PageUp/Down: Scroll messages.",
-      "%c{cyan}A: Achievements, %c{}?: Toggle tutorial."
+      "%c{cyan}A: Achievements, %c{}/: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -448,7 +448,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell.",
       " ",
       "PageUp/Down: Scroll messages.",
-      "A: Achievements, ?: Toggle tutorial."
+      "A: Achievements, /: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -488,7 +488,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell.",
       " ",
       "PageUp/Down: Scroll messages.",
-      "A: Achievements, ?: Toggle tutorial."
+      "A: Achievements, /: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -530,7 +530,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell, %c{cyan}J: Assign job.",
       " ",
       "PageUp/Down: Scroll messages.",
-      "A: Achievements, ?: Toggle tutorial."
+      "A: Achievements, /: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -608,7 +608,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell, J: Assign job.",
       " ",
       "PageUp/Down: Scroll messages.",
-      "A: Achievements, ?: Toggle tutorial."
+      "A: Achievements, /: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -653,7 +653,7 @@ HTomb = (function(HTomb) {
           "%c{cyan}Z: Cast spell, %c{}J: Assign job.",
           " ",
           "PageUp/Down: Scroll messages.",
-          "A: Achievements, ?: Toggle tutorial."
+          "A: Achievements, /: Toggle tutorial."
           //,"Backspace / Delete: Previous tutorial."
         ];
       } else if (context==="ShowSpells") {
@@ -704,7 +704,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell, %c{}J: Assign job.",
       " ",
       "PageUp/Down: Scroll messages.",
-      "A: Achievements, ?: Toggle tutorial."
+      "A: Achievements, /: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -742,7 +742,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell, J: Assign job.",
       " ",
       "PageUp/Down: Scroll messages.",
-      "A: Achievements, ?: Toggle tutorial."
+      "A: Achievements, /: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
@@ -777,7 +777,7 @@ HTomb = (function(HTomb) {
       "Z: Cast spell, J: Assign job.",
       " ",
       "PageUp/Down: Scroll messages.",
-      "A: Achievements, ?: Toggle tutorial."
+      "A: Achievements, /: Toggle tutorial."
       //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [

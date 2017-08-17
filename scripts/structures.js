@@ -476,6 +476,7 @@ HTomb = (function(HTomb) {
       {WoodPlank: 1}
     ],
     makes: [
+      "WorkAxe",
       "DoorItem",
       "TorchItem"
     ]
@@ -700,7 +701,7 @@ HTomb = (function(HTomb) {
     bg: "#336699",
     workshop: null,
     makes: null,
-    steps: 10,
+    labor: 20,
     started: false,
     dormancy: 4,
     canAssign: function(cr) {
@@ -736,16 +737,17 @@ HTomb = (function(HTomb) {
     beginWork: function() {
       let test = this.assignee.inventory.items.takeItems(this.ingredients);
       this.started = true;
+      this.labor = HTomb.Things.templates[this.makes].labor || this.labor;
       HTomb.GUI.pushMessage(this.beginMessage());
     },
     work: function(x,y,z) {
       if (this.workBegun()!==true) {
         this.beginWork();
       }
-      this.steps-=1;
+      this.labor-=1;
       this.assignee.ai.acted = true;
       this.assignee.ai.actionPoints-=16;
-      if (this.steps<=0) {
+      if (this.labor<=0) {
         this.completeWork();
       }
     },

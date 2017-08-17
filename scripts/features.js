@@ -131,6 +131,7 @@ HTomb = (function(HTomb) {
     locked: false,
     symbol: "\u25A5",
     fg: "#BB9922",
+    labor: 20,
     craftable: true,
     activate: function() {
       if (this.locked) {
@@ -150,12 +151,14 @@ HTomb = (function(HTomb) {
     },
     solid: false,
     opaque: true,
+    integrity: 50,
     ingredients: {WoodPlank: 1}
   });
 
   HTomb.Things.defineFeature({
     template: "Excavation",
     name: "excavation",
+    labor: 20,
     incompleteSymbol: "\u2717",
     incompleteFg: HTomb.Constants.BELOWFG,
     onPlace: function(x,y,z) {
@@ -225,6 +228,7 @@ HTomb = (function(HTomb) {
     template: "Construction",
     name: "construction",
     incompleteSymbol: "\u2692",
+    labor: 20,
     incompleteFg: HTomb.Constants.WALLFG,
     onPlace: function(x,y,z) {
       var tiles = HTomb.World.tiles;
@@ -263,17 +267,20 @@ HTomb = (function(HTomb) {
     fg: "#BB9922",
     makes: null,
     finished: false,
-    steps: -5,
+    labor: 5,
     onCreate: function(args) {
       this.makes = args.makes;
+      this.labor = this.makes.labor || this.labor;
       this.symbol = this.makes.incompleteSymbol || this.symbol;
       this.fg = this.makes.incompleteFg || this.makes.fg || this.fg;
       this.name = "incomplete "+this.makes.name;
       return this;
     },
     work: function() {
-      this.steps+=1;
-      if (this.steps>=0) {
+      let labor = 1;
+      // need to account for work axes somehow
+      this.labor-=labor;
+      if (this.labor<=0) {
         this.finish();
       }
     },

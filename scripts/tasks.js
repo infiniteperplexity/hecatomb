@@ -190,6 +190,7 @@ HTomb = (function(HTomb) {
         this.beginWork();
       } else {
         f.work();
+        // be careful not to do this twice...
         this.assignee.ai.acted = true;
         this.assignee.ai.actionPoints-=16;
       }

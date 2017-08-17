@@ -63,11 +63,12 @@ HTomb = (function(HTomb) {
   });
 
   HTomb.Things.defineItem({
-    template: "StoneWorkAxe",
-    name: "stone work axe",
-    symbol: "\u26CF",
+    template: "WorkAxe",
+    name: "work axe",
+    symbol: "\u262D",
     fg: "gray",
-    tags: ["Tool"]
+    ingredients: {"WoodPlank": 1, "Rock": 1},
+    Behaviors: {Equipment: {slot: "MainHand", labor: "2"}}
   });
 
 

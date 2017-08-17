@@ -436,6 +436,9 @@ HTomb = (function(HTomb) {
       return this;
     },
     absorbStack: function(item) {
+      if (item.item.container) {
+        item.item.container.remove(item);
+      }
       //let n = item.item.n;
       let n = Math.min(item.item.n,this.canFit(item));
       let existing = false;
@@ -482,6 +485,9 @@ HTomb = (function(HTomb) {
       if (item.item.stackable) {
         this.absorbStack(item);
       } else {
+        if (item.item.container) {
+          item.item.container.remove(item);
+        }
         this.items.push(item);
         item.item.container = this;
       }
@@ -727,6 +733,7 @@ HTomb = (function(HTomb) {
         // overwrite the item's ingredients
         template.ingredients = {};
         template.ingredients[args.template+"Item"] = 1;
+        template.labor = args.labor || 10;
       }
     },
     onPlace: function(x,y,z) {
@@ -747,7 +754,9 @@ HTomb = (function(HTomb) {
       if (this.integrity===null) {
         this.integrity=5;
       }
-      this.integrity-=1;
+      let labor = 1;
+      this.integrity-=labor;
+      // need to account for work axes somehow
       if (this.integrity<=0) {
         this.harvest();
       }

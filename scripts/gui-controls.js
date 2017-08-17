@@ -578,6 +578,7 @@ HTomb = (function(HTomb) {
     VK_G: Commands.pickup,
     VK_D: Commands.drop,
     VK_I: Commands.inventory,
+    VK_E: Commands.equip,
     VK_J: Commands.showJobs,
     VK_Z: Commands.showSpells,
     VK_SLASH: function() {
@@ -857,7 +858,7 @@ HTomb = (function(HTomb) {
     "M: Minions, S: Structures, U: Summary.",
     " ",
     "PageUp/Down: Scroll messages.",
-    "A: Achievements, ?: Toggle tutorial."
+    "A: Achievements, /: Toggle tutorial."
     //,
     //"F: Submit Feedback."
   ];
