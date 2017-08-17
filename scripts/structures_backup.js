@@ -412,7 +412,182 @@ HTomb = (function(HTomb) {
     }
   });
 
-  
+  HTomb.Things.defineStructure({
+    template: "Farm",
+    name: "farm",
+    symbol: '"',
+    fg: "#666622",
+    onDefine: function(args) {
+      HTomb.Things.templates.Structure.onDefine.call(this,args);
+      HTomb.Things.templates.FarmFeature.bg = "#443322";
+    },
+    onPlace: function(x,y,z) {
+      HTomb.Things.templates.Structure.onPlace.call(this,x,y,z);
+      let crops = HTomb.Types.templates.Crop.types;
+      for (let i=0; i<crops.length; i++) {
+        this.options.push({
+          text: crops[i].template,
+          selected: false,
+          active: false
+        });
+      }
+    },
+    allSeeds: function() {
+      let findSeeds = this.owner.master.ownedItems.filter(function(item) {
+        if (item.parent==="Seed" && item.item.isOnGround()) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      let allSeeds = [];
+      for (let i=0; i<findSeeds.length;i++) {
+        let t = findSeeds[i].template;
+        if (allSeeds.indexOf(t)===-1) {
+          allSeeds.push(t);
+        }
+      }
+      return allSeeds;
+    },
+    optionsHeading: function() {
+      return "Crops permitted:";
+    },
+    noOptionsText: function() {
+      return "(No crops defined?)";
+    },
+    updateOptions: function() {
+      let allSeeds = this.allSeeds();
+      for (let i=0; i<this.options.length; i++) {
+        let opt = this.options[i];
+        if (allSeeds.indexOf(opt.text+"Seed")===-1) {
+          opt.active = false;
+        } else {
+          opt.active = true;
+        }
+      }
+    },
+    onTurnBegin: function() {
+      let seeds = [];
+      let all = this.allSeeds();
+      for (let i=0; i<this.options.length; i++) {
+        let o = this.options[i];
+        if (o.selected && all.indexOf(o.text+"Seed")!==-1) {
+          seeds.push(o.text);
+        }
+      }
+      for (let i=0; i<this.features.length; i++) {
+        let f = this.features[i];
+        let task = HTomb.World.tasks[coord(f.x,f.y,f.z)];
+        if (!task && !f.growing && seeds.length>0) {
+          HTomb.Utils.shuffle(seeds);
+          let seed = seeds[0];
+          let t = HTomb.Things.FarmTask({makes: seed, assigner: this.owner}).place(f.x,f.y,f.z,this.owner);
+          t.task.ingredients = {};
+          t.task.ingredients[seed+"Seed"] = 1;
+        } else if (f.growing) {
+          if (f.growing.parent==="Sprout") {
+            f.growing.ripen();
+          } else if (!task && f.growing.parent==="Plant") {
+            let t = HTomb.Things.HarvestFarmTask({assigner: this.owner}).place(f.x,f.y,f.z,this.owner);
+          }
+        } else if (task && !f.growing && seeds.length>0 && !task.assignee) {
+          if (seeds.indexOf(task.task.makes)===-1) {
+            HTomb.Utils.shuffle(seeds);
+            let seed = seeds[0];
+            task.task.makes = seed;
+            task.task.ingredients = {};
+            task.task.ingredients[seed+"Seed"] = 1;
+          }
+        }
+      }
+    }
+  });
+  HTomb.Things.defineTask({
+    template: "FarmTask",
+    name: "farm",
+    bg: "#444411",
+    makes: null,
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f && f.template==="FarmFeature" && !f.growing && (!f.makes || f.makes.template===this.makes+"Sprout")) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    designateTile: function(x,y,z,assigner) {
+      let t = HTomb.Things.templates.Task.designateTile(x,y,z,assigner);
+      return t;
+    },
+    workBegun: function() {
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f && f.template==="FarmFeature" && f.makes && f.makes.template===this.makes+"Sprout") {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    beginWork: function() {
+      // could handle auto-dismantling here...
+      // will this work?  or should we check for ingredients before taking?
+      if (this.assignee.inventory.items.hasAll(this.ingredients)!==true) {
+        throw new Error("Shoudl never reach this due to AI");
+      }
+      HTomb.GUI.pushMessage(this.beginMessage());
+      let items = this.assignee.inventory.items.takeItems(this.ingredients);
+      for (let i=0; i<items.length; i++) {
+        items[i].despawn();
+      }
+      //let's avoid the incompleteFeature entirely?
+      let c = HTomb.Things[this.makes+"Sprout"]();
+      let f = HTomb.World.features[coord(this.entity.x,this.entity.y,this.entity.z)];
+      //c.inFarm = f;
+      if (f===undefined) {
+        console.log("What is going on here?");
+        console.log(this);
+      }
+      f.makes = c;
+      f.steps = -5;
+      f.symbol = c.incompleteSymbol;
+      f.fg = c.fg;
+      f.name = "farm: "+c.name;
+      c.inFarm = f;
+      this.assignee.ai.acted = true;
+      this.assignee.ai.actionPoints-=16;
+    },
+    work: function() {
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      if (this.validTile(x,y,z)!==true) {
+        this.cancel();
+        return;
+      }
+      //do I want to make demolishing unowned features the default?
+      let f = HTomb.World.features[coord(x,y,z)];
+      // we could also handle the dismantling in "beginWork"...
+      // Somehow we manage to start this task without having the proper ingredients
+      if (this.workBegun()!==true) {
+        this.beginWork();
+      } else {
+        f.steps+=1;
+        this.assignee.ai.acted = true;
+        this.assignee.ai.actionPoints-=16;
+      }
+      if (f && f.steps>=0) {
+        f.growing = f.makes;
+        f.makes = null;
+        f.symbol = f.growing.symbol;
+        this.completeWork();
+      }
+    }
+  });
 
   HTomb.Things.defineTask({
     template: "HarvestFarmTask",
@@ -477,68 +652,76 @@ HTomb = (function(HTomb) {
     ],
     makes: [
       "DoorItem",
-      "TorchItem"
+      "TorchItem",
+      "ThroneItem"
     ]
   });
 
   HTomb.Things.defineStructure({
-    template: "Storage",
-    height: 3,
-    width: 3,
-    stores: function(item) {return false;},
+    template: "Stockpile",
+    name: "stockpile",
+    symbol: "\u2261",
+    fg: HTomb.Constants.FLOORFG,
+    options: [
+      {text: "Minerals", selected: false, active: false},
+      {text: "Wood", selected: false, active: false},
+      {text: "Seeds", selected: false, active: false},
+      {text: "Herbs", selected: false, active: false},
+      {text: "Fixtures", selected: false, active: false}
+    ],
+    updateOptions: function() {
+      let items = this.owner.master.ownedItems;
+      let tags = [];
+      for (let i=0; i<items.length; i++) {
+        if (items[i].item.tags) {
+          for (let j=0; j<items[i].item.tags.length; j++) {
+            if (tags.indexOf(items[i].item.tags[j])===-1) {
+              tags.push(items[i].item.tags[j]);
+            }
+          }
+        }
+      }
+      for (let o in this.options) {
+        if (tags.indexOf(this.options[o].text)===-1) {
+          this.options[o].active = false;
+        } else {
+          this.options[o].active = true;
+        }
+      }
+    },
+    optionsHeading: function() {
+      return "Store items:";
+    },
     onTurnBegin: function() {
+      let types = [];
+      for (let o in this.options) {
+        if (this.options[o].selected===true) {
+          types.push(this.options[o].text);
+        }
+      }
+      if (types.length===0) {
+        return;
+      }
       for (let i=0; i<this.features.length; i++) {
         let f = this.features[i];
         let z = HTomb.World.tasks[coord(f.x,f.y,f.z)];
         if (z===undefined) {
-          z = HTomb.Things.HaulTask({
+          z = HTomb.Things.StockpileTask({
             assigner: this.owner,
-            stores: this.stores
+            allows: HTomb.Utils.copy(types)
           });
           z.place(f.x,f.y,f.z);
-        } else if (z.template==="HaulTaskEntity") {
-          z.task.hauls = this.stores;
+        } else if (z.template==="StockpileTaskEntity") {
+          z.task.allows = HTomb.Utils.copy(types);
         }
       }
-    },
-    detailsText: function() {
-      let txt = ["Contents:"];
-      let totalItems = {};
-      for (let i=0; i<this.squares.length; i++) {
-        let s = this.squares[i];
-        let items = HTomb.World.items[coord(s[0],s[1],s[2])];
-        if (items) {
-          items = items.items;
-          for (let j=0; j<items.length; j++) {
-            let item = items[j];
-            totalItems[item.template] = totalItems[item.template] || 0;
-            totalItems[item.template] += item.item.n;
-          }
-        }
-      }
-      for (let key in totalItems) {
-        let n = totalItems[key];
-        let line;
-        if (n===1) {
-          line = HTomb.Things.templates[key].describe({article: "indefinite"});
-          console.log(line);
-        } else {
-          line = n + " " + HTomb.Things.templates[key].describe({plural: "true"});
-          console.log(line);
-        }
-        txt.push(line);
-      }
-      return txt;
     }
   });
-
-
-  // Should this change its name to the name of the hauled item?
   HTomb.Things.defineTask({
-    template: "HaulTask",
-    name: "haul",
+    template: "StockpileTask",
+    name: "stockpile",
     bg: "#555544",
-    hauls: function(item) {return false;},
+    allows: [],
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -563,12 +746,22 @@ HTomb = (function(HTomb) {
         return false;
       }
     },
+    itemAllowed: function(item) {
+      for (let i=0; i<this.allows.length; i++) {
+        for (let j=0; j<item.item.tags.length; j++) {
+          if (this.allows[i]===item.item.tags[j]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     getSomeValidItem: function(cr) {
       // right now we ignore the creature argument
       let pile = HTomb.World.items[coord(this.x,this.y,this.z)] || HTomb.Things.Container();
       let that = this;
       let items = this.assigner.master.ownedItems.filter(function(item) {
-        if (that.hauls(item)!==true) {
+        if (that.itemAllowed(item)!==true) {
           return false;
         } else if (pile.canFit(item)<1) {
           return false;
@@ -576,7 +769,7 @@ HTomb = (function(HTomb) {
           return false;
         }
         let task = HTomb.World.tasks[coord(item.x,item.y,item.z)];
-        if (task && task.task.template==="HaulTask") {
+        if (task && task.task.template==="StockpileTask") {
           return false;
         }
         if (HTomb.Tiles.isReachableFrom(item.x, item.y, item.z, that.entity.x, that.entity.y, that.entity.z, {
@@ -616,7 +809,7 @@ HTomb = (function(HTomb) {
           let carrying = false;
           for (let j=0; j<cr.inventory.items.length; j++) {
             let item = cr.inventory.items.expose(j);
-            if (this.hauls(item)) {
+            if (this.itemAllowed(item)) {
               carrying=true;
               // if you're standing on the square and have a valid item, drop it
               if (cr.x===x && cr.y===y && cr.z===z) {
@@ -637,7 +830,7 @@ HTomb = (function(HTomb) {
           }
           if (carrying===false) {
             // if not carrying any valid item...hold on...shouldn't we keep a valid target if we already have one?
-            if (!t || !t.item || !this.hauls(t) || !t.isPlaced()) {
+            if (!t || !t.item || !this.itemAllowed(t) || !t.isPlaced()) {
               cr.ai.target = this.getSomeValidItem(cr);
             }
             // should maybe use fetch with an option to avoid things in hoards?
@@ -669,30 +862,186 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineStorage({
-    template: "Stockpile",
-    name: "stockpile",
-    symbols: ["\u2261","\u2261","\u2261","\u2261","\u2261","\u2261","\u2261","\u2261","\u2261"],
-    fgs: ["#BB9922","#BB9922","#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922","#BB9922","#BB9922"],
-    ingredients: [
-      {Rock: 1},
-      {},
-      {Rock: 1},
-      {},
-      {WoodPlank: 2},
-      {},
-      {Rock: 1},
-      {},
-      {Rock: 1}
-    ],
-    stores: function(item) {
-      if (item.template==="WoodPlank" || item.template==="Rock") {
-        return true;
-      } else {
-        return false;
+  HTomb.Things.defineStructure({
+    template: "Monument",
+    name: "monument",
+    symbols: ["@"],
+    fgs: ["gray"],
+    height: 1,
+    width: 1,
+    ingredients: [{Jade: 1}],
+    cancelCommand: function() {
+      if (this.cursor===0) {
+        let code = prompt("Enter a unicode value.",this.features[0].symbol.charCodeAt());
+        code = code.substr(0,4).toUpperCase();
+        let pat = /[A-F0-9]{1,4}/;
+        let match = pat.exec(code);
+        if (match===null) {
+          alert("Invalid Unicode value.");
+        } else {
+          this.features[0].symbol = String.fromCharCode(parseInt(code,16));
+        }
+      } else if (this.cursor===1) {
+        let code = prompt("Enter an 16-bit hex value for red.",ROT.Color.fromString(this.features[0].fg)[0]);
+        code = code.toUpperCase();
+        let pat = /[A-F0-9]{1,2}/;
+        let match = pat.exec(code);
+        if (match===null) {
+          alert("Invalid 16-bit hex value.");
+        } else {
+          let fg = this.features[0].fg;
+          this.features[0].fg = "#" + code + fg.substr(3,4);
+        }
+      } else if (this.cursor===2) {
+        let code = prompt("Enter an 16-bit hex value for green.",ROT.Color.fromString(this.features[0].fg)[1]);
+        code = code.toUpperCase();
+        let pat = /[A-F0-9]{1,2}/;
+        let match = pat.exec(code);
+        if (match===null) {
+          alert("Invalid 16-bit hex value.");
+        } else {
+          let fg = this.features[0].fg;
+          this.features[0].fg = "#" + fg.substr(1,2) + code + fg.substr(5,2);
+        }
+      } else if (this.cursor===3) {
+        let code = prompt("Enter an 16-bit hex value for blue.",ROT.Color.fromString(this.features[0].fg)[2]);
+        code = code.toUpperCase();
+        let pat = /[A-F0-9]{1,2}/;
+        let match = pat.exec(code);
+        if (match===null) {
+          alert("Invalid 16-bit hex value.");
+        } else {
+          let fg = this.features[0].fg;
+          this.features[0].fg = "#" + fg.substr(3,4) + code;
+        }
       }
+      HTomb.GUI.Panels.gameScreen.redraw(this.x, this.y);
+    },
+    upCommand: function() {
+      this.cursor-=1;
+      if (this.cursor<0) {
+        this.cursor = 3;
+      }
+    },
+    downCommand: function() {
+      this.cursor+=1;
+      if (this.cursor>=4) {
+        this.cursor = 0;
+      }
+    },
+    scrollChoices: function(n) {
+      if (this.cursor===0) {
+        let code = this.features[0].symbol.charCodeAt();
+        code+=n;
+        if (code>0xFFFF) {
+          code-=0xFFFF;
+        } else if (code<0) {
+          code+=0xFFFF;
+        }
+        this.features[0].symbol = String.fromCharCode(code);
+      } else if (this.cursor>=1 && this.cursor<=3){
+        let c = ROT.Color.fromString(this.features[0].fg);
+        let color = c[this.cursor-1];
+        color+=n;
+        if (color>=256) {
+          color-=256;
+        } else if (color<0) {
+          color+=256;
+        }
+        c[this.cursor-1] = color;
+        this.features[0].fg = ROT.Color.toHex([c[0],c[1],c[2]]);
+      }
+      HTomb.GUI.Panels.gameScreen.redraw(this.x, this.y);
+    },
+    moreCommand: function() {
+      if (HTomb.GUI.shiftDown() && this.cursor===0) {
+        this.scrollChoices(+256);
+      } else {
+        this.scrollChoices(+16);
+      }
+    },
+    lessCommand: function() {
+      if (HTomb.GUI.shiftDown() && this.cursor===0) {
+        this.scrollChoices(-256);
+      } else {
+        this.scrollChoices(-16);
+      }
+    },
+    rightCommand: function() {
+      if (HTomb.GUI.shiftDown()) {
+        this.scrollChoices(+16);
+      } else {
+        this.scrollChoices(+1);
+      }
+    },
+    leftCommand: function() {
+      if (HTomb.GUI.shiftDown()) {
+        this.scrollChoices(-16);
+      } else {
+        this.scrollChoices(-1);
+      }
+    },
+    detailsText: function() {
+      let txt = [
+        "%c{orange}**Esc: Done.**",
+        "Wait: NumPad 5 / Control+Space.",
+        "Click / Space: Select.",
+        "Enter: Toggle Pause.",
+        " ",
+        "%c{yellow}Structure: "+this.describe({capitalized: true, atCoordinates: true})+".",
+        "Up/Down: Choose property.",
+        "Left/Right: Up or down by 1.",
+        "[/]: Up or down by 16.",
+        "Backspace/Delete: Enter value using prompt.",
+        "Tab: Next structure.",
+        " ",
+        "Properties:"
+      ];
+      if (this.cursor===-1) {
+        this.cursor = 0;
+      }
+      let opts = [
+        ["  Unicode",this.features[0].symbol.charCodeAt().toString(16).toUpperCase()],
+        ["  Red (0-255)",ROT.Color.fromString(this.features[0].fg)[0]],
+        ["  Green (0-255)",ROT.Color.fromString(this.features[0].fg)[1]],
+        ["  Blue (0-255)",ROT.Color.fromString(this.features[0].fg)[2]]
+      ];
+      opts[this.cursor][0] = ">"+opts[this.cursor][0].substr(1);
+      for (let i=0; i<opts.length; i++) {
+        txt.push(opts[i][0] + ": " + opts[i][1]);
+      }
+      return txt;
     }
   });
+
+  HTomb.Things.defineStructure({
+    template: "Mortuary",
+    name: "mortuary",
+    symbols: ["\u2744","\u2637","\u2744","\u2637","\u2744","\u2637","\u2744","\u2637","\u2744"],
+    fgs: ["#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF"]
+  });
+
+  HTomb.Things.defineStructure({
+    template: "BoneCarvery",
+    name: "bone carvery",
+    symbols: ["\u2692","\u2620","\u2692","\u2620","\u2699","\u2620","\u2692","\u2620","\u2692"],
+    fgs: ["#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB"]
+  });
+
+  HTomb.Things.defineStructure({
+    template: "Library",
+    name: "library",
+    symbols: ["\u270D","\u270E","\u2710","/","\u25AD","\u26B4/","\u2261","/","\u2261"],
+    fgs: ["#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922"]
+  });
+
+  HTomb.Things.defineStructure({
+    template: "Laboratory",
+    name: "library",
+    symbols: ["\u2609","\u263F","\u2640","\u263D","\u2641","\u2697","\u2642","\u2643","\u26A9"],
+    fgs: ["#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922"]
+  });
+
 
   HTomb.Things.defineTask({
     template: "ProduceTask",
@@ -773,7 +1122,8 @@ HTomb = (function(HTomb) {
     longName: "create a structure",
     bg: "#553300",
     makes: null,
-    structures: ["Carpenter","Stockpile"],
+    //workshops: ["Mortuary","BoneCarvery","Carpenter"],
+    structures: ["Carpenter","Farm","Stockpile","Monument"],
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -976,364 +1326,25 @@ HTomb = (function(HTomb) {
       callb.call(options.context,squares,assigner);
     }
   });
+  // UseWorkshopTask
+    // Each workshop maintains a queue...it spawns tasks one at a time.
+    // When the task finished, it tries to assign the next one to the same minion.
+  // We could auto-queue a feature when we CraftTask
+  // Or we can do it through stocks
+
+  //DF workshops...
+    // Bowyer, Carpenter, Jeweler, Mason, Butcher, Mechanic, Farmer, Fishery, Craftsdwarf, Siege, Furnace, Smelter, Kiln, Glass Furnace
+    // Tanner, Loom, Still, Ashery, Screw Press, Kitchen, Quern, Millstone,
+    // Leatherwork, Clothier, Dyer, Metalsmith, Soap
+
+  // Goblin Camp
+    // Saw Pit, Carpenter, Basket Weaver, Winery, Kitchen, Butcher, Weaver, Bone Carver, Stone Mason, Weapon Crafter,
+    // Leather Crafter, Tanner, Mill, Bloomery, Blacksmith, Kiln, Oil Press, Alchemist, Armorsmith
+
+//    -	Do X times
+//    -	As many as possible (u221E)
+//    -	Cycle (u27F3, u21BB, u21C4)
+
 
 return HTomb;
 })(HTomb);
-
-
-// HTomb.Things.defineStructure({
-//     template: "Monument",
-//     name: "monument",
-//     symbols: ["@"],
-//     fgs: ["gray"],
-//     height: 1,
-//     width: 1,
-//     ingredients: [{Jade: 1}],
-//     cancelCommand: function() {
-//       if (this.cursor===0) {
-//         let code = prompt("Enter a unicode value.",this.features[0].symbol.charCodeAt());
-//         code = code.substr(0,4).toUpperCase();
-//         let pat = /[A-F0-9]{1,4}/;
-//         let match = pat.exec(code);
-//         if (match===null) {
-//           alert("Invalid Unicode value.");
-//         } else {
-//           this.features[0].symbol = String.fromCharCode(parseInt(code,16));
-//         }
-//       } else if (this.cursor===1) {
-//         let code = prompt("Enter an 16-bit hex value for red.",ROT.Color.fromString(this.features[0].fg)[0]);
-//         code = code.toUpperCase();
-//         let pat = /[A-F0-9]{1,2}/;
-//         let match = pat.exec(code);
-//         if (match===null) {
-//           alert("Invalid 16-bit hex value.");
-//         } else {
-//           let fg = this.features[0].fg;
-//           this.features[0].fg = "#" + code + fg.substr(3,4);
-//         }
-//       } else if (this.cursor===2) {
-//         let code = prompt("Enter an 16-bit hex value for green.",ROT.Color.fromString(this.features[0].fg)[1]);
-//         code = code.toUpperCase();
-//         let pat = /[A-F0-9]{1,2}/;
-//         let match = pat.exec(code);
-//         if (match===null) {
-//           alert("Invalid 16-bit hex value.");
-//         } else {
-//           let fg = this.features[0].fg;
-//           this.features[0].fg = "#" + fg.substr(1,2) + code + fg.substr(5,2);
-//         }
-//       } else if (this.cursor===3) {
-//         let code = prompt("Enter an 16-bit hex value for blue.",ROT.Color.fromString(this.features[0].fg)[2]);
-//         code = code.toUpperCase();
-//         let pat = /[A-F0-9]{1,2}/;
-//         let match = pat.exec(code);
-//         if (match===null) {
-//           alert("Invalid 16-bit hex value.");
-//         } else {
-//           let fg = this.features[0].fg;
-//           this.features[0].fg = "#" + fg.substr(3,4) + code;
-//         }
-//       }
-//       HTomb.GUI.Panels.gameScreen.redraw(this.x, this.y);
-//     },
-//     upCommand: function() {
-//       this.cursor-=1;
-//       if (this.cursor<0) {
-//         this.cursor = 3;
-//       }
-//     },
-//     downCommand: function() {
-//       this.cursor+=1;
-//       if (this.cursor>=4) {
-//         this.cursor = 0;
-//       }
-//     },
-//     scrollChoices: function(n) {
-//       if (this.cursor===0) {
-//         let code = this.features[0].symbol.charCodeAt();
-//         code+=n;
-//         if (code>0xFFFF) {
-//           code-=0xFFFF;
-//         } else if (code<0) {
-//           code+=0xFFFF;
-//         }
-//         this.features[0].symbol = String.fromCharCode(code);
-//       } else if (this.cursor>=1 && this.cursor<=3){
-//         let c = ROT.Color.fromString(this.features[0].fg);
-//         let color = c[this.cursor-1];
-//         color+=n;
-//         if (color>=256) {
-//           color-=256;
-//         } else if (color<0) {
-//           color+=256;
-//         }
-//         c[this.cursor-1] = color;
-//         this.features[0].fg = ROT.Color.toHex([c[0],c[1],c[2]]);
-//       }
-//       HTomb.GUI.Panels.gameScreen.redraw(this.x, this.y);
-//     },
-//     moreCommand: function() {
-//       if (HTomb.GUI.shiftDown() && this.cursor===0) {
-//         this.scrollChoices(+256);
-//       } else {
-//         this.scrollChoices(+16);
-//       }
-//     },
-//     lessCommand: function() {
-//       if (HTomb.GUI.shiftDown() && this.cursor===0) {
-//         this.scrollChoices(-256);
-//       } else {
-//         this.scrollChoices(-16);
-//       }
-//     },
-//     rightCommand: function() {
-//       if (HTomb.GUI.shiftDown()) {
-//         this.scrollChoices(+16);
-//       } else {
-//         this.scrollChoices(+1);
-//       }
-//     },
-//     leftCommand: function() {
-//       if (HTomb.GUI.shiftDown()) {
-//         this.scrollChoices(-16);
-//       } else {
-//         this.scrollChoices(-1);
-//       }
-//     },
-//     detailsText: function() {
-//       let txt = [
-//         "%c{orange}**Esc: Done.**",
-//         "Wait: NumPad 5 / Control+Space.",
-//         "Click / Space: Select.",
-//         "Enter: Toggle Pause.",
-//         " ",
-//         "%c{yellow}Structure: "+this.describe({capitalized: true, atCoordinates: true})+".",
-//         "Up/Down: Choose property.",
-//         "Left/Right: Up or down by 1.",
-//         "[/]: Up or down by 16.",
-//         "Backspace/Delete: Enter value using prompt.",
-//         "Tab: Next structure.",
-//         " ",
-//         "Properties:"
-//       ];
-//       if (this.cursor===-1) {
-//         this.cursor = 0;
-//       }
-//       let opts = [
-//         ["  Unicode",this.features[0].symbol.charCodeAt().toString(16).toUpperCase()],
-//         ["  Red (0-255)",ROT.Color.fromString(this.features[0].fg)[0]],
-//         ["  Green (0-255)",ROT.Color.fromString(this.features[0].fg)[1]],
-//         ["  Blue (0-255)",ROT.Color.fromString(this.features[0].fg)[2]]
-//       ];
-//       opts[this.cursor][0] = ">"+opts[this.cursor][0].substr(1);
-//       for (let i=0; i<opts.length; i++) {
-//         txt.push(opts[i][0] + ": " + opts[i][1]);
-//       }
-//       return txt;
-//     }
-//   });
-
-// HTomb.Things.defineStructure({
-//     template: "Farm",
-//     name: "farm",
-//     symbol: '"',
-//     fg: "#666622",
-//     onDefine: function(args) {
-//       HTomb.Things.templates.Structure.onDefine.call(this,args);
-//       HTomb.Things.templates.FarmFeature.bg = "#443322";
-//     },
-//     onPlace: function(x,y,z) {
-//       HTomb.Things.templates.Structure.onPlace.call(this,x,y,z);
-//       let crops = HTomb.Types.templates.Crop.types;
-//       for (let i=0; i<crops.length; i++) {
-//         this.options.push({
-//           text: crops[i].template,
-//           selected: false,
-//           active: false
-//         });
-//       }
-//     },
-//     allSeeds: function() {
-//       let findSeeds = this.owner.master.ownedItems.filter(function(item) {
-//         if (item.parent==="Seed" && item.item.isOnGround()) {
-//           return true;
-//         } else {
-//           return false;
-//         }
-//       });
-//       let allSeeds = [];
-//       for (let i=0; i<findSeeds.length;i++) {
-//         let t = findSeeds[i].template;
-//         if (allSeeds.indexOf(t)===-1) {
-//           allSeeds.push(t);
-//         }
-//       }
-//       return allSeeds;
-//     },
-//     optionsHeading: function() {
-//       return "Crops permitted:";
-//     },
-//     noOptionsText: function() {
-//       return "(No crops defined?)";
-//     },
-//     updateOptions: function() {
-//       let allSeeds = this.allSeeds();
-//       for (let i=0; i<this.options.length; i++) {
-//         let opt = this.options[i];
-//         if (allSeeds.indexOf(opt.text+"Seed")===-1) {
-//           opt.active = false;
-//         } else {
-//           opt.active = true;
-//         }
-//       }
-//     },
-//     onTurnBegin: function() {
-//       let seeds = [];
-//       let all = this.allSeeds();
-//       for (let i=0; i<this.options.length; i++) {
-//         let o = this.options[i];
-//         if (o.selected && all.indexOf(o.text+"Seed")!==-1) {
-//           seeds.push(o.text);
-//         }
-//       }
-//       for (let i=0; i<this.features.length; i++) {
-//         let f = this.features[i];
-//         let task = HTomb.World.tasks[coord(f.x,f.y,f.z)];
-//         if (!task && !f.growing && seeds.length>0) {
-//           HTomb.Utils.shuffle(seeds);
-//           let seed = seeds[0];
-//           let t = HTomb.Things.FarmTask({makes: seed, assigner: this.owner}).place(f.x,f.y,f.z,this.owner);
-//           t.task.ingredients = {};
-//           t.task.ingredients[seed+"Seed"] = 1;
-//         } else if (f.growing) {
-//           if (f.growing.parent==="Sprout") {
-//             f.growing.ripen();
-//           } else if (!task && f.growing.parent==="Plant") {
-//             let t = HTomb.Things.HarvestFarmTask({assigner: this.owner}).place(f.x,f.y,f.z,this.owner);
-//           }
-//         } else if (task && !f.growing && seeds.length>0 && !task.assignee) {
-//           if (seeds.indexOf(task.task.makes)===-1) {
-//             HTomb.Utils.shuffle(seeds);
-//             let seed = seeds[0];
-//             task.task.makes = seed;
-//             task.task.ingredients = {};
-//             task.task.ingredients[seed+"Seed"] = 1;
-//           }
-//         }
-//       }
-//     }
-//   });
-//   HTomb.Things.defineTask({
-//     template: "FarmTask",
-//     name: "farm",
-//     bg: "#444411",
-//     makes: null,
-//     validTile: function(x,y,z) {
-//       if (HTomb.World.explored[z][x][y]!==true) {
-//         return false;
-//       }
-//       let f = HTomb.World.features[coord(x,y,z)];
-//       if (f && f.template==="FarmFeature" && !f.growing && (!f.makes || f.makes.template===this.makes+"Sprout")) {
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     },
-//     designateTile: function(x,y,z,assigner) {
-//       let t = HTomb.Things.templates.Task.designateTile(x,y,z,assigner);
-//       return t;
-//     },
-//     workBegun: function() {
-//       let x = this.entity.x;
-//       let y = this.entity.y;
-//       let z = this.entity.z;
-//       let f = HTomb.World.features[coord(x,y,z)];
-//       if (f && f.template==="FarmFeature" && f.makes && f.makes.template===this.makes+"Sprout") {
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     },
-//     beginWork: function() {
-//       // could handle auto-dismantling here...
-//       // will this work?  or should we check for ingredients before taking?
-//       if (this.assignee.inventory.items.hasAll(this.ingredients)!==true) {
-//         throw new Error("Should never reach this due to AI");
-//       }
-//       HTomb.GUI.pushMessage(this.beginMessage());
-//       let items = this.assignee.inventory.items.takeItems(this.ingredients);
-//       for (let i=0; i<items.length; i++) {
-//         items[i].despawn();
-//       }
-//       //let's avoid the incompleteFeature entirely?
-//       let c = HTomb.Things[this.makes+"Sprout"]();
-//       let f = HTomb.World.features[coord(this.entity.x,this.entity.y,this.entity.z)];
-//       //c.inFarm = f;
-//       if (f===undefined) {
-//         console.log("What is going on here?");
-//         console.log(this);
-//       }
-//       f.makes = c;
-//       f.steps = -5;
-//       f.symbol = c.incompleteSymbol;
-//       f.fg = c.fg;
-//       f.name = "farm: "+c.name;
-//       c.inFarm = f;
-//       this.assignee.ai.acted = true;
-//       this.assignee.ai.actionPoints-=16;
-//     },
-//     work: function() {
-//       let x = this.entity.x;
-//       let y = this.entity.y;
-//       let z = this.entity.z;
-//       if (this.validTile(x,y,z)!==true) {
-//         this.cancel();
-//         return;
-//       }
-//       //do I want to make demolishing unowned features the default?
-//       let f = HTomb.World.features[coord(x,y,z)];
-//       // we could also handle the dismantling in "beginWork"...
-//       // Somehow we manage to start this task without having the proper ingredients
-//       if (this.workBegun()!==true) {
-//         this.beginWork();
-//       } else {
-//         f.steps+=1;
-//         this.assignee.ai.acted = true;
-//         this.assignee.ai.actionPoints-=16;
-//       }
-//       if (f && f.steps>=0) {
-//         f.growing = f.makes;
-//         f.makes = null;
-//         f.symbol = f.growing.symbol;
-//         this.completeWork();
-//       }
-//     }
-//   });
-
-  // HTomb.Things.defineStructure({
-  //   template: "Mortuary",
-  //   name: "mortuary",
-  //   symbols: ["\u2744","\u2637","\u2744","\u2637","\u2744","\u2637","\u2744","\u2637","\u2744"],
-  //   fgs: ["#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF"]
-  // });
-
-  // HTomb.Things.defineStructure({
-  //   template: "BoneCarvery",
-  //   name: "bone carvery",
-  //   symbols: ["\u2692","\u2620","\u2692","\u2620","\u2699","\u2620","\u2692","\u2620","\u2692"],
-  //   fgs: ["#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB"]
-  // });
-
-  // HTomb.Things.defineStructure({
-  //   template: "Library",
-  //   name: "library",
-  //   symbols: ["\u270D","\u270E","\u2710","/","\u25AD","\u26B4/","\u2261","/","\u2261"],
-  //   fgs: ["#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922"]
-  // });
-
-  // HTomb.Things.defineStructure({
-  //   template: "Laboratory",
-  //   name: "library",
-  //   symbols: ["\u2609","\u263F","\u2640","\u263D","\u2641","\u2697","\u2642","\u2643","\u26A9"],
-  //   fgs: ["#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922"]
-  // });
