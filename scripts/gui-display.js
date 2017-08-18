@@ -188,7 +188,7 @@ HTomb = (function(HTomb) {
     }
     let txt = "X:"+x+" Y:"+y+" Z:"+z+" "+HTomb.Time.dailyCycle.getPhase().symbol+day+":"+hour+":"+minute;
     if (p.caster) {
-      txt = "Mana: " + HTomb.Player.player.delegate.caster.mana + "/" + p.caster.maxmana + " " + txt;
+      txt = "Soul: " + HTomb.Player.player.delegate.caster.soul + "/" + p.caster.maxsoul + " " + txt;
     }
     if (HTomb.Time.isPaused()===true || HTomb.GUI.autopause===true) {
       txt = txt + " %c{yellow}Paused";

@@ -666,9 +666,9 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}This decaying wretch is but the beginning - soon, you will command an undead horde.",
       " ",
-      "Every zombie under your control raises the mana cost of the 'raise zombie' spell.  Your current mana is listed above the left-hand side of the message bar.",
+      "Every zombie under your control raises the cost of the 'raise zombie' spell in soul points.  Your current soul points are listed above the left-hand side of the message bar.",
       " ",
-      "%c{cyan}%b{DarkRed}Wait (pass turns) until you have 15 mana, then raise a second zombie and wait for it to emerge.  Press Z to cast a spell, press A to choose 'raise zombie', and then select a tombstone."
+      "%c{cyan}%b{DarkRed}Wait (pass turns) until you have 15 soul points, then raise a second zombie and wait for it to emerge.  Press Z to cast a spell, press A to choose 'raise zombie', and then select a tombstone."
     ],
     listens: ["Cast"],
     skip: "WaitForSecondZombie",
@@ -710,7 +710,7 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}This decaying wretch is but the beginning - soon, you will command an undead horde.",
       " ",
-      "Every zombie under your control raises the mana cost of the 'raise zombie' spell.  Your current mana is listed above the left-hand side of the message bar.",
+      "Every zombie under your control raises the cost of the 'raise zombie' spell in soul points.  Your current soul points are listed above the left-hand side of the message bar.",
       " ",
       "%c{cyan}%b{DarkRed}Wait (pass turns) until your zombie emerges."
     ],

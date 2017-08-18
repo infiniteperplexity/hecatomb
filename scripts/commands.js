@@ -378,25 +378,25 @@ HTomb = (function(HTomb) {
       return;
     }
     HTomb.Events.publish({type: "Command", command: "ShowSpells"});
-    GUI.choosingMenu("Choose a spell (mana cost):", p.caster.spells,
+    GUI.choosingMenu("Choose a spell (soul cost):", p.caster.spells,
       function(sp) {
         return function() {
-          if (p.caster.mana>=sp.getCost()) {
+          if (p.caster.soul>=sp.getCost()) {
             HTomb.GUI.Panels.menu.middle = [];
             HTomb.GUI.Panels.menu.refresh();
             HTomb.Events.publish({type: "Command", command: "ChooseSpell", spell: sp});
             p.caster.cast(sp);
           } else {
-            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough mana."];
+            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough soul."];
             HTomb.GUI.Panels.menu.refresh();
-            HTomb.GUI.pushMessage("Not enough mana!");
+            HTomb.GUI.pushMessage("Not enough soul!");
           }
         };
       },
       {
         format: function(spell) {
           let descrip = spell.describe()+" ("+spell.getCost()+")";
-          if (spell.getCost()>spell.caster.mana) {
+          if (spell.getCost()>spell.caster.soul) {
             descrip = "%c{gray}"+descrip;
           }
           return descrip;

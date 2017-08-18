@@ -12,16 +12,6 @@ HTomb = (function(HTomb) {
   });
 
   HTomb.Things.defineItem({
-    template: "FlintStone",
-    name: "flint stone",
-    symbol: "\u2022",
-    fg: "#AAAAAA",
-    stackable: true,
-    randomColor: 15,
-    tags: ["Minerals"]
-  });
-
-  HTomb.Things.defineItem({
     template: "Corpse",
     name: "corpse",
     symbol: "%",
@@ -45,14 +35,6 @@ HTomb = (function(HTomb) {
   });
 
   HTomb.Things.defineItem({
-    template: "Stick",
-    name: "stick",
-    symbol: "-",
-    fg: "brown",
-    randomColor: 20
-  });
-
-  HTomb.Things.defineItem({
     template: "WoodPlank",
     name: "wooden plank",
     symbol: "=",
@@ -61,6 +43,34 @@ HTomb = (function(HTomb) {
     maxn: 10,
     tags: ["Wood"]
   });
+
+  HTomb.Things.defineItem({
+    template: "Trade Goods",
+    name: "trade goods",
+    symbol: "\u2696",
+    fg: "yellow",
+    stackable: true,
+    maxn: 10
+  });
+
+  HTomb.Things.defineItem({
+    template: "Ectoplasm",
+    name: "ectoplasm",
+    symbol: "\u2697",
+    fg: "cyan",
+    stackable: true,
+    maxn: 10
+  });
+
+  HTomb.Things.defineItem({
+    template: "Fuel",
+    name: "fuel",
+    symbol: "\u269B",
+    fg: "cyan",
+    stackable: true,
+    maxn: 10
+  });
+
 
   HTomb.Things.defineItem({
     template: "WorkAxe",

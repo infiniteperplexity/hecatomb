@@ -434,8 +434,8 @@ HTomb = (function(HTomb) {
   HTomb.Things.defineBehavior({
     template: "SpellCaster",
     name: "caster",
-    maxmana: 20,
-    mana: 20,
+    maxsoul: 20,
+    soul: 20,
     onCreate: function(options) {
       options = options || {};
       options.spells = options.spells || [];
@@ -448,13 +448,13 @@ HTomb = (function(HTomb) {
       return this;
     },
     onTurnBegin: function() {
-      if (this.mana<this.maxmana && Math.random()<(1/10)) {
-        this.mana+=1;
+      if (this.soul<this.maxsoul && Math.random()<(1/10)) {
+        this.soul+=1;
       }
     },
     cast: function(sp) {
       let cost = sp.getCost();
-      if (this.mana>=cost) {
+      if (this.soul>=cost) {
         sp.cast();
       }
     }
