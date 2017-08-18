@@ -394,6 +394,11 @@ HTomb = (function(HTomb) {
           pile.remove(this.entity);
         }
       }
+      //if there is a haul task for the item here, cancel it
+      let task = HTomb.World.tasks[c];
+      if (task && task.task.template==="HaulTask" && task.task.item===this.entity) {
+        task.task.cancel();
+      }
     },
     onDescribe: function(options) {
       if (this.stackable && this.n>1) {

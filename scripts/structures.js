@@ -486,24 +486,24 @@ HTomb = (function(HTomb) {
     template: "Storage",
     height: 3,
     width: 3,
+    dormant: 0,
+    dormancy: 10,
+    tasks: null,
     stores: function(item) {return false;},
-    onTurnBegin: function() {
-      for (let i=0; i<this.features.length; i++) {
-        let f = this.features[i];
-        let z = HTomb.World.tasks[coord(f.x,f.y,f.z)];
-        if (z===undefined) {
-          z = HTomb.Things.HaulTask({
-            assigner: this.owner,
-            stores: this.stores
-          });
-          z.place(f.x,f.y,f.z);
-        } else if (z.template==="HaulTaskEntity") {
-          z.task.hauls = this.stores;
-        }
+    onCreate: function() {
+      this.tasks = [];
+      for (let i=0; i<this.width*this.height; i++) {
+        this.tasks.push(null);
       }
+      return this;
     },
     detailsText: function() {
-      let txt = ["Contents:"];
+      let txt = [
+        "%c{orange}**Esc: Done.**",
+        "%c{yellow}Storage: "+this.describe({capitalized: true, atCoordinates: true})+".",
+        " ",
+        "Contents:"
+      ];
       let totalItems = {};
       for (let i=0; i<this.squares.length; i++) {
         let s = this.squares[i];
@@ -530,143 +530,128 @@ HTomb = (function(HTomb) {
         txt.push(line);
       }
       return txt;
+    },
+    onTurnBegin: function() {
+      // this probably shouldn't happen every turn...maybe have a countdown?
+      if (this.dormant>0) {
+        this.dormant-=1;
+        return;
+      }
+      this.dormant = this.dormancy;
+      let items = this.owner.master.ownedItems;
+      for (let i=0; i<items.length; i++) {
+        //if ever we run out of task space, break the loop
+        if (this.tasks.indexOf(null)===-1) {
+          return;
+        }
+        let item = items[i];
+        let f = HTomb.World.features[coord(item.x,item.y,item.z)];
+        if (!item.item.isOnGround()) {
+          continue;
+        } else if (this.stores(item)===false) {
+          continue;
+        } else if (HTomb.World.tasks[coord(item.x,item.y,item.z)]!==undefined) {
+          continue;
+        } else if (HTomb.Tiles.isReachableFrom(this.x, this.y, this.z, item.x, item.y, item.z)===false) {
+          continue;
+        } else if (f && f.structure && f.structure.template===this.entity.template) {
+          continue;
+        } else {
+          let slots = [];
+          for (let j=0; j<this.tasks.length; j++) {
+            if (this.tasks[j]===null) {
+              slots.push(j);
+            }
+          }
+          HTomb.Utils.shuffle(slots);
+          let feat = this.features[slots[0]];
+          let z = HTomb.Things.HaulTask({
+             assigner: this.owner,
+             name: "haul " + item.describe()
+           });
+          z.place(item.x,item.y,item.z);
+          z.task.item = item;
+          z.task.storage = this;
+          z.task.feature = feat;
+          this.tasks[slots[0]] = z;
+        }
+      }
     }
   });
 
-
-  // Should this change its name to the name of the hauled item?
   HTomb.Things.defineTask({
     template: "HaulTask",
     name: "haul",
-    bg: "#555544",
-    hauls: function(item) {return false;},
+    bg: "#773366",
+    item: null,
+    feature: null,
+    storage: null,
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
       }
-      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
-        return true;
-      } else {
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile || HTomb.World.tiles[z][x][y]===HTomb.Tiles.EmptyTile) {
         return false;
+      } else {
+        return true;
       }
     },
     canAssign: function(cr) {
       let x = this.entity.x;
       let y = this.entity.y;
       let z = this.entity.z;
+      // should this check whether the item is still here?
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
         searcher: cr,
         searchee: this.entity,
         searchTimeout: 10
-      }) && this.getSomeValidItem(cr)) {
+      }) && this.item.x===x && this.item.y===y && this.item.z===z) {
         return true;
       } else {
         return false;
       }
     },
-    getSomeValidItem: function(cr) {
-      // right now we ignore the creature argument
-      let pile = HTomb.World.items[coord(this.x,this.y,this.z)] || HTomb.Things.Container();
-      let that = this;
-      let items = this.assigner.master.ownedItems.filter(function(item) {
-        if (that.hauls(item)!==true) {
-          return false;
-        } else if (pile.canFit(item)<1) {
-          return false;
-        } else if (item.item.isOnGround()!==true) {
-          return false;
-        }
-        let task = HTomb.World.tasks[coord(item.x,item.y,item.z)];
-        if (task && task.task.template==="HaulTask") {
-          return false;
-        }
-        if (HTomb.Tiles.isReachableFrom(item.x, item.y, item.z, that.entity.x, that.entity.y, that.entity.z, {
-          searcher: cr,
-          searchee: item,
-          searchTimeout: 10
-        })) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      if (items.length>0) {
-        return HTomb.Path.closest(cr.x,cr.y,cr.z,items)[0];
-      } else {
-        return null;
-      }
-    },
     ai: function() {
       let cr = this.assignee;
-      // this could be either the task square or the item
+      let item = this.item;
+      let feature = this.feature;
+      if (cr.inventory.items.items.indexOf(this.item)!==-1) {
+        cr.ai.target = feature;
+        this.entity.place(feature.x, feature.y, feature.z);
+      } else if (item.item.isOnGround())  {
+        cr.ai.target = item;
+      } else {
+        this.cancel();
+         return;
+      }
       let t = cr.ai.target;
-      if (cr.movement) {
-        var x = this.entity.x;
-        var y = this.entity.y;
-        var z = this.entity.z;
-        var path = HTomb.Path.aStar(cr.x,cr.y,cr.z,x,y,z,{
-          canPass: HTomb.Utils.bind(cr.movement,"canMove"),
-          searcher: cr,
-          searchee: t,
-          searchTimeout: 10
-        });
-        if (path===false) {
-          this.unassign();
-          cr.ai.walkRandom();
+      // this could be either the task square or the item
+      if (t.x===cr.x && t.y===cr.y && t.z===cr.z) {
+        if (t===feature) {
+          cr.inventory.drop(this.item);
+          this.completeWork();
+          cr.ai.acted = true;
+          return;
         } else {
-          let carrying = false;
-          for (let j=0; j<cr.inventory.items.length; j++) {
-            let item = cr.inventory.items.expose(j);
-            if (this.hauls(item)) {
-              carrying=true;
-              // if you're standing on the square and have a valid item, drop it
-              if (cr.x===x && cr.y===y && cr.z===z) {
-                cr.inventory.drop(item);
-                cr.ai.target = null;
-                this.unassign();
-                HTomb.Events.publish({type: "Complete", task: this});
-              } else {
-                // otherwise if you have a valid item
-                cr.ai.walkToward(x,y,z, {
-                  searcher: cr,
-                  searchee: item,
-                  searchTimeout: 10
-                });
-              }
-              break;
-            }
-          }
-          if (carrying===false) {
-            // if not carrying any valid item...hold on...shouldn't we keep a valid target if we already have one?
-            if (!t || !t.item || !this.hauls(t) || !t.isPlaced()) {
-              cr.ai.target = this.getSomeValidItem(cr);
-            }
-            // should maybe use fetch with an option to avoid things in hoards?
-            if (cr.ai.target===null) {
-              this.unassign();
-              cr.ai.walkRandom();
-            } else if (cr.x===cr.ai.target.x && cr.y===cr.ai.target.y && cr.z===cr.ai.target.z) {
-              let pile = HTomb.World.items[coord(this.x,this.y,this.z)] || HTomb.Things.Container();
-              let item = cr.ai.target;
-              let n = Math.min(pile.canFit(item),item.item.n);
-              if (n===0) {
-                this.unassign();
-                cr.ai.walkRandom();
-              } else {
-                cr.inventory.pickupSome(item.template,n);
-                cr.ai.target = null;
-              }
-            } else {
-              cr.ai.walkToward(cr.ai.target.x,cr.ai.target.y,cr.ai.target.z, {
-                searcher: cr,
-                searchee: cr.ai.target,
-                searchTimeout: 10
-              });
-            }
-          }
+          // move it to the building;
+          this.entity.place(feature.x, feature.y, feature.z);
+          cr.inventory.pickup(item);
+          cr.ai.acted = true;
+          return;
         }
       }
+      cr.ai.walkToward(t.x,t.y,t.z, {
+        searcher: cr,
+        searchee: t,
+        searchTimeout: 10,
+        useLast: true
+      });
       cr.ai.acted = true;
+    },
+    onDespawn: function() {
+      HTomb.Things.templates.Task.onDespawn.call(this);
+      let tasks = this.storage.tasks;
+      tasks.splice(tasks.indexOf[this.entity],1,null);
     }
   });
 

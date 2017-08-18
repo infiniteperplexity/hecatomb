@@ -138,8 +138,8 @@ HTomb = (function(HTomb) {
     }); timeIt("labyrinths", function() {
         labyrinths();
     }); timeIt("minerals", function() {
-        placeMinerals({template: "IronVein", p: 0.01});
-        placeMinerals({template: "CoalCluster", p: 0.01});
+        placeMinerals({template: "IronVein", p: 0.005});
+        placeMinerals({template: "CoalCluster", p: 0.005});
     }); timeIt("grass", function() {
         grassify();
     }); timeIt("plants", function() {

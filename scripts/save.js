@@ -112,8 +112,9 @@ HTomb = (function(HTomb) {
           topLevel = false;
           let dummy = {};
           let template = HTomb.Things.templates[val.template];
+          // "makes" is a tricky one, needs special treatment for now
           for (let p in val) {
-            if (p==="template" || val[p]!==template[p]) {
+            if (p==="template" || p==="makes" || val[p]!==template[p]) {
               dummy[p] = val[p];
             }
           }
@@ -376,7 +377,7 @@ HTomb = (function(HTomb) {
     HTomb.Time.unlockTime();
     HTomb.Time.stopTime();
     HTomb.Time.initialPaused = true;
-    HTomb.GUI.Contexts.locked=false;
+    HTomb.GUI.Contexts.locked = false;
     HTomb.GUI.Views.parentView = HTomb.GUI.Views.Main.reset;
     HTomb.GUI.Panels.scroll.reset();
     HTomb.GUI.splash(["Game restored."]);

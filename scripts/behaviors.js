@@ -341,7 +341,7 @@ HTomb = (function(HTomb) {
         } else {
           let MAXPRIORITY = 3;
           for (let j=0; j<=MAXPRIORITY; j++) {
-            let tasks = this.taskList.filter(function(e,i,a) {return (priorities[e.task.template]===j && !e.dormant)});
+            let tasks = this.taskList.filter(function(e,i,a) {return (priorities[e.task.template]===j && !e.dormant && e.task.assignee===null)});
             // for hauling tasks, this gives misleading results...but I could fix that
             tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
             for (let k=0; k<tasks.length; k++) {
@@ -351,7 +351,7 @@ HTomb = (function(HTomb) {
                 //very ad hoc
                 let j = MAXPRIORITY+1;
                 break;
-              } else if (fails.indexOf(task)===-1) {
+              } else if (failed.indexOf(task)===-1) {
                 failed.push(task);
               }
             }

@@ -8,3 +8,12 @@ Is this still true?
 *Rebalance combat and add genuine threats, soon.
 
 *Make aquifers easy to get through, or nonexistent.
+
+So, I think right now it's important that I not let myself get overwhelmed.  Just get back in the game.  So the thing to do *right* *now* is to change...
+1) What buildings are available...
+2) How furnishing works.
+
+What does each of these things entail?
+
+1) We currently have Structures (good), Workshop ()
+2) Don't show the fixture if the building doesn't exist or you don't have the item.  If you assign the task and no item exists but you do have the building, add to the queue.
