@@ -51,6 +51,7 @@ HTomb = (function(HTomb) {
     symbol: ["\u2663","\u2660"],
     fg: "#77BB00",
     randomColor: 10,
+    integrity: 15,
     yields: {WoodPlank: {n: 1, nozero: true}}
   });
 
@@ -158,7 +159,7 @@ HTomb = (function(HTomb) {
   HTomb.Things.defineFeature({
     template: "Excavation",
     name: "excavation",
-    labor: 20,
+    labor: 15,
     incompleteSymbol: "\u2717",
     incompleteFg: HTomb.Constants.BELOWFG,
     onPlace: function(x,y,z) {
@@ -228,7 +229,7 @@ HTomb = (function(HTomb) {
     template: "Construction",
     name: "construction",
     incompleteSymbol: "\u2692",
-    labor: 20,
+    labor: 15,
     incompleteFg: HTomb.Constants.WALLFG,
     onPlace: function(x,y,z) {
       var tiles = HTomb.World.tiles;
@@ -276,8 +277,11 @@ HTomb = (function(HTomb) {
       this.name = "incomplete "+this.makes.name;
       return this;
     },
-    work: function() {
-      let labor = 1;
+    work: function(assignee) {
+      let labor = assignee.worker.labor;
+      if (assignee.equipper && assignee.equipper.slots.MainHand && assignee.equipper.slots.MainHand.equipment.labor>labor) {
+        labor = assignee.equipper.slots.MainHand.equipment.labor;
+      }
       // need to account for work axes somehow
       this.labor-=labor;
       if (this.labor<=0) {

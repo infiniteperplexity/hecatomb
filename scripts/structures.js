@@ -453,7 +453,7 @@ HTomb = (function(HTomb) {
           }
           f.growing.destroy();
           f.growing = null;
-          this.completeWork();
+          this.completeWork(this.assignee);
         }
       }
     }
@@ -629,7 +629,7 @@ HTomb = (function(HTomb) {
       if (t.x===cr.x && t.y===cr.y && t.z===cr.z) {
         if (t===feature) {
           cr.inventory.drop(this.item);
-          this.completeWork();
+          this.completeWork(this.assignee);
           cr.ai.acted = true;
           return;
         } else {
@@ -726,14 +726,19 @@ HTomb = (function(HTomb) {
       HTomb.GUI.pushMessage(this.beginMessage());
     },
     work: function(x,y,z) {
+      let assignee = this.assignee;
       if (this.workBegun()!==true) {
-        this.beginWork();
+        this.beginWork(this.assignee);
       }
-      this.labor-=1;
+      let labor = assignee.worker.labor;
+      if (assignee.equipper && assignee.equipper.slots.MainHand && assignee.equipper.slots.MainHand.equipment.labor>labor) {
+        labor = assignee.equipper.slots.MainHand.equipment.labor;
+      }
+      this.labor-=labor;
       this.assignee.ai.acted = true;
       this.assignee.ai.actionPoints-=16;
       if (this.labor<=0) {
-        this.completeWork();
+        this.completeWork(assignee);
       }
     },
     completeWork: function() {

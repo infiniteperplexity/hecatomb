@@ -66,9 +66,9 @@ HTomb = (function(HTomb) {
     template: "WorkAxe",
     name: "work axe",
     symbol: "\u262D",
-    fg: "gray",
+    fg: "#BBAA88",
     ingredients: {"WoodPlank": 1, "Rock": 1},
-    Behaviors: {Equipment: {slot: "MainHand", labor: "2"}}
+    Behaviors: {Equipment: {slot: "MainHand", labor: 2}}
   });
 
 

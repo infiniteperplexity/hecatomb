@@ -176,7 +176,7 @@ HTomb = (function(HTomb) {
       this.assignee.ai.acted = true;
       this.assignee.ai.actionPoints-=16;
     },
-    work: function() {
+    work: function(creature) {
       let x = this.entity.x;
       let y = this.entity.y;
       let z = this.entity.z;
@@ -187,15 +187,15 @@ HTomb = (function(HTomb) {
       let f = HTomb.World.features[coord(x,y,z)];
       // we could also handle the dismantling in "beginWork"...
       if (this.workBegun()!==true) {
-        this.beginWork();
+        this.beginWork(this.assignee);
       } else {
-        f.work();
+        f.work(this.assignee);
         // be careful not to do this twice...
         this.assignee.ai.acted = true;
         this.assignee.ai.actionPoints-=16;
       }
       if (f && f.finished) {
-        this.completeWork();
+        this.completeWork(this.assignee);
       }
     },
     completeWork: function(x,y,z) {
@@ -611,7 +611,7 @@ HTomb = (function(HTomb) {
         this.assignee.ai.acted = true;
         this.assignee.ai.actionPoints-=16;
         if (f.isPlaced()===false) {
-          this.completeWork();
+          this.completeWork(this.assignee);
         }
       } else {
         f = HTomb.World.covers[z][x][y];
@@ -621,7 +621,7 @@ HTomb = (function(HTomb) {
           HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
           this.assignee.ai.acted = true;
           this.assignee.ai.actionPoints-=16;
-          this.completeWork();
+          this.completeWork(this.assignee);
         }
       }
     }
@@ -663,6 +663,59 @@ HTomb = (function(HTomb) {
         hover: myHover,
         contextName: "Designate"+this.template
       });
+    }
+  });
+
+  HTomb.Things.defineTask({
+    template: "EquipTask",
+    name: "equip",
+    bg: "#882266",
+    item: null,
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile || HTomb.World.tiles[z][x][y]===HTomb.Tiles.EmptyTile) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    canAssign: function(cr) {
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      // should this check whether the item is still here?
+      if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
+        searcher: cr,
+        searchee: this.entity,
+        searchTimeout: 10
+      }) && this.item.x===x && this.item.y===y && this.item.z===z) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    ai: function() {
+      let cr = this.assignee;
+      let item = this.item;
+      let x = item.x;
+      let y = item.y;
+      let z = item.z;
+      if (x===cr.x && y===cr.y && z===cr.z) {
+        cr.inventory.pickup(item);
+        this.completeWork();
+      } else {
+        cr.ai.target = item;
+        let t = cr.ai.target;
+        cr.ai.walkToward(t.x,t.y,t.z, {
+          searcher: cr,
+          searchee: t,
+          searchTimeout: 10,
+          useLast: true
+        });
+      }
+      cr.ai.acted = true;
     }
   });
 

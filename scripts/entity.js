@@ -396,7 +396,7 @@ HTomb = (function(HTomb) {
       }
       //if there is a haul task for the item here, cancel it
       let task = HTomb.World.tasks[c];
-      if (task && task.task.template==="HaulTask" && task.task.item===this.entity) {
+      if (task && task.task.item===this.entity) {
         task.task.cancel();
       }
     },

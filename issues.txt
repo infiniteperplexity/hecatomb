@@ -1,1 +1,3 @@
 - if you save while constructTasks are active, the .makes property seems to get wiped out.  I'm not sure why, but it may have a dependency on the state of ".makes" on the template.
+- probably need a "claim item" task or some such thing to block multiple claims on the same item
+- get rid of double graveyards

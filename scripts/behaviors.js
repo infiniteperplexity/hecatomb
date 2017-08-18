@@ -257,6 +257,7 @@ HTomb = (function(HTomb) {
   HTomb.Things.defineBehavior({
     template: "Worker",
     name: "worker",
+    labor: 1,
     task: null,
     allowedTasks: ["DigTask","BuildTask","PatrolTask","FurnishTask","HaulTask","ConstructTask","ProduceTask","DismantleTask","HarvestFarmTask","ConvergeTask"],
     onAssign: function(tsk) {
@@ -271,6 +272,7 @@ HTomb = (function(HTomb) {
       this.task = null;
     }
   });
+
 
   HTomb.Things.defineBehavior({
     template: "Master",
@@ -339,6 +341,45 @@ HTomb = (function(HTomb) {
         } else if (minion.worker.task!==null) {
           continue;
         } else {
+          // look for labor tools
+          let labor = minion.worker.labor;
+          if (minion.equipper && minion.equipper.slots.MainHand && minion.equipper.slots.MainHand.equipment.labor>labor) {
+            labor = minion.equipper.slots.MainHand.equipment.labor;
+          }
+          let invenTools = this.ownedItems.filter(function(e,i,a) {
+            return (e.equipment && e.equipment.labor>labor && minion.inventory && minion.inventory.items.items.indexOf(e)!==-1);
+          });
+          let groundTools = this.ownedItems.filter(function(e,i,a) {
+            return (e.equipment && e.equipment.labor>labor && e.item.isOnGround());
+          });
+          // sort by labor value
+          let comp = function(a,b) {
+            if (a.equipment.labor>b.equipment.labor) {
+              return 1;
+            } else if (a.equipment.labor<b.equipment.labor) {
+              return -1;
+            } else {
+              return 0;
+            }
+          };
+          invenTools.sort(comp);
+          groundTools.sort(comp);
+          // equip best ones
+          if (invenTools.length>0) {
+            minion.equipper.equipItem(invenTools[0]);
+            this.entity.ai.acted = true;
+            this.entity.ai.actionPoints-=16;
+            continue;
+          } else if (groundTools.length>0) {
+            let task = HTomb.Things.EquipTask();
+            let item = groundTools[0];
+            task.task.item = item;
+            task.task.assigner = this.entity;
+            task.name = "equip " + item.describe();
+            task.place(item.x, item.y, item.z);
+            task.task.assignTo(minion);
+            continue;
+          }
           let MAXPRIORITY = 3;
           for (let j=0; j<=MAXPRIORITY; j++) {
             let tasks = this.taskList.filter(function(e,i,a) {return (priorities[e.task.template]===j && !e.dormant && e.task.assignee===null)});
