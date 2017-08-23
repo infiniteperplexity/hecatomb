@@ -421,5 +421,14 @@ HTomb = (function(HTomb) {
     bg: HTomb.Constants.WALLBG
   });
 
+  HTomb.Types.defineCover({
+    template: "Flooring",
+    name: "flooring",
+    symbol: '\u25CB',
+    fg: "#997777",
+    bg: "#665544"
+  });
+
+
   return HTomb;
 })(HTomb);

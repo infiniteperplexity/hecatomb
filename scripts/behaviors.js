@@ -206,6 +206,9 @@ HTomb = (function(HTomb) {
       }
     },
     canFindAll: function(ingredients) {
+      if (HTomb.Debug.noingredients) {
+        return true;
+      }
       if (!this.entity.minion || !this.entity.minion.master || !this.entity.minion.master.master) {
         return false;
       }
@@ -489,11 +492,14 @@ HTomb = (function(HTomb) {
     },
     stepTo: function(x,y,z) {
       this.entity.place(x,y,z);
+      let cost = 16;
+      if (HTomb.World.items[coord(x,y,z)] && !this.flies) {
+        cost = 25;
+      }
       if (this.entity.ai) {
         this.entity.ai.acted = true;
-        this.entity.ai.actionPoints-=16;
+        this.entity.ai.actionPoints-=cost;
       }
-      // unimplemented...use action points?
     },
     // If the square is crossable and unoccupied
     canPass: function(x,y,z) {

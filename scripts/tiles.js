@@ -150,8 +150,9 @@ HTomb = (function(HTomb) {
       } else {
         bg = bg || covers[z][x][y].darken();
       }
-    // !!!Experimental - show darkened covers on level below
-  } else if (zview===-1 && covers[z-1][x][y]!==HTomb.Covers.NoCover && !covers[z-1][x][y].solid && tiles[z-1][x][y].solid!==true) {
+    } else if (features[crd] && features[crd].bg) {
+      bg = bg || features[crd].bg;
+    } else if (zview===-1 && covers[z-1][x][y]!==HTomb.Covers.NoCover && !covers[z-1][x][y].solid && tiles[z-1][x][y].solid!==true) {
       if (vis && covers[z-1][x][y].liquid) {
         bg = bg || covers[z-1][x][y].shimmer();
       } else {

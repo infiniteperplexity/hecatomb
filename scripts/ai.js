@@ -22,6 +22,9 @@ HTomb = (function(HTomb) {
       var cr = ai.entity;
       var task = cr.worker.task;
       var ingredients = args || task.ingredients;
+      if (HTomb.Debug.noingredients) {
+        ingredients = {};
+      }
       // if no ingredients are required, skip the rest
       if (Object.keys(ingredients).length===0) {
         return false;
@@ -314,14 +317,20 @@ HTomb = (function(HTomb) {
     goals: null,
     fallback: null,
     regainPoints: function() {
-      this.acted = false;
-      if (this.actionPoints<0) {
-        do {
-          this.actionPoints+=16;
-        } while (this.actionPoints<=0);
-      } else {
-        this.actionPoints = 16;
+      if (this.entity===HTomb.Player) {
+        console.log("regaining from ", this.actionPoints);
       }
+      this.acted = false;
+      this.actionPoints+=16;
+      // wait...this doesn't really test whether you go below zero...
+
+      //if (this.actionPoints<0) {
+      //  do {
+       //   this.actionPoints+=16;
+       // } while (this.actionPoints<=0);
+      //} else {
+      //  this.actionPoints = 16;
+     // }
     },
     isHostile: function(thing) {
       if (thing.ai===undefined || thing.ai.team===null || this.team===null) {
@@ -390,8 +399,12 @@ HTomb = (function(HTomb) {
          //throw new Error("Creature failed to act!");
       }
       // Reset activity for next turn
-      this.acted = false;
-      this.actionPoints-=16;
+      if (this.acted===false) {
+        this.actionPoints-=16;
+        this.acted = true;
+      }
+      //this.acted = false;
+      //this.actionPoints-=16;
     },
     // A patrolling creature tries to stay within a certain orbit of a target square
     patrol: function(x,y,z, options) {
@@ -479,11 +492,10 @@ HTomb = (function(HTomb) {
         if (this.entity.movement.canMove(x+dir[0],y+dir[1],z+dir[2])===false) {
           continue;
         } else if (cr) {
-          //if (cr.ai && cr.ai.isFriendly && cr.player===undefined && cr.movement) {
           if (cr.ai && cr.ai.isHostile(this.entity)===false && cr.player===undefined && cr.movement) {
-            // try displacing only half the time?
             if (Math.random()<=0.5) {
-              cr.movement.displaceCreature(cr);
+              this.entity.movement.displaceCreature(cr);
+              return true;
             } else {
               continue;
             }

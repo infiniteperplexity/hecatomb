@@ -737,7 +737,7 @@ HTomb = (function(HTomb) {
             var task = that.designateTile(x,y,z,assigner);
             if (task) {
               task.task.makes = feature.template;
-              if (feature.ingredients) {
+              if (feature.ingredients && !HTomb.Debug.noingredients) {
                 task.task.ingredients = HTomb.Utils.clone(feature.ingredients);
               }
               task.name = task.name + " " + HTomb.Things.templates[feature.template].name;

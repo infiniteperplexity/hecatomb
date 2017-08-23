@@ -103,6 +103,7 @@ HTomb = (function(HTomb) {
           }
         }
       }
+      zombie.ai.acted = false;
       zombie.ai.act();
     }
   };

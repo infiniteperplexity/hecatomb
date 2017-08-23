@@ -139,7 +139,7 @@ HTomb = (function(HTomb) {
     // Take the next actor off the queue
     let actor = queue.pop();
     // Eventually we will do this in a more complex way to allow for round-robin combat mode
-    if (actor===HTomb.Player.player.delegate) {
+    if (actor===HTomb.Player.player.delegate && actor.ai.actionPoints>0) {
       HTomb.Events.publish({type: "PlayerActive"});
       // When we hit the player, halt recursion and update visibility
       HTomb.Player.player.visibility();
