@@ -19,6 +19,7 @@ HTomb = (function(HTomb) {
       let symbol = args.symbol || "\u2234";
       this.cover = args.template+((args.metallic) ? "Vein" : "Cluster")
       this.item = args.template+((args.metallic) ? "Ore" : "");
+
       HTomb.Types.defineCover({
         template: this.cover,
         name: args.name+((args.metallic) ? " vein" : " cluster"),
@@ -31,6 +32,7 @@ HTomb = (function(HTomb) {
         mineral: true,
         solid: true
       });
+
       HTomb.Things.defineItem({
         template: this.item,
         name: args.name+((args.metallic) ? " ore" : ""),
@@ -57,7 +59,7 @@ HTomb = (function(HTomb) {
     template: "Coal",
     name: "coal",
     symbol: "\u2234",
-    fg: "gray"
+    fg: "#333333"
   });
 
 
@@ -86,6 +88,21 @@ HTomb = (function(HTomb) {
     fg: "green"
   });
 
+  HTomb.Types.defineCover({
+    template: "Basalt",
+    name: "basalt",
+    symbol: "#",
+    fg: "#BB9999",
+    bg: "#776666"
+  });
+
+  HTomb.Types.defineCover({
+    template: "Aquifer",
+    name: "aquifer",
+    symbol: "~",
+    fg: HTomb.Constants.WATERFG || "#3388FF",
+    bg: "#666677"
+  });
 
 return HTomb;
 })(HTomb);

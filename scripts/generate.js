@@ -130,7 +130,7 @@ HTomb = (function(HTomb) {
     }); timeIt("lava", function() {
         placeLava(10);
     }); timeIt("water", function() {
-        waterTable(48,4);
+        waterTable(4);
     }); timeIt("slopes", function() {
         addSlopes();
     }); timeIt("caverns", function() {
@@ -138,8 +138,10 @@ HTomb = (function(HTomb) {
     }); timeIt("labyrinths", function() {
         labyrinths();
     }); timeIt("minerals", function() {
-        placeMinerals({template: "IronVein", p: 0.005});
+        placeMinerals({template: "Basalt", p: 0.005});
         placeMinerals({template: "CoalCluster", p: 0.005});
+        placeMinerals({template: "IronVein", p: 0.005});
+        placeMinerals({template: "Aquifer", p: 0.005});
     }); timeIt("grass", function() {
         grassify();
     }); timeIt("plants", function() {
@@ -246,11 +248,11 @@ HTomb = (function(HTomb) {
     }
   }
 
-  function waterTable(elev, depth) {
+  function waterTable(depth, elev) {
     elev = elev || lowest+3;
     depth = depth || 4;
     var rock = new ROT.Map.Cellular(LEVELW,LEVELH);
-    rock.randomize(0.45);
+    rock.randomize(0.6);
     for (var i=0; i<10; i++) {
       rock.create();
     }
@@ -289,8 +291,8 @@ HTomb = (function(HTomb) {
     function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
     let dirs = ROT.DIRS[4];
     for (let i=0; i<LEVELW*LEVELH*yardChance; i++) {
-      let x = HTomb.Utils.dice(1,LEVELW-4);
-      let y = HTomb.Utils.dice(1,LEVELH-4);
+      let x = HTomb.Utils.dice(1,LEVELW/2-2)*2;
+      let y = HTomb.Utils.dice(1,LEVELH/2-2)*2;
       let z = HTomb.Tiles.groundLevel(x,y);
       if (z<=lowest+4) {
         continue;
@@ -386,17 +388,24 @@ HTomb = (function(HTomb) {
     var template = options.template || "IronVein";
     let nodeChance = options.p || 0.001;
     let bottom = 15;
-    let oreChance = 0.5;
+    let oreChance = options.oreChance || 0.75;
     function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
     for (let z=bottom; z<highest; z++) {
       for (let i=0; i<LEVELW*LEVELH*nodeChance; i++) {
-        let dx = HTomb.Utils.dice(1,LEVELW-4);
-        let dy = HTomb.Utils.dice(1,LEVELH-4);
-        for (let x=dx-1; x<=dx+1; x++) {
-          for (let y=dy-1; y<=dy+1; y++) {
+        let x0 = HTomb.Utils.dice(1,LEVELW-2);
+        let y0 = HTomb.Utils.dice(1,LEVELH-2);
+        let d = HTomb.Utils.dice(1,4)+3;
+        let a = Math.random()*2*Math.PI;
+        let x1 = x0+Math.round(d*Math.cos(a));
+        let y1 = y0+Math.round(d*Math.sin(a));
+        let vein = HTomb.Path.line(x0,y0,x1,y1);
+        for (let j=0; j<vein.length; j++) {
+          let x = vein[j][0];
+          let y = vein[j][1];
+          if (x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
             if (HTomb.Tiles.countNeighborsWhere(x,y,z,nonsolids)>0) {
               continue;
-            } else if (Math.random()<oreChance) {
+            } else if (Math.random()<oreChance && x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
               HTomb.World.covers[z][x][y] = HTomb.Covers[template];
             }
           }

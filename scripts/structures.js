@@ -431,7 +431,7 @@ HTomb = (function(HTomb) {
   HTomb.Things.defineWorkshop({
     template: "Carpenter",
     name: "carpenter",
-    symbols: ["\u25AE","/","\u2699","\u2630","\u25AA",".","\u2692",".","\u25A7"],
+    symbols: ["\u25AE","/","\u2699","\u2261","\u25AA",".","\u2692",".","\u25A7"],
     bg: "#665555",
     fgs: ["#BB9922","#BB9922",HTomb.Constants.FLOORFG,"#BB9922","#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922"],
      ingredients: [
