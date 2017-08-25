@@ -159,7 +159,7 @@ HTomb = (function(HTomb) {
   HTomb.Things.defineFeature({
     template: "Excavation",
     name: "excavation",
-    labor: 15,
+    labor: 10,
     incompleteSymbol: "\u2717",
     incompleteFg: HTomb.Constants.BELOWFG,
     onPlace: function(x,y,z) {
@@ -269,21 +269,22 @@ HTomb = (function(HTomb) {
     makes: null,
     finished: false,
     labor: 5,
+    effort: 0,
     onCreate: function(args) {
       this.makes = args.makes;
       this.labor = this.makes.labor || this.labor;
+      this.effort = this.makes.effort || this.effort;
       this.symbol = this.makes.incompleteSymbol || this.symbol;
       this.fg = this.makes.incompleteFg || this.makes.fg || this.fg;
       this.name = "incomplete "+this.makes.name;
       return this;
     },
     work: function(assignee) {
-      let labor = assignee.worker.labor;
-      if (assignee.equipper && assignee.equipper.slots.MainHand && assignee.equipper.slots.MainHand.equipment.labor>labor) {
-        labor = assignee.equipper.slots.MainHand.equipment.labor;
-      }
+      let labor = assignee.worker.getLabor();
+      labor = Math.max(0, labor-this.effort);
       // need to account for work axes somehow
       this.labor-=labor;
+      //deal with hardness here?
       if (this.labor<=0) {
         this.finish();
       }

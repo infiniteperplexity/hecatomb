@@ -224,6 +224,34 @@ HTomb = (function(HTomb) {
     bg: "#884400",
     makes: "Excavation",
     dormancy: 0,
+    canAssign: function(cr) {
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      let tf = HTomb.Things.templates.Task.canAssign.call(this, cr);
+      if (tf===false) {
+        return false;
+      }
+      let soil = HTomb.World.covers[z][x][y];
+      let t = HTomb.World.tiles[z][x][y];
+      if (t===HTomb.Tiles.FloorTile || t===HTomb.Tiles.DownSlopeTile) {
+        soil = HTomb.World.covers[z-1][x][y];
+      }
+      let hardness;
+      if (soil.hardness===undefined) {
+        hardness = 0;
+      } else {
+        hardness = soil.hardness;
+      }
+      let labor = 0;
+      if (cr.worker) {
+        labor = cr.worker.getLabor();
+      }
+      if (labor-hardness<=0) {
+        return false;
+      }
+      return true;
+    },
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return true;
@@ -336,6 +364,22 @@ HTomb = (function(HTomb) {
         return t;
       }
     },
+    beginWork: function(assignee) {
+      HTomb.Things.templates.Task.beginWork.call(this,assignee);
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      let f = HTomb.World.features[coord(x,y,z)];
+      let soil = HTomb.World.covers[z][x][y];
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.DownSlopeTile || HTomb.World.Tiles===HTomb.Tiles.FloorTile) {
+        soil = HTomb.World.covers[z-1][x][y];
+      }
+      if (soil.hardness===undefined) {
+        f.effort = 0;
+      } else {
+        f.effort = soil.hardness;
+      }
+    }
   });
 
   HTomb.Things.defineTask({

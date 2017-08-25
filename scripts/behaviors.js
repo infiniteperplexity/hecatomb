@@ -273,6 +273,13 @@ HTomb = (function(HTomb) {
       }
       HTomb.Debug.pushMessage(this.entity.describe({capitalized: true, article: "indefinite"}) + " was unassigned from " + this.task.describe());
       this.task = null;
+    },
+    getLabor: function() {
+      let e = this.entity.equipper;
+      if (e && e.slots.MainHand && e.slots.MainHand.equipment.labor>this.labor) {
+        return e.slots.MainHand.equipment.labor;
+      }
+      return this.labor;
     }
   });
 
