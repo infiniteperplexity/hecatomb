@@ -37,6 +37,16 @@ HTomb = (function(HTomb) {
     }
   };
 
+  HTomb.Utils.splitPropCase = function(s) {
+    let caps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (let i=0; i<s.length; i++) {
+      if (caps.indexOf(s[i])!==-1) {
+        s = s.substr(0,i-1)+" "+s.substr(i);
+      }
+    }
+    return s;
+  }
+
   HTomb.Utils.grid3d = function(filling) {
     var grid = [];
     for (let z=0; z<NLEVELS; z++) {

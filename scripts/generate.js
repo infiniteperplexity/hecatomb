@@ -91,6 +91,8 @@ HTomb = (function(HTomb) {
         waterTable(48,4);
     }); timeIt("slopes", function() {
         addSlopes();
+    }); timeIt("earths", function() {
+        placeEarths();
     }); timeIt("caverns", function() {
         cavernLevels(3);
     }); timeIt("labyrinths", function() {
@@ -131,6 +133,8 @@ HTomb = (function(HTomb) {
         placeLava(10);
     }); timeIt("water", function() {
         waterTable(4);
+    }); timeIt("earths", function() {
+        placeEarths();
     }); timeIt("slopes", function() {
         addSlopes();
     }); timeIt("caverns", function() {
@@ -138,10 +142,8 @@ HTomb = (function(HTomb) {
     }); timeIt("labyrinths", function() {
         labyrinths();
     }); timeIt("minerals", function() {
-        placeMinerals({template: "Basalt", p: 0.005});
         placeMinerals({template: "CoalCluster", p: 0.005});
         placeMinerals({template: "IronVein", p: 0.005});
-        placeMinerals({template: "Aquifer", p: 0.005});
     }); timeIt("grass", function() {
         grassify();
     }); timeIt("plants", function() {
@@ -164,8 +166,6 @@ HTomb = (function(HTomb) {
         placePlayer();
     });
   };
-
-
 
   var lowest;
   var highest;
@@ -284,6 +284,61 @@ HTomb = (function(HTomb) {
     }
   }
 
+  function placeEarths(layers) {
+    layers = layers || ["Soil","Limestone","Basalt","Granite","Bedrock"];
+    for (let x=1; x<LEVELW-1; x++) {
+      for (let y=1; y<LEVELH-1; y++) {
+        let z = HTomb.Tiles.groundLevel(x,y);
+        for (let i=0; i<layers.length; i++) {
+          let layer = HTomb.Covers[layers[i]];
+          if (i===layers.length-1) {
+            do {
+              z-=1;
+              if (HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
+                HTomb.World.covers[z][x][y] = layer;
+              }
+            } while (z>0);
+          } else {
+            for (let j=0; j<layer.thickness; j++) {
+              z-=1;
+              if (HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
+                HTomb.World.covers[z][x][y] = layer;
+              }
+            }
+          }
+        }
+      }
+    }
+    let nodeChance = 0.005;
+    let oreChance = 0.75;
+    function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
+    for (let z=1; z<highest; z++) {
+      for (let i=0; i<LEVELW*LEVELH*nodeChance; i++) {
+        let x0 = HTomb.Utils.dice(1,LEVELW-2);
+        let y0 = HTomb.Utils.dice(1,LEVELH-2);
+        let d = HTomb.Utils.dice(1,4)+3;
+        let a = Math.random()*2*Math.PI;
+        let x1 = x0+Math.round(d*Math.cos(a));
+        let y1 = y0+Math.round(d*Math.sin(a));
+        let vein = HTomb.Path.line(x0,y0,x1,y1);
+        for (let j=0; j<vein.length; j++) {
+          let x = vein[j][0];
+          let y = vein[j][1];
+          if (x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
+            if (HTomb.Tiles.countNeighborsWhere(x,y,z,nonsolids)>0) {
+              continue;
+            } else if (Math.random()<oreChance && x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
+              let ind = layers.indexOf(HTomb.World.covers[z][x][y].template);
+              if (ind>-1 && ind<layers.length-1) {
+                HTomb.World.covers[z][x][y] = HTomb.Covers[layers[ind+1]];
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   function graveyards(options) {
     options = options || {};
     let yardChance = options.p || 0.005;
@@ -337,6 +392,7 @@ HTomb = (function(HTomb) {
         caves.create(function(x,y,val) {
           if (val) {
             HTomb.World.tiles[z][x+1][y+1] = HTomb.Tiles.FloorTile;
+            HTomb.World.covers[z][x+1][y+1] = HTomb.Covers.NoCover;
             HTomb.World.validate.dirtify(x+1,y+1,z);
           }
         });
@@ -373,6 +429,7 @@ HTomb = (function(HTomb) {
           maze.create(function(x0,y0,val) {
             if (val===0) {
               HTomb.World.tiles[z][x+x0][y+y0] = HTomb.Tiles.FloorTile;
+              HTomb.World.covers[z][x+x0][y+y0] = HTomb.Covers.NoCover;
               HTomb.World.validate.dirtify(x+x0,y+y0,z);
             }
           });

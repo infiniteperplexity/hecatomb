@@ -89,19 +89,52 @@ HTomb = (function(HTomb) {
   });
 
   HTomb.Types.defineCover({
+    template: "Soil",
+    name: "soil",
+    symbol: "#",
+    hardness: 1,
+    thickness: 1,
+    fg: "#BBBBAA",
+    bg: "#888877"
+  });
+
+  HTomb.Types.defineCover({
+    template: "Limestone",
+    name: "limestone",
+    symbol: "#",
+    hardness: 2,
+    thickness: 5,
+    fg: "#AAAAAA",
+    bg: "#777777"
+  });
+
+  HTomb.Types.defineCover({
     template: "Basalt",
     name: "basalt",
     symbol: "#",
-    fg: "#BB9999",
+    hardness: 3,
+    thickness: 12,
+    fg: "#999999",
+    bg: "#666666"
+  });
+
+  HTomb.Types.defineCover({
+    template: "Granite",
+    name: "granite",
+    symbol: "#",
+    hardness: 4,
+    thickness: 12,
+    fg: "#AA9999",
     bg: "#776666"
   });
 
   HTomb.Types.defineCover({
-    template: "Aquifer",
-    name: "aquifer",
-    symbol: "~",
-    fg: HTomb.Constants.WATERFG || "#3388FF",
-    bg: "#666677"
+    template: "Bedrock",
+    name: "bedrock",
+    symbol: "#",
+    hardness: 5,
+    fg: "#888888",
+    bg: "#555555"
   });
 
 return HTomb;
