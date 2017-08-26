@@ -173,14 +173,33 @@ HTomb.Entities.Creature = function(args) {
   if (args.onDefine) {
     args.onDefine.call(creature, args);
   }
+  Object.seal(creature);
   HTomb.Entities[creature.name] = function() {
     return new /////something or other....losing steam....
   }
-}
+};
 
 class Behavior extends Thing {
-
+  constructor(args) {
+    super(args);
+    this.label = "behavior";
+    this.entity = null;
+  }
+  addToEntity(entity) {
+    this.entity = entity;
+    this.entity[this.label] = this;
+  }
 }
+
+HTomb.Things.Behavior = function(args) {
+  args = args || {};
+  let behavior = new Behavior(args);
+  if (args.onDefine) {
+    args.onDefine.call(behavior, args);
+  }
+  Object.seal(behavior);
+  HTomb.Behaviors[behavior.name] = function() {};
+};
 
 class Type {
 
