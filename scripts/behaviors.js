@@ -340,6 +340,7 @@ HTomb = (function(HTomb) {
       for (let i=0; i<this.taskList.length; i++) {
         let task = this.taskList[i].task;
         if (task.dormant>0) {
+          console.log("reducing dormancy");
           task.dormant-=1;
         }
       }
@@ -392,7 +393,7 @@ HTomb = (function(HTomb) {
           }
           let MAXPRIORITY = 3;
           for (let j=0; j<=MAXPRIORITY; j++) {
-            let tasks = this.taskList.filter(function(e,i,a) {return (priorities[e.task.template]===j && !e.dormant && e.task.assignee===null)});
+            let tasks = this.taskList.filter(function(e,i,a) {return (priorities[e.task.template]===j && !e.task.dormant && e.task.assignee===null)});
             // for hauling tasks, this gives misleading results...but I could fix that
             tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
             for (let k=0; k<tasks.length; k++) {

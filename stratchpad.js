@@ -1,140 +1,193 @@
-
-  HTomb.Things.defineStructure({
-    template: "Storage",
-    height: 3,
-    width: 3,
-    dormant: 0,
-    dormancy: 10,
-    tasks: null,
-    stores: function(item) {return false;},
-    onCreate: function() {
-      this.tasks = [];
-      for (let i=0; i<this.width*this.height; i++) {
-        this.tasks.push(null);
+HTomb.World.things = {};
+class Thing {
+  constructor(args) {
+    this.label = null;
+    this.thingId = null;
+  }
+  static resetIds: function() {
+    let i = 0;
+    let things = Object.values(HTomb.World.things);
+    HTomb.World.things = {};
+    for (let thing of things) {
+      thing.acquireId();
+    }
+  }
+  get name: function() {
+    return this.constructor.name;
+  }
+  acquireId: function() {
+    this.thingId = (Math.max(Object.keys(HTomb.World.things)) || 0)+1;
+    HTomb.World.things[this.thingId] = this;
+  }
+  spawn: function() {
+    if (this.onSpawn) {
+      this.onSpawn();
+    }
+  }
+  despawn: function() {
+    if (HTomb.World.things[this.thingId]) {
+      delete HTomb.World.things[this.thingId];
+    }
+    HTomb.Events.unsubscribeAll(this);
+    if (this.onDespawn) {
+      this.onDespawn();
+    }
+  }
+  //isSpawned: function() {}
+  describe: function(options) {
+    options = options || {};
+    options.label = this.label || "(nameless)";
+    let article = options.article || "none";
+    if (article==="indefinite" && this.definiteArticle===true) {
+      article = "definite";
+    }
+    let capitalized = options.capitalized || false;
+    let plural = options.plural || this.plural || false;
+    let possessive = options.possessive || false;
+    let beginsWithVowel = this.beginsWithVowel || undefined;
+    let properNoun = this.properNoun || false;
+    let irregularPlural = this.irregularPlural || false;
+    let atCoordinates = options.atCoordinates || false;
+    let label = options.label;
+    let override = options.override || function(s) {return s;}
+    if (plural && irregularPlural) {
+      label = irregularPlural;
+    } else if (plural && this.plural) {
+      label = label;
+    } else if (plural) {
+      let l = label.length;
+      if (label[l-1]==="s" || label[l-1]==="x" || label[l-1]==="s" || label[l-1]==="z" || (
+        label[l-1]==="h" && (label[l-2]==="s" || label[l-2]==="c")
+      )) {
+        label+="e";
       }
-      return this;
-    },
-    onTurnBegin: function() {
-      // this probably shouldn't happen every turn...maybe have a countdown?
-      if (this.dormant>0) {
-        this.dormant-=1;
-        return;
-      }
-      this.dormant = this.dormancy;
-      let items = this.owner.master.ownedItems;
-      for (let i=0; i<items; i++) {
-        //if ever we run out of task space, break the loop
-        if (this.tasks.indexOf(null)===-1) {
-          return;
-        }
-        let item = items[i];
-        let f = HTomb.World.features[coord(item.x,item.y,item.z)];
-        if (!item.item.isOnGround()) {
-          continue;
-        } else if (this.stores(item)===false) {
-          continue;
-        } else if (HTomb.World.tasks[coord(item.x,item.y,item.z)]!==undefined) {
-          continue;
-        } else if (HTomb.Tiles.isReachableFrom(this.x, this.y, this.z, item.x, item.y, item.z)===false) {
-          continue;
-        } else if (f.feature.structure && f.feature.structure.template===this.template) {
-          continue;
-        } else {
-          let slots = [];
-          for (let j=0; j<this.tasks.length; j++) {
-            if (this.tasks[j]===null) {
-              slots.push(j);
-            }
-          }
-          HTomb.Utils.shuffle(slots[0]);
-          f = this.features[j];
-          z = HTomb.Things.HaulTask({
-             assigner: this.owner,
-             item: item,
-             storage: this,
-             feature: f,
-             name: "haul " + item.describe()
-           });
-          z.place(item.x,item.y,item.z);
-          this.tasks[slots[0]] = z;
-        }
+      label+="s";
+    }
+    if (possessive) {
+      let l = label.length;
+      if (label[l-1]==="s") {
+        label+="'";
+      } else {
+        label+="'s";
       }
     }
-  });
-
-  HTomb.Things.defineTask({
-    template: "HaulTask",
-    name: "haul",
-    bg: "#555544",
-    item: null,
-    feature: null,
-    validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
-        return true;
+    //proper nouns not yet implemented
+    if (article==="indefinite") {
+      if (plural) {
+        // either do nothing or use "some"?
+        //label = "some " + label;
+      } else
+      // e.g. beginsWithVowel is explicitly false for a "unicorn"
+      if (beginsWithVowel===true || (beginsWithVowel!==false &&
+        (label[0]==="a" || label[0]==="e" || label[0]==="i" || label[0]==="o" || label[0]==="u"
+          || label[0]==="A" || label[0]==="E" || label[0]==="I" || label[0]==="O" || label[0]==="U"))) {
+        label = "an " + label;
       } else {
-        return false;
+        label = "a " + label;
       }
-    },
-    canAssign: function(cr) {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
-      // should this check whether the item is still here?
-      if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
-        searcher: cr,
-        searchee: this.entity,
-        searchTimeout: 10
-      }) && this.item.x===x && this.item.y===y && this.item.z===z) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    ai: function() {
-      let cr = this.assignee;
-      let item = this.item;
-      let feature = this.feature;
-      // this could be either the task square or the item
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
-      if (x===cr.x && y===cr.y && z===cr.z) {
-        if (cr.inventory.items.items.indexOf(this.item)) {
-          cr.inventory.drop(this.item);
-          this.complete();
-          cr.ai.acted = true;
-          return;
-        } else if (item.x===cr.x && item.y===cr.y && item.z===cr.z) {
-          // move it to the building;
-          this.place()
-          cr.inventory.pickup(item);
-          cr.ai.acted = true;
-           eturn;
-        } else {
-          console.log("something went wrong with hauling!");
-        }
-      }
-      if (cr.inventory.items.items.indexOf(this.item)) {
-        cr.ai.target = feature;
-      } else if (item.item.isOnGround())  {
-        cr.ai.target = item;
-      } else {
-        this.cancel();
-        return;
-      }
-      let t = cr.ai.target;
-      cr.ai.walkToward(x,y,z, {
-        searcher: cr,
-        searchee: t,
-        searchTimeout: 10
-      });
-      cr.ai.acted = true;
-    },
-    onDespawn: function() {
-      let tasks = this.storage.tasks;
-      tasks.splice(tasks.indexOf[this],1,null);
+    } else if (article==="definite") {
+      label = "the " + label;
+    } else if (article!=="none") {
+      label = article + " " + label;
     }
-  });
+    if (capitalized) {
+      label = label.substr(0,1).toUpperCase() + label.substr(1);
+    }
+    if (atCoordinates) {
+      if (this.entity) {
+        let e = this.entity;
+        if (e.x!==null && e.y!==null && e.z!==null && e.x!==undefined && e.y!==undefined && e.z!==undefined) {
+          label+= " at " + e.x + ", " + e.y + ", " + e.z;
+        }
+      } else if (this.x!==null && this.y!==null && this.z!==null && this.x!==undefined && this.y!==undefined && this.z!==undefined) {
+        label+= " at " + this.x + ", " + this.y + ", " + this.z;
+      }
+    }
+    label = override(label);
+    return label;
+  }
+}
+
+
+class Entity extends Thing {
+  constructor(args) {
+    super(args);
+    this.label = "entity";
+    this.x = null;
+    this.y = null;
+    this.z = null;
+    this.behaviors = [];
+  }
+  place(x,y,z) {
+    if (this.isPlaced()) {
+      this.remove();
+    }
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    if (this.onPlace) {
+      this.onPlace(x,y,z);
+    }
+    for (let b in this.behaviors) {
+      if (b.onPlace) {
+        b.onPlace(x,y,z);
+      }
+    }
+  }
+  remove() {
+    for (let b in this.behaviors) {
+      if (b.onRemove) {
+        b.onRemove();
+      }
+    }
+    if (this.onRemove) {
+      this.onRemove();
+    }
+  }
+  onDespawn() {
+    if (this.isPlaced()) {
+      this.remove();
+    }
+    for (let b of this.behaviors) {
+      if (b.onDespawn) {
+        b.onDespawn();
+      }
+    }
+  }
+  isPlaced() {
+    if (this.x===null || this.y===null || this.z===null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
+class Creature extends Entity {
+
+}
+
+HTomb.Entities.Creature = function(args) {
+  args = args || {};
+  let creature = new Creature(args);
+  if (args.onDefine) {
+    args.onDefine.call(creature, args);
+  }
+  HTomb.Entities[creature.name] = function() {
+    return new /////something or other....losing steam....
+  }
+}
+
+class Behavior extends Thing {
+
+}
+
+class Type {
+
+}
+
+
+let foo = {a: 1, b: 2};
+Object.seal(foo);
+let bar = Object.create(foo);
+bar.c = 3
