@@ -19,7 +19,7 @@ HTomb = (function(HTomb) {
 	// tasks sometimes go dormant when assignment fails
 	task.dormant = 0;
 	task.dormancy = 6;
-
+	task.priority = 0;
 	// Entity-placement behavior
 	task.onPlace = function(x,y,z,args) {
       if (this.assigner && this.assigner.master) {

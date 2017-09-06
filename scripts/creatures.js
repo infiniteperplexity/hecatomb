@@ -17,7 +17,8 @@ HTomb = (function(HTomb) {
           team: "PlayerTeam"
         },
         Equipper: {},
-        Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
+        //Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
+        Master: {tasks: ["DigTask","BuildTask"]},
         SpellCaster: {spells: ["RaiseZombie"]},
         Body: {
           materials: {
