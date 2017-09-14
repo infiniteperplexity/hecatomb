@@ -10,7 +10,7 @@ HTomb = (function(HTomb) {
     y: null,
     z: null,
     Behaviors: {},
-    place: function(x,y,z) {
+    place: function(x,y,z,args) {
       if (this.isPlaced()) {
         this.remove();
       }

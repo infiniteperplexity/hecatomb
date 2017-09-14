@@ -91,8 +91,8 @@ HTomb = (function(HTomb) {
         waterTable(48,4);
     }); timeIt("slopes", function() {
         addSlopes();
-    }); timeIt("earths", function() {
-        placeEarths();
+    //}); timeIt("earths", function() {
+    //    placeEarths();
     }); timeIt("caverns", function() {
         cavernLevels(3);
     }); timeIt("labyrinths", function() {
@@ -133,8 +133,8 @@ HTomb = (function(HTomb) {
         placeLava(10);
     }); timeIt("water", function() {
         waterTable(4);
-    }); timeIt("earths", function() {
-        placeEarths();
+    //}); timeIt("earths", function() {
+    //    placeEarths();
     }); timeIt("slopes", function() {
         addSlopes();
     }); timeIt("caverns", function() {

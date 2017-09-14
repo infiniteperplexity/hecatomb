@@ -300,7 +300,7 @@ HTomb = (function(HTomb) {
     listens: ["Complete"],
     onComplete: function(event) {
       let t = event.task;
-      let z = t.z;
+      let z = t.entity.z;
       if (t.template==="DigTask" && z<44) {
         this.achieve();
       }

@@ -97,7 +97,7 @@ HTomb = (function(HTomb) {
       let zombie = zombies[i];
       if (zombie.worker.task===null) {
         for (let j=0; j<tasks.length; j++) {
-          let task = tasks[j];
+          let task = tasks[j].task;
           if (task.assignee===null && zombie.worker.task===null && task.canAssign(zombie)) {
             task.assignTo(zombie);
           }

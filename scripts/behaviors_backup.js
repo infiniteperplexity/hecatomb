@@ -338,7 +338,7 @@ HTomb = (function(HTomb) {
       HTomb.Utils.shuffle(this.taskList);
       //count down dormant tasks
       for (let i=0; i<this.taskList.length; i++) {
-        let task = this.taskList[i];
+        let task = this.taskList[i].task;
         if (task.dormant>0) {
           console.log("reducing dormancy");
           task.dormant-=1;
@@ -384,20 +384,20 @@ HTomb = (function(HTomb) {
           } else if (groundTools.length>0) {
             let task = HTomb.Things.EquipTask();
             let item = groundTools[0];
-            task.item = item;
-            task.assigner = this.entity;
+            task.task.item = item;
+            task.task.assigner = this.entity;
             task.name = "equip " + item.describe();
             task.place(item.x, item.y, item.z);
-            task.assignTo(minion);
+            task.task.assignTo(minion);
             continue;
           }
           let MAXPRIORITY = 3;
           for (let j=0; j<=MAXPRIORITY; j++) {
-            let tasks = this.taskList.filter(function(task,i,a) {return (priorities[task.template]===j && !task.dormant && task.assignee===null)});
+            let tasks = this.taskList.filter(function(e,i,a) {return (priorities[e.task.template]===j && !e.task.dormant && e.task.assignee===null)});
             // for hauling tasks, this gives misleading results...but I could fix that
             tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
             for (let k=0; k<tasks.length; k++) {
-              let task = tasks[k];
+              let task = tasks[k].task;
               if (minion.worker.allowedTasks.indexOf(task.template)!==-1 && task.canAssign(minion)) {
                 task.assignTo(minion);
                 //very ad hoc
@@ -544,7 +544,7 @@ HTomb = (function(HTomb) {
       // can't go through a zone your master forbids
       if (e.minion) {
         let task = HTomb.World.tasks[c];
-        if (task && task.template==="ForbidTask" && task.assigner===e.minion.master) {
+        if (task && task.task.template==="ForbidTask" && task.task.assigner===e.minion.master) {
           return false;
         }
       }

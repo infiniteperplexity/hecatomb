@@ -160,7 +160,7 @@ HTomb = (function(HTomb) {
               HTomb.Things.Minion().addToEntity(zombie);
               caster.entity.master.addMinion(zombie);
               let task = HTomb.Things.ZombieEmergeTask({assigner: caster.entity}).place(x,y,z);
-              task.assignTo(zombie);
+              task.task.assignTo(zombie);
               zombie.ai.acted = true;
               zombie.ai.actionPoints-=16;
               HTomb.GUI.sensoryEvent("You hear an ominous stirring below the earth...",x,y,z);
@@ -202,8 +202,8 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.templates.Task.extend({
-  //HTomb.Things.defineTask({
+  //Special zombie dig task?
+  HTomb.Things.defineTask({
     template: "ZombieEmergeTask",
     name: "emerge",
     bg: "#884400",
@@ -214,7 +214,7 @@ HTomb = (function(HTomb) {
       // this thing is going to be special...it should keep respawning if thwarted
       return true;
     },
-    workOnTask: function(x,y,z) {
+    work: function(x,y,z) {
       let f = HTomb.World.features[HTomb.Utils.coord(x,y,z)];
       // There is a special case of digging upward under a tombstone...
       if (f && f.template==="Tombstone") {
@@ -222,7 +222,8 @@ HTomb = (function(HTomb) {
           f.integrity=10;
         }
         if (f.integrity===10) {
-          HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " begins digging toward the surface.");
+          HTomb.GUI.pushMessage(this.beginMessage());
+          //HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " begins digging toward the surface.");
         }
         f.integrity-=1;
         this.assignee.ai.acted = true;
@@ -236,7 +237,7 @@ HTomb = (function(HTomb) {
           if (c.mine) {
             c.mine(x,y,z,this.assigner);
           }
-          this.complete();
+          this.completeWork(x,y,z);
           HTomb.World.validate.cleanNeighbors(x,y,z);
         }
       }
