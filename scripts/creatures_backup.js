@@ -2,47 +2,12 @@
 HTomb = (function(HTomb) {
   "use strict";
 
-  let Entity = HTomb.Things.templates.Entity;
-  let Creature = Entity.extend({
-    template: "Creature",
-    name: "creature",
-    // this will eventually create corpses with Material values
-    leavesCorpse: true,
-    die: function() {
-      if (this.x!==null && this.y!==null && this.z!==null) {
-        HTomb.Particles.addEmitter(this.x, this.y, this.z, HTomb.Particles.Blood, HTomb.Particles.Spray);
-        HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " dies.",this.x,this.y,this.z,"red");
-        if (this.player) {
-          this.player.playerDeath();
-        } else {
-          if (this.leavesCorpse) {
-            let corpse = HTomb.Things.Corpse({sourceCreature: this});
-            corpse.place(this.x, this.y, this.z);
-          }
-          this.destroy();
-        }
-      }
-    },
-    place: function(x,y,z,args) {
-      Entity.place.call(this,x,y,z,args);
-      let c = coord(x,y,z);
-      if (HTomb.World.creatures[c]) {
-        HTomb.Debug.pushMessage("Overwrote a creature!");
-        let cr = HTomb.World.creatures[c];
-        cr.remove();
-        cr.despawn();
-      }
-      HTomb.World.creatures[c] = this;
-    },
-    remove: function() {
-      delete HTomb.World.creatures[coord(this.x, this.y, this.z)];
-      Entity.remove.call(this);
-    }
-  });
-
   var b = HTomb.Things;
 
-  Creature.extend({
+
+
+
+  HTomb.Things.defineCreature({
       template: "Necromancer",
       name: "necromancer",
       symbol: "@",
@@ -74,7 +39,7 @@ HTomb = (function(HTomb) {
       }
   });
 
-  Creature.extend({
+  HTomb.Things.defineCreature({
     template: "Dryad",
     name: "dryad",
     symbol: "n",
@@ -131,7 +96,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  Creature.extend({
+  HTomb.Things.defineCreature({
     template: "Zombie",
     name: "zombie",
     leavesCorpse: false,
@@ -173,7 +138,7 @@ HTomb = (function(HTomb) {
   });
 
   var totalGhouls = 0;
-  Creature.extend({
+  HTomb.Things.defineCreature({
     template: "Ghoul",
     name: "ghoul",
     symbol: "z",
@@ -238,7 +203,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  Creature.extend({
+  HTomb.Things.defineCreature({
     template: "Bat",
     name: "bat",
     symbol: "b",
@@ -257,7 +222,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  Creature.extend({
+  HTomb.Things.defineCreature({
     template: "Spider",
     name: "spider",
     symbol: "s",
@@ -275,7 +240,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  Creature.extend({
+  HTomb.Things.defineCreature({
     template: "DeathCarp",
     name: "death carp",
     symbol: "p",
@@ -328,7 +293,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  Creature.extend({
+  HTomb.Things.defineCreature({
     template: "Fish",
     name: "fish",
     symbol: "p",

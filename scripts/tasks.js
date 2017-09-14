@@ -7,13 +7,9 @@ HTomb = (function(HTomb) {
   //refactoring dummy
   HTomb.Things.defineTask = function(args) {};
 
-
   let Entity = HTomb.Things.templates.Entity;
 
   let Task = Entity.extend({
-  //let task = Object.create(HTomb.Things.templates.Entity);
-  //task.super = HTomb.Things.templates.Entity;
-  //task = Object.assign(task, {
     template: "Task",
     name: "task",
     // description is the name for the job assignment menu
