@@ -26,15 +26,15 @@ HTomb = (function(HTomb) {
   placement.stack = function(thing,x,y,z) {
     var crd = coord(x,y,z);
     var stack;
-    if (thing.feature) {
+    if (thing.parent==="Feature") {
       stack = this.features[crd] || [];
       stack.push(thing);
       this.features[crd] = stack;
-    } else if (thing.item) {
+    } else if (thing.parent==="Item") {
       stack = this.items[crd] || [];
       stack.push(thing);
       this.items[crd] = stack;
-    } else if (thing.creature) {
+    } else if (thing.parent==="Creature") {
       stack = this.creatures[crd] || [];
       stack.push(thing);
       this.creatures[crd] = stack;
@@ -82,49 +82,6 @@ HTomb = (function(HTomb) {
 
   HTomb.World.generators = {};
 
-  HTomb.World.generators.bestSoFar = function() {
-    timeIt("elevation", function() {
-        assignElevation(50);
-    }); timeIt("lava", function() {
-        placeLava(10);
-    }); timeIt("water", function() {
-        waterTable(48,4);
-    }); timeIt("slopes", function() {
-        addSlopes();
-    //}); timeIt("earths", function() {
-    //    placeEarths();
-    }); timeIt("caverns", function() {
-        cavernLevels(3);
-    }); timeIt("labyrinths", function() {
-        labyrinths();
-    }); timeIt("minerals", function() {
-        placeMinerals({template: "IronVein", p: 0.0025});
-        placeMinerals({template: "BloodstoneCluster", p: 0.001});
-        placeMinerals({template: "GoldVein", p: 0.0025});
-        placeMinerals({template: "MoonstoneCluster", p: 0.001});
-        placeMinerals({template: "JadeCluster", p: 0.0025});
-    }); timeIt("grass", function() {
-        grassify();
-    }); timeIt("plants", function() {
-        growPlants({template: "Tree", p: 0.05});
-        growPlants({template: "Shrub", p: 0.05});
-        growPlants({template: "WolfsbanePlant", p: 0.001});
-        growPlants({template: "AmanitaPlant", p: 0.001});
-        growPlants({template: "MandrakePlant", p: 0.001});
-        growPlants({template: "WormwoodPlant", p: 0.001});
-        growPlants({template: "BloodwortPlant", p: 0.001});
-    }); timeIt("graveyards", function() {
-        graveyards();
-    }); timeIt("critters", function() {
-        placeCritters();
-    }); timeIt("resolving", function() {
-        placement.resolve();
-    }); timeIt("no hauling", function() {
-        notOwned();
-    }); timeIt("player", function() {
-        placePlayer();
-    });
-  };
 
   HTomb.World.generators.revised = function() {
     timeIt("elevation", function() {
@@ -149,11 +106,11 @@ HTomb = (function(HTomb) {
     }); timeIt("plants", function() {
         growPlants({template: "Tree", p: 0.05});
         growPlants({template: "Shrub", p: 0.05});
-        growPlants({template: "WolfsbanePlant", p: 0.001});
-        growPlants({template: "AmanitaPlant", p: 0.001});
-        growPlants({template: "MandrakePlant", p: 0.001});
-        growPlants({template: "WormwoodPlant", p: 0.001});
-        growPlants({template: "BloodwortPlant", p: 0.001});
+        //growPlants({template: "WolfsbanePlant", p: 0.001});
+        //growPlants({template: "AmanitaPlant", p: 0.001});
+        //growPlants({template: "MandrakePlant", p: 0.001});
+        //growPlants({template: "WormwoodPlant", p: 0.001});
+        //growPlants({template: "BloodwortPlant", p: 0.001});
     }); timeIt("graveyards", function() {
         graveyards();
     }); timeIt("critters", function() {
@@ -523,7 +480,7 @@ HTomb = (function(HTomb) {
     }
     for (var it in HTomb.World.items) {
       var items = HTomb.World.items[it];
-      items.forEach(function(e,a,i) {e.item.owner=null});
+      items.forEach(function(item,a,i) {item.owner=null});
     }
   }
 

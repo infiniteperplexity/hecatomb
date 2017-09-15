@@ -1,7 +1,9 @@
 HTomb = (function(HTomb) {
   "use strict";
 
-  HTomb.Things.defineItem({
+  let Item = HTomb.Things.templates.Item;
+  
+  Item.extend({
     template: "Rock",
     name: "rock",
     symbol: "\u2022",
@@ -11,7 +13,7 @@ HTomb = (function(HTomb) {
     tags: ["Minerals"]
   });
 
-  HTomb.Things.defineItem({
+  Item.extend({
     template: "Corpse",
     name: "corpse",
     symbol: "%",
@@ -34,7 +36,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineItem({
+  Item.extend({
     template: "WoodPlank",
     name: "wooden plank",
     symbol: "=",
@@ -44,7 +46,7 @@ HTomb = (function(HTomb) {
     tags: ["Wood"]
   });
 
-  HTomb.Things.defineItem({
+  Item.extend({
     template: "Trade Goods",
     name: "trade goods",
     symbol: "\u2696",
@@ -53,7 +55,7 @@ HTomb = (function(HTomb) {
     maxn: 10
   });
 
-  HTomb.Things.defineItem({
+  Item.extend({
     template: "Ectoplasm",
     name: "ectoplasm",
     symbol: "\u2697",
@@ -62,7 +64,7 @@ HTomb = (function(HTomb) {
     maxn: 10
   });
 
-  HTomb.Things.defineItem({
+  Item.extend({
     template: "Fuel",
     name: "fuel",
     symbol: "\u269B",
@@ -72,7 +74,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Things.defineItem({
+  Item.extend({
     template: "WorkAxe",
     name: "work axe",
     symbol: "\u262D",

@@ -6,7 +6,9 @@ HTomb = (function(HTomb) {
   var NLEVELS = HTomb.Constants.NLEVELS;
   var coord = HTomb.Utils.coord;
 
-  HTomb.Things.defineBehavior({
+  let Behavior = HTomb.Things.templates.Behavior;
+
+  Behavior.extend({
     template: "Player",
     name: "player",
     controlling: null,
@@ -64,7 +66,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "PointLight",
     name: "pointlight",
     point: null,
@@ -87,7 +89,7 @@ HTomb = (function(HTomb) {
     }
   })
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Senses",
     name: "senses",
     sightRange: 10,
@@ -125,7 +127,7 @@ HTomb = (function(HTomb) {
   });
 
   // The Sight behavior allows a creature to see
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Sight",
     name: "sight",
     range: 10,
@@ -141,7 +143,7 @@ HTomb = (function(HTomb) {
   });
 
   // The Inventory behavior allows a creature to carry things
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Inventory",
     name: "inventory",
     capacity: 10,
@@ -151,7 +153,7 @@ HTomb = (function(HTomb) {
     pickup: function(item) {
       var e = this.entity;
       if (this.entity.minion && this.entity.minion.master) {
-        item.item.owner = this.entity.minion.master;
+        item.owner = this.entity.minion.master;
       }
       item.remove();
       HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " picks up " + item.describe({article: "indefinite"})+".",e.x,e.y,e.z);
@@ -212,10 +214,14 @@ HTomb = (function(HTomb) {
       if (!this.entity.minion || !this.entity.minion.master || !this.entity.minion.master.master) {
         return false;
       }
+      //??? what is this about?
       let master = this.entity.minion.master.master;
+      if (master===undefined) {
+        throw new Error("What is this master.master business?");
+      }
       for (let item in ingredients) {
         let items = master.ownedItems.filter(function(it) {
-          if (it.template===item && it.item.isOnGround()===true) {
+          if (it.template===item && it.isOnGround()===true) {
             return true;
           } else {
             return false;
@@ -223,7 +229,7 @@ HTomb = (function(HTomb) {
         });
         let n = 0;
         for (let i=0; i<items.length; i++) {
-          n+= (items[i].item.n || 1);
+          n+= (items[i].n || 1);
         }
         if (n<ingredients[item]) {
           // if any ingredients are missing, do not assign
@@ -235,12 +241,12 @@ HTomb = (function(HTomb) {
   });
 
   // Not yet functional
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Attacker",
     name: "attack"
   });
   // The Minion behavior allows a creature to serve a master and take orders
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Minion",
     name: "minion",
     master: null,
@@ -251,13 +257,13 @@ HTomb = (function(HTomb) {
     },
     onDestroy: function(event) {
       if (event.entity===this.master) {
-        this.removeFromEntity();
+        this.detachFromEntity();
         this.despawn();
       }
     }
   });
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Worker",
     name: "worker",
     labor: 1,
@@ -284,7 +290,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Master",
     name: "master",
     minions: null,
@@ -340,7 +346,6 @@ HTomb = (function(HTomb) {
       for (let i=0; i<this.taskList.length; i++) {
         let task = this.taskList[i];
         if (task.dormant>0) {
-          console.log("reducing dormancy");
           task.dormant-=1;
         }
       }
@@ -353,15 +358,12 @@ HTomb = (function(HTomb) {
           continue;
         } else {
           // look for labor tools
-          let labor = minion.worker.labor;
-          if (minion.equipper && minion.equipper.slots.MainHand && minion.equipper.slots.MainHand.equipment.labor>labor) {
-            labor = minion.equipper.slots.MainHand.equipment.labor;
-          }
+          let labor = minion.worker.getLabor();
           let invenTools = this.ownedItems.filter(function(e,i,a) {
             return (e.equipment && e.equipment.labor>labor && minion.inventory && minion.inventory.items.items.indexOf(e)!==-1);
           });
           let groundTools = this.ownedItems.filter(function(e,i,a) {
-            return (e.equipment && e.equipment.labor>labor && e.item.isOnGround());
+            return (e.equipment && e.equipment.labor>labor && e.isOnGround());
           });
           // sort by labor value
           let comp = function(a,b) {
@@ -442,11 +444,11 @@ HTomb = (function(HTomb) {
   });
 
   // The SpellCaster behavior maintains a list of castable spells
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "SpellCaster",
     name: "caster",
-    maxsoul: 20,
-    soul: 20,
+    maxEntropy: 20,
+    entropy: 20,
     onCreate: function(options) {
       options = options || {};
       options.spells = options.spells || [];
@@ -459,20 +461,20 @@ HTomb = (function(HTomb) {
       return this;
     },
     onTurnBegin: function() {
-      if (this.soul<this.maxsoul && Math.random()<(1/10)) {
-        this.soul+=1;
+      if (this.entropy<this.maxEntropy && Math.random()<(1/10)) {
+        this.entropy+=1;
       }
     },
     cast: function(sp) {
       let cost = sp.getCost();
-      if (this.soul>=cost) {
+      if (this.entropy>=cost) {
         sp.cast();
       }
     }
   });
 
   // The Movement behavior allows the creature to move
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Movement",
     name: "movement",
     // flags for different kinds of movement
@@ -593,7 +595,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
   	template: "Body",
   	name: "body",
   	materials: null,
@@ -621,7 +623,7 @@ HTomb = (function(HTomb) {
           }
         }
         if (died) {
-          this.entity.creature.die();
+          this.entity.die();
         }
       }
     },
@@ -646,7 +648,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
   	template: "Combat",
   	name: "combat",
     accuracy: 0,
@@ -680,7 +682,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Equipment",
     name: "equipment",
     slot: null,
@@ -689,7 +691,7 @@ HTomb = (function(HTomb) {
     onUnequip: function(equipper) {}
   });
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "Equipper",
     name: "equipper",
     items: null,

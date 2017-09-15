@@ -378,25 +378,25 @@ HTomb = (function(HTomb) {
       return;
     }
     HTomb.Events.publish({type: "Command", command: "ShowSpells"});
-    GUI.choosingMenu("Choose a spell (soul cost):", p.caster.spells,
+    GUI.choosingMenu("Choose a spell (entropy cost):", p.caster.spells,
       function(sp) {
         return function() {
-          if (p.caster.soul>=sp.getCost()) {
+          if (p.caster.entropy>=sp.getCost()) {
             HTomb.GUI.Panels.menu.middle = [];
             HTomb.GUI.Panels.menu.refresh();
             HTomb.Events.publish({type: "Command", command: "ChooseSpell", spell: sp});
             p.caster.cast(sp);
           } else {
-            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough soul."];
+            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough entropy."];
             HTomb.GUI.Panels.menu.refresh();
-            HTomb.GUI.pushMessage("Not enough soul!");
+            HTomb.GUI.pushMessage("Not enough entropy!");
           }
         };
       },
       {
         format: function(spell) {
           let descrip = spell.describe()+" ("+spell.getCost()+")";
-          if (spell.getCost()>spell.caster.soul) {
+          if (spell.getCost()>spell.caster.entropy) {
             descrip = "%c{gray}"+descrip;
           }
           return descrip;
@@ -419,7 +419,6 @@ HTomb = (function(HTomb) {
       },
       {
         format: function(task) {
-          console.log(task);
           let name = task.description;
           return (name.substr(0,1).toUpperCase() + name.substr(1)+".");
         },

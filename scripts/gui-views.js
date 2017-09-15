@@ -402,7 +402,7 @@ HTomb = (function(HTomb) {
     text.push("Unassigned Tasks:");
     for (let k=0; k<HTomb.Player.master.taskList.length; k++) {
       var task = HTomb.Player.master.taskList[k];
-      if (task.task.assignee===null) {
+      if (task.assignee===null) {
         s = "  "+task.describe({atCoordinates: true}) + ".";
         text.push(s);
       }
@@ -425,7 +425,7 @@ HTomb = (function(HTomb) {
     HTomb.Time.stopTime();
     Views.Structures.structureCursor = -1;
     if (Views.Structures.selectedStructure) {
-      Views.Structures.selectedStructure.structure.unhighlight();
+      Views.Structures.selectedStructure.unhighlight();
     }
     if (Views.Creature.selectedCreature) {
       Views.Creature.selectedCreature.unhighlight();
@@ -449,7 +449,7 @@ HTomb = (function(HTomb) {
     let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     for (let i=0; i<alphabet.length; i++) {
       GUI.bindKey(GUI.Contexts.structures,"VK_"+alphabet[i], function() {
-        Views.Structures.selectedStructure.structure.choiceCommand(i);
+        Views.Structures.selectedStructure.choiceCommand(i);
         Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
       });
     }
@@ -459,7 +459,7 @@ HTomb = (function(HTomb) {
   GUI.Contexts.structures = GUI.Contexts.new({
     VK_ESCAPE: function() {
       if (Views.Structures.selectedStructure) {
-        Views.Structures.selectedStructure.structure.unhighlight();
+        Views.Structures.selectedStructure.unhighlight();
       }
       HTomb.GUI.reset();
     },
@@ -486,45 +486,45 @@ HTomb = (function(HTomb) {
   Views.Structures.selectedStructure = null;
   //done!
   Views.Structures.displayStructureInfo = function(w) {
-    w.structure.highlight("#557722");
+    w.highlight("#557722");
     HTomb.GUI.Views.Main.zoomIfNotVisible(w.x,w.y,w.z);
-    GUI.Contexts.structures.menuText = w.structure.detailsText();
+    GUI.Contexts.structures.menuText = w.structureText();
     menu.bottom = menu.defaultBottom;
     menu.render();
     GUI.Contexts.active = GUI.Contexts.structures;
   };
   Views.Structures.structureCancel = function() {
-    Views.Structures.selectedStructure.structure.cancelCommand();
+    Views.Structures.selectedStructure.cancelCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.structureDown = function() {
-    Views.Structures.selectedStructure.structure.downCommand();
+    Views.Structures.selectedStructure.downCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.structureUp = function() {
-    Views.Structures.selectedStructure.structure.upCommand();
+    Views.Structures.selectedStructure.upCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.structureRight = function() {
-    Views.Structures.selectedStructure.structure.rightCommand();
+    Views.Structures.selectedStructure.rightCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.structureLeft = function() {
-    Views.Structures.selectedStructure.structure.leftCommand();
+    Views.Structures.selectedStructure.leftCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.structureMore = function() {
-    Views.Structures.selectedStructure.structure.moreCommand();
+    Views.Structures.selectedStructure.moreCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.structureLess = function() {
-    Views.Structures.selectedStructure.structure.lessCommand();
+    Views.Structures.selectedStructure.lessCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.nextStructure = function() {
     Views.Structures.structureCursor = -1;
     if (Views.Structures.selectedStructure) {
-      Views.Structures.selectedStructure.structure.unhighlight();
+      Views.Structures.selectedStructure.unhighlight();
     }
     var p = HTomb.Player;
     if (Views.Structures.selectedStructure===null && p.master.structures.length>0) {
@@ -548,7 +548,7 @@ HTomb = (function(HTomb) {
   Views.Structures.previousStructure = function() {
     Views.Structures.structureCursor = -1;
     if (Views.Structures.selectedStructure) {
-      Views.Structures.selectedStructure.structure.unhighlight();
+      Views.Structures.selectedStructure.unhighlight();
     }
     var p = HTomb.Player;
     if (Views.Structures.selectedStructure===null && p.master.structures.length>0) {
@@ -574,7 +574,7 @@ HTomb = (function(HTomb) {
   Views.creatureView = function(c) {
     HTomb.Time.stopTime();
     if (Views.Structures.selectedStructure) {
-      Views.Structures.selectedStructure.structure.unhighlight();
+      Views.Structures.selectedStructure.unhighlight();
     }
     HTomb.Events.subscribe(Views.Creature, "PlayerActive");
     c = c || HTomb.Player;
@@ -675,7 +675,7 @@ HTomb = (function(HTomb) {
     if (c.worker) {
       let b = c.worker;
       if (b.task) {
-        let s = "Task: " + b.task.entity.describe({atCoordinates: true}) + ".";
+        let s = "Task: " + b.task.describe({atCoordinates: true}) + ".";
         txt.push(s);
       }
       txt.push(" ");

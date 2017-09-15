@@ -38,6 +38,16 @@ HTomb = (function(HTomb) {
     remove: function() {
       delete HTomb.World.creatures[coord(this.x, this.y, this.z)];
       Entity.remove.call(this);
+    },
+    fall: function() {
+      var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
+      if (HTomb.World.creatures[coord(this.x,this.y,g)]) {
+        alert("haven't decided how to handle falling creature collisions");
+      } else {
+        HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
+        this.place(this.x,this.y,g);
+      }
+      HTomb.GUI.render();
     }
   });
 
@@ -56,8 +66,7 @@ HTomb = (function(HTomb) {
           team: "PlayerTeam"
         },
         Equipper: {},
-        //Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
-        Master: {tasks: ["DigTask","BuildTask"]},
+        Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
         SpellCaster: {spells: ["RaiseZombie"]},
         Body: {
           materials: {
@@ -139,6 +148,8 @@ HTomb = (function(HTomb) {
     symbol: "z",
     fg: "#99FF66",
     onCreate: function(args) {
+      //ugh...
+      //Creature.onCreate.call(this,args);
       args = args || {};
       if (args.sourceCreature) {
         let creature = HTomb.Things.templates[args.sourceCreature];

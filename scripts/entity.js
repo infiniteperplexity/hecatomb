@@ -1,145 +1,13 @@
 HTomb = (function(HTomb) {
   "use strict";
   var coord = HTomb.Utils.coord;
+  
+
+  let Thing = HTomb.Things.templates.Thing;
   // Define a generic entity that occupies a tile space
-
-    let Thing = HTomb.Things.templates.Thing;
-
-  // let Entity = Thing.extend({
-  //   template: "Entity",
-  //   name: "entity",
-  //   x: null,
-  //   y: null,
-  //   z: null,
-  //   Behaviors: {},
-  //   place: function(x,y,z,args) {
-  //     if (this.isPlaced()) {
-  //       this.remove();
-  //     }
-  //     this.x = x;
-  //     this.y = y;
-  //     this.z = z;
-  //     if (this.isPlaced()) {
-  //       var beh = this.behaviors;
-  //       for (var i=0; i<beh.length; i++) {
-  //         if (beh[i].onPlace) {
-  //           beh[i].onPlace(x,y,z);
-  //         }
-  //       }
-  //     }
-  //     if (this.onPlace) {
-  //       this.onPlace(x,y,z);
-  //     }
-  //     return this;
-  //   },
-  //   isPlaced: function() {
-  //     if (this.x===null || this.y===null || this.z===null) {
-  //       return false;
-  //     } else {
-  //       return true;
-  //     }
-  //   },
-  //   remove: function() {
-  //     var beh = this.behaviors;
-  //     for (var i=0; i<beh.length; i++) {
-  //       if (beh[i].onRemove) {
-  //         beh[i].onRemove();
-  //       }
-  //     }
-  //     if (this.onRemove) {
-  //       this.onRemove();
-  //     }
-  //     this.x = null;
-  //     this.y = null;
-  //     this.z = null;
-  //   },
-  //   destroy: function() {
-  //     var beh = this.behaviors;
-  //     for (var i=0; i<beh.length; i++) {
-  //       var b = beh[i];
-  //       if (b.destroy) {
-  //         b.destroy();
-  //       }
-  //       b.despawn();
-  //     }
-  //     HTomb.Events.publish({type: "Destroy", entity: this});
-  //     this.despawn();
-  //   },
-  //   despawn: function() {
-  //     if (this.isPlaced()) {
-  //       this.remove();
-  //     }
-  //     var beh = this.behaviors;
-  //     for (var i=0; i<beh.length; i++) {
-  //       if (beh[i].onDespawn) {
-  //         beh[i].onDespawn();
-  //       }
-  //     }
-  //     if (this.onDespawn) {
-  //       this.onDespawn();
-  //     }
-  //     Thing.despawn.call(this);
-  //   },
-  //   spawn: function(args) {
-  //     Thing.spawn.call(this,args);
-      //for every behavior in Behaviors, create a new one and add it to the entity
-      
-      //may need a frickin' deep merge here...
-  //     export function mergeDeep(target, ...sources) {
-  // if (!sources.length) return target;
-  // const source = sources.shift();
-
-  // if (isObject(target) && isObject(source)) {
-  //   for (const key in source) {
-  //     if (isObject(source[key])) {
-  //       if (!target[key]) Object.assign(target, { [key]: {} });
-  //       mergeDeep(target[key], source[key]);
-  //     } else {
-  //       Object.assign(target, { [key]: source[key] });
-  //     }
-  //   }
-  //}
-
-  //return mergeDeep(target, ...sources);
-// }
-      
-//     }
-//     onCreate: function(args) {
-//       // Add behaviors to entity
-//       for (var b in this.Behaviors) {
-//         if (typeof(HTomb.Things[b])!=="function") {
-//             console.log("Problem with behavior " + b + " for " + this.describe());
-//         }
-//         //var beh = HTomb.Things[b](this.behaviors[b] || {});
-//         var beh = HTomb.Things.create(b,this.Behaviors[b] || {});
-//         beh.addToEntity(this);
-//       }
-//       // Randomly choose symbol if necessary
-//       if (Array.isArray(this.symbol)) {
-//         this.symbol = this.symbol[Math.floor(Math.random()*this.symbol.length)];
-//       }
-//       // Randomly choose  color if necessary
-//       if (Array.isArray(this.fg)) {
-//         this.fg = this.fg[Math.floor(Math.random()*this.fg.length)];
-//       }
-//       // Randomly perturb color, if necessary
-//       if (this.randomColor>0 && this.fg) {
-//         if (this.fg) {
-//           var c = ROT.Color.fromString(this.fg);
-//           c = ROT.Color.randomize(c,[this.randomColor, this.randomColor, this.randomColor]);
-//           c = ROT.Color.toHex(c);
-//           this.fg = c;
-//         }
-//       }
-//       return this;
-//     }
-//   });
-
-
-  HTomb.Things.define({
+  let Entity = Thing.extend({
     template: "Entity",
     name: "entity",
-    parent: "Thing",
     x: null,
     y: null,
     z: null,
@@ -151,14 +19,15 @@ HTomb = (function(HTomb) {
       this.x = x;
       this.y = y;
       this.z = z;
-      if (this.isPlaced()) {
+      if (this.behaviors) {
         var beh = this.behaviors;
         for (var i=0; i<beh.length; i++) {
           if (beh[i].onPlace) {
-            beh[i].onPlace(x,y,z);
+             beh[i].onPlace(x,y,z);
           }
         }
       }
+      // should this indeed go after the behaviors?
       if (this.onPlace) {
         this.onPlace(x,y,z);
       }
@@ -171,31 +40,13 @@ HTomb = (function(HTomb) {
         return true;
       }
     },
-    validateBehaviors: function() {
-      let props = Object.getOwnPropertyNames(this);
-      let behaviors = [];
-      let b = HTomb.Things.behaviors;
-      for (let i=0; i<props.length; i++) {
-        if (b.indexOf(props[i])!==-1) {
-          behaviors.push(this[props[i]]);
-        }
-      }
-      //return behaviors;
-      this.behaviors = behaviors;
-    },
-    behaviorTemplate: function(beh) {
-      let beh1 = HTomb.Utils.copy(this.Behaviors[beh]);
-      let beh2 = HTomb.Utils.clone(HTomb.Things.templates[beh]);
-      for (let v in beh1) {
-        beh2[v] = beh1[v];
-      }
-      return beh2;
-    },
     remove: function() {
-      var beh = this.behaviors;
-      for (var i=0; i<beh.length; i++) {
-        if (beh[i].onRemove) {
-          beh[i].onRemove();
+      if (this.behaviors) {
+        var beh = this.behaviors;
+        for (var i=0; i<beh.length; i++) {
+          if (beh[i].onRemove) {
+            beh[i].onRemove();
+          }
         }
       }
       if (this.onRemove) {
@@ -206,57 +57,37 @@ HTomb = (function(HTomb) {
       this.z = null;
     },
     destroy: function() {
-      var beh = this.behaviors;
-      for (var i=0; i<beh.length; i++) {
-        var b = beh[i];
-        if (b.destroy) {
-          b.destroy();
+      if (this.behaviors) {
+        var beh = this.behaviors;
+        for (var i=0; i<beh.length; i++) {
+          var b = beh[i];
+          if (b.destroy) {
+            b.destroy();
+          }
+          b.despawn();
         }
-        b.despawn();
       }
       HTomb.Events.publish({type: "Destroy", entity: this});
       this.despawn();
     },
-    onDespawn: function() {
+    despawn: function() {
       if (this.isPlaced()) {
         this.remove();
       }
+      if (this.behaviors) {
       var beh = this.behaviors;
-      for (var i=0; i<beh.length; i++) {
-        if (beh[i].onDespawn) {
-          beh[i].onDespawn();
+        for (var i=0; i<beh.length; i++) {
+          if (beh[i].onDespawn) {
+            beh[i].onDespawn();
+          }
         }
       }
+      Thing.despawn.call(this);
     },
-    fall: function() {
-      var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
-      if (this.creature) {
-        if (HTomb.World.creatures[coord(this.x,this.y,g)]) {
-          alert("haven't decided how to handle falling creature collisions");
-        } else {
-          HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
-          this.place(this.x,this.y,g);
-        }
-      }
-      if (this.item) {
-        HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
-        this.place(this.x,this.y,g);
-      }
-      HTomb.GUI.render();
-    },
-    onSpawn: function(args) {
-      this.onCreate(args);
-    },
-    onCreate: function() {
-      console.log("creating behaviors");
-      this.behaviors = [];
-      // Add behaviors to entity
-      for (var b in this.Behaviors) {
-        if (typeof(HTomb.Things[b])!=="function") {
-            console.log("Problem with behavior " + b + " for " + this.describe());
-        }
-        //var beh = HTomb.Things[b](this.behaviors[b] || {});
-        var beh = HTomb.Things.create(b,this.Behaviors[b] || {});
+    spawn: function(args) {
+      Thing.spawn.call(this,args);
+      for (let b in this.Behaviors) {
+        let beh = HTomb.Things.create(b,this.Behaviors[b] || {});
         beh.addToEntity(this);
       }
       // Randomly choose symbol if necessary
@@ -277,121 +108,44 @@ HTomb = (function(HTomb) {
         }
       }
       return this;
-    }
+    },
+    highlight: function(bg) {
+      this.highlightColor = bg;
+    },
+    unhighlight: function() {
+      if (this.highlightColor) {
+        delete this.highlightColor;
+      }
+    },
   });
 
-  // Define a generic behavior that gets attached to entities
-  HTomb.Things.define({
+  let Behavior = Entity.extend({
     template: "Behavior",
     name: "behavior",
-    parent: "Thing",
     entity: null,
     addToEntity: function(ent) {
       this.entity = ent;
-      // This is kind of a weird multi-level inheritance thing...
-      if (this.parent==="Behavior") {
-        ent[this.name] = this;
-      } else {
-        let name = HTomb.Things.templates[this.parent].name;
-        ent[name] = this;
+      ent[this.name] = this;
+      if (!ent.behaviors) {
+        ent.behaviors = [];
       }
+      ent.behaviors.push(this);
       if (this.onAdd) {
         this.onAdd(this.options);
       }
-      this.entity.validateBehaviors();
     },
-    removeFromEntity: function() {
+    detachFromEntity: function() {
       let ent = this.entity;
+      if (this.onDetach) {
+        this.onDetach();
+      }
+      ent.behaviors.splice(ent.behaviors.indexOf(this),1);
       this.entity = null;
-      ent[this.name] = undefined;
-      this.entity.validateBehaviors();
-      //onRemove stuff?
-    },
-    onDefine: function(args) {
-      HTomb.Things.behaviors.push(args.name);
-      let beh = HTomb.Things.templates[args.template];
-      if (args.parent!=="Behavior") {
-        let eargs = {};
-        eargs.parent = "Entity";
-        eargs.name = args.name;
-        if (args.bg) {
-          eargs.bg = args.bg;
-          delete beh.bg;
-        }
-        if (args.fg) {
-          eargs.fg = args.fg;
-          delete beh.fg;
-        }
-        if (args.symbol) {
-          eargs.symbol = args.symbol;
-          delete beh.symbol;
-        }
-        eargs.Behaviors = {};
-        eargs.Behaviors[args.template] = {};
-        eargs.template = args.template+"Entity";
-        HTomb.Things.define(eargs);
-        HTomb.Things[args.template] = function(cargs) {
-          let entargs = {};
-          let bargs = {};
-          let entity = HTomb.Things.templates[args.template+"Entity"];
-          for (let arg in cargs) {
-            if (typeof(cargs[arg])==="function") {
-              entargs[arg] = cargs[arg];
-            } else if (entity[arg]!==undefined) {
-              entargs[arg] = cargs[arg];
-            } else if (beh[arg]!==undefined) {
-              bargs[arg] = cargs[arg];
-            } else {
-              entargs[arg] = cargs[arg];
-            }
-          }
-          // this can't work like this...we need to avoid overwriting behaviors...
-          // this worked okay for Rocks, didn't it?  Or maybe it overwrote...
-          entargs.Behaviors = entargs.Behaviors || {};
-          entargs.Behaviors[args.template] = bargs;
-          return HTomb.Things[args.template+"Entity"](entargs);
-        };
-      }
-    }
-  });
-  HTomb.Things.behaviors = [];
-
-  HTomb.Things.defineBehavior({
-    template: "Creature",
-    name: "creature",
-    // this will eventually create corpses with Material values
-    leavesCorpse: true,
-    die: function() {
-      if (this.entity.x!==null && this.entity.y!==null && this.entity.z!==null) {
-        HTomb.Particles.addEmitter(this.entity.x, this.entity.y, this.entity.z, HTomb.Particles.Blood, HTomb.Particles.Spray);
-        HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " dies.",this.entity.x,this.entity.y,this.entity.z,"red");
-        if (this.entity.player) {
-          this.entity.player.playerDeath();
-        } else {
-          if (this.leavesCorpse) {
-            let corpse = HTomb.Things.Corpse({sourceCreature: this.entity});
-            corpse.place(this.entity.x, this.entity.y, this.entity.z);
-          }
-          this.entity.destroy();
-        }
-      }
-    },
-    onPlace: function(x,y,z) {
-      let c = coord(x,y,z);
-      if (HTomb.World.creatures[c]) {
-        HTomb.Debug.pushMessage("Overwrote a creature!");
-        let cr = HTomb.World.creatures[c];
-        cr.remove();
-        cr.despawn();
-      }
-      HTomb.World.creatures[c] = this.entity;
-    },
-    onRemove: function() {
-      delete HTomb.World.creatures[coord(this.entity.x, this.entity.y, this.entity.z)];
+      delete ent[this.name];
     }
   });
 
-  HTomb.Things.defineBehavior({
+  let Item = Entity.extend({
     template: "Item",
     name: "item",
     stackable: false,
@@ -406,7 +160,7 @@ HTomb = (function(HTomb) {
     unsetOwner: function() {
       if (this.owner) {
         if (this.owner.master.ownedItems.indexOf(this)!==-1) {
-          this.owner.master.ownedItems.splice(this.owner.master.ownedItems.indexOf(this.entity),1);
+          this.owner.master.ownedItems.splice(this.owner.master.ownedItems.indexOf(this),1);
         }
       }
     },
@@ -414,8 +168,14 @@ HTomb = (function(HTomb) {
       this.unsetOwner();
       this.owner = cr;
       if (cr!==null && cr.master) {
-        cr.master.ownedItems.push(this.entity)
+        cr.master.ownedItems.push(this)
       }
+    },
+    fall: function() {
+      var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
+      HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
+      this.place(this.x,this.y,g);
+      HTomb.GUI.render();
     },
     // this method is for when an item is forced onto a square but can't fit
     tumble: function(x,y,z) {
@@ -468,12 +228,12 @@ HTomb = (function(HTomb) {
       }
     },
     inStructure: function() {
-      if (this.entity.x===null) {
+      if (this.x===null) {
         return false;
       }
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       let f = HTomb.World.features(HTomb.Utils.coord(x,y,z));
       if (f && f.structure && f.structure.owner===HTomb.Player) {
         return true;
@@ -482,7 +242,7 @@ HTomb = (function(HTomb) {
     },
     carriedByMinion: function() {
       if (!this.container) {
-        console.log(this.entity);
+        console.log(this);
         return false;
       }
       let parent = this.container.heldby;
@@ -492,7 +252,7 @@ HTomb = (function(HTomb) {
         return false;
       }
     },
-    onDespawn: function() {
+    despawn: function() {
       if (HTomb.Player.master) {
         let owned = HTomb.Player.master.ownedItems;
         let i = owned.indexOf(this.entity);
@@ -500,10 +260,11 @@ HTomb = (function(HTomb) {
           owned.splice(i,1);
         }
       }
+      Entity.despawn.call(this);
     },
     carriedByCreature: function() {
       if (!this.container) {
-        console.log(this.entity);
+        console.log(this);
         return false;
       }
       let parent = this.container.heldby;
@@ -513,38 +274,42 @@ HTomb = (function(HTomb) {
         return false;
       }
     },
-    onPlace: function(x,y,z) {
+    place: function(x,y,z,args) {
+      Entity.place.call(this,x,y,z,args);
       let c = coord(x,y,z);
       var pile = HTomb.World.items[c] || HTomb.Things.Container({heldby: c});
-      pile.push(this.entity);
+      pile.push(this);
       if (pile.length>0) {
         HTomb.World.items[c] = pile;
       } else {
         console.log("despawning stupid pile");
         pile.despawn();
       }
+      return this;
     },
-    onRemove: function() {
-      let c = coord(this.entity.x,this.entity.y,this.entity.z);
+    remove: function(args) {
+      let c = coord(this.x,this.y,this.z);
       var pile = HTomb.World.items[c];
       // remove it from the old pile
       if (pile) {
-        if (pile.contains(this.entity)) {
-          pile.remove(this.entity);
+        if (pile.contains(this)) {
+          pile.remove(this);
         }
       }
       //if there is a haul task for the item here, cancel it
       let task = HTomb.World.tasks[c];
-      if (task && task.task.item===this.entity) {
-        task.task.cancel();
+      if (task && task.item===this) {
+        task.cancel();
       }
+      Entity.remove.call(this, args);
     },
-    onDescribe: function(options) {
+    describe: function(options) {
+      options = options || {};
       if (this.stackable && this.n>1) {
         options.plural = true;
         options.article = this.n;
       }
-      return options;
+      return Entity.describe.call(this,options);
     },
     makeStack: function() {
       if (this.stackable) {
@@ -571,7 +336,7 @@ HTomb = (function(HTomb) {
     totalBulk: function() {
       let total = 0;
       for (let i=0; i<this.items.length; i++) {
-        total+=this.items[i].item.getBulk();
+        total+=this.items[i].getBulk();
       }
       return total;
     },
@@ -580,40 +345,40 @@ HTomb = (function(HTomb) {
       return this;
     },
     absorbStack: function(item) {
-      if (item.item.container) {
-        item.item.container.remove(item);
+      if (item.container) {
+        item.container.remove(item);
       }
       //let n = item.item.n;
-      let n = Math.min(item.item.n,this.canFit(item));
+      let n = Math.min(item.n,this.canFit(item));
       let existing = false;
       for (let i=0; i<this.items.length; i++) {
         if (this.items[i].template===item.template) {
-          this.items[i].item.n+=n;
+          this.items[i].n+=n;
           existing = true;
           break;
         }
       }
       if (existing) {
-        item.item.n-=n;
-        if (item.item.n===0) {
+        item.n-=n;
+        if (item.n===0) {
           item.despawn();
           item = null;
         }
         return item;
       } else {
         this.items.push(item);
-        item.item.container = this;
+        item.container = this;
         return null;
       }
     },
     canFit: function(item) {
-      let one = item.item.n;
+      let one = item.n;
       let two = 0;
       let bulk = 0;
       for (let i=0; i<this.items.length; i++) {
         if (item.template===this.items[i].template) {
-          two = this.items[i].item.n;
-          bulk = this.items[i].item.getBulk();
+          two = this.items[i].n;
+          bulk = this.items[i].getBulk();
           break;
         }
       }
@@ -621,27 +386,30 @@ HTomb = (function(HTomb) {
       let n = 0;
       do {
         n+=1;
-      } while (item.item.getBulk(n)<=room);
+      } while (item.getBulk(n)<=room);
       n-=1;
       return n;
     },
     push: function(item) {
-      if (item.item.stackable) {
+      if (item===undefined) {
+        throw new Error("what the what?");
+      }
+      if (item.stackable) {
         this.absorbStack(item);
       } else {
-        if (item.item.container) {
-          item.item.container.remove(item);
+        if (item.container) {
+          item.container.remove(item);
         }
         this.items.push(item);
-        item.item.container = this;
+        item.container = this;
       }
     },
     insert: function(item,i) {
-      if (item.item.stackable) {
+      if (item.stackable) {
         this.absorbStack(item);
       } else {
         this.items[i] = item;
-        item.item.container = this;
+        item.container = this;
       }
     },
     expose: function(i) {
@@ -674,7 +442,7 @@ HTomb = (function(HTomb) {
       var tally = 0;
       for (var i=0; i<this.items.length; i++) {
         if (this.items[i].template===template) {
-          tally+=this.items[i].item.n;
+          tally+=this.items[i].n;
         }
       }
       return tally;
@@ -725,18 +493,18 @@ HTomb = (function(HTomb) {
       if (this.hasAll(ing)!==true) {
         return false;
       }
-      if (HTomb.Things.templates[i_or_t].Behaviors.Item.stackable!==true) {
+      if (HTomb.Things.templates[i_or_t].stackable!==true) {
         var first = this.getFirst(i_or_t);
         return this.remove(first);
       } else {
         var last = this.getLast(i_or_t);
-        if (last.item.n<=n) {
+        if (last.n<=n) {
           this.remove(last);
           return last;
         } else {
-          last.item.n-=n;
+          last.n-=n;
           var taken = HTomb.Things[last.template]();
-          taken.item.n = n;
+          taken.n = n;
           return taken;
         }
       }
@@ -751,19 +519,19 @@ HTomb = (function(HTomb) {
       if (this.hasAll(ing)!==true) {
         n = this.countAll(i_or_t);
       }
-      if (HTomb.Things.templates[i_or_t].Behaviors.Item.stackable!==true) {
+      if (HTomb.Things.templates[i_or_t].stackable!==true) {
         var first = this.getFirst(i_or_t);
         this.remove(first);
         return (first);
       } else {
         var last = this.getLast(i_or_t);
-        if (last.item.n<=n) {
+        if (last.n<=n) {
           this.remove(last);
           return last;
         } else {
-          last.item.n-=n;
+          last.n-=n;
           var taken = HTomb.Things[last.template]();
-          taken.item.n = n;
+          taken.n = n;
           return taken;
         }
       }
@@ -771,7 +539,7 @@ HTomb = (function(HTomb) {
     remove: function(item) {
       var indx = this.items.indexOf(item);
       if (indx>-1) {
-        item.item.container = null;
+        item.container = null;
         this.items.splice(indx,1);
         // should this only happen if it's on the ground?
         if (typeof(this.heldby)==="number") {
@@ -860,19 +628,35 @@ HTomb = (function(HTomb) {
   });
   Object.defineProperty(HTomb.Things.templates.Container,"length",{get: function() {return this.items.length;}});
 
-  HTomb.Things.defineBehavior({
+  Entity.extend({
     template: "Feature",
     name: "feature",
     yields: null,
+    //i kind of hate this name
     integrity: null,
-    stackedFeatures: null,
+    fall: function() {
+      var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
+      if (this.creature) {
+        if (HTomb.World.creatures[coord(this.x,this.y,g)]) {
+          alert("haven't decided how to handle falling creature collisions");
+        } else {
+          HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
+          this.place(this.x,this.y,g);
+        }
+      }
+      if (this.item) {
+        HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
+        this.place(this.x,this.y,g);
+      }
+      HTomb.GUI.render();
+    },
     onDefine: function(args) {
       if (args.craftable===true) {
         let item = HTomb.Utils.copy(args);
         item.template = args.template+"Item";
         item.tags = ["Fixtures"];
         delete item.Behaviors;
-        HTomb.Things.defineItem(item);
+        HTomb.Things.templates.Item.extend(item);
         let template = HTomb.Things.templates[args.template];
         // overwrite the item's ingredients
         template.ingredients = {};
@@ -880,19 +664,23 @@ HTomb = (function(HTomb) {
         template.labor = args.labor || 10;
       }
     },
-    onPlace: function(x,y,z) {
+    place: function(x,y,z,args) {
+      Entity.place.call(this,x,y,z,args);
       let c = coord(x,y,z);
       let f = HTomb.World.features[c];
       if (f) {
+        console.log(this);
+        console.log(f);
         throw new Error("unhandled feature conflict!");
       }
-      HTomb.World.features[c] = this.entity;
+      HTomb.World.features[c] = this;
     },
-    onRemove: function() {
-      let c = coord(this.entity.x,this.entity.y,this.entity.z);
+    remove: function(args) {
+      let c = coord(this.x,this.y,this.z);
       if (HTomb.World.features[c]) {
         delete HTomb.World.features[c];
       }
+      Entity.remove.call(this,args);
     },
     dismantle: function(optionalTask) {
       if (this.integrity===null) {
@@ -907,9 +695,9 @@ HTomb = (function(HTomb) {
     },
     harvest: function() {
       if (this.yields!==null) {
-        var x = this.entity.x;
-        var y = this.entity.y;
-        var z = this.entity.z;
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
         for (var template in this.yields) {
           var n = HTomb.Utils.diceUntil(2,2);
           if (this.yields[template].nozero) {
@@ -917,17 +705,13 @@ HTomb = (function(HTomb) {
           }
           for (var i=0; i<n; i++) {
             var thing = HTomb.Things[template]().place(x,y,z);
-            thing.item.setOwner(HTomb.Player);
+            thing.setOwner(HTomb.Player);
           }
         }
       }
-      this.entity.destroy();
+      this.destroy();
     }
   });
-
-  HTomb.Things.defineByProxy("Creature","Entity");
-  HTomb.Things.defineByProxy("Item","Entity");
-  HTomb.Things.defineByProxy("Feature","Entity");
 
 return HTomb;
 })(HTomb);

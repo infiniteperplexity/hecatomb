@@ -177,8 +177,8 @@ HTomb = (function(HTomb) {
     while(z.length<3) {
       z = "0"+z;
     }
-    while(day.length<5) {
-      day = " "+day;
+    while(day.length<4) {
+      day = "0"+day;
     }
     while(hour.length<2) {
       hour = "0"+hour;
@@ -188,10 +188,10 @@ HTomb = (function(HTomb) {
     }
     let txt = "X:"+x+" Y:"+y+" Z:"+z+" "+HTomb.Time.dailyCycle.getPhase().symbol+day+":"+hour+":"+minute;
     if (p.caster) {
-      txt = "Soul: " + HTomb.Player.player.delegate.caster.soul + "/" + p.caster.maxsoul + " " + txt;
+      txt = "Entropy:" + HTomb.Player.player.delegate.caster.entropy + "/" + p.caster.maxEntropy + " " + txt;
     }
     if (HTomb.Time.isPaused()===true || HTomb.GUI.autopause===true) {
-      txt = txt + " %c{yellow}Paused";
+      txt = txt + " %c{yellow}Pause";
     }
     scrollDisplay.drawText(scroll.x0, scroll.y0, txt);
   };

@@ -8,8 +8,8 @@ HTomb = (function(HTomb) {
     getCost: function() {
       return 10;
     },
-    spendsoul: function() {
-      this.caster.soul-=this.getCost();
+    spendEntropy: function() {
+      this.caster.entropy-=this.getCost();
     },
   });
 
@@ -55,7 +55,7 @@ HTomb = (function(HTomb) {
         let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
         if (cr) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-          that.spendsoul();
+          that.spendEntropy();
           //HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Utils.merge(HTomb.Particles.SpellCast,HTomb.Particles.Acid,{alwaysVisible: true}));
           //HTomb.Particles.addEmitter(x,y,z,HTomb.Utils.merge(HTomb.Particles.SpellTarget,HTomb.Particles.Acid,{alwaysVisible: true}));
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.Acid,{alwaysVisible: true});
@@ -122,7 +122,7 @@ HTomb = (function(HTomb) {
               HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
               let corpse = items.takeOne("Corpse");
               let sourceCreature = corpse.sourceCreature;
-              that.spendsoul();
+              that.spendEntropy();
               corpse.despawn();
               if (sourceCreature) {
                 zombie = HTomb.Things.Zombie({sourceCreature: sourceCreature});
@@ -146,7 +146,7 @@ HTomb = (function(HTomb) {
               HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z-1});
               let corpse = items.takeOne("Corpse");
               let sourceCreature = corpse.sourceCreature;
-              that.spendsoul();
+              that.spendEntropy();
               corpse.despawn();
               if (HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile) {
                 HTomb.World.tiles[z-1][x][y]=HTomb.Tiles.UpSlopeTile;

@@ -1,6 +1,8 @@
 HTomb = (function(HTomb) {
   "use strict";
 
+  let Item = HTomb.Things.templates.Item;
+
   let mineral = {
     mine: function(x,y,z,owner) {
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
@@ -8,7 +10,7 @@ HTomb = (function(HTomb) {
       let base = HTomb.Types.templates[this.base];
       let ore = HTomb.Things[base.item]();
       ore.place(x,y,z);
-      ore.item.setOwner(owner);
+      ore.setOwner(owner);
 
     }
   }
@@ -33,7 +35,7 @@ HTomb = (function(HTomb) {
         solid: true
       });
 
-      HTomb.Things.defineItem({
+     Item.extend({
         template: this.item,
         name: args.name+((args.metallic) ? " ore" : ""),
         plural: (args.metallic) ? true : false,

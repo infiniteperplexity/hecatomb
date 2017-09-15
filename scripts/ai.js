@@ -5,6 +5,8 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var coord = HTomb.Utils.coord;
 
+  let Behavior = HTomb.Things.templates.Behavior;
+  
   HTomb.Types.define({
     template: "Routine",
     name: "routine",
@@ -61,7 +63,7 @@ HTomb = (function(HTomb) {
             var items = task.assigner.master.ownedItems.filter(function(v) {
             //var items = HTomb.Utils.findItems(function(v) {
               //if (v.item.isOwned()!==true || v.item.isOnGround()!==true) {
-              if (v.item.isOnGround()!==true) {
+              if (v.isOnGround()!==true) {
                 return false;
               } else if (v.template===ing) {
                 if (HTomb.Tiles.isReachableFrom(v.x,v.y,v.z,cr.x,cr.y,cr.z,{
@@ -301,7 +303,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineBehavior({
+  Behavior.extend({
     template: "AI",
     name: "ai",
     // unimplemented

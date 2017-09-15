@@ -1,7 +1,10 @@
 HTomb = (function(HTomb) {
   "use strict";
 
-  HTomb.Things.defineItem({
+  let Feature = HTomb.Things.templates.Feature;
+  let Item = HTomb.Things.templates.Item;
+
+  Item.extend({
     template: "Seed",
     name: "seed",
     symbol: "\u2026",
@@ -10,7 +13,7 @@ HTomb = (function(HTomb) {
     maxn: 10,
     tags: ["Seeds"]
   });
-  HTomb.Things.defineItem({
+  Item.extend({
     template: "Herb",
     name: "herb",
     symbol: "\u273F",
@@ -19,7 +22,7 @@ HTomb = (function(HTomb) {
     maxn: 10,
     tags: ["Herbs"]
   });
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Sprout",
     name: "sprout",
     symbol: "\u0662",
@@ -50,7 +53,7 @@ HTomb = (function(HTomb) {
       this.ripen();
     }
   });
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Plant",
     name: "plant",
     base: null,
@@ -93,10 +96,10 @@ HTomb.Types.define({
         }
       }
     }
-    HTomb.Things.defineItem(args.Seed);
-    HTomb.Things.defineFeature(args.Sprout);
-    HTomb.Things.defineFeature(args.Plant);
-    HTomb.Things.defineItem(args.Herb);
+    Item.extend(args.Seed);
+    Feature.extend(args.Sprout);
+    Feature.extend(args.Plant);
+    Item.extend(args.Herb);
   }
 });
 

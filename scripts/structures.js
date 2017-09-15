@@ -4,22 +4,25 @@ HTomb = (function(HTomb) {
 
   // Might like to have animations
 
-  HTomb.Things.defineBehavior({
+  let Entity = HTomb.Things.templates.Entity;
+  let Task = HTomb.Things.templates.Task;
+  let Behavior = HTomb.Things.templates.Behavior;
+
+  let Structure = Entity.extend({
     template: "Structure",
     name: "structure",
     owner: null,
-    height: null,
-    width: null,
+    height: 3,
+    width: 3,
     x: null,
     y: null,
     z: null,
+    placed: false,
     squares: [],
     features: [],
     symbols: [],
     fgs: [],
-    options: [],
     ingredients: [],
-    cursor: -1,
     setSymbol: function(i,sym) {
       this.features[i].symbol = sym;
     },
@@ -36,23 +39,28 @@ HTomb = (function(HTomb) {
         }
         HTomb.Things.templates[this.template].ingredients = ings;
       }
-      HTomb.Things.templates.Behavior.onDefine.call(this,args);
-      HTomb.Things.defineFeature({template: args.template+"Feature", name: args.name, bg: args.bg});
+      HTomb.Things.templates.Feature.extend({template: args.template+"Feature", name: args.name, bg: args.bg});
     },
-    onCreate: function() {
+    spawn: function(args) {
+      Entity.spawn.call(this,args);
       this.features = [];
       this.options = HTomb.Utils.copy(this.options);
       return this;
     },
-    onPlace: function() {
-      this.owner.master.structures.push(this.entity);
-      if (this.onTurnBegin) {
-        HTomb.Events.subscribe(this,"TurnBegin");
-      }
+    place: function(x,y,z,args) {
+      Entity.place.call(this,x,y,z,args);
+      this.owner.master.structures.push(this);
+      this.placed = true;
+      return this;
     },
-    onRemove: function() {
-      this.owner.master.structures.splice(this.owner.master.structures.indexOf(this.entity),1);
+    isPlaced: function() {
+      return this.placed;
+    },
+    remove: function() {
+      this.owner.master.structures.splice(this.owner.master.structures.indexOf(this),1);
       HTomb.Events.unsubscribeAll(this);
+      this.placed = false;
+      Entity.remove.call(this);
     },
     highlight: function(bg) {
       for (let i=0; i<this.features.length; i++) {
@@ -67,83 +75,33 @@ HTomb = (function(HTomb) {
       }
     },
     headerText: function() {
-      return "%c{yellow}Structure: "+this.entity.describe({capitalized: true, atCoordinates: true})+".";
+      return 
     },
-    detailsText: function() {
-      let txt = this.commandsText();
-      txt.concat(this.optionsText());
-      return txt;
-    },
-    commandsText: function() {
+    structureText: function() {
       let txt = [
         "%c{orange}**Esc: Done.**",
         "Wait: NumPad 5 / Control+Space.",
         "Click / Space: Select.",
         "Enter: Toggle Pause.",
         " ",
-        this.headerText(),
-        "a-z: Toggle option.",
-        "Tab: Next structure.",
-        " "
+        "%c{yellow}Structure: "+this.describe({capitalized: true, atCoordinates: true})+".",
       ];
-      txt = txt.concat(this.optionsText());
-      return txt;
-    },
-    updateOptions: function() {
-
-    },
-    optionsHeading: function() {
-
-    },
-    noOptionsText: function() {
-      return "(No options.)";
-    },
-    optionsText: function() {
-      this.updateOptions();
-      if (this.options.length===0) {
-        return this.noOptionsText();
+      if (this.behaviors) {
+        for (let behavior of this.behaviors) {
+          if (behavior.commandsText) {
+            txt = txt.concat(behavior.commandsText());
+          }
+        }
       }
-      let txt = [this.optionsHeading()];
-      let alphabet = "abcdefghijklmnopqrstuvwxyz";
-      for (let i=0; i<this.options.length; i++) {
-        let opt = this.options[i];
-        let s = "";
-        if (opt.active) {
-          s = "%c{white}";
-        } else {
-          s = "%c{gray}";
+      txt = txt.concat(["Tab: Next structure."," "]);
+      if (this.behaviors) {
+        for (let behavior of this.behaviors) {
+          if (behavior.detailsText) {
+            txt = txt.concat(behavior.detailsText());
+          }
         }
-        s+=alphabet[i];
-        s+=") ";
-        if (opt.selected) {
-          s += "[X] ";
-        } else {
-          s += "[ ] ";
-        }
-        s+=opt.text;
-        s+=".";
-        txt.push(s);
       }
       return txt;
-    },
-    choiceCommand: function(i) {
-      if (this.options[i]!==undefined) {
-        this.options[i].selected = !this.options[i].selected;
-      }
-    },
-    upCommand: function() {
-    },
-    downCommand: function() {
-    },
-    leftCommand: function() {
-    },
-    rightCommand: function() {
-    },
-    moreCommand: function() {
-    },
-    lessCommand: function() {
-    },
-    cancelCommand: function() {
     },
     totalIngredients: function() {
       let ings = {};
@@ -188,29 +146,44 @@ HTomb = (function(HTomb) {
       return ings;
     }
   });
+  // Add commands with similar behavior dynamically
+  for (let command of ["up","down","left","right","more","less","cancel","choice"]) {
+    Structure[command+"Command"] = function(args) {
+      if (this.behaviors) {
+        for (let behavior of this.behaviors) {
+          if (behavior[command+"Command"]) {
+            behavior[command+"Command"](args);
+          }
+        }
+      }
+    };
+  }
 
-  HTomb.Things.defineStructure({
+  Behavior.extend({
     template: "Workshop",
+    name: "workshop",
     makes: [],
     queue: null,
     task: null,
-    height: 3,
-    width: 3,
-    onPlace: function(x,y,z) {
-      HTomb.Things.templates.Structure.onPlace.call(this,x,y,z);
+    cursor: -1,
+    onPlace: function(x,y,z,args) {
       this.queue = [];
+      HTomb.Events.subscribe(this, "TurnBegin");
     },
     onRemove: function() {
-      HTomb.Things.templates.Structure.onRemove.call(this);
       for (let i=0; i<this.queue.length; i++) {
         this.task.cancel();
       }
+      HTomb.Events.unsubscribeAll(this);
     },
     choiceCommand: function(i) {
       if (this.makes.length<=i) {
         return;
       }
       this.queue.splice(this.cursor+1,0,[this.makes[i],"finite",1]);
+      console.log(i);
+      console.log(this.makes);
+      console.log(this.makes[i]);
       if (this.task===null) {
         this.nextGood();
       }
@@ -259,12 +232,12 @@ HTomb = (function(HTomb) {
     moreCommand: function() {
       let i = this.cursor;
       if (i===-1 && this.task) {
-        if (this.queue[0] && this.queue[0][0]===this.task.task.makes) {
+        if (this.queue[0] && this.queue[0][0]===this.task.makes) {
           if (this.queue[0][1]!=="infinite") {
             this.queue[0][2]+=1;
           }
         } else {
-          this.queue.splice(this.cursor+1,0,[this.task.task.makes,"finite",1]);
+          this.queue.splice(this.cursor+1,0,[this.task.makes,"finite",1]);
         }
         return;
       } else if (i===-1 || this.queue.length===0) {
@@ -297,7 +270,7 @@ HTomb = (function(HTomb) {
     cancelCommand: function() {
       if (this.cursor===-1) {
         if (this.task) {
-          this.task.task.cancel();
+          this.task.cancel();
         }
       } else if (this.queue.length>0 && this.cursor>=0) {
         this.queue.splice(this.cursor,1);
@@ -317,7 +290,7 @@ HTomb = (function(HTomb) {
     nextGood: function() {
       if (this.queue.length===0) {
         return;
-      } else if (HTomb.World.tasks[HTomb.Utils.coord(this.x,this.y,this.z)]) {
+      } else if (HTomb.World.tasks[HTomb.Utils.coord(this.entity.x,this.entity.y,this.entity.z)]) {
         HTomb.GUI.pushMessage("Workshop tried to create new task but there was already a zone.");
         return;
       }
@@ -326,18 +299,18 @@ HTomb = (function(HTomb) {
       if (HTomb.Debug.noingredients) {
         ings = {};
       }
-      if (this.owner.master.ownsAllIngredients(ings)!==true) {
+      if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
         this.task = null;
         this.queue.push(this.queue.shift());
         return;
       }
-      let task = HTomb.Things.templates.ProduceTask.designateTile(this.x,this.y,this.z,this.owner);
+      let task = HTomb.Things.templates.ProduceTask.designateTile(this.entity.x,this.entity.y,this.entity.z,this.entity.owner);
       this.task = task;
-      task.task.makes = this.queue[0][0];
-      task.task.workshop = this;
-      HTomb.GUI.pushMessage("Next good is "+HTomb.Things.templates[task.task.makes].describe({article: "indefinite"}));
-      task.name = "produce "+HTomb.Things.templates[task.task.makes].name;
-      task.task.ingredients = ings;
+      task.makes = this.queue[0][0];
+      task.workshop = this;
+      HTomb.GUI.pushMessage("Next good is "+HTomb.Things.templates[task.makes].describe({article: "indefinite"}));
+      task.name = "produce "+HTomb.Things.templates[task.makes].name;
+      task.ingredients = ings;
       if (this.queue[0][1]==="finite") {
         this.queue[0][2]-=1;
         if (this.queue[0][2]<=0) {
@@ -354,26 +327,20 @@ HTomb = (function(HTomb) {
         // except maybe check to see if there are enough materials???
       }
     },
-    detailsText: function() {
-      if (this.cursor>=this.queue.length) {
-        this.cursor = this.queue.length-1;
-      }
-      let txt = [
-        "%c{orange}**Esc: Done.**",
-        "Wait: NumPad 5 / Control+Space.",
-        "Click / Space: Select.",
-        "Enter: Toggle Pause.",
-        " ",
-        "%c{yellow}Workshop: "+this.describe({capitalized: true, atCoordinates: true})+".",
+    commandsText: function() {
+      return [
         "Up/Down: Traverse queue.",
         "Left/Right: Alter repeat.",
         "[/]: Alter count.",
         "a-z: Insert good below the >.",
-        "Backspace/Delete: Remove good.",
-        "Tab: Next structure.",
-        " ",
-        "Goods:"
+        "Backspace/Delete: Remove good."
       ];
+    },
+    detailsText: function() {
+      if (this.cursor>=this.queue.length) {
+        this.cursor = this.queue.length-1;
+      }
+      let txt = ["Goods:"];
       let alphabet = 'abcdefghijklmnopqrstuvwxyz';
       for (let i=0; i<this.makes.length; i++) {
         let t = HTomb.Things.templates[this.makes[i]];
@@ -392,7 +359,7 @@ HTomb = (function(HTomb) {
       txt.push("Production Queue:");
       let startQueue = txt.length;
       if (this.task) {
-        let s = "@ " + HTomb.Things.templates[this.task.task.makes].describe({article: "indefinite"});
+        let s = "@ " + HTomb.Things.templates[this.task.makes].describe({article: "indefinite"});
         if (this.task.assignee) {
           s+=": (active: "+this.task.assignee.describe({article: "indefinite"})+")";
         } else {
@@ -428,7 +395,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Things.defineWorkshop({
+  Structure.extend({
     template: "Carpenter",
     name: "carpenter",
     symbols: ["\u25AE","/","\u2699","\u2261","\u25AA",".","\u2692",".","\u25A7"],
@@ -445,45 +412,48 @@ HTomb = (function(HTomb) {
        {},
        {WoodPlank: 1}
     ],
-    makes: [
-      "WorkAxe",
-      "DoorItem",
-      "TorchItem"
-    ]
+    Behaviors: {
+      Workshop: {
+        makes: [
+          "WorkAxe",
+          "DoorItem",
+          "TorchItem"
+        ]
+      }
+    }
   });
 
-  HTomb.Things.defineStructure({
+  Behavior.extend({
     template: "Storage",
-    height: 3,
-    width: 3,
     dormant: 0,
     dormancy: 10,
     tasks: null,
-    stores: function(item) {return false;},
-    onCreate: function() {
+    stores: [],
+    onPlace: function() {
+      HTomb.Events.subscribe(this,"TurnBegin");
+    },
+    onRemove: function() {
+      HTomb.Events.unsubscribeAll(this);
+    },
+    onAdd: function() {
       this.tasks = [];
-      for (let i=0; i<this.width*this.height; i++) {
+      for (let i=0; i<this.entity.width*this.entity.height; i++) {
         this.tasks.push(null);
       }
       return this;
     },
     detailsText: function() {
-      let txt = [
-        "%c{orange}**Esc: Done.**",
-        "%c{yellow}Storage: "+this.describe({capitalized: true, atCoordinates: true})+".",
-        " ",
-        "Contents:"
-      ];
+      let txt = ["Contents:"];
       let totalItems = {};
-      for (let i=0; i<this.squares.length; i++) {
-        let s = this.squares[i];
+      for (let i=0; i<this.entity.squares.length; i++) {
+        let s = this.entity.squares[i];
         let items = HTomb.World.items[coord(s[0],s[1],s[2])];
         if (items) {
           items = items.items;
           for (let j=0; j<items.length; j++) {
             let item = items[j];
             totalItems[item.template] = totalItems[item.template] || 0;
-            totalItems[item.template] += item.item.n;
+            totalItems[item.template] += item.n;
           }
         }
       }
@@ -492,10 +462,8 @@ HTomb = (function(HTomb) {
         let line;
         if (n===1) {
           line = HTomb.Things.templates[key].describe({article: "indefinite"});
-          console.log(line);
         } else {
           line = n + " " + HTomb.Things.templates[key].describe({plural: "true"});
-          console.log(line);
         }
         txt.push(line);
       }
@@ -508,7 +476,7 @@ HTomb = (function(HTomb) {
         return;
       }
       this.dormant = this.dormancy;
-      let items = this.owner.master.ownedItems;
+      let items = this.entity.owner.master.ownedItems;
       for (let i=0; i<items.length; i++) {
         //if ever we run out of task space, break the loop
         if (this.tasks.indexOf(null)===-1) {
@@ -516,13 +484,13 @@ HTomb = (function(HTomb) {
         }
         let item = items[i];
         let f = HTomb.World.features[coord(item.x,item.y,item.z)];
-        if (!item.item.isOnGround()) {
+        if (!item.isOnGround()) {
           continue;
-        } else if (this.stores(item)===false) {
+        } else if (this.stores.indexOf(item.template)===-1) {
           continue;
         } else if (HTomb.World.tasks[coord(item.x,item.y,item.z)]!==undefined) {
           continue;
-        } else if (HTomb.Tiles.isReachableFrom(this.x, this.y, this.z, item.x, item.y, item.z)===false) {
+        } else if (HTomb.Tiles.isReachableFrom(this.entity.x, this.entity.y, this.entity.z, item.x, item.y, item.z)===false) {
           continue;
         } else if (f && f.structure && f.structure.template===this.entity.template) {
           continue;
@@ -534,22 +502,22 @@ HTomb = (function(HTomb) {
             }
           }
           HTomb.Utils.shuffle(slots);
-          let feat = this.features[slots[0]];
+          let feat = this.entity.features[slots[0]];
           let z = HTomb.Things.HaulTask({
-             assigner: this.owner,
+             assigner: this.entity.owner,
              name: "haul " + item.describe()
            });
           z.place(item.x,item.y,item.z);
-          z.task.item = item;
-          z.task.storage = this;
-          z.task.feature = feat;
+          z.item = item;
+          z.storage = this;
+          z.feature = feat;
           this.tasks[slots[0]] = z;
         }
       }
     }
   });
 
-  HTomb.Things.defineTask({
+  Task.extend({
     template: "HaulTask",
     name: "haul",
     bg: "#773366",
@@ -567,13 +535,13 @@ HTomb = (function(HTomb) {
       }
     },
     canAssign: function(cr) {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       // should this check whether the item is still here?
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
         searcher: cr,
-        searchee: this.entity,
+        searchee: this,
         searchTimeout: 10
       }) && this.item.x===x && this.item.y===y && this.item.z===z) {
         return true;
@@ -587,8 +555,8 @@ HTomb = (function(HTomb) {
       let feature = this.feature;
       if (cr.inventory.items.items.indexOf(this.item)!==-1) {
         cr.ai.target = feature;
-        this.entity.place(feature.x, feature.y, feature.z);
-      } else if (item.item.isOnGround())  {
+        this.place(feature.x, feature.y, feature.z);
+      } else if (item.isOnGround())  {
         cr.ai.target = item;
       } else {
         this.cancel();
@@ -599,12 +567,12 @@ HTomb = (function(HTomb) {
       if (t.x===cr.x && t.y===cr.y && t.z===cr.z) {
         if (t===feature) {
           cr.inventory.drop(this.item);
-          this.completeWork(this.assignee);
+          this.complete(this.assignee);
           cr.ai.acted = true;
           return;
         } else {
           // move it to the building;
-          this.entity.place(feature.x, feature.y, feature.z);
+          this.place(feature.x, feature.y, feature.z);
           cr.inventory.pickup(item);
           cr.ai.acted = true;
           return;
@@ -619,13 +587,12 @@ HTomb = (function(HTomb) {
       cr.ai.acted = true;
     },
     onDespawn: function() {
-      HTomb.Things.templates.Task.onDespawn.call(this);
       let tasks = this.storage.tasks;
-      tasks.splice(tasks.indexOf[this.entity],1,null);
+      tasks.splice(tasks.indexOf[this],1,null);
     }
   });
 
-  HTomb.Things.defineStorage({
+  Structure.extend({
     template: "Stockpile",
     name: "stockpile",
     bg: "#444455",
@@ -642,16 +609,14 @@ HTomb = (function(HTomb) {
       {},
       {Rock: 1}
     ],
-    stores: function(item) {
-      if (item.template==="WoodPlank" || item.template==="Rock") {
-        return true;
-      } else {
-        return false;
+    Behaviors: {
+      Storage: {
+        stores: ["WoodPlank","Rock"]
       }
     }
   });
 
-  HTomb.Things.defineTask({
+  Task.extend({
     template: "ProduceTask",
     name: "produce",
     bg: "#336699",
@@ -661,15 +626,15 @@ HTomb = (function(HTomb) {
     started: false,
     dormancy: 4,
     canAssign: function(cr) {
-      if (this.entity.isPlaced()===false) {
+      if (this.isPlaced()===false) {
         return false;
       }
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
         searcher: cr,
-        searchee: this.entity,
+        searchee: this,
         searchTimeout: 10
       })) {
         // cancel this task if you can't find the ingredients
@@ -687,55 +652,51 @@ HTomb = (function(HTomb) {
     validTile: function(x,y,z) {
       return true;
     },
-    workBegun: function() {
+    begun: function() {
       return this.started;
     },
-    beginWork: function() {
+    begin: function() {
       if (!HTomb.Debug.noingredients) {
         let test = this.assignee.inventory.items.takeItems(this.ingredients);
       }
       this.started = true;
       this.labor = HTomb.Things.templates[this.makes].labor || this.labor;
-      HTomb.GUI.pushMessage(this.beginMessage());
+      HTomb.GUI.pushMessage(this.blurb());
     },
-    work: function(x,y,z) {
+    workOnTask: function(x,y,z) {
       let assignee = this.assignee;
-      if (this.workBegun()!==true) {
-        this.beginWork(this.assignee);
+      if (this.begun()!==true) {
+        this.begin(this.assignee);
       }
-      let labor = assignee.worker.labor;
-      if (assignee.equipper && assignee.equipper.slots.MainHand && assignee.equipper.slots.MainHand.equipment.labor>labor) {
-        labor = assignee.equipper.slots.MainHand.equipment.labor;
-      }
+      let labor = assignee.worker.getLabor();
       this.labor-=labor;
       this.assignee.ai.acted = true;
       this.assignee.ai.actionPoints-=16;
       if (this.labor<=0) {
-        this.completeWork(assignee);
+        this.finish();
+        this.complete();
       }
     },
-    completeWork: function() {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+    finish: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       let item = HTomb.Things[this.makes]().place(x,y,z);
-      item.item.setOwner(HTomb.Player);
+      item.setOwner(HTomb.Player);
       HTomb.Events.publish({type: "Complete", task: this});
       this.workshop.occupied = null;
       HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes making " + HTomb.Things.templates[this.makes].describe({article: "indefinite"}));
-      this.entity.despawn();
     },
     onDespawn: function() {
-      HTomb.Things.templates.Task.onDespawn.call(this);
       this.workshop.task = null;
       this.workshop.nextGood();
     }
   });
 
-  HTomb.Things.defineTask({
+  Task.extend({
     template: "ConstructTask",
     name: "construct",
-    longName: "create a structure",
+    description: "create a structure",
     bg: "#553300",
     makes: null,
     structures: ["Carpenter","Stockpile","BlackMarket","Sanctum"],
@@ -747,7 +708,7 @@ HTomb = (function(HTomb) {
         return false;
       }
       let f = HTomb.World.features[coord(x,y,z)];
-      if (f===undefined || (f.template==="IncompleteFeature" && f.makes.template===this.makes)) {
+      if (f===undefined || (f.template==="IncompleteFeature" && f.makes===this.makes)) {
         return true;
       }
       else {
@@ -778,7 +739,7 @@ HTomb = (function(HTomb) {
                 failed = true;
               }
             // an incomplete version of the same workshop
-          } else if (f && (f.template!=="IncompleteFeature" || !f.makes || f.makes.template!==structure.template+"Feature")) {
+          } else if (f && (f.template!=="IncompleteFeature" || !f.makes || f.makes!==structure.template+"Feature")) {
               failed = true;
             }
           }
@@ -791,11 +752,11 @@ HTomb = (function(HTomb) {
             w = struc;
           } else {
             w = HTomb.Things[structure.template]();
-            w.structure.owner = assigner;
-            w.structure.squares = squares;
-            w.structure.x = squares[mid][0];
-            w.structure.y = squares[mid][1];
-            w.structure.z = squares[mid][2];
+            w.owner = assigner;
+            w.squares = squares;
+            w.x = squares[mid][0];
+            w.y = squares[mid][1];
+            w.z = squares[mid][2];
           }
           for (let i=0; i<squares.length; i++) {
             let crd = squares[i];
@@ -803,21 +764,25 @@ HTomb = (function(HTomb) {
             if (HTomb.World.features[coord(crd[0],crd[1],crd[2])] && HTomb.World.features[coord(crd[0],crd[1],crd[2])].template===w.template+"Feature") {
               continue;
             }
-            this.makes = w.structure.template+"Feature";
+            this.makes = w.template+"Feature";
             let task = this.designateTile(crd[0],crd[1],crd[2],assigner);
             if (task) {
               //Bugs have occurred here...I may have fixed them...
-              task.task.structure = w;
-              task.task.makes = w.structure.template+"Feature";
-              if (w.structure.height!==null && w.structure.width!==null) {
+              task.structure = w;
+              task.makes = w.template+"Feature";
+              if (w.height!==null && w.width!==null) {
                 if (HTomb.Debug.noingredients) {
-                  task.task.ingredients = {};
+                  task.ingredients = {};
                 } else {
-                  task.task.ingredients = HTomb.Utils.clone(w.structure.ingredients[i]);
+                  if (w.ingredients[i]===undefined) {
+                    task.ingredients = {};
+                  } else {
+                    task.ingredients = HTomb.Utils.clone(w.ingredients[i]);
+                  }
                 }
               }
-              task.task.position = i;
-              task.name = task.name + " " + w.structure.name;
+              task.position = i;
+              task.name = task.name + " " + w.name;
             }
           }
         }
@@ -900,43 +865,44 @@ HTomb = (function(HTomb) {
       });
     },
     canAssign: function(cr) {
-      if (HTomb.Things.templates.Task.canAssign.call(this, cr)!==true) {
+      if (Task.canAssign.call(this, cr)!==true) {
         return false;
       }
       // more intuitive if ingredient-needing features are built first
-      let ings = this.structure.structure.neededIngredients();
+      let ings = this.structure.neededIngredients();
       if (HTomb.Utils.notEmpty(ings) && HTomb.Utils.notEmpty(this.ingredients)!==true) {
         return false;
       }
       return true;
     },
-    beginWork: function() {
-      HTomb.Things.templates.Task.beginWork.call(this);
+    begin: function() {
+      Task.begin.call(this);
       let i = this.position;
-      let f = HTomb.World.features[coord(this.entity.x, this.entity.y, this.entity.z)];
-      f.fg = this.structure.structure.fgs[i] || this.structure.fg;
-      f.makes.fg = this.structure.structure.fgs[i] || this.structure.fg;
-      f.makes.symbol = this.structure.structure.symbols[i] || this.structure.symbol;
-      HTomb.World.covers[this.entity.z][this.entity.x][this.entity.y] = HTomb.Covers.NoCover;
+      let f = HTomb.World.features[coord(this.x, this.y, this.z)];
+      f.fg = this.structure.fgs[i] || this.structure.fg;
+      HTomb.World.covers[this.z][this.x][this.y] = HTomb.Covers.NoCover;
     },
-    completeWork: function() {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+    finish: function() {
+      Task.finish.call(this);
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       let f = HTomb.World.features[coord(x,y,z)];
+      let p = this.position;
+      f.fg = this.structure.fgs[p] || this.structure.fg;
+      f.symbol = this.structure.symbols[p] || this.structure.symbol;
       f.structure = this.structure;
-      this.structure.structure.features[this.position] = f;
-      for (let i=0; i<this.structure.structure.squares.length; i++) {
-        if (!this.structure.structure.features[i]) {
+      this.structure.features[p] = f;
+      for (let i=0; i<this.structure.squares.length; i++) {
+        if (!this.structure.features[i]) {
           break;
         }
-        if (i===this.structure.structure.squares.length-1) {
+        if (i===this.structure.squares.length-1) {
           let w = this.structure;
-          w.place(w.structure.x, w.structure.y, w.structure.z);
+          w.place(w.x, w.y, w.z);
           HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes building " + w.describe({article: "indefinite", atCoordinates: true}) + ".");
         }
       }
-      HTomb.Things.templates.Task.completeWork.call(this);
     },
     designateBox: function(squares, options) {
       options = options || {};
@@ -946,31 +912,17 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineStructure({
+  Structure.extend({
     template: "BlackMarket",
     name: "black market",
-    height: 3,
-    width: 3,
     symbols: ["\u00A3",".",".",".","\u2696","$","\u00A2","\u20AA","\u00A4"],
     fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
     bg: "#555544"
   });
 
-  HTomb.Things.defineStructure({
-    template: "BlackMarket",
-    name: "black market",
-    height: 3,
-    width: 3,
-    symbols: ["\u00A3",".",".",".","\u2696","$","\u00A2","\u20AA","\u00A4"],
-    fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
-    bg: "#555544"
-  });
-
-  HTomb.Things.defineStructure({
+  Structure.extend({
     template: "Sanctum",
     name: "sanctum",
-    height: 3,
-    width: 3,
     symbols: ["\u2625",".","\u2AEF",".","\u2135",".","\u2AEF","\u2606","\u263F"],
     fgs: ["magenta",HTomb.Constants.FLOORFG,"cyan",HTomb.Constants.FLOORFG,"green",HTomb.Constants.FLOORFG,"yellow","red","orange"],
     bg: "#222244"

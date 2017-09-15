@@ -11,8 +11,8 @@ HTomb = (function(HTomb) {
 
   */
   HTomb.Tutorial = {
-    //enabled: true,
-    enabled: false,
+    enabled: true,
+    //enabled: false,
     active: 0,
     tutorials: [],
     templates: {},
@@ -495,7 +495,7 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}Your minion bursts forth from the ground!",
       " ",
-      "The word 'Paused' above the right-hand side of the message bar.  The game is currently auto-paused - one turn will pass for each action you take.  If you turn auto-pause off, turns will pass in realtime even if you take no actions.  You can press + or - to make time pass faster or slower.",
+      "The word 'Pause' above the right-hand side of the message bar.  The game is currently auto-paused - one turn will pass for each action you take.  If you turn auto-pause off, turns will pass in realtime even if you take no actions.  You can press + or - to make time pass faster or slower.",
       " ",
       "%c{cyan}%b{DarkRed}Press Enter / Return to turn off auto-pause, then wait for several turns to pass.",
       " ",
@@ -667,9 +667,9 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}This decaying wretch is but the beginning - soon, you will command an undead horde.",
       " ",
-      "Every zombie under your control raises the cost of the 'raise zombie' spell in soul points.  Your current soul points are listed above the left-hand side of the message bar.",
+      "Every zombie under your control raises the cost of the 'raise zombie' spell in entropy points.  Your current entropy points are listed above the left-hand side of the message bar.",
       " ",
-      "%c{cyan}%b{DarkRed}Wait (pass turns) until you have 15 soul points, then raise a second zombie and wait for it to emerge.  Press Z to cast a spell, press A to choose 'raise zombie', and then select a tombstone."
+      "%c{cyan}%b{DarkRed}Wait (pass turns) until you have 15 entropy points, then raise a second zombie and wait for it to emerge.  Press Z to cast a spell, press A to choose 'raise zombie', and then select a tombstone."
     ],
     listens: ["Cast"],
     skip: "WaitForSecondZombie",
@@ -711,7 +711,7 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}This decaying wretch is but the beginning - soon, you will command an undead horde.",
       " ",
-      "Every zombie under your control raises the cost of the 'raise zombie' spell in soul points.  Your current soul points are listed above the left-hand side of the message bar.",
+      "Every zombie under your control raises the cost of the 'raise zombie' spell in entropy points.  Your current entropy points are listed above the left-hand side of the message bar.",
       " ",
       "%c{cyan}%b{DarkRed}Wait (pass turns) until your zombie emerges."
     ],

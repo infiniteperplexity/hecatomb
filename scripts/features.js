@@ -5,7 +5,9 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var coord = HTomb.Utils.coord;
 
-  HTomb.Things.defineFeature({
+  let Feature = HTomb.Things.templates.Feature;
+
+  Feature.extend({
     template: "Tombstone",
     name: "tombstone",
     symbol: "\u2670",
@@ -32,10 +34,10 @@ HTomb = (function(HTomb) {
           }
           if (Math.random()<0.4) {
             var rock = HTomb.Things.Rock();
-            rock.item.n = 1;
+            rock.n = 1;
             rock.place(x1,y1,z);
             if (cause) {
-              rock.item.setOwner(cause);
+              rock.setOwner(cause);
             }
             //rock.item.setOwner(HTomb.Player);
           }
@@ -44,7 +46,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Tree",
     name: "tree",
     //symbol: "\u2663",
@@ -55,7 +57,7 @@ HTomb = (function(HTomb) {
     yields: {WoodPlank: {n: 1, nozero: true}}
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Shrub",
     name: "shrub",
     symbol: "\u2698",
@@ -63,7 +65,7 @@ HTomb = (function(HTomb) {
     randomColor: 15
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Seaweed",
     name: "seaweed",
     plural: true,
@@ -73,7 +75,7 @@ HTomb = (function(HTomb) {
     randomColor: 20
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Puddle",
     name: "puddle",
     symbol: "~",
@@ -81,7 +83,7 @@ HTomb = (function(HTomb) {
     randomColor: 20
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Throne",
     name: "throne",
     craftable: true,
@@ -91,7 +93,7 @@ HTomb = (function(HTomb) {
     ingredients: {GoldOre: 1}
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "ScryingGlass",
     craftable: true,
     name: "scrying glass",
@@ -100,7 +102,7 @@ HTomb = (function(HTomb) {
     ingredients: {Moonstone: 1}
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Pentagram",
     craftable: true,
     name: "pentagram",
@@ -109,7 +111,7 @@ HTomb = (function(HTomb) {
     ingredients: {Bloodstone: 1}
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Torch",
     name: "torch",
     craftable: true,
@@ -119,14 +121,14 @@ HTomb = (function(HTomb) {
     ingredients: {WoodPlank: 1}
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "FakeTorch",
     name: "torch",
     symbol: "\u2AEF",
     fg: "yellow"
   });
 
-  HTomb.Things.defineFeature({
+  Feature.extend({
     template: "Door",
     name: "door",
     locked: false,

@@ -21,11 +21,12 @@ HTomb = (function(HTomb) {
       HTomb.Things.templates.Thing.maxSpawnId = this.spawnId;
       HTomb.Things.templates.Thing.spawnIds[this.spawnId] = this;
     },
-    spawn: function() {
+    spawn: function(args) {
       // Add to the global things table
       HTomb.World.things.push(this);
+      this.acquireSpawnId();
       if (this.onSpawn) {
-        this.onSpawn();
+        this.onSpawn(args);
       }
     },
     isSpawned: function() {
@@ -59,8 +60,7 @@ HTomb = (function(HTomb) {
       options = options || {};
       options.name = this.name || "(nameless)";
       // behaviors can augment or alter the description via options
-      if (this.Behaviors) {
-        this.validateBehaviors();
+      if (this.behaviors) {
         let beh = this.behaviors;
         for (let i=0; i<beh.length; i++) {
           if (beh[i].onDescribe) {
@@ -150,14 +150,6 @@ HTomb = (function(HTomb) {
     //details: function() {
     //  return ["This is " + this.describe() + "."];
     //},
-    highlight: function(bg) {
-      this.highlightColor = bg;
-    },
-    unhighlight: function() {
-      if (this.highlightColor) {
-        delete this.highlightColor;
-      }
-    },
     extend: function(args) {
       let child = Object.create(this);
       child.parent = this.template;
@@ -165,10 +157,19 @@ HTomb = (function(HTomb) {
       HTomb.Things.templates[args.template] = child;
       HTomb.Things[args.template] = function(args2) {
         let o = Object.create(child);
+        // !!!should this be a deep merge instead of assign?
         o = Object.assign(o, args2);
         o.spawn();
+        if (o.onCreate) {
+          return o.onCreate(args2);
+        }
         return o;
       };
+      //!!!I feel like this is bad news but let's keep it for now...
+      //!!!it doesn't know how to climb the prototype chain
+      if (child.onDefine) {
+        child.onDefine(args);
+      }
       return child;
     }
   };
@@ -225,7 +226,7 @@ HTomb = (function(HTomb) {
     }
     // Do all "on spawn" tasks
     t.spawn();
-    t.acquireSpawnId();
+    //t.acquireSpawnId();
     if (t.onCreate) {
       return t.onCreate(args);
     }

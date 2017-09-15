@@ -4,6 +4,8 @@ HTomb = (function(HTomb) {
 
   // Might like to have animations
 
+  let Task = HTomb.Things.templates.Task;
+
   HTomb.Things.defineBehavior({
     template: "Structure",
     name: "structure",
@@ -20,6 +22,12 @@ HTomb = (function(HTomb) {
     options: [],
     ingredients: [],
     cursor: -1,
+    setSymbol: function(i,sym) {
+      this.features[i].symbol = sym;
+    },
+    setColor: function(i,fg) {
+      this.features[i].fg = fg;
+    },
     onDefine: function(args) {
       if ((args.ingredients===undefined || args.ingredients.length===0) && args.height!==null && args.width!==null) {
         let ings = [];
@@ -31,7 +39,7 @@ HTomb = (function(HTomb) {
         HTomb.Things.templates[this.template].ingredients = ings;
       }
       HTomb.Things.templates.Behavior.onDefine.call(this,args);
-      HTomb.Things.defineFeature({template: args.template+"Feature", name: args.name});
+      HTomb.Things.templates.Feature.extend({template: args.template+"Feature", name: args.name, bg: args.bg});
     },
     onCreate: function() {
       this.features = [];
@@ -141,6 +149,9 @@ HTomb = (function(HTomb) {
     },
     totalIngredients: function() {
       let ings = {};
+      if (HTomb.Debug.noingredients) {
+        return ings;
+      }
       for (let i=0; i<this.ingredients.length; i++) {
         let ingr = this.ingredients[i];
         for (let ing in ingr) {
@@ -155,6 +166,9 @@ HTomb = (function(HTomb) {
         return {};
       }
       let ings = {};
+      if (HTomb.Debug.noingredients) {
+        return {};
+      }
       for (let i=0; i<this.ingredients.length; i++) {
         if (this.features[i]) {
           continue;
@@ -311,6 +325,9 @@ HTomb = (function(HTomb) {
       }
       // this is a good place to check for ingredients
       let ings = HTomb.Utils.copy(HTomb.Things.templates[this.queue[0][0]].ingredients);
+      if (HTomb.Debug.noingredients) {
+        ings = {};
+      }
       if (this.owner.master.ownsAllIngredients(ings)!==true) {
         this.task = null;
         this.queue.push(this.queue.shift());
@@ -412,660 +429,252 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineStructure({
-    template: "Farm",
-    name: "farm",
-    symbol: '"',
-    fg: "#666622",
-    onDefine: function(args) {
-      HTomb.Things.templates.Structure.onDefine.call(this,args);
-      HTomb.Things.templates.FarmFeature.bg = "#443322";
-    },
-    onPlace: function(x,y,z) {
-      HTomb.Things.templates.Structure.onPlace.call(this,x,y,z);
-      let crops = HTomb.Types.templates.Crop.types;
-      for (let i=0; i<crops.length; i++) {
-        this.options.push({
-          text: crops[i].template,
-          selected: false,
-          active: false
-        });
-      }
-    },
-    allSeeds: function() {
-      let findSeeds = this.owner.master.ownedItems.filter(function(item) {
-        if (item.parent==="Seed" && item.item.isOnGround()) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      let allSeeds = [];
-      for (let i=0; i<findSeeds.length;i++) {
-        let t = findSeeds[i].template;
-        if (allSeeds.indexOf(t)===-1) {
-          allSeeds.push(t);
-        }
-      }
-      return allSeeds;
-    },
-    optionsHeading: function() {
-      return "Crops permitted:";
-    },
-    noOptionsText: function() {
-      return "(No crops defined?)";
-    },
-    updateOptions: function() {
-      let allSeeds = this.allSeeds();
-      for (let i=0; i<this.options.length; i++) {
-        let opt = this.options[i];
-        if (allSeeds.indexOf(opt.text+"Seed")===-1) {
-          opt.active = false;
-        } else {
-          opt.active = true;
-        }
-      }
-    },
-    onTurnBegin: function() {
-      let seeds = [];
-      let all = this.allSeeds();
-      for (let i=0; i<this.options.length; i++) {
-        let o = this.options[i];
-        if (o.selected && all.indexOf(o.text+"Seed")!==-1) {
-          seeds.push(o.text);
-        }
-      }
-      for (let i=0; i<this.features.length; i++) {
-        let f = this.features[i];
-        let task = HTomb.World.tasks[coord(f.x,f.y,f.z)];
-        if (!task && !f.growing && seeds.length>0) {
-          HTomb.Utils.shuffle(seeds);
-          let seed = seeds[0];
-          let t = HTomb.Things.FarmTask({makes: seed, assigner: this.owner}).place(f.x,f.y,f.z,this.owner);
-          t.task.ingredients = {};
-          t.task.ingredients[seed+"Seed"] = 1;
-        } else if (f.growing) {
-          if (f.growing.parent==="Sprout") {
-            f.growing.ripen();
-          } else if (!task && f.growing.parent==="Plant") {
-            let t = HTomb.Things.HarvestFarmTask({assigner: this.owner}).place(f.x,f.y,f.z,this.owner);
-          }
-        } else if (task && !f.growing && seeds.length>0 && !task.assignee) {
-          if (seeds.indexOf(task.task.makes)===-1) {
-            HTomb.Utils.shuffle(seeds);
-            let seed = seeds[0];
-            task.task.makes = seed;
-            task.task.ingredients = {};
-            task.task.ingredients[seed+"Seed"] = 1;
-          }
-        }
-      }
-    }
-  });
-  HTomb.Things.defineTask({
-    template: "FarmTask",
-    name: "farm",
-    bg: "#444411",
-    makes: null,
-    validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      let f = HTomb.World.features[coord(x,y,z)];
-      if (f && f.template==="FarmFeature" && !f.growing && (!f.makes || f.makes.template===this.makes+"Sprout")) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    designateTile: function(x,y,z,assigner) {
-      let t = HTomb.Things.templates.Task.designateTile(x,y,z,assigner);
-      return t;
-    },
-    workBegun: function() {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
-      let f = HTomb.World.features[coord(x,y,z)];
-      if (f && f.template==="FarmFeature" && f.makes && f.makes.template===this.makes+"Sprout") {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    beginWork: function() {
-      // could handle auto-dismantling here...
-      // will this work?  or should we check for ingredients before taking?
-      if (this.assignee.inventory.items.hasAll(this.ingredients)!==true) {
-        throw new Error("Shoudl never reach this due to AI");
-      }
-      HTomb.GUI.pushMessage(this.beginMessage());
-      let items = this.assignee.inventory.items.takeItems(this.ingredients);
-      for (let i=0; i<items.length; i++) {
-        items[i].despawn();
-      }
-      //let's avoid the incompleteFeature entirely?
-      let c = HTomb.Things[this.makes+"Sprout"]();
-      let f = HTomb.World.features[coord(this.entity.x,this.entity.y,this.entity.z)];
-      //c.inFarm = f;
-      if (f===undefined) {
-        console.log("What is going on here?");
-        console.log(this);
-      }
-      f.makes = c;
-      f.steps = -5;
-      f.symbol = c.incompleteSymbol;
-      f.fg = c.fg;
-      f.name = "farm: "+c.name;
-      c.inFarm = f;
-      this.assignee.ai.acted = true;
-      this.assignee.ai.actionPoints-=16;
-    },
-    work: function() {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
-      if (this.validTile(x,y,z)!==true) {
-        this.cancel();
-        return;
-      }
-      //do I want to make demolishing unowned features the default?
-      let f = HTomb.World.features[coord(x,y,z)];
-      // we could also handle the dismantling in "beginWork"...
-      // Somehow we manage to start this task without having the proper ingredients
-      if (this.workBegun()!==true) {
-        this.beginWork();
-      } else {
-        f.steps+=1;
-        this.assignee.ai.acted = true;
-        this.assignee.ai.actionPoints-=16;
-      }
-      if (f && f.steps>=0) {
-        f.growing = f.makes;
-        f.makes = null;
-        f.symbol = f.growing.symbol;
-        this.completeWork();
-      }
-    }
-  });
-
-  HTomb.Things.defineTask({
-    template: "HarvestFarmTask",
-    name: "harvest",
-    bg: "#445511",
-    validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      let f = HTomb.World.features[coord(x,y,z)]
-      if (f && f.growing && f.growing.parent==="Plant") {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    work: function(x,y,z) {
-      var f = HTomb.World.features[coord(x,y,z)];
-      if (f && f.growing && f.growing.parent==="Plant") {
-        if (f.feature.integrity===null) {
-          HTomb.GUI.pushMessage(this.beginMessage());
-          f.feature.integrity=5;
-        }
-        f.feature.integrity-=1;
-        this.assignee.ai.acted = true;
-        this.assignee.ai.actionPoints-=16;
-        if (f.feature.integrity<=0) {
-          if (f.growing.feature.yields!==null) {
-            for (let template in f.growing.feature.yields) {
-              var n = HTomb.Utils.diceUntil(2,2);
-              if (f.growing.feature.yields[template].nozero) {
-                n = Math.max(n,1);
-              }
-              for (var i=0; i<n; i++) {
-                var thing = HTomb.Things[template]().place(x,y,z);
-                thing.item.setOwner(this.assigner);}
-            }
-          }
-          f.growing.destroy();
-          f.growing = null;
-          this.completeWork();
-        }
-      }
-    }
-  });
 
   HTomb.Things.defineWorkshop({
     template: "Carpenter",
     name: "carpenter",
-    symbols: ["\u2692","\u2261","\u2692","\u2261","\u2699","\u2261","\u2692","\u2261","\u2692"],
-    fgs: ["#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922"],
-    ingredients: [
-      {WoodPlank: 1},
-      {},
-      {WoodPlank: 1},
-      {},
-      {Rock: 2},
-      {},
-      {WoodPlank: 1},
-      {},
-      {WoodPlank: 1}
+    symbols: ["\u25AE","/","\u2699","\u2261","\u25AA",".","\u2692",".","\u25A7"],
+    bg: "#665555",
+    fgs: ["#BB9922","#BB9922",HTomb.Constants.FLOORFG,"#BB9922","#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922"],
+     ingredients: [
+       {WoodPlank: 1},
+       {},
+       {WoodPlank: 1},
+       {},
+       {Rock: 2},
+       {},
+       {WoodPlank: 1},
+       {},
+       {WoodPlank: 1}
     ],
     makes: [
+      "WorkAxe",
       "DoorItem",
-      "TorchItem",
-      "ThroneItem"
+      "TorchItem"
     ]
   });
 
   HTomb.Things.defineStructure({
-    template: "Stockpile",
-    name: "stockpile",
-    symbol: "\u2261",
-    fg: HTomb.Constants.FLOORFG,
-    options: [
-      {text: "Minerals", selected: false, active: false},
-      {text: "Wood", selected: false, active: false},
-      {text: "Seeds", selected: false, active: false},
-      {text: "Herbs", selected: false, active: false},
-      {text: "Fixtures", selected: false, active: false}
-    ],
-    updateOptions: function() {
-      let items = this.owner.master.ownedItems;
-      let tags = [];
-      for (let i=0; i<items.length; i++) {
-        if (items[i].item.tags) {
-          for (let j=0; j<items[i].item.tags.length; j++) {
-            if (tags.indexOf(items[i].item.tags[j])===-1) {
-              tags.push(items[i].item.tags[j]);
-            }
-          }
-        }
+    template: "Storage",
+    height: 3,
+    width: 3,
+    dormant: 0,
+    dormancy: 10,
+    tasks: null,
+    stores: function(item) {return false;},
+    onCreate: function() {
+      this.tasks = [];
+      for (let i=0; i<this.width*this.height; i++) {
+        this.tasks.push(null);
       }
-      for (let o in this.options) {
-        if (tags.indexOf(this.options[o].text)===-1) {
-          this.options[o].active = false;
-        } else {
-          this.options[o].active = true;
-        }
-      }
-    },
-    optionsHeading: function() {
-      return "Store items:";
-    },
-    onTurnBegin: function() {
-      let types = [];
-      for (let o in this.options) {
-        if (this.options[o].selected===true) {
-          types.push(this.options[o].text);
-        }
-      }
-      if (types.length===0) {
-        return;
-      }
-      for (let i=0; i<this.features.length; i++) {
-        let f = this.features[i];
-        let z = HTomb.World.tasks[coord(f.x,f.y,f.z)];
-        if (z===undefined) {
-          z = HTomb.Things.StockpileTask({
-            assigner: this.owner,
-            allows: HTomb.Utils.copy(types)
-          });
-          z.place(f.x,f.y,f.z);
-        } else if (z.template==="StockpileTaskEntity") {
-          z.task.allows = HTomb.Utils.copy(types);
-        }
-      }
-    }
-  });
-  HTomb.Things.defineTask({
-    template: "StockpileTask",
-    name: "stockpile",
-    bg: "#555544",
-    allows: [],
-    validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    canAssign: function(cr) {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
-      if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
-        searcher: cr,
-        searchee: this.entity,
-        searchTimeout: 10
-      }) && this.getSomeValidItem(cr)) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    itemAllowed: function(item) {
-      for (let i=0; i<this.allows.length; i++) {
-        for (let j=0; j<item.item.tags.length; j++) {
-          if (this.allows[i]===item.item.tags[j]) {
-            return true;
-          }
-        }
-      }
-      return false;
-    },
-    getSomeValidItem: function(cr) {
-      // right now we ignore the creature argument
-      let pile = HTomb.World.items[coord(this.x,this.y,this.z)] || HTomb.Things.Container();
-      let that = this;
-      let items = this.assigner.master.ownedItems.filter(function(item) {
-        if (that.itemAllowed(item)!==true) {
-          return false;
-        } else if (pile.canFit(item)<1) {
-          return false;
-        } else if (item.item.isOnGround()!==true) {
-          return false;
-        }
-        let task = HTomb.World.tasks[coord(item.x,item.y,item.z)];
-        if (task && task.task.template==="StockpileTask") {
-          return false;
-        }
-        if (HTomb.Tiles.isReachableFrom(item.x, item.y, item.z, that.entity.x, that.entity.y, that.entity.z, {
-          searcher: cr,
-          searchee: item,
-          searchTimeout: 10
-        })) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      if (items.length>0) {
-        return HTomb.Path.closest(cr.x,cr.y,cr.z,items)[0];
-      } else {
-        return null;
-      }
-    },
-    ai: function() {
-      let cr = this.assignee;
-      // this could be either the task square or the item
-      let t = cr.ai.target;
-      if (cr.movement) {
-        var x = this.entity.x;
-        var y = this.entity.y;
-        var z = this.entity.z;
-        var path = HTomb.Path.aStar(cr.x,cr.y,cr.z,x,y,z,{
-          canPass: HTomb.Utils.bind(cr.movement,"canMove"),
-          searcher: cr,
-          searchee: t,
-          searchTimeout: 10
-        });
-        if (path===false) {
-          this.unassign();
-          cr.ai.walkRandom();
-        } else {
-          let carrying = false;
-          for (let j=0; j<cr.inventory.items.length; j++) {
-            let item = cr.inventory.items.expose(j);
-            if (this.itemAllowed(item)) {
-              carrying=true;
-              // if you're standing on the square and have a valid item, drop it
-              if (cr.x===x && cr.y===y && cr.z===z) {
-                cr.inventory.drop(item);
-                cr.ai.target = null;
-                this.unassign();
-                HTomb.Events.publish({type: "Complete", task: this});
-              } else {
-                // otherwise if you have a valid item
-                cr.ai.walkToward(x,y,z, {
-                  searcher: cr,
-                  searchee: item,
-                  searchTimeout: 10
-                });
-              }
-              break;
-            }
-          }
-          if (carrying===false) {
-            // if not carrying any valid item...hold on...shouldn't we keep a valid target if we already have one?
-            if (!t || !t.item || !this.itemAllowed(t) || !t.isPlaced()) {
-              cr.ai.target = this.getSomeValidItem(cr);
-            }
-            // should maybe use fetch with an option to avoid things in hoards?
-            if (cr.ai.target===null) {
-              this.unassign();
-              cr.ai.walkRandom();
-            } else if (cr.x===cr.ai.target.x && cr.y===cr.ai.target.y && cr.z===cr.ai.target.z) {
-              let pile = HTomb.World.items[coord(this.x,this.y,this.z)] || HTomb.Things.Container();
-              let item = cr.ai.target;
-              let n = Math.min(pile.canFit(item),item.item.n);
-              if (n===0) {
-                this.unassign();
-                cr.ai.walkRandom();
-              } else {
-                cr.inventory.pickupSome(item.template,n);
-                cr.ai.target = null;
-              }
-            } else {
-              cr.ai.walkToward(cr.ai.target.x,cr.ai.target.y,cr.ai.target.z, {
-                searcher: cr,
-                searchee: cr.ai.target,
-                searchTimeout: 10
-              });
-            }
-          }
-        }
-      }
-      cr.ai.acted = true;
-    }
-  });
-
-  HTomb.Things.defineStructure({
-    template: "Monument",
-    name: "monument",
-    symbols: ["@"],
-    fgs: ["gray"],
-    height: 1,
-    width: 1,
-    ingredients: [{Jade: 1}],
-    cancelCommand: function() {
-      if (this.cursor===0) {
-        let code = prompt("Enter a unicode value.",this.features[0].symbol.charCodeAt());
-        code = code.substr(0,4).toUpperCase();
-        let pat = /[A-F0-9]{1,4}/;
-        let match = pat.exec(code);
-        if (match===null) {
-          alert("Invalid Unicode value.");
-        } else {
-          this.features[0].symbol = String.fromCharCode(parseInt(code,16));
-        }
-      } else if (this.cursor===1) {
-        let code = prompt("Enter an 16-bit hex value for red.",ROT.Color.fromString(this.features[0].fg)[0]);
-        code = code.toUpperCase();
-        let pat = /[A-F0-9]{1,2}/;
-        let match = pat.exec(code);
-        if (match===null) {
-          alert("Invalid 16-bit hex value.");
-        } else {
-          let fg = this.features[0].fg;
-          this.features[0].fg = "#" + code + fg.substr(3,4);
-        }
-      } else if (this.cursor===2) {
-        let code = prompt("Enter an 16-bit hex value for green.",ROT.Color.fromString(this.features[0].fg)[1]);
-        code = code.toUpperCase();
-        let pat = /[A-F0-9]{1,2}/;
-        let match = pat.exec(code);
-        if (match===null) {
-          alert("Invalid 16-bit hex value.");
-        } else {
-          let fg = this.features[0].fg;
-          this.features[0].fg = "#" + fg.substr(1,2) + code + fg.substr(5,2);
-        }
-      } else if (this.cursor===3) {
-        let code = prompt("Enter an 16-bit hex value for blue.",ROT.Color.fromString(this.features[0].fg)[2]);
-        code = code.toUpperCase();
-        let pat = /[A-F0-9]{1,2}/;
-        let match = pat.exec(code);
-        if (match===null) {
-          alert("Invalid 16-bit hex value.");
-        } else {
-          let fg = this.features[0].fg;
-          this.features[0].fg = "#" + fg.substr(3,4) + code;
-        }
-      }
-      HTomb.GUI.Panels.gameScreen.redraw(this.x, this.y);
-    },
-    upCommand: function() {
-      this.cursor-=1;
-      if (this.cursor<0) {
-        this.cursor = 3;
-      }
-    },
-    downCommand: function() {
-      this.cursor+=1;
-      if (this.cursor>=4) {
-        this.cursor = 0;
-      }
-    },
-    scrollChoices: function(n) {
-      if (this.cursor===0) {
-        let code = this.features[0].symbol.charCodeAt();
-        code+=n;
-        if (code>0xFFFF) {
-          code-=0xFFFF;
-        } else if (code<0) {
-          code+=0xFFFF;
-        }
-        this.features[0].symbol = String.fromCharCode(code);
-      } else if (this.cursor>=1 && this.cursor<=3){
-        let c = ROT.Color.fromString(this.features[0].fg);
-        let color = c[this.cursor-1];
-        color+=n;
-        if (color>=256) {
-          color-=256;
-        } else if (color<0) {
-          color+=256;
-        }
-        c[this.cursor-1] = color;
-        this.features[0].fg = ROT.Color.toHex([c[0],c[1],c[2]]);
-      }
-      HTomb.GUI.Panels.gameScreen.redraw(this.x, this.y);
-    },
-    moreCommand: function() {
-      if (HTomb.GUI.shiftDown() && this.cursor===0) {
-        this.scrollChoices(+256);
-      } else {
-        this.scrollChoices(+16);
-      }
-    },
-    lessCommand: function() {
-      if (HTomb.GUI.shiftDown() && this.cursor===0) {
-        this.scrollChoices(-256);
-      } else {
-        this.scrollChoices(-16);
-      }
-    },
-    rightCommand: function() {
-      if (HTomb.GUI.shiftDown()) {
-        this.scrollChoices(+16);
-      } else {
-        this.scrollChoices(+1);
-      }
-    },
-    leftCommand: function() {
-      if (HTomb.GUI.shiftDown()) {
-        this.scrollChoices(-16);
-      } else {
-        this.scrollChoices(-1);
-      }
+      return this;
     },
     detailsText: function() {
       let txt = [
         "%c{orange}**Esc: Done.**",
-        "Wait: NumPad 5 / Control+Space.",
-        "Click / Space: Select.",
-        "Enter: Toggle Pause.",
+        "%c{yellow}Storage: "+this.describe({capitalized: true, atCoordinates: true})+".",
         " ",
-        "%c{yellow}Structure: "+this.describe({capitalized: true, atCoordinates: true})+".",
-        "Up/Down: Choose property.",
-        "Left/Right: Up or down by 1.",
-        "[/]: Up or down by 16.",
-        "Backspace/Delete: Enter value using prompt.",
-        "Tab: Next structure.",
-        " ",
-        "Properties:"
+        "Contents:"
       ];
-      if (this.cursor===-1) {
-        this.cursor = 0;
+      let totalItems = {};
+      for (let i=0; i<this.squares.length; i++) {
+        let s = this.squares[i];
+        let items = HTomb.World.items[coord(s[0],s[1],s[2])];
+        if (items) {
+          items = items.items;
+          for (let j=0; j<items.length; j++) {
+            let item = items[j];
+            totalItems[item.template] = totalItems[item.template] || 0;
+            totalItems[item.template] += item.item.n;
+          }
+        }
       }
-      let opts = [
-        ["  Unicode",this.features[0].symbol.charCodeAt().toString(16).toUpperCase()],
-        ["  Red (0-255)",ROT.Color.fromString(this.features[0].fg)[0]],
-        ["  Green (0-255)",ROT.Color.fromString(this.features[0].fg)[1]],
-        ["  Blue (0-255)",ROT.Color.fromString(this.features[0].fg)[2]]
-      ];
-      opts[this.cursor][0] = ">"+opts[this.cursor][0].substr(1);
-      for (let i=0; i<opts.length; i++) {
-        txt.push(opts[i][0] + ": " + opts[i][1]);
+      for (let key in totalItems) {
+        let n = totalItems[key];
+        let line;
+        if (n===1) {
+          line = HTomb.Things.templates[key].describe({article: "indefinite"});
+          console.log(line);
+        } else {
+          line = n + " " + HTomb.Things.templates[key].describe({plural: "true"});
+          console.log(line);
+        }
+        txt.push(line);
       }
       return txt;
+    },
+    onTurnBegin: function() {
+      // this probably shouldn't happen every turn...maybe have a countdown?
+      if (this.dormant>0) {
+        this.dormant-=1;
+        return;
+      }
+      this.dormant = this.dormancy;
+      let items = this.owner.master.ownedItems;
+      for (let i=0; i<items.length; i++) {
+        //if ever we run out of task space, break the loop
+        if (this.tasks.indexOf(null)===-1) {
+          return;
+        }
+        let item = items[i];
+        let f = HTomb.World.features[coord(item.x,item.y,item.z)];
+        if (!item.item.isOnGround()) {
+          continue;
+        } else if (this.stores(item)===false) {
+          continue;
+        } else if (HTomb.World.tasks[coord(item.x,item.y,item.z)]!==undefined) {
+          continue;
+        } else if (HTomb.Tiles.isReachableFrom(this.x, this.y, this.z, item.x, item.y, item.z)===false) {
+          continue;
+        } else if (f && f.structure && f.structure.template===this.entity.template) {
+          continue;
+        } else {
+          let slots = [];
+          for (let j=0; j<this.tasks.length; j++) {
+            if (this.tasks[j]===null) {
+              slots.push(j);
+            }
+          }
+          HTomb.Utils.shuffle(slots);
+          let feat = this.features[slots[0]];
+          let z = HTomb.Things.HaulTask({
+             assigner: this.owner,
+             name: "haul " + item.describe()
+           });
+          z.place(item.x,item.y,item.z);
+          z.task.item = item;
+          z.task.storage = this;
+          z.task.feature = feat;
+          this.tasks[slots[0]] = z;
+        }
+      }
     }
   });
 
-  HTomb.Things.defineStructure({
-    template: "Mortuary",
-    name: "mortuary",
-    symbols: ["\u2744","\u2637","\u2744","\u2637","\u2744","\u2637","\u2744","\u2637","\u2744"],
-    fgs: ["#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF","#999999","#AAAAFF"]
+  Task.extend({
+    template: "HaulTask",
+    name: "haul",
+    bg: "#773366",
+    item: null,
+    feature: null,
+    storage: null,
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile || HTomb.World.tiles[z][x][y]===HTomb.Tiles.EmptyTile) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    canAssign: function(cr) {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
+      // should this check whether the item is still here?
+      if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
+        searcher: cr,
+        searchee: this,
+        searchTimeout: 10
+      }) && this.item.x===x && this.item.y===y && this.item.z===z) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    ai: function() {
+      let cr = this.assignee;
+      let item = this.item;
+      let feature = this.feature;
+      if (cr.inventory.items.items.indexOf(this.item)!==-1) {
+        cr.ai.target = feature;
+        this.entity.place(feature.x, feature.y, feature.z);
+      } else if (item.isOnGround())  {
+        cr.ai.target = item;
+      } else {
+        this.cancel();
+         return;
+      }
+      let t = cr.ai.target;
+      // this could be either the task square or the item
+      if (t.x===cr.x && t.y===cr.y && t.z===cr.z) {
+        if (t===feature) {
+          cr.inventory.drop(this.item);
+          this.completeWork(this.assignee);
+          cr.ai.acted = true;
+          return;
+        } else {
+          // move it to the building;
+          this.place(feature.x, feature.y, feature.z);
+          cr.inventory.pickup(item);
+          cr.ai.acted = true;
+          return;
+        }
+      }
+      cr.ai.walkToward(t.x,t.y,t.z, {
+        searcher: cr,
+        searchee: t,
+        searchTimeout: 10,
+        useLast: true
+      });
+      cr.ai.acted = true;
+    },
+    onDespawn: function() {
+      let tasks = this.storage.tasks;
+      tasks.splice(tasks.indexOf[this],1,null);
+    }
   });
 
-  HTomb.Things.defineStructure({
-    template: "BoneCarvery",
-    name: "bone carvery",
-    symbols: ["\u2692","\u2620","\u2692","\u2620","\u2699","\u2620","\u2692","\u2620","\u2692"],
-    fgs: ["#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB","#BBBBBB"]
+  HTomb.Things.defineStorage({
+    template: "Stockpile",
+    name: "stockpile",
+    bg: "#444455",
+    symbols: [".",".","\u25AD","\u2234","#","\u2630","\u25A7",".","\u25AF"],
+    fgs: ["#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922",HTomb.Constants.FLOORFG,"#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922"],
+    ingredients: [
+      {Rock: 1},
+      {},
+      {Rock: 1},
+      {},
+      {WoodPlank: 2},
+      {},
+      {Rock: 1},
+      {},
+      {Rock: 1}
+    ],
+    stores: function(item) {
+      if (item.template==="WoodPlank" || item.template==="Rock") {
+        return true;
+      } else {
+        return false;
+      }
+    }
   });
 
-  HTomb.Things.defineStructure({
-    template: "Library",
-    name: "library",
-    symbols: ["\u270D","\u270E","\u2710","/","\u25AD","\u26B4/","\u2261","/","\u2261"],
-    fgs: ["#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922"]
-  });
-
-  HTomb.Things.defineStructure({
-    template: "Laboratory",
-    name: "library",
-    symbols: ["\u2609","\u263F","\u2640","\u263D","\u2641","\u2697","\u2642","\u2643","\u26A9"],
-    fgs: ["#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922","#BB9922"]
-  });
-
-
-  HTomb.Things.defineTask({
+  Task.extend({
     template: "ProduceTask",
     name: "produce",
     bg: "#336699",
     workshop: null,
     makes: null,
-    steps: 10,
+    labor: 20,
     started: false,
     dormancy: 4,
     canAssign: function(cr) {
-      if (this.entity.isPlaced()===false) {
+      if (this.isPlaced()===false) {
         return false;
       }
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
         searcher: cr,
-        searchee: this.entity,
+        searchee: this,
         searchTimeout: 10
       })) {
         // cancel this task if you can't find the ingredients
-        if (cr.inventory.canFindAll(this.ingredients)!==true) {
+        if (cr.inventory.canFindAll(this.ingredients)!==true && !HTomb.Debug.noingredients) {
           // Wait...can this cancel the task in the middle of assignment???
           this.cancel();
           return false;
@@ -1079,51 +688,54 @@ HTomb = (function(HTomb) {
     validTile: function(x,y,z) {
       return true;
     },
-    workBegun: function() {
+    begun: function() {
       return this.started;
     },
-    beginWork: function() {
-      let test = this.assignee.inventory.items.takeItems(this.ingredients);
-      this.started = true;
-      HTomb.GUI.pushMessage(this.beginMessage());
-    },
-    work: function(x,y,z) {
-      if (this.workBegun()!==true) {
-        this.beginWork();
+    begin: function() {
+      if (!HTomb.Debug.noingredients) {
+        let test = this.assignee.inventory.items.takeItems(this.ingredients);
       }
-      this.steps-=1;
+      this.started = true;
+      this.labor = HTomb.Things.templates[this.makes].labor || this.labor;
+      HTomb.GUI.pushMessage(this.blurb());
+    },
+    workOnTask: function(x,y,z) {
+      let assignee = this.assignee;
+      if (this.workBegun()!==true) {
+        this.beginWork(this.assignee);
+      }
+      let labor = assignee.worker.getLabor();
+      this.labor-=labor;
       this.assignee.ai.acted = true;
       this.assignee.ai.actionPoints-=16;
-      if (this.steps<=0) {
-        this.completeWork();
+      if (this.labor<=0) {
+        this.finish();
+        this.complete();
       }
     },
-    completeWork: function() {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+    finish: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       let item = HTomb.Things[this.makes]().place(x,y,z);
-      item.item.setOwner(HTomb.Player);
+      item.setOwner(HTomb.Player);
       HTomb.Events.publish({type: "Complete", task: this});
       this.workshop.occupied = null;
       HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes making " + HTomb.Things.templates[this.makes].describe({article: "indefinite"}));
-      this.entity.despawn();
     },
     onDespawn: function() {
-      HTomb.Things.templates.Task.onDespawn.call(this);
       this.workshop.task = null;
       this.workshop.nextGood();
     }
   });
 
-  HTomb.Things.defineTask({
+  Task.extend({
     template: "ConstructTask",
     name: "construct",
-    longName: "create a structure",
+    description: "create a structure",
     bg: "#553300",
     makes: null,
-    //workshops: ["Mortuary","BoneCarvery","Carpenter"],
-    structures: ["Carpenter","Farm","Stockpile","Monument"],
+    structures: ["Carpenter","Stockpile","BlackMarket","Sanctum"],
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -1132,7 +744,7 @@ HTomb = (function(HTomb) {
         return false;
       }
       let f = HTomb.World.features[coord(x,y,z)];
-      if (f===undefined || (f.template==="IncompleteFeature" && f.makes.template===this.makes)) {
+      if (f===undefined || (f.template==="IncompleteFeature" && f.makes===this.makes)) {
         return true;
       }
       else {
@@ -1163,7 +775,7 @@ HTomb = (function(HTomb) {
                 failed = true;
               }
             // an incomplete version of the same workshop
-          } else if (f && (f.template!=="IncompleteFeature" || !f.makes || f.makes.template!==structure.template+"Feature")) {
+          } else if (f && (f.template!=="IncompleteFeature" || !f.makes || f.makes!==structure.template+"Feature")) {
               failed = true;
             }
           }
@@ -1172,6 +784,7 @@ HTomb = (function(HTomb) {
             return;
           }
           let w;
+          //!!!some refactoring ahead
           if (struc!==null) {
             w = struc;
           } else {
@@ -1192,12 +805,16 @@ HTomb = (function(HTomb) {
             let task = this.designateTile(crd[0],crd[1],crd[2],assigner);
             if (task) {
               //Bugs have occurred here...I may have fixed them...
-              task.task.structure = w;
-              task.task.makes = w.structure.template+"Feature";
+              task.structure = w;
+              task.makes = w.structure.template+"Feature";
               if (w.structure.height!==null && w.structure.width!==null) {
-                task.task.ingredients = HTomb.Utils.clone(w.structure.ingredients[i]);
+                if (HTomb.Debug.noingredients) {
+                  task.ingredients = {};
+                } else {
+                  task.ingredients = HTomb.Utils.clone(w.structure.ingredients[i]);
+                }
               }
-              task.task.position = i;
+              task.position = i;
               task.name = task.name + " " + w.structure.name;
             }
           }
@@ -1281,10 +898,11 @@ HTomb = (function(HTomb) {
       });
     },
     canAssign: function(cr) {
-      if (HTomb.Things.templates.Task.canAssign.call(this, cr)!==true) {
+      if (Task.canAssign.call(this, cr)!==true) {
         return false;
       }
       // more intuitive if ingredient-needing features are built first
+      //!!!needs refactor
       let ings = this.structure.structure.neededIngredients();
       if (HTomb.Utils.notEmpty(ings) && HTomb.Utils.notEmpty(this.ingredients)!==true) {
         return false;
@@ -1292,18 +910,19 @@ HTomb = (function(HTomb) {
       return true;
     },
     beginWork: function() {
-      HTomb.Things.templates.Task.beginWork.call(this);
+      Task.beginWork.call(this);
       let i = this.position;
       let f = HTomb.World.features[coord(this.entity.x, this.entity.y, this.entity.z)];
+      //!!refactor
       f.fg = this.structure.structure.fgs[i] || this.structure.fg;
       f.makes.fg = this.structure.structure.fgs[i] || this.structure.fg;
       f.makes.symbol = this.structure.structure.symbols[i] || this.structure.symbol;
-      HTomb.World.covers[this.entity.z][this.entity.x][this.entity.y] = HTomb.Covers.NoCover;
+      HTomb.World.covers[this.z][this.x][this.y] = HTomb.Covers.NoCover;
     },
-    completeWork: function() {
-      let x = this.entity.x;
-      let y = this.entity.y;
-      let z = this.entity.z;
+    finish: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
       let f = HTomb.World.features[coord(x,y,z)];
       f.structure = this.structure;
       this.structure.structure.features[this.position] = f;
@@ -1317,7 +936,7 @@ HTomb = (function(HTomb) {
           HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes building " + w.describe({article: "indefinite", atCoordinates: true}) + ".");
         }
       }
-      HTomb.Things.templates.Task.completeWork.call(this);
+      Task.finish.call(this);
     },
     designateBox: function(squares, options) {
       options = options || {};
@@ -1326,24 +945,36 @@ HTomb = (function(HTomb) {
       callb.call(options.context,squares,assigner);
     }
   });
-  // UseWorkshopTask
-    // Each workshop maintains a queue...it spawns tasks one at a time.
-    // When the task finished, it tries to assign the next one to the same minion.
-  // We could auto-queue a feature when we CraftTask
-  // Or we can do it through stocks
 
-  //DF workshops...
-    // Bowyer, Carpenter, Jeweler, Mason, Butcher, Mechanic, Farmer, Fishery, Craftsdwarf, Siege, Furnace, Smelter, Kiln, Glass Furnace
-    // Tanner, Loom, Still, Ashery, Screw Press, Kitchen, Quern, Millstone,
-    // Leatherwork, Clothier, Dyer, Metalsmith, Soap
+  HTomb.Things.defineStructure({
+    template: "BlackMarket",
+    name: "black market",
+    height: 3,
+    width: 3,
+    symbols: ["\u00A3",".",".",".","\u2696","$","\u00A2","\u20AA","\u00A4"],
+    fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
+    bg: "#555544"
+  });
 
-  // Goblin Camp
-    // Saw Pit, Carpenter, Basket Weaver, Winery, Kitchen, Butcher, Weaver, Bone Carver, Stone Mason, Weapon Crafter,
-    // Leather Crafter, Tanner, Mill, Bloomery, Blacksmith, Kiln, Oil Press, Alchemist, Armorsmith
+  HTomb.Things.defineStructure({
+    template: "BlackMarket",
+    name: "black market",
+    height: 3,
+    width: 3,
+    symbols: ["\u00A3",".",".",".","\u2696","$","\u00A2","\u20AA","\u00A4"],
+    fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
+    bg: "#555544"
+  });
 
-//    -	Do X times
-//    -	As many as possible (u221E)
-//    -	Cycle (u27F3, u21BB, u21C4)
+  HTomb.Things.defineStructure({
+    template: "Sanctum",
+    name: "sanctum",
+    height: 3,
+    width: 3,
+    symbols: ["\u2625",".","\u2AEF",".","\u2135",".","\u2AEF","\u2606","\u263F"],
+    fgs: ["magenta",HTomb.Constants.FLOORFG,"cyan",HTomb.Constants.FLOORFG,"green",HTomb.Constants.FLOORFG,"yellow","red","orange"],
+    bg: "#222244"
+  });
 
 
 return HTomb;

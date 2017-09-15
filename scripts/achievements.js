@@ -124,7 +124,7 @@ HTomb = (function(HTomb) {
       items = items.exposeItems();
       let anyOre = false;
       for (let i=0; i<items.length; i++) {
-        if (items[i].item.tags.indexOf("Minerals")!==-1 && items[i].template!=="Rock") {
+        if (items[i].tags.indexOf("Minerals")!==-1 && items[i].template!=="Rock") {
           anyOre=true;
         }
       }
@@ -150,7 +150,7 @@ HTomb = (function(HTomb) {
       items = items.exposeItems();
       let anyWood = false;
       for (let i=0; i<items.length; i++) {
-        if (items[i].item.tags.indexOf("Wood")!==-1) {
+        if (items[i].tags.indexOf("Wood")!==-1) {
           anyWood=true;
         }
       }
