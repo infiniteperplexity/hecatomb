@@ -1,2 +1,7 @@
-- if you save while constructTasks are active, the .makes property seems to get wiped out.  I'm not sure why, but it may have a dependency on the state of ".makes" on the template.
-- probably need a "claim item" task or some such thing to block multiple claims on the same item
+refactoring brings up a ton of new issues...
+- it's unclear that Types should still work exactly the way they do
+- some things, like Crops, aren't working correctly
+- we should probably refactor item lists as well
+- we haven't checked whether saving the game works
+- some things like craftable should probably be made into behaviors
+- probably need a "claim item" task or some such thing to block multiple claims on the same item...subsidiary tasks
