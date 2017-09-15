@@ -158,18 +158,8 @@ HTomb = (function(HTomb) {
         delete this.highlightColor;
       }
     },
-    extend: function(args) {
-      let child = Object.create(this);
-      child.parent = this.template;
-      child = Object.assign(child, args);
-      HTomb.Things.templates[args.template] = child;
-      HTomb.Things[args.template] = function(args2) {
-        let o = Object.create(child);
-        o = Object.assign(o, args2);
-        o.spawn();
-        return o;
-      };
-      return child;
+    super: function() {
+      return HTomb.Things.templates[this.parent];
     }
   };
   // The global list of known templates

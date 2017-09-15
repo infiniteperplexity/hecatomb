@@ -419,8 +419,7 @@ HTomb = (function(HTomb) {
       },
       {
         format: function(task) {
-          console.log(task);
-          let name = task.description;
+          let name = task.longName;
           return (name.substr(0,1).toUpperCase() + name.substr(1)+".");
         },
         contextName: "ShowJobs"

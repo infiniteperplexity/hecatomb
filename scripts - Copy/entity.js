@@ -2,140 +2,6 @@ HTomb = (function(HTomb) {
   "use strict";
   var coord = HTomb.Utils.coord;
   // Define a generic entity that occupies a tile space
-
-    let Thing = HTomb.Things.templates.Thing;
-
-  // let Entity = Thing.extend({
-  //   template: "Entity",
-  //   name: "entity",
-  //   x: null,
-  //   y: null,
-  //   z: null,
-  //   Behaviors: {},
-  //   place: function(x,y,z,args) {
-  //     if (this.isPlaced()) {
-  //       this.remove();
-  //     }
-  //     this.x = x;
-  //     this.y = y;
-  //     this.z = z;
-  //     if (this.isPlaced()) {
-  //       var beh = this.behaviors;
-  //       for (var i=0; i<beh.length; i++) {
-  //         if (beh[i].onPlace) {
-  //           beh[i].onPlace(x,y,z);
-  //         }
-  //       }
-  //     }
-  //     if (this.onPlace) {
-  //       this.onPlace(x,y,z);
-  //     }
-  //     return this;
-  //   },
-  //   isPlaced: function() {
-  //     if (this.x===null || this.y===null || this.z===null) {
-  //       return false;
-  //     } else {
-  //       return true;
-  //     }
-  //   },
-  //   remove: function() {
-  //     var beh = this.behaviors;
-  //     for (var i=0; i<beh.length; i++) {
-  //       if (beh[i].onRemove) {
-  //         beh[i].onRemove();
-  //       }
-  //     }
-  //     if (this.onRemove) {
-  //       this.onRemove();
-  //     }
-  //     this.x = null;
-  //     this.y = null;
-  //     this.z = null;
-  //   },
-  //   destroy: function() {
-  //     var beh = this.behaviors;
-  //     for (var i=0; i<beh.length; i++) {
-  //       var b = beh[i];
-  //       if (b.destroy) {
-  //         b.destroy();
-  //       }
-  //       b.despawn();
-  //     }
-  //     HTomb.Events.publish({type: "Destroy", entity: this});
-  //     this.despawn();
-  //   },
-  //   despawn: function() {
-  //     if (this.isPlaced()) {
-  //       this.remove();
-  //     }
-  //     var beh = this.behaviors;
-  //     for (var i=0; i<beh.length; i++) {
-  //       if (beh[i].onDespawn) {
-  //         beh[i].onDespawn();
-  //       }
-  //     }
-  //     if (this.onDespawn) {
-  //       this.onDespawn();
-  //     }
-  //     Thing.despawn.call(this);
-  //   },
-  //   spawn: function(args) {
-  //     Thing.spawn.call(this,args);
-      //for every behavior in Behaviors, create a new one and add it to the entity
-      
-      //may need a frickin' deep merge here...
-  //     export function mergeDeep(target, ...sources) {
-  // if (!sources.length) return target;
-  // const source = sources.shift();
-
-  // if (isObject(target) && isObject(source)) {
-  //   for (const key in source) {
-  //     if (isObject(source[key])) {
-  //       if (!target[key]) Object.assign(target, { [key]: {} });
-  //       mergeDeep(target[key], source[key]);
-  //     } else {
-  //       Object.assign(target, { [key]: source[key] });
-  //     }
-  //   }
-  //}
-
-  //return mergeDeep(target, ...sources);
-// }
-      
-//     }
-//     onCreate: function(args) {
-//       // Add behaviors to entity
-//       for (var b in this.Behaviors) {
-//         if (typeof(HTomb.Things[b])!=="function") {
-//             console.log("Problem with behavior " + b + " for " + this.describe());
-//         }
-//         //var beh = HTomb.Things[b](this.behaviors[b] || {});
-//         var beh = HTomb.Things.create(b,this.Behaviors[b] || {});
-//         beh.addToEntity(this);
-//       }
-//       // Randomly choose symbol if necessary
-//       if (Array.isArray(this.symbol)) {
-//         this.symbol = this.symbol[Math.floor(Math.random()*this.symbol.length)];
-//       }
-//       // Randomly choose  color if necessary
-//       if (Array.isArray(this.fg)) {
-//         this.fg = this.fg[Math.floor(Math.random()*this.fg.length)];
-//       }
-//       // Randomly perturb color, if necessary
-//       if (this.randomColor>0 && this.fg) {
-//         if (this.fg) {
-//           var c = ROT.Color.fromString(this.fg);
-//           c = ROT.Color.randomize(c,[this.randomColor, this.randomColor, this.randomColor]);
-//           c = ROT.Color.toHex(c);
-//           this.fg = c;
-//         }
-//       }
-//       return this;
-//     }
-//   });
-
-
   HTomb.Things.define({
     template: "Entity",
     name: "entity",
@@ -144,7 +10,7 @@ HTomb = (function(HTomb) {
     y: null,
     z: null,
     Behaviors: {},
-    place: function(x,y,z,args) {
+    place: function(x,y,z) {
       if (this.isPlaced()) {
         this.remove();
       }
@@ -244,12 +110,7 @@ HTomb = (function(HTomb) {
       }
       HTomb.GUI.render();
     },
-    onSpawn: function(args) {
-      this.onCreate(args);
-    },
     onCreate: function() {
-      console.log("creating behaviors");
-      this.behaviors = [];
       // Add behaviors to entity
       for (var b in this.Behaviors) {
         if (typeof(HTomb.Things[b])!=="function") {

@@ -124,7 +124,7 @@ HTomb = (function(HTomb) {
     var zview = tiles[z][x][y].zview;
     var vis = (visible[crd]===true || HTomb.Debug.visible===true);
     var bg;
-    if (tasks[crd]!==undefined && tasks[crd].assigner===HTomb.Player) {
+    if (tasks[crd]!==undefined && tasks[crd].task && tasks[crd].task.assigner===HTomb.Player) {
       bg = tasks[crd].bg;
     }
     // ****** If the square has not been explored... ****************

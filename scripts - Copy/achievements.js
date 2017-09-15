@@ -84,9 +84,9 @@ HTomb = (function(HTomb) {
     listens: ["Complete"],
     onComplete: function(event) {
       let t = event.task;
-      let x = t.x;
-      let y = t.y;
-      let z = t.z;
+      let x = t.entity.x;
+      let y = t.entity.y;
+      let z = t.entity.z;
       if (t.template==="DigTask" && HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile && HTomb.World.tiles[z+1][x][y].zview!==-1) {
         this.achieve();
       }
@@ -99,9 +99,9 @@ HTomb = (function(HTomb) {
     listens: ["Complete"],
     onComplete: function(event) {
       let t = event.task;
-      let x = t.x;
-      let y = t.y;
-      let z = t.z;
+      let x = t.entity.x;
+      let y = t.entity.y;
+      let z = t.entity.z;
       if (t.template==="BuildTask" && HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile) {
         this.achieve();
       }
@@ -117,9 +117,9 @@ HTomb = (function(HTomb) {
       if (t.template!=="DigTask") {
         return;
       }
-      let x = t.x;
-      let y = t.y;
-      let z = t.z;
+      let x = t.entity.x;
+      let y = t.entity.y;
+      let z = t.entity.z;
       let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Container();
       items = items.exposeItems();
       let anyOre = false;
@@ -143,9 +143,9 @@ HTomb = (function(HTomb) {
       if (t.template!=="DismantleTask") {
         return;
       }
-      let x = t.x;
-      let y = t.y;
-      let z = t.z;
+      let x = t.entity.x;
+      let y = t.entity.y;
+      let z = t.entity.z;
       let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Container();
       items = items.exposeItems();
       let anyWood = false;
@@ -300,7 +300,7 @@ HTomb = (function(HTomb) {
     listens: ["Complete"],
     onComplete: function(event) {
       let t = event.task;
-      let z = t.z;
+      let z = t.entity.z;
       if (t.template==="DigTask" && z<44) {
         this.achieve();
       }

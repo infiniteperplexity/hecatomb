@@ -156,6 +156,152 @@ HTomb = (function(HTomb) {
     ingredients: {WoodPlank: 1}
   });
 
+  HTomb.Things.defineFeature({
+    template: "Excavation",
+    name: "excavation",
+    labor: 10,
+    incompleteSymbol: "\u2717",
+    incompleteFg: HTomb.Constants.BELOWFG,
+    onPlace: function(x,y,z) {
+      var tiles = HTomb.World.tiles;
+      var EmptyTile = HTomb.Tiles.EmptyTile;
+      var FloorTile = HTomb.Tiles.FloorTile;
+      var WallTile = HTomb.Tiles.WallTile;
+      var UpSlopeTile = HTomb.Tiles.UpSlopeTile;
+      var DownSlopeTile = HTomb.Tiles.DownSlopeTile;
+      var t = tiles[z][x][y];
+      let c = HTomb.World.covers[z][x][y];
+      // If there is a slope below, dig out the floor
+      if (tiles[z-1][x][y]===UpSlopeTile && HTomb.World.explored[z-1][x][y] && (t===WallTile || t===FloorTile)) {
+        tiles[z][x][y] = DownSlopeTile;
+      // If it's a wall, dig a tunnel
+      } else if (t===WallTile) {
+        tiles[z][x][y] = FloorTile;
+        if (c.mine) {
+          c.mine(x,y,z);
+        }
+      } else if (t===FloorTile) {
+        // If it's a floor with a wall underneath dig a trench
+        if (tiles[z-1][x][y]===WallTile) {
+          tiles[z][x][y] = DownSlopeTile;
+          tiles[z-1][x][y] = UpSlopeTile;
+          c = HTomb.World.covers[z-1][x][y];
+          if (c.mine) {
+            c.mine(x,y,z-1);
+          }
+        // Otherwise just remove the floor
+        } else {
+          tiles[z][x][y] = EmptyTile;
+        }
+      // If it's a down slope tile, remove the slopes
+      } else if (t===DownSlopeTile) {
+        tiles[z][x][y] = EmptyTile;
+        tiles[z-1][x][y] = FloorTile;
+      // if it's an upward slope, remove the slope
+      } else if (t===UpSlopeTile) {
+        tiles[z][x][y] = FloorTile;
+        if (tiles[z+1][x][y]===DownSlopeTile) {
+          tiles[z+1][x][y] = EmptyTile;
+        }
+      } else if (t===EmptyTile) {
+        // this shouldn't happen
+      }
+      // Eventually this might get folded into mining...
+      HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
+      if (Math.random()<0.25) {
+        var rock = HTomb.Things.Rock();
+        rock.item.n = 1;
+        if (tiles[z][x][y]===DownSlopeTile) {
+          let item = rock.place(x,y,z-1);
+          item.item.setOwner(HTomb.Player);
+        } else {
+          let item = rock.place(x,y,z);
+          item.item.setOwner(HTomb.Player);
+        }
+      }
+      HTomb.World.validate.cleanNeighbors(x,y,z);
+      this.despawn();
+    }
+  });
+
+
+  HTomb.Things.defineFeature({
+    template: "Construction",
+    name: "construction",
+    incompleteSymbol: "\u2692",
+    labor: 15,
+    incompleteFg: HTomb.Constants.WALLFG,
+    onPlace: function(x,y,z) {
+      var tiles = HTomb.World.tiles;
+      var EmptyTile = HTomb.Tiles.EmptyTile;
+      var FloorTile = HTomb.Tiles.FloorTile;
+      var WallTile = HTomb.Tiles.WallTile;
+      var UpSlopeTile = HTomb.Tiles.UpSlopeTile;
+      var DownSlopeTile = HTomb.Tiles.DownSlopeTile;
+      var t = tiles[z][x][y];
+      HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
+      // If it's a floor, build a slope
+      if (t===FloorTile) {
+        tiles[z][x][y] = UpSlopeTile;
+        if (tiles[z+1][x][y]===EmptyTile) {
+          tiles[z+1][x][y] = DownSlopeTile;
+        }
+      // If it's a slope, make it into a wall
+    } else if (t===UpSlopeTile) {
+        tiles[z][x][y] = WallTile;
+        if (tiles[z+1][x][y] === DownSlopeTile) {
+          tiles[z+1][x][y] = FloorTile;
+        }
+      // If it's empty, add a floor
+      } else if (t===DownSlopeTile || t===EmptyTile) {
+        tiles[z][x][y] = FloorTile;
+      }
+      HTomb.World.validate.cleanNeighbors(x,y,z);
+      this.despawn();
+    }
+  });
+
+  HTomb.Things.defineFeature({
+    template: "IncompleteFeature",
+    name: "incomplete feature",
+    symbol: "\u25AB",
+    fg: "#BB9922",
+    makes: null,
+    finished: false,
+    labor: 5,
+    effort: 0,
+    onCreate: function(args) {
+      this.makes = args.makes;
+      this.labor = this.makes.labor || this.labor;
+      this.effort = this.makes.effort || this.effort;
+      this.symbol = this.makes.incompleteSymbol || this.symbol;
+      this.fg = this.makes.incompleteFg || this.makes.fg || this.fg;
+      this.name = "incomplete "+this.makes.name;
+      return this;
+    },
+    work: function(assignee) {
+      let labor = assignee.worker.getLabor();
+      labor = Math.max(0, labor-this.effort);
+      // need to account for work axes somehow
+      this.labor-=labor;
+      //deal with hardness here?
+      if (this.labor<=0) {
+        this.finish();
+      }
+    },
+    finish: function() {
+      var x = this.x;
+      var y = this.y;
+      var z = this.z;
+      // need to swap over the stack, if necessary...
+      this.finished = true;
+      this.remove();
+      this.makes.place(x,y,z);
+      this.despawn();
+    }
+  });
+
+
   HTomb.Types.define({
     template: "Cover",
     name: "cover",

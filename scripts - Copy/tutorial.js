@@ -11,8 +11,7 @@ HTomb = (function(HTomb) {
 
   */
   HTomb.Tutorial = {
-    //enabled: true,
-    enabled: false,
+    enabled: true,
     active: 0,
     tutorials: [],
     templates: {},

@@ -34,7 +34,7 @@ HTomb = (function(HTomb) {
       var z = task.z;
       var f = HTomb.World.features[coord(x,y,z)];
       // no need for ingredients if construction has begun
-      if (task.begun()) {
+      if (task.workBegun()) {
         return false;
       }
       //if (f && f.makes.template===task.makes) {
@@ -119,22 +119,22 @@ HTomb = (function(HTomb) {
       var cr = ai.entity;
       var task = cr.worker.task;
       if (cr.movement) {
-        var x = task.x;
-        var y = task.y;
-        var z = task.z;
+        var x = task.entity.x;
+        var y = task.entity.y;
+        var z = task.entity.z;
         if (z===null) {
           console.log("why go to work fail?");
         }
         var dist = HTomb.Path.distance(cr.x,cr.y,x,y);
         // Should I instead check for "beginWork"?
         if (useLast===true && x===cr.x && y===cr.y && z===cr.z) {
-          task.workOnTask(x,y,z);
+          task.work(x,y,z);
         } else if (useLast!==true && HTomb.Tiles.isTouchableFrom(x,y,z,cr.x,cr.y,cr.z)) {
-          task.workOnTask(x,y,z);
+          task.work(x,y,z);
         } else if (dist>0 || cr.z!==z) {
           cr.ai.walkToward(x,y,z, {
             searcher: cr,
-            searchee: task,
+            searchee: task.entity,
             searchTimeout: 10
           });
         } else if (dist===0) {
@@ -317,8 +317,20 @@ HTomb = (function(HTomb) {
     goals: null,
     fallback: null,
     regainPoints: function() {
+      if (this.entity===HTomb.Player) {
+        console.log("regaining from ", this.actionPoints);
+      }
       this.acted = false;
       this.actionPoints+=16;
+      // wait...this doesn't really test whether you go below zero...
+
+      //if (this.actionPoints<0) {
+      //  do {
+       //   this.actionPoints+=16;
+       // } while (this.actionPoints<=0);
+      //} else {
+      //  this.actionPoints = 16;
+     // }
     },
     isHostile: function(thing) {
       if (thing.ai===undefined || thing.ai.team===null || this.team===null) {
