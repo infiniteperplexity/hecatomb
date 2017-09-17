@@ -15,6 +15,7 @@ HTomb = (function(HTomb) {
     }
     return template;
   };
+
   HTomb.Utils.bind = function(obj, method) {
     let newfunc = obj[method].bind(obj);
     newfunc.getBoundThis = function() {

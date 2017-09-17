@@ -436,13 +436,6 @@ HTomb.Things.Behavior = function(args) {
   HTomb.Behaviors[behavior.name] = function() {};
 };
 
-class Type {
-
-}
+HTomb.Utils.
 
 
-let foo = {a: 1, b: 2};
-Object.seal(foo);
-let bar = Object.create(foo);
-bar.c = 3
->>>>>>> f96df913d8628a7bfff351702188e286cd1342cd

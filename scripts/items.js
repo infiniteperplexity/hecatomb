@@ -47,12 +47,13 @@ HTomb = (function(HTomb) {
   });
 
   Item.extend({
-    template: "Trade Goods",
+    template: "TradeGoods",
     name: "trade goods",
     symbol: "\u2696",
-    fg: "yellow",
+    fg: "#AAAA44",
     stackable: true,
-    maxn: 10
+    maxn: 10,
+    plural: true
   });
 
   Item.extend({

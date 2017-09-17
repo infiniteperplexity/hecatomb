@@ -67,15 +67,14 @@ HTomb = (function(HTomb) {
       stack[0].place(d[0],d[1],d[2]);
     }
     for (crd in this.items) {
+      stack = this.items[crd];
+      for (let item of stack) {
+        d = HTomb.Utils.decoord(crd);
+        item.place(d[0],d[1],d[2]);
+      }
       if (HTomb.World.items[crd]) {
         continue;
       }
-      stack = this.items[crd];
-      if (stack.length>1) {
-        HTomb.Utils.shuffle(stack);
-      }
-      d = HTomb.Utils.decoord(crd);
-      stack[0].place(d[0],d[1],d[2]);
     }
     this.reset();
   };
@@ -309,13 +308,23 @@ HTomb = (function(HTomb) {
       if (z<=lowest+4) {
         continue;
       }
+      let placed = [];
       for (let j=0; j<dirs.length; j++) {
         if (HTomb.Tiles.countNeighborsWhere(x+dirs[j][0],y+dirs[j][1],z-1,nonsolids)>0) {
           continue;
         } else if (Math.random()<graveChance) {
-          placement.stack(HTomb.Things.Tombstone(),x+dirs[j][0],y+dirs[j][1],z);
-          HTomb.World.covers[z-1][x][y] = HTomb.Covers.NoCover;
+          let x1 = x+dirs[j][0];
+          let y1 = y+dirs[j][1];
+          placed.push([x1,y1,z]);
+          placement.stack(HTomb.Things.Tombstone(),x1,y1,z);
+          HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.NoCover;
         }
+      }
+      //place one trade good in each cluster of graves
+      if (placed.length>0) {
+        let r = HTomb.Utils.dice(1,placed.length)-1;
+        let g = placed[r];
+        placement.stack(HTomb.Things.TradeGoods({n: 1}),g[0],g[1],g[2]-1);
       }
     }
   }
