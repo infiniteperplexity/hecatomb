@@ -22,8 +22,12 @@ HTomb = (function(HTomb) {
       var y = this.y;
       var z = this.z;
       this.destroy();
+      let buriedItems = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Container();
+      for (let i=0; i<buriedItems.items.length; i++) {
+        buriedItems.items[i].setOwner(cause);
+      }
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
-      for (var i=0; i<ROT.DIRS[8].length; i++) {
+      for (let i=0; i<ROT.DIRS[8].length; i++) {
         var x1 = ROT.DIRS[8][i][0]+x;
         var y1 = ROT.DIRS[8][i][1]+y;
         if (HTomb.World.tiles[z][x1][y1].solid!==true) {

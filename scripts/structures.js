@@ -282,7 +282,6 @@ HTomb = (function(HTomb) {
     onTurnBegin: function() {
       if (this.task===null) {
         if (HTomb.Utils.dice(2,6)===12) {
-          console.log("trying next good");
           this.nextGood();
         }
       }
@@ -419,7 +418,8 @@ HTomb = (function(HTomb) {
           "DoorItem",
           "TorchItem"
         ]
-      }
+      },
+      StructureLight: {}
     }
   });
 
@@ -568,6 +568,7 @@ HTomb = (function(HTomb) {
         if (t===feature) {
           cr.inventory.drop(this.item);
           this.complete(this.assignee);
+          console.log("haul task completed");
           cr.ai.acted = true;
           return;
         } else {
@@ -612,7 +613,8 @@ HTomb = (function(HTomb) {
     Behaviors: {
       Storage: {
         stores: ["WoodPlank","Rock"]
-      }
+      },
+      StructureLight: {}
     }
   });
 
@@ -699,7 +701,7 @@ HTomb = (function(HTomb) {
     description: "create a structure",
     bg: "#553300",
     makes: null,
-    structures: ["Carpenter","Stockpile","BlackMarket","Sanctum"],
+    structures: ["GuardPost","Carpenter","Stockpile","BlackMarket","Sanctum"],
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -807,6 +809,7 @@ HTomb = (function(HTomb) {
             let valid = true;
             for (var j=0; j<squares.length; j++) {
               let s = squares[j];
+              //!! this went out of range?
               if (HTomb.World.explored[s[2]][s[0]][s[1]]!==true || that.validTile(s[0],s[1],s[2])!==true) {
                 valid = false;
               }
@@ -917,7 +920,18 @@ HTomb = (function(HTomb) {
     name: "black market",
     symbols: ["\u00A3",".",".",".","\u2696","$","\u00A2","\u20AA","\u00A4"],
     fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
-    bg: "#555544"
+    bg: "#555544",
+    ingredients: [
+      {Rock: 1}, {}, {WoodPlank: 1},
+      {}, {TradeGoods: 1}, {},
+      {WoodPlank: 1}, {}, {Rock: 1}
+    ],
+    Behaviors: {
+      Storage: {
+        stores: "TradeGoods"
+      },
+      StructureLight: {}
+    }
   });
 
   Structure.extend({
@@ -925,7 +939,27 @@ HTomb = (function(HTomb) {
     name: "sanctum",
     symbols: ["\u2625",".","\u2AEF",".","\u2135",".","\u2AEF","\u2606","\u263F"],
     fgs: ["magenta",HTomb.Constants.FLOORFG,"cyan",HTomb.Constants.FLOORFG,"green",HTomb.Constants.FLOORFG,"yellow","red","orange"],
-    bg: "#222244"
+    bg: "#222244",
+    // do we want some sort of mana activation thing?,
+    Behaviors: {
+      StructureLight: {}
+    }
+  });
+
+  Structure.extend({
+    template: "GuardPost",
+    name: "guard post",
+    ingredients: [
+      {},{},{},
+      {},{Rock:1,WoodPlank:1},{},
+      {},{},{}
+    ],
+    symbols: ["\u2694",".","\u2658",".",".",".","\u2658",".","\u2694"],
+    fgs: ["#BBBBBB",HTomb.Constants.FLOORFG,"#BBBBBB",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BBBBBB",HTomb.Constants.FLOORFG,"#BBBBBB"],
+    bg: "#555577",
+    Behaviors: {
+      StructureLight: {}
+    }
   });
 
 

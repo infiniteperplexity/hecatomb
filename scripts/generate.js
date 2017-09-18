@@ -28,15 +28,15 @@ HTomb = (function(HTomb) {
     var stack;
     if (thing.parent==="Feature") {
       stack = this.features[crd] || [];
-      stack.push(thing);
+      stack.unshift(thing);
       this.features[crd] = stack;
     } else if (thing.parent==="Item") {
       stack = this.items[crd] || [];
-      stack.push(thing);
+      stack.unshift(thing);
       this.items[crd] = stack;
     } else if (thing.parent==="Creature") {
       stack = this.creatures[crd] || [];
-      stack.push(thing);
+      stack.unshift(thing);
       this.creatures[crd] = stack;
     } else {
       thing.place(x,y,z);

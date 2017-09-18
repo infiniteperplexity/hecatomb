@@ -29,7 +29,7 @@ HTomb = (function(HTomb) {
     // Entity-placement behavior
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
-      if (this.assigner && this.assigner.master) {
+      if (this.assigner && this.assigner.master && this.assigner.master.taskList.indexOf(this)===-1) {
         this.assigner.master.taskList.push(this);
       }
       let t = HTomb.World.tasks[coord(x,y,z)];
@@ -78,7 +78,7 @@ HTomb = (function(HTomb) {
             }
         }
       if (this.assignee) {
-        this.assignee.worker.unassign();
+        this.unassign();
       }
       Entity.despawn.call(this);
     },
@@ -107,6 +107,10 @@ HTomb = (function(HTomb) {
     },
     unassign: function() {
       var cr = this.assignee;
+      if (!cr) {
+        this.assignee = null;
+        return;
+      }
       if (cr.worker===undefined) {
         HTomb.Debug.pushMessage("Problem unassigning task");
       } else {

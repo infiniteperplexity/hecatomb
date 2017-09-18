@@ -130,15 +130,27 @@ HTomb = (function(HTomb) {
   };
 
   var lightLevel = 255;
-  HTomb.FOV.discreteLights = function() {
+  HTomb.FOV.pointLights = function() {
     for (var l=0; l<HTomb.World.lights.length; l++) {
       var light = HTomb.World.lights[l];
-      light.illuminate();
-   }
+      var x = light.point.x;
+      var y = light.point.y;
+      var z = light.point.z;
+      if (light.point.item) {
+        let cont = light.point.item.containerXYZ();
+        if (cont[0]!==null) {
+          x = cont[0];
+          y = cont[1];
+          z = cont[2];
+        }
+      }
+      lightLevel = light.level;
+      illuminate(x,y,z,light.range); //all lights 10 for now
+    }
   };
 
   // we need some way for the light to fade over time...
-  HTomb.FOV.pointIlluminate = function(x,y,z,r) {
+  function illuminate(x,y,z,r) {
     x0 = x;
     y0 = y;
     r0 = r;
@@ -163,7 +175,7 @@ HTomb = (function(HTomb) {
   HTomb.World.validate.lighting = function(coords, z) {
     HTomb.FOV.resetLight(coords, z)
     HTomb.FOV.ambientLight(HTomb.Time.dailyCycle.lightLevel(),coords);
-    HTomb.FOV.discreteLights(coords);
+    HTomb.FOV.pointLights(coords);
   };
 
   HTomb.FOV.shade = function(color,x,y,z) {

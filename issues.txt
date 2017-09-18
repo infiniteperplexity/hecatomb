@@ -5,3 +5,4 @@ refactoring brings up a ton of new issues...
 - we haven't checked whether saving the game works
 - some things like craftable should probably be made into behaviors
 - probably need a "claim item" task or some such thing to block multiple claims on the same item...subsidiary tasks
+- should rework how ownership and forbidding works
