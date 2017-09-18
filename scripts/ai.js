@@ -385,7 +385,9 @@ HTomb = (function(HTomb) {
         this.fallback.act(this);
       }
       if (this.acted===false) {
-         console.log(this.entity.describe() + " failed to act!");
+        if (this.actionPoints>0) {
+          console.log(this.entity.describe() + " failed to act!");
+        }
          //throw new Error("Creature failed to act!");
       }
       // Reset activity for next turn

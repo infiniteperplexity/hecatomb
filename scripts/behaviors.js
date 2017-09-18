@@ -93,6 +93,7 @@ HTomb = (function(HTomb) {
     template: "StructureLight",
     name: "structure light",
     level: 255,
+    range: 3,
     onPlace: function() {
       if (HTomb.World.lights.indexOf(this)===-1) {
         HTomb.World.lights.push(this);
@@ -106,10 +107,16 @@ HTomb = (function(HTomb) {
       }
     },
     illuminate: function(x,y,z) {
-      let squares = this.entity.squares;
-      for (let s of squares) {
-        HTomb.World.lit[s[2]][s[0]][s[1]] = this.level;
+      let e = this.entity;
+      for (let i=-this.range; i<=this.range; i++) {
+        for (let j=-this.range; j<this.range; j++) {
+          HTomb.World.lit[e.z][e.x+i][e.y+j] = this.level;
+        }
       }
+      //let squares = this.entity.squares;
+      //for (let s of squares) {
+      //  HTomb.World.lit[s[2]][s[0]][s[1]] = this.level;
+      //}
     }
   });
 
@@ -519,7 +526,7 @@ HTomb = (function(HTomb) {
       cr.remove();
       this.entity.place(x,y,z);
       cr.place(x0,y0,z0);
-      //HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " displaces " + cr.describe({article: "indefinite"}) + ".",x,y,z);
+      HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " displaces " + cr.describe({article: "indefinite"}) + ".",x,y,z);
       if (this.entity.ai) {
         this.entity.ai.acted = true;
         this.entity.ai.actionPoints-=16;

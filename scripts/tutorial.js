@@ -582,7 +582,7 @@ HTomb = (function(HTomb) {
       " ",
       "- Digging on a slope levels the slope.",
       " ",
-      "Look below this panel for a hint about what digging does in the highlighted square."
+      "Look below this panel for a hint about   what digging does in the highlighted square."
     ],
     backupInstructions: HTomb.Tutorial.templates.AssignAJob.instructions,
     listens: ["Designate"],
@@ -617,14 +617,13 @@ HTomb = (function(HTomb) {
       " ",
       "%c{cyan}%b{DarkRed}Now wait (pass turns) while your zombie digs.",
       " ",
-      "There is a chance that you will unlock one or more additional achievements, depending on where your zombie digs and what it finds."
+      "There is a chance that you will unlock one or more additional achievements, depending on where your zombie digs and what it finds.  Note that some types of soil or stone may be too hard to dig through, at least until your zombies equip better tools."
     ],
     skip: "WaitForSecondZombie",
     listens: ["Complete"],
     trigger: function(event) {
       // special handling for the one tutorial you're allowed to do out of order
       if (event.task && event.task.template==="ZombieEmergeTask" && HTomb.Player.master.minions.length>=2) {
-          console.log("Skipping ahead in tutorial.");
           HTomb.Tutorial.templates.RaiseASecondZombie.norepeat = true;
           HTomb.Tutorial.templates.WaitForSecondZombie.norepeat = true;
           HTomb.Tutorial.goto("NavigationModeStepOne");

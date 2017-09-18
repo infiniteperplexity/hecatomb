@@ -181,9 +181,6 @@ HTomb = (function(HTomb) {
         return;
       }
       this.queue.splice(this.cursor+1,0,[this.makes[i],"finite",1]);
-      console.log(i);
-      console.log(this.makes);
-      console.log(this.makes[i]);
       if (this.task===null) {
         this.nextGood();
       }
@@ -568,7 +565,6 @@ HTomb = (function(HTomb) {
         if (t===feature) {
           cr.inventory.drop(this.item);
           this.complete(this.assignee);
-          console.log("haul task completed");
           cr.ai.acted = true;
           return;
         } else {
