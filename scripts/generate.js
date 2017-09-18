@@ -317,7 +317,7 @@ HTomb = (function(HTomb) {
           let y1 = y+dirs[j][1];
           placed.push([x1,y1,z]);
           placement.stack(HTomb.Things.Tombstone(),x1,y1,z);
-          HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.NoCover;
+          HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.Soil;
         }
       }
       //place one trade good in each cluster of graves

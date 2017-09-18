@@ -93,6 +93,7 @@ HTomb = (function(HTomb) {
   HTomb.Types.defineCover({
     template: "Soil",
     name: "soil",
+    earth: true,
     hardness: 0,
     thickness: 1,
     fg: "#BBBBAA",
@@ -102,6 +103,7 @@ HTomb = (function(HTomb) {
   HTomb.Types.defineCover({
     template: "Limestone",
     name: "limestone",
+    earth: true,
     hardness: 1,
     thickness: 5,
     fg: "#AAAAAA",
@@ -111,6 +113,7 @@ HTomb = (function(HTomb) {
   HTomb.Types.defineCover({
     template: "Basalt",
     name: "basalt",
+    earth: true,
     hardness: 2,
     thickness: 12,
     fg: "#999999",
@@ -120,6 +123,7 @@ HTomb = (function(HTomb) {
   HTomb.Types.defineCover({
     template: "Granite",
     name: "granite",
+    earth: true,
     hardness: 3,
     thickness: 12,
     fg: "#AA9999",
@@ -129,6 +133,7 @@ HTomb = (function(HTomb) {
   HTomb.Types.defineCover({
     template: "Bedrock",
     name: "bedrock",
+    earth: true,
     hardness: 4,
     fg: "#888888",
     bg: "#555555"

@@ -405,7 +405,7 @@ HTomb = (function(HTomb) {
     designateTile: function(x,y,z,assigner) {
       if (this.validTile(x,y,z) || HTomb.World.explored[z][x][y]!==true) {
         let t = HTomb.Things[this.template]({assigner: assigner}).place(x,y,z);
-        HTomb.Events.publish({type: "Designate", task: t.task});
+        HTomb.Events.publish({type: "Designate", task: this});
         return t;
       }
     },
@@ -437,6 +437,8 @@ HTomb = (function(HTomb) {
       var DownSlopeTile = HTomb.Tiles.DownSlopeTile;
       var t = tiles[z][x][y];
       let c = HTomb.World.covers[z][x][y];
+      let downOne = false;
+      // this should unforbid items...
       // If there is a slope below, dig out the floor
       if (tiles[z-1][x][y]===UpSlopeTile && HTomb.World.explored[z-1][x][y] && (t===WallTile || t===FloorTile)) {
         tiles[z][x][y] = DownSlopeTile;
@@ -455,6 +457,7 @@ HTomb = (function(HTomb) {
           if (c.mine) {
             c.mine(x,y,z-1);
           }
+          downOne = true;
         // Otherwise just remove the floor
         } else {
           tiles[z][x][y] = EmptyTile;
@@ -463,11 +466,13 @@ HTomb = (function(HTomb) {
       } else if (t===DownSlopeTile) {
         tiles[z][x][y] = EmptyTile;
         tiles[z-1][x][y] = FloorTile;
+        downOne = true;
       // if it's an upward slope, remove the slope
       } else if (t===UpSlopeTile) {
         tiles[z][x][y] = FloorTile;
         if (tiles[z+1][x][y]===DownSlopeTile) {
           tiles[z+1][x][y] = EmptyTile;
+          downOne = true;
         }
       } else if (t===EmptyTile) {
         // this shouldn't happen
@@ -484,6 +489,13 @@ HTomb = (function(HTomb) {
           let item = rock.place(x,y,z);
           item.setOwner(HTomb.Player);
         }
+      }
+      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Container();
+      if (downOne) {
+        items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Container();
+      }
+      for (let i=0; i<items.items; i++) {
+        items.items[i].setOwner(this.assigner);
       }
       HTomb.World.validate.cleanNeighbors(x,y,z);
       let f = HTomb.World.features[coord(x,y,z)];

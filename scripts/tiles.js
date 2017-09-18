@@ -155,7 +155,7 @@ HTomb = (function(HTomb) {
     } else if (zview===-1 && covers[z-1][x][y]!==HTomb.Covers.NoCover && !covers[z-1][x][y].solid && tiles[z-1][x][y].solid!==true) {
       if (vis && covers[z-1][x][y].liquid) {
         bg = bg || covers[z-1][x][y].shimmer();
-      } else {
+      } else if (!covers[z-1][x][y].earth) {
         bg = bg || covers[z-1][x][y].darken();
       }
     } else if (creatures[crd] && creatures[crd].bg) {

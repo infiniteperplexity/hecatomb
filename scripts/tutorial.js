@@ -450,7 +450,6 @@ HTomb = (function(HTomb) {
       " ",
       "PageUp/Down: Scroll messages.",
       "A: Achievements, /: Toggle tutorial."
-      //,"Backspace / Delete: Previous tutorial."
     ],
     instructions: [
       "%c{white}You wait, smiling grimly as your undead thrall claws its way out of its grave.",
@@ -681,6 +680,7 @@ HTomb = (function(HTomb) {
       }
     },
     trigger: function(event) {
+      console.log("testing this thing");
       return (event.spell.template==="RaiseZombie");
     },
     onComplete: function() {

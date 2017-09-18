@@ -407,14 +407,12 @@ HTomb = (function(HTomb) {
   };
   // Show a menu of the tasks the player can assign
   Commands.showJobs = function() {
-    // This one alone should *not* delegate
     HTomb.Events.publish({type: "Command", command: "ShowJobs"});
     GUI.choosingMenu("Choose a task:", HTomb.Player.master.listTasks(),
       function(task) {
         return function() {
           HTomb.Events.publish({type: "Command", command: "ChooseJob", task: task})
           HTomb.Player.master.designate(task);
-          //HTomb.Time.resumeActors();
         };
       },
       {
