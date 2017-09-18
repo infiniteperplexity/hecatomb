@@ -300,14 +300,12 @@ HTomb = (function(HTomb) {
         throw new Error("What just happened?!?!");
       }
       this.task = tsk;
-      console.log(this.describe() + " assigned to " + tsk.describe());
       HTomb.Debug.pushMessage(this.entity.describe({capitalized: true, article: "indefinite"}) + " was assigned " + tsk.describe());
     },
     unassign: function() {
       if (this.task===null) {
         return;
       }
-      console.log(this.describe() + " unassigned from " + this.task.describe());
       HTomb.Debug.pushMessage(this.entity.describe({capitalized: true, article: "indefinite"}) + " was unassigned from " + this.task.describe());
       this.task = null;
     },
@@ -413,7 +411,6 @@ HTomb = (function(HTomb) {
             minion.equipper.equipItem(invenTools[0]);
             this.entity.ai.acted = true;
             this.entity.ai.actionPoints-=16;
-            console.log("equipping an item");
             continue;
           } else if (groundTools.length>0) {
             let task = HTomb.Things.EquipTask();
@@ -422,7 +419,6 @@ HTomb = (function(HTomb) {
             task.assigner = this.entity;
             task.name = "equip " + item.describe();
             task.place(item.x, item.y, item.z);
-            console.log("!!!assigning an equip task");
             task.assignTo(minion);
             continue;
           }
@@ -433,22 +429,12 @@ HTomb = (function(HTomb) {
             tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
             for (let k=0; k<tasks.length; k++) {
               let task = tasks[k];
-              if (minion.worker.task!==null) {
-                console.log("!!!!!!!!!");
-                console.log("tracking problems....");
-                console.log("priority is "+j);
-                console.log(tasks);
-                console.log(task);
-                console.log(minion);
-                throw new Error("stop this nonsense!");
-              }
               if (minion.worker.task===null && minion.worker.allowedTasks.indexOf(task.template)!==-1 && task.canAssign(minion)) {
                 task.assignTo(minion);
                 //very ad hoc
-                let j = MAXPRIORITY+1;
+                j = MAXPRIORITY+1;
                 break;
               } else if (failed.indexOf(task)===-1) {
-                console.log("assign " + task.describe() + " failed");
                 failed.push(task);
               }
             }
