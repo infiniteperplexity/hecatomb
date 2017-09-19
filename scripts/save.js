@@ -161,6 +161,13 @@ HTomb = (function(HTomb) {
     let things = JSON.parse(json, function (key, val) {
       if (val===null) {
         return null;
+      } else if (key==="items") {
+        // I believe this will work...
+        let items = HTomb.Things.Items(this);
+        for (let item of val) {
+          items.addItem(val);
+        }
+        return items;
       } else if (val.Type!==undefined) {
         // should not require tracking swaps
         return HTomb.Types.templates[val.Type];
@@ -220,31 +227,40 @@ HTomb = (function(HTomb) {
     for (let t = 0; t<things.length; t++) {
       let thing = things[t];
       //load floor item containers into the items list
-      if (typeof(thing.heldby)==="number") {
-        HTomb.World.items[thing.heldby] = thing;
-      }
       let x = thing.x;
       let y = thing.y;
       let z = thing.z;
       if (x===null || y===null || z===null) {
         continue;
       }
-      HTomb.World.things[t] = thing;
       // A lot of these things may need explicit placement
-      if (thing.creature) {
+      if (thing.parent==="Creature") {
         HTomb.World.creatures[coord(x,y,z)]=thing;
       }
-      if (thing.feature) {
+      if (thing.parent==="Feature") {
         HTomb.World.features[coord(x,y,z)]=thing;
       }
-      if (thing.task) {
+      if (thing.parent==="Task") {
         HTomb.World.tasks[coord(x,y,z)]=thing;
       }
+      if (thing.parent==="Item") {
+        if (thing.onlist && thing.onlist.heldby===HTomb.World.items) {
+          let pile = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
+          pile.addItem(thing);
+          HTomb.World.items[coord(x,y,z)] = pile;
+        }
+      }
     }
+    let behaviors = HTomb.Things.templates.Behavior.children.map(function(e,i,a) {return e.name;});
     for (let i=0; i<HTomb.World.things.length; i++) {
       let thing = HTomb.World.things[i];
-      if (thing.Behaviors) {
-        thing.validateBehaviors();
+      for (let key in Object.keys(thing)) {
+        if (key in behaviors) {
+          if (thing.behaviors===undefined) {
+            thing.behaviors = [];
+          }
+          thing.behaviors.push(thing[key]);
+        }
       }
     }
   }

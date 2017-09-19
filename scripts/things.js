@@ -152,8 +152,12 @@ HTomb = (function(HTomb) {
     //},
     extend: function(args) {
       let child = Object.create(this);
-      child.parent = this.template;
       child = Object.assign(child, args);
+      child.parent = this.template;
+      if (this.hasOwnProperty("children")===false) {
+        this.children = [];
+      }
+      this.children.push(child);
       HTomb.Things.templates[args.template] = child;
       HTomb.Things[args.template] = function(args2) {
         let o = Object.create(child);
@@ -176,43 +180,6 @@ HTomb = (function(HTomb) {
   // The global list of known templates
   HTomb.Things.templates = {Thing: thing};
 
-  // define a template for creating things
-  HTomb.Things.define = function(args) {
-    console.log("called old-fashioned Define...");
-    console.log(args.template);
-    if (args===undefined || args.template===undefined) {
-      //HTomb.Debug.pushMessage("invalid template definition");
-      return;
-    }
-    // Create based on generic thing
-    var t;
-    if (args.parent===undefined || (args.parent!=="Thing" && HTomb.Things.templates[args.parent]===undefined)) {
-      args.parent = "Thing";
-    }
-
-    t = Object.create(HTomb.Things.templates[args.parent]);
-
-    // Create a new function...maybe not the best way to do this
-    HTomb.Things["define" + args.template] = function(opts) {
-      opts.parent = opts.parent || args.template;
-      return HTomb.Things.define(opts);
-    };
-    HTomb.Things[args.template] = function(opts) {
-      // Create a shortcut function to create it
-      return HTomb.Things.create(args.template, opts);
-    };
-    // Add the arguments to the template
-    for (var arg in args) {
-      t[arg] = args[arg];
-    }
-    // Add to the list of templates
-    HTomb.Things.templates[args.template] = t;
-    // Don't fire onDefine for the top-level thing
-    if (t.onDefine && args.parent!=="Thing") {
-      t.onDefine(args);
-    }
-    return t;
-  };
-
+  // 
 return HTomb;
 })(HTomb);
