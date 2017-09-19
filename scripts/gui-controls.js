@@ -446,7 +446,7 @@ HTomb = (function(HTomb) {
       next = mainColor + "Items: ";
       if (square.items) {
         for (let i=0; i<square.items.length; i++) {
-          next+=square.items.expose(i).describe({article: "indefinite"});
+          next+=square.items[i].describe({article: "indefinite"});
           text.push(next);
           next = "       "+mainColor;
         }
@@ -488,7 +488,7 @@ HTomb = (function(HTomb) {
       next = otherColor + "Items: ";
       if (above.items) {
         for (let i=0; i<above.items.length; i++) {
-          next+=above.items.expose(i).describe({article: "indefinite"});
+          next+=above.items[i].describe({article: "indefinite"});
           text.push(next);
           next = otherColor+"       ";
         }
@@ -526,7 +526,7 @@ HTomb = (function(HTomb) {
       next = otherColor + "Items: ";
       if (below.items) {
         for (let i=0; i<below.items.length; i++) {
-          next+=below.items.expose(i).describe({article: "indefinite"});
+          next+=below.items[i].describe({article: "indefinite"});
           text.push(next);
           next = otherColor+"       ";
         }

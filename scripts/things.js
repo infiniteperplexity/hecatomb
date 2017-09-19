@@ -178,6 +178,8 @@ HTomb = (function(HTomb) {
 
   // define a template for creating things
   HTomb.Things.define = function(args) {
+    console.log("called old-fashioned Define...");
+    console.log(args.template);
     if (args===undefined || args.template===undefined) {
       //HTomb.Debug.pushMessage("invalid template definition");
       return;
@@ -211,123 +213,6 @@ HTomb = (function(HTomb) {
     }
     return t;
   };
-
-
-  // Create a new object based on the template
-  HTomb.Things.create = function(template, args) {
-    if (HTomb.Things.templates[template]===undefined) {
-      console.log([template,args]);
-    }
-    var t = Object.create(HTomb.Things.templates[template]);
-    // Copy the arguments onto the thing
-    // here's where we went wrong...
-    for (var arg in args) {
-      t[arg] = args[arg];
-    }
-    // Do all "on spawn" tasks
-    t.spawn();
-    //t.acquireSpawnId();
-    if (t.onCreate) {
-      return t.onCreate(args);
-    }
-    // return the thing
-    return t;
-  };
-
-  HTomb.Things.defineByProxy = function(child, parnt) {
-    // This has only ever been tested for Behavior/Entity relationships
-    let ent = HTomb.Things.templates[parnt];
-    let beh = HTomb.Things.templates[child];
-    HTomb.Things["define"+child] = function(args) {
-      args = args || {};
-      let chld = {};
-      let parent = HTomb.Things.templates[args.parent] || {};
-      // I think this next bit is only for subtypes, like Seed, et cetera
-      args.Behaviors = args.Behaviors || {};
-      if (parent.Behaviors) {
-        for (let arg in parent.Behaviors) {
-          args.Behaviors[arg] = HTomb.Utils.copy(parent.Behaviors[arg]);
-        }
-      }
-      // This code makes sure the right arguments get passed to the parent and child
-      let eargs = {};
-      let onDefine = null;
-      for (let arg in args) {
-        if (arg==="onDefine") {
-          onDefine = args[arg];
-        } else if (arg.substr(0,2)==="on" && (arg.substr(2,1)===arg.substr(2,1).toUpperCase())) {
-          if (ent[arg]) {
-            let func1 = ent[arg];
-            let func2 = args[arg];
-            eargs[arg] = function() {
-              func1.apply(this,arguments);
-              return func2.apply(this,arguments);
-            };
-          } else {
-            eargs[arg] = args[arg];
-          }
-        } else if (ent[arg]!==undefined) {
-          eargs[arg] = args[arg];
-        } else if (beh[arg]!==undefined) {
-          chld[arg] = args[arg];
-        } else {
-          eargs[arg] = args[arg];
-        }
-      }
-      // I think this is for subtypes again
-      if (eargs.Behaviors[child]) {
-        for (let arg in chld) {
-          eargs.Behaviors[child][arg] = HTomb.Utils.copy(chld[arg]);
-        }
-      } else {
-        eargs.Behaviors[child] = chld;
-      }
-      let newdef = HTomb.Things["define"+parnt](eargs);
-      // Make sure that onDefine works at the level it is supposed to
-      if (beh.hasOwnProperty("onDefine")) {
-        beh.onDefine(eargs);
-      }
-      // make the child onDefine kick in after the parent and behavioral onDefines
-      if (onDefine) {
-        onDefine.call(newdef);
-      }
-      let create = HTomb.Things[args.template];
-      HTomb.Things[args.template] = function(crargs) {
-        crargs = crargs || {};
-        crargs.Behaviors = crargs.Behaviors || {};
-        let par = HTomb.Things.templates[args.template];
-        if (par.Behaviors) {
-          for (let arg in par.Behaviors) {
-            crargs.Behaviors[arg] = HTomb.Utils.copy(par.Behaviors[arg]);
-          }
-        }
-        let entargs = {};
-        let bargs = {};
-        for (let arg in crargs) {
-          if (typeof(crargs[arg])==="function") {
-            entargs[arg] = crargs[arg];
-          } else if (ent[arg]!==undefined) {
-            entargs[arg] = crargs[arg];
-          } else if (beh[arg]!==undefined) {
-            bargs[arg] = crargs[arg];
-          } else {
-            entargs[arg] = crargs[arg];
-          }
-        }
-        for (let arg in bargs) {
-          entargs.Behaviors[child][arg] = bargs[arg];
-        }
-        return create(entargs);
-      };
-      return newdef;
-    };
-    // Make sure that onDefine does not override its parent
-    if (beh.hasOwnProperty("onDefine") && HTomb.Things.templates[beh.parent].hasOwnProperty("onDefine")) {
-      HTomb.Things.templates[beh.parent].onDefine(beh);
-    }
-    return beh;
-  };
-
 
 return HTomb;
 })(HTomb);

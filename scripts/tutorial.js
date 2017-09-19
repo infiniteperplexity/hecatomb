@@ -886,7 +886,6 @@ HTomb = (function(HTomb) {
       // This logic attempts to catch whether someone harvested the wrong thing
       if (event.task && event.task.template==="DismantleTask") {
         if (HTomb.Player.master.ownsAllIngredients({WoodPlank: 1})) {
-          console.log(HTomb.Player.master.taskList.length);
           return true;
         } else if (HTomb.Player.master.taskList.length<=1) {
           HTomb.Tutorial.goto("HarvestResourcesStepOne");

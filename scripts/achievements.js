@@ -120,8 +120,7 @@ HTomb = (function(HTomb) {
       let x = t.x;
       let y = t.y;
       let z = t.z;
-      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Container();
-      items = items.exposeItems();
+      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
       let anyOre = false;
       for (let i=0; i<items.length; i++) {
         if (items[i].tags.indexOf("Minerals")!==-1 && items[i].template!=="Rock") {
@@ -146,15 +145,8 @@ HTomb = (function(HTomb) {
       let x = t.x;
       let y = t.y;
       let z = t.z;
-      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Container();
-      items = items.exposeItems();
-      let anyWood = false;
-      for (let i=0; i<items.length; i++) {
-        if (items[i].tags.indexOf("Wood")!==-1) {
-          anyWood=true;
-        }
-      }
-      if (anyWood) {
+      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
+      if (items.count("WoodPlank")) {
         this.achieve();
       }
     }

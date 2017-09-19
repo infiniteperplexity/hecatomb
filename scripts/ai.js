@@ -58,11 +58,9 @@ HTomb = (function(HTomb) {
         for (var ing in ingredients) {
           var n = ingredients[ing];
           // if we lack what we need, search for items
-          if (cr.inventory.items.countAll(ing)<n) {
+          if (cr.inventory.items.count(ing)<n) {
             needy = true;
-            var items = task.assigner.master.ownedItems.filter(function(v) {
-            //var items = HTomb.Utils.findItems(function(v) {
-              //if (v.item.isOwned()!==true || v.item.isOnGround()!==true) {
+            var items = task.assigner.master.ownedItems().filter(function(v) {
               if (v.isOnGround()!==true) {
                 return false;
               } else if (v.template===ing) {

@@ -15,16 +15,16 @@ HTomb = (function(HTomb) {
     randomColor: 5,
     onPlace: function(x,y,z) {
       // Bury a corpse beneath the tombstone
-      HTomb.Things.create("Corpse").place(x,y,z-1);
+      HTomb.Things.Corpse().place(x,y,z-1);
     },
-    explode: function(cause) {
+    explode: function(args) {
       var x = this.x;
       var y = this.y;
       var z = this.z;
       this.destroy();
-      let buriedItems = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Container();
-      for (let i=0; i<buriedItems.items.length; i++) {
-        buriedItems.items[i].setOwner(cause);
+      let buriedItems = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();
+      for (let item of buriedItems) {
+        item.owned = true;
       }
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
       for (let i=0; i<ROT.DIRS[8].length; i++) {
@@ -40,10 +40,10 @@ HTomb = (function(HTomb) {
             var rock = HTomb.Things.Rock();
             rock.n = 1;
             rock.place(x1,y1,z);
-            if (cause) {
-              rock.setOwner(cause);
+            // may need to deal with this part later
+            if (args) {
+              rock.claimed = true;
             }
-            //rock.item.setOwner(HTomb.Player);
           }
         }
       }

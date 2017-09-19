@@ -314,6 +314,24 @@ HTomb = (function(HTomb) {
       } else if (t===HTomb.Tiles.EmptyTile && (tb===HTomb.Tiles.EmptyTile || tb===HTomb.Tiles.FloorTile)) {;
         return false;
       }
+      let soil = HTomb.World.covers[z][x][y];
+      if (t===HTomb.Tiles.FloorTile || t===HTomb.Tiles.DownSlopeTile) {
+        soil = HTomb.World.covers[z-1][x][y];
+      }
+      let hardness;
+      if (soil.hardness===undefined) {
+        hardness = 0;
+      } else {
+        hardness = soil.hardness;
+      }
+      let labor = 0;
+      // no assigner yet at this point?
+      for (let minion of HTomb.Player.master.minions) {
+        labor = Math.max(labor, minion.worker.getLabor());
+      }
+      if (labor-hardness<=0) {
+        return false;
+      }
       return true;
     },
     // experiment with a filter to dig only one level at a time
@@ -484,18 +502,18 @@ HTomb = (function(HTomb) {
         rock.n = 1;
         if (tiles[z][x][y]===DownSlopeTile) {
           let item = rock.place(x,y,z-1);
-          item.setOwner(HTomb.Player);
+          item.owned = true;;
         } else {
           let item = rock.place(x,y,z);
-          item.setOwner(HTomb.Player);
+          item.owned = true
         }
       }
-      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Container();
+      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
       if (downOne) {
-        items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Container();
+        items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();
       }
-      for (let i=0; i<items.items; i++) {
-        items.items[i].setOwner(this.assigner);
+      for (let item of items) {
+        item.owned = true;
       }
       HTomb.World.validate.cleanNeighbors(x,y,z);
       let f = HTomb.World.features[coord(x,y,z)];

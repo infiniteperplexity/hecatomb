@@ -190,7 +190,7 @@ HTomb = (function(HTomb) {
   Commands.glance = function(square) {
     if (square.items) {
       // This should use the listItems method
-      var mesg = square.items.list();
+      var mesg = square.items.describe();
       HTomb.GUI.pushMessage("You see " + mesg + " here.");
     }
     if (square.feature) {
@@ -243,7 +243,7 @@ HTomb = (function(HTomb) {
         HTomb.Time.resumeActors();
       } else {
         // If there are multiple items, display a menu
-        GUI.choosingMenu("Choose an item:",square.items.exposeArray(),
+        GUI.choosingMenu("Choose an item:",square.items,
           function(item) {
             return function() {
               HTomb.Events.publish({type: "Command", command: "PickUp", item: item});
@@ -298,7 +298,7 @@ HTomb = (function(HTomb) {
       HTomb.GUI.pushMessage("You have no items.");
     } else {
         // If the player has multiple items, display a menu
-      GUI.choosingMenu("You are carrying:",p.inventory.items.exposeArray(),
+      GUI.choosingMenu("You are carrying:",p.inventory.items,
         function(item) {
           return function() {
             HTomb.GUI.reset();
@@ -327,8 +327,8 @@ HTomb = (function(HTomb) {
             if (choice[1]===null) {
               let equippable = [];
               //HTomb.Player.inventory.add(HTomb.Things.WorkAxe());
-              for (let i=0; i<p.inventory.items.items.length; i++) {
-                let item = p.inventory.items.items[i];
+              for (let i=0; i<p.inventory.items.length; i++) {
+                let item = p.inventory.items[i];
                 if (item.equipment && item.equipment.slot===choice[0]) {
                   equippable.push(item);
                 }

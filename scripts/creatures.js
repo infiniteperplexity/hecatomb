@@ -230,7 +230,7 @@ HTomb = (function(HTomb) {
             if (HTomb.World.tasks[HTomb.Utils.coord(x,y,z)]) {
               return false;
             }
-            if (HTomb.World.items[HTomb.Utils.coord(x,y,z-1)] && HTomb.World.items[HTomb.Utils.coord(x,y,z-1)].containsAny("Corpse")) {
+            if (HTomb.World.items[HTomb.Utils.coord(x,y,z-1)] && HTomb.World.items[HTomb.Utils.coord(x,y,z-1)].count("Corpse")) {
               return true;
             }
           }

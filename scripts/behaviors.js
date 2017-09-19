@@ -180,12 +180,12 @@ HTomb = (function(HTomb) {
     name: "inventory",
     capacity: 10,
     onAdd: function() {
-      this.items = HTomb.Things.Container({heldby: this});
+      this.items = HTomb.Things.Items(this);
     },
     pickup: function(item) {
       var e = this.entity;
-      if (this.entity.minion && this.entity.minion.master) {
-        item.owner = this.entity.minion.master;
+      if (this.entity===HTomb.Player || (this.entity.minion && this.entity.minion.master===HTomb.Player)) {
+        item.owned = true;
       }
       item.remove();
       HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " picks up " + item.describe({article: "indefinite"})+".",e.x,e.y,e.z);
@@ -195,23 +195,23 @@ HTomb = (function(HTomb) {
     },
     pickupOne: function(i_or_t) {
       var e = this.entity;
-      var items = HTomb.World.items[coord(e.x,e.y,e.z)];
-      var item = items.takeOne(i_or_t);
+      var items = HTomb.World.items[coord(e.x,e.y,e.z)] || HTomb.Things.Items();
+      var item = items.take(i_or_t);
       if (item) {
         this.pickup(item);
       }
     },
     pickupSome: function(i_or_t,n) {
       var e = this.entity;
-      var items = HTomb.World.items[coord(e.x,e.y,e.z)];
-      var item = items.takeSome(i_or_t,n);
+      var items = HTomb.World.items[coord(e.x,e.y,e.z)] || HTomb.Things.Items();
+      var item = items.take(i_or_t,n);
       if (item) {
         this.pickup(item);
       }
     },
     drop: function(item) {
       var e = this.entity;
-      this.items.remove(item);
+      this.items.removeItem(item);
       item.place(e.x,e.y,e.z);
       HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " drops " + item.describe({article: "indefinite"})+".",e.x,e.y,e.z);
       this.entity.ai.acted = true;
@@ -221,22 +221,16 @@ HTomb = (function(HTomb) {
       if (this.items.length>=this.capacity) {
         HTomb.GUI.pushMessage("Can't pick that up.");
       } else {
-        this.items.push(item);
+        this.items.addItem(item);
       }
     },
     hasAll: function(ingredients) {
-      for (var ing in ingredients) {
-        var n = ingredients[ing];
-        // if we lack what we need, search for items
-        if (this.items.countAll(ing)<n) {
-          return false;
-        }
-      }
-      return true;
+      return this.items.hasAll(ingredients);
     },
     onDespawn: function() {
-      if (this.items) {
-        this.items.despawn();
+      //should probably drop all the items, right?
+      for (let item in this.items) {
+        this.drop(item);
       }
     },
     canFindAll: function(ingredients) {
@@ -246,13 +240,10 @@ HTomb = (function(HTomb) {
       if (!this.entity.minion || !this.entity.minion.master || !this.entity.minion.master.master) {
         return false;
       }
-      //??? what is this about?
+      // this looks ridiculous because we are accessing the master property of a creature that is a master
       let master = this.entity.minion.master.master;
-      if (master===undefined) {
-        throw new Error("What is this master.master business?");
-      }
       for (let item in ingredients) {
-        let items = master.ownedItems.filter(function(it) {
+        let items = master.ownedItems().filter(function(it) {
           if (it.template===item && it.isOnGround()===true) {
             return true;
           } else {
@@ -333,14 +324,12 @@ HTomb = (function(HTomb) {
     taskList: null,
     workshops: null,
     tasks: null,
-    ownedItems: null,
     onCreate: function(options) {
       options = options || {};
       this.tasks = options.tasks || [];
       this.minions = [];
       this.taskList = [];
       this.structures = [];
-      this.ownedItems = [];
       HTomb.Events.subscribe(this, "Destroy");
       return this;
     },
@@ -395,10 +384,10 @@ HTomb = (function(HTomb) {
         } else {
           // look for labor tools
           let labor = minion.worker.getLabor();
-          let invenTools = this.ownedItems.filter(function(e,i,a) {
-            return (e.equipment && e.equipment.labor>labor && minion.inventory && minion.inventory.items.items.indexOf(e)!==-1);
+          let invenTools = this.ownedItems().filter(function(e,i,a) {
+            return (e.equipment && e.equipment.labor>labor && minion.inventory && minion.inventory.items.indexOf(e)!==-1);
           });
-          let groundTools = this.ownedItems.filter(function(e,i,a) {
+          let groundTools = this.ownedItems().filter(function(e,i,a) {
             return (e.equipment && e.equipment.labor>labor && e.isOnGround());
           });
           // sort by labor value
@@ -460,13 +449,18 @@ HTomb = (function(HTomb) {
       }
       return tasks;
     },
+    ownedItems: function() {
+      // should this return an Items list?
+      return HTomb.Utils.where(HTomb.World.things, function(item) {return (item.parent==="Item" && item.owned);});
+    },
     ownsAllIngredients: function(ingredients) {
+      let ownedItems = this.ownedItems();
       let owned = {};
-      for (let i=0; i<this.ownedItems.length; i++) {
-        let temp = this.ownedItems[i].template
+      for (let i=0; i<ownedItems.length; i++) {
+        let temp = ownedItems[i].template
         if (ingredients[temp]>0) {
           owned[temp] = owned[temp] || 0;
-          let n = this.ownedItems[i].n || 1;
+          let n = ownedItems[i].n || 1;
           owned[temp]+=n;
         }
       }
@@ -736,7 +730,7 @@ HTomb = (function(HTomb) {
       OffHand: null    
     },
     onCreate: function(args) {
-      this.items = HTomb.Things.Container();
+      this.items = HTomb.Things.Items(this);
       this.slots = HTomb.Utils.copy(this.slots);
       return this;
     },
@@ -772,11 +766,6 @@ HTomb = (function(HTomb) {
           e.onEquip(this);
           this.slots[slot] = item;
         }
-      }
-    },
-    onDespawn: function() {
-      if (this.items) {
-        this.items.despawn();
       }
     }
   });

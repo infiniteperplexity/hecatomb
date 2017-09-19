@@ -446,7 +446,6 @@ HTomb = (function(HTomb) {
         let s = this.entity.squares[i];
         let items = HTomb.World.items[coord(s[0],s[1],s[2])];
         if (items) {
-          items = items.items;
           for (let j=0; j<items.length; j++) {
             let item = items[j];
             totalItems[item.template] = totalItems[item.template] || 0;
@@ -473,7 +472,7 @@ HTomb = (function(HTomb) {
         return;
       }
       this.dormant = this.dormancy;
-      let items = this.entity.owner.master.ownedItems;
+      let items = this.entity.owner.master.ownedItems();
       for (let i=0; i<items.length; i++) {
         //if ever we run out of task space, break the loop
         if (this.tasks.indexOf(null)===-1) {
@@ -550,7 +549,7 @@ HTomb = (function(HTomb) {
       let cr = this.assignee;
       let item = this.item;
       let feature = this.feature;
-      if (cr.inventory.items.items.indexOf(this.item)!==-1) {
+      if (cr.inventory.items.indexOf(this.item)!==-1) {
         cr.ai.target = feature;
         this.place(feature.x, feature.y, feature.z);
       } else if (item.isOnGround())  {
@@ -680,7 +679,7 @@ HTomb = (function(HTomb) {
       let y = this.y;
       let z = this.z;
       let item = HTomb.Things[this.makes]().place(x,y,z);
-      item.setOwner(HTomb.Player);
+      item.owned = true;
       HTomb.Events.publish({type: "Complete", task: this});
       this.workshop.occupied = null;
       HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes making " + HTomb.Things.templates[this.makes].describe({article: "indefinite"}));

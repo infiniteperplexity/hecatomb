@@ -2,7 +2,7 @@
 //conventions...
 //....an items member should always be called this.items
 //...an item should call the items object it belongs to this.container
-class Items extends Array {
+class ItemList extends Array {
   push: function(item) {
     // does this properly handle full stacks
     if (item.container) {

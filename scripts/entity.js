@@ -87,7 +87,7 @@ HTomb = (function(HTomb) {
     spawn: function(args) {
       Thing.spawn.call(this,args);
       for (let b in this.Behaviors) {
-        let beh = HTomb.Things.create(b,this.Behaviors[b] || {});
+        let beh = HTomb.Things[b](this.Behaviors[b] || {});
         beh.addToEntity(this);
       }
       // Randomly choose symbol if necessary
@@ -151,26 +151,12 @@ HTomb = (function(HTomb) {
     stackable: false,
     n: 1,
     maxn: 10,
-    container: null,
+    onlist: null,
     bulk: 10,
     value: 1,
     tags: [],
     stackSize: [1,0.7,0.4,0.3,0.1],
-    owner: null,
-    unsetOwner: function() {
-      if (this.owner) {
-        if (this.owner.master.ownedItems.indexOf(this)!==-1) {
-          this.owner.master.ownedItems.splice(this.owner.master.ownedItems.indexOf(this),1);
-        }
-      }
-    },
-    setOwner: function(cr) {
-      this.unsetOwner();
-      this.owner = cr;
-      if (cr!==null && cr.master) {
-        cr.master.ownedItems.push(this)
-      }
-    },
+    owned: true,
     fall: function() {
       var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
       HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
@@ -194,40 +180,16 @@ HTomb = (function(HTomb) {
         }
       }
     },
-    getBulk: function(n) {
-      n = n || this.n || 1;
-      let bulk = 0;
-      for (let i=0; i<n; i++) {
-        let j = i;
-        if (j>=this.stackSize.length) {
-          j = this.stackSize.length-1;
-        }
-        bulk+=this.stackSize[j]*this.bulk;
-      }
-      return Math.ceil(bulk);
-    },
-    maxStack: function(b) {
-      b = b || HTomb.Things.templates.Container.maxBulk;
-      let n=0;
-      let blk=0;
-      do {
-        n+=1;
-      } while (this.getBulk(n)<=b);
-      n-=1;
-      return n;
-    },
     isOnGround: function() {
-      if (!this.container) {
-        return false;
-      }
-      let parent = this.container.heldby;
-      if (typeof(parent)==="number") {
+      if (this.onlist && this.onlist.heldby===HTomb.World.items) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     },
     inStructure: function() {
+      if (this.isOnGround()===false) {
+        return false;
+      }
       if (this.x===null) {
         return false;
       }
@@ -241,11 +203,10 @@ HTomb = (function(HTomb) {
       return false;
     },
     carriedByMinion: function() {
-      if (!this.container) {
-        console.log(this);
+      if (this.isOnGround() || !this.onlist) {
         return false;
       }
-      let parent = this.container.heldby;
+      let parent = this.onlist.heldby;
       if (parent.entity && HTomb.Player.master.minions.indexOf(parent.entity)) {
         return true;
       } else {
@@ -253,22 +214,17 @@ HTomb = (function(HTomb) {
       }
     },
     despawn: function() {
-      if (HTomb.Player.master) {
-        let owned = HTomb.Player.master.ownedItems;
-        let i = owned.indexOf(this.entity);
-        if (i!==-1) {
-          owned.splice(i,1);
-        }
+      if (this.onlist && this.onlist.contains(this)) {
+        this.onlist.removeItem(this);
       }
       Entity.despawn.call(this);
     },
     carriedByCreature: function() {
-      if (!this.container) {
-        console.log(this);
+      if (this.isOnGround() || !this.onlist) {
         return false;
       }
-      let parent = this.container.heldby;
-      if (parent.entity && parent.entity.creature) {
+      let parent = this.onlist.heldby;
+      if (parent.entity && parent.entity.parent==="Creature") {
         return true;
       } else {
         return false;
@@ -277,13 +233,10 @@ HTomb = (function(HTomb) {
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
       let c = coord(x,y,z);
-      var pile = HTomb.World.items[c] || HTomb.Things.Container({heldby: c});
+      var pile = HTomb.World.items[c] || HTomb.Things.Items();
       pile.push(this);
       if (pile.length>0) {
         HTomb.World.items[c] = pile;
-      } else {
-        console.log("despawning stupid pile");
-        pile.despawn();
       }
       return this;
     },
@@ -293,7 +246,7 @@ HTomb = (function(HTomb) {
       // remove it from the old pile
       if (pile) {
         if (pile.contains(this)) {
-          pile.remove(this);
+          pile.removeItem(this);
         }
       }
       //if there is a haul task for the item here, cancel it
@@ -310,323 +263,8 @@ HTomb = (function(HTomb) {
         options.article = this.n;
       }
       return Entity.describe.call(this,options);
-    },
-    makeStack: function() {
-      if (this.stackable) {
-        this.n = 1+HTomb.Utils.diceUntil(3,3);
-      }
-    },
-    containerXYZ: function() {
-      if (this.container && this.container.parent && this.container.parent.entity) {
-        let e = this.container.parent.entity;
-        return [e.x,e.y,e.z];
-      } else {
-        return [null,null,null];
-      }
     }
   });
-
-  HTomb.Things.define({
-    template: "Container",
-    name: "container",
-    parent: "Thing",
-    items: null,
-    heldby: null,
-    maxBulk: 25,
-    totalBulk: function() {
-      let total = 0;
-      for (let i=0; i<this.items.length; i++) {
-        total+=this.items[i].getBulk();
-      }
-      return total;
-    },
-    onCreate: function() {
-      this.items = [];
-      return this;
-    },
-    absorbStack: function(item) {
-      if (item.container) {
-        item.container.remove(item);
-      }
-      //let n = item.item.n;
-      let n = Math.min(item.n,this.canFit(item));
-      let existing = false;
-      for (let i=0; i<this.items.length; i++) {
-        if (this.items[i].template===item.template) {
-          this.items[i].n+=n;
-          existing = true;
-          break;
-        }
-      }
-      if (existing) {
-        item.n-=n;
-        if (item.n===0) {
-          item.despawn();
-          item = null;
-        }
-        return item;
-      } else {
-        this.items.push(item);
-        item.container = this;
-        return null;
-      }
-    },
-    canFit: function(item) {
-      let one = item.n;
-      let two = 0;
-      let bulk = 0;
-      for (let i=0; i<this.items.length; i++) {
-        if (item.template===this.items[i].template) {
-          two = this.items[i].n;
-          bulk = this.items[i].getBulk();
-          break;
-        }
-      }
-      let room = this.maxBulk - this.totalBulk() + bulk;
-      let n = 0;
-      do {
-        n+=1;
-      } while (item.getBulk(n)<=room);
-      n-=1;
-      return n;
-    },
-    push: function(item) {
-      if (item===undefined) {
-        throw new Error("what the what?");
-      }
-      if (item.stackable) {
-        this.absorbStack(item);
-      } else {
-        if (item.container) {
-          item.container.remove(item);
-        }
-        this.items.push(item);
-        item.container = this;
-      }
-    },
-    insert: function(item,i) {
-      if (item.stackable) {
-        this.absorbStack(item);
-      } else {
-        this.items[i] = item;
-        item.container = this;
-      }
-    },
-    expose: function(i) {
-      return this.items[i];
-    },
-    exposeItems: function() {
-      let arr = [];
-      for (let i=0; i<this.items.length; i++) {
-        arr.push(this.items[i]);
-      }
-      return arr;
-    },
-    contains: function(item) {
-      var indx = this.items.indexOf(item);
-      if (indx>-1) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    containsAny: function(template) {
-      for (var i=0; i<this.items.length; i++) {
-        if (this.items[i].template===template) {
-          return true;
-        }
-      }
-      return false;
-    },
-    countAll: function(template) {
-      var tally = 0;
-      for (var i=0; i<this.items.length; i++) {
-        if (this.items[i].template===template) {
-          tally+=this.items[i].n;
-        }
-      }
-      return tally;
-    },
-    getFirst: function(template) {
-      for (var i=0; i<this.items.length; i++) {
-        if (this.items[i].template===template) {
-          return this.items[i];
-        }
-      }
-      return null;
-    },
-    getLast: function(template) {
-      for (var i=this.items.length-1; i>=0; i--) {
-        if (this.items[i].template===template) {
-          return this.items[i];
-        }
-      }
-      return null;
-    },
-    takeOne: function(i_or_t) {
-      if (typeof(i_or_t)!=="string" && i_or_t.template) {
-        i_or_t = i_or_t.template;
-      }
-      if (HTomb.Things.templates[i_or_t].stackable!==true) {
-        var first = this.getFirst(i_or_t);
-        return this.remove(first);
-      } else {
-        var last = this.getLast(i_or_t);
-        if (last.item.n===1) {
-          this.remove(last);
-          return last;
-        } else {
-          last.item.n-=1;
-          var single = HTomb.Things[last.template]();
-          single.item.n = 1;
-          return single;
-        }
-      }
-    },
-    take: function(i_or_t, n) {
-      n = n || 1;
-      if (typeof(i_or_t)!=="string" && i_or_t.template) {
-        i_or_t = i_or_t.template;
-      }
-      let ing = {};
-      ing[i_or_t] = n;
-      if (this.hasAll(ing)!==true) {
-        return false;
-      }
-      if (HTomb.Things.templates[i_or_t].stackable!==true) {
-        var first = this.getFirst(i_or_t);
-        return this.remove(first);
-      } else {
-        var last = this.getLast(i_or_t);
-        if (last.n<=n) {
-          this.remove(last);
-          return last;
-        } else {
-          last.n-=n;
-          var taken = HTomb.Things[last.template]();
-          taken.n = n;
-          return taken;
-        }
-      }
-    },
-    takeSome: function(i_or_t, n) {
-      n = n || 1;
-      if (typeof(i_or_t)!=="string" && i_or_t.template) {
-        i_or_t = i_or_t.template;
-      }
-      let ing = {};
-      ing[i_or_t] = n;
-      if (this.hasAll(ing)!==true) {
-        n = this.countAll(i_or_t);
-      }
-      if (HTomb.Things.templates[i_or_t].stackable!==true) {
-        var first = this.getFirst(i_or_t);
-        this.remove(first);
-        return (first);
-      } else {
-        var last = this.getLast(i_or_t);
-        if (last.n<=n) {
-          this.remove(last);
-          return last;
-        } else {
-          last.n-=n;
-          var taken = HTomb.Things[last.template]();
-          taken.n = n;
-          return taken;
-        }
-      }
-    },
-    remove: function(item) {
-      var indx = this.items.indexOf(item);
-      if (indx>-1) {
-        item.container = null;
-        this.items.splice(indx,1);
-        // should this only happen if it's on the ground?
-        if (typeof(this.heldby)==="number") {
-          item.remove();
-          if (this.items.length===0) {
-            delete HTomb.World.items[this.heldby];
-            this.despawn();
-          }
-        }
-        return item;
-      }
-    },
-    takeItems: function(ingredients) {
-      let items = [];
-      if (this.hasAll(ingredients)!==true) {
-        console.log("can't find the ingredients");
-        return false;
-      }
-      for (let item in ingredients) {
-        let n = ingredients[item];
-        let taken = this.take(item,n);
-        // need some error handling?
-        items.push(taken);
-      }
-      return items;
-    },
-    hasAll: function(ingredients) {
-      for (var ing in ingredients) {
-        var n = ingredients[ing];
-        // if we lack what we need, search for items
-        if (this.countAll(ing)<n) {
-          return false;
-        }
-      }
-      return true;
-    },
-    missingIngredients: function(ingredients) {
-      var miss = {};
-      for (var ing in ingredients) {
-        // if we lack what we need, search for items
-        let n = ingredients[ing] - this.countAll(ing);
-        if (n>0) {
-          miss[ing] = n;
-        }
-      }
-      return miss;
-    },
-    list: function() {
-      var mesg = "";
-      for (var i = 0; i<this.items.length; i++) {
-        if (i>0) {
-          mesg+=" ";
-        }
-        mesg+=this.items[i].describe({article: "indefinite"});
-        if (i===this.items.length-2) {
-          mesg = mesg + ", and";
-        } else if (i<this.items.length-1) {
-          mesg = mesg + ",";
-        }
-      }
-      return mesg;
-    },
-    lineList: function(spacer) {
-      var buffer = [];
-      for (var i = 0; i<this.items.length; i++) {
-        buffer.push([spacer,this.items[i].describe({article: "indefinite"})]);
-      }
-      return buffer;
-    },
-    head: function() {
-      return this.items[0];
-    },
-    tail: function() {
-      return this.items[this.items.length-1];
-    },
-    forEach: function(callb) {
-      let ret = [];
-      for (let i=0; i<this.items.length; i++) {
-        ret.push(callb(this.items[i], this, i));
-      }
-      return ret;
-    },
-    exposeArray: function() {
-      return this.items;
-    }
-  });
-  Object.defineProperty(HTomb.Things.templates.Container,"length",{get: function() {return this.items.length;}});
 
   Entity.extend({
     template: "Feature",
@@ -705,13 +343,171 @@ HTomb = (function(HTomb) {
           }
           for (var i=0; i<n; i++) {
             var thing = HTomb.Things[template]().place(x,y,z);
-            thing.setOwner(HTomb.Player);
+            thing.owned = true;
           }
         }
       }
       this.destroy();
     }
   });
+
+
+
+  class Items extends Array {
+    // normal array constructor arguments forbidden
+    // argument is the "holder" of the item list
+      // almost always either a behavior or the global item list
+    constructor(heldby) {
+      super();
+      this.heldby = heldby || HTomb.World.items;
+    }
+    // add a specific item to the array, absorbing it into a stack if need be
+    addItem(item) {
+      if (item.onlist) {
+        item.onlist.removeItem(item);
+      }
+      for (let it of this) {
+        if (it.template===item.template) {
+          it.n+=item.n;
+          item.despawn();
+          return;
+        }
+      }
+      item.onlist = this;
+      super.push(item);
+    }
+    // override normal ways of adding items
+    push(item) {
+      this.addItem(item);
+    }
+    unshift(item) {
+      this.addItem(item);
+    }
+    // count how many items of a specific type are in the list
+    count(template) {
+      if (typeof(template)!=="string" && template.template) {
+        template = template.template;
+      }
+      for (let item of this) {
+        if (item.template===template) {
+          return item.n;
+        }
+      }
+      return 0;
+    }
+    // check whether a specific item is in the list
+    contains(item) {
+      if (this.indexOf(item)!==-1) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    // return the first item of a given type in the list
+    getItem(template) {
+      if (typeof(template)!=="string" && template.template) {
+        template = template.template;
+      }
+      for (let item of this) {
+        if (item.template===template) {
+          return item;
+        }
+      }
+      return null;
+    }
+    // take n items of a specific type from the list
+    take(template,n) {
+      n = n || 1;
+      if (typeof(template)!=="string" && template.template) {
+        template = template.template;
+      }
+      for (let item of this) {
+        if (item.template===template) {
+          if (item.n>n) {
+            item.n-=n;
+            return HTomb.Things[template]({n: n});
+          } else {
+            return this.removeItem(item);
+          }
+        }
+      }
+    }
+    // take multiple items of various types from the list
+    takeItems(ingredients) {
+      let arr = [];
+      for (let ingredient in ingredients) {
+        let n = ingredients[ingredient];
+        arr.push(this.take(ingredient,n));
+      }
+      return arr;
+    }
+    // remove a specific item from the list
+    removeItem(item) {
+      let i = this.indexOf(item);
+      super.splice(i,1);
+      item.onlist = null;
+      if (this.length===0) {
+        if (this.heldby===HTomb.World.items) {
+          for (let coord in HTomb.World.items) {
+            if (HTomb.World.items[coord]===this) {
+              delete HTomb.World.items[coord];
+              break;
+            }
+          }
+        }
+      }
+      return item;
+    }
+    // check whether multiple items of various types are on the list
+    hasAll (ingredients) {
+      for (let ingredient in ingredients) {
+        let n = ingredients[ingredient];
+        // if we lack what we need, search for items
+        if (this.count(ingredient)<n) {
+          return false;
+        }
+      }
+      return true;
+    }
+    // describe the list
+    describe(args) {
+      args = args || args;
+      let mesg = "";
+      for (let i = 0; i<this.length; i++) {
+        if (i>0) {
+          mesg+=" ";
+        }
+        mesg+=this[i].describe({article: "indefinite"});
+        if (i===this.length-2) {
+          mesg = mesg + ", and";
+        } else if (i<this.length-1) {
+          mesg = mesg + ",";
+        }
+      }
+      return mesg;
+    }
+    // return the first item on the list
+    head() {
+      return this[0];
+    }
+    // return the last item on teh list
+    tail() {
+      return this[this.length-1];
+    }
+    // block many methods that normally modify arrays
+    pop() {}
+    shift() {}
+    copyWithin() {}
+    concat() {}
+    fill() {}
+    join() {}
+    slice() {}
+    splice() {}
+  }
+  // Expose the constructor
+  HTomb.Things.Items = function(heldby) {
+    return new Items(heldby);
+  };
 
 return HTomb;
 })(HTomb);

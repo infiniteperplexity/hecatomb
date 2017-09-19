@@ -489,7 +489,9 @@ HTomb = (function(HTomb) {
     }
     for (var it in HTomb.World.items) {
       var items = HTomb.World.items[it];
-      items.forEach(function(item,a,i) {item.owner=null});
+      for (let item of items) {
+        item.owned = false;
+      }
     }
   }
 

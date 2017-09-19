@@ -2,7 +2,9 @@ HTomb = (function(HTomb) {
   "use strict";
   var coord = HTomb.Utils.coord;
 
-  HTomb.Things.define({
+  let Thing = HTomb.Things.templates.Thing;
+
+  let Spell = Thing.extend({
     template: "Spell",
     name: "spell",
     getCost: function() {
@@ -25,7 +27,7 @@ HTomb = (function(HTomb) {
   HTomb.Debug.resetParticles = function() {
     HTomb.Things.templates.ParticleTest.args = {};
   }
-  HTomb.Things.defineSpell({
+  Spell.extend({
     template: "ParticleTest",
     name: "particle test",
     args: {},
@@ -39,7 +41,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Things.defineSpell({
+  Spell.extend({
     template: "AcidBolt",
     name: "acid bolt",
     attack: {
@@ -90,7 +92,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.defineSpell({
+  Spell.extend({
     template: "RaiseZombie",
     name: "raise zombie",
     getCost: function() {
@@ -116,57 +118,53 @@ HTomb = (function(HTomb) {
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           // cast directly on a corpse
-          items = HTomb.World.items[coord(x,y,z)]
-          if (items) {
-            if (items.containsAny("Corpse")) {
-              HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-              let corpse = items.takeOne("Corpse");
-              let sourceCreature = corpse.sourceCreature;
-              that.spendEntropy();
-              corpse.despawn();
-              if (sourceCreature) {
-                zombie = HTomb.Things.Zombie({sourceCreature: sourceCreature});
-              } else {
-                zombie = HTomb.Things.Zombie();
-              }
-              zombie.place(x,y,z);
-              HTomb.Things.Minion().addToEntity(zombie);
-              caster.entity.master.addMinion(zombie);
-              zombie.ai.acted = true;
-              zombie.ai.actionPoints-=16;
-              HTomb.GUI.sensoryEvent("The corpse stirs and rises...",x,y,z);
-              HTomb.Time.resumeActors();
-              return;
+          items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
+          if (items.count("Corpse")) {
+            HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
+            let corpse = items.take("Corpse");
+            let sourceCreature = corpse.sourceCreature;
+            that.spendEntropy();
+            corpse.despawn();
+            if (sourceCreature) {
+              zombie = HTomb.Things.Zombie({sourceCreature: sourceCreature});
+            } else {
+              zombie = HTomb.Things.Zombie();
             }
+            zombie.place(x,y,z);
+            HTomb.Things.Minion().addToEntity(zombie);
+            caster.entity.master.addMinion(zombie);
+            zombie.ai.acted = true;
+            zombie.ai.actionPoints-=16;
+            HTomb.GUI.sensoryEvent("The corpse stirs and rises...",x,y,z);
+            HTomb.Time.resumeActors();
+            return;
           }
           // if it's a tombstone
-          items = HTomb.World.items[coord(x,y,z-1)];
-          if (items) {
-            if (items.containsAny("Corpse")) {
-              HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z-1});
-              let corpse = items.takeOne("Corpse");
-              let sourceCreature = corpse.sourceCreature;
-              that.spendEntropy();
-              corpse.despawn();
-              if (HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile) {
-                HTomb.World.tiles[z-1][x][y]=HTomb.Tiles.UpSlopeTile;
-              }
-              if (sourceCreature) {
-                zombie = HTomb.Things.Zombie({sourceCreature: sourceCreature});
-              } else {
-                zombie = HTomb.Things.Zombie();
-              }
-              zombie.place(x,y,z-1);
-              HTomb.Things.Minion().addToEntity(zombie);
-              caster.entity.master.addMinion(zombie);
-              let task = HTomb.Things.ZombieEmergeTask({assigner: caster.entity}).place(x,y,z);
-              task.assignTo(zombie);
-              zombie.ai.acted = true;
-              zombie.ai.actionPoints-=16;
-              HTomb.GUI.sensoryEvent("You hear an ominous stirring below the earth...",x,y,z);
-              HTomb.Time.resumeActors();
-              return;
+          items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Thigns.Items();
+          if (items.count("Corpse")) {
+            HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z-1});
+            let corpse = items.take("Corpse");
+            let sourceCreature = corpse.sourceCreature;
+            that.spendEntropy();
+            corpse.despawn();
+            if (HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile) {
+              HTomb.World.tiles[z-1][x][y]=HTomb.Tiles.UpSlopeTile;
             }
+            if (sourceCreature) {
+              zombie = HTomb.Things.Zombie({sourceCreature: sourceCreature});
+            } else {
+              zombie = HTomb.Things.Zombie();
+            }
+            zombie.place(x,y,z-1);
+            HTomb.Things.Minion().addToEntity(zombie);
+            caster.entity.master.addMinion(zombie);
+            let task = HTomb.Things.ZombieEmergeTask({assigner: caster.entity}).place(x,y,z);
+            task.assignTo(zombie);
+            zombie.ai.acted = true;
+            zombie.ai.actionPoints-=16;
+            HTomb.GUI.sensoryEvent("You hear an ominous stirring below the earth...",x,y,z);
+            HTomb.Time.resumeActors();
+            return;
           }
         } else {
           HTomb.GUI.pushMessage("Can't cast the spell there.");
@@ -192,10 +190,10 @@ HTomb = (function(HTomb) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
       }
-      if (HTomb.World.features[coord(x,y,z)] && HTomb.World.features[coord(x,y,z)].template==="Tombstone" && HTomb.World.items[coord(x,y,z-1)] && HTomb.World.items[coord(x,y,z-1)].containsAny("Corpse")) {
+      if (HTomb.World.features[coord(x,y,z)] && HTomb.World.features[coord(x,y,z)].template==="Tombstone" && HTomb.World.items[coord(x,y,z-1)] && HTomb.World.items[coord(x,y,z-1)].count("Corpse")) {
         return true;
       }
-      if (HTomb.World.items[coord(x,y,z)] && HTomb.World.items[coord(x,y,z)].containsAny("Corpse")) {
+      if (HTomb.World.items[coord(x,y,z)] && HTomb.World.items[coord(x,y,z)].count("Corpse")) {
         return true;
       }
       return false;

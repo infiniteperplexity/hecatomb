@@ -10,8 +10,9 @@ HTomb = (function(HTomb) {
       let base = HTomb.Types.templates[this.base];
       let ore = HTomb.Things[base.item]();
       ore.place(x,y,z);
-      ore.setOwner(owner);
-
+      if (owner) {
+        ore.owned = true;
+      }
     }
   }
   HTomb.Types.define({
