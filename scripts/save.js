@@ -163,6 +163,7 @@ HTomb = (function(HTomb) {
         return null;
       } else if (key==="items") {
         // I believe this will work...
+        console.log("is this working?");
         let items = HTomb.Things.Items(this);
         for (let item of val) {
           items.addItem(val);
@@ -244,7 +245,8 @@ HTomb = (function(HTomb) {
         HTomb.World.tasks[coord(x,y,z)]=thing;
       }
       if (thing.parent==="Item") {
-        if (thing.onlist && thing.onlist.heldby===HTomb.World.items) {
+        if (!thing.onlist.heldby) {
+          thing.onlist = null;
           let pile = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
           pile.addItem(thing);
           HTomb.World.items[coord(x,y,z)] = pile;
@@ -254,7 +256,7 @@ HTomb = (function(HTomb) {
     let behaviors = HTomb.Things.templates.Behavior.children.map(function(e,i,a) {return e.name;});
     for (let i=0; i<HTomb.World.things.length; i++) {
       let thing = HTomb.World.things[i];
-      for (let key in Object.keys(thing)) {
+      for (let key of Object.keys(thing)) {
         if (key in behaviors) {
           if (thing.behaviors===undefined) {
             thing.behaviors = [];
