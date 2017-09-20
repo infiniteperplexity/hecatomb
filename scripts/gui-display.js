@@ -391,8 +391,6 @@ HTomb = (function(HTomb) {
     " ",
     "PageUp/Down: Scroll messages.",
     "A: Achievements, /: Toggle tutorial."
-    //,
-    //"F: Submit Feedback."
   ];
   menu.defaultMiddle = [];
   menu.defaultBottom = [];
@@ -536,3 +534,4 @@ HTomb = (function(HTomb) {
 
   return HTomb;
 })(HTomb);
+

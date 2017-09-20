@@ -6,6 +6,7 @@ HTomb = (function(HTomb) {
   var timePassing = null;
   var speeds = ["1/4","1/2","3/4","1/1","3/2","2/1","4/1","8/1"];
   var speed = speeds.indexOf("1/1");
+  HTomb.Time.inTacticalMode = false;
 
   var timeLocked = false;
   HTomb.Time.speedUp = function(spd) {
@@ -138,12 +139,18 @@ HTomb = (function(HTomb) {
     }
     // Take the next actor off the queue
     let actor = queue.pop();
+
+    if (HTomb.Time.inTacticalMode && (actor===HTomb.Player || HTomb.Player.master.minions.indexOf(actor)!==-1) && actor.notactics!==true) {
+      if (!HTomb.Tiles.isEnclosed(actor.x, actor.y, actor.z)) {
+        HTomb.Player.player.delegate = actor;
+      }
+    }
     // Eventually we will do this in a more complex way to allow for round-robin combat mode
     if (actor===HTomb.Player.player.delegate && actor.ai.actionPoints>0) {
       HTomb.Events.publish({type: "PlayerActive"});
       // When we hit the player, halt recursion and update visibility
       HTomb.Player.player.visibility();
-      if (HTomb.GUI.Contexts.active===HTomb.GUI.Contexts.main) {
+      if (HTomb.GUI.Contexts.active===HTomb.GUI.Contexts.main || HTomb.GUI.Contexts.active===HTomb.GUI.Contexts.tactical) {
         // maybe should center on active actor?
         HTomb.GUI.Panels.gameScreen.recenter();
       }
@@ -235,6 +242,24 @@ HTomb = (function(HTomb) {
       }
     });
     // Begin recursive traversal of the queue
+    nextActor();
+  };
+
+  HTomb.Time.insertActor = function(actor) {
+    //maybe we need an AI for the necro?
+    if (actor.ai && actor.ai.actionPoints>0 && actor.isPlaced()) {
+      // Act
+      actor.ai.acted = false;
+      let points = actor.ai.actionPoints;
+      actor.ai.act();
+      if (points===actor.ai.actionPoints) {
+        console.log("Danger of infinite recursion from " + actor);
+      }
+      // If the actor can still act, put it on deck
+      if (actor.ai.actionPoints>0 && actor.isPlaced()) {
+        deck.push(actor);
+      }
+    }
     nextActor();
   };
 

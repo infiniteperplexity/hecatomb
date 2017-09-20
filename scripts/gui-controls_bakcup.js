@@ -52,16 +52,6 @@ HTomb = (function(HTomb) {
       HTomb.Events.publish({type: "Command", command: "SurveyMode"});
       Main.surveyMode();
       return;
-    } else if (HTomb.Time.inTacticalMode===true) {
-      HTomb.Events.publish({type: "Command", command: "TacticalMode"});
-      GUI.Contexts.active = GUI.Contexts.tactical;
-      menu.refresh();
-      let p = HTomb.Player.player.delegate;
-      if (gameScreen.xoffset>p.x || gameScreen.yoffset>p.y || gameScreen.xoffset<=p.x-SCREENW || gameScreen.yoffset<=p.y-SCREENW) {
-        gameScreen.recenter();
-      }
-      GUI.render();   
-      return;
     } else {
       HTomb.Events.publish({type: "Command", command: "MainMode"});
     }
@@ -777,8 +767,6 @@ HTomb = (function(HTomb) {
       if (GUI.Contexts.active===GUI.Contexts.survey) {
         Main.inSurveyMode = false;
         GUI.reset();
-        //!!!!!Experimental
-        //Main.tacticalMode();
       } else {
         gameScreen.render();
         let keyCursor = HTomb.GUI.getKeyCursor();
@@ -878,103 +866,5 @@ HTomb = (function(HTomb) {
   survey.clickAt = function() {
     Commands.wait();
   };
-
-
-  Main.tacticalMode = function() {
-    HTomb.GUI.autopause = true;
-    HTomb.Time.stopTime();
-    if (HTomb.Player.notactics) {
-      delete HTomb.Player.notactics;
-    }
-    for (let minion of HTomb.Player.master.minions) {
-      if (minion.notactics) {
-        delete minion.notactics;
-      }
-    }
-    HTomb.Time.inTacticalMode = true;
-    Main.inSurveyMode = false;
-    Contexts.active = Contexts.tactical;
-    HTomb.GUI.reset();
-  };
-  Main.exitTactical = function() {
-    if (HTomb.Player.notactics) {
-      delete HTomb.Player.notactics;
-    }
-    for (let minion of HTomb.Player.master.minions) {
-      if (minion.notactics) {
-        delete minion.notactics;
-      }
-    }
-    HTomb.Time.inTacticalMode = false;
-    Main.inSurveyMode = false;
-    HTomb.Player.player.delegate = HTomb.Player;
-    gameScreen.recenter();
-    HTomb.GUI.reset();
-  };
-  let tactical = Contexts.tactical = Contexts.new({
-    "VK_TAB": function() {
-      Main.exitTactical();
-    },
-    "VK_U": function() {
-      let actor = HTomb.Player.player.delegate;
-      actor.notactics = true;
-      HTomb.Time.insertActor(actor);
-      let allno = true;
-      if (HTomb.Player.notactics!==true) {
-        allno = false;
-      }
-      for (let minion of HTomb.Player.master.minions) {
-        if (minion.notactics!==true) {
-          allno = false;
-        }
-      }
-      if (allno===true) {
-        Main.exitTactical();
-      }
-    },
-    "VK_J": function() {
-      //use special abilities?
-    }
-  });
-  for (let key in Contexts.main.boundKeys) {
-    // link most of the commands in tactical mode to the main mode
-    let excepts = [ROT.VK_M, ROT.VK_S,ROT.VK_U,ROT.VK_J,ROT.VK_TAB];
-    if (excepts.indexOf(parseInt(key))===-1) {
-      tactical.boundKeys[key] = Contexts.main.boundKeys[key];
-    }
-  }
-  tactical.clickAt = function() {
-    Commands.wait();
-  };
-  tactical.clickTile = function(x,y) {
-    this.clickAt();
-  };
-  tactical.rightClickTile = function(x,y) {
-    this.clickTile(x,y);
-  };
-  tactical.contextName = "Tactical";
-
-  tactical.menuText = [
-    "Esc: System view.",
-    "%c{yellow}Tactical mode (Tab: Avatar mode)",
-    " ",
-    "Move: NumPad/Arrows, ,/.: Up/Down.",
-    "(Control+Arrows for diagonal.)",
-    "Wait: NumPad 5 / Space.",
-    " ",
-    "Enter: Enable auto-pause.",
-    "+/-: Change speed.",
-    " ",
-    "Z: Cast spell, J: Use ability.",
-    "U: Release minion from tactics.",
-    "G: Pick Up, D: Drop.",
-    "I: Inventory, E: Equip/Unequip.",
-    " ",
-    "PageUp/Down: Scroll messages.",
-    "A: Achievements, /: Toggle tutorial."
-  ];
-
-
   return HTomb;
 })(HTomb);
-
