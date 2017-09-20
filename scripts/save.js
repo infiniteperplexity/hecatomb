@@ -163,7 +163,6 @@ HTomb = (function(HTomb) {
         return null;
       } else if (key==="items") {
         // I believe this will work...
-        console.log("is this working?");
         let items = HTomb.Things.Items(this);
         for (let item of val) {
           items.addItem(val);
@@ -225,6 +224,9 @@ HTomb = (function(HTomb) {
     for (let i=0; i<oldkeys.length; i++) {
       delete HTomb.World.tasks[oldkeys[i]];
     }
+    for (let i=0; i<HTomb.World.encounters.length; i++) {
+      delete HTomb.World.encounters[i];
+    }
     for (let t = 0; t<things.length; t++) {
       let thing = things[t];
       //load floor item containers into the items list
@@ -243,6 +245,9 @@ HTomb = (function(HTomb) {
       }
       if (thing.parent==="Task") {
         HTomb.World.tasks[coord(x,y,z)]=thing;
+      }
+      if (thing.parent==="Encounter") {
+        HTomb.World.encounters.push(thing);
       }
       if (thing.parent==="Item") {
         if (!thing.onlist.heldby) {

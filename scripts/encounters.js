@@ -5,57 +5,34 @@ HTomb = (function(HTomb) {
   var NLEVELS = HTomb.Constants.NLEVELS;
   var coord = HTomb.Utils.coord;
 
-  HTomb.Types.define({
-  	template: "Encounter",
-  	name: "encounter",
-    hostile: true,
-    spawn: function() {},
-    onDefine: function() {
-      if (HTomb.Encounters.table===undefined) {
-        HTomb.Encounters.table = [];
+
+  let Entity = HTomb.Things.templates.Entity;
+
+  Entity.extend({
+    template: "Encounter",
+    name: "encounter",
+    creatures: [],
+    addCreature: function(creature, args) {
+      if (this.creatures===undefined) {
+        this.creatures = [];
       }
-      HTomb.Encounters.table.push([this.frequency,this]);
+      this.creatures.push(creature);
+      creature.encounter = this;
+    },
+    place: function(x,y,z,args) {
+      Entity.place.call(this,x,y,z,args);
+      HTomb.World.encounters.push(this);
+      return this;
+    },
+    remove: function(args) {
+      if (HTomb.World.encounters.indexOf(this)!==-1) {
+        HTomb.World.encounters.splice(HTomb.World.encounters.indexOf(this),1);
+      }
+      Entity.remove.call(this,args);
     }
   });
-  HTomb.Encounters.check = function() {
-    //if (HTomb.Time.dailyCycle.turn===1) {
-    //  return true;
-    //} else {
-    //  return false;
-    //}
-  };
-  HTomb.Encounters.roll = function(callb) {
-    //for now we don't use this
-    //return;
-    callb = callb || function() {return true;};
-    var cumulative = 0;
-    var table = [];
-    for (var k=0; k<HTomb.Encounters.table.length; k++) {
-      if (callb(HTomb.Encounters.table[k][1])) {
-        if (HTomb.Debug.peaceful && HTomb.Encounters.table[k][1].hostile) {
-          continue;
-        } else {
-          table.push(HTomb.Encounters.table[k]);
-        }
-      }
-    }
-    if (table.length===0) {
-      return;
-    }
-    for (var i=0; i<table.length; i++) {
-      cumulative+=table[i][0];
-    }
-    var roll = Math.random()*cumulative;
-    cumulative = 0;
-    for (var j=0; table.length; j++) {
-      cumulative+=table[j][0];
-      if (roll<cumulative) {
-        table[j][1].spawn();
-        break;
-      }
-    }
-  };
 
+  // a helper function to avoid dropping one creature on top of another.
   function noCreature(x,y,z) {
     if (HTomb.World.creatures[coord(x,y,z)]===undefined) {
       return true;
@@ -96,34 +73,6 @@ HTomb = (function(HTomb) {
       }
     }
   };
-
-  HTomb.Types.defineEncounter({
-    template: "GhoulTest",
-    name: "ghoul test",
-    frequency: 1,
-    hostile: true,
-    spawn: function() {
-      var c = HTomb.Tiles.getEdgeSquare();
-      var cr = HTomb.Things.Ghoul();
-      cr.place(c[0],c[1],c[2]);
-      console.log("placed a ghoul");
-    }
-  });
-
-  HTomb.Types.defineEncounter({
-    template: "SpiderTest",
-    name: "spidertest",
-    // frequency: 2,
-    frequency: 0,
-    hostile: false,
-    spawn: function() {
-      var c = HTomb.Tiles.getEdgeSquare();
-      var cr = HTomb.Things.Spider();
-      cr.place(c[0],c[1],c[2]);
-      console.log("placed a spider");
-    }
-  });
-
 
 
 
