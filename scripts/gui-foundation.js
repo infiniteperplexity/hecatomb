@@ -131,6 +131,9 @@ HTomb = (function(HTomb) {
     if (GUI.Contexts.locked===true) {
       return;
     }
+    if (GUI.Contexts.alert===true) {
+      return true;
+    }
     // Pass the keystroke to the current control context
     var diagonal = null;
     if (key.ctrlKey && arrows.indexOf(key.keyCode)>-1) {
@@ -214,6 +217,9 @@ HTomb = (function(HTomb) {
     click.preventDefault();
     if (GUI.Contexts.locked===true) {
       return;
+    }
+    if (GUI.Contexts.alert===true) {
+      GUI.Contexts.alert = false;
     }
     // Convert X and Y from pixels to characters
     var x = Math.floor((click.clientX+XSKEW)/CHARWIDTH-1);
@@ -332,6 +338,7 @@ HTomb = (function(HTomb) {
   GUI.Contexts.mouseX = 0;
   GUI.Contexts.mouseY = 0;
   GUI.Contexts.locked = false;
+  GUI.Contexts.alert = false;
 
   function Context(bindings) {
     // Pass a map of keystroke / function bindings
@@ -367,5 +374,13 @@ HTomb = (function(HTomb) {
   // I don't think this line works...
   GUI.Contexts.default = Context.prototype;
 
+  GUI.alert = function(msg) {
+    GUI.Contexts.alert = true;
+    HTomb.GUI.autopause = true;
+    HTomb.Time.stopTime();    
+    alert(msg);
+    HTomb.GUI.pushMessage(msg);
+    setTimeout(function() {GUI.Contexts.alert = false;},2000);
+  }
   return HTomb;
 })(HTomb);

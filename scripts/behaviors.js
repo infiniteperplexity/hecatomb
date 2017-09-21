@@ -229,7 +229,7 @@ HTomb = (function(HTomb) {
     },
     onDespawn: function() {
       //should probably drop all the items, right?
-      for (let item in this.items) {
+      for (let item of this.items) {
         this.drop(item);
       }
     },
@@ -520,7 +520,7 @@ HTomb = (function(HTomb) {
       cr.remove();
       this.entity.place(x,y,z);
       cr.place(x0,y0,z0);
-      HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " displaces " + cr.describe({article: "indefinite"}) + ".",x,y,z);
+      //HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " displaces " + cr.describe({article: "indefinite"}) + ".",x,y,z);
       if (this.entity.ai) {
         this.entity.ai.acted = true;
         this.entity.ai.actionPoints-=16;

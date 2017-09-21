@@ -89,36 +89,6 @@ HTomb = (function(HTomb) {
     name: "dryad",
     symbol: "n",
     fg: "#44AA44",
-    onDefine: function(args) {
-      HTomb.Events.subscribe(this, "Destroy");
-    },
-    onDestroy: function(event) {
-      // no dryads in the extremely early game
-      if (HTomb.Time.dailyCycle.turn<500 && HTomb.Player.master.structures.length===0 && HTomb.Player.master.ownsAllIngredients({WoodPlank: 5})===false) {
-        return;
-      }
-      let t = event.entity;
-      if (t.template==="Tree") {
-        let x = t.x;
-        let y = t.y;
-        let z = t.z;
-        if (HTomb.Utils.dice(1,25)===1) {
-          let trees = HTomb.Utils.where(HTomb.World.features,
-            function(e) {
-              let d = HTomb.Path.quickDistance(e.x,e.y,e.z,x,y,z);
-              return (e.template==="Tree" && d>=5 && d<=9);
-            }
-          );
-          if (trees.length>0) {
-            let tree = HTomb.Path.closest(x,y,z,trees)[0];
-            let dryad = HTomb.Things.Dryad();
-            dryad.place(tree.x,tree.y,tree.z);
-            HTomb.Particles.addEmitter(tree.x,tree.y,tree.z,HTomb.Particles.SpellTarget, HTomb.Particles.DryadEffect);
-            HTomb.GUI.sensoryEvent("An angry dryad emerges from a nearby tree!",tree.x,tree.y,tree.z,"red");
-          }
-        }
-      }
-    },
     Behaviors: {
       AI: {
         team: "AngryNatureTeam"

@@ -8,10 +8,24 @@ HTomb = (function(HTomb) {
 
   let Entity = HTomb.Things.templates.Entity;
 
-  Entity.extend({
+  let Encounter = Entity.extend({
     template: "Encounter",
     name: "encounter",
+    listens: [],
     creatures: [],
+    observed: true,
+    blurb: "There is some kind of encounter going on!",
+    alert: function() {
+      HTomb.GUI.alert(this.blurb);
+      HTomb.GUI.Views.Main.tacticalMode();
+    },
+    onDefine: function(args) {
+      args = args || {};
+      let listens = args.listens || this.listens;
+      for (let ev of listens) {
+        HTomb.Events.subscribe(this,ev);
+      }
+    },
     addCreature: function(creature, args) {
       if (this.creatures===undefined) {
         this.creatures = [];
@@ -74,7 +88,48 @@ HTomb = (function(HTomb) {
     }
   };
 
-
+  Encounter.extend({
+    template: "AngryDryads",
+    name: "angry dryads",
+    listens: ["Destroy"],
+    blurb: "Dryads emerge from the trees, angered by your desecration of the forest!",
+    onDestroy: function(event) {
+      // no dryads in the extremely early game
+      if (HTomb.Time.dailyCycle.turn<0) {
+        return;
+      }
+      let t = event.entity;
+      if (t.template==="Tree") {
+        let x = t.x;
+        let y = t.y;
+        let z = t.z;
+        if (HTomb.Utils.dice(1,5)===1) {
+          this.spawn().place(x,y,z);
+        }
+      }
+    },
+    onSpawn: function() {
+      this.addCreature(HTomb.Things.Dryad());
+    },
+    onPlace: function(x,y,z) {
+      let dryad = this.creatures[0];
+      let trees = HTomb.Utils.where(HTomb.World.features,
+      function(e) {
+        let d = HTomb.Path.quickDistance(e.x,e.y,e.z,x,y,z);
+          return (e.template==="Tree" && d>=5 && d<=9);
+        }
+      );
+      if (trees.length>0) {
+        let tree = HTomb.Path.closest(x,y,z,trees)[0];
+        dryad.place(tree.x,tree.y,tree.z);
+        HTomb.Particles.addEmitter(tree.x,tree.y,tree.z,HTomb.Particles.SpellTarget, HTomb.Particles.DryadEffect);
+        HTomb.GUI.sensoryEvent("An angry dryad emerges from a nearby tree!",tree.x,tree.y,tree.z,"red");
+        this.alert();
+      } else {
+        this.despawn();
+      }
+    }
+  });
 
   return HTomb;
 })(HTomb);
