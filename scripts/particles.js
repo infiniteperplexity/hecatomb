@@ -163,14 +163,14 @@ HTomb = (function(HTomb) {
   }
 
   HTomb.Particles.Liquid = {chars: ["\u00B7","\u2022","\u2234","\u2235","\u25CB","\u25CF","\u25E6"]};
-  HTomb.Particles.Blood = HTomb.Utils.merge(HTomb.Particles.Liquid,{fg: "red"});
-  HTomb.Particles.Acid = HTomb.Utils.merge(HTomb.Particles.Liquid,{fg: "#55FF11"});
+  HTomb.Particles.Blood = HTomb.Utils.coalesce(HTomb.Particles.Liquid,{fg: "red"});
+  HTomb.Particles.Acid = HTomb.Utils.coalesce(HTomb.Particles.Liquid,{fg: "#55FF11"});
   HTomb.Particles.Spatter = {t: 2, alpha: 0.5, fade: 0.5, n: 25};
   HTomb.Particles.Spray = {dist: 1, alpha: 0.75, fade: 0.75, n: 50};
   HTomb.Particles.SpellTarget = {fg: "black", dist: 3, v: -0.5};
   HTomb.Particles.SpellCast = {fg: "black", v: 0.5, dist: 1};
   HTomb.Particles.DryadEffect = {fg: "#88AA00", rr: 30, chars: ["\u2663","\u2660","\u2698","\u2618"]};
-  HTomb.Particles.Anger = HTomb.Utils.merge(HTomb.Particles.Spray,{chars: ["!","\u2757","\u2762","\u203C","\u2755","\u2694","\u2639"], dist: 0});
+  HTomb.Particles.Anger = HTomb.Utils.coalesce(HTomb.Particles.Spray,{chars: ["!","\u2757","\u2762","\u203C","\u2755","\u2694","\u2639"], dist: 0});
 
 
   return HTomb;

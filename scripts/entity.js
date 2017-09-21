@@ -86,8 +86,13 @@ HTomb = (function(HTomb) {
     },
     spawn: function(args) {
       Thing.spawn.call(this,args);
+
       for (let b in this.Behaviors) {
-        let beh = HTomb.Things[b](this.Behaviors[b] || {});
+        //let beh = HTomb.Things[b](this.Behaviors[b] || {});
+        //if (this.template==="Necromancer") {
+        //  console.log();
+        //}
+        let beh = HTomb.Things[b](HTomb.Utils.merge(HTomb.Things.templates[b], this.Behaviors[b]));
         beh.addToEntity(this);
       }
       // Randomly choose symbol if necessary

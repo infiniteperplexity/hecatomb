@@ -197,7 +197,10 @@ HTomb = (function(HTomb) {
     act: function(ai) {
       // this performance might be okay
       let cr = ai.entity;
-      if (ai.target===null || ai.target.creature===undefined || ai.isHostile(ai.target)!==true || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,ai.target.x,ai.target.y,ai.target.z)>15) {
+      if (ai.target && ai.target.isPlaced()===false) {
+        ai.target = null;
+      }
+      if (ai.target===null || ai.target.parent!=="Creature" || ai.isHostile(ai.target)!==true || ai.target.isPlaced()===false || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,ai.target.x,ai.target.y,ai.target.z)>15) {
         if (ai.team===undefined) {
           console.log("what in the world???");
         }
@@ -210,7 +213,6 @@ HTomb = (function(HTomb) {
             hostiles.push(ids[n]);
           }
         }
-
         let canMove = HTomb.Utils.bind(ai.entity.movement,"canMove");
         hostiles = hostiles.filter(function(e) {
           if (!e.isPlaced()) {
@@ -236,7 +238,6 @@ HTomb = (function(HTomb) {
           ai.target = hostiles[0];
         }
       }
-      // should this test for a valid target?
       if (ai.target && ai.isHostile(ai.target)) {
         if (HTomb.Tiles.isTouchableFrom(ai.target.x, ai.target.y,ai.target.z, cr.x, cr.y, cr.z)) {
           ai.entity.combat.attack(ai.target);

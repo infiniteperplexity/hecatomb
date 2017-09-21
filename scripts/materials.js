@@ -22,11 +22,6 @@ HTomb = (function(HTomb) {
   });
 
   HTomb.Types.defineMaterial({
-    template: "Blood",
-    name: "bone"
-  });
-
-  HTomb.Types.defineMaterial({
     template: "Wood",
     name: "wood"
   });
@@ -41,10 +36,10 @@ HTomb = (function(HTomb) {
       this.table[this.template] = {};
       var types = HTomb.Types.templates.Material.types;
       for (var i=0; i<types.length; i++) {
-        if (this[types[i].template]) {
+        if (this[types[i].template]!==undefined) {
           this.table[this.template][types[i].template] = this[types[i].template];
         } else {
-          HTomb.Debug.pushMessage("Warning: No damage/material lookup for " + this.template + "/" + types[i].template + ".");
+          console.log("Warning: No damage/material lookup for " + this.template + "/" + types[i].template + ".");
         }
       }
     }
@@ -53,38 +48,45 @@ HTomb = (function(HTomb) {
   HTomb.Types.defineDamage({
   	template: "Slashing",
   	name: "slashing",
-    Bone: 0.5,
-    Flesh: 1,
-    Blood: 1.5,
-    Wood: 1.5
+    hits: {
+      2: "grazes",
+      4: "slashes",
+      6: "cleaves",
+      8: "massacres"
+    },
+    wounded: {
+      2: "grazed",
+      4: "slashed",
+      6: "bleeding"
+    },
+    Bone: -1,
+    Flesh: +0,
+    Wood: +1,
   });
 
   HTomb.Types.defineDamage({
   	template: "Piercing",
   	name: "piercing",
-    Bone: 0.5,
-    Flesh: 1.5,
-    Blood: 1,
-    Wood: 0.5
+    Bone: -1,
+    Flesh: +1,
+    Wood: -1
   });
 
 
   HTomb.Types.defineDamage({
     template: "Crushing",
     name: "crushing",
-    Bone: 1.5,
-    Flesh: 1,
-    Blood: 0.5,
-    Wood: 1
+    Bone: +1,
+    Flesh: +0,
+    Wood: -1
   });
 
   HTomb.Types.defineDamage({
     template: "Acid",
     name: "acid",
-    Bone: 1.5,
-    Flesh: 1,
-    Blood: 0.5,
-    Wood: 1.5
+    Bone: +1,
+    Flesh: -1,
+    Wood: +1
   });
 
 

@@ -32,7 +32,7 @@ HTomb = (function(HTomb) {
     HTomb.Types.templates.Team.hostilityMatrix.reset();
     HTomb.World.validate.reset();
     while(HTomb.World.things.length>0) {
-      HTomb.World.things.pop();
+      HTomb.World.things.pop().despawn();  
     }
     var oldkeys;
     oldkeys = Object.keys(HTomb.World.creatures);

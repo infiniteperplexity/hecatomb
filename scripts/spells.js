@@ -58,8 +58,6 @@ HTomb = (function(HTomb) {
         if (cr) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
           that.spendEntropy();
-          //HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Utils.merge(HTomb.Particles.SpellCast,HTomb.Particles.Acid,{alwaysVisible: true}));
-          //HTomb.Particles.addEmitter(x,y,z,HTomb.Utils.merge(HTomb.Particles.SpellTarget,HTomb.Particles.Acid,{alwaysVisible: true}));
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.Acid,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.Acid,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " casts an acid bolt at " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");

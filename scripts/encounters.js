@@ -17,7 +17,7 @@ HTomb = (function(HTomb) {
     blurb: "There is some kind of encounter going on!",
     alert: function() {
       HTomb.GUI.alert(this.blurb);
-      HTomb.GUI.Views.Main.tacticalMode();
+      //HTomb.GUI.Views.Main.tacticalMode();
     },
     onDefine: function(args) {
       args = args || {};
@@ -89,6 +89,25 @@ HTomb = (function(HTomb) {
   };
 
   Encounter.extend({
+    template: "PeasantMob",
+    name: "angry peasant mob",
+    listens: "TurnBegin",
+    blurb: "A mob of angry peasants approaches, determined to end your foul research.",
+    onTurnBegin: function(event) {
+      if (HTomb.Time.dailyCycle.turn===999) {
+        let e = HTomb.Tiles.getEdgeSquare();
+        this.spawn().place(e.x,e.y,e.z);
+      }
+    },
+    onSpawn: function(args) {
+      //this.addCreature(HTomb.Things.Peasant());
+    },
+    onPlace: function(x,y,z,args) {
+      this.creatures[0].place(x,y,z);
+    }
+  });
+  
+  Encounter.extend({
     template: "AngryDryads",
     name: "angry dryads",
     listens: ["Destroy"],
@@ -121,6 +140,9 @@ HTomb = (function(HTomb) {
       );
       if (trees.length>0) {
         let tree = HTomb.Path.closest(x,y,z,trees)[0];
+        if (HTomb.World.creatures[coord(x,y,z)]) {
+          return;
+        }
         dryad.place(tree.x,tree.y,tree.z);
         HTomb.Particles.addEmitter(tree.x,tree.y,tree.z,HTomb.Particles.SpellTarget, HTomb.Particles.DryadEffect);
         HTomb.GUI.sensoryEvent("An angry dryad emerges from a nearby tree!",tree.x,tree.y,tree.z,"red");

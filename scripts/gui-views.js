@@ -422,6 +422,10 @@ HTomb = (function(HTomb) {
 
   // ***************** Structure (or Structure?) view **********
   Views.structureView = function(w) {
+    if (w.isPlaced()===false) {
+      HTomb.GUI.reset();
+      return;
+    }
     HTomb.Time.stopTime();
     Views.Structures.structureCursor = -1;
     if (Views.Structures.selectedStructure) {
@@ -572,6 +576,10 @@ HTomb = (function(HTomb) {
 
   // *********** Creature view ****************
   Views.creatureView = function(c) {
+    if (c.isPlaced()===false) {
+      HTomb.GUI.reset();
+      return;
+    }
     HTomb.Time.stopTime();
     if (Views.Structures.selectedStructure) {
       Views.Structures.selectedStructure.unhighlight();
@@ -691,15 +699,25 @@ HTomb = (function(HTomb) {
       }
       txt.push(" ");
     }
-    if (c.body && c.body.materials) {
-      let b = c.body.materials;
-      txt.push("Body: ");
-      let s = "  ";
-      for (let i in b) {
-        s+=HTomb.Materials[i].describe() + " (" + b[i].has + " out of " + b[i].max + ")";
-        txt.push(s);
-        s = "  ";
+    if (c.combat) {
+      let wounds = c.combat.wounds.level;
+      let type = null;
+      if (c.combat.wounds.type) {
+        type = HTomb.Types.templates[c.combat.wounds.type].name;
       }
+      txt.push("Health: ");
+      if (wounds===0) {
+        txt.push(" No wounds.");
+      } else if (wounds<=3) {
+        txt.push(" Mild " + type + " wounds.");
+      } else if (wounds<=5) {
+        txt.push(" Moderate " + type + " wounds.");
+      } else if (wounds<=6) {
+        txt.push(" Severe " + type + " wounds.");
+      } else {
+        txt.push(" Critical " + type + " wounds.");
+      }
+
     }
     return txt;
   };

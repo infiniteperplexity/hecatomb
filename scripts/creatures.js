@@ -68,18 +68,13 @@ HTomb = (function(HTomb) {
         Equipper: {},
         Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
         SpellCaster: {spells: ["RaiseZombie"]},
-        Body: {
-          materials: {
-            Flesh: 25,
-            Bone: 25
-          }
-        },
         Combat: {
-          accuracy: 1,
-          evasion: 2,
           damage: {
-            Slashing: [1,4]
-          }
+            level: 1
+          },
+          evasion: 1,
+          toughness: 1,
+          accuracy: 1,
         }
       }
   });
@@ -96,20 +91,14 @@ HTomb = (function(HTomb) {
       Movement: {swims: true},
       Sight: {},
       Combat: {
-        accuracy: 0,
         damage: {
-          Crushing: [1,4]
-        }
-      },
-      Body: {
-        materials: {
-          Wood: 25,
-          Flesh: 25,
-          Bone: 25
+          type: "Crushing"
         }
       }
     }
   });
+
+  
 
   Creature.extend({
     template: "Zombie",
@@ -118,8 +107,6 @@ HTomb = (function(HTomb) {
     symbol: "z",
     fg: "#99FF66",
     onCreate: function(args) {
-      //ugh...
-      //Creature.onCreate.call(this,args);
       args = args || {};
       if (args.sourceCreature) {
         let creature = HTomb.Things.templates[args.sourceCreature];
@@ -137,20 +124,7 @@ HTomb = (function(HTomb) {
       Worker: {},
       Inventory: {capacity: 2},
       Combat: {
-        accuracy: 1,
-        damage: {
-          Slashing: [1,3],
-          Crushing: [1,3]
-        }
-      },
-      Body: {
-        materials: {
-          Flesh: {
-            max: 25,
-            needs: 1
-          },
-          Bone: 25
-        }
+        toughness: 1
       }
     }
   });
@@ -171,16 +145,10 @@ HTomb = (function(HTomb) {
       Worker: {},
       Inventory: {capacity: 2},
       Combat: {
-        accuracy: 0,
         damage: {
-          Slashing: [1,6]
-        }
-      },
-      Body: {
-        materials: {
-          Flesh: 10,
-          Bone: 10
-        }
+          level: 1
+        },
+        toughness: 1
       }
     },
     onDefine: function(args) {
@@ -230,12 +198,11 @@ HTomb = (function(HTomb) {
       AI: {},
       Movement: {flies: true, swims: false},
       Sight: {},
-      Combat: {},
-      Body: {
-        materials: {
-          Flesh: 5,
-          Bone: 2
-        }
+      Combat: {
+        damage: {
+          level: -1
+        },
+        toughness: -1
       }
     }
   });
@@ -248,12 +215,11 @@ HTomb = (function(HTomb) {
     Behaviors: {
       AI: {},
       Movement: {swims: false},
-      Combat: {},
-      Body: {
-        materials: {
-          Flesh: 5,
-          Bone: 2
-        }
+      Combat: {
+        damage: {
+          level: -1
+        },
+        toughness: -1
       }
     }
   });
@@ -269,17 +235,10 @@ HTomb = (function(HTomb) {
       },
       Movement: {swims: true, walks: false},
       Combat: {
-        accuracy: 1,
         damage: {
-          Slashing: [1,8]
-        }
-      },
-      Body: {
-        materials: {
-          Flesh: 10,
-          Bone: 10,
-          Blood: 10
-        }
+          level: 2
+        },
+        accuracy: 1,
       }
     },
     onDefine: function() {
@@ -307,7 +266,6 @@ HTomb = (function(HTomb) {
           HTomb.GUI.sensoryEvent("A peaceful-looking fish turns out to be a ravenous death carp!",x,y,z,"red");
         }
       }
-
     }
   });
 
@@ -319,12 +277,11 @@ HTomb = (function(HTomb) {
     Behaviors: {
       AI: {},
       Movement: {swims: true, walks: false},
-      Combat: {},
-      Body: {
-        materials: {
-          Flesh: 5,
-          Bone: 2
-        }
+      Combat: {
+        damage: {
+          level: -1
+        },
+        toughness: -1
       }
     }
   });

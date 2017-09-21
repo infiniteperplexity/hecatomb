@@ -678,37 +678,103 @@ HTomb = (function(HTomb) {
     }
   });
 
+  let Damage = HTomb.Types.templates.Damage;
   Behavior.extend({
   	template: "Combat",
   	name: "combat",
+    damage: {
+      type: "Slashing",
+      level: 0
+    },
+    material: "Flesh",
     accuracy: 0,
     evasion: 0,
-    armor: 0,
-    damage: null,
-    onCreate: function(options) {
-      return this;
+    armor: {
+      material: "Flesh",
+      level: 0
     },
-  	// worry about multiple attacks later
-  	attack: function(thing) {
-      // if it's a combatant, you might miss
-      var evade = (thing.combat) ? thing.combat.evasion : 0;
-      var accuracy = this.accuracy;
-      // basic hit roll
-      var roll = HTomb.Utils.dice(1,20);
-      if (roll+accuracy >= 10+evade) {
-        HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " hits " + thing.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"orange");
-        //apply armor in some way?
-        thing.body.endure(this);
+    toughness: 0,
+    wounds: {
+      type: null,
+      level: 0 // 2 is mild, 4 is moderate, 6 is severe, 8 is dead
+    },
+    attack: function(victim) {
+      let evade = (victim.combat) ? victim.combat.evasion - victim.combat.wounds.level : -10;
+      // should get modified by the victim's condition?
+      let roll = HTomb.Utils.dice(1,20);
+      if (roll+this.accuracy >= 10 + evade) {
+        (victim.combat) ? victim.combat.defend(this) : {};       
       } else {
-        HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + thing.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
+        HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + victim.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
       }
       this.entity.ai.acted = true;
       this.entity.ai.actionPoints-=16;
-  	},
-  	//should be on the damage packet..//hit: function() {},
-  	defend: function() {
-      // do nothing for now
-  	}
+    },
+    defend: function(attack) {
+      let roll = HTomb.Utils.dice(1,20);
+      console.log(roll);
+      console.log(attack);
+      console.log(this);
+      let modifier = Damage.table[attack.damage.type][this.material];
+      let penetrate = Damage.table[attack.damage.type][this.armor.material];
+      let total = roll;
+      total += attack.damage.level;
+      total += modifier;
+      total += this.wounds.level;
+      // armor can never leave you worse off
+      total -= Math.max(0,this.armor.level-penetrate);
+      total -= this.toughness;
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      let attacker = attack.entity.describe({capitalized: true, article: "indefinite"});
+      let defender = this.entity.describe({article: "indefinite"});
+      let type = HTomb.Types.templates[attack.damage.type].name;
+      if (total>=20) {
+        HTomb.GUI.sensoryEvent(attacker + " deals critical " + type + " damage to " + defender + ".",x,y,z,"red");
+        this.wounds.level = 8;
+        this.wounds.type = attack.damage.type;
+      } else if (total>=17) {
+        HTomb.GUI.sensoryEvent(attacker + " deals severe " + type + " damage to " + defender + ".",x,y,z,"#FFBB00");
+        if (this.wounds.level<6) {
+          this.wounds.level = 6;
+        } else {
+          this.wounds.level = 8;
+        }
+        this.wounds.type = attack.damage.type;
+      } else if (total>=12) {
+        HTomb.GUI.sensoryEvent(attacker + " deals " + type + " damage to " + defender + ".",x,y,z,"orange");
+        if (this.wounds.level<4) {
+          this.wounds.level = 4;
+          this.wounds.type = attack.damage.type;
+        } else if (this.wounds.level===4) {
+          this.wounds.level+=2;
+          this.wounds.type = attack.damage.type;
+        } else {
+          this.wounds.level+=2;
+          if (!attack.damage.type) {
+            this.wounds.type = attack.damage.type;
+          }
+        }
+      } else if (total>=5) {
+        HTomb.GUI.sensoryEvent(attacker + " deals mild " + type + " damage to " + defender + ".",x,y,z,"#FFBB00");
+        if (this.wounds.level<2) {
+          this.wounds.level = 2;
+          this.wounds.type = attack.damage.type;
+        // cannot die of a mild wound
+        } else if (this.wounds.level<7) {
+          this.wounds.level+=1;
+          if (!attack.damage.type) {
+            this.wounds.type = attack.damage.type;
+          }
+        }
+      } else {
+        HTomb.GUI.sensoryEvent(attacker + " hits " + defender +" but deals no damage.",x,y,z,"yellow");
+      }
+      if (this.wounds.level>=8) {
+        this.entity.die();
+      }
+    }
   });
 
 

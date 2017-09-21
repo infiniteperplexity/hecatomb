@@ -5,7 +5,54 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var NLEVELS = HTomb.Constants.NLEVELS;
 
-  HTomb.Utils.merge = function() {
+  // a deep-ish merge utility, used mostly for constructor arguments
+  HTomb.Utils.merge = function(obj, newer) {
+    //if one or the other is undefined, return the other
+    if (obj===undefined) {
+      return HTomb.Utils.copy(newer);
+    } else if (newer===undefined) {
+      return HTomb.Utils.copy(obj);
+    } else if (newer===null) {
+      return null;
+    } else if (obj!==null && typeof(obj)!==typeof(newer)) {
+      throw new Error("Malformed deep merge arguments.");
+    } else if (typeof(obj)==="object") {
+      let nobj;
+      // for arrays, do not recursively merge, instead keep newer
+      if (Array.isArray(newer)) {
+        nobj = [];
+        for (let i=0; i<newer.length; i++) {
+          nobj[i] = HTomb.Utils.copy(newer[i]);
+        }
+      } else if (Array.isArray(obj)) {
+        nobj = [];
+        for (var i=0; i<obj.length; i++) {
+          nobj[i] = HTomb.Utils.copy(obj[i]);
+        }
+      } else {
+        let keys = [];
+        for (let key of Object.keys(obj)) {
+          if (obj.hasOwnProperty(key)) {
+            keys.push(key);
+          }
+        }
+        for (let key of Object.keys(newer)) {
+          if (newer.hasOwnProperty(key) && keys.indexOf(key)===-1) {
+            keys.push(key);
+          }
+        }
+        nobj = {};
+        for (let key of keys) {
+          nobj[key] = HTomb.Utils.merge(obj[key],newer[key]);
+        }
+      }
+      return nobj;
+    } else {
+      return HTomb.Utils.copy(newer);
+    }
+  };
+
+  HTomb.Utils.coalesce = function() {
     let template = {};
     for (let i = 0; i<arguments.length; i++) {
       let args = arguments[i];
@@ -141,8 +188,10 @@ HTomb = (function(HTomb) {
         }
       } else {
         nobj = {};
-        for (var key in obj) {
-          nobj[key] = HTomb.Utils.copy(obj[key]);
+        for (let key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            nobj[key] = HTomb.Utils.copy(obj[key]);
+          }
         }
       }
       return nobj;
@@ -274,3 +323,6 @@ HTomb = (function(HTomb) {
 
   return HTomb;
 })(HTomb);
+
+
+  
