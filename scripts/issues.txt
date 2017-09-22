@@ -1,3 +1,8 @@
+- Long messages get truncated instead of wrapping.
+- Alert box is distracting and should be customized.
+
+
+
 Is this still true?
 ]* examineSquare doesn't show non-visible items even though you can see them on the screen.
 

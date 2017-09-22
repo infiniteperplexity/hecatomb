@@ -12,12 +12,18 @@ HTomb = (function(HTomb) {
     template: "Encounter",
     name: "encounter",
     listens: [],
-    creatures: [],
+    creatures: null,
     observed: true,
     blurb: "There is some kind of encounter going on!",
     alert: function() {
       HTomb.GUI.alert(this.blurb);
       //HTomb.GUI.Views.Main.tacticalMode();
+    },
+    isPlaced: function() {
+      if (this.creatures && this.creatures.length>0) {
+        return true;
+      }
+      return false;
     },
     onDefine: function(args) {
       args = args || {};
@@ -27,11 +33,21 @@ HTomb = (function(HTomb) {
       }
     },
     addCreature: function(creature, args) {
-      if (this.creatures===undefined) {
+      if (this.creatures===null) {
         this.creatures = [];
       }
       this.creatures.push(creature);
       creature.encounter = this;
+    },
+    removeCreature: function(creature, args) {
+      if (this.creatures && this.creatures.indexOf(creature)!==-1) {
+        this.creatures.splice(this.creatures.indexOf(this),1);
+      } 
+      delete creature.encounter;
+      // despawn the encounter if every creature is dead
+      if (this.creatures && this.creatures.length===0) {
+        this.despawn();
+      }
     },
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
@@ -114,7 +130,7 @@ HTomb = (function(HTomb) {
     blurb: "Dryads emerge from the trees, angered by your desecration of the forest!",
     onDestroy: function(event) {
       // no dryads in the extremely early game
-      if (HTomb.Time.dailyCycle.turn<0) {
+      if (HTomb.Time.dailyCycle.turn<500) {
         return;
       }
       let t = event.entity;
@@ -122,8 +138,9 @@ HTomb = (function(HTomb) {
         let x = t.x;
         let y = t.y;
         let z = t.z;
-        if (HTomb.Utils.dice(1,5)===1) {
-          this.spawn().place(x,y,z);
+        if (HTomb.Utils.dice(1,25)===1) {
+          // really ought to standardize this...
+          HTomb.Things[this.template]().place(x,y,z);
         }
       }
     },

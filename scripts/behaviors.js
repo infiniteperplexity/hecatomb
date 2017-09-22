@@ -23,17 +23,16 @@ HTomb = (function(HTomb) {
     },
     playerDeath: function() {
       HTomb.Time.lockTime();
-      HTomb.GUI.Contexts.locked=true;
-      HTomb.GUI.pushMessage("%c{red}You have died!");
+      HTomb.GUI.alert("%c{red}You have died!",1000);
       setTimeout(function(){
         HTomb.GUI.Views.parentView = HTomb.GUI.Views.startup;
         let context = HTomb.GUI.Contexts.new();
-        context.clickTile = context.rightClickTile = context.keydown = function() {
+        context.clickTile = context.rightClickTile = context.keydown = context.clickAlert = context.clickAt = function() {
+          HTomb.GUI.closeAlert();
           HTomb.GUI.reset();
         };
         HTomb.GUI.Contexts.active = context;
-        HTomb.GUI.Contexts.locked = false;
-      },2000);
+      },1000);
     },
     visibility: function() {
       let p = this.entity;
@@ -702,7 +701,7 @@ HTomb = (function(HTomb) {
       let evade = (victim.combat) ? victim.combat.evasion - victim.combat.wounds.level : -10;
       // should get modified by the victim's condition?
       let roll = HTomb.Utils.dice(1,20);
-      if (roll+this.accuracy >= 10 + evade) {
+      if (roll+this.accuracy >= 11 + evade) {
         (victim.combat) ? victim.combat.defend(this) : {};       
       } else {
         HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + victim.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
@@ -712,15 +711,13 @@ HTomb = (function(HTomb) {
     },
     defend: function(attack) {
       let roll = HTomb.Utils.dice(1,20);
-      console.log(roll);
-      console.log(attack);
-      console.log(this);
       let modifier = Damage.table[attack.damage.type][this.material];
       let penetrate = Damage.table[attack.damage.type][this.armor.material];
       let total = roll;
       total += attack.damage.level;
       total += modifier;
       total += this.wounds.level;
+      total -= attack.wounds.level;
       // armor can never leave you worse off
       total -= Math.max(0,this.armor.level-penetrate);
       total -= this.toughness;
@@ -730,6 +727,7 @@ HTomb = (function(HTomb) {
       let attacker = attack.entity.describe({capitalized: true, article: "indefinite"});
       let defender = this.entity.describe({article: "indefinite"});
       let type = HTomb.Types.templates[attack.damage.type].name;
+      console.log("Total: ",total);
       if (total>=20) {
         HTomb.GUI.sensoryEvent(attacker + " deals critical " + type + " damage to " + defender + ".",x,y,z,"red");
         this.wounds.level = 8;
@@ -742,7 +740,7 @@ HTomb = (function(HTomb) {
           this.wounds.level = 8;
         }
         this.wounds.type = attack.damage.type;
-      } else if (total>=12) {
+      } else if (total>=14) {
         HTomb.GUI.sensoryEvent(attacker + " deals " + type + " damage to " + defender + ".",x,y,z,"orange");
         if (this.wounds.level<4) {
           this.wounds.level = 4;
@@ -756,7 +754,7 @@ HTomb = (function(HTomb) {
             this.wounds.type = attack.damage.type;
           }
         }
-      } else if (total>=5) {
+      } else if (total>=8) {
         HTomb.GUI.sensoryEvent(attacker + " deals mild " + type + " damage to " + defender + ".",x,y,z,"#FFBB00");
         if (this.wounds.level<2) {
           this.wounds.level = 2;

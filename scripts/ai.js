@@ -191,6 +191,56 @@ HTomb = (function(HTomb) {
     }
   });
 
+
+  HTomb.Test.checkForHostile = function(cr) {
+    let ai = cr.ai;
+    console.log("Target: ");
+    console.log(cr.ai.target);
+    if (ai.target && ai.target.isPlaced()===false) {
+        ai.target = null;
+    }
+    if (ai.target===null || ai.target.parent!=="Creature" || ai.isHostile(ai.target)!==true || ai.target.isPlaced()===false || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,ai.target.x,ai.target.y,ai.target.z)>15) {
+      console.log("Made it into hostility check block");
+      let matrix = HTomb.Types.templates.Team.hostilityMatrix.matrix;
+      let m = matrix[ai.entity.spawnId];
+      let hostiles = [];
+      let ids = HTomb.Things.templates.Thing.spawnIds;
+      for (let n in m) {
+        if (m[n]<=10) {
+          hostiles.push(ids[n]);
+        }
+      }
+      console.log("Hostiles Length: ",hostiles.length);
+      let canMove = HTomb.Utils.bind(ai.entity.movement,"canMove");
+      hostiles = hostiles.filter(function(e) {
+        if (!e.isPlaced()) {
+          return false;
+        }
+        let path = HTomb.Path.aStar(cr.x,cr.y,cr.z,e.x,e.y,e.z, {
+          canPass: canMove,
+          searcher: cr,
+          searchee: e,
+          cacheAfter: 40,
+          cacheTimeout: 10,
+          searchTimeout: 10
+        });
+        // want a nice gap between cacheAfter and maximum length
+        if (path && path.length<=20) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      console.log("Filtered length: ",hostiles.length);
+      if (hostiles.length>0) {
+        hostiles = HTomb.Path.closest(ai.entity.x,ai.entity.y,ai.entity.z,hostiles);
+        ai.target = hostiles[0];
+        console.log("New target: ");
+        console.log(ai.target);
+      }
+    }
+  };
+
   HTomb.Types.defineRoutine({
     template: "CheckForHostile",
     name: "check for hostile",
@@ -237,6 +287,11 @@ HTomb = (function(HTomb) {
           hostiles = HTomb.Path.closest(ai.entity.x,ai.entity.y,ai.entity.z,hostiles);
           ai.target = hostiles[0];
         }
+      }
+      // I'm still not clear on how we ever reach this logic
+      if (ai.target && ai.target.isPlaced()===false) {
+        ai.target = null;
+        return;
       }
       if (ai.target && ai.isHostile(ai.target)) {
         if (HTomb.Tiles.isTouchableFrom(ai.target.x, ai.target.y,ai.target.z, cr.x, cr.y, cr.z)) {

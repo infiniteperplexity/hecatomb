@@ -48,6 +48,12 @@ HTomb = (function(HTomb) {
         this.place(this.x,this.y,g);
       }
       HTomb.GUI.render();
+    },
+    despawn: function() {
+      if (this.encounter) {
+        this.encounter.removeCreature(this);
+      }
+      Entity.despawn.call(this);
     }
   });
 

@@ -39,6 +39,8 @@ HTomb = (function(HTomb) {
   let status = Panels.status;
   let overlay = Panels.overlay;
   let overlayDisplay = overlay.display;
+  let alert = Panels.alert;
+  let alertDisplay = alert.display;
 
   // Basic rendering of panels
   // Keep track of how many tiles it is offset from 0, 0
@@ -201,6 +203,7 @@ HTomb = (function(HTomb) {
   scroll.reset = function() {
     scroll.buffer = [];
   }
+  scroll.lastLines = 1;
   scroll.render = function() {
     scrollDisplay.clear();
     status.render();
@@ -209,14 +212,10 @@ HTomb = (function(HTomb) {
         break;
       }
       let message = this.buffer[this.buffer.length-s-this.bufferIndex];
-      if (s+this.bufferIndex === 1) {
-        if (message.substr(0,3)!=="%c{") {
-          message = "%c{cyan}"+message;
-          scrollDisplay.drawText(this.x0,this.y0+s+1,message);
-        }
-      } else {
-        scrollDisplay.drawText(this.x0,this.y0+s+1,message);
+      if (s+this.bufferIndex<=scroll.lastLines && message.substr(0,3)!=="%c{") {
+        message = "%c{cyan}"+message;
       }
+      scrollDisplay.drawText(this.x0,this.y0+s+1,message);
     }
   };
   scroll.scrollUp = function() {
@@ -340,7 +339,27 @@ HTomb = (function(HTomb) {
       GUI.pushMessage(strng, color);
     }
   };
+
   GUI.pushMessage = function(strng, color) {
+    if (Array.isArray(strng)) {
+      strng.map(function(e,i,a) {GUI.pushMessage(e,color);});
+      return;
+    }
+    let MAX = HTomb.Constants.SCROLLW;
+    if (HTomb.Utils.cleanText(strng).length>MAX) {
+      let lines = HTomb.Utils.lineBreak(strng,MAX);
+      lines.reverse();
+      scroll.lastLines = lines.length;
+      for (let line of lines) {
+        pushMessage(line, color);
+      }
+      return;  
+    }
+    scroll.lastLines = 1;
+    pushMessage(strng, color);
+  }
+
+  function pushMessage(strng, color) {
     if (color!==undefined) {
       strng = "%c{" + color + "}"+strng;
     }
@@ -531,6 +550,62 @@ HTomb = (function(HTomb) {
       GUI.Contexts.locked = false;
     }, n);
   };
+
+
+  function closeAlert() {
+    if (GUI.Contexts.alert.frozen) {
+      return;
+    }
+    GUI.Contexts.active = GUI.Contexts.alert.saved;
+    alert.hide();
+    GUI.render();
+  }
+  GUI.Contexts.alert = GUI.Contexts.new({
+    VK_RETURN: closeAlert,
+    VK_ESCAPE: closeAlert
+  });
+  GUI.Contexts.alert.mouseDown = closeAlert;
+  GUI.Contexts.alert.clickAt = closeAlert;
+  GUI.Contexts.alert.clickTile = closeAlert;
+  GUI.Contexts.alert.rightClickTile = closeAlert;
+  GUI.Contexts.alert.clickAlert = closeAlert;
+  GUI.Contexts.alert.keydown = closeAlert;
+  GUI.Contexts.alert.hoverTile = function() {};
+  GUI.closeAlert = function() {
+    GUI.Contexts.alert.frozen = false;
+    closeAlert();
+  }
+  GUI.alert = function(msg, millis) {
+    millis = millis || 1000;
+    GUI.Contexts.alert.saved = GUI.Contexts.active;
+    GUI.Contexts.alert.frozen = true;
+    GUI.Contexts.active = GUI.Contexts.alert;
+    HTomb.GUI.autopause = true;
+    HTomb.Time.stopTime();
+    HTomb.Time.stopParticles();
+    alertDisplay.clear();
+    alertDisplay.drawText(0,0,"%c{yellow}+" + "=".repeat(28)+"+");
+    for (let i=0; i<HTomb.Constants.ALERTHEIGHT-2; i++) {
+      alertDisplay.drawText(0,i+1,"%c{yellow}|");
+      alertDisplay.drawText(29,i+1,"%c{yellow}|");
+    }
+    alertDisplay.drawText(0,11,"%c{yellow}+" + "=".repeat(28)+"+");
+    let clean = HTomb.Utils.cleanText(msg);
+    let hpad = Math.floor((HTomb.Constants.ALERTWIDTH-1-clean.length)/2);
+    if (hpad<2) {
+      hpad = 2;
+    }
+    // I have no idea if this formula is any good...
+    let vpad = Math.floor((HTomb.Constants.ALERTHEIGHT-4-(clean.length/(HTomb.Constants.ALERTWIDTH)-4))/2);
+    if (vpad<2) {
+      vpad = 2;
+    }
+    alertDisplay.drawText(hpad,vpad,msg,HTomb.Constants.ALERTWIDTH-4);
+    alert.unhide();
+    setTimeout(function() {GUI.Contexts.alert.frozen = false;},millis);
+  }
+
+
 
   return HTomb;
 })(HTomb);

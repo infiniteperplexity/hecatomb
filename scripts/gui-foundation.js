@@ -25,6 +25,8 @@ HTomb = (function(HTomb) {
   var YSKEW = HTomb.Constants.YSKEW;
   var TEXTSPACING = HTomb.Constants.TEXTSPACING;
   var TEXTWIDTH = HTomb.Constants.TEXTWIDTH;
+  var ALERTHEIGHT = HTomb.Constants.ALERTHEIGHT;
+  var ALERTWIDTH = HTomb.Constants.ALERTWIDTH;
   var coord = HTomb.Utils.coord;
 
   let GUI = HTomb.GUI;
@@ -62,6 +64,14 @@ HTomb = (function(HTomb) {
     fontFamily: TEXTFONT,
     spacing: TEXTSPACING
   });
+  var alertDisplay = new ROT.Display({
+    width: ALERTWIDTH,
+    height: ALERTHEIGHT,
+    fontSize: TEXTSIZE,
+    fontFamily: TEXTFONT,
+    spacing: TEXTSPACING
+  });
+
   GUI.domInit = function() {
     var body = document.body;
     var div = document.createElement("div");
@@ -74,15 +84,19 @@ HTomb = (function(HTomb) {
     menu.id = "menu";
     var overlay = document.createElement("div");
     overlay.id = "overlay";
+    var alert = document.createElement("div");
+    alert.id = "alert";
     body.appendChild(div);
     div.appendChild(game);
     div.appendChild(scroll);
     div.appendChild(menu);
     div.appendChild(overlay);
+    div.appendChild(alert);
     game.appendChild(display.getContainer());
     scroll.appendChild(scrollDisplay.getContainer());
     menu.appendChild(menuDisplay.getContainer());
     overlay.appendChild(overlayDisplay.getContainer());
+    alert.appendChild(alertDisplay.getContainer());
   };
 
   // Attach input events
@@ -130,9 +144,6 @@ HTomb = (function(HTomb) {
     }
     if (GUI.Contexts.locked===true) {
       return;
-    }
-    if (GUI.Contexts.alert===true) {
-      return true;
     }
     // Pass the keystroke to the current control context
     var diagonal = null;
@@ -218,9 +229,6 @@ HTomb = (function(HTomb) {
     if (GUI.Contexts.locked===true) {
       return;
     }
-    if (GUI.Contexts.alert===true) {
-      GUI.Contexts.alert = false;
-    }
     // Convert X and Y from pixels to characters
     var x = Math.floor((click.clientX+XSKEW)/CHARWIDTH-1);
     var y = Math.floor((click.clientY+YSKEW)/CHARHEIGHT-1);
@@ -297,6 +305,7 @@ HTomb = (function(HTomb) {
     scrollDisplay.getContainer().addEventListener("mousemove",function() {GUI.Contexts.active.mouseOver();});
     ///!!!! Maybe get rid of the next line....
     overlayDisplay.getContainer().addEventListener("mousedown",function() {GUI.Contexts.active.clickOverlay();});
+    alertDisplay.getContainer().addEventListener("mousedown",function() {GUI.Contexts.active.clickAlert();});
     console.log("adding event listeners");
   },500);
 
@@ -331,14 +340,14 @@ HTomb = (function(HTomb) {
   GUI.Panels.status = new Panel(1,0,scrollDisplay);
   GUI.Panels.scroll = new Panel(1,STATUSH,scrollDisplay);
   GUI.Panels.menu = new Panel(0,1,menuDisplay);
-  GUI.Panels.overlay = new Panel(0,0,overlayDisplay,"overlay",false);
+  GUI.Panels.overlay = new Panel(1,1,overlayDisplay,"overlay",false);
+  GUI.Panels.alert = new Panel(0,0,alertDisplay,"alert",false);
 
   //******* Define the abstract control context *******
   GUI.Contexts = {};
   GUI.Contexts.mouseX = 0;
   GUI.Contexts.mouseY = 0;
   GUI.Contexts.locked = false;
-  GUI.Contexts.alert = false;
 
   function Context(bindings) {
     // Pass a map of keystroke / function bindings
@@ -374,13 +383,5 @@ HTomb = (function(HTomb) {
   // I don't think this line works...
   GUI.Contexts.default = Context.prototype;
 
-  GUI.alert = function(msg) {
-    GUI.Contexts.alert = true;
-    HTomb.GUI.autopause = true;
-    HTomb.Time.stopTime();    
-    alert(msg);
-    HTomb.GUI.pushMessage(msg);
-    setTimeout(function() {GUI.Contexts.alert = false;},2000);
-  }
   return HTomb;
 })(HTomb);

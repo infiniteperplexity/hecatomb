@@ -42,6 +42,7 @@ var HTomb = (function() {
   var Particles = {};
   var Utils = {};
   var Time = {};
+  var Test = {};
   // Allow public access to the submodules
   World.newGame = function() {
     GUI.Views.progressView(["Building world..."]);
@@ -93,7 +94,8 @@ var HTomb = (function() {
     Things: Things,
     Particles: Particles,
     Utils: Utils,
-    Time: Time
+    Time: Time,
+    Test: Test
   };
 })();
 // Start the game when the window loads

@@ -5,6 +5,27 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var NLEVELS = HTomb.Constants.NLEVELS;
 
+  HTomb.Utils.lineBreak = function(str,len) {
+    str = HTomb.Utils.cleanText(str);
+    let tokens = str.split(" ");
+    let lines = [tokens[0]];
+    tokens.splice(0,1);
+    let i = 0;
+    for (let word of tokens) {
+      if (lines[i].length + 1 + word.length > len) {
+        i+=1;
+        lines.push(word);
+      } else {   
+        lines[i] = lines[i] + " " + word;
+      }
+    }
+    return lines;
+  };
+  HTomb.Utils.cleanText = function(str) {
+    let fgpat = /%c{\w*}/g;
+    let bgpat = /%b{\w*}/g;
+    return str.replace(fgpat,"").replace(bgpat,"");
+  };
   // a deep-ish merge utility, used mostly for constructor arguments
   HTomb.Utils.merge = function(obj, newer) {
     //if one or the other is undefined, return the other

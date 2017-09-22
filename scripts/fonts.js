@@ -41,6 +41,9 @@ HTomb = (function(HTomb) {
   var SCROLLH = Constants.SCROLLH = 6;
   var SCROLLW = Constants.SCROLLW = 50;
 
+  var ALERTHEIGHT = Constants.ALERTHEIGHT = 12;
+  var ALERTWIDTH = Constants.ALERTWIDTH = 30;
+
   HTomb.Fonts = {};
   HTomb.Fonts.lookupSymbol = {};
   HTomb.Fonts.textLookup = {};
