@@ -274,7 +274,7 @@ HTomb = (function(HTomb) {
         HTomb.Time.resumeActors();
       } else {
         // If the player has multiple items, display a menu
-        GUI.choosingMenu("Choose an item:",p.inventory.items.exposeItems(),
+        GUI.choosingMenu("Choose an item:",p.inventory.items,
           function(item) {
             return function() {
               p.inventory.drop(item);

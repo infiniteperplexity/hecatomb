@@ -37,6 +37,8 @@ HTomb = (function(HTomb) {
       return null;
     } else if (obj!==null && typeof(obj)!==typeof(newer)) {
       throw new Error("Malformed deep merge arguments.");
+    } else if (obj===null) {
+      return HTomb.Utils.copy(newer);
     } else if (typeof(obj)==="object") {
       let nobj;
       // for arrays, do not recursively merge, instead keep newer

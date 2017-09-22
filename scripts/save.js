@@ -158,14 +158,15 @@ HTomb = (function(HTomb) {
     console.log(json.substr(0,500));
     let tids = [];
     let player = null;
+    let itemLists = {};
     let things = JSON.parse(json, function (key, val) {
       if (val===null) {
         return null;
       } else if (key==="items") {
-        // I believe this will work...
+        // this doesn't work right...the thing that gets added is not the real thing
         let items = HTomb.Things.Items(this);
         for (let item of val) {
-          items.addItem(val);
+          itemLists[item.tid] = items;
         }
         return items;
       } else if (val.Type!==undefined) {
@@ -199,6 +200,10 @@ HTomb = (function(HTomb) {
         player = things[tid[2].tid];
       }
     }
+    for (let tid in itemLists) {
+      things[tid].onlist = undefined;
+      itemLists[tid].addItem(things[tid]);
+    }
     HTomb.Player = player.entity;
     HTomb.Things.templates.Player.delegate = null;
     // Fix ItemContainer references
@@ -224,6 +229,10 @@ HTomb = (function(HTomb) {
     for (let i=0; i<oldkeys.length; i++) {
       delete HTomb.World.tasks[oldkeys[i]];
     }
+    oldkeys = Object.keys(HTomb.World.blocks);
+    for (let i=0; i<oldkeys.length; i++) {
+      delete HTomb.World.blocks[oldkeys[i]];
+    }
     for (let i=0; i<HTomb.World.encounters.length; i++) {
       delete HTomb.World.encounters[i];
     }
@@ -242,6 +251,9 @@ HTomb = (function(HTomb) {
       }
       if (thing.parent==="Feature") {
         HTomb.World.features[coord(x,y,z)]=thing;
+        if (thing.blocking) {
+          HTomb.World.blocks[coord(x,y,z)]=thing;
+        }
       }
       if (thing.parent==="Task") {
         HTomb.World.tasks[coord(x,y,z)]=thing;

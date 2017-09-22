@@ -345,7 +345,8 @@ HTomb = (function(HTomb) {
         if (HTomb.Utils.notEmpty(ings)) {
           g+=" ";
           g+=HTomb.Utils.listIngredients(ings);
-          if (this.owner && this.owner.master && this.owner.master.ownsAllIngredients(ings)!==true) {
+          console.log(this);
+          if (this.entity.owner && this.entity.owner.master && this.entity.owner.master.ownsAllIngredients(ings)!==true) {
             g = "%c{gray}"+g;
           }
         }
@@ -480,13 +481,17 @@ HTomb = (function(HTomb) {
         }
         let item = items[i];
         let f = HTomb.World.features[coord(item.x,item.y,item.z)];
+        // This is a bit tricky...maybe a "bestMove" function returned from Master?
+        let canMove = this.entity.owner.movement.boundMove();
         if (!item.isOnGround()) {
           continue;
         } else if (this.stores.indexOf(item.template)===-1) {
           continue;
         } else if (HTomb.World.tasks[coord(item.x,item.y,item.z)]!==undefined) {
           continue;
-        } else if (HTomb.Tiles.isReachableFrom(this.entity.x, this.entity.y, this.entity.z, item.x, item.y, item.z)===false) {
+
+        } else if (HTomb.Tiles.isReachableFrom(this.entity.x, this.entity.y, this.entity.z, item.x, item.y, item.z,
+          {canPass: canMove})===false) {
           continue;
         } else if (f && f.structure && f.structure.template===this.entity.template) {
           continue;
@@ -536,6 +541,7 @@ HTomb = (function(HTomb) {
       let z = this.z;
       // should this check whether the item is still here?
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
+        canPass: cr.movement.boundMove(),
         searcher: cr,
         searchee: this,
         searchTimeout: 10
@@ -632,6 +638,7 @@ HTomb = (function(HTomb) {
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
         searcher: cr,
         searchee: this,
+        canPass: cr.movement.boundMove(),
         searchTimeout: 10
       })) {
         // cancel this task if you can't find the ingredients

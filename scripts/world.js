@@ -20,6 +20,7 @@ HTomb = (function(HTomb) {
   HTomb.World.features = {};
   HTomb.World.tasks = {};
   HTomb.World.encounters = [];
+  HTomb.World.blocks = {};
   HTomb.World.covers = HTomb.Utils.grid3d();
 
   HTomb.World.reset = function() {
@@ -50,6 +51,10 @@ HTomb = (function(HTomb) {
     oldkeys = Object.keys(HTomb.World.tasks);
     for (let i=0; i<oldkeys.length; i++) {
       delete HTomb.World.tasks[oldkeys[i]];
+    }
+    oldkeys = Object.keys(HTomb.World.blocks);
+    for (let i=0; i<oldkeys.length; i++) {
+      delete HTomb.World.blocks[oldkeys[i]];
     }
     for (let i=0; i<HTomb.World.encounters.length; i++) {
       delete HTomb.World.encounters[i];

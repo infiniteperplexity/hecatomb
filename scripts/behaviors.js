@@ -233,6 +233,7 @@ HTomb = (function(HTomb) {
       }
     },
     canFindAll: function(ingredients) {
+      // this doesn't actually check for the path...
       if (HTomb.Debug.noingredients) {
         return true;
       }
@@ -551,6 +552,9 @@ HTomb = (function(HTomb) {
       }
       return true;
     },
+    boundMove: function() {
+      return this.canMove.bind(this);
+    },
     // If the square is crossable for this creature
     canMove: function(x,y,z,x0,y0,z0) {
       if (x<0 || x>=LEVELW || y<0 || y>=LEVELH || z<0 || z>=NLEVELS) {
@@ -582,7 +586,10 @@ HTomb = (function(HTomb) {
       // can't go through solid feature
       var feature = HTomb.World.features[c];
       if (feature && feature.solid===true && this.phases!==true) {
-        return false;
+        
+        if (!feature.owner || !feature.owner.ai.team===e.ai.team) {
+          return false;
+        }
       }
       ////Passability dependent on position
       var dx = x-(x0 || e.x);

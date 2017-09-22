@@ -65,6 +65,7 @@ HTomb = (function(HTomb) {
                 return false;
               } else if (v.template===ing) {
                 if (HTomb.Tiles.isReachableFrom(v.x,v.y,v.z,cr.x,cr.y,cr.z,{
+                  canPass: cr.movement.boundMove(),
                   searcher: cr,
                   searchee: v,
                   searchTimeout: 10
@@ -164,7 +165,7 @@ HTomb = (function(HTomb) {
           // For now just drop items if there is no task at all?
           if (!cr.worker.task || cr.worker.task.template==="PatrolTask") {
             console.log("dropping an unneeded item");
-            cr.inventory.drop(items.expose(i));
+            cr.inventory.drop(items[i]);
             ai.acted = true;
             break;
           }
@@ -263,13 +264,12 @@ HTomb = (function(HTomb) {
             hostiles.push(ids[n]);
           }
         }
-        let canMove = HTomb.Utils.bind(ai.entity.movement,"canMove");
         hostiles = hostiles.filter(function(e) {
           if (!e.isPlaced()) {
             return false;
           }
           let path = HTomb.Path.aStar(cr.x,cr.y,cr.z,e.x,e.y,e.z, {
-            canPass: canMove,
+            canPass: cr.movement.boundMove(),
             searcher: cr,
             searchee: e,
             cacheAfter: 40,
@@ -299,6 +299,7 @@ HTomb = (function(HTomb) {
           ai.acted = true;
         } else {
           ai.walkToward(ai.target.x,ai.target.y,ai.target.z,{
+            canPass: cr.movement.boundMove(),
             searcher: cr,
             searchee: ai.target,
             searchTimeout: 10
@@ -317,7 +318,10 @@ HTomb = (function(HTomb) {
         let y = HTomb.Utils.dice(1,LEVELH-2);
         let z = HTomb.Tiles.groundLevel(x,y);
         let cr = ai.entity;
-        if (HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z)) {
+        let canMove = cr.movement.canMove.bind(cr);
+        if (HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
+          canPass: canMove
+        })) {
           ai.target = HTomb.Tiles.getTileDummy(x,y,z) || null;
         }
       }

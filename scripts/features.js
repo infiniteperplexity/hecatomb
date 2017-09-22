@@ -135,6 +135,8 @@ HTomb = (function(HTomb) {
   Feature.extend({
     template: "Door",
     name: "door",
+    solid: true,
+    opaque: true,
     locked: false,
     symbol: "\u25A5",
     fg: "#BB9922",

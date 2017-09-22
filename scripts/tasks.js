@@ -90,6 +90,7 @@ HTomb = (function(HTomb) {
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z,{
         searcher: cr,
         searchee: this,
+        canPass: cr.movement.boundMove(),
         searchTimeout: 10
       }) && cr.inventory.canFindAll(this.ingredients)) {
         return true;
@@ -242,7 +243,9 @@ HTomb = (function(HTomb) {
       let z = this.z;
       let f = HTomb.World.features[coord(x,y,z)];
       f.remove();
-      HTomb.Things[f.makes]().place(x,y,z);
+      let newf = HTomb.Things[f.makes]();
+      newf.owner = this.assigner;
+      newf.place(x,y,z);
       f.despawn();
     },
     begun: function() {
@@ -949,6 +952,7 @@ HTomb = (function(HTomb) {
       // should this check whether the item is still here?
       if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
         searcher: cr,
+        canPass: cr.movement.boundMove(),
         searchee: this,
         searchTimeout: 10
       }) && this.item.x===x && this.item.y===y && this.item.z===z) {
@@ -1023,7 +1027,6 @@ HTomb = (function(HTomb) {
           for (let ing in feature.ingredients) {
             ings.push([ing, feature.ingredients[ing]]);
           }
-          let hasAll = true;
           if (ings.length>0) {
             g+=" ($: ";
             for (let i=0; i<ings.length; i++) {
@@ -1035,20 +1038,9 @@ HTomb = (function(HTomb) {
               } else {
                 g+=")";
               }
-              if (assigner.master) {
-                let has = false;
-                for (let j=0; j<assigner.master.ownedItems.length; j++) {
-                  if (assigner.master.ownedItems[j].template===ings[i][0]) {
-                    has = true;
-                  }
-                }
-                if (has===false) {
-                  hasAll = false;
-                }
-              }
             }
           }
-          if (hasAll!==true) {
+          if (assigner && assigner.master && assigner.master.ownsAllIngredients(feature.ingredients)!==true) {
             g = "%c{gray}"+g;
           }
           return g;

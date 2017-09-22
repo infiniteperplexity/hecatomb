@@ -219,6 +219,10 @@ HTomb = (function(HTomb) {
       }
     },
     despawn: function() {
+      if (this.onlist && !this.onlist.contains) {
+        console.log("what the heck happened here?");
+        console.log(this);
+      }
       if (this.onlist && this.onlist.contains(this)) {
         this.onlist.removeItem(this);
       }
@@ -274,6 +278,7 @@ HTomb = (function(HTomb) {
   Entity.extend({
     template: "Feature",
     name: "feature",
+    solid: false,
     yields: null,
     //i kind of hate this name
     integrity: null,
@@ -317,11 +322,17 @@ HTomb = (function(HTomb) {
         throw new Error("unhandled feature conflict!");
       }
       HTomb.World.features[c] = this;
+      if (this.solid) {
+        HTomb.World.blocks[c] = this;
+      }
     },
     remove: function(args) {
       let c = coord(this.x,this.y,this.z);
       if (HTomb.World.features[c]) {
         delete HTomb.World.features[c];
+      }
+      if (this.solid && HTomb.World.blocks[c]) {
+        delete Htomb.World.blocks[c];
       }
       Entity.remove.call(this,args);
     },

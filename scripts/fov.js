@@ -23,7 +23,7 @@ HTomb = (function(HTomb) {
       if (grid[x][y].opaque===true) {
         return false;
       }
-      var f = HTomb.World.features[coord(x,y,z0)];
+      let f = HTomb.World.features[coord(x,y,z0)];
       if (f && f.opaque===true) {
         return false;
       }
