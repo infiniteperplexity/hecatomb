@@ -345,7 +345,6 @@ HTomb = (function(HTomb) {
         if (HTomb.Utils.notEmpty(ings)) {
           g+=" ";
           g+=HTomb.Utils.listIngredients(ings);
-          console.log(this);
           if (this.entity.owner && this.entity.owner.master && this.entity.owner.master.ownsAllIngredients(ings)!==true) {
             g = "%c{gray}"+g;
           }

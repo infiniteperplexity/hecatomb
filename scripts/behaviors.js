@@ -112,10 +112,6 @@ HTomb = (function(HTomb) {
           HTomb.World.lit[e.z][e.x+i][e.y+j] = this.level;
         }
       }
-      //let squares = this.entity.squares;
-      //for (let s of squares) {
-      //  HTomb.World.lit[s[2]][s[0]][s[1]] = this.level;
-      //}
     }
   });
 
@@ -586,8 +582,7 @@ HTomb = (function(HTomb) {
       // can't go through solid feature
       var feature = HTomb.World.features[c];
       if (feature && feature.solid===true && this.phases!==true) {
-        
-        if (!feature.owner || !feature.owner.ai.team===e.ai.team) {
+        if (!feature.owner || feature.owner.ai.team!==e.ai.team) {
           return false;
         }
       }

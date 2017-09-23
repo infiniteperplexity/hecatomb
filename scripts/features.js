@@ -158,8 +158,6 @@ HTomb = (function(HTomb) {
       }
       HTomb.GUI.reset();
     },
-    solid: false,
-    opaque: true,
     integrity: 50,
     ingredients: {WoodPlank: 1}
   });

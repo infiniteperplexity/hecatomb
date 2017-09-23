@@ -107,7 +107,7 @@ HTomb = (function(HTomb) {
   Encounter.extend({
     template: "PeasantMob",
     name: "angry peasant mob",
-    listens: "TurnBegin",
+    listens: ["TurnBegin"],
     blurb: "A mob of angry peasants approaches, determined to end your foul research.",
     onTurnBegin: function(event) {
       if (HTomb.Time.dailyCycle.turn===999) {

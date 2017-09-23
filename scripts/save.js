@@ -54,7 +54,19 @@ HTomb = (function(HTomb) {
     };
   }
 
+
+  HTomb.Test.addThingIds = function() {
+    for (let i=0; i<HTomb.World.things.length; i++) {
+      HTomb.World.things[i].thingId = i;
+    }
+  };
+  HTomb.Test.deleteThingIds = function() {
+    for (let i=0; i<HTomb.World.things.length; i++) {
+      delete HTomb.World.things[i].thingId;
+    }
+  };
   var killsave = false;
+
   //!!!Changed to file system!!!
   HTomb.Save.saveGame = function(name) {
     HTomb.Time.lockTime();
@@ -102,6 +114,8 @@ HTomb = (function(HTomb) {
           //console.log("could I just do null normally?");
           return null;
         } else if (key==="behaviors") {
+          return undefined;
+        } else if (key==="onlist") {
           return undefined;
         }
         // if it has special instructions, use those to stringify
@@ -152,10 +166,7 @@ HTomb = (function(HTomb) {
     });
   };
 
-  function restoreThings(json) {
-    //length of crashed save was >43 million characters.
-    console.log("length of things is " +json.length);
-    console.log(json.substr(0,500));
+  HTomb.Test.restoreThing = function(json) {
     let tids = [];
     let player = null;
     let itemLists = {};
@@ -200,6 +211,67 @@ HTomb = (function(HTomb) {
         player = things[tid[2].tid];
       }
     }
+    console.log(itemLists);
+    console.log(things);
+    for (let tid in itemLists) {
+      things[tid].onlist = undefined;
+      itemLists[tid].addItem(things[tid]);
+    }
+    return things;
+  };
+
+  function restoreThings(json) {
+    //length of crashed save was >43 million characters.
+    console.log("length of things is " +json.length);
+    console.log(json.substr(0,500));
+    for (let thing of HTomb.World.things) {
+      thing.despawn();
+    }
+    let tids = [];
+    let player = null;
+    let itemLists = {};
+    let things = JSON.parse(json, function (key, val) {
+      if (val===null) {
+        return null;
+      } else if (key==="items") {
+        // this doesn't work right...the thing that gets added is not the real thing
+        let items = HTomb.Things.Items(this);
+        for (let item of val) {
+          itemLists[item.tid] = items;
+        }
+        return items;
+      } else if (val.Type!==undefined) {
+        // should not require tracking swaps
+        return HTomb.Types.templates[val.Type];
+      } else if (val.tid!==undefined) {
+        tids.push([this,key,val]);
+        return {tid: val.tid};
+      } else if (val.template) {
+        let template = HTomb.Things.templates[val.template];
+        let dummy = Object.create(template);
+        for (let p in val) {
+          if (p!=="template" || val[p]!==template[p]) {
+            dummy[p] = val[p];
+          }
+        }
+        val.swappedWith = dummy;
+        return dummy;
+      }
+      return val;
+    });
+    // Swap thingIDs for things
+    for (let i=0; i<tids.length; i++) {
+      let tid = tids[i];
+      if (tid[0].swappedWith) {
+        tid[0].swappedWith[tid[1]] = things[tid[2].tid];
+      } else {
+        tid[0][tid[1]] = things[tid[2].tid];
+      }
+      if (tid[1]==="player") {
+        player = things[tid[2].tid];
+      }
+    }
+    HTomb.Test.things = things;
     for (let tid in itemLists) {
       things[tid].onlist = undefined;
       itemLists[tid].addItem(things[tid]);
@@ -262,7 +334,7 @@ HTomb = (function(HTomb) {
         HTomb.World.encounters.push(thing);
       }
       if (thing.parent==="Item") {
-        if (!thing.onlist.heldby) {
+        if (!thing.onlist) {
           thing.onlist = null;
           let pile = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
           pile.addItem(thing);
@@ -274,7 +346,7 @@ HTomb = (function(HTomb) {
     for (let i=0; i<HTomb.World.things.length; i++) {
       let thing = HTomb.World.things[i];
       for (let key of Object.keys(thing)) {
-        if (key in behaviors) {
+        if (behaviors.indexOf(key)!==-1) {
           if (thing.behaviors===undefined) {
             thing.behaviors = [];
           }

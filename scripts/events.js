@@ -72,3 +72,9 @@ HTomb = (function(HTomb) {
 
   return HTomb;
 })(HTomb);
+
+
+// for (let i=0; i<d.length; i++) {
+//   console.log(i);
+//   HTomb.Save.stringifyThing(d[i]);
+// }

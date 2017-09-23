@@ -77,9 +77,10 @@ HTomb = (function(HTomb) {
       if (this.behaviors) {
       var beh = this.behaviors;
         for (var i=0; i<beh.length; i++) {
-          if (beh[i].onDespawn) {
-            beh[i].onDespawn();
-          }
+          //if (beh[i].onDespawn) {
+          //  beh[i].onDespawn();
+          //}
+          beh[i].despawn();
         }
       }
       Thing.despawn.call(this);
@@ -332,7 +333,7 @@ HTomb = (function(HTomb) {
         delete HTomb.World.features[c];
       }
       if (this.solid && HTomb.World.blocks[c]) {
-        delete Htomb.World.blocks[c];
+        delete HTomb.World.blocks[c];
       }
       Entity.remove.call(this,args);
     },
