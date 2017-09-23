@@ -680,15 +680,33 @@ HTomb = (function(HTomb) {
   });
 
   let Damage = HTomb.Types.templates.Damage;
+
   Behavior.extend({
-  	template: "Combat",
-  	name: "combat",
+    template: "Attacker",
+    name: "attacker",
     damage: {
       type: "Slashing",
-      level: 0
+      level: 0,
+      accuracy: 0,
     },
+    attack: function(victim) {
+      let evade = (victim.defender) ? victim.defender.evasion - victim.defender.wounds.level : -10;
+      // should get modified by the victim's condition?
+      let roll = HTomb.Utils.dice(1,20);
+      if (roll+this.accuracy >= 11 + evade) {
+        (victim.defender) ? victim.defender.defend(this) : {};       
+      } else {
+        HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + victim.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
+      }
+      this.entity.ai.acted = true;
+      this.entity.ai.actionPoints-=16;
+    }
+  });
+
+  Behavior.extend({
+  	template: "Defender",
+  	name: "defender", 
     material: "Flesh",
-    accuracy: 0,
     evasion: 0,
     armor: {
       material: "Flesh",
@@ -699,18 +717,6 @@ HTomb = (function(HTomb) {
       type: null,
       level: 0 // 2 is mild, 4 is moderate, 6 is severe, 8 is dead
     },
-    attack: function(victim) {
-      let evade = (victim.combat) ? victim.combat.evasion - victim.combat.wounds.level : -10;
-      // should get modified by the victim's condition?
-      let roll = HTomb.Utils.dice(1,20);
-      if (roll+this.accuracy >= 11 + evade) {
-        (victim.combat) ? victim.combat.defend(this) : {};       
-      } else {
-        HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + victim.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
-      }
-      this.entity.ai.acted = true;
-      this.entity.ai.actionPoints-=16;
-    },
     defend: function(attack) {
       let roll = HTomb.Utils.dice(1,20);
       let modifier = Damage.table[attack.damage.type][this.material];
@@ -719,7 +725,9 @@ HTomb = (function(HTomb) {
       total += attack.damage.level;
       total += modifier;
       total += this.wounds.level;
-      total -= attack.wounds.level;
+      if (attack.entity.defender) {
+        total -= attack.entity.defender.wounds.level;
+      }
       // armor can never leave you worse off
       total -= Math.max(0,this.armor.level-penetrate);
       total -= this.toughness;
@@ -729,7 +737,6 @@ HTomb = (function(HTomb) {
       let attacker = attack.entity.describe({capitalized: true, article: "indefinite"});
       let defender = this.entity.describe({article: "indefinite"});
       let type = HTomb.Types.templates[attack.damage.type].name;
-      console.log("Total: ",total);
       if (total>=20) {
         HTomb.GUI.sensoryEvent(attacker + " deals critical " + type + " damage to " + defender + ".",x,y,z,"red");
         this.wounds.level = 8;
@@ -772,7 +779,12 @@ HTomb = (function(HTomb) {
         HTomb.GUI.sensoryEvent(attacker + " hits " + defender +" but deals no damage.",x,y,z,"yellow");
       }
       if (this.wounds.level>=8) {
-        this.entity.die();
+        if (this.entity.die) {
+          this.entity.die();
+        } else {
+          this.entity.destroy();
+          HTomb.GUI.sensoryEvent("The " + defender +" is destroyed.",x,y,z,"#FFBB00");
+        }
       }
     }
   });

@@ -323,7 +323,7 @@ HTomb = (function(HTomb) {
       }
       if (thing.parent==="Feature") {
         HTomb.World.features[coord(x,y,z)]=thing;
-        if (thing.blocking) {
+        if (thing.solid) {
           HTomb.World.blocks[coord(x,y,z)]=thing;
         }
       }

@@ -345,7 +345,7 @@ HTomb = (function(HTomb) {
       strng.map(function(e,i,a) {GUI.pushMessage(e,color);});
       return;
     }
-    let MAX = HTomb.Constants.SCROLLW;
+    let MAX = HTomb.Constants.SCROLLW-1;
     if (HTomb.Utils.cleanText(strng).length>MAX) {
       let lines = HTomb.Utils.lineBreak(strng,MAX);
       lines.reverse();
@@ -609,4 +609,3 @@ HTomb = (function(HTomb) {
 
   return HTomb;
 })(HTomb);
-

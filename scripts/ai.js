@@ -193,58 +193,11 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Test.checkForHostile = function(cr) {
-    let ai = cr.ai;
-    console.log("Target: ");
-    console.log(cr.ai.target);
-    if (ai.target && ai.target.isPlaced()===false) {
-        ai.target = null;
-    }
-    if (ai.target===null || ai.target.parent!=="Creature" || ai.isHostile(ai.target)!==true || ai.target.isPlaced()===false || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,ai.target.x,ai.target.y,ai.target.z)>15) {
-      console.log("Made it into hostility check block");
-      let matrix = HTomb.Types.templates.Team.hostilityMatrix.matrix;
-      let m = matrix[ai.entity.spawnId];
-      let hostiles = [];
-      let ids = HTomb.Things.templates.Thing.spawnIds;
-      for (let n in m) {
-        if (m[n]<=10) {
-          hostiles.push(ids[n]);
-        }
-      }
-      console.log("Hostiles Length: ",hostiles.length);
-      let canMove = HTomb.Utils.bind(ai.entity.movement,"canMove");
-      hostiles = hostiles.filter(function(e) {
-        if (!e.isPlaced()) {
-          return false;
-        }
-        let path = HTomb.Path.aStar(cr.x,cr.y,cr.z,e.x,e.y,e.z, {
-          canPass: canMove,
-          searcher: cr,
-          searchee: e,
-          cacheAfter: 40,
-          cacheTimeout: 10,
-          searchTimeout: 10
-        });
-        // want a nice gap between cacheAfter and maximum length
-        if (path && path.length<=20) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      console.log("Filtered length: ",hostiles.length);
-      if (hostiles.length>0) {
-        hostiles = HTomb.Path.closest(ai.entity.x,ai.entity.y,ai.entity.z,hostiles);
-        ai.target = hostiles[0];
-        console.log("New target: ");
-        console.log(ai.target);
-      }
-    }
-  };
-
   HTomb.Types.defineRoutine({
     template: "CheckForHostile",
     name: "check for hostile",
+    // This whole method is an awful mess.
+    // Right now we can acquire features as targets but we can't keep them as targets.
     act: function(ai) {
       // this performance might be okay
       let cr = ai.entity;
@@ -258,6 +211,7 @@ HTomb = (function(HTomb) {
         let matrix = HTomb.Types.templates.Team.hostilityMatrix.matrix;
         let m = matrix[ai.entity.spawnId];
         let hostiles = [];
+        let doors = [];
         let ids = HTomb.Things.templates.Thing.spawnIds;
         for (let n in m) {
           if (m[n]<=10) {
@@ -284,8 +238,58 @@ HTomb = (function(HTomb) {
           }
         });
         if (hostiles.length>0) {
-          hostiles = HTomb.Path.closest(ai.entity.x,ai.entity.y,ai.entity.z,hostiles);
+          hostiles = HTomb.Path.closest(cr.x,cr.y,cr.z,hostiles);
           ai.target = hostiles[0];
+        } else {
+          // let's try to attack doors next
+          if (cr.template==="Dryad") {
+            console.log(1);
+          }
+          doors = Object.keys(HTomb.World.blocks).map(function(e,i,a) {return HTomb.World.blocks[e];});
+          if (cr.template==="Dryad") {
+            console.log(doors);
+          }
+          doors = doors.filter(function(door) {return (HTomb.Path.quickDistance(cr.x,cr.y,cr.z,door.x,door.y,door.z)<=10)});
+          if (cr.template==="Dryad") {
+            console.log(doors);
+          }
+          doors = doors.filter(function(door) {return (!door.owner || ai.isHostile(door.owner));});
+          if (cr.template==="Dryad") {
+            console.log(doors);
+          }
+          doors = doors.filter(function(e) {
+            if (!e.isPlaced()) {
+              return false;
+            }
+            if (cr.template==="Dryad") {
+            console.log(2);
+          }
+            let path = HTomb.Path.aStar(cr.x,cr.y,cr.z,e.x,e.y,e.z, {
+              canPass: cr.movement.boundMove(),
+              searcher: cr,
+              searchee: e,
+              useLast: false,
+              cacheAfter: 40,
+              cacheTimeout: 10,
+              searchTimeout: 10
+            });
+            if (cr.template==="Dryad") {
+            console.log(path);
+          }
+            // want a nice gap between cacheAfter and maximum length
+            if (path && path.length<=20) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+        }
+        if (doors.length>0) {
+          if (cr.template==="Dryad") {
+            console.log(doors);
+          }
+          doors = HTomb.Path.closest(cr.x,cr.y,cr.z,doors);
+          ai.target = doors[0];
         }
       }
       // I'm still not clear on how we ever reach this logic
@@ -293,9 +297,23 @@ HTomb = (function(HTomb) {
         ai.target = null;
         return;
       }
-      if (ai.target && ai.isHostile(ai.target)) {
+      // need to handle doors as well
+      if (ai.target && ai.target.parent==="Creature" && ai.isHostile(ai.target)) {
         if (HTomb.Tiles.isTouchableFrom(ai.target.x, ai.target.y,ai.target.z, cr.x, cr.y, cr.z)) {
-          ai.entity.combat.attack(ai.target);
+          ai.entity.attacker.attack(ai.target);
+          ai.acted = true;
+        } else {
+          ai.walkToward(ai.target.x,ai.target.y,ai.target.z,{
+            canPass: cr.movement.boundMove(),
+            searcher: cr,
+            searchee: ai.target,
+            searchTimeout: 10
+          });
+        }
+      // probably don't want separate logic for doors
+      } else if (ai.target && ai.target.parent==="Feature" && ai.target.defender && (!ai.target.owner || ai.isHostile(ai.target.owner))) {
+        if (HTomb.Tiles.isTouchableFrom(ai.target.x, ai.target.y,ai.target.z, cr.x, cr.y, cr.z)) {
+          ai.entity.attacker.attack(ai.target);
           ai.acted = true;
         } else {
           ai.walkToward(ai.target.x,ai.target.y,ai.target.z,{
@@ -535,10 +553,19 @@ HTomb = (function(HTomb) {
       var x = this.entity.x;
       var y = this.entity.y;
       var z = this.entity.z;
+      // probably need to put feature attacks in here now?
       for (var i=0; i<backoffs.length; i++) {
         var dir = backoffs[i];
-        var cr = HTomb.World.creatures[coord(x+dir[0],y+dir[1],z+dir[2])];
+        let c = coord(x+dir[0],y+dir[1],z+dir[2]);
+        var cr = HTomb.World.creatures[c];
+        let f = HTomb.World.features[c];
         // modify this to allow non-player creatures to displace
+
+        ////!!!!Okay, hold on...this currently forbids attacking into walls, or attacking doors
+
+        //if (f && f.defend && (!f.owner || this.isHostile(f.owner))) {
+
+        //}
         if (this.entity.movement.canMove(x+dir[0],y+dir[1],z+dir[2])===false) {
           continue;
         } else if (cr) {

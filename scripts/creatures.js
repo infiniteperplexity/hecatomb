@@ -74,13 +74,15 @@ HTomb = (function(HTomb) {
         Equipper: {},
         Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask"]},
         SpellCaster: {spells: ["RaiseZombie"]},
-        Combat: {
+        Attacker: {
           damage: {
             level: 1
           },
+          accuracy: 1
+        },
+        Defender: {
           evasion: 1,
           toughness: 1,
-          accuracy: 1,
         }
       }
   });
@@ -96,11 +98,12 @@ HTomb = (function(HTomb) {
       },
       Movement: {swims: true},
       Sight: {},
-      Combat: {
+      Attacker: {
         damage: {
           type: "Crushing"
         }
-      }
+      },
+      Defender: {}
     }
   });
 
@@ -129,7 +132,8 @@ HTomb = (function(HTomb) {
       Sight: {},
       Worker: {},
       Inventory: {capacity: 2},
-      Combat: {
+      Attacker: {},
+      Defender: {
         toughness: 1
       }
     }
@@ -150,10 +154,12 @@ HTomb = (function(HTomb) {
       Sight: {},
       Worker: {},
       Inventory: {capacity: 2},
-      Combat: {
+      Attacker: {
         damage: {
           level: 1
-        },
+        }
+      },
+      Defender: {
         toughness: 1
       }
     },
@@ -204,10 +210,12 @@ HTomb = (function(HTomb) {
       AI: {},
       Movement: {flies: true, swims: false},
       Sight: {},
-      Combat: {
+      Attacker: {
         damage: {
           level: -1
-        },
+        }
+      },
+      Defender: {
         toughness: -1
       }
     }
@@ -221,10 +229,12 @@ HTomb = (function(HTomb) {
     Behaviors: {
       AI: {},
       Movement: {swims: false},
-      Combat: {
+      Attacker: {
         damage: {
           level: -1
-        },
+        }
+      },
+      Defender: {
         toughness: -1
       }
     }
@@ -240,12 +250,13 @@ HTomb = (function(HTomb) {
         team: "HungryPredatorTeam"
       },
       Movement: {swims: true, walks: false},
-      Combat: {
+      Attacker: {
         damage: {
           level: 2
         },
         accuracy: 1,
-      }
+      },
+      Defender: {}
     },
     onDefine: function() {
       HTomb.Events.subscribe(this, "TurnBegin");
@@ -283,10 +294,12 @@ HTomb = (function(HTomb) {
     Behaviors: {
       AI: {},
       Movement: {swims: true, walks: false},
-      Combat: {
+      Attacker: {
         damage: {
           level: -1
-        },
+        }
+      },
+      Defender: {
         toughness: -1
       }
     }

@@ -247,6 +247,8 @@ HTomb = (function(HTomb) {
         break;
       }
     }
+    console.log(searcher);
+    console.log(searchee);
     console.log("path failed after " + squaresTried);
     if (searcher && searchee && searchTimeout) {
       let combo = searcher.spawnId+","+searchee.spawnId;

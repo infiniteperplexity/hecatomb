@@ -142,24 +142,15 @@ HTomb = (function(HTomb) {
     fg: "#BB9922",
     labor: 20,
     craftable: true,
-    activate: function() {
-      if (this.locked) {
-        HTomb.GUI.sensoryEvent("Unlocked " + this.describe()+".",this.x, this.y, this.z);
-        this.locked = false;
-        this.solid = false;
-        this.name = "door";
-        this.symbol = "\u25A5";
-      } else {
-        HTomb.GUI.sensoryEvent("Locked " + this.describe()+".",this.x,this.y,this.z);
-        this.locked = true;
-        this.solid = true;
-        this.name = "locked door";
-        this.symbol = "\u26BF";
-      }
-      HTomb.GUI.reset();
-    },
     integrity: 50,
-    ingredients: {WoodPlank: 1}
+    ingredients: {WoodPlank: 1},
+    Behaviors: {
+      Defender: {
+        material: "Wood",
+        toughness: 12,
+        evasion: -10
+      }
+    }
   });
 
   HTomb.Types.define({

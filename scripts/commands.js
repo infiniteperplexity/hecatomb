@@ -56,10 +56,14 @@ HTomb = (function(HTomb) {
     // attack a touchable, hostile creature
     } else if (square.creature && square.creature.ai && square.creature.ai.isHostile(p) && HTomb.Tiles.isTouchableFrom(newx, newy, newz, x, y, z)) {
     //} else if (square.creature && square.creature.ai && square.creature.ai.hostile && HTomb.Tiles.isTouchableFrom(newx, newy, newz, x, y, z)) {
-      p.combat.attack(square.creature);
+      p.attacker.attack(square.creature);
       HTomb.Time.resumeActors(p);
       return;
     // if you can move, either move or displace
+    } else if (square.feature && square.feature.solid && square.feature.defender && (!square.feature.owner || square.feature.owner.ai.isHostile(p))) {
+      p.attacker.attack(square.feature);
+      HTomb.Time.resumeActors(p);
+      return;
     } else if (p.movement.canMove(newx,newy,newz)) {
       if (square.creature && square.creature.ai && square.creature.ai.isHostile(p)===false) {
         HTomb.Events.publish({type: "Command", command: "Move", dir: dir});
