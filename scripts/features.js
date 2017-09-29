@@ -147,7 +147,7 @@ HTomb = (function(HTomb) {
     Behaviors: {
       Defender: {
         material: "Wood",
-        toughness: 12,
+        toughness: 10,
         evasion: -10
       }
     }

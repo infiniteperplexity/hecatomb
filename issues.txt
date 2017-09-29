@@ -1,8 +1,33 @@
 refactoring brings up a ton of new issues...
 - it's unclear that Types should still work exactly the way they do
 - some things, like Crops, aren't working correctly
-- we should probably refactor item lists as well
-- we haven't checked whether saving the game works
 - some things like craftable should probably be made into behaviors
 - probably need a "claim item" task or some such thing to block multiple claims on the same item...subsidiary tasks
 - should rework how ownership and forbidding works
+
+- Long messages get truncated instead of wrapping.
+- Alert box is distracting and should be customized.
+
+
+*Should add granite or something.
+
+*Rebalance combat and add genuine threats, soon.
+
+*Make aquifers easy to get through, or nonexistent.
+
+So, I think right now it's important that I not let myself get overwhelmed.  Just get back in the game.  So the thing to do *right* *now* is to change...
+1) What buildings are available...
+2) How furnishing works.
+
+What does each of these things entail?
+
+1) We currently have Structures (good), Workshop ()
+2) Don't show the fixture if the building doesn't exist or you don't have the item.  If you assign the task and no item exists but you do have the building, add to the queue.
+
+- Does displacement really work?  Yes...there's a quirk where preference for diagonal working spaces tends to result in blockage.
+
+- The workshop queue is too eager to unassign.
+- ore is just sitting around a lot.
+- should zombies cluster around the guard post instead of the necro?
+- it's a little weird to have no vision of one's buildings, but it makes sense...do we want a "fly on the wall" spell?
+- is the number of "failed to acts" unreasonably high?

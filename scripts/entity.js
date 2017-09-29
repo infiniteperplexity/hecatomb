@@ -60,16 +60,6 @@ HTomb = (function(HTomb) {
     },
     destroy: function() {
       HTomb.Debug.logEvent("getDestroyed",this);
-      if (this.behaviors) {
-        var beh = this.behaviors;
-        for (var i=0; i<beh.length; i++) {
-          var b = beh[i];
-          if (b.destroy) {
-            b.destroy();
-          }
-          b.despawn();
-        }
-      }
       HTomb.Events.publish({type: "Destroy", entity: this});
       this.despawn();
     },
@@ -80,9 +70,6 @@ HTomb = (function(HTomb) {
       if (this.behaviors) {
       var beh = this.behaviors;
         for (var i=0; i<beh.length; i++) {
-          //if (beh[i].onDespawn) {
-          //  beh[i].onDespawn();
-          //}
           beh[i].despawn();
         }
       }

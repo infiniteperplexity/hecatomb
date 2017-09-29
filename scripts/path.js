@@ -39,6 +39,7 @@ HTomb = (function(HTomb) {
   };
 
   HTomb.Path.failures = {};
+  HTomb.Path.successes = {};
   HTomb.Events.subscribe(HTomb.Path,"TurnBegin");
   HTomb.Path.onTurnBegin = function() {
     for (let f in HTomb.Path.failures) {
@@ -47,10 +48,6 @@ HTomb = (function(HTomb) {
         delete HTomb.Path.failures[f];
       }
     }
-  };
-  HTomb.Path.successes = {};
-  HTomb.Events.subscribe(HTomb.Path,"TurnBegin");
-  HTomb.Path.onTurnBegin = function() {
     for (let f in HTomb.Path.successes) {
       HTomb.Path.successes[f][0]-=1;
       if (HTomb.Path.successes[f][0]<=0) {

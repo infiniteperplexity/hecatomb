@@ -242,28 +242,13 @@ HTomb = (function(HTomb) {
           ai.target = hostiles[0];
         } else {
           // let's try to attack doors next
-          if (cr.template==="Dryad") {
-            console.log(1);
-          }
           doors = Object.keys(HTomb.World.blocks).map(function(e,i,a) {return HTomb.World.blocks[e];});
-          if (cr.template==="Dryad") {
-            console.log(doors);
-          }
           doors = doors.filter(function(door) {return (HTomb.Path.quickDistance(cr.x,cr.y,cr.z,door.x,door.y,door.z)<=10)});
-          if (cr.template==="Dryad") {
-            console.log(doors);
-          }
           doors = doors.filter(function(door) {return (!door.owner || ai.isHostile(door.owner));});
-          if (cr.template==="Dryad") {
-            console.log(doors);
-          }
           doors = doors.filter(function(e) {
             if (!e.isPlaced()) {
               return false;
             }
-            if (cr.template==="Dryad") {
-            console.log(2);
-          }
             let path = HTomb.Path.aStar(cr.x,cr.y,cr.z,e.x,e.y,e.z, {
               canPass: cr.movement.boundMove(),
               searcher: cr,
@@ -273,9 +258,6 @@ HTomb = (function(HTomb) {
               cacheTimeout: 10,
               searchTimeout: 10
             });
-            if (cr.template==="Dryad") {
-            console.log(path);
-          }
             // want a nice gap between cacheAfter and maximum length
             if (path && path.length<=20) {
               return true;
@@ -285,9 +267,6 @@ HTomb = (function(HTomb) {
           });
         }
         if (doors.length>0) {
-          if (cr.template==="Dryad") {
-            console.log(doors);
-          }
           doors = HTomb.Path.closest(cr.x,cr.y,cr.z,doors);
           ai.target = doors[0];
         }

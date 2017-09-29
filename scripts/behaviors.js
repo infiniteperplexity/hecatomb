@@ -626,59 +626,6 @@ HTomb = (function(HTomb) {
   });
 
 
-  Behavior.extend({
-  	template: "Body",
-  	name: "body",
-  	materials: null,
-    armor: null,
-  	endure: function(attack) {
-      let damage = attack.damage;
-      for (let d in damage) {
-        for (let m in this.materials) {
-          let dice = damage[d];
-          let n = HTomb.Utils.dice(dice[0],dice[1]);
-          if (dice[2]) {
-            n+=dice[2];
-          }
-          var adjusted = Math.round(n*HTomb.Types.templates.Damage.table[d][m]);
-          this.materials[m].has-=adjusted;
-          if (adjusted>1) {
-            HTomb.Particles.addEmitter(this.entity.x,this.entity.y,this.entity.z,HTomb.Particles.Blood);
-          }
-        }
-        let died = false;
-        for (var m in this.materials) {
-          //how do we decide how to die first?  just do it in order I guess...
-          if (this.materials[m].has < this.materials[m].needs) {
-            died = true;
-          }
-        }
-        if (died) {
-          this.entity.die();
-        }
-      }
-    },
-    onCreate: function(options) {
-      this.materials = {};
-      options = options || {};
-      for (var m in options.materials) {
-        this.materials[m] = {};
-        // if there's just one number, fall back on a default
-        if (typeof(options.materials[m])==="number") {
-          this.materials[m].max = options.materials[m];
-          this.materials[m].has = options.materials[m];
-          this.materials[m].needs = Math.floor(options.materials[m]/2);
-        } else {
-        // otherwise expect maximum and minimum
-          this.materials[m].max = options.materials[m].max;
-          this.materials[m].has = options.materials[m].max;
-          this.materials[m].needs = options.materials[m].needs;
-        }
-      }
-      return this;
-    }
-  });
-
   let Damage = HTomb.Types.templates.Damage;
 
   Behavior.extend({
@@ -687,8 +634,8 @@ HTomb = (function(HTomb) {
     damage: {
       type: "Slashing",
       level: 0,
-      accuracy: 0,
     },
+    accuracy: 0,
     attack: function(victim) {
       let evade = (victim.defender) ? victim.defender.evasion - victim.defender.wounds.level : -10;
       // should get modified by the victim's condition?
@@ -778,6 +725,7 @@ HTomb = (function(HTomb) {
       } else {
         HTomb.GUI.sensoryEvent(attacker + " hits " + defender +" but deals no damage.",x,y,z,"yellow");
       }
+      console.log("Wounds: ",this.wounds.level);
       if (this.wounds.level>=8) {
         if (this.entity.die) {
           this.entity.die();
