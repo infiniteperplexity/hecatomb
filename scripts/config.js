@@ -13,6 +13,21 @@ HTomb = (function(HTomb) {
   //Debug.faster = true;
   //Debug.paused = true;\
   //Debug.peaceful = true;
+  Debug.logEvents = true;
+  Debug.maxEvents = 1000;
+  Debug.eventLog = [];
+  Debug.logEvent = function(event, thing) {
+    if (Debug.logEvents!==true) {
+      return;
+    }
+    let entry = [event, thing.describe({spawnId: true})];
+    Debug.eventLog.push(entry);
+    if (Debug.eventLog.length>Debug.maxEvents) {
+      do {
+        Debug.eventLog.shift();
+      } while (Debug.eventLog.length>Debug.maxEvents);
+    }
+  };
   
   return HTomb;
 })(HTomb);

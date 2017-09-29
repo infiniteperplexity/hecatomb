@@ -22,6 +22,7 @@ HTomb = (function(HTomb) {
       HTomb.Things.templates.Thing.spawnIds[this.spawnId] = this;
     },
     spawn: function(args) {
+      HTomb.Debug.logEvent("spawn",this);
       // Add to the global things table
       HTomb.World.things.push(this);
       this.acquireSpawnId();
@@ -37,6 +38,7 @@ HTomb = (function(HTomb) {
       }
     },
     despawn: function() {
+      HTomb.Debug.logEvent("despawn",this);
     // remove from the global things table
       let i = HTomb.World.things.indexOf(this);
       if (i!==-1) {
@@ -86,6 +88,7 @@ HTomb = (function(HTomb) {
       let name = options.name;
 
       let override = options.override || function(s) {return s;}
+      let spawnId = options.spawnId || false;
 
       if (plural && irregularPlural) {
         name = irregularPlural;
@@ -141,6 +144,9 @@ HTomb = (function(HTomb) {
         }
       }
       name = override(name);
+      if (spawnId) {
+        name = name + " with spawnId=" + this.spawnId;
+      }
       return name;
     },
     // Describe for an in-game list

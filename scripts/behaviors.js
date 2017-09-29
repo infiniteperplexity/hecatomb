@@ -330,7 +330,7 @@ HTomb = (function(HTomb) {
       return this;
     },
     onDestroy: function(event) {
-      if (this.minions.indexOf(event.entity)>-1) {
+      if (this.minions.indexOf(event.entity)!==-1) {
         HTomb.GUI.sensoryEvent(this.entity.describe({capitalized:true, article:"indefinite"}) + " mourns the death of " + event.entity.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z);
         this.minions.splice(this.minions.indexOf(event.entity),1);
       }

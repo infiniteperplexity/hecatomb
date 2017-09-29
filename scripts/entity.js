@@ -13,6 +13,7 @@ HTomb = (function(HTomb) {
     z: null,
     Behaviors: {},
     place: function(x,y,z,args) {
+      HTomb.Debug.logEvent("place",this);
       if (this.isPlaced()) {
         this.remove();
       }
@@ -41,6 +42,7 @@ HTomb = (function(HTomb) {
       }
     },
     remove: function() {
+      HTomb.Debug.logEvent("remove",this);
       if (this.behaviors) {
         var beh = this.behaviors;
         for (var i=0; i<beh.length; i++) {
@@ -57,6 +59,7 @@ HTomb = (function(HTomb) {
       this.z = null;
     },
     destroy: function() {
+      HTomb.Debug.logEvent("getDestroyed",this);
       if (this.behaviors) {
         var beh = this.behaviors;
         for (var i=0; i<beh.length; i++) {
@@ -124,11 +127,12 @@ HTomb = (function(HTomb) {
     },
   });
 
-  let Behavior = Entity.extend({
+  let Behavior = Thing.extend({
     template: "Behavior",
     name: "behavior",
     entity: null,
     addToEntity: function(ent) {
+      HTomb.Debug.logEvent("add",this);
       this.entity = ent;
       ent[this.name] = this;
       if (!ent.behaviors) {
@@ -140,6 +144,7 @@ HTomb = (function(HTomb) {
       }
     },
     detachFromEntity: function() {
+      HTomb.Debug.logEvent("detach",this);
       let ent = this.entity;
       if (this.onDetach) {
         this.onDetach();

@@ -37,7 +37,7 @@ HTomb = (function(HTomb) {
       //}
     });
     necro.place(Math.floor(width/2),Math.floor(height/2),z);
-    HTomb.necroTest = necro;
+
     throne = HTomb.Things.Throne();
     throne.place(Math.floor(width/2),Math.floor(height/2),z);
     HTomb.Things.FakeTorch().place(throne.x+3, throne.y-1, z);

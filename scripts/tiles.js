@@ -331,9 +331,10 @@ HTomb = (function(HTomb) {
   HTomb.Tiles.getSquare = function(x,y,z) {
     var square = {};
     var crd = HTomb.Utils.coord(x,y,z);
+    try {
     if (HTomb.World.tiles[z][x]===undefined) {
       console.log("weird thing going on, tried to examine square: "+x +", " + y +", "+z);
-    }
+    }} catch(e) {HTomb.Debug.myError = e;}
     square.terrain = HTomb.World.tiles[z][x][y];
     square.creature = HTomb.World.creatures[crd];
     square.items = HTomb.World.items[crd];
