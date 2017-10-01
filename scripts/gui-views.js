@@ -576,7 +576,7 @@ HTomb = (function(HTomb) {
 
   // *********** Creature view ****************
   Views.creatureView = function(c) {
-    if (c.isPlaced()===false) {
+    if (c && c.isPlaced()===false) {
       HTomb.GUI.reset();
       return;
     }
