@@ -325,6 +325,7 @@ HTomb = (function(HTomb) {
       }
       if (this.solid && HTomb.World.blocks[c]) {
         delete HTomb.World.blocks[c];
+        HTomb.Path.reset();
       }
       Entity.remove.call(this,args);
     },

@@ -246,6 +246,9 @@ HTomb = (function(HTomb) {
       let newf = HTomb.Things[f.makes]();
       newf.owner = this.assigner;
       newf.place(x,y,z);
+      if (newf.solid) {
+        HTomb.Path.reset();
+      }
       f.despawn();
     },
     begun: function() {
@@ -522,6 +525,8 @@ HTomb = (function(HTomb) {
       let f = HTomb.World.features[coord(x,y,z)];
       f.remove();
       f.despawn();
+      //!!!Experimental...hope this doesn't slow things down
+      HTomb.Path.reset();
     }
   });
 
@@ -658,6 +663,8 @@ HTomb = (function(HTomb) {
       let f = HTomb.World.features[coord(x,y,z)];
       f.remove();
       f.despawn();
+      //!!!Experimental...hope this doesn't slow things down
+      HTomb.Path.reset();
     }
   });
 
