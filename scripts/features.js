@@ -153,6 +153,51 @@ HTomb = (function(HTomb) {
     }
   });
 
+
+
+// U+27F1
+// U+290B
+// U+2927
+// U+2963
+// U+2964
+// U+2ADD
+
+  Feature.extend({
+    template: "SpikeTrap",
+    name: "spike trap",
+    symbol: '"',
+    fg: "brown",
+    labor: 10,
+    craftable: true,
+    integrity: 10,
+    ingredients: {WoodPlank: 1},
+    Behaviors: {
+      Attacker: {
+        damage: {
+          type: "Piercing",
+          level: 4
+        },
+        accuracy: 4
+      }
+    },
+    onPlace: function() {
+      if (this)
+      HTomb.Events.subscribe(this,"Step");
+    },
+    onStep: function(event) {
+      let c = event.creature;
+      if (c.x===this.x && c.y===this.y && c.z===this.z
+      && (!this.owner || !c.ai || this.owner.ai.team!==c.ai.team)
+      && !c.movement.flies) {
+        this.attacker.attack(c);
+        if (Math.random()<0.5) {
+          HTomb.Things.SpikeTrapItem().place(this.x,this.y,this.z);
+        }
+        this.destroy();
+      }
+    }
+  });
+
   HTomb.Types.define({
     template: "Cover",
     name: "cover",

@@ -514,8 +514,12 @@ HTomb = (function(HTomb) {
       var y = cr.y;
       var z = cr.z;
       cr.remove();
-      this.entity.place(x,y,z);
-      cr.place(x0,y0,z0);
+      this.stepTo(x,y,z);
+      if (cr.movement) {
+        cr.movement.stepTo(x0,y0,z0);
+      } else {
+        cr.place(x0,y0,z0);
+      }
       //HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " displaces " + cr.describe({article: "indefinite"}) + ".",x,y,z);
       if (this.entity.ai) {
         this.entity.ai.acted = true;
@@ -536,6 +540,7 @@ HTomb = (function(HTomb) {
         this.entity.ai.acted = true;
         this.entity.ai.actionPoints-=cost;
       }
+      HTomb.Events.publish({type: "Step", creature: this.entity});
     },
     // If the square is crossable and unoccupied
     canPass: function(x,y,z) {

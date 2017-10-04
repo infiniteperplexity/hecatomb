@@ -1,6 +1,6 @@
 // The lowest-level GUI functionality, interacting with the DOM directly or through ROT.js.
 HTomb = (function(HTomb) {
-  const remote = require('electron').remote;
+  const remote = (this.require) ? require('electron').remote : function() {};
   "use strict";
   // break out constants
   var SCREENW = HTomb.Constants.SCREENW;
@@ -83,12 +83,10 @@ HTomb = (function(HTomb) {
     let txt = [
       "Welcome to Hecatomb!",
       "N) New game.",
-      "R) Restore game.",
+      (this.require) ? "R) Restore game." : "%c{gray}R) Restore game.",
       //"F) Submit feedback or bug report.",
       "M) Read the manual.",
-      "Q) Quit."
-      //,
-      //"%c{yellow}!!!Warning: During playtest, all players can see, save over, and restore all other players' saved games."
+      (this.require) ? "Q) Quit." : "%c{gray}Q) Quit."
     ];
     GUI.Panels.overlay.update(txt);
     let yoffset = txt.length+4;
@@ -211,22 +209,26 @@ HTomb = (function(HTomb) {
     GUI.Contexts.active = GUI.Contexts.system;
     GUI.Panels.overlay.update([
       "Esc) Back to game.",
-      "S) Save game ('" + HTomb.Save.currentGame +"').",
-      "A) Save game as...",
-      "R) Restore game.",
-      "D) Delete current game('" + HTomb.Save.currentGame +"').",
+      (this.require) ? "S) Save game ('" + HTomb.Save.currentGame +"')." : "%c{gray}S) Save game.",
+      (this.require) ? "A) Save game as..." : "%c{gray}A) Save game as...",
+      (this.require) ? "R) Restore game." : "%c{gray}R) Restore game.",
+      (this.require) ? "D) Delete current game('" + HTomb.Save.currentGame +"')." : "%c{gray}D) Delete game.",
       "N) New game.",
-      "Q) Quit game.",
+      (this.require) ? "Q) Quit game." : "%c{gray}Q) Quit game.",
       "M) Read the manual."
-      //,
-      ///"%c{yellow}!!!Warning: During playtest, all players can see, save over, and restore all other players' saved games."
     ]);
   };
   GUI.Contexts.system = GUI.Contexts.new({
     VK_ESCAPE: HTomb.GUI.reset,
     VK_A: function() {Views.System.saveAs();},
     VK_S: function() {Views.System.save();},
-    VK_R: function() {HTomb.GUI.Views.parentView = HTomb.GUI.Views.systemView; Views.System.restore();},
+    VK_R: function() {
+      if (!this.require) {
+        return;
+      }
+      HTomb.GUI.Views.parentView = HTomb.GUI.Views.systemView;
+      Views.System.restore();
+    },
     VK_Q: function() {Views.System.quit();},
     VK_D: function() {Views.System.delete();},
     VK_M: function() {Views.manual();},
@@ -234,11 +236,17 @@ HTomb = (function(HTomb) {
   });
   Views.System = {};
   Views.System.save = function() {
+    if (!this.require) {
+      return;
+    }
     // Uses the current or default save game name
     HTomb.GUI.Views.progressView(["Saving game..."]);
     setTimeout(HTomb.Save.saveGame,500);
   };
   Views.System.delete = function() {
+    if (!this.require) {
+      return;
+    }
     if (confirm("Really delete game?")) {
       HTomb.GUI.Views.progressView(["Deleting game..."])
       setTimeout(HTomb.Save.deleteGame,500,HTomb.Save.currentGame);
@@ -248,6 +256,9 @@ HTomb = (function(HTomb) {
   };
 
   Views.System.saveAs = function() {
+    if (!this.require) {
+      return;
+    }
     HTomb.Time.stopTime();
     HTomb.GUI.Views.parentView = HTomb.GUI.Views.systemView;
     HTomb.Save.getDir(function(arg) {
@@ -291,6 +302,9 @@ HTomb = (function(HTomb) {
     });
   };
   Views.System.restore = function() {
+    if (!this.require) {
+      return;
+    }
     HTomb.Time.stopTime();
     HTomb.Save.getDir(function(arg) {
       let saves = [];
@@ -321,6 +335,9 @@ HTomb = (function(HTomb) {
     });
   };
   Views.System.quit = function() {
+    if (!this.require) {
+      return;
+    }
     HTomb.Time.stopTime();
     if (confirm("Really quit?")) {
       //Views.startup();

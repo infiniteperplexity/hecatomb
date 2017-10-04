@@ -414,6 +414,8 @@ HTomb = (function(HTomb) {
           "WorkAxe",
           "DoorItem",
           "TorchItem"
+          // ,
+          // "SpikeTrapItem"
         ]
       },
       StructureLight: {}

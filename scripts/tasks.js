@@ -996,7 +996,7 @@ HTomb = (function(HTomb) {
     name: "furnish",
     description: "furnish a fixture",
     bg: "#553300",
-    features: ["Door","Throne","ScryingGlass","Torch"],
+    features: ["Door","Throne","ScryingGlass","Torch"/*,"SpikeTrap"*/],
     designate: function(assigner) {
       var arr = [];
       for (var i=0; i<this.features.length; i++) {

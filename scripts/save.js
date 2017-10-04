@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = (this.require) ? require('fs') : function() {};
 // This submodule handles saving the game
 HTomb = (function(HTomb) {
   "use strict";
