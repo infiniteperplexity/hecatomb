@@ -88,6 +88,9 @@ HTomb = (function(HTomb) {
       "M) Read the manual.",
       (this.require) ? "Q) Quit." : "%c{gray}Q) Quit."
     ];
+    if (!this.require) {
+      txt.push("%c{yellow}Note: Saved games are currently disabled for online playtesting.");
+    }
     GUI.Panels.overlay.update(txt);
     let yoffset = txt.length+4;
     let xoffset = 5;
