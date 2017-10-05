@@ -231,6 +231,8 @@ HTomb = (function(HTomb) {
     name: "trap",
     listens: ["Step"],
     sprung: false,
+    rearmLabor: 5,
+    rearmEffort: 0,
     sprungSymbol: null,
     unsprungSymbol: null,
     onAdd: function() {
@@ -254,6 +256,8 @@ HTomb = (function(HTomb) {
         this.entity.symbol = this.sprungSymbol;
       }
       this.entity.name = "sprung " + this.entity.name;
+      this.entity.labor = this.rearmLabor;
+      this.entity.effort = this.rearmEffort;
     }
   });
 

@@ -148,6 +148,7 @@ HTomb = (function(HTomb) {
         callb.call(options.context,crd[0],crd[1],crd[2],assigner);
       }
     },
+    // wait what's the difference between designateTile and designateSquare?
     designateTile: function(x,y,z,assigner) {
       if (this.validTile(x,y,z)) {
         let t = HTomb.Things[this.template]({assigner: assigner}).place(x,y,z);
@@ -232,7 +233,11 @@ HTomb = (function(HTomb) {
       let z = this.z;
       let f = HTomb.World.features[coord(x,y,z)];
       let labor = this.assignee.worker.getLabor();
-      labor = Math.max(0, labor-f.effort);
+      if (f.effort===undefined || f.effort===null) {
+        Math.max(labor,0);
+      } else {
+        labor = Math.max(0, labor-f.effort);
+      }
       f.labor-=labor;
       this.assignee.ai.acted = true;
       this.assignee.ai.actionPoints-=16;
@@ -321,7 +326,7 @@ HTomb = (function(HTomb) {
         return false;
       } else if (t===HTomb.Tiles.FloorTile && tb===HTomb.Tiles.VoidTile) {
         return false;
-      } else if (t===HTomb.Tiles.EmptyTile && (tb===HTomb.Tiles.EmptyTile || tb===HTomb.Tiles.FloorTile)) {;
+      } else if (t===HTomb.Tiles.EmptyTile && (tb===HTomb.Tiles.EmptyTile || tb===HTomb.Tiles.FloorTile)) {
         return false;
       }
       let soil = HTomb.World.covers[z][x][y];
@@ -420,7 +425,7 @@ HTomb = (function(HTomb) {
         } else {
           menu.middle = ["%c{orange}Can't dig in this area."];
         }
-      };
+      }
       HTomb.GUI.selectSquareZone(assigner.z,this.designateSquares,{
         context: this,
         assigner: assigner,
@@ -512,10 +517,10 @@ HTomb = (function(HTomb) {
         rock.n = 1;
         if (tiles[z][x][y]===DownSlopeTile) {
           let item = rock.place(x,y,z-1);
-          item.owned = true;;
+          item.owned = true;
         } else {
           let item = rock.place(x,y,z);
-          item.owned = true
+          item.owned = true;
         }
       }
       let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
@@ -699,7 +704,6 @@ HTomb = (function(HTomb) {
     labor: 5,
     effort: 0,
     onCreate: function(args) {
-      //console.log(args);
       if (args.makes) {
         let makes = HTomb.Things.templates[args.makes];
         this.makes = args.makes;
@@ -1073,6 +1077,85 @@ HTomb = (function(HTomb) {
         contextName: "ChooseFixture"
       });
       HTomb.GUI.Panels.menu.middle = ["%c{orange}Choose a fixture before placing it."];
+    }
+  });
+
+  Task.extend({
+    template: "RepairTask",
+    name: "repair",
+    description: "repair a fixture or rearm a trap",
+    bg: "#553300",
+    ingredients: {},
+    expended: false,
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f && f.defender && f.defender.wounds.level>0) {
+        return true;
+      } else if (f && f.trap && f.trap.sprung) {
+        return true;
+      }
+      return false;
+    },
+    designate: function(assigner) {
+      let menu = HTomb.GUI.Panels.menu;
+      function myHover(x, y, z) {
+        let f = HTomb.World.features[coord(x,y,z)];
+        if (f && f.defender && f.defender.wounds.level>0) {
+          menu.middle = ["%c{lime}Repair "+f.describe({article: "indefinite"})+"."];
+        } else if (f && f.trap && f.trap.sprung) {
+          menu.middle = ["%c{lime}Rearm "+f.describe({article: "indefinite"})+"."];
+        } else {
+          menu.middle = ["%c{orange}Nothing to repair or rearm here."];
+        }
+      }
+      let that = this;
+      function createZone(x,y,z) {
+        let task = that.designateTile(x,y,z,assigner);
+        if (task) {
+          let f = HTomb.World.features[coord(x,y,z)];
+          if (f && f.trap && f.trap.sprung) {
+            if (f.trap.rearmCost) {
+              task.ingredients = f.trap.rearmCost;
+            } else {
+              task.ingredients = f.ingredients || {};
+            }
+          } else if (f && f.defender && f.defender.wounds.level>0) {
+            if (f.repairCost) {
+              task.ingredients = f.repairCost;
+            } else {
+              task.ingredients = f.ingredients || {};
+            }
+          }
+        }
+      }
+      HTomb.GUI.selectSquare(assigner.z,that.designateSquare,{
+        assigner: assigner,
+        context: that,
+        callback: createZone,
+        hover: myHover,
+        contextName: "Designate"+that.template
+      });
+    },
+    begin: function() {
+      this.expended = true;
+    },
+    begun: function() {
+      return this.expended;
+    },
+    finish: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f && f.trap && f.trap.sprung) {
+        f.trap.rearm();
+      } else if (f && f.defender) {
+        //!!! again, not a great way to do this
+        f.name = HTomb.Things.templates[f].name;
+      }
     }
   });
 

@@ -5,6 +5,22 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var NLEVELS = HTomb.Constants.NLEVELS;
 
+  // let seed = 0;
+  // let nextSeed = seed;
+
+  // HTomb.Utils.reseed = function() {
+  //   seed = Math.floor(Math.random()*Math.pow(2,16));
+  // };
+
+  // HTomb.Utils.random = function(max, min) {
+  //   max = max || 1;
+  //   min = min || 0;
+  //   nextSeed = (nextSeed * 9301 + 49297) % 233280;
+  //   let rnd = seed / 233280;
+  //   return min + rnd * (max - min);
+  // };
+
+
   HTomb.Utils.lineBreak = function(str,len) {
     str = HTomb.Utils.cleanText(str);
     let tokens = str.split(" ");
