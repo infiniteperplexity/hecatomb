@@ -1,6 +1,6 @@
 // The lowest-level GUI functionality, interacting with the DOM directly or through ROT.js.
 HTomb = (function(HTomb) {
-  const remote = (this.require) ? require('electron').remote : function() {};
+  const remote = (this.require) ? require('electron').remote : null;
   "use strict";
   // break out constants
   var SCREENW = HTomb.Constants.SCREENW;
@@ -83,12 +83,12 @@ HTomb = (function(HTomb) {
     let txt = [
       "Welcome to Hecatomb!",
       "N) New game.",
-      (this.require) ? "R) Restore game." : "%c{gray}R) Restore game.",
+      (remote) ? "R) Restore game." : "%c{gray}R) Restore game.",
       //"F) Submit feedback or bug report.",
       "M) Read the manual.",
-      (this.require) ? "Q) Quit." : "%c{gray}Q) Quit."
+      (remote) ? "Q) Quit." : "%c{gray}Q) Quit."
     ];
-    if (!this.require) {
+    if (!remote) {
       txt.push("%c{yellow}Note: Saved games are currently disabled for online playtesting.");
     }
     GUI.Panels.overlay.update(txt);
@@ -212,12 +212,12 @@ HTomb = (function(HTomb) {
     GUI.Contexts.active = GUI.Contexts.system;
     GUI.Panels.overlay.update([
       "Esc) Back to game.",
-      (this.require) ? "S) Save game ('" + HTomb.Save.currentGame +"')." : "%c{gray}S) Save game.",
-      (this.require) ? "A) Save game as..." : "%c{gray}A) Save game as...",
-      (this.require) ? "R) Restore game." : "%c{gray}R) Restore game.",
-      (this.require) ? "D) Delete current game('" + HTomb.Save.currentGame +"')." : "%c{gray}D) Delete game.",
+      (remote) ? "S) Save game ('" + HTomb.Save.currentGame +"')." : "%c{gray}S) Save game.",
+      (remote) ? "A) Save game as..." : "%c{gray}A) Save game as...",
+      (remote) ? "R) Restore game." : "%c{gray}R) Restore game.",
+      (remote) ? "D) Delete current game('" + HTomb.Save.currentGame +"')." : "%c{gray}D) Delete game.",
       "N) New game.",
-      (this.require) ? "Q) Quit game." : "%c{gray}Q) Quit game.",
+      (remote) ? "Q) Quit game." : "%c{gray}Q) Quit game.",
       "M) Read the manual."
     ]);
   };
@@ -226,7 +226,7 @@ HTomb = (function(HTomb) {
     VK_A: function() {Views.System.saveAs();},
     VK_S: function() {Views.System.save();},
     VK_R: function() {
-      if (!this.require) {
+      if (!remote) {
         return;
       }
       HTomb.GUI.Views.parentView = HTomb.GUI.Views.systemView;
@@ -239,7 +239,7 @@ HTomb = (function(HTomb) {
   });
   Views.System = {};
   Views.System.save = function() {
-    if (!this.require) {
+    if (!remote) {
       return;
     }
     // Uses the current or default save game name
@@ -247,7 +247,7 @@ HTomb = (function(HTomb) {
     setTimeout(HTomb.Save.saveGame,500);
   };
   Views.System.delete = function() {
-    if (!this.require) {
+    if (!remote) {
       return;
     }
     if (confirm("Really delete game?")) {
@@ -259,7 +259,7 @@ HTomb = (function(HTomb) {
   };
 
   Views.System.saveAs = function() {
-    if (!this.require) {
+    if (!remote) {
       return;
     }
     HTomb.Time.stopTime();
@@ -305,7 +305,7 @@ HTomb = (function(HTomb) {
     });
   };
   Views.System.restore = function() {
-    if (!this.require) {
+    if (!remote) {
       return;
     }
     HTomb.Time.stopTime();
@@ -338,7 +338,7 @@ HTomb = (function(HTomb) {
     });
   };
   Views.System.quit = function() {
-    if (!this.require) {
+    if (!remote) {
       return;
     }
     HTomb.Time.stopTime();
@@ -719,11 +719,11 @@ HTomb = (function(HTomb) {
       }
       txt.push(" ");
     }
-    if (c.combat) {
-      let wounds = c.combat.wounds.level;
+    if (c.defender) {
+      let wounds = c.defender.wounds.level;
       let type = null;
-      if (c.combat.wounds.type) {
-        type = HTomb.Types.templates[c.combat.wounds.type].name;
+      if (c.defender.wounds.type) {
+        type = HTomb.Types.templates[c.defender.wounds.type].name;
       }
       txt.push("Health: ");
       if (wounds===0) {

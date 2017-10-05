@@ -1,4 +1,4 @@
-const fs = (this.require) ? require('fs') : function() {};
+const fs = (this.require) ? require('fs') : null;
 // This submodule handles saving the game
 HTomb = (function(HTomb) {
   "use strict";
@@ -281,6 +281,7 @@ HTomb = (function(HTomb) {
     // Fix ItemContainer references
     while(HTomb.World.things.length>0) {
       let thing = HTomb.World.things.pop();
+      thing.despawn();
     }
     fillListFrom(things, HTomb.World.things);
     HTomb.Things.templates.Thing.resetSpawnIds();

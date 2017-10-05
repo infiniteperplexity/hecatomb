@@ -203,6 +203,7 @@ HTomb = (function(HTomb) {
 
   Creature.extend({
     template: "Bat",
+    vermin: true,
     name: "bat",
     symbol: "b",
     fg: "#999999",
@@ -224,6 +225,7 @@ HTomb = (function(HTomb) {
   Creature.extend({
     template: "Spider",
     name: "spider",
+    vermin: true,
     symbol: "s",
     fg: "#BBBBBB",
     Behaviors: {
@@ -288,6 +290,7 @@ HTomb = (function(HTomb) {
 
   Creature.extend({
     template: "Fish",
+    vermin: true,
     name: "fish",
     symbol: "p",
     fg: "#FF8888",

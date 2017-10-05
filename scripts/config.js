@@ -16,8 +16,12 @@ HTomb = (function(HTomb) {
   Debug.logEvents = false;
   Debug.maxEvents = 1000;
   Debug.eventLog = [];
+  Debug.logVermin = false;
   Debug.logEvent = function(event, thing) {
     if (Debug.logEvents!==true) {
+      return;
+    }
+    if (thing.vermin && Debug.logVermin===false) {
       return;
     }
     let entry = [event, thing.describe({spawnId: true})];

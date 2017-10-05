@@ -259,11 +259,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  // Not yet functional
-  Behavior.extend({
-    template: "Attacker",
-    name: "attack"
-  });
+
   // The Minion behavior allows a creature to serve a master and take orders
   Behavior.extend({
     template: "Minion",
@@ -650,8 +646,10 @@ HTomb = (function(HTomb) {
       } else {
         HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + victim.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
       }
-      this.entity.ai.acted = true;
-      this.entity.ai.actionPoints-=16;
+      if (this.entity.ai) {
+        this.entity.ai.acted = true;
+        this.entity.ai.actionPoints-=16;
+      }
     }
   });
 
@@ -730,13 +728,27 @@ HTomb = (function(HTomb) {
       } else {
         HTomb.GUI.sensoryEvent(attacker + " hits " + defender +" but deals no damage.",x,y,z,"yellow");
       }
+      // do we need some code to show damaged features?
+      // this would go better in the description, or in onDescribe
+      if (this.entity.parent==="Feature") {
+        let name = HTomb.Things.templates[this.entity.template].name;
+        if (this.wounds.level<=3) {
+          this.entity.name = "mildy damaged " + name;
+        } else if (this.wounds.level<=5) {
+          this.entity.name = "damaged " + name;
+        } else if (this.wounds.level<=6) {
+          this.entity.name = "severely damaged " + name;
+        } else {
+          this.entity.name = "totaled " + name;
+        }
+      }
       console.log("Wounds: ",this.wounds.level);
       if (this.wounds.level>=8) {
         if (this.entity.die) {
           this.entity.die();
         } else {
           this.entity.destroy();
-          HTomb.GUI.sensoryEvent("The " + defender +" is destroyed.",x,y,z,"#FFBB00");
+          HTomb.GUI.sensoryEvent(this.entity.describe({article: "indefinite", capitalized: true}) +" is destroyed.",x,y,z,"#FFBB00");
         }
       }
     }

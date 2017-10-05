@@ -250,6 +250,10 @@ HTomb = (function(HTomb) {
         HTomb.Path.reset();
       }
       f.despawn();
+      ///!!!! Very ad hoc solution...not sure whether I like it
+      if (newf.placeholder) {
+        newf.despawn();
+      }
     },
     begun: function() {
       let x = this.x;
@@ -533,7 +537,8 @@ HTomb = (function(HTomb) {
   Task.extend({
     template: "BuildTask",
     name: "build",
-    description: "build walls/floors/slopes",
+    //description: "build walls/floors/slopes",
+    description: "build walls or floors",
     bg: "#440088",
     makes: "Construction",
     ingredients: {Rock: 1},
@@ -557,19 +562,28 @@ HTomb = (function(HTomb) {
       for (var j=0; j<squares.length; j++) {
         var s = squares[j];
         let tile = HTomb.World.tiles[s[2]][s[0]][s[1]];
-        if (tile===HTomb.Tiles.UpSlopeTile) {
+        // if (tile===HTomb.Tiles.UpSlopeTile) {
+        //   tallest = Math.max(tallest,1);
+        // } else if (tile===HTomb.Tiles.FloorTile) {
+        //   tallest = Math.max(tallest,0);
+        // }
+        if (tile===HTomb.Tiles.UpSlopeTile || tile===HTomb.Tiles.FloorTile) {
           tallest = Math.max(tallest,1);
-        } else if (tile===HTomb.Tiles.FloorTile) {
-          tallest = Math.max(tallest,0);
         }
       }
+      // if (tallest===1) {
+      //   squares = squares.filter(function(e,i,a) {
+      //     return (HTomb.World.tiles[e[2]][e[0]][e[1]]===HTomb.Tiles.UpSlopeTile);
+      //   });
+      // } else if (tallest===0) {
+      //   squares = squares.filter(function(e,i,a) {
+      //     return (HTomb.World.tiles[e[2]][e[0]][e[1]]===HTomb.Tiles.FloorTile);
+      //   });
+      // }
       if (tallest===1) {
         squares = squares.filter(function(e,i,a) {
-          return (HTomb.World.tiles[e[2]][e[0]][e[1]]===HTomb.Tiles.UpSlopeTile);
-        });
-      } else if (tallest===0) {
-        squares = squares.filter(function(e,i,a) {
-          return (HTomb.World.tiles[e[2]][e[0]][e[1]]===HTomb.Tiles.FloorTile);
+          let t = HTomb.World.tiles[e[2]][e[0]][e[1]];
+          return (t===HTomb.Tiles.UpSlopeTile || t===HTomb.Tiles.FloorTile);
         });
       }
       HTomb.Things.templates.Task.designateSquares.call(this, squares, options);
@@ -593,7 +607,8 @@ HTomb = (function(HTomb) {
           } else if (tile===HTomb.Tiles.UpSlopeTile) {
             menu.middle = ["%c{lime}Building here will convert this slope into a wall."];
           } else if (tile===HTomb.Tiles.FloorTile) {
-            menu.middle = ["%c{lime}Building here will construct an upward slope (can be upgraded into a wall.)"];
+            // menu.middle = ["%c{lime}Building here will construct an upward slope (can be upgraded into a wall.)"];
+            menu.middle = ["%c{lime}Building here will construct a wall."];
           } else {
             menu.middle = ["%c{orange}Can't build on this tile."];
           }
@@ -603,18 +618,19 @@ HTomb = (function(HTomb) {
         for (var j=0; j<squares.length; j++) {
           var s = squares[j];
           let tile = HTomb.World.tiles[s[2]][s[0]][s[1]];
-          if (tile===HTomb.Tiles.UpSlopeTile) {
+          // if (tile===HTomb.Tiles.UpSlopeTile) {
+          if (tile===HTomb.Tiles.UpSlopeTile || tile===HTomb.Tiles.FloorTile) {
             tallest = Math.max(tallest,1);
-          } else if (tile===HTomb.Tiles.FloorTile) {
-            tallest = Math.max(tallest,0);
+          // } else if (tile===HTomb.Tiles.FloorTile) {
+          //   tallest = Math.max(tallest,0);
           } else if (tile===HTomb.Tiles.DownSlopeTile || tile===HTomb.Tiles.EmptyTile) {
             tallest = Math.max(tallest,-1);
           }
         }
         if (tallest===1) {
           menu.middle = ["%c{lime}Construct new walls in this area."];
-        } else if (tallest===0) {
-          menu.middle = ["%c{lime}Construct new slopes in this area."];
+        // } else if (tallest===0) {
+        //   menu.middle = ["%c{lime}Construct new slopes in this area."];
         } else if (tallest===-1) {
           menu.middle = ["%c{lime}Construct new floors in this area."];
         } else {
@@ -644,11 +660,13 @@ HTomb = (function(HTomb) {
       var t = tiles[z][x][y];
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
       // If it's a floor, build a slope
+      // !!!Now build a wall instead
       if (t===FloorTile) {
-        tiles[z][x][y] = UpSlopeTile;
-        if (tiles[z+1][x][y]===EmptyTile) {
-          tiles[z+1][x][y] = DownSlopeTile;
-        }
+        // tiles[z][x][y] = UpSlopeTile;
+        // if (tiles[z+1][x][y]===EmptyTile) {
+        //   tiles[z+1][x][y] = DownSlopeTile;
+        // }
+        tiles[z][x][y] = WallTile;
       // If it's a slope, make it into a wall
     } else if (t===UpSlopeTile) {
         tiles[z][x][y] = WallTile;
@@ -996,7 +1014,7 @@ HTomb = (function(HTomb) {
     name: "furnish",
     description: "furnish a fixture",
     bg: "#553300",
-    features: ["Door","Throne","ScryingGlass","Torch"/*,"SpikeTrap"*/],
+    features: ["Ramp","Door","Throne","ScryingGlass","Torch","SpearTrap"],
     designate: function(assigner) {
       var arr = [];
       for (var i=0; i<this.features.length; i++) {

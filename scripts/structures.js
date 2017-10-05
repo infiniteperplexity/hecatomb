@@ -413,9 +413,8 @@ HTomb = (function(HTomb) {
         makes: [
           "WorkAxe",
           "DoorItem",
-          "TorchItem"
-          // ,
-          // "SpikeTrapItem"
+          "TorchItem",
+          "SpearTrapItem"
         ]
       },
       StructureLight: {}

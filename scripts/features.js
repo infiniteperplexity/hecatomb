@@ -6,6 +6,8 @@ HTomb = (function(HTomb) {
   var coord = HTomb.Utils.coord;
 
   let Feature = HTomb.Things.templates.Feature;
+  let Behavior = HTomb.Things.templates.Behavior;
+  let Item = HTomb.Things.templates.Item;
 
   Feature.extend({
     template: "Tombstone",
@@ -133,6 +135,28 @@ HTomb = (function(HTomb) {
   });
 
   Feature.extend({
+    template: "Ramp",
+    name: "ramp",
+    incompleteSymbol: "\u2692",
+    incompleteFg: HTomb.Constants.WALLFG,
+    labor: 5,
+    // for pathing resets
+    solid: true,
+    // !!!!very ad hoc solution
+    placeholder: true,
+    ingredients: {Rock: 1},
+    onPlace: function(x,y,z) {
+      let t = HTomb.World.tiles;
+      if (t[z][x][y]===HTomb.Tiles.FloorTile) {
+        t[z][x][y] = HTomb.Tiles.UpSlopeTile;
+        if (t[z+1][x][y]===HTomb.Tiles.EmptyTile) {
+          t[z+1][x][y] = HTomb.Tiles.DownSlopeTile;
+        } 
+      }
+    }
+  });
+
+  Feature.extend({
     template: "Door",
     name: "door",
     solid: true,
@@ -147,7 +171,7 @@ HTomb = (function(HTomb) {
     Behaviors: {
       Defender: {
         material: "Wood",
-        toughness: 10,
+        toughness: 9,
         evasion: -10
       }
     }
@@ -163,38 +187,73 @@ HTomb = (function(HTomb) {
 // U+2ADD
 
   Feature.extend({
-    template: "SpikeTrap",
-    name: "spike trap",
-    symbol: '"',
-    fg: "brown",
+    template: "SpearTrap",
+    name: "spear trap",
+    symbol: "\u2963",
+    fg: "#CC9944",
     labor: 10,
     craftable: true,
     integrity: 10,
-    ingredients: {WoodPlank: 1},
+    sprung: false,
+    ingredients: {WoodPlank: 2},
     Behaviors: {
       Attacker: {
         damage: {
           type: "Piercing",
-          level: 4
+          level: 2
         },
-        accuracy: 4
+        accuracy: 2
+      },
+      Trap: {
+        sprungSymbol: "\u2964",
+        rearmCost: {WoodPlank: 1}
       }
     },
-    onPlace: function() {
-      if (this)
-      HTomb.Events.subscribe(this,"Step");
+    onSpring: function(x,y,z) {
+      let c = HTomb.World.creatures[coord(x,y,z)];
+      this.attacker.attack(c);
     },
     onStep: function(event) {
+      if (this.trap.sprung) {
+        return;
+      }
       let c = event.creature;
       if (c.x===this.x && c.y===this.y && c.z===this.z
       && (!this.owner || !c.ai || this.owner.ai.team!==c.ai.team)
       && !c.movement.flies) {
-        this.attacker.attack(c);
-        if (Math.random()<0.5) {
-          HTomb.Things.SpikeTrapItem().place(this.x,this.y,this.z);
-        }
-        this.destroy();
+        this.trap.spring(c.x,c.y,c.z);
       }
+    }
+  });
+
+  Behavior.extend({
+    template: "Trap",
+    name: "trap",
+    listens: ["Step"],
+    sprung: false,
+    sprungSymbol: null,
+    unsprungSymbol: null,
+    onAdd: function() {
+      for (let type of this.listens) {
+        HTomb.Events.subscribe(this.entity,type);
+      }
+    },
+    rearm: function() {
+      this.sprung = false;
+      if (this.unsprungSymbol) {
+        this.entity.symbol = this.unsprungSymbol;
+      } else {
+        this.entity.symbol = HTomb.Things.templates[this.entity.template].symbol;
+      }
+      this.entity.name = HTomb.Things.templates[this.entity.template].name;
+    },
+    spring: function(x,y,z) {
+      this.sprung = true;
+      this.entity.onSpring(x,y,z);
+      if (this.sprungSymbol) {
+        this.entity.symbol = this.sprungSymbol;
+      }
+      this.entity.name = "sprung " + this.entity.name;
     }
   });
 
