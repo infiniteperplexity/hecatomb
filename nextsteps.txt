@@ -1,0 +1,2 @@
+- change defender so it has a wound() method and an onDescribe() method, then fix TwistFlesh;
+- add favorable terrain stuff to attacker / defender

@@ -20,7 +20,6 @@ HTomb = (function(HTomb) {
   //   return min + rnd * (max - min);
   // };
 
-
   HTomb.Utils.lineBreak = function(str,len) {
     str = HTomb.Utils.cleanText(str);
     let tokens = str.split(" ");
@@ -266,7 +265,7 @@ HTomb = (function(HTomb) {
   HTomb.Utils.shuffle = function(arr) {
     //Fisher-Yates
     var i = arr.length;
-    if ( i == 0 ) return false;
+    if ( i == 0 ) return arr;
     while ( --i ) {
        var j = Math.floor( Math.random() * ( i + 1 ) );
        var tempi = arr[i];

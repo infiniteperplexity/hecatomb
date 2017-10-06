@@ -204,7 +204,7 @@ HTomb = (function(HTomb) {
       if (ai.target && ai.target.isPlaced()===false) {
         ai.target = null;
       }
-      if (ai.target===null || ai.target.parent!=="Creature" || ai.isHostile(ai.target)!==true || ai.target.isPlaced()===false || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,ai.target.x,ai.target.y,ai.target.z)>15) {
+      if (ai.target===null || ai.target.parent!=="Creature" || ai.isHostile(ai.target)!==true || ai.target.isPlaced()===false || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,ai.target.x,ai.target.y,ai.target.z)>10) {
         if (ai.team===undefined) {
           console.log("what in the world???");
         }
@@ -336,6 +336,55 @@ HTomb = (function(HTomb) {
       }
     }
   });
+
+  HTomb.Types.defineRoutine({
+    template: "HuntPlayer",
+    name: "hunt player",
+    act: function(ai) {
+      let c = ai.entity;
+      let canMove = c.movement.boundMove();
+      // so...this tends to lock onto one thing and seek it out relentlessly.
+      // we want to it be able to acquire other targets
+      if (ai.target===null) {
+        let p = HTomb.Player;
+        if (HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,p.x,p.y,p.z,{canPass: canMove})) {
+          ai.target = p;
+        } else {
+          let minions = HTomb.Player.master.minions;
+          if (minions.length>0) {
+            for (let m of minions) {
+              if (HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,m.x,m.y,m.z,{canPass: canMove})) {
+                ai.target = m;
+                break;
+              }
+            }
+          }
+        }
+        if (ai.target===null) {
+          for (let block in HTomb.World.blocks) {
+            let b = HTomb.World.blocks[block];
+            if (b.owner===HTomb.Player && HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,b.x,b.y,b.z,{canPass: canMove})) {
+              ai.target = b;
+              break;
+            }
+          }
+        }
+        if (ai.target && HTomb.Tiles.isTouchableFrom(ai.target.x, ai.target.y, ai.target.z, ai.entity.x, ai.entity.y, ai.entity.z)) {
+          ai.target = null;
+          return;
+        }
+        if (ai.target!==null) {
+          ai.walkToward(ai.target.x, ai.target.y, ai.target.z, {
+            searcher: ai.entity,
+            searchee: ai.target,
+            cacheAfter: 25,
+            cacheTimeout: 20
+          });
+        }
+      }
+    }
+  });
+
   HTomb.Types.defineRoutine({
     template: "HuntDeadThings",
     name: "hunt dead things",
@@ -706,6 +755,12 @@ HTomb = (function(HTomb) {
     template: "AngryNatureTeam",
     name: "angryNature",
     enemies: ["PlayerTeam","GhoulTeam"]
+  });
+
+  HTomb.Types.defineTeam({
+    template: "HumanityTeam",
+    name: "humanity",
+    enemies: ["PlayerTeam","GhoulTeam","AngryNatureTeam"]
   });
 
   return HTomb;

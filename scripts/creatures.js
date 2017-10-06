@@ -107,6 +107,28 @@ HTomb = (function(HTomb) {
     }
   });
 
+
+  Creature.extend({
+    template: "Peasant",
+    name: "peasant",
+    symbol: "@",
+    fg: "brown",
+    Behaviors: {
+      AI: {
+        goals: ["HuntPlayer"],
+        team: "HumanityTeam"
+      },
+      Movement: {},
+      Sight: {},
+      Attacker: {
+        damage: {
+          type: "Crushing"
+        }
+      },
+      Defender: {}
+    }
+  });
+
   
 
   Creature.extend({

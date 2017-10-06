@@ -551,6 +551,8 @@ HTomb = (function(HTomb) {
     }, n);
   };
 
+  GUI.Contexts.default.clickAlert = closeAlert;
+
 
   function closeAlert() {
     if (GUI.Contexts.alert.frozen) {

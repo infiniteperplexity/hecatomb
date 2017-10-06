@@ -23,6 +23,7 @@ HTomb = (function(HTomb) {
     symbols: [],
     fgs: [],
     ingredients: [],
+    tooltip: "A generic structure tooltip.",
     setSymbol: function(i,sym) {
       this.features[i].symbol = sym;
     },
@@ -75,7 +76,7 @@ HTomb = (function(HTomb) {
       }
     },
     headerText: function() {
-      return 
+      return;
     },
     structureText: function() {
       let txt = [
@@ -160,8 +161,8 @@ HTomb = (function(HTomb) {
   }
 
   Behavior.extend({
-    template: "Workshop",
-    name: "workshop",
+    template: "Producer",
+    name: "producer",
     makes: [],
     queue: null,
     task: null,
@@ -287,7 +288,7 @@ HTomb = (function(HTomb) {
       if (this.queue.length===0) {
         return;
       } else if (HTomb.World.tasks[HTomb.Utils.coord(this.entity.x,this.entity.y,this.entity.z)]) {
-        HTomb.GUI.pushMessage("Workshop tried to create new task but there was already a zone.");
+        HTomb.GUI.pushMessage("Structure tried to create new task but there was already a zone.");
         return;
       }
       // this is a good place to check for ingredients
@@ -303,7 +304,7 @@ HTomb = (function(HTomb) {
       let task = HTomb.Things.templates.ProduceTask.designateTile(this.entity.x,this.entity.y,this.entity.z,this.entity.owner);
       this.task = task;
       task.makes = this.queue[0][0];
-      task.workshop = this;
+      task.producer= this;
       HTomb.GUI.pushMessage("Next good is "+HTomb.Things.templates[task.makes].describe({article: "indefinite"}));
       task.name = "produce "+HTomb.Things.templates[task.makes].name;
       task.ingredients = ings;
@@ -392,10 +393,11 @@ HTomb = (function(HTomb) {
 
 
   Structure.extend({
-    template: "Carpenter",
-    name: "carpenter",
+    template: "Workshop",
+    name: "workshop",
     symbols: ["\u25AE","/","\u2699","\u2261","\u25AA",".","\u2692",".","\u25A7"],
     bg: "#665555",
+    tooltip: "(The workshop produces basic goods.)",
     fgs: ["#BB9922","#BB9922",HTomb.Constants.FLOORFG,"#BB9922","#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922"],
      ingredients: [
        {WoodPlank: 1},
@@ -409,7 +411,7 @@ HTomb = (function(HTomb) {
        {WoodPlank: 1}
     ],
     Behaviors: {
-      Workshop: {
+      Producer: {
         makes: [
           "WorkAxe",
           "DoorItem",
@@ -597,6 +599,7 @@ HTomb = (function(HTomb) {
   Structure.extend({
     template: "Stockpile",
     name: "stockpile",
+    tooltip: "(The stockpile stores and tallies basic resources.)",
     bg: "#444455",
     symbols: [".",".","\u25AD","\u2234","#","\u2630","\u25A7",".","\u25AF"],
     fgs: ["#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922",HTomb.Constants.FLOORFG,"#BB9922",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BB9922"],
@@ -623,7 +626,7 @@ HTomb = (function(HTomb) {
     template: "ProduceTask",
     name: "produce",
     bg: "#336699",
-    workshop: null,
+    producer: null,
     makes: null,
     labor: 20,
     started: false,
@@ -688,12 +691,12 @@ HTomb = (function(HTomb) {
       let item = HTomb.Things[this.makes]().place(x,y,z);
       item.owned = true;
       HTomb.Events.publish({type: "Complete", task: this});
-      this.workshop.occupied = null;
+      this.producer.occupied = null;
       HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes making " + HTomb.Things.templates[this.makes].describe({article: "indefinite"}));
     },
     onDespawn: function() {
-      this.workshop.task = null;
-      this.workshop.nextGood();
+      this.producer.task = null;
+      this.producer.nextGood();
     }
   });
 
@@ -703,7 +706,7 @@ HTomb = (function(HTomb) {
     description: "create a structure",
     bg: "#553300",
     makes: null,
-    structures: ["GuardPost","Carpenter","Stockpile","BlackMarket","Sanctum"],
+    structures: ["GuardPost","Workshop","Stockpile","BlackMarket","Sanctum"],
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -736,13 +739,13 @@ HTomb = (function(HTomb) {
             let f = HTomb.World.features[coord(crd[0],crd[1],crd[2])];
             if (HTomb.World.tiles[crd[2]][crd[0]][crd[1]]!==HTomb.Tiles.FloorTile) {
               failed = true;
-            // a completed, partial version of the same workshop
+            // a completed, partial version of the same structure
           } else if (f && f.template===structure.template+"Feature") {
               struc = f.structure;
               if (struc.isPlaced()===true || struc.structure.x!==squares[mid][0] || struc.structure.y!==squares[mid][1]) {
                 failed = true;
               }
-            // an incomplete version of the same workshop
+            // an incomplete version of the same structure
           } else if (f && (f.template!=="IncompleteFeature" || !f.makes || f.makes!==structure.template+"Feature")) {
               failed = true;
             }
@@ -793,6 +796,7 @@ HTomb = (function(HTomb) {
         function myHover(x, y, z, squares) {
           //hacky as all get-out
           let menu = HTomb.GUI.Panels.menu;
+          // this may not be used any more because it was for varied-size structures
           if (Array.isArray(x)===false && squares===undefined) {
             if (HTomb.World.explored[z][x][y]!==true) {
               menu.middle = ["%c{orange}Unexplored tile."];
@@ -820,7 +824,7 @@ HTomb = (function(HTomb) {
               menu.middle = ["%c{orange}Cannot build structure here."];
               return;
             } else {
-              menu.middle = ["%c{lime}Build structure here."];
+              menu.middle = ["%c{lime}Build structure here.","","%c{lime}"+structure.tooltip];
             }
           }
         }
@@ -920,9 +924,94 @@ HTomb = (function(HTomb) {
   Structure.extend({
     template: "BlackMarket",
     name: "black market",
+    tooltip: "(The black market lets you trade for goods from faraway lands.)",
     symbols: ["\u00A3",".",".",".","\u2696","$","\u00A2","\u20AA","\u00A4"],
     fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
     bg: "#555544",
+    offers: [],
+    awaiting: [],
+    onPlace: function() {
+      HTomb.Events.subscribe(this,"TurnBegin");
+    },
+    onTurnBegin: function() {
+      if (HTomb.Utils.dice(1,100)===1) {
+        let MAXOFFERS = 4;
+        let trades = [
+          [["Rock",3],["TradeGoods",1]],
+          [["WoodPlank",3],["TradeGoods",1]]
+        ];
+        trades = HTomb.Utils.shuffle(trades);
+        this.offers.unshift(trades[0]);
+        if (this.offers.length>MAXOFFERS) {
+          this.offers.pop();
+        }
+      }
+      let i = 0;
+      while (i<this.awaiting.length) {
+        let a = this.awaiting[i];
+        a[2]-=1;
+        if (a[2]<=0) {
+          let item = HTomb.Things[a[0]]({n: a[1]});
+          item.place(this.x,this.y,this.z);
+          this.awaiting.splice(i,1);
+        } else {
+          i+=1;
+        }
+      }
+    },
+    choiceCommand: function(i) {
+      if (this.offers.length>i) {
+        let o = this.offers[i];
+        //need to remove the traded items somehow
+        this.awaiting.push([o[1][0],o[1][1],50]);
+        this.offers.splice(i,1);
+      }
+    },
+    structureText: function() {
+      let txt = [
+        "%c{orange}**Esc: Done.**",
+        "Wait: NumPad 5 / Control+Space.",
+        "Click / Space: Select.",
+        "Enter: Toggle Pause.",
+        "a-z: Accept an offer.",
+        " ",
+        "%c{yellow}Structure: "+this.describe({capitalized: true, atCoordinates: true})+".",
+      ];
+      if (this.behaviors) {
+        for (let behavior of this.behaviors) {
+          if (behavior.commandsText) {
+            txt = txt.concat(behavior.commandsText());
+          }
+        }
+      }
+      txt = txt.concat(["Tab: Next structure."," "]);
+      txt.push(" ");
+      txt.push("Offers:");
+      let alphabet = 'abcdefghijklmnopqrstuvwxyz';
+      for (let i=0; i<this.offers.length; i++) {
+        let o = this.offers[i];
+        let name0 = HTomb.Things.templates[o[0][0]].name;
+        let name1 = HTomb.Things.templates[o[1][0]].name;
+        // !!!gray it out if you don't have it...
+        txt.push(alphabet[i] + ") " + o[0][1] + " " + name0 + " : " + o[1][1] + " " + name1 + ".");
+      }
+      txt.push(" ");
+      txt.push("Awaiting:");
+      for (let i=0; i<this.awaiting.length; i++) {
+        let a = this.awaiting[i];
+        let name = HTomb.Things.templates[a[0]].name;
+        txt.push("- " + a[1] + " " + name + ".");
+      }
+      txt.push(" ");
+      if (this.behaviors) {
+        for (let behavior of this.behaviors) {
+          if (behavior.detailsText) {
+            txt = txt.concat(behavior.detailsText());
+          }
+        }
+      }
+      return txt;
+    },
     ingredients: [
       {Rock: 1}, {}, {WoodPlank: 1},
       {}, {TradeGoods: 1}, {},
@@ -930,7 +1019,7 @@ HTomb = (function(HTomb) {
     ],
     Behaviors: {
       Storage: {
-        stores: "TradeGoods"
+        stores: ["TradeGoods"]
       },
       StructureLight: {}
     }
@@ -939,18 +1028,52 @@ HTomb = (function(HTomb) {
   Structure.extend({
     template: "Sanctum",
     name: "sanctum",
+    tooltip: "(The sanctum grants you addition entropy and spells.)",
     symbols: ["\u2625",".","\u2AEF",".","\u2135",".","\u2AEF","\u2606","\u263F"],
     fgs: ["magenta",HTomb.Constants.FLOORFG,"cyan",HTomb.Constants.FLOORFG,"green",HTomb.Constants.FLOORFG,"yellow","red","orange"],
     bg: "#222244",
     // do we want some sort of mana activation thing?,
     Behaviors: {
       StructureLight: {}
+    },
+    onPlace: function() {
+      let structures = HTomb.Player.master.structures;
+      let anySanctum = false;
+      for (let s of structures) {
+        if (s.template==="Sanctum") {
+          anySanctum = true;
+        }
+      }
+      if (anySanctum===false) {
+        HTomb.Player.caster.maxEntropy+=5;
+        let spell = HTomb.Things.PoundOfFlesh({caster: HTomb.Player.caster});
+        HTomb.Player.caster.spells.push(spell); 
+      }
+    },
+    onRemove: function() {
+      let structures = HTomb.Player.master.structures;
+      let anySanctum = false;
+      for (let s of structures) {
+        if (s.template==="Sanctum") {
+          anySanctum = true;
+        }
+      }
+      if (anySanctum===false) {
+        HTomb.Player.caster.maxEntropy-=5;
+        let spells = HTomb.Player.caster.spells;
+        for (let i=0; i<spells.length; i++) {
+          if (spells[i].template==="PoundOfFlesh") {
+            spells.splice(i,1);
+          }
+        } 
+      }
     }
   });
 
   Structure.extend({
     template: "GuardPost",
     name: "guard post",
+    tooltip: "(The guard post warns of incoming attacks and gives bonuses to defenders fighting within it.",
     ingredients: [
       {},{},{},
       {},{Rock:1,WoodPlank:1},{},

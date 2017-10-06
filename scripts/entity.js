@@ -274,6 +274,7 @@ HTomb = (function(HTomb) {
     yields: null,
     //i kind of hate this name
     integrity: null,
+    tooltip: "A generic feature tooltip",
     fall: function() {
       var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
       if (this.creature) {

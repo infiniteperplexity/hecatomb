@@ -16,8 +16,14 @@ HTomb = (function(HTomb) {
     observed: true,
     blurb: "There is some kind of encounter going on!",
     alert: function() {
-      HTomb.GUI.alert(this.blurb);
-      //HTomb.GUI.Views.Main.tacticalMode();
+      let structures = HTomb.Player.master.structures;
+      for (let s of structures) {
+        if (s.template==="GuardPost") {
+          HTomb.GUI.alert(this.blurb);
+          //HTomb.GUI.Views.Main.tacticalMode();
+          return;
+        }
+      }
     },
     isPlaced: function() {
       if (this.creatures && this.creatures.length>0) {
@@ -49,6 +55,11 @@ HTomb = (function(HTomb) {
         this.despawn();
       }
     },
+    // this "spawns" the encounter, since the name "spawn" is already taken
+    muster: function(x,y,z,args) {
+      let encounter = HTomb.Things[this.template]();
+      encounter.place(x,y,z,args);
+    },
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
       HTomb.World.encounters.push(this);
@@ -59,50 +70,75 @@ HTomb = (function(HTomb) {
         HTomb.World.encounters.splice(HTomb.World.encounters.indexOf(this),1);
       }
       Entity.remove.call(this,args);
-    }
-  });
-
-  // a helper function to avoid dropping one creature on top of another.
-  function noCreature(x,y,z) {
-    if (HTomb.World.creatures[coord(x,y,z)]===undefined) {
-      return true;
-    } else {
+    },
+    alongEdge: function(n, len, callb) {
+      // n is the number of squares needed, len is the length of the line to try, callb is the rule
+      len = len || 3*n;
+      // default rule is ground level, no liquid, no creatures
+      callb = callb || function(x,y) {
+        let z = HTomb.Tiles.groundLevel(x,y);
+        if (HTomb.World.covers[z][x][y].liquid) {
+          return false;
+        }
+        if (HTomb.World.creatures[coord(x,y,z)]===undefined) {
+          return [x,y,z];
+        }
+        return false;
+      };
+      let TRIES = 100;
+      let tries = 0;
+      let x;
+      let y;
+      let z;
+      while (tries<TRIES) {
+        let edge = HTomb.Utils.dice(1,4);
+        let span;
+        if (edge===1 || edge===3) {
+          span = LEVELH;
+        } else {
+          span = LEVELW;
+        }
+        let center = HTomb.Utils.dice(1,span-2-len)+Math.floor(len/2);
+        let line = [];
+        for (let i=0; i<len; i++) {
+          line.push(center-Math.floor(len/2)+i);
+        }
+        let coords = [];
+        if (edge===1) {
+          x = 1;
+          for (let s of line) {
+            coords.push([x,s]);
+          }
+        } else if (edge===2) {
+          y = 1;
+          for (let s of line) {
+            coords.push([s,y]);
+          }
+        } else if (edge===3) {
+          x = LEVELW-1;
+          for (let s of line) {
+            coords.push([x,s]);
+          }
+        } else if (edge===4) {
+          y = LEVELH-1;
+          for (let s of line) {
+            coords.push([s,y]);
+          }
+        }
+        coords = HTomb.Utils.shuffle(coords);
+        let squares = [];
+        for (let i of coords) {
+          if (callb(i[0],i[1])) {
+            squares.push(callb(i[0],i[1]));
+          }
+          if (squares.length>=n) {
+            return squares;
+          }
+        } 
+      }
       return false;
     }
-  }
-  HTomb.Tiles.getEdgeSquare = function(callb) {
-    callb = callb || noCreature;
-    var TRIES = 100;
-    var tries = 0;
-    while (true) {
-      tries+=1;
-      var x = Math.floor(Math.random()*LEVELW);
-      var y = Math.floor(Math.random()*LEVELH);
-      var r = Math.random();
-      if (r<0.5) {
-        if (x>LEVELW/2) {
-          x = LEVELW-2;
-        } else {
-          x = 1;
-        }
-      } else {
-        if (y>LEVELH/2) {
-          y = LEVELH-2;
-        } else {
-          y = 1;
-        }
-      }
-      var z = HTomb.Tiles.groundLevel(x,y);
-      if (callb(x,y,z)) {
-        console.log("returning " + [x,y,z]);
-        return [x,y,z];
-      }
-      if (tries>=TRIES) {
-        alert("failed to find ");
-        return;
-      }
-    }
-  };
+  });
 
   Encounter.extend({
     template: "PeasantMob",
@@ -112,14 +148,30 @@ HTomb = (function(HTomb) {
     onTurnBegin: function(event) {
       if (HTomb.Time.dailyCycle.turn===999) {
         let e = HTomb.Tiles.getEdgeSquare();
-        this.spawn().place(e.x,e.y,e.z);
+        this.muster(e.x,e.y,e.z);
       }
     },
     onSpawn: function(args) {
-      //this.addCreature(HTomb.Things.Peasant());
+      let r = HTomb.Utils.dice(1,4)+2;
+      for (let i=0; i<r; i++) {
+        this.addCreature(HTomb.Things.Peasant());
+      }
+      HTomb.Debug.peasants = this.creatures;
     },
     onPlace: function(x,y,z,args) {
-      this.creatures[0].place(x,y,z);
+      let squares = this.alongEdge(this.creatures.length);
+      if (squares) {
+        this.alert();
+        for (let i=0; i<this.creatures.length; i++) {
+          let s = squares[i];
+          this.creatures[i].place(s[0],s[1],s[2]);
+        }
+      } else {
+        for (let c of this.creatures) {
+          c.despawn();
+        }
+        this.despawn();
+      }
     }
   });
   
@@ -139,15 +191,14 @@ HTomb = (function(HTomb) {
         let y = t.y;
         let z = t.z;
         if (HTomb.Utils.dice(1,25)===1) {
-          // really ought to standardize this...
-          HTomb.Things[this.template]().place(x,y,z);
+          this.muster(x,y,z,{});
         }
       }
     },
     onSpawn: function() {
       this.addCreature(HTomb.Things.Dryad());
     },
-    onPlace: function(x,y,z) {
+    onPlace: function(x,y,z,args) {
       let dryad = this.creatures[0];
       let trees = HTomb.Utils.where(HTomb.World.features,
       function(e) {
@@ -172,3 +223,17 @@ HTomb = (function(HTomb) {
 
   return HTomb;
 })(HTomb);
+
+
+
+
+
+/*
+function f() {
+  HTomb.Debug.visible = true;
+  HTomb.Debug.explored = true;
+  HTomb.Things.templates.PeasantMob.muster();
+  HTomb.GUI.reset();
+};
+f();
+*/

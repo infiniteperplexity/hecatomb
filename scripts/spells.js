@@ -91,6 +91,67 @@ HTomb = (function(HTomb) {
   });
 
   Spell.extend({
+    template: "PoundOfFlesh",
+    name: "pound of flesh",
+    cast: function() {
+      let caster = this.caster;
+      var c = caster.entity;
+      let that = this;
+      function castBolt(x,y,z) {
+        let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
+        if (cr && cr.template==="Zombie") {
+          HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
+          that.spendEntropy();
+          HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
+          HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
+          HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh to " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
+          if (caster.defender) {
+            // need to wound the caster...right now there is no straightforward way to do this
+            // need to use onDescribe
+            // need to heal the zombie...no straightforward way to do that so far
+          }
+          c.ai.acted = true;
+          c.ai.actionPoints-=16;
+        } else if (cr) {
+          HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
+          that.spendEntropy();
+          HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
+          HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});
+          HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh from " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
+          if (cr.defender) {
+            // need to wound the caster...right now there is no straightforward way to do this
+            // need to use onDescribe
+            // need to heal the zombie...no straightforward way to do that so far
+          }
+          c.ai.acted = true;
+          c.ai.actionPoints-=16;
+        } else {
+          HTomb.GUI.pushMessage("Can't cast the spell there.");
+        }
+      }
+      function myHover(x, y, z) {
+        if (HTomb.World.explored[z][x][y]!==true) {
+          HTomb.GUI.Panels.menu.middle = ["%c{orange}Unexplored tile."];
+          return;
+        }
+        let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
+        if (cr && cr.template==="Zombie") {
+          HTomb.GUI.Panels.menu.middle = ["%c{lime}Sacrifice your flesh to heal " + cr.describe({article: "indefinite"})+"."];
+        } else if (cr) {
+          HTomb.GUI.Panels.menu.middle = ["%c{lime}Siphon flesh from this creature to heal your wounds."];
+        } else {
+          HTomb.GUI.Panels.menu.middle = ["%c{orange}Select a zombie to heal or enemy to damage."];
+        }
+      }
+      HTomb.GUI.selectSquare(
+        c.z,
+        castBolt,
+        {hover: myHover}
+      );
+    }
+  });
+
+  Spell.extend({
     template: "RaiseZombie",
     name: "raise zombie",
     getCost: function() {

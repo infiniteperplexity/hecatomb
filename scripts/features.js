@@ -120,6 +120,7 @@ HTomb = (function(HTomb) {
   Feature.extend({
     template: "Torch",
     name: "torch",
+    tooltip: "(A furnished torch provides stationary light.)",
     craftable: true,
     symbol: "\u2AEF",
     fg: "yellow",
@@ -137,6 +138,7 @@ HTomb = (function(HTomb) {
   Feature.extend({
     template: "Ramp",
     name: "ramp",
+    tooltip: "(Creates an upward slope.)",
     incompleteSymbol: "\u2692",
     incompleteFg: HTomb.Constants.WALLFG,
     labor: 5,
@@ -162,6 +164,7 @@ HTomb = (function(HTomb) {
     solid: true,
     opaque: true,
     locked: false,
+    tooltip: "(A door blocks your enemies but not you or your minions.)",
     symbol: "\u25A5",
     fg: "#BB9922",
     labor: 20,
@@ -191,6 +194,7 @@ HTomb = (function(HTomb) {
     name: "spear trap",
     symbol: "\u2963",
     fg: "#CC9944",
+    tooltip: "(A spring-loaded, spiked stick that attacks your enemies.)",
     labor: 10,
     craftable: true,
     integrity: 10,

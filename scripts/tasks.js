@@ -1018,7 +1018,7 @@ HTomb = (function(HTomb) {
     name: "furnish",
     description: "furnish a fixture",
     bg: "#553300",
-    features: ["Ramp","Door","Throne","ScryingGlass","Torch","SpearTrap"],
+    features: ["Ramp","Door",/*"Throne",*/"Torch","SpearTrap"],
     designate: function(assigner) {
       var arr = [];
       for (var i=0; i<this.features.length; i++) {
@@ -1038,7 +1038,8 @@ HTomb = (function(HTomb) {
             }
           }
           function myHover(x,y,z) {
-            HTomb.GUI.Panels.menu.middle = ["%c{lime}Furnish " + feature.describe({article: "indefinite"}) + " here."];
+            HTomb.GUI.Panels.menu.middle = ["%c{lime}Furnish " + feature.describe({article: "indefinite"}) + " here.",
+            "","%c{lime}"+feature.tooltip];
           }
           HTomb.GUI.selectSquare(assigner.z,that.designateSquare,{
             assigner: assigner,
