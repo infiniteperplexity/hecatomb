@@ -62,7 +62,11 @@ HTomb = (function(HTomb) {
       options = options || {};
       options.name = this.name || "(nameless)";
       // behaviors can augment or alter the description via options
-      if (this.behaviors) {
+      let nobehaviors = options.nobehaviors || false;
+      if (this.onDescribe) {
+        options = this.onDescribe(options);
+      }
+      if (this.behaviors && !nobehaviors) {
         let beh = this.behaviors;
         for (let i=0; i<beh.length; i++) {
           if (beh[i].onDescribe) {
@@ -89,6 +93,16 @@ HTomb = (function(HTomb) {
 
       let override = options.override || function(s) {return s;}
       let spawnId = options.spawnId || false;
+      let prefixes = options.prefixes || [];
+      let postfixes = options.postfixes || [];
+
+      // need to handle vowels somehow
+      for (let pre of prefixes) {
+        name = pre + " " + name;
+      }
+      for (let post of postfixes) {
+        name = name + " " + post;
+      }
 
       if (plural && irregularPlural) {
         name = irregularPlural;

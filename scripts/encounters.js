@@ -146,9 +146,8 @@ HTomb = (function(HTomb) {
     listens: ["TurnBegin"],
     blurb: "A mob of angry peasants approaches, determined to end your foul research!",
     onTurnBegin: function(event) {
-      if (HTomb.Time.dailyCycle.turn===999) {
-        let e = HTomb.Tiles.getEdgeSquare();
-        this.muster(e.x,e.y,e.z);
+      if (HTomb.Time.dailyCycle.turn===1800) {
+        this.muster();
       }
     },
     onSpawn: function(args) {
@@ -182,7 +181,7 @@ HTomb = (function(HTomb) {
     blurb: "Dryads emerge from the trees, angered by your desecration of the forest!",
     onDestroy: function(event) {
       // no dryads in the extremely early game
-      if (HTomb.Time.dailyCycle.turn<500) {
+      if (HTomb.Time.dailyCycle.turn<1800) {
         return;
       }
       let t = event.entity;
@@ -190,12 +189,13 @@ HTomb = (function(HTomb) {
         let x = t.x;
         let y = t.y;
         let z = t.z;
-        if (HTomb.Utils.dice(1,25)===1) {
+        if (HTomb.Utils.dice(1,50)===1) {
           this.muster(x,y,z,{});
         }
       }
     },
     onSpawn: function() {
+      // should add multiple dryads
       this.addCreature(HTomb.Things.Dryad());
     },
     onPlace: function(x,y,z,args) {

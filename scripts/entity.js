@@ -24,7 +24,7 @@ HTomb = (function(HTomb) {
         var beh = this.behaviors;
         for (var i=0; i<beh.length; i++) {
           if (beh[i].onPlace) {
-             beh[i].onPlace(x,y,z);
+             beh[i].onPlace(x,y,z,args);
           }
         }
       }
@@ -126,6 +126,15 @@ HTomb = (function(HTomb) {
         ent.behaviors = [];
       }
       ent.behaviors.push(this);
+      ent.behaviors.sort(function(a,b) {
+        if (a.name<b.name) {
+          return -1;
+        } else if (a.name>b.name) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
       if (this.onAdd) {
         this.onAdd(this.options);
       }

@@ -142,6 +142,8 @@ HTomb = (function(HTomb) {
       return HTomb.World.creatures[crd].highlightColor;
     } else if (HTomb.World.features[crd] && HTomb.World.features[crd].highlightColor) {
       return HTomb.World.features[crd].highlightColor;
+    } else if (HTomb.GUI.Panels.gameScreen.highlitTiles[crd]) {
+      return HTomb.GUI.Panels.gameScreen.highlitTiles[crd];
     }
     // *********** Choose the background color *******************************
     if (covers[z][x][y].liquid && tile.solid!==true) {

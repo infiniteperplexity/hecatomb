@@ -26,6 +26,7 @@ HTomb = (function(HTomb) {
     name: "wood"
   });
 
+
   //******Types of damage
   HTomb.Types.define({
   	template: "Damage",
@@ -86,6 +87,14 @@ HTomb = (function(HTomb) {
     name: "acid",
     Bone: +1,
     Flesh: -1,
+    Wood: +1
+  });
+
+  HTomb.Types.defineDamage({
+    template: "Wither",
+    name: "wither",
+    Bone: -1,
+    Flesh: +1,
     Wood: +1
   });
 

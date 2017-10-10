@@ -1146,6 +1146,7 @@ HTomb = (function(HTomb) {
     begun: function() {
       return this.expended;
     },
+    // wait a second...how do we decide how much labor is needed?
     finish: function() {
       let x = this.x;
       let y = this.y;
@@ -1154,8 +1155,8 @@ HTomb = (function(HTomb) {
       if (f && f.trap && f.trap.sprung) {
         f.trap.rearm();
       } else if (f && f.defender) {
-        //!!! again, not a great way to do this
-        f.name = HTomb.Things.templates[f].name;
+        f.defender.wounds.level = 0;
+        f.defender.wounds.type = null;
       }
     }
   });
