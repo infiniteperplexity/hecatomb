@@ -546,6 +546,8 @@ HTomb = (function(HTomb) {
           continue;
         } else if (this.stores.indexOf(item.template)===-1) {
           continue;
+        } else if (item.claimed>=item.n) {
+          continue;
         } else if (HTomb.World.tasks[coord(item.x,item.y,item.z)]!==undefined) {
           continue;
         } else if (HTomb.Tiles.isReachableFrom(this.entity.x, this.entity.y, this.entity.z, item.x, item.y, item.z,
@@ -554,25 +556,28 @@ HTomb = (function(HTomb) {
         } else if (f && f.structure && f.structure.template===this.entity.template) {
           continue;
         } else {
-          let slots = [];
-          for (let j=0; j<this.tasks.length; j++) {
-            if (this.tasks[j]===null) {
-              slots.push(j);
-            }
-          }
-          HTomb.Utils.shuffle(slots);
-          let feat = this.entity.features[slots[0]];
-          let z = HTomb.Things.HaulTask({
-             assigner: this.entity.owner,
-             name: "haul " + item.describe()
-           });
-          z.place(item.x,item.y,item.z);
-          z.item = item;
-          z.storage = this;
-          z.feature = feat;
-          this.tasks[slots[0]] = z;
+          this.spawnHaulTask(item);
         }
       }
+    },
+    spawnHaulTask: function(item) {
+      let slots = [];
+      for (let j=0; j<this.tasks.length; j++) {
+        if (this.tasks[j]===null) {
+          slots.push(j);
+        }
+      }
+      HTomb.Utils.shuffle(slots);
+      let f = this.entity.features[slots[0]];
+      let t = HTomb.Things.HaulTask({
+         assigner: this.entity.owner,
+         name: "haul " + item.describe()
+       });
+      t.claim(item, item.n-item.claimed);
+      t.item = item;
+      t.storage = this;
+      this.tasks[slots[0]] = t;
+      t.place(f.x,f.y,f.z);
     }
   });
 
@@ -580,71 +585,30 @@ HTomb = (function(HTomb) {
     template: "HaulTask",
     name: "haul",
     bg: "#773366",
-    item: null,
-    feature: null,
     storage: null,
-    validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile || HTomb.World.tiles[z][x][y]===HTomb.Tiles.EmptyTile) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    canAssign: function(cr) {
-      let x = this.x;
-      let y = this.y;
-      let z = this.z;
-      // should this check whether the item is still here?
-      if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
-        canPass: cr.movement.boundMove(),
-        searcher: cr,
-        searchee: this,
-        searchTimeout: 10
-      }) && this.item.x===x && this.item.y===y && this.item.z===z) {
-        return true;
-      } else {
-        return false;
-      }
-    },
+    workRange: 0,
+    item: null,
     ai: function() {
-      let cr = this.assignee;
-      let item = this.item;
-      let feature = this.feature;
-      if (cr.inventory.items.indexOf(this.item)!==-1) {
-        cr.ai.target = feature;
-        this.place(feature.x, feature.y, feature.z);
-      } else if (item.isOnGround())  {
-        cr.ai.target = item;
-      } else {
-        this.cancel();
-         return;
+      let cr = this.entity;
+      if (cr.ai.acted) {
+        return;
       }
-      let t = cr.ai.target;
-      // this could be either the task square or the item
-      if (t.x===cr.x && t.y===cr.y && t.z===cr.z) {
-        if (t===feature) {
-          cr.inventory.drop(this.item);
-          this.complete(this.assignee);
-          cr.ai.acted = true;
-          return;
-        } else {
-          // move it to the building;
-          this.place(feature.x, feature.y, feature.z);
-          cr.inventory.pickup(item);
-          cr.ai.acted = true;
-          return;
+      HTomb.Types.templates.FetchItem(cr.ai, {task: this, item: this.item});
+      if (cr.ai.acted) {
+        return;
+      }
+      if (this.x===cr.x && this.y===cr.y && this.z===cr.z) {
+        if (cr.inventory.items.contains(item)) {
+          cr.inventory.drop(item);
+          this.complete();
         }
+      } else {
+        cr.ai.walkToward(x,y,z, {
+          searcher: cr,
+          searchee: this,
+          searchTimeout: 10
+        });
       }
-      cr.ai.walkToward(t.x,t.y,t.z, {
-        searcher: cr,
-        searchee: t,
-        searchTimeout: 10,
-        useLast: true
-      });
-      cr.ai.acted = true;
     },
     onDespawn: function() {
       let tasks = this.storage.tasks;
@@ -687,6 +651,7 @@ HTomb = (function(HTomb) {
     labor: 20,
     started: false,
     dormancy: 4,
+    workRange: 0,
     canAssign: function(cr) {
       if (this.isPlaced()===false) {
         return false;

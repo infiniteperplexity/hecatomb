@@ -138,10 +138,21 @@ HTomb = (function(HTomb) {
       }
     }
     // look for explicit highlight colors
+    let itembg = null;
+    if (HTomb.World.items[crd]) {
+      let pile = HTomb.World.items[crd];
+      for (let item of pile) {
+        if (item.claimed>0) {
+          itembg = "red";
+        }
+      }
+    }
     if (HTomb.World.creatures[crd] && HTomb.World.creatures[crd].highlightColor) {
       return HTomb.World.creatures[crd].highlightColor;
     } else if (HTomb.World.features[crd] && HTomb.World.features[crd].highlightColor) {
       return HTomb.World.features[crd].highlightColor;
+    } else if (itembg) {
+      return itembg;
     } else if (HTomb.GUI.Panels.gameScreen.highlitTiles[crd]) {
       return HTomb.GUI.Panels.gameScreen.highlitTiles[crd];
     }

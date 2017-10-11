@@ -6,3 +6,4 @@
 - test combat near guardpost
 - add highlight to guard post
 - make research work only in center?
+- patrol around guardpost by default

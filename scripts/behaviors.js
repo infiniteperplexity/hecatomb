@@ -238,19 +238,49 @@ HTomb = (function(HTomb) {
       }
       // this looks ridiculous because we are accessing the master property of a creature that is a master
       let master = this.entity.minion.master.master;
-      for (let item in ingredients) {
-        let items = master.ownedItems().filter(function(it) {
-          if (it.template===item && it.isOnGround()===true) {
+      let that = this;
+      for (let ingredient in ingredients) {
+        let items = master.ownedItems().filter(function(item) {
+          if (item.template!==ingredient) {
+            console.log(item);
+            console.log(item.template + " is not " + ingredient);
+            return false;
+          } else if (item.isOnGround()===true) {
+            console.log("on the ground");
+            console.log(ingredient);
+            return true;
+          } else if (that.items.contains(item)) {
+            console.log("held a thing");
+            console.log(item.template);
             return true;
           } else {
+            console.log("where the heck is it then???");
+            console.log(item);
+            console.log(that.items);
+            console.log(item.onlist);
             return false;
           }
         });
         let n = 0;
         for (let i=0; i<items.length; i++) {
-          n+= (items[i].n || 1);
+          n += (items[i].n-items[i].claimed || 1-items[i].claimed);
         }
-        if (n<ingredients[item]) {
+        if (n<ingredients[ingredient]) {
+          console.log("missing...");
+          console.log(ingredient);
+          console.log(this.items);
+          console.log(master);
+          console.log(master.ownedItems());
+          console.log(items);
+          for (let i=0; i<items.length; i++) {
+            console.log(items[i].template);
+            console.log(ingredient);
+            if (items[i].template===ingredient) {
+              console.log("found but...");
+              console.log(items[i].n);
+              console.log(items[i].claimed)
+            }
+          } 
           // if any ingredients are missing, do not assign
           return false;
         }
@@ -398,16 +428,13 @@ HTomb = (function(HTomb) {
           // equip best ones
           if (invenTools.length>0) {
             minion.equipper.equipItem(invenTools[0]);
-            this.entity.ai.acted = true;
-            this.entity.ai.actionPoints-=16;
             continue;
           } else if (groundTools.length>0) {
-            let task = HTomb.Things.EquipTask();
-            let item = groundTools[0];
-            task.item = item;
-            task.assigner = this.entity;
-            task.name = "equip " + item.describe();
-            task.place(item.x, item.y, item.z);
+            let task = HTomb.Things.EquipTask({
+              assigner: this.entity,
+              item: groundTools[0],
+              name: "equip " + item.describe()
+            });
             task.assignTo(minion);
             continue;
           }
@@ -447,6 +474,7 @@ HTomb = (function(HTomb) {
       return HTomb.Utils.where(HTomb.World.things, function(item) {return (item.parent==="Item" && item.owned);});
     },
     ownsAllIngredients: function(ingredients) {
+      // should respect claims
       let ownedItems = this.ownedItems();
       let owned = {};
       for (let i=0; i<ownedItems.length; i++) {
@@ -845,8 +873,11 @@ HTomb = (function(HTomb) {
         }
         this.entity.slot = null;
       }
+      this.entity.ai.actionPoints-=16;
+      this.entity.acted = true;
       return item;
     },
+    // should this always use action points?
     equipItem: function(item) {
       let e = item.equipment;
       if (e) {
@@ -860,6 +891,8 @@ HTomb = (function(HTomb) {
           this.slots[slot] = item;
         }
       }
+      this.entity.ai.actionPoints-=16;
+      this.entity.acted = true;
     }
   });
 

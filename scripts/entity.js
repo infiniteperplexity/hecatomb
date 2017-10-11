@@ -163,6 +163,7 @@ HTomb = (function(HTomb) {
     tags: [],
     stackSize: [1,0.7,0.4,0.3,0.1],
     owned: true,
+    claimed: 0,
     fall: function() {
       var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
       HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " falls " + (this.z-g) + " stories!",this.x,this.y,this.z);
@@ -259,11 +260,7 @@ HTomb = (function(HTomb) {
           pile.removeItem(this);
         }
       }
-      //if there is a haul task for the item here, cancel it
-      let task = HTomb.World.tasks[c];
-      if (task && task.item===this) {
-        task.cancel();
-      }
+      this.claimed = 0;
       Entity.remove.call(this, args);
     },
     describe: function(options) {
@@ -271,6 +268,14 @@ HTomb = (function(HTomb) {
       if (this.stackable && this.n>1) {
         options.plural = true;
         options.article = this.n;
+      }
+      if (this.claimed) {
+        options.postfixes = options.postfixes || [];
+        if (this.claimed===1) {
+          options.postfixes.push(" (claimed)");
+        } else {
+          options.postfixes.push(" (" + this.claimed + " claimed)");
+        }
       }
       return Entity.describe.call(this,options);
     }
@@ -504,6 +509,13 @@ HTomb = (function(HTomb) {
         }
       }
       return mesg;
+    }
+    asIngredients() {
+      let ingredients = {};
+      for (let item of this) {
+        ingredients[item.template = item.n];
+      }
+      return ingredients;
     }
     // return the first item on the list
     head() {
