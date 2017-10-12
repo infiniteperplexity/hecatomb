@@ -66,6 +66,7 @@ HTomb = (function(HTomb) {
         this.claimedItems = [];
       }
       this.claimedItems.push([item, n]);
+      item.claimed+=n;
     },
     claimIngredients: function(args) {
       args = args || {};
@@ -95,7 +96,7 @@ HTomb = (function(HTomb) {
             this.claim(item,n);
             n = 0;
           } else {
-            this.claim(item,item.n-item.claimed)
+            this.claim(item, item.n-item.claimed)
             n-=(item.n-item.claimed);
           }
         }
@@ -117,12 +118,14 @@ HTomb = (function(HTomb) {
         let tuple = this.claimedItems[i];
         if (tuple[0]===item) {
           item.claimed-=tuple[1];
+          console.log("suspicious splice");
           this.claimedItems.splice(i,1);
           return;
         }
       }
     },
     unclaimItems: function() {
+      console.log("unclaimItems");
       while (this.claimedItems.length>0) {
         let tuple = this.claimedItems.pop();
         tuple[0].claimed-=tuple[1];
@@ -264,6 +267,10 @@ HTomb = (function(HTomb) {
         return;
       }
       console.log("testing 10");
+      // if this got unassigned
+      if (this.assignee==null) {
+        return;
+      }
       // otherwise, try to work
       if (this.x===cr.x && this.y===cr.y && this.z===cr.z) {
         // can always work from range 0

@@ -211,6 +211,15 @@ HTomb = (function(HTomb) {
     // 2) Handle TurnBegin listeners
     HTomb.Time.dailyCycle.onTurnBegin();
     HTomb.Events.publish({type: "TurnBegin"});
+    for (let thing of HTomb.World.things) {
+      if (thing.template===1) {
+        console.log("What's wrong with this???");
+        console.log(thing);
+      }
+    }
+
+
+
     // 3) Assign tasks
     HTomb.Player.master.assignTasks();
     // 4) Deal with actors

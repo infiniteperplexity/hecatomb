@@ -262,6 +262,9 @@ HTomb = (function(HTomb) {
           }
         });
         let n = 0;
+        // oh wait...so, its own claims count against it...
+        // we need to fix that somehow
+        // I bet we can!
         for (let i=0; i<items.length; i++) {
           n += (items[i].n-items[i].claimed || 1-items[i].claimed);
         }

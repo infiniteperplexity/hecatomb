@@ -98,10 +98,10 @@ HTomb = (function(HTomb) {
           if (e[0].isPlaced()
               && (!inventory[e[0].template] || inventory[e[0].template]<=ingredients[e[0].template])
               && HTomb.Tiles.isReachableFrom(e[0].x,e[0].y,e[0].z,cr.x,cr.y,cr.z,{
-                  canPass: cr.movement.boundMove(),
-                  searcher: cr,
-                  searchee: e[0],
-                  searchTimeout: 10
+                canPass: cr.movement.boundMove(),
+                searcher: cr,
+                searchee: e[0],
+                searchTimeout: 10
               })) {
             return true;
           } else {
@@ -143,9 +143,10 @@ HTomb = (function(HTomb) {
           cr.ai.target = items[0];
         }
         console.log("test 5");
-        if (claims) {
+        if (cr.ai.target && claims) {
+          let item = cr.ai.target;
           console.log("test 6");
-          let n = ingredients[cr.ai.target.template];
+          let n = ingredients[item.template];
           if (n<=item.n-item.claimed) {
             if (task) {
               task.claim(item,n);
@@ -197,9 +198,9 @@ HTomb = (function(HTomb) {
         console.log("test 9");
         console.log(t);
         cr.ai.walkToward(t.x,t.y,t.z, {
-           searcher: cr,
-           searchee: t,
-           searchTimeout: 10
+          searcher: cr,
+          searchee: t,
+          searchTimeout: 10
         });
       }
     }
