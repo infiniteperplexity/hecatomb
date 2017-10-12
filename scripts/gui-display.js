@@ -190,7 +190,7 @@ HTomb = (function(HTomb) {
     }
     let txt = "X:"+x+" Y:"+y+" Z:"+z+" "+HTomb.Time.dailyCycle.getPhase().symbol+day+":"+hour+":"+minute;
     if (p.caster) {
-      txt = "Entropy:" + HTomb.Player.player.delegate.caster.entropy + "/" + p.caster.maxEntropy + " " + txt;
+      txt = "Entropy:" + p.caster.entropy + "/" + p.caster.getMaxEntropy() + " " + txt;
     }
     if (HTomb.Time.isPaused()===true || HTomb.GUI.autopause===true) {
       txt = txt + " %c{yellow}Pause";
@@ -462,6 +462,7 @@ HTomb = (function(HTomb) {
     );
   };
 
+  gameScreen.highlitTiles = {};
   // Change the background color of the appropriate X and Y tile
   gameScreen.highlightTile = function(x,y,bg) {
     var xoffset = gameScreen.xoffset || 0;

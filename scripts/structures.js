@@ -391,6 +391,63 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Behavior.extend({
+    template: "Research",
+    name: "research",
+    choices: [],
+    library: [],
+    current: null,
+    onPlace: function(x,y,z,args) {
+      HTomb.Events.subscribe(this, "TurnBegin");
+    },
+    choiceCommand: function(i) {
+      if (i<this.choices.length) {
+        this.current = HTomb.Things[this.choices[i]]();
+      }
+    },
+    cancelCommand: function() {
+      this.current = null;
+    },
+    onTurnBegin: function() {
+      if (this.current) {
+        let e = this.entity;
+        let cr = HTomb.World.creatures[coord(e.x,e.y,e.z)];
+        if (cr && cr.caster && (cr===this.entity.owner || (this.entity.owner.master && this.entity.owner.master.indexOf(cr)!==-1))) {
+          this.current.researchable.time-=1;
+          if (this.current.researchable.time<=0) {
+            this.current.researchable.finish({researcher: this.entity.owner});
+            this.current = null;
+          }
+        }
+      }
+      // think about how to handle the "library"?
+    },
+    commandsText: function() {
+      return [
+        "a-z: Begin research on lore.",
+        "Delete: Cancel current research.",
+        "(Research takes place only if the necromancer occupies the building.)"
+      ];
+    },
+    detailsText: function() {
+      let txt = ["Research choices:"];
+      let alphabet = "abcdefghijklmnopqrstuvwxyz";
+      let choices = this.choices;
+      let dtime = HTomb.Things.templates.Researchable.time;
+      for (let i=0; i<choices.length; i++) {
+        let choice = HTomb.Things.templates[choices[i]];
+        txt.push(alphabet[i] + ") " + choice.name + " (" + (choice.Behaviors.Researchable.time || dtime) + " turns.)");
+      }
+      txt.push(" ");
+      txt.push("Researching:");
+      if (this.current===null) {
+        txt.push("(nothing)");
+      } else {
+        txt.push("- " + this.current.name + " (" + this.current.researchable.time + " turns.)");
+      }
+      return txt;
+    }
+  });
 
   Structure.extend({
     template: "Workshop",
@@ -489,34 +546,38 @@ HTomb = (function(HTomb) {
           continue;
         } else if (this.stores.indexOf(item.template)===-1) {
           continue;
+        } else if (item.claimed>=item.n) {
+          continue;
         } else if (HTomb.World.tasks[coord(item.x,item.y,item.z)]!==undefined) {
           continue;
-
         } else if (HTomb.Tiles.isReachableFrom(this.entity.x, this.entity.y, this.entity.z, item.x, item.y, item.z,
           {canPass: canMove})===false) {
           continue;
         } else if (f && f.structure && f.structure.template===this.entity.template) {
           continue;
         } else {
-          let slots = [];
-          for (let j=0; j<this.tasks.length; j++) {
-            if (this.tasks[j]===null) {
-              slots.push(j);
-            }
-          }
-          HTomb.Utils.shuffle(slots);
-          let feat = this.entity.features[slots[0]];
-          let z = HTomb.Things.HaulTask({
-             assigner: this.entity.owner,
-             name: "haul " + item.describe()
-           });
-          z.place(item.x,item.y,item.z);
-          z.item = item;
-          z.storage = this;
-          z.feature = feat;
-          this.tasks[slots[0]] = z;
+          this.spawnHaulTask(item);
         }
       }
+    },
+    spawnHaulTask: function(item) {
+      let slots = [];
+      for (let j=0; j<this.tasks.length; j++) {
+        if (this.tasks[j]===null) {
+          slots.push(j);
+        }
+      }
+      HTomb.Utils.shuffle(slots);
+      let f = this.entity.features[slots[0]];
+      let t = HTomb.Things.HaulTask({
+         assigner: this.entity.owner,
+         name: "haul " + item.describe()
+       });
+      t.claim(item, item.n-item.claimed);
+      t.item = item;
+      t.storage = this;
+      this.tasks[slots[0]] = t;
+      t.place(f.x,f.y,f.z);
     }
   });
 
@@ -524,71 +585,30 @@ HTomb = (function(HTomb) {
     template: "HaulTask",
     name: "haul",
     bg: "#773366",
-    item: null,
-    feature: null,
     storage: null,
-    validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile || HTomb.World.tiles[z][x][y]===HTomb.Tiles.EmptyTile) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    canAssign: function(cr) {
-      let x = this.x;
-      let y = this.y;
-      let z = this.z;
-      // should this check whether the item is still here?
-      if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
-        canPass: cr.movement.boundMove(),
-        searcher: cr,
-        searchee: this,
-        searchTimeout: 10
-      }) && this.item.x===x && this.item.y===y && this.item.z===z) {
-        return true;
-      } else {
-        return false;
-      }
-    },
+    workRange: 0,
+    item: null,
     ai: function() {
-      let cr = this.assignee;
-      let item = this.item;
-      let feature = this.feature;
-      if (cr.inventory.items.indexOf(this.item)!==-1) {
-        cr.ai.target = feature;
-        this.place(feature.x, feature.y, feature.z);
-      } else if (item.isOnGround())  {
-        cr.ai.target = item;
-      } else {
-        this.cancel();
-         return;
+      let cr = this.entity;
+      if (cr.ai.acted) {
+        return;
       }
-      let t = cr.ai.target;
-      // this could be either the task square or the item
-      if (t.x===cr.x && t.y===cr.y && t.z===cr.z) {
-        if (t===feature) {
-          cr.inventory.drop(this.item);
-          this.complete(this.assignee);
-          cr.ai.acted = true;
-          return;
-        } else {
-          // move it to the building;
-          this.place(feature.x, feature.y, feature.z);
-          cr.inventory.pickup(item);
-          cr.ai.acted = true;
-          return;
+      HTomb.Types.templates.FetchItem(cr.ai, {task: this, item: this.item});
+      if (cr.ai.acted) {
+        return;
+      }
+      if (this.x===cr.x && this.y===cr.y && this.z===cr.z) {
+        if (cr.inventory.items.contains(item)) {
+          cr.inventory.drop(item);
+          this.complete();
         }
+      } else {
+        cr.ai.walkToward(x,y,z, {
+          searcher: cr,
+          searchee: this,
+          searchTimeout: 10
+        });
       }
-      cr.ai.walkToward(t.x,t.y,t.z, {
-        searcher: cr,
-        searchee: t,
-        searchTimeout: 10,
-        useLast: true
-      });
-      cr.ai.acted = true;
     },
     onDespawn: function() {
       let tasks = this.storage.tasks;
@@ -631,6 +651,7 @@ HTomb = (function(HTomb) {
     labor: 20,
     started: false,
     dormancy: 4,
+    workRange: 0,
     canAssign: function(cr) {
       if (this.isPlaced()===false) {
         return false;
@@ -1028,52 +1049,54 @@ HTomb = (function(HTomb) {
   Structure.extend({
     template: "Sanctum",
     name: "sanctum",
-    tooltip: "(The sanctum grants you addition entropy and spells.)",
+    tooltip: "(The sanctum grants you addition entropy and researchable spells.)",
     symbols: ["\u2625",".","\u2AEF",".","\u2135",".","\u2AEF","\u2606","\u263F"],
     fgs: ["magenta",HTomb.Constants.FLOORFG,"cyan",HTomb.Constants.FLOORFG,"green",HTomb.Constants.FLOORFG,"yellow","red","orange"],
     bg: "#222244",
     // do we want some sort of mana activation thing?,
     Behaviors: {
+      Research: {
+        choices: ["PoundOfFlesh"]
+      },
       StructureLight: {}
     },
-    onPlace: function() {
-      let structures = HTomb.Player.master.structures;
-      let anySanctum = false;
-      for (let s of structures) {
-        if (s.template==="Sanctum") {
-          anySanctum = true;
-        }
-      }
-      if (anySanctum===false) {
-        HTomb.Player.caster.maxEntropy+=5;
-        let spell = HTomb.Things.PoundOfFlesh({caster: HTomb.Player.caster});
-        HTomb.Player.caster.spells.push(spell); 
-      }
-    },
-    onRemove: function() {
-      let structures = HTomb.Player.master.structures;
-      let anySanctum = false;
-      for (let s of structures) {
-        if (s.template==="Sanctum") {
-          anySanctum = true;
-        }
-      }
-      if (anySanctum===false) {
-        HTomb.Player.caster.maxEntropy-=5;
-        let spells = HTomb.Player.caster.spells;
-        for (let i=0; i<spells.length; i++) {
-          if (spells[i].template==="PoundOfFlesh") {
-            spells.splice(i,1);
-          }
-        } 
-      }
-    }
   });
 
+  //!!!!!Weird that its behavior is defined in defender, not here
   Structure.extend({
     template: "GuardPost",
     name: "guard post",
-    tooltip: "(The guard post warns of incoming attacks and gives bonuses to defenders fighting within it.",
+    defenseRange: 3,
+    highlight: function(bg) {
+      Structure.highlight.call(this,bg);
+      let z = this.z;
+      for (let x=-3; x<=3; x++) {
+        for (let y=-3; y<=3; y++) {
+          if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) <= 3) {
+            HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)] = "#779944";
+          }
+        }
+      }
+    },
+    unhighlight: function() {
+      let z = this.z;
+      for (let x=-3; x<=3; x++) {
+        for (let y=-3; y<=3; y++) {
+          if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) <= 3) {
+            if (HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)]) {
+              delete HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)]; 
+            }
+          }
+        }
+      }
+      Structure.unhighlight.call(this);
+    },
+    structureText: function() {
+      let txt = Structure.structureText();
+      txt.splice(6,0,"(Warns of incoming attacks; defense bonus within radius.");
+      return txt;
+    },
+    tooltip: "(The guard post warns of incoming attacks and gives bonuses to defenders fighting near it.)",
     ingredients: [
       {},{},{},
       {},{Rock:1,WoodPlank:1},{},

@@ -2,9 +2,9 @@ HTomb = (function(HTomb) {
   "use strict";
   var coord = HTomb.Utils.coord;
 
-  let Thing = HTomb.Things.templates.Thing;
+  let Entity = HTomb.Things.templates.Entity;
 
-  let Spell = Thing.extend({
+  let Spell = Entity.extend({
     template: "Spell",
     name: "spell",
     getCost: function() {
@@ -13,6 +13,28 @@ HTomb = (function(HTomb) {
     spendEntropy: function() {
       this.caster.entropy-=this.getCost();
     },
+  });
+
+  HTomb.Things.templates.Behavior.extend({
+    template: "Researchable",
+    name: "researchable",
+    //time: 480,
+    time: 120,
+    cost: {},
+    finish: function(args) {
+      let r = args.researcher;
+      if (this.entity.parent==="Spell") {
+        HTomb.GUI.alert("You have completed research on the spell '" + this.entity.describe()+".'");
+        this.entity.caster = args.researcher.caster;
+        let spell = this.entity;
+        if (this.entity.caster.spells.indexOf(spell.template)===-1) {
+          this.entity.caster.spells.push(this.entity);
+        } else {
+          this.entity.despawn();
+        }
+      }
+      
+    }
   });
 
 
@@ -93,6 +115,12 @@ HTomb = (function(HTomb) {
   Spell.extend({
     template: "PoundOfFlesh",
     name: "pound of flesh",
+    Behaviors: {
+      Researchable: {
+        ingredients: {}
+        //ingredients: {Flesh: 1, Bone: 1}
+      }
+    },
     cast: function() {
       let caster = this.caster;
       var c = caster.entity;
@@ -105,10 +133,16 @@ HTomb = (function(HTomb) {
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh to " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
-          if (caster.defender) {
-            // need to wound the caster...right now there is no straightforward way to do this
-            // need to use onDescribe
-            // need to heal the zombie...no straightforward way to do that so far
+          if (c.defender) {
+            c.defender.wounds.level+=1;
+            if (c.defender.wounds.type===null) {
+              c.defender.wounds.type = "Wither";
+            }
+            c.defender.tallyWounds();
+            if (cr.defender) {
+              cr.defender.wounds.level-=1;
+              cr.defender.tallyWounds();
+            }
           }
           c.ai.acted = true;
           c.ai.actionPoints-=16;
@@ -118,10 +152,17 @@ HTomb = (function(HTomb) {
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh from " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
+          // should this be an attack or not?  just a direct drain?
           if (cr.defender) {
-            // need to wound the caster...right now there is no straightforward way to do this
-            // need to use onDescribe
-            // need to heal the zombie...no straightforward way to do that so far
+           cr.defender.wounds.level+=1;
+            if (cr.defender.wounds.type===null) {
+              cr.defender.wounds.type = "Wither";
+            }
+            cr.defender.tallyWounds();
+            if (c.defender) {
+              c.defender.wounds.level-=1;
+              c.defender.tallyWounds();
+            }
           }
           c.ai.acted = true;
           c.ai.actionPoints-=16;

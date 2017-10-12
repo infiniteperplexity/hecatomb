@@ -285,7 +285,7 @@ HTomb = (function(HTomb) {
   };
 
   HTomb.Path.quickDistance = function(x0,y0,z0,x1,y1,z1) {
-    return Math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0)+(z1-z0)+(z1-z0));
+    return Math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0)+(z1-z0)*(z1-z0));
   };
 
   HTomb.Path.closest = function(x,y,z,arr) {

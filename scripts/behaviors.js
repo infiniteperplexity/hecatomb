@@ -238,19 +238,49 @@ HTomb = (function(HTomb) {
       }
       // this looks ridiculous because we are accessing the master property of a creature that is a master
       let master = this.entity.minion.master.master;
-      for (let item in ingredients) {
-        let items = master.ownedItems().filter(function(it) {
-          if (it.template===item && it.isOnGround()===true) {
+      let that = this;
+      for (let ingredient in ingredients) {
+        let items = master.ownedItems().filter(function(item) {
+          if (item.template!==ingredient) {
+            console.log(item);
+            console.log(item.template + " is not " + ingredient);
+            return false;
+          } else if (item.isOnGround()===true) {
+            console.log("on the ground");
+            console.log(ingredient);
+            return true;
+          } else if (that.items.contains(item)) {
+            console.log("held a thing");
+            console.log(item.template);
             return true;
           } else {
+            console.log("where the heck is it then???");
+            console.log(item);
+            console.log(that.items);
+            console.log(item.onlist);
             return false;
           }
         });
         let n = 0;
         for (let i=0; i<items.length; i++) {
-          n+= (items[i].n || 1);
+          n += (items[i].n-items[i].claimed || 1-items[i].claimed);
         }
-        if (n<ingredients[item]) {
+        if (n<ingredients[ingredient]) {
+          console.log("missing...");
+          console.log(ingredient);
+          console.log(this.items);
+          console.log(master);
+          console.log(master.ownedItems());
+          console.log(items);
+          for (let i=0; i<items.length; i++) {
+            console.log(items[i].template);
+            console.log(ingredient);
+            if (items[i].template===ingredient) {
+              console.log("found but...");
+              console.log(items[i].n);
+              console.log(items[i].claimed)
+            }
+          } 
           // if any ingredients are missing, do not assign
           return false;
         }
@@ -398,16 +428,13 @@ HTomb = (function(HTomb) {
           // equip best ones
           if (invenTools.length>0) {
             minion.equipper.equipItem(invenTools[0]);
-            this.entity.ai.acted = true;
-            this.entity.ai.actionPoints-=16;
             continue;
           } else if (groundTools.length>0) {
-            let task = HTomb.Things.EquipTask();
-            let item = groundTools[0];
-            task.item = item;
-            task.assigner = this.entity;
-            task.name = "equip " + item.describe();
-            task.place(item.x, item.y, item.z);
+            let task = HTomb.Things.EquipTask({
+              assigner: this.entity,
+              item: groundTools[0],
+              name: "equip " + item.describe()
+            });
             task.assignTo(minion);
             continue;
           }
@@ -447,6 +474,7 @@ HTomb = (function(HTomb) {
       return HTomb.Utils.where(HTomb.World.things, function(item) {return (item.parent==="Item" && item.owned);});
     },
     ownsAllIngredients: function(ingredients) {
+      // should respect claims
       let ownedItems = this.ownedItems();
       let owned = {};
       for (let i=0; i<ownedItems.length; i++) {
@@ -470,7 +498,7 @@ HTomb = (function(HTomb) {
   Behavior.extend({
     template: "SpellCaster",
     name: "caster",
-    maxEntropy: 20,
+    baseEntropy: 20,
     entropy: 20,
     onCreate: function(options) {
       options = options || {};
@@ -484,9 +512,20 @@ HTomb = (function(HTomb) {
       return this;
     },
     onTurnBegin: function() {
-      if (this.entropy<this.maxEntropy && Math.random()<(1/10)) {
+      if (this.entropy<this.getMaxEntropy() && Math.random()<(1/10)) {
         this.entropy+=1;
       }
+    },
+    getMaxEntropy: function() {
+      let ent = this.baseEntropy;
+      if (this.entity.master) {
+        for (let s of this.entity.master.structures) {
+          if (s.template==="Sanctum") {
+            ent+=5;
+          }
+        }
+      }
+      return ent;
     },
     cast: function(sp) {
       let cost = sp.getCost();
@@ -638,10 +677,31 @@ HTomb = (function(HTomb) {
       level: 0,
     },
     accuracy: 0,
+    checkTerrain(v,r) {
+      let e = this.entity;
+      // higher ground
+      if (e.z>v.z) {
+        r+=1;
+      }
+      // guard post
+      if (v.minion && v.minion.master && v.minion.master.master) {
+        let gp = false;
+        for (let s of v.minion.master.master.structures) {
+          if (s.template==="GuardPost" && s.z===v.z && HTomb.Path.quickDistance(s.x,s.y,s.z,v.x,v.y,v.z)<=s.range) {
+            gp = true;
+          }
+        }
+        if (gp) {
+          r-=1;
+        }
+      }
+      return r;
+    },
     attack: function(victim) {
+      let e = this.entity;
       let evade = (victim.defender) ? victim.defender.evasion - victim.defender.wounds.level : -10;
-      // should get modified by the victim's condition?
       let roll = HTomb.Utils.dice(1,20);
+      roll = this.checkTerrain(victim, roll);
       if (roll+this.accuracy >= 11 + evade) {
         (victim.defender) ? victim.defender.defend(this) : {};       
       } else {
@@ -668,8 +728,22 @@ HTomb = (function(HTomb) {
       type: null,
       level: 0 // 2 is mild, 4 is moderate, 6 is severe, 8 is dead
     },
-    defend: function(attack) {
-      let roll = HTomb.Utils.dice(1,20);
+    tallyWounds: function() {
+      console.log("Wounds: ",this.wounds.level);
+      if (this.wounds.level<=0) {
+        this.wounds.level = 0;
+        this.wounds.type = null;
+      }
+      if (this.wounds.level>=8) {
+        if (this.entity.die) {
+          this.entity.die();
+        } else {
+          this.entity.destroy();
+          HTomb.GUI.sensoryEvent(this.entity.describe({article: "indefinite", capitalized: true}) +" is destroyed.",x,y,z,"#FFBB00");
+        }
+      }
+    },
+    endure: function(roll, attack) {
       let modifier = Damage.table[attack.damage.type][this.material];
       let penetrate = Damage.table[attack.damage.type][this.armor.material];
       let total = roll;
@@ -729,29 +803,32 @@ HTomb = (function(HTomb) {
       } else {
         HTomb.GUI.sensoryEvent(attacker + " hits " + defender +" but deals no damage.",x,y,z,"yellow");
       }
-      // do we need some code to show damaged features?
-      // this would go better in the description, or in onDescribe
+      this.tallyWounds();
+    },
+    defend: function(attack) {
+      let roll = HTomb.Utils.dice(1,20);
+      this.endure(roll, attack);      
+    },
+    onDescribe: function(options) {
+      let pre = options.pre || [];
       if (this.entity.parent==="Feature") {
-        let name = HTomb.Things.templates[this.entity.template].name;
-        if (this.wounds.level<=3) {
-          this.entity.name = "mildy damaged " + name;
-        } else if (this.wounds.level<=5) {
-          this.entity.name = "damaged " + name;
-        } else if (this.wounds.level<=6) {
-          this.entity.name = "severely damaged " + name;
+        let wounds = this.wounds.level;
+        if (wounds<=0) {
+          return options;
+        } else if (wounds<=3) {
+          pre.push("mildly damaged");
+        } else if (wounds<=5) {
+          pre.push("damaged");
+        } else if (wounds<=6) {
+          pre.push("severely damaged");
         } else {
-          this.entity.name = "totaled " + name;
+          pre.push("totaled");
         }
+        options.pre = pre;
+        options.startsWithVowel = false;
+        return options;
       }
-      console.log("Wounds: ",this.wounds.level);
-      if (this.wounds.level>=8) {
-        if (this.entity.die) {
-          this.entity.die();
-        } else {
-          this.entity.destroy();
-          HTomb.GUI.sensoryEvent(this.entity.describe({article: "indefinite", capitalized: true}) +" is destroyed.",x,y,z,"#FFBB00");
-        }
-      }
+      return options;
     }
   });
 
@@ -796,8 +873,11 @@ HTomb = (function(HTomb) {
         }
         this.entity.slot = null;
       }
+      this.entity.ai.actionPoints-=16;
+      this.entity.acted = true;
       return item;
     },
+    // should this always use action points?
     equipItem: function(item) {
       let e = item.equipment;
       if (e) {
@@ -811,6 +891,8 @@ HTomb = (function(HTomb) {
           this.slots[slot] = item;
         }
       }
+      this.entity.ai.actionPoints-=16;
+      this.entity.acted = true;
     }
   });
 

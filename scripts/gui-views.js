@@ -442,7 +442,7 @@ HTomb = (function(HTomb) {
 
   // ***************** Structure (or Structure?) view **********
   Views.structureView = function(w) {
-    if (w.isPlaced()===false) {
+    if (w && w.isPlaced()===false) {
       HTomb.GUI.reset();
       return;
     }
@@ -455,6 +455,7 @@ HTomb = (function(HTomb) {
       Views.Creature.selectedCreature.unhighlight();
     }
     HTomb.Events.unsubscribe(Views.Creature,"PlayerActive");
+    HTomb.Events.subscribe(Views.Structures, "PlayerActive");
     w = w || HTomb.Player.master.structures[0] || null;
     Views.Structures.selectedStructure = w;
     if (w===null) {
@@ -485,6 +486,7 @@ HTomb = (function(HTomb) {
       if (Views.Structures.selectedStructure) {
         Views.Structures.selectedStructure.unhighlight();
       }
+      HTomb.Events.unsubscribe(Views.Structures,"PlayerActive");
       HTomb.GUI.reset();
     },
     VK_UP: function() {Views.Structures.structureUp();},
@@ -569,6 +571,11 @@ HTomb = (function(HTomb) {
     Views.Structures.selectedStructure = p;
     Views.Structures.displayStructureInfo(p);
   };
+  Views.Structures.onPlayerActive = function() {
+    if (Views.Structures.selectedStructure) {
+      Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
+    }
+  };
   Views.Structures.previousStructure = function() {
     Views.Structures.structureCursor = -1;
     if (Views.Structures.selectedStructure) {
@@ -604,6 +611,7 @@ HTomb = (function(HTomb) {
     if (Views.Structures.selectedStructure) {
       Views.Structures.selectedStructure.unhighlight();
     }
+    HTomb.Events.unsubscribe(Views.Structures, "PlayerActive");
     HTomb.Events.subscribe(Views.Creature, "PlayerActive");
     c = c || HTomb.Player;
     if (Views.Creature.selectedCreature) {

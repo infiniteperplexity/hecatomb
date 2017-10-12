@@ -16,11 +16,14 @@ HTomb = (function(HTomb) {
     assignee: null,
     // many tasks have ingredients and/or make a configurable thing
     ingredients: {},
+    // do I need to manually create this for instances?
+    claimedItems: [],
     makes: null,
     // tasks sometimes go dormant when assignment fails
     dormant: 0,
     dormancy: 6,
     priority: 0,
+    workRange: 1,
     // placeholder...
     behaviors: [],
     blurb: function() {
@@ -52,11 +55,78 @@ HTomb = (function(HTomb) {
         delete HTomb.World.tasks[coord(x,y,z)];
         Entity.remove.call(this);
     },
-    // eventually we need to refactor this to override thing.spawn
     spawn: function(args) {
       Entity.spawn.call(this,args);
       HTomb.Events.subscribe(this, "Destroy");
       return this;
+    },
+    claim: function(item, n) {
+      n = n || 1;
+      if (this.hasOwnProperty("claimedItems")===false) {
+        this.claimedItems = [];
+      }
+      this.claimedItems.push([item, n]);
+    },
+    claimIngredients: function(args) {
+      args = args || {};
+      let ingredients = args.ingredients || this.ingredients || {};
+      let cr = this.assignee;
+      // assume we have already checked availability
+      for (let ingredient in ingredients) {
+        let n = this.ingredients[ingredient];
+        let items = [];
+        for (let item of this.assigner.master.ownedItems()) {
+          if (item.template===ingredient && item.isOnGround() 
+                && HTomb.Tiles.isReachableFrom(item.x,item.y,item.z,cr.x,cr.y,cr.z,{
+                  canPass: cr.movement.boundMove(),
+                  searcher: cr,
+                  searchee: item,
+                  searchTimeout: 10
+                })) {
+            items.push(item);
+          }
+        }
+        items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
+        for (let item of items) {
+          if (n<=0) {
+            break;
+          }
+          if (item.n-item.claimed>=n) {
+            this.claim(item,n);
+            n = 0;
+          } else {
+            this.claim(item,item.n-item.claimed)
+            n-=(item.n-item.claimed);
+          }
+        }
+      }
+    },
+    hasClaimed: function(item) {
+      for (let tuple of this.claimedItems) {
+        if (tuple[0]===item) {
+          return true;
+        }
+      }
+      return false;
+    },
+    unclaim: function(item) {
+      if (this.hasClaimed(item)===false) {
+        return;
+      }
+      for (let i=0; i<this.claimedItems.length; i++) {
+        let tuple = this.claimedItems[i];
+        if (tuple[0]===item) {
+          item.claimed-=tuple[1];
+          this.claimedItems.splice(i,1);
+          return;
+        }
+      }
+    },
+    unclaimItems: function() {
+      while (this.claimedItems.length>0) {
+        let tuple = this.claimedItems.pop();
+        tuple[0].claimed-=tuple[1];
+      }
     },
     onDestroy: function(event) {
     let cr = event.entity;
@@ -67,6 +137,7 @@ HTomb = (function(HTomb) {
       }
     },
     despawn: function() {
+      this.unclaimItems();
       let master = this.assigner;
         if (master) {
           let taskList = this.assigner.master.taskList;
@@ -103,10 +174,13 @@ HTomb = (function(HTomb) {
         HTomb.Debug.pushMessage("Problem assigning task");
       } else {
         this.assignee = cr;
+        this.claimIngredients();
         cr.worker.onAssign(this);
       }
     },
     unassign: function() {
+      console.log("unassigning");
+      console.log(this);
       var cr = this.assignee;
       if (!cr) {
         this.assignee = null;
@@ -116,10 +190,13 @@ HTomb = (function(HTomb) {
         HTomb.Debug.pushMessage("Problem unassigning task");
       } else {
         this.assignee = null;
+        this.unclaimItems();
         cr.worker.unassign();
       }
     },
     cancel: function() {
+      console.log("canceling");
+      console.log(this);
       this.despawn();
     },
     // default methods for designating tasks
@@ -172,24 +249,38 @@ HTomb = (function(HTomb) {
         return false;
       }
     },
-    // Doing actual work...the thorny bits...
     //this will get renamed "actor" or "action", I think, or "act"
     ai: function() {
-      if (this.assignee.ai.acted===true) {
+      let cr = this.assignee;
+      if (cr.ai.acted) {
         return;
       }
-      var cr = this.assignee;
-      if (this.ingredients==null) {
-        console.log("what the what?");
-        console.log(this);
-      }
-      if (this.begun()!==true && Object.keys(this.ingredients).length>0) {
-        HTomb.Routines.ShoppingList.act(cr.ai);
-      }
-      if (cr.ai.acted===true) {
+      // if it still needs items, fetch one
+      HTomb.Routines.FetchItems.act(cr.ai, {
+        task: this,
+        ingredients: this.ingredients
+      });
+      if (cr.ai.acted) {
         return;
       }
-      HTomb.Routines.GoToWork.act(cr.ai);
+      console.log("testing 10");
+      // otherwise, try to work
+      if (this.x===cr.x && this.y===cr.y && this.z===cr.z) {
+        // can always work from range 0
+        this.workOnTask(this.x,this.y,this.z);
+      } else if (this.workRange>=1 && HTomb.Tiles.isTouchableFrom(this.x,this.y,this.z,cr.x,cr.y,cr.z)) {
+        this.workOnTask(this.x,this.y,this.z);
+      // otherwise, walk toward
+      } else {
+        cr.ai.walkToward(this.x,this.y,this.z, {
+          searcher: cr,
+          searchee: this,
+          searchTimeout: 10
+        });
+      }
+    },
+    onFetchFail: function() {
+      this.unassign();
     },
     // "workOnTask" is basically a switch statement based on the progress of work
     workOnTask: function() {
@@ -272,6 +363,8 @@ HTomb = (function(HTomb) {
       }
     },
     complete: function(x,y,z) {
+      console.log("completing");
+      console.log(this);
       HTomb.Events.publish({type: "Complete", task: this});
       this.despawn();
     }
@@ -965,51 +1058,28 @@ HTomb = (function(HTomb) {
     bg: "#882266",
     item: null,
     validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile || HTomb.World.tiles[z][x][y]===HTomb.Tiles.EmptyTile) {
-        return false;
-      } else {
-        return true;
-      }
+      // no longer needs to be placed...
+      return true;
     },
     canAssign: function(cr) {
-      let x = this.x;
-      let y = this.y;
-      let z = this.z;
-      // should this check whether the item is still here?
-      if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z, {
-        searcher: cr,
-        canPass: cr.movement.boundMove(),
-        searchee: this,
-        searchTimeout: 10
-      }) && this.item.x===x && this.item.y===y && this.item.z===z) {
-        return true;
-      } else {
-        return false;
-      }
+      return cr.inventory.canFindAll(this.ingredients);
     },
     ai: function() {
       let cr = this.assignee;
-      let item = this.item;
-      let x = item.x;
-      let y = item.y;
-      let z = item.z;
-      if (x===cr.x && y===cr.y && z===cr.z) {
-        cr.inventory.pickup(item);
-        this.complete();
-      } else {
-        cr.ai.target = item;
-        let t = cr.ai.target;
-        cr.ai.walkToward(t.x,t.y,t.z, {
-          searcher: cr,
-          searchee: t,
-          searchTimeout: 10,
-          useLast: true
-        });
+      if (cr.ai.acted) {
+        return;
       }
-      cr.ai.acted = true;
+      HTomb.Routines.FetchItem.act(cr.ai, {
+        task: this,
+        item: this.item,
+      });
+      if (cr.ai.acted) {
+        return;
+      }
+      if (cr.inventory.contains(this.item)) {
+        cr.equipper.equipItem(this.item);
+        this.complete();
+      }; 
     }
   });
 
@@ -1146,6 +1216,7 @@ HTomb = (function(HTomb) {
     begun: function() {
       return this.expended;
     },
+    // wait a second...how do we decide how much labor is needed?
     finish: function() {
       let x = this.x;
       let y = this.y;
@@ -1154,8 +1225,8 @@ HTomb = (function(HTomb) {
       if (f && f.trap && f.trap.sprung) {
         f.trap.rearm();
       } else if (f && f.defender) {
-        //!!! again, not a great way to do this
-        f.name = HTomb.Things.templates[f].name;
+        f.defender.wounds.level = 0;
+        f.defender.wounds.type = null;
       }
     }
   });

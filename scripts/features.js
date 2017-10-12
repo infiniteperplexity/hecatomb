@@ -42,9 +42,8 @@ HTomb = (function(HTomb) {
             var rock = HTomb.Things.Rock();
             rock.n = 1;
             rock.place(x1,y1,z);
-            // may need to deal with this part later
             if (args) {
-              rock.claimed = true;
+              rock.owned = true;
             }
           }
         }

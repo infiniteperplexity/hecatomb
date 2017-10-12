@@ -17,133 +17,238 @@ HTomb = (function(HTomb) {
     }
   });
 
+  // Fetch ingredients (not specific items)
   HTomb.Types.defineRoutine({
-    template: "ShoppingList",
-    name: "shopping list",
+    template: "FetchItems",
+    name: "fetch items",
     act: function(ai, args) {
-      var cr = ai.entity;
-      var task = cr.worker.task;
-      var ingredients = args || task.ingredients;
-      if (HTomb.Debug.noingredients) {
-        ingredients = {};
+      args = args || {};
+      let cr = ai.entity;
+      let claims = false;
+      // if this is a minion of the player, be ready to stake claims
+      if (cr.minion && cr.minion.master === HTomb.Player) {
+        claims = true;
       }
-      // if no ingredients are required, skip the rest
+      if (cr.inventory===undefined) {
+        return;
+      }
+      // this mostly only matters for claims and defaults
+      let task = args.task || null;
+      if (task && task.begun()) {
+        return;
+      }
+      // decide what the ingredients are
+      let ingredients = (HTomb.Debug.noingredients) ? {} : args.ingredients;
+      if (ingredients===undefined && task) {
+        ingredients = task.ingredients;
+      }
+      ingredients = ingredients || {};
       if (Object.keys(ingredients).length===0) {
-        return false;
+        return;
       }
-      var x = task.x;
-      var y = task.y;
-      var z = task.z;
-      var f = HTomb.World.features[coord(x,y,z)];
-      // no need for ingredients if construction has begun
-      if (task.begun()) {
-        return false;
+      console.log("test 1");
+      // if all ingredients are carried, skip the rest
+      if (cr.inventory.items.hasAll(ingredients)) {
+        console.log("has everything");
+        return;
       }
-      //if (f && f.makes.template===task.makes) {
-      //  return false;
-      //}
-      // check to see if we are already targeting an ingredient
-      if (cr.ai.target && cr.ai.target.isPlaced()!==true) {
-        cr.ai.target = null;
+      // if not all ingredients are available, fall back on something else
+      if (cr.inventory.canFindAll(ingredients)===false) {
+        if (task) {
+          console.log("fetch failed?");
+          task.onFetchFail();
+        }
+        return;
       }
-      var t = cr.ai.target;
-      // if the target is not an ingredient
-      if (t && ingredients[t.template]===undefined) {
-        cr.ai.target = null;
+      let inventory = cr.inventory.items.asIngredients();
+      // check whether the target is a needed ingredient
+      console.log("test 2");
+      if (cr.ai.target) {
+        // if not, change targets
+        let t = cr.ai.target.template;
+        if (!ingredients[t] || inventory[t]>=ingredients[t]) {
+          cr.ai.target = null;
+        // if the item has been picked up or destroyed, change targets
+        } else if (cr.ai.target.isPlaced()!==true) {
+          if (claims && task) {
+            task.unclaim(cr.ai.target);
+          }
+          cr.ai.target = null;
+        } else if (claims && task) {
+          // edge case, reclaim if item was targetted by some other task or method
+          if (task.hasClaimed(cr.ai.target)===false) {
+            let item = cr.ai.target;
+            let n = ingredients[cr.ai.target.template];
+            if (n<=item.n-item.claimed) {
+              task.claim(item,n);
+            } else {
+              task.claim(item,item.n-item.claimed);
+            }
+          }
+        }
+        console.log("testing 11");
+        // otherwise continue
       }
-      t = cr.ai.target;
-      var needy = false;
-      // cycle through ingredients to see if we have enough
-      if (t===null) {
-        for (var ing in ingredients) {
-          var n = ingredients[ing];
-          // if we lack what we need, search for items
-          if (cr.inventory.items.count(ing)<n) {
-            needy = true;
-            var items = task.assigner.master.ownedItems().filter(function(v) {
-              if (v.isOnGround()!==true) {
-                return false;
-              } else if (v.template===ing) {
-                if (HTomb.Tiles.isReachableFrom(v.x,v.y,v.z,cr.x,cr.y,cr.z,{
+      console.log("test 3");
+      // choosing targets is easier with claims and tasks
+      if (cr.ai.target===null && claims && task) {
+        console.log("test 4");
+        let items = task.claimedItems.filter(function(e,i,a) {
+          // if it is still needed and is reachable
+          if (e[0].isPlaced()
+              && (!inventory[e[0].template] || inventory[e[0].template]<=ingredients[e[0].template])
+              && HTomb.Tiles.isReachableFrom(e[0].x,e[0].y,e[0].z,cr.x,cr.y,cr.z,{
                   canPass: cr.movement.boundMove(),
                   searcher: cr,
-                  searchee: v,
+                  searchee: e[0],
+                  searchTimeout: 10
+              })) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        items = items.map(function(e,i,a) {
+          return e[0];
+        });
+        items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
+        if (items.length>0) {
+          cr.ai.target = items[0];
+        }
+      }
+      // slightly harder otherwise, or if the claimed item was moved
+      if (cr.ai.target===null) {
+        let items = [];
+        for (let crd in HTomb.World.items) {
+          let pile = HTomb.World.items[crd];
+          for (let item of pile) {
+            if (ingredients[item.template]) {
+              // if it is not needed
+              if (inventory[item.template]>=ingredients[item.template]) {
+                break;
+              // otherwise
+              } else if (HTomb.Tiles.isReachableFrom(item.x,item.y,item.z,cr.x,cr.y,cr.z,{
+                  canPass: cr.movement.boundMove(),
+                  searcher: cr,
+                  searchee: item,
                   searchTimeout: 10
                 })) {
-                  return true;
-                }
+                items.push(item);
               }
-              return false;
-            });
-            // if we find an item we need, target it
-            if (items.length>0) {
-              items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
-              cr.ai.target = items[0];
-              break;
+            }
+          }
+        }
+        items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
+        if (items.length>0) {
+          cr.ai.target = items[0];
+        }
+        console.log("test 5");
+        if (claims) {
+          console.log("test 6");
+          let n = ingredients[cr.ai.target.template];
+          if (n<=item.n-item.claimed) {
+            if (task) {
+              task.claim(item,n);
+            } else {
+              item.claimed+=n;
+            }
+          } else {
+            if (task) {
+              task.claim(item.n-item.claimed);
+            } else {
+              // claim the rest of the stack
+              item.claimed = item.n;
             }
           }
         }
       }
-      t = cr.ai.target;
-      // we have everything we need so skip the rest
-      if (needy===false && t===null) {
-        return false;
-      // failed to find what we needed
-      } else if (needy===true && t===null) {
-        cr.worker.task.unassign();
-        cr.ai.walkRandom();
-      } else if (t!==null) {
-        if (t.x===cr.x && t.y===cr.y && t.z===cr.z) {
-          cr.inventory.pickupSome(t.template,ingredients[t.template]);
-          cr.ai.acted = true;
-          cr.ai.target = null;
-        } else {
-          if (t.z===null) {
-            console.log("why did this shopping list fail?");
-          }
-          cr.ai.walkToward(t.x,t.y,t.z, {
-            searcher: cr,
-            searchee: t,
-            searchTimeout: 10
-          });
+      console.log("test 7");
+      // if there is no target at this point, something has gone wrong
+      let t = cr.ai.target;
+      if (t===null) {
+        throw new Error("FetchItems somehow skipped a check");
+      }
+      if (t===undefined) {
+        throw new Error("You are f*cking kidding me...");
+      }
+      // if we are standing on it, pick up as many as we need / can
+      if (cr.x===t.x && cr.y===t.y && cr.z===t.z) {
+        let n = ingredients[t.template];
+        if (inventory[t.template]) {
+          n-=inventory[t.template];
         }
+        console.log("test 8");
+        if (claims) {
+          if (n<=t.n-t.claimed) {
+            cr.inventory.pickupSome(t.template,n);
+            t.claimed-=n;
+          } else {
+            cr.inventory.pickup(t);
+          }
+          if (task && task.claimedItems.indexOf(t)!==-1) {
+            task.claimedItems.splice(task.claimedItems.indexOf(t),1);
+          }
+        } else {
+          cr.inventory.pickUpSome(t.template,n);
+        }
+        cr.ai.target = null;
+      // otherwise walk toward it
+      } else {
+        console.log("test 9");
+        console.log(t);
+        cr.ai.walkToward(t.x,t.y,t.z, {
+           searcher: cr,
+           searchee: t,
+           searchTimeout: 10
+        });
       }
     }
   });
 
+  //fetch a specific item
   HTomb.Types.defineRoutine({
-    template: "GoToWork",
-    name: "go to work",
-    act: function(ai, options) {
-      options = options || {};
-      let useLast = options.useLast || false;
-      var cr = ai.entity;
-      var task = cr.worker.task;
-      if (cr.movement) {
-        var x = task.x;
-        var y = task.y;
-        var z = task.z;
-        if (z===null) {
-          console.log("why go to work fail?");
-        }
-        var dist = HTomb.Path.distance(cr.x,cr.y,x,y);
-        // Should I instead check for "beginWork"?
-        if (useLast===true && x===cr.x && y===cr.y && z===cr.z) {
-          task.workOnTask(x,y,z);
-        } else if (useLast!==true && HTomb.Tiles.isTouchableFrom(x,y,z,cr.x,cr.y,cr.z)) {
-          task.workOnTask(x,y,z);
-        } else if (dist>0 || cr.z!==z) {
-          cr.ai.walkToward(x,y,z, {
+    template: "FetchItem",
+    name: "fetch item",
+    act: function(ai, args) {
+      args = args || {};
+      let cr = ai.entity;
+      let claims = false;
+      // if this is a minion of the player, be ready to stake claims
+      if (cr.minion && cr.minion.master === HTomb.Player) {
+        claims = true;
+      }
+      if (cr.inventory===undefined) {
+        return;
+      }
+      // this mostly only matters for claims and defaults
+      let task = args.task || null;
+      let item = args.item;
+      if (item===undefined && task) {
+        item = task.item || null;
+      }
+      if (item===null) {
+        return;
+      }
+      if (!item.isPlaced() || !HTomb.Tiles.isReachableFrom(item.x,item.y,item.z,cr.x,cr.y,cr.z,{
+            canPass: cr.movement.boundMove(),
             searcher: cr,
-            searchee: task,
+            searchee: item,
             searchTimeout: 10
-          });
-        } else if (dist===0) {
-          cr.ai.walkRandom();
-        } else {
-          task.unassign();
-          cr.ai.walkRandom();
-        }
+        })) {
+        task.cancel();
+      }
+      let t = cr.ai.target;
+      // if we are standing on it, pick it up
+      if (cr.x===t.x && cr.y===t.y && cr.z===c.z) {
+        cr.inventory.pickup(item);
+        cr.ai.target = null;
+      // otherwise walk toward it
+      } else {
+        cr.ai.walkToward(t.x,t.y,t.z, {
+           searcher: cr,
+           searchee: t,
+           searchTimeout: 10
+        });
       }
     }
   });
