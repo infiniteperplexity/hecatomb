@@ -8,7 +8,6 @@ HTomb = (function(HTomb) {
     name: "rock",
     symbol: "\u2022",
     fg: "#999999",
-    stackable: true,
     randomColor: 15,
     tags: ["Minerals"]
   });
@@ -17,7 +16,6 @@ HTomb = (function(HTomb) {
     template: "Corpse",
     name: "corpse",
     symbol: "%",
-    //symbol: "\u2620",
     fg: "brown",
     randomColor: 10,
     sourceCreature: null,
@@ -41,8 +39,6 @@ HTomb = (function(HTomb) {
     name: "wooden plank",
     symbol: "=",
     fg: "#BB9922",
-    stackable: true,
-    maxn: 10,
     tags: ["Wood"]
   });
 
@@ -51,8 +47,6 @@ HTomb = (function(HTomb) {
     name: "trade goods",
     symbol: "\u2696",
     fg: "#AAAA44",
-    stackable: true,
-    maxn: 10,
     plural: true
   });
 
@@ -60,18 +54,14 @@ HTomb = (function(HTomb) {
     template: "Ectoplasm",
     name: "ectoplasm",
     symbol: "\u2697",
-    fg: "cyan",
-    stackable: true,
-    maxn: 10
+    fg: "cyan"
   });
 
   Item.extend({
     template: "Fuel",
     name: "fuel",
     symbol: "\u269B",
-    fg: "cyan",
-    stackable: true,
-    maxn: 10
+    fg: "cyan"
   });
 
 

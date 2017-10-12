@@ -228,6 +228,7 @@ HTomb = (function(HTomb) {
         this.drop(item);
       }
     },
+    // !!!not used anymore?
     canFindAll: function(ingredients) {
       // this doesn't actually check for the path...
       if (HTomb.Debug.noingredients) {
@@ -240,53 +241,44 @@ HTomb = (function(HTomb) {
       let master = this.entity.minion.master.master;
       let that = this;
       for (let ingredient in ingredients) {
+        console.log("looking for a " + ingredient);
         let items = master.ownedItems().filter(function(item) {
           if (item.template!==ingredient) {
-            console.log(item);
-            console.log(item.template + " is not " + ingredient);
             return false;
           } else if (item.isOnGround()===true) {
-            console.log("on the ground");
-            console.log(ingredient);
             return true;
           } else if (that.items.contains(item)) {
-            console.log("held a thing");
-            console.log(item.template);
             return true;
           } else {
-            console.log("where the heck is it then???");
+            console.log("where the heck is " + item.describe() + " then???");
             console.log(item);
-            console.log(that.items);
-            console.log(item.onlist);
             return false;
           }
         });
-        let n = 0;
-        // oh wait...so, its own claims count against it...
-        // we need to fix that somehow
-        // I bet we can!
-        for (let i=0; i<items.length; i++) {
-          n += (items[i].n-items[i].claimed || 1-items[i].claimed);
-        }
-        if (n<ingredients[ingredient]) {
-          console.log("missing...");
-          console.log(ingredient);
-          console.log(this.items);
-          console.log(master);
-          console.log(master.ownedItems());
-          console.log(items);
-          for (let i=0; i<items.length; i++) {
-            console.log(items[i].template);
-            console.log(ingredient);
-            if (items[i].template===ingredient) {
-              console.log("found but...");
-              console.log(items[i].n);
-              console.log(items[i].claimed)
-            }
-          } 
+        console.log("ignoring claims for the moment");
+        //temporarily ignore claims
+        //let n = 0;
+        //for (let i=0; i<items.length; i++) {
+        //  n += (items[i].n-items[i].claimed || 1-items[i].claimed);
+        //}
+        for (let item of items) {
+          let n = item.n;
+          if (n<ingredients[ingredient]) {
+            console.log("an acceptable" + ingredient + " was not found.");
+            console.log(this.entity.describe() + "is carrying:");
+            console.log(this.items);
+            console.log(master.entity.describe() + " owns:");
+            console.log(master.ownedItems());
+            for (let i=0; i<items.length; i++) {
+              if (items[i].template===ingredient) {
+                console.log(items[i].describe() = " was found, but" + items[i].claimed + " of " + items[i].n + " were claimed so we couldn't use " + n);
+                console.log(items[i]);
+              }
+            } 
           // if any ingredients are missing, do not assign
-          return false;
-        }
+            return false;
+          }
+        }     
       }
       return true;
     }
@@ -477,14 +469,14 @@ HTomb = (function(HTomb) {
       return HTomb.Utils.where(HTomb.World.things, function(item) {return (item.parent==="Item" && item.owned);});
     },
     ownsAllIngredients: function(ingredients) {
-      // should respect claims
       let ownedItems = this.ownedItems();
       let owned = {};
       for (let i=0; i<ownedItems.length; i++) {
         let temp = ownedItems[i].template
         if (ingredients[temp]>0) {
           owned[temp] = owned[temp] || 0;
-          let n = ownedItems[i].n || 1;
+          // should respect claims
+          let n = ownedItems[i].n-ownedItems[i].claimed || 1;
           owned[temp]+=n;
         }
       }

@@ -666,7 +666,12 @@ HTomb = (function(HTomb) {
         searchTimeout: 10
       })) {
         // cancel this task if you can't find the ingredients
-        if (cr.inventory.canFindAll(this.ingredients)!==true && !HTomb.Debug.noingredients) {
+        if (HTomb.Tiles.canFindAll(x,y,z,this.ingredients,{
+          searcher: cr,
+          ownedOnly: (this.assignee===HTomb.Player) ? true : false,
+          respectClaims: (this.assignee===HTomb.Player) ? true : false
+        })) {
+        //if (cr.inventory.canFindAll(this.ingredients)!==true && !HTomb.Debug.noingredients) {
           // Wait...can this cancel the task in the middle of assignment???
           this.cancel();
           return false;

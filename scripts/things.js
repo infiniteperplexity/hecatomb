@@ -96,14 +96,6 @@ HTomb = (function(HTomb) {
       let prefixes = options.prefixes || [];
       let postfixes = options.postfixes || [];
 
-      // need to handle vowels somehow
-      for (let pre of prefixes) {
-        name = pre + " " + name;
-      }
-      for (let post of postfixes) {
-        name = name + " " + post;
-      }
-
       if (plural && irregularPlural) {
         name = irregularPlural;
       } else if (plural && this.plural) {
@@ -125,6 +117,16 @@ HTomb = (function(HTomb) {
           name+="'s";
         }
       }
+      // postfixes come after pluralization
+      for (let post of postfixes) {
+        if (!possessive) {
+          name = name + " " + post;
+        }
+      }
+      // prefixes come before vowel check
+      for (let pre of prefixes) {
+        name = pre + " " + name;
+      }
       //proper nouns not yet implemented
       if (article==="indefinite") {
         if (plural) {
@@ -132,6 +134,7 @@ HTomb = (function(HTomb) {
           //name = "some " + name;
         } else
         // e.g. beginsWithVowel is explicitly false for a "unicorn"
+        //!!!wait, do we also need to handle begins with Y vowel stuff?
         if (beginsWithVowel===true || (beginsWithVowel!==false &&
           (name[0]==="a" || name[0]==="e" || name[0]==="i" || name[0]==="o" || name[0]==="u"
             || name[0]==="A" || name[0]==="E" || name[0]==="I" || name[0]==="O" || name[0]==="U"))) {
