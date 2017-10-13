@@ -75,6 +75,9 @@ HTomb = (function(HTomb) {
         }
       }
     },
+    commandsText: function() {
+      return;
+    },
     headerText: function() {
       return;
     },
@@ -87,6 +90,9 @@ HTomb = (function(HTomb) {
         " ",
         "%c{yellow}Structure: "+this.describe({capitalized: true, atCoordinates: true})+".",
       ];
+      if (this.commandsText()) {
+        txt = txt.concat(this.commandsText());
+      }
       if (this.behaviors) {
         for (let behavior of this.behaviors) {
           if (behavior.commandsText) {
@@ -962,6 +968,20 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Task.extend({
+    template: "TradeTask",
+    name: "trade",
+    structure: null,
+    workRange: 0,
+    bg: "#999922",
+    begun: function() {
+      return false;
+    },
+    workOnTask: function() {
+      this.expend();
+    } 
+  });
+
   Structure.extend({
     template: "BlackMarket",
     name: "black market",
@@ -989,6 +1009,7 @@ HTomb = (function(HTomb) {
       }
       let i = 0;
       while (i<this.awaiting.length) {
+        // need to record whether these have been fed somehow
         let a = this.awaiting[i];
         a[2]-=1;
         if (a[2]<=0) {
@@ -1004,7 +1025,10 @@ HTomb = (function(HTomb) {
       if (this.offers.length>i) {
         let o = this.offers[i];
         //need to remove the traded items somehow
-        this.awaiting.push([o[1][0],o[1][1],50]);
+        //this.awaiting.push([o[1][0],o[1][1],50]);
+        let ings = {};
+        ings[o[1][0]] = o[1][1];
+        HTomb.Things.TradeTask({assigner: this.owner, ingredients: ings});
         this.offers.splice(i,1);
       }
     },
@@ -1035,9 +1059,11 @@ HTomb = (function(HTomb) {
         let name1 = HTomb.Things.templates[o[1][0]].name;
         // !!!gray it out if you don't have it...
         txt.push(alphabet[i] + ") " + o[0][1] + " " + name0 + " : " + o[1][1] + " " + name1 + ".");
+        // also gray it out if the building is full of tasks
       }
       txt.push(" ");
       txt.push("Awaiting:");
+      // gray these out if they haven't been fed yet
       for (let i=0; i<this.awaiting.length; i++) {
         let a = this.awaiting[i];
         let name = HTomb.Things.templates[a[0]].name;
@@ -1087,6 +1113,7 @@ HTomb = (function(HTomb) {
     template: "GuardPost",
     name: "guard post",
     defenseRange: 3,
+    rallying: false,
     highlight: function(bg) {
       Structure.highlight.call(this,bg);
       let z = this.z;
@@ -1095,6 +1122,24 @@ HTomb = (function(HTomb) {
           if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) <= 3) {
             HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)] = "#779944";
           }
+        }
+      }
+    },
+    commandsText: function() {
+      let txt = "a) ";
+      if (this.rallying===false) {
+        txt+="rally defenders here.";
+      } else {
+        txt+="dismiss rallied defenders.";
+      }
+      return [txt];
+    },
+    choiceCommand: function(i) {
+      if (i===0) {
+        if (this.rallying) {
+          this.rallying = false;
+        } else {
+          this.rallying = true;
         }
       }
     },
@@ -1111,12 +1156,7 @@ HTomb = (function(HTomb) {
       }
       Structure.unhighlight.call(this);
     },
-    structureText: function() {
-      let txt = Structure.structureText();
-      txt.splice(6,0,"(Warns of incoming attacks; defense bonus within radius.");
-      return txt;
-    },
-    tooltip: "(The guard post warns of incoming attacks and gives bonuses to defenders fighting near it.)",
+    tooltip: "(The guard post warns of incoming attacks and provides a rallying point for defenders.)",
     ingredients: [
       {},{},{},
       {},{Rock:1,WoodPlank:1},{},

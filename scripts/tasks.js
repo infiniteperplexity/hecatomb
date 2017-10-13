@@ -65,7 +65,6 @@ HTomb = (function(HTomb) {
       if (this.hasOwnProperty("claimedItems")===false) {
         this.claimedItems = [];
       }
-      console.log("claiming " + n + " " + item.describe());
       let idx = this.claimedItems.indexOf(item);
       if (idx===-1) {
         this.claimedItems.push([item, n]);
@@ -73,7 +72,6 @@ HTomb = (function(HTomb) {
         this.claimedItems[idx][1]+=n;
       }
       item.claimed+=n;
-      console.log("now " + item.claimed + " are claimed.");
     },
     claimIngredients: function(args) {
       if (HTomb.Debug.noingredients) {
@@ -98,18 +96,14 @@ HTomb = (function(HTomb) {
           }
         }
         items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
-        console.log("claiming ingredients...");
         for (let item of items) {
           if (n<=0) {
-            console.log("finished claiming");
             break;
           }
           if (item.n-item.claimed>=n) {
-            console.log("trying to claim " + n + " of " + item.describe());
             this.claim(item,n);
             n = 0;
           } else {
-            console.log("trying to claim entire stack of " + item.describe());
             this.claim(item, item.n-item.claimed)
             n-=(item.n-item.claimed);
           }
@@ -132,14 +126,12 @@ HTomb = (function(HTomb) {
         let tuple = this.claimedItems[i];
         if (tuple[0]===item) {
           item.claimed-=tuple[1];
-          console.log("after unclaiming..." + item.describe());
           this.claimedItems.splice(i,1);
           return;
         }
       }
     },
     unclaimItems: function() {
-      console.log("unclaimItems");
       while (this.claimedItems.length>0) {
         // this will often go below zero when items have been picked up
         let tuple = this.claimedItems.pop();
@@ -204,8 +196,6 @@ HTomb = (function(HTomb) {
       }
     },
     unassign: function() {
-      console.log("unassigning");
-      console.log(this);
       var cr = this.assignee;
       if (!cr) {
         this.assignee = null;
@@ -220,8 +210,6 @@ HTomb = (function(HTomb) {
       }
     },
     cancel: function() {
-      console.log("canceling");
-      console.log(this);
       this.despawn();
     },
     // default methods for designating tasks
@@ -290,7 +278,6 @@ HTomb = (function(HTomb) {
       }
       // if this got unassigned
       if (this.assignee==null) {
-        console.log(this.describe() + " got unassigned so I'm bailing...");
         return;
       }
       // otherwise, try to work
@@ -395,8 +382,6 @@ HTomb = (function(HTomb) {
       }
     },
     complete: function(x,y,z) {
-      console.log("completing");
-      console.log(this);
       HTomb.Events.publish({type: "Complete", task: this});
       this.despawn();
     }

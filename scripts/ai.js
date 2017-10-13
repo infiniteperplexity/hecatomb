@@ -282,6 +282,20 @@ HTomb = (function(HTomb) {
   });
 
   HTomb.Types.defineRoutine({
+    template: "GuardPostRally",
+    name: "guard post rally",
+    act: function(ai) {
+      if (ai.entity.minion===undefined) {
+        return;
+      }
+      let cr = ai.entity;
+      let post;
+      
+      
+    }
+  });
+
+  HTomb.Types.defineRoutine({
     template: "ServeMaster",
     name: "serve master",
     act: function(ai) {
@@ -307,13 +321,29 @@ HTomb = (function(HTomb) {
       if (cr.worker && cr.worker.task) {
         ai.entity.worker.task.ai();
       } else {
-        // Otherwise, patrol around the creature's master
-        // or maybe check for tasks now?
-        ai.patrol(ai.entity.minion.master.x,ai.entity.minion.master.y,ai.entity.minion.master.z, {
-          searcher: ai.entity,
-          searchee: ai.entity.minion.master,
-          searchTimeout: 10
-        });
+        //!!!a very strange place to define guard post rally behavior...
+        let post;
+        for (let structure of HTomb.Player.master.structures) {
+          if (structure.template==="GuardPost" && structure.rallying) {
+            post = structure;
+          }
+        }
+        if (post) {
+          ai.patrol(post.x,post.y,post.z, {
+            min: 0,
+            max: post.defenseRange,
+            searcher: ai.entity,
+            searchee: post,
+            searchTimeout: 10
+          });
+        } else {
+          // Otherwise, patrol around the creature's master
+          ai.patrol(ai.entity.minion.master.x,ai.entity.minion.master.y,ai.entity.minion.master.z, {
+            searcher: ai.entity,
+            searchee: ai.entity.minion.master,
+            searchTimeout: 10
+          });
+        }
       }
     }
   });
@@ -638,8 +668,8 @@ HTomb = (function(HTomb) {
     // A patrolling creature tries to stay within a certain orbit of a target square
     patrol: function(x,y,z, options) {
       options = options || {};
-      let min = options.min || 2;
-      let max = options.max || 5;
+      let min = options.min || 1;
+      let max = options.max || 4;
       if (!this.entity.movement) {
         return false;
       }
@@ -647,9 +677,9 @@ HTomb = (function(HTomb) {
         console.log("why problem with patrol???");
       }
       var dist = HTomb.Path.distance(this.entity.x,this.entity.y,x,y);
-      if (dist<min) {
+      if (dist<=min) {
         this.acted = this.walkAway(x,y,z);
-      } else if (dist>max) {
+      } else if (dist>=max) {
         this.acted = this.walkToward(x,y,z, {
           searcher: options.searcher,
           searchee: options.searchee,
@@ -746,7 +776,7 @@ HTomb = (function(HTomb) {
         }
       }
       return false;
-    },
+    }
   });
 
   HTomb.Types.define({

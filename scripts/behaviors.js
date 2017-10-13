@@ -331,7 +331,7 @@ HTomb = (function(HTomb) {
     name: "worker",
     labor: 1,
     task: null,
-    allowedTasks: ["EquipTask","DigTask","BuildTask","PatrolTask","FurnishTask","HaulTask","ConstructTask","ProduceTask","DismantleTask","RepairTask"],
+    allowedTasks: ["EquipTask","DigTask","BuildTask","PatrolTask","FurnishTask","HaulTask","ConstructTask","ProduceTask","DismantleTask","RepairTask","TradeTask"],
     onAssign: function(tsk) {
       if (this.task!==null) {
         this.task.unassign();
@@ -708,9 +708,8 @@ HTomb = (function(HTomb) {
       if (v.minion && v.minion.master && v.minion.master.master) {
         let gp = false;
         for (let s of v.minion.master.master.structures) {
-          if (s.template==="GuardPost" && s.z===v.z && HTomb.Path.quickDistance(s.x,s.y,s.z,v.x,v.y,v.z)<=s.range) {
+          if (s.template==="GuardPost" && s.z===v.z && HTomb.Path.quickDistance(s.x,s.y,s.z,v.x,v.y,v.z)<=s.defenseRange) {
             gp = true;
-            console.log("guard post defended " + v.describe());
           }
         }
         if (gp) {
