@@ -22,6 +22,9 @@ HTomb = (function(HTomb) {
     template: "FetchItems",
     name: "fetch items",
     act: function(ai, args) {
+      if (HTomb.Debug.noingredients) {
+        return;
+      }
       args = args || {};
       let cr = ai.entity;
       let claims = false;
@@ -44,12 +47,10 @@ HTomb = (function(HTomb) {
       }
       ingredients = ingredients || {};
       if (Object.keys(ingredients).length===0) {
-        console.log("no ingredients are required");
         return;
       }
       // if all ingredients are carried, skip the rest
       if (cr.inventory.items.hasAll(ingredients)) {
-        console.log("has everything it needs");
         return;
       }
       // if not all ingredients are available, fall back on something else
@@ -245,6 +246,11 @@ HTomb = (function(HTomb) {
       if (item===null) {
         return;
       }
+      // if we already have it
+      if (cr.inventory.items.contains(item))  {
+        return;
+      }
+      // if someone else picked it up
       if (!item.isPlaced() || !HTomb.Tiles.isReachableFrom(item.x,item.y,item.z,cr.x,cr.y,cr.z,{
             canPass: cr.movement.boundMove(),
             searcher: cr,
@@ -252,11 +258,17 @@ HTomb = (function(HTomb) {
             searchTimeout: 10
         })) {
         task.cancel();
+        return;
+      } else {
+        cr.ai.target = item;
       }
       let t = cr.ai.target;
       // if we are standing on it, pick it up
-      if (cr.x===t.x && cr.y===t.y && cr.z===c.z) {
-        cr.inventory.pickup(item);
+      if (cr.x===t.x && cr.y===t.y && cr.z===t.z) {
+        if (task) {
+          task.unclaim(t);
+        }
+        cr.inventory.pickup(t);
         cr.ai.target = null;
       // otherwise walk toward it
       } else {

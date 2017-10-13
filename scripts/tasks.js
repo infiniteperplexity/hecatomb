@@ -76,6 +76,9 @@ HTomb = (function(HTomb) {
       console.log("now " + item.claimed + " are claimed.");
     },
     claimIngredients: function(args) {
+      if (HTomb.Debug.noingredients) {
+        return;
+      }
       args = args || {};
       let ingredients = args.ingredients || this.ingredients || {};
       let cr = this.assignee;
@@ -331,6 +334,9 @@ HTomb = (function(HTomb) {
       }
     },
     expend: function() {
+      if (HTomb.Debug.noingredients) {
+        return;
+      }
       if (this.assignee.inventory.items.hasAll(this.ingredients)!==true) {
         throw new Error("shouldn't reach this due to AI");
       }
@@ -1108,7 +1114,7 @@ HTomb = (function(HTomb) {
       if (cr.ai.acted) {
         return;
       }
-      if (cr.inventory.contains(this.item)) {
+      if (cr.inventory.items.contains(this.item)) {
         cr.equipper.equipItem(this.item);
         this.complete();
       }; 

@@ -90,7 +90,7 @@ HTomb = (function(HTomb) {
 
   Behavior.extend({
     template: "StructureLight",
-    name: "structure light",
+    name: "structurelight",
     level: 255,
     range: 3,
     onPlace: function() {
@@ -184,7 +184,7 @@ HTomb = (function(HTomb) {
       }
       item.remove();
       HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " picks up " + item.describe({article: "indefinite"})+".",e.x,e.y,e.z);
-      this.add(item);
+      this.items.addItem(item);
       this.entity.ai.acted = true;
       this.entity.ai.actionPoints-=16;
     },
@@ -212,15 +212,38 @@ HTomb = (function(HTomb) {
       this.entity.ai.acted = true;
       this.entity.ai.actionPoints-=16;
     },
-    add: function(item) {
-      if (this.items.length>=this.capacity) {
-        HTomb.GUI.pushMessage("Can't pick that up.");
-      } else {
-        this.items.addItem(item);
-      }
+    push: function(item) {
+      this.addItem(item);
+    },
+    unshift: function(item) {
+      this.addItem(item);
+    },
+    addItem: function(item) {
+      this.items.addItem(item);
+    },
+    count: function(arg) {
+      return this.items.count(arg);
+    },
+    contains: function(item) {
+      return this.items.contains(item);
+    },
+    getItem: function(arg) {
+      return this.items.getItem(arg);
+    },
+    take: function(arg,n) {
+      return this.items.take(arg,n);
+    },
+    takeItems: function(ings) {
+      return this.items.takeItems(ings);
+    },
+    removeItem: function(item) {
+      return this.items.removeItem(item);
     },
     hasAll: function(ingredients) {
       return this.items.hasAll(ingredients);
+    },
+    asIngredients: function() {
+      return this.items.asIngredients();
     },
     onDespawn: function() {
       //should probably drop all the items, right?
@@ -403,10 +426,10 @@ HTomb = (function(HTomb) {
           // look for labor tools
           let labor = minion.worker.getLabor();
           let invenTools = this.ownedItems().filter(function(e,i,a) {
-            return (e.equipment && e.equipment.labor>labor && minion.inventory && minion.inventory.items.indexOf(e)!==-1);
+            return (e.equipment && e.claimed < e.n && e.equipment.labor>labor && minion.inventory && minion.inventory.items.indexOf(e)!==-1);
           });
           let groundTools = this.ownedItems().filter(function(e,i,a) {
-            return (e.equipment && e.equipment.labor>labor && e.isOnGround());
+            return (e.equipment && e.claimed < e.n && e.equipment.labor>labor && e.isOnGround());
           });
           // sort by labor value
           let comp = function(a,b) {
@@ -428,7 +451,7 @@ HTomb = (function(HTomb) {
             let task = HTomb.Things.EquipTask({
               assigner: this.entity,
               item: groundTools[0],
-              name: "equip " + item.describe()
+              name: "equip " + groundTools[0].describe()
             });
             task.assignTo(minion);
             continue;
@@ -469,6 +492,9 @@ HTomb = (function(HTomb) {
       return HTomb.Utils.where(HTomb.World.things, function(item) {return (item.parent==="Item" && item.owned);});
     },
     ownsAllIngredients: function(ingredients) {
+      if (HTomb.Debug.noingredients) {
+        return true;
+      }
       let ownedItems = this.ownedItems();
       let owned = {};
       for (let i=0; i<ownedItems.length; i++) {
@@ -684,6 +710,7 @@ HTomb = (function(HTomb) {
         for (let s of v.minion.master.master.structures) {
           if (s.template==="GuardPost" && s.z===v.z && HTomb.Path.quickDistance(s.x,s.y,s.z,v.x,v.y,v.z)<=s.range) {
             gp = true;
+            console.log("guard post defended " + v.describe());
           }
         }
         if (gp) {
@@ -868,6 +895,10 @@ HTomb = (function(HTomb) {
         }
         this.entity.slot = null;
       }
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " unequips " + item.describe({article: "indefinite"})+".",x,y,z);
       this.entity.ai.actionPoints-=16;
       this.entity.acted = true;
       return item;
@@ -886,6 +917,10 @@ HTomb = (function(HTomb) {
           this.slots[slot] = item;
         }
       }
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " equips " + item.describe({article: "indefinite"})+".",x,y,z);
       this.entity.ai.actionPoints-=16;
       this.entity.acted = true;
     }

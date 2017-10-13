@@ -293,9 +293,6 @@ HTomb = (function(HTomb) {
       }
       // this is a good place to check for ingredients
       let ings = HTomb.Utils.copy(HTomb.Things.templates[this.queue[0][0]].ingredients);
-      if (HTomb.Debug.noingredients) {
-        ings = {};
-      }
       if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
         this.task = null;
         this.queue.push(this.queue.shift());
@@ -342,7 +339,7 @@ HTomb = (function(HTomb) {
       for (let i=0; i<this.makes.length; i++) {
         let t = HTomb.Things.templates[this.makes[i]];
         let g = t.describe({article: "indefinite"});
-        let ings = t.ingredients;
+        let ings = (HTomb.Debug.noingredients) ? {} : t.ingredients;
         if (HTomb.Utils.notEmpty(ings)) {
           g+=" ";
           g+=HTomb.Utils.listIngredients(ings);
@@ -482,6 +479,7 @@ HTomb = (function(HTomb) {
 
   Behavior.extend({
     template: "Storage",
+    name: "storage",
     dormant: 0,
     dormancy: 10,
     tasks: null,
@@ -571,7 +569,7 @@ HTomb = (function(HTomb) {
       let f = this.entity.features[slots[0]];
       let t = HTomb.Things.HaulTask({
          assigner: this.entity.owner,
-         name: "haul " + item.describe()
+         name: "haul " + item.name
        });
       t.claim(item, item.n-item.claimed);
       t.item = item;
@@ -588,22 +586,43 @@ HTomb = (function(HTomb) {
     storage: null,
     workRange: 0,
     item: null,
+    canAssign: function(cr) {
+      let result = Task.canAssign.call(this, cr);
+      console.log("trying to assign");
+      console.log(result);
+      return result;
+    },
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]!==HTomb.Tiles.FloorTile) {
+        return false;
+      }
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f && f.structure && f.structure.storage===this.storage) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
     ai: function() {
-      let cr = this.entity;
+      let cr = this.assignee;
       if (cr.ai.acted) {
         return;
       }
-      HTomb.Types.templates.FetchItem(cr.ai, {task: this, item: this.item});
+      HTomb.Routines.FetchItem.act(cr.ai, {task: this, item: this.item});
       if (cr.ai.acted) {
         return;
       }
       if (this.x===cr.x && this.y===cr.y && this.z===cr.z) {
-        if (cr.inventory.items.contains(item)) {
-          cr.inventory.drop(item);
+        if (cr.inventory.items.contains(this.item)) {
+          cr.inventory.drop(this.item);
           this.complete();
         }
       } else {
-        cr.ai.walkToward(x,y,z, {
+        cr.ai.walkToward(this.x,this.y,this.z, {
           searcher: cr,
           searchee: this,
           searchTimeout: 10
@@ -670,9 +689,7 @@ HTomb = (function(HTomb) {
           searcher: cr,
           ownedOnly: (this.assignee===HTomb.Player) ? true : false,
           respectClaims: (this.assignee===HTomb.Player) ? true : false
-        })) {
-        //if (cr.inventory.canFindAll(this.ingredients)!==true && !HTomb.Debug.noingredients) {
-          // Wait...can this cancel the task in the middle of assignment???
+        })===false) {
           this.cancel();
           return false;
         } else {
@@ -689,9 +706,7 @@ HTomb = (function(HTomb) {
       return this.started;
     },
     begin: function() {
-      if (!HTomb.Debug.noingredients) {
-        let test = this.assignee.inventory.items.takeItems(this.ingredients);
-      }
+      this.expend();
       this.started = true;
       this.labor = HTomb.Things.templates[this.makes].labor || this.labor;
       HTomb.GUI.pushMessage(this.blurb());

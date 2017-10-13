@@ -588,7 +588,7 @@ HTomb = (function(HTomb) {
       // now we have a list of candidate items
       for (let item of items) {
         // if the item is held by somebody else
-        if (!item.isPlaced() && (!searcher || !searcher.inventory || search.inventory.items.contains(item)===false)) {
+        if (!item.isPlaced() && (!searcher || !searcher.inventory || searcher.inventory.items.contains(item)===false)) {
           continue;
         }
         // if the item is not reachable
