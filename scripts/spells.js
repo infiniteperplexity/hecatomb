@@ -20,21 +20,7 @@ HTomb = (function(HTomb) {
     name: "researchable",
     //time: 480,
     time: 120,
-    cost: {},
-    finish: function(args) {
-      let r = args.researcher;
-      if (this.entity.parent==="Spell") {
-        HTomb.GUI.alert("You have completed research on the spell '" + this.entity.describe()+".'");
-        this.entity.caster = args.researcher.caster;
-        let spell = this.entity;
-        if (this.entity.caster.spells.indexOf(spell.template)===-1) {
-          this.entity.caster.spells.push(this.entity);
-        } else {
-          this.entity.despawn();
-        }
-      }
-      
-    }
+    cost: {}
   });
 
 

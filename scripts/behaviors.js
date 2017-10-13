@@ -331,7 +331,7 @@ HTomb = (function(HTomb) {
     name: "worker",
     labor: 1,
     task: null,
-    allowedTasks: ["EquipTask","DigTask","BuildTask","PatrolTask","FurnishTask","HaulTask","ConstructTask","ProduceTask","DismantleTask","RepairTask","TradeTask"],
+    allowedTasks: ["EquipTask","DigTask","BuildTask","PatrolTask","FurnishTask","HaulTask","ConstructTask","ProduceTask","DismantleTask","RepairTask","TradeTask","ResearchTask"],
     onAssign: function(tsk) {
       if (this.task!==null) {
         this.task.unassign();

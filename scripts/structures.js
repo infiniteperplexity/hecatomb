@@ -394,6 +394,62 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Task.extend({
+    template: "ResearchTask",
+    name: "research",
+    bg: "#8800BB",
+    structure: null,
+    researching: null,
+    turns: 0,
+    workRange: 1,
+    fulfilled: false,
+    canAssign: function(cr) {
+      if (this.fulfilled) {
+        return false;
+      } else {
+        return Task.canAssign.call(this, cr);
+      }
+    },
+    workOnTask: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
+      //cancel the task if something weird happened to the tile
+      if (this.validTile(x,y,z)!==true) {
+        this.cancel();
+      }
+      if (this.begun()!==true) {
+        this.expend();
+        this.begin();
+      }
+    },
+    work: function() {
+      this.turns-=1;
+      if (this.turns<=0) {
+        this.finish();
+        this.complete();
+      }
+    },
+    begun: function() {
+      return this.fulfilled;
+    },
+    begin: function() {
+      this.fulfilled = true;
+    },
+    finish: function() {
+      let template = HTomb.Things.templates[this.researching];
+      if (template.parent==="Spell") {
+        HTomb.GUI.alert("You have completed research on the spell '" + template.describe()+".'");
+        let spells = this.assigner.caster.spells.map(function(s) {return s.template;});
+        if (spells.indexOf(template.template)===-1) {
+          this.assigner.caster.spells.push(HTomb.Things[template.template]({caster: this.assigner.caster}));
+        }
+      }
+    },
+    onDespawn: function() {
+      this.structure.research.current = null;
+    }
+  });
   Behavior.extend({
     template: "Research",
     name: "research",
@@ -404,23 +460,42 @@ HTomb = (function(HTomb) {
       HTomb.Events.subscribe(this, "TurnBegin");
     },
     choiceCommand: function(i) {
+      if (this.current) {
+        if (confirm("Really cancel current research?")) {
+          this.current.cancel();
+        } else {
+          return;
+        }
+      }
       if (i<this.choices.length) {
-        this.current = HTomb.Things[this.choices[i]]();
+        let template = HTomb.Things.templates[this.choices[i]];
+        let dflt = HTomb.Things.templates.Researchable;
+        this.current = HTomb.Things.ResearchTask({
+          assigner: this.entity.owner,
+          name: "research " + template.name,
+          structure: this.entity,
+          researching: this.choices[i],
+          turns: (template.Behaviors 
+                  && template.Behaviors.Researchable
+                  && template.Behaviors.Researchable.time)
+                  ? template.Behaviors.Researchable.time
+                  : dflt.time,
+          fulfilled: (HTomb.Debug.noingredients || Object.keys(template.ingredients).length===0) ? true : false
+        });
+        this.current.place(this.entity.x, this.entity.y, this.entity.z);
       }
     },
     cancelCommand: function() {
-      this.current = null;
+      if (this.current && confirm("Really cancel research?")) {
+        this.current.cancel();
+      }
     },
     onTurnBegin: function() {
-      if (this.current) {
+      if (this.current && this.current.fulfilled) {
         let e = this.entity;
         let cr = HTomb.World.creatures[coord(e.x,e.y,e.z)];
-        if (cr && cr.caster && (cr===this.entity.owner || (this.entity.owner.master && this.entity.owner.master.indexOf(cr)!==-1))) {
-          this.current.researchable.time-=1;
-          if (this.current.researchable.time<=0) {
-            this.current.researchable.finish({researcher: this.entity.owner});
-            this.current = null;
-          }
+        if (cr && cr.caster && (cr===e.owner || (e.owner.master && e.owner.master.minions.indexOf(cr)!==-1))) {
+          this.current.work();
         }
       }
       // think about how to handle the "library"?
@@ -439,14 +514,17 @@ HTomb = (function(HTomb) {
       let dtime = HTomb.Things.templates.Researchable.time;
       for (let i=0; i<choices.length; i++) {
         let choice = HTomb.Things.templates[choices[i]];
-        txt.push(alphabet[i] + ") " + choice.name + " (" + (choice.Behaviors.Researchable.time || dtime) + " turns.)");
+        txt.push(alphabet[i] + ") " + choice.name + " ("
+          + ((choice.Behaviors && choice.Behaviors.Researchable
+          && choice.Behaviors.Researchable.time) ? choice.Behaviors.Researchable.time
+          : dtime) + " turns.)");
       }
       txt.push(" ");
       txt.push("Researching:");
       if (this.current===null) {
         txt.push("(nothing)");
       } else {
-        txt.push("- " + this.current.name + " (" + this.current.researchable.time + " turns.)");
+        txt.push("- " + this.current.name + " (" + this.current.turns + " turns.)");
       }
       return txt;
     }
