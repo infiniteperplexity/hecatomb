@@ -65,9 +65,18 @@ HTomb = (function(HTomb) {
       if (this.hasOwnProperty("claimedItems")===false) {
         this.claimedItems = [];
       }
-      this.claimedItems.push([item, n]);
+      let idx = this.claimedItems.indexOf(item);
+      if (idx===-1) {
+        this.claimedItems.push([item, n]);
+      } else {
+        this.claimedItems[idx][1]+=n;
+      }
+      item.claimed+=n;
     },
     claimIngredients: function(args) {
+      if (HTomb.Debug.noingredients) {
+        return;
+      }
       args = args || {};
       let ingredients = args.ingredients || this.ingredients || {};
       let cr = this.assignee;
@@ -95,7 +104,7 @@ HTomb = (function(HTomb) {
             this.claim(item,n);
             n = 0;
           } else {
-            this.claim(item,item.n-item.claimed)
+            this.claim(item, item.n-item.claimed)
             n-=(item.n-item.claimed);
           }
         }
@@ -124,8 +133,12 @@ HTomb = (function(HTomb) {
     },
     unclaimItems: function() {
       while (this.claimedItems.length>0) {
+        // this will often go below zero when items have been picked up
         let tuple = this.claimedItems.pop();
         tuple[0].claimed-=tuple[1];
+        if (tuple[0].claimed<0) {
+            console.log("claims went below zero: " + tuple[0].describe());
+          }
       }
     },
     onDestroy: function(event) {
@@ -163,7 +176,11 @@ HTomb = (function(HTomb) {
         searchee: this,
         canPass: cr.movement.boundMove(),
         searchTimeout: 10
-      }) && cr.inventory.canFindAll(this.ingredients)) {
+      }) && HTomb.Tiles.canFindAll(cr.x, cr.y, cr.z, this.ingredients, {
+        searcher: cr,
+        respectClaims: (this.assigner===HTomb.Player) ? true : false,
+        ownedOnly: (this.assigner===HTomb.Player) ? true : false
+      })) {
         return true;
       } else {
         return false;
@@ -179,8 +196,6 @@ HTomb = (function(HTomb) {
       }
     },
     unassign: function() {
-      console.log("unassigning");
-      console.log(this);
       var cr = this.assignee;
       if (!cr) {
         this.assignee = null;
@@ -195,8 +210,6 @@ HTomb = (function(HTomb) {
       }
     },
     cancel: function() {
-      console.log("canceling");
-      console.log(this);
       this.despawn();
     },
     // default methods for designating tasks
@@ -263,7 +276,10 @@ HTomb = (function(HTomb) {
       if (cr.ai.acted) {
         return;
       }
-      console.log("testing 10");
+      // if this got unassigned
+      if (this.assignee==null) {
+        return;
+      }
       // otherwise, try to work
       if (this.x===cr.x && this.y===cr.y && this.z===cr.z) {
         // can always work from range 0
@@ -305,6 +321,9 @@ HTomb = (function(HTomb) {
       }
     },
     expend: function() {
+      if (HTomb.Debug.noingredients) {
+        return;
+      }
       if (this.assignee.inventory.items.hasAll(this.ingredients)!==true) {
         throw new Error("shouldn't reach this due to AI");
       }
@@ -363,8 +382,6 @@ HTomb = (function(HTomb) {
       }
     },
     complete: function(x,y,z) {
-      console.log("completing");
-      console.log(this);
       HTomb.Events.publish({type: "Complete", task: this});
       this.despawn();
     }
@@ -1062,7 +1079,13 @@ HTomb = (function(HTomb) {
       return true;
     },
     canAssign: function(cr) {
-      return cr.inventory.canFindAll(this.ingredients);
+      let i = this.item;
+      return HTomb.Tiles.isReachableFrom(i.x,i.y,i.z,cr.x, cr.y, cr.z, {
+        searcher: cr,
+        searchee: i,
+        canMove: cr.movement.boundMove(),
+        searchTimeout: 10
+      });
     },
     ai: function() {
       let cr = this.assignee;
@@ -1076,7 +1099,7 @@ HTomb = (function(HTomb) {
       if (cr.ai.acted) {
         return;
       }
-      if (cr.inventory.contains(this.item)) {
+      if (cr.inventory.items.contains(this.item)) {
         cr.equipper.equipItem(this.item);
         this.complete();
       }; 

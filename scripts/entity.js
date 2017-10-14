@@ -154,7 +154,6 @@ HTomb = (function(HTomb) {
   let Item = Entity.extend({
     template: "Item",
     name: "item",
-    stackable: false,
     n: 1,
     maxn: 10,
     onlist: null,
@@ -265,16 +264,16 @@ HTomb = (function(HTomb) {
     },
     describe: function(options) {
       options = options || {};
-      if (this.stackable && this.n>1) {
+      if (this.n>1) {
         options.plural = true;
         options.article = this.n;
       }
       if (this.claimed) {
         options.postfixes = options.postfixes || [];
-        if (this.claimed===1) {
-          options.postfixes.push(" (claimed)");
+        if (this.claimed===1 && this.n===1) {
+          options.postfixes.push("(claimed)");
         } else {
-          options.postfixes.push(" (" + this.claimed + " claimed)");
+          options.postfixes.push("(" + this.claimed + " claimed)");
         }
       }
       return Entity.describe.call(this,options);
@@ -513,7 +512,7 @@ HTomb = (function(HTomb) {
     asIngredients() {
       let ingredients = {};
       for (let item of this) {
-        ingredients[item.template = item.n];
+        ingredients[item.template] = item.n;
       }
       return ingredients;
     }

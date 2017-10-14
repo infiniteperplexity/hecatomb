@@ -9,8 +9,6 @@ HTomb = (function(HTomb) {
     name: "seed",
     symbol: "\u2026",
     base: null,
-    stackable: true,
-    maxn: 10,
     tags: ["Seeds"]
   });
   Item.extend({
@@ -18,8 +16,6 @@ HTomb = (function(HTomb) {
     name: "herb",
     symbol: "\u273F",
     base: null,
-    stackable: true,
-    maxn: 10,
     tags: ["Herbs"]
   });
   Feature.extend({

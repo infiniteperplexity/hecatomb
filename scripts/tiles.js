@@ -143,7 +143,7 @@ HTomb = (function(HTomb) {
       let pile = HTomb.World.items[crd];
       for (let item of pile) {
         if (item.claimed>0) {
-          itembg = "red";
+          itembg = "#DDBB99";
         }
       }
     }
@@ -550,6 +550,80 @@ HTomb = (function(HTomb) {
     } else {
       return false;
     }
+  };
+
+  HTomb.Tiles.canFindAll = function(x,y,z,ingredients, options) {
+    if (HTomb.Debug.noingredients) {
+      return true;
+    }
+    options = options || {};
+    // should always be a creature
+    let searcher = options.searcher || null;
+    // used for tasks that have already claimed items
+    let claimedItems = options.claimedItems || [];
+    // usually true for minions
+    let ownedOnly = (options.ownedOnly===false) ? false : true;
+    // usually true for minions
+    let respectClaims = (options.respectClaims===false) ? false : true;
+    let items = [];
+    for (let ingredient in ingredients) {
+      let n = ingredients[ingredient];
+      if (ownedOnly) {
+        // search items the player owns
+        for (let item of HTomb.Player.master.ownedItems()) {
+          if (item.template===ingredient) {
+            items.push(item);
+          }
+        }
+      } else {
+        // search all things
+        for (let thing of HTomb.World.things) {
+          if (thing.template===ingredient) {
+            items.push(thing);
+          }
+        }
+      }
+      // make a list of claimed items
+      let claimed = claimedItems.map(function(e) {return e[0];});
+      // now we have a list of candidate items
+      for (let item of items) {
+        // if the item is held by somebody else
+        if (!item.isPlaced() && (!searcher || !searcher.inventory || searcher.inventory.items.contains(item)===false)) {
+          continue;
+        }
+        // if the item is not reachable
+        if (item.isPlaced() && !HTomb.Tiles.isReachableFrom(item.x,item.y,item.z,x,y,z,{
+            searcher: searcher || undefined,
+            searchee: item,
+            canMove: (searcher) ? searcher.movement.canMove : undefined,
+            searchTimeOut: 10,
+            useLast: true
+          })) {
+          continue;
+        }
+        if (respectClaims) {
+          // check claims status
+          if (claimed.indexOf(item)!==-1) {
+            n-=(item.n-item.claimed+claimedItems[claimed.indexOf(item)][1]);
+          } else {
+            n-=(item.n-item.claimed);
+          }
+        } else {
+          n-=item.n;
+        }
+        // if we found enough, skip the rest
+        if (n<=0) {
+          break;
+        }
+      }
+      console.log("At the end of the check, had " + n + " left to find.");
+      // if we did not find enough, return false
+      if (n>0) {
+        return false;
+      }
+    }
+    // if we got this far without failing, return true
+    return true;
   };
 
   HTomb.Tiles.isEnclosed = function(x,y,z,callb) {

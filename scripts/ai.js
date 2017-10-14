@@ -22,6 +22,9 @@ HTomb = (function(HTomb) {
     template: "FetchItems",
     name: "fetch items",
     act: function(ai, args) {
+      if (HTomb.Debug.noingredients) {
+        return;
+      }
       args = args || {};
       let cr = ai.entity;
       let claims = false;
@@ -46,14 +49,17 @@ HTomb = (function(HTomb) {
       if (Object.keys(ingredients).length===0) {
         return;
       }
-      console.log("test 1");
       // if all ingredients are carried, skip the rest
       if (cr.inventory.items.hasAll(ingredients)) {
-        console.log("has everything");
         return;
       }
       // if not all ingredients are available, fall back on something else
-      if (cr.inventory.canFindAll(ingredients)===false) {
+      if (HTomb.Tiles.canFindAll(cr.x, cr.y, cr.z, ingredients, {
+        searcher: cr,
+        respectClaims: (claims) ? true : false,
+        ownedOnly: (claims) ? true : false,
+        claimedItems: (task) ? task.claimedItems : false
+      })===false) {
         if (task) {
           console.log("fetch failed?");
           task.onFetchFail();
@@ -62,14 +68,17 @@ HTomb = (function(HTomb) {
       }
       let inventory = cr.inventory.items.asIngredients();
       // check whether the target is a needed ingredient
-      console.log("test 2");
       if (cr.ai.target) {
+        console.log("already targetting" + cr.ai.target.describe());
+        console.log(cr.ai.target);
         // if not, change targets
         let t = cr.ai.target.template;
         if (!ingredients[t] || inventory[t]>=ingredients[t]) {
+          console.log("target wasn't an ingredient");
           cr.ai.target = null;
         // if the item has been picked up or destroyed, change targets
         } else if (cr.ai.target.isPlaced()!==true) {
+          console.log("target wasn't placed");
           if (claims && task) {
             task.unclaim(cr.ai.target);
           }
@@ -77,6 +86,7 @@ HTomb = (function(HTomb) {
         } else if (claims && task) {
           // edge case, reclaim if item was targetted by some other task or method
           if (task.hasClaimed(cr.ai.target)===false) {
+            console.log("hadn't claimed it yet.")
             let item = cr.ai.target;
             let n = ingredients[cr.ai.target.template];
             if (n<=item.n-item.claimed) {
@@ -86,22 +96,20 @@ HTomb = (function(HTomb) {
             }
           }
         }
-        console.log("testing 11");
         // otherwise continue
       }
-      console.log("test 3");
       // choosing targets is easier with claims and tasks
       if (cr.ai.target===null && claims && task) {
-        console.log("test 4");
+        console.log("trying to target a claimed ingredient");
         let items = task.claimedItems.filter(function(e,i,a) {
           // if it is still needed and is reachable
           if (e[0].isPlaced()
               && (!inventory[e[0].template] || inventory[e[0].template]<=ingredients[e[0].template])
               && HTomb.Tiles.isReachableFrom(e[0].x,e[0].y,e[0].z,cr.x,cr.y,cr.z,{
-                  canPass: cr.movement.boundMove(),
-                  searcher: cr,
-                  searchee: e[0],
-                  searchTimeout: 10
+                canPass: cr.movement.boundMove(),
+                searcher: cr,
+                searchee: e[0],
+                searchTimeout: 10
               })) {
             return true;
           } else {
@@ -112,12 +120,17 @@ HTomb = (function(HTomb) {
           return e[0];
         });
         items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
+        console.log("there are " + items.length + " items to choose from.");
+        console.log(items);
         if (items.length>0) {
           cr.ai.target = items[0];
+          console.log(items[0].describe() + " was closest");
+          console.log(items[0]);
         }
       }
       // slightly harder otherwise, or if the claimed item was moved
       if (cr.ai.target===null) {
+        console.log("trying to claim a new item instead");
         let items = [];
         for (let crd in HTomb.World.items) {
           let pile = HTomb.World.items[crd];
@@ -138,14 +151,18 @@ HTomb = (function(HTomb) {
             }
           }
         }
+        console.log("there are " + items.length + " items to choose from.");
+        console.log(items);
         items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
         if (items.length>0) {
           cr.ai.target = items[0];
+          console.log(items[0].describe() + " was closest");
+          console.log(items[0]);
         }
-        console.log("test 5");
-        if (claims) {
-          console.log("test 6");
-          let n = ingredients[cr.ai.target.template];
+        if (cr.ai.target && claims) {
+          let item = cr.ai.target;
+          let n = ingredients[item.template];
+          console.log("going to try to claim " + n + " from " + item.describe());
           if (n<=item.n-item.claimed) {
             if (task) {
               task.claim(item,n);
@@ -154,15 +171,13 @@ HTomb = (function(HTomb) {
             }
           } else {
             if (task) {
-              task.claim(item.n-item.claimed);
+              task.claim(item,item.n-item.claimed);
             } else {
-              // claim the rest of the stack
               item.claimed = item.n;
             }
           }
         }
       }
-      console.log("test 7");
       // if there is no target at this point, something has gone wrong
       let t = cr.ai.target;
       if (t===null) {
@@ -174,11 +189,14 @@ HTomb = (function(HTomb) {
       // if we are standing on it, pick up as many as we need / can
       if (cr.x===t.x && cr.y===t.y && cr.z===t.z) {
         let n = ingredients[t.template];
+        console.log("trying to pick up " + n + " from " + t.describe());
         if (inventory[t.template]) {
           n-=inventory[t.template];
         }
-        console.log("test 8");
         if (claims) {
+          if (task) {
+            task.unclaim(t);
+          }
           if (n<=t.n-t.claimed) {
             cr.inventory.pickupSome(t.template,n);
             t.claimed-=n;
@@ -194,12 +212,11 @@ HTomb = (function(HTomb) {
         cr.ai.target = null;
       // otherwise walk toward it
       } else {
-        console.log("test 9");
-        console.log(t);
+        console.log("walking towards " + t.describe());
         cr.ai.walkToward(t.x,t.y,t.z, {
-           searcher: cr,
-           searchee: t,
-           searchTimeout: 10
+          searcher: cr,
+          searchee: t,
+          searchTimeout: 10
         });
       }
     }
@@ -229,6 +246,11 @@ HTomb = (function(HTomb) {
       if (item===null) {
         return;
       }
+      // if we already have it
+      if (cr.inventory.items.contains(item))  {
+        return;
+      }
+      // if someone else picked it up
       if (!item.isPlaced() || !HTomb.Tiles.isReachableFrom(item.x,item.y,item.z,cr.x,cr.y,cr.z,{
             canPass: cr.movement.boundMove(),
             searcher: cr,
@@ -236,11 +258,17 @@ HTomb = (function(HTomb) {
             searchTimeout: 10
         })) {
         task.cancel();
+        return;
+      } else {
+        cr.ai.target = item;
       }
       let t = cr.ai.target;
       // if we are standing on it, pick it up
-      if (cr.x===t.x && cr.y===t.y && cr.z===c.z) {
-        cr.inventory.pickup(item);
+      if (cr.x===t.x && cr.y===t.y && cr.z===t.z) {
+        if (task) {
+          task.unclaim(t);
+        }
+        cr.inventory.pickup(t);
         cr.ai.target = null;
       // otherwise walk toward it
       } else {
@@ -250,6 +278,20 @@ HTomb = (function(HTomb) {
            searchTimeout: 10
         });
       }
+    }
+  });
+
+  HTomb.Types.defineRoutine({
+    template: "GuardPostRally",
+    name: "guard post rally",
+    act: function(ai) {
+      if (ai.entity.minion===undefined) {
+        return;
+      }
+      let cr = ai.entity;
+      let post;
+      
+      
     }
   });
 
@@ -279,13 +321,29 @@ HTomb = (function(HTomb) {
       if (cr.worker && cr.worker.task) {
         ai.entity.worker.task.ai();
       } else {
-        // Otherwise, patrol around the creature's master
-        // or maybe check for tasks now?
-        ai.patrol(ai.entity.minion.master.x,ai.entity.minion.master.y,ai.entity.minion.master.z, {
-          searcher: ai.entity,
-          searchee: ai.entity.minion.master,
-          searchTimeout: 10
-        });
+        //!!!a very strange place to define guard post rally behavior...
+        let post;
+        for (let structure of HTomb.Player.master.structures) {
+          if (structure.template==="GuardPost" && structure.rallying) {
+            post = structure;
+          }
+        }
+        if (post) {
+          ai.patrol(post.x,post.y,post.z, {
+            min: 0,
+            max: post.defenseRange,
+            searcher: ai.entity,
+            searchee: post,
+            searchTimeout: 10
+          });
+        } else {
+          // Otherwise, patrol around the creature's master
+          ai.patrol(ai.entity.minion.master.x,ai.entity.minion.master.y,ai.entity.minion.master.z, {
+            searcher: ai.entity,
+            searchee: ai.entity.minion.master,
+            searchTimeout: 10
+          });
+        }
       }
     }
   });
@@ -610,8 +668,8 @@ HTomb = (function(HTomb) {
     // A patrolling creature tries to stay within a certain orbit of a target square
     patrol: function(x,y,z, options) {
       options = options || {};
-      let min = options.min || 2;
-      let max = options.max || 5;
+      let min = options.min || 1;
+      let max = options.max || 4;
       if (!this.entity.movement) {
         return false;
       }
@@ -619,9 +677,9 @@ HTomb = (function(HTomb) {
         console.log("why problem with patrol???");
       }
       var dist = HTomb.Path.distance(this.entity.x,this.entity.y,x,y);
-      if (dist<min) {
+      if (dist<=min) {
         this.acted = this.walkAway(x,y,z);
-      } else if (dist>max) {
+      } else if (dist>=max) {
         this.acted = this.walkToward(x,y,z, {
           searcher: options.searcher,
           searchee: options.searchee,
@@ -718,7 +776,7 @@ HTomb = (function(HTomb) {
         }
       }
       return false;
-    },
+    }
   });
 
   HTomb.Types.define({

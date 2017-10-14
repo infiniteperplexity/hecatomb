@@ -75,6 +75,9 @@ HTomb = (function(HTomb) {
         }
       }
     },
+    commandsText: function() {
+      return;
+    },
     headerText: function() {
       return;
     },
@@ -87,6 +90,9 @@ HTomb = (function(HTomb) {
         " ",
         "%c{yellow}Structure: "+this.describe({capitalized: true, atCoordinates: true})+".",
       ];
+      if (this.commandsText()) {
+        txt = txt.concat(this.commandsText());
+      }
       if (this.behaviors) {
         for (let behavior of this.behaviors) {
           if (behavior.commandsText) {
@@ -293,9 +299,6 @@ HTomb = (function(HTomb) {
       }
       // this is a good place to check for ingredients
       let ings = HTomb.Utils.copy(HTomb.Things.templates[this.queue[0][0]].ingredients);
-      if (HTomb.Debug.noingredients) {
-        ings = {};
-      }
       if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
         this.task = null;
         this.queue.push(this.queue.shift());
@@ -342,7 +345,7 @@ HTomb = (function(HTomb) {
       for (let i=0; i<this.makes.length; i++) {
         let t = HTomb.Things.templates[this.makes[i]];
         let g = t.describe({article: "indefinite"});
-        let ings = t.ingredients;
+        let ings = (HTomb.Debug.noingredients) ? {} : t.ingredients;
         if (HTomb.Utils.notEmpty(ings)) {
           g+=" ";
           g+=HTomb.Utils.listIngredients(ings);
@@ -391,6 +394,62 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Task.extend({
+    template: "ResearchTask",
+    name: "research",
+    bg: "#8800BB",
+    structure: null,
+    researching: null,
+    turns: 0,
+    workRange: 1,
+    fulfilled: false,
+    canAssign: function(cr) {
+      if (this.fulfilled) {
+        return false;
+      } else {
+        return Task.canAssign.call(this, cr);
+      }
+    },
+    workOnTask: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
+      //cancel the task if something weird happened to the tile
+      if (this.validTile(x,y,z)!==true) {
+        this.cancel();
+      }
+      if (this.begun()!==true) {
+        this.expend();
+        this.begin();
+      }
+    },
+    work: function() {
+      this.turns-=1;
+      if (this.turns<=0) {
+        this.finish();
+        this.complete();
+      }
+    },
+    begun: function() {
+      return this.fulfilled;
+    },
+    begin: function() {
+      this.fulfilled = true;
+    },
+    finish: function() {
+      let template = HTomb.Things.templates[this.researching];
+      if (template.parent==="Spell") {
+        HTomb.GUI.alert("You have completed research on the spell '" + template.describe()+".'");
+        let spells = this.assigner.caster.spells.map(function(s) {return s.template;});
+        if (spells.indexOf(template.template)===-1) {
+          this.assigner.caster.spells.push(HTomb.Things[template.template]({caster: this.assigner.caster}));
+        }
+      }
+    },
+    onDespawn: function() {
+      this.structure.research.current = null;
+    }
+  });
   Behavior.extend({
     template: "Research",
     name: "research",
@@ -401,23 +460,42 @@ HTomb = (function(HTomb) {
       HTomb.Events.subscribe(this, "TurnBegin");
     },
     choiceCommand: function(i) {
+      if (this.current) {
+        if (confirm("Really cancel current research?")) {
+          this.current.cancel();
+        } else {
+          return;
+        }
+      }
       if (i<this.choices.length) {
-        this.current = HTomb.Things[this.choices[i]]();
+        let template = HTomb.Things.templates[this.choices[i]];
+        let dflt = HTomb.Things.templates.Researchable;
+        this.current = HTomb.Things.ResearchTask({
+          assigner: this.entity.owner,
+          name: "research " + template.name,
+          structure: this.entity,
+          researching: this.choices[i],
+          turns: (template.Behaviors 
+                  && template.Behaviors.Researchable
+                  && template.Behaviors.Researchable.time)
+                  ? template.Behaviors.Researchable.time
+                  : dflt.time,
+          fulfilled: (HTomb.Debug.noingredients || Object.keys(template.ingredients).length===0) ? true : false
+        });
+        this.current.place(this.entity.x, this.entity.y, this.entity.z);
       }
     },
     cancelCommand: function() {
-      this.current = null;
+      if (this.current && confirm("Really cancel research?")) {
+        this.current.cancel();
+      }
     },
     onTurnBegin: function() {
-      if (this.current) {
+      if (this.current && this.current.fulfilled) {
         let e = this.entity;
         let cr = HTomb.World.creatures[coord(e.x,e.y,e.z)];
-        if (cr && cr.caster && (cr===this.entity.owner || (this.entity.owner.master && this.entity.owner.master.indexOf(cr)!==-1))) {
-          this.current.researchable.time-=1;
-          if (this.current.researchable.time<=0) {
-            this.current.researchable.finish({researcher: this.entity.owner});
-            this.current = null;
-          }
+        if (cr && cr.caster && (cr===e.owner || (e.owner.master && e.owner.master.minions.indexOf(cr)!==-1))) {
+          this.current.work();
         }
       }
       // think about how to handle the "library"?
@@ -436,14 +514,17 @@ HTomb = (function(HTomb) {
       let dtime = HTomb.Things.templates.Researchable.time;
       for (let i=0; i<choices.length; i++) {
         let choice = HTomb.Things.templates[choices[i]];
-        txt.push(alphabet[i] + ") " + choice.name + " (" + (choice.Behaviors.Researchable.time || dtime) + " turns.)");
+        txt.push(alphabet[i] + ") " + choice.name + " ("
+          + ((choice.Behaviors && choice.Behaviors.Researchable
+          && choice.Behaviors.Researchable.time) ? choice.Behaviors.Researchable.time
+          : dtime) + " turns.)");
       }
       txt.push(" ");
       txt.push("Researching:");
       if (this.current===null) {
         txt.push("(nothing)");
       } else {
-        txt.push("- " + this.current.name + " (" + this.current.researchable.time + " turns.)");
+        txt.push("- " + this.current.name + " (" + this.current.turns + " turns.)");
       }
       return txt;
     }
@@ -482,6 +563,7 @@ HTomb = (function(HTomb) {
 
   Behavior.extend({
     template: "Storage",
+    name: "storage",
     dormant: 0,
     dormancy: 10,
     tasks: null,
@@ -571,7 +653,7 @@ HTomb = (function(HTomb) {
       let f = this.entity.features[slots[0]];
       let t = HTomb.Things.HaulTask({
          assigner: this.entity.owner,
-         name: "haul " + item.describe()
+         name: "haul " + item.name
        });
       t.claim(item, item.n-item.claimed);
       t.item = item;
@@ -588,22 +670,43 @@ HTomb = (function(HTomb) {
     storage: null,
     workRange: 0,
     item: null,
+    canAssign: function(cr) {
+      let result = Task.canAssign.call(this, cr);
+      console.log("trying to assign");
+      console.log(result);
+      return result;
+    },
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]!==HTomb.Tiles.FloorTile) {
+        return false;
+      }
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f && f.structure && f.structure.storage===this.storage) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
     ai: function() {
-      let cr = this.entity;
+      let cr = this.assignee;
       if (cr.ai.acted) {
         return;
       }
-      HTomb.Types.templates.FetchItem(cr.ai, {task: this, item: this.item});
+      HTomb.Routines.FetchItem.act(cr.ai, {task: this, item: this.item});
       if (cr.ai.acted) {
         return;
       }
       if (this.x===cr.x && this.y===cr.y && this.z===cr.z) {
-        if (cr.inventory.items.contains(item)) {
-          cr.inventory.drop(item);
+        if (cr.inventory.items.contains(this.item)) {
+          cr.inventory.drop(this.item);
           this.complete();
         }
       } else {
-        cr.ai.walkToward(x,y,z, {
+        cr.ai.walkToward(this.x,this.y,this.z, {
           searcher: cr,
           searchee: this,
           searchTimeout: 10
@@ -666,8 +769,11 @@ HTomb = (function(HTomb) {
         searchTimeout: 10
       })) {
         // cancel this task if you can't find the ingredients
-        if (cr.inventory.canFindAll(this.ingredients)!==true && !HTomb.Debug.noingredients) {
-          // Wait...can this cancel the task in the middle of assignment???
+        if (HTomb.Tiles.canFindAll(x,y,z,this.ingredients,{
+          searcher: cr,
+          ownedOnly: (this.assignee===HTomb.Player) ? true : false,
+          respectClaims: (this.assignee===HTomb.Player) ? true : false
+        })===false) {
           this.cancel();
           return false;
         } else {
@@ -684,9 +790,7 @@ HTomb = (function(HTomb) {
       return this.started;
     },
     begin: function() {
-      if (!HTomb.Debug.noingredients) {
-        let test = this.assignee.inventory.items.takeItems(this.ingredients);
-      }
+      this.expend();
       this.started = true;
       this.labor = HTomb.Things.templates[this.makes].labor || this.labor;
       HTomb.GUI.pushMessage(this.blurb());
@@ -942,6 +1046,20 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Task.extend({
+    template: "TradeTask",
+    name: "trade",
+    structure: null,
+    workRange: 0,
+    bg: "#999922",
+    begun: function() {
+      return false;
+    },
+    workOnTask: function() {
+      this.expend();
+    } 
+  });
+
   Structure.extend({
     template: "BlackMarket",
     name: "black market",
@@ -969,6 +1087,7 @@ HTomb = (function(HTomb) {
       }
       let i = 0;
       while (i<this.awaiting.length) {
+        // need to record whether these have been fed somehow
         let a = this.awaiting[i];
         a[2]-=1;
         if (a[2]<=0) {
@@ -984,7 +1103,10 @@ HTomb = (function(HTomb) {
       if (this.offers.length>i) {
         let o = this.offers[i];
         //need to remove the traded items somehow
-        this.awaiting.push([o[1][0],o[1][1],50]);
+        //this.awaiting.push([o[1][0],o[1][1],50]);
+        let ings = {};
+        ings[o[1][0]] = o[1][1];
+        HTomb.Things.TradeTask({assigner: this.owner, ingredients: ings});
         this.offers.splice(i,1);
       }
     },
@@ -1015,9 +1137,11 @@ HTomb = (function(HTomb) {
         let name1 = HTomb.Things.templates[o[1][0]].name;
         // !!!gray it out if you don't have it...
         txt.push(alphabet[i] + ") " + o[0][1] + " " + name0 + " : " + o[1][1] + " " + name1 + ".");
+        // also gray it out if the building is full of tasks
       }
       txt.push(" ");
       txt.push("Awaiting:");
+      // gray these out if they haven't been fed yet
       for (let i=0; i<this.awaiting.length; i++) {
         let a = this.awaiting[i];
         let name = HTomb.Things.templates[a[0]].name;
@@ -1067,6 +1191,7 @@ HTomb = (function(HTomb) {
     template: "GuardPost",
     name: "guard post",
     defenseRange: 3,
+    rallying: false,
     highlight: function(bg) {
       Structure.highlight.call(this,bg);
       let z = this.z;
@@ -1075,6 +1200,24 @@ HTomb = (function(HTomb) {
           if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) <= 3) {
             HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)] = "#779944";
           }
+        }
+      }
+    },
+    commandsText: function() {
+      let txt = "a) ";
+      if (this.rallying===false) {
+        txt+="rally defenders here.";
+      } else {
+        txt+="dismiss rallied defenders.";
+      }
+      return [txt];
+    },
+    choiceCommand: function(i) {
+      if (i===0) {
+        if (this.rallying) {
+          this.rallying = false;
+        } else {
+          this.rallying = true;
         }
       }
     },
@@ -1091,12 +1234,7 @@ HTomb = (function(HTomb) {
       }
       Structure.unhighlight.call(this);
     },
-    structureText: function() {
-      let txt = Structure.structureText();
-      txt.splice(6,0,"(Warns of incoming attacks; defense bonus within radius.");
-      return txt;
-    },
-    tooltip: "(The guard post warns of incoming attacks and gives bonuses to defenders fighting near it.)",
+    tooltip: "(The guard post warns of incoming attacks and provides a rallying point for defenders.)",
     ingredients: [
       {},{},{},
       {},{Rock:1,WoodPlank:1},{},
