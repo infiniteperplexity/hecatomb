@@ -5,3 +5,9 @@
 - add visual cues for out-of-depth rock types
 - simplify workshop interface
 - change how dryad encounters work
+
+- entropy to sanity
+- more spells
+- condense ectoplasm
+- shadow step
+

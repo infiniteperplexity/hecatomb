@@ -705,6 +705,11 @@ HTomb = (function(HTomb) {
       let e = this.entity;
       let evade = (victim.defender) ? victim.defender.evasion - victim.defender.wounds.level : -10;
       let roll = HTomb.Utils.dice(1,20);
+      if (e.entity && e.entity.equipper
+            && e.entity.equipper.slots.MainHand
+            && e.entity.equipper.slots.MainHand.accuracy) {
+        roll += e.entity.equipper.slots.MainHand.accuracy;
+      }
       roll = this.checkTerrain(victim, roll);
       if (roll+this.accuracy >= 11 + evade) {
         (victim.defender) ? victim.defender.defend(this) : {};       
@@ -748,10 +753,24 @@ HTomb = (function(HTomb) {
       }
     },
     endure: function(roll, attack) {
-      let modifier = Damage.table[attack.damage.type][this.material];
-      let penetrate = Damage.table[attack.damage.type][this.armor.material];
+      let atype = attack.damage.type;
+      let alevel = attack.damage.level;
+
+      if (attack.entity && attack.entity.equipper
+            && attack.entity.equipper.slots.MainHand
+            && attack.entity.equipper.slots.MainHand.damage) {
+        let d = attack.entity.equipper.slots.MainHand;
+        if (d.type) {
+          atype = d.type;
+        }
+        if (d.level) {
+          alevel = d.level;
+        }
+      }
+      let modifier = Damage.table[atype][this.material];
+      let penetrate = Damage.table[atype][this.armor.material];
       let total = roll;
-      total += attack.damage.level;
+      total += alevel;
       total += modifier;
       total += this.wounds.level;
       if (attack.entity.defender) {
@@ -765,11 +784,11 @@ HTomb = (function(HTomb) {
       let z = this.entity.z;
       let attacker = attack.entity.describe({capitalized: true, article: "indefinite"});
       let defender = this.entity.describe({article: "indefinite"});
-      let type = HTomb.Types.templates[attack.damage.type].name;
+      let type = HTomb.Types.templates[atype].name;
       if (total>=20) {
         HTomb.GUI.sensoryEvent(attacker + " deals critical " + type + " damage to " + defender + ".",x,y,z,"red");
         this.wounds.level = 8;
-        this.wounds.type = attack.damage.type;
+        this.wounds.type = atype;
       } else if (total>=17) {
         HTomb.GUI.sensoryEvent(attacker + " deals severe " + type + " damage to " + defender + ".",x,y,z,"#FFBB00");
         if (this.wounds.level<6) {
@@ -777,31 +796,31 @@ HTomb = (function(HTomb) {
         } else {
           this.wounds.level = 8;
         }
-        this.wounds.type = attack.damage.type;
+        this.wounds.type = atype;
       } else if (total>=14) {
         HTomb.GUI.sensoryEvent(attacker + " deals " + type + " damage to " + defender + ".",x,y,z,"orange");
         if (this.wounds.level<4) {
           this.wounds.level = 4;
-          this.wounds.type = attack.damage.type;
+          this.wounds.type = atype;
         } else if (this.wounds.level===4) {
           this.wounds.level+=2;
-          this.wounds.type = attack.damage.type;
+          this.wounds.type = atype;
         } else {
           this.wounds.level+=2;
-          if (!attack.damage.type) {
-            this.wounds.type = attack.damage.type;
+          if (!type) {
+            this.wounds.type = atype;
           }
         }
       } else if (total>=8) {
         HTomb.GUI.sensoryEvent(attacker + " deals mild " + type + " damage to " + defender + ".",x,y,z,"#FFBB00");
         if (this.wounds.level<2) {
           this.wounds.level = 2;
-          this.wounds.type = attack.damage.type;
+          this.wounds.type = atype;
         // cannot die of a mild wound
         } else if (this.wounds.level<7) {
           this.wounds.level+=1;
-          if (!attack.damage.type) {
-            this.wounds.type = attack.damage.type;
+          if (!atype) {
+            this.wounds.type = atype;
           }
         }
       } else {

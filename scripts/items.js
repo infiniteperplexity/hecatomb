@@ -71,7 +71,16 @@ HTomb = (function(HTomb) {
     symbol: "\u262D",
     fg: "#BBAA88",
     ingredients: {"WoodPlank": 1, "Rock": 1},
-    Behaviors: {Equipment: {slot: "MainHand", labor: 2}}
+    Behaviors: {Equipment: 
+      {
+        slot: "MainHand",
+        labor: 2,
+        accuracy: 0,
+        damage: {
+          type: "Slashing",
+          level: 1
+        }
+      }}
   });
 
 

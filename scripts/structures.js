@@ -187,7 +187,7 @@ HTomb = (function(HTomb) {
       if (this.makes.length<=i) {
         return;
       }
-      this.queue.splice(this.cursor+1,0,[this.makes[i],"finite",1]);
+      this.queue.splice(this.cursor+1,0,this.makes[i]);
       if (this.task===null) {
         this.nextGood();
       }
@@ -205,70 +205,6 @@ HTomb = (function(HTomb) {
       this.cursor+=1;
       if (this.cursor>this.queue.length-1) {
         this.cursor = -1;
-      }
-    },
-    rightCommand: function() {
-      let i = this.cursor;
-      if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite") {
-        this.queue[i][1]=1;
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1]) {
-        this.queue[i][1]="infinite";
-      } else if (this.queue[i][1]==="infinite") {
-        this.queue[i][1] = "finite";
-      }
-    },
-    leftCommand: function() {
-      let i = this.cursor;
-      if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite") {
-        this.queue[i][1]="infinite";
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1]) {
-        this.queue[i][1] = "finite";
-      } else if (this.queue[i][1]==="infinite") {
-        this.queue[i][1]=1;
-      }
-    },
-    moreCommand: function() {
-      let i = this.cursor;
-      if (i===-1 && this.task) {
-        if (this.queue[0] && this.queue[0][0]===this.task.makes) {
-          if (this.queue[0][1]!=="infinite") {
-            this.queue[0][2]+=1;
-          }
-        } else {
-          this.queue.splice(this.cursor+1,0,[this.task.makes,"finite",1]);
-        }
-        return;
-      } else if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite") {
-        this.queue[i][2]+=1;
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1]) {
-        this.queue[i][1]+=1;
-        this.queue[i][2]+=1;
-      }
-    },
-    lessCommand: function() {
-      let i = this.cursor;
-      if (i===-1 && this.task) {
-        this.cancelCommand();
-        return;
-      } else if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite" && this.queue[i][2]>1) {
-        this.queue[i][2]-=1;
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1] && this.queue[i][1]>1) {
-        this.queue[i][1]-=1;
-        if (this.queue[i][2]>this.queue[i][1]) {
-          this.queue[i][2] = this.queue[i][1];
-        }
       }
     },
     cancelCommand: function() {
@@ -298,7 +234,7 @@ HTomb = (function(HTomb) {
         return;
       }
       // this is a good place to check for ingredients
-      let ings = HTomb.Utils.copy(HTomb.Things.templates[this.queue[0][0]].ingredients);
+      let ings = HTomb.Utils.copy(HTomb.Things.templates[this.queue[0]].ingredients);
       if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
         this.task = null;
         this.queue.push(this.queue.shift());
@@ -306,32 +242,16 @@ HTomb = (function(HTomb) {
       }
       let task = HTomb.Things.templates.ProduceTask.designateTile(this.entity.x,this.entity.y,this.entity.z,this.entity.owner);
       this.task = task;
-      task.makes = this.queue[0][0];
+      task.makes = this.queue[0];
       task.producer= this;
       HTomb.GUI.pushMessage("Next good is "+HTomb.Things.templates[task.makes].describe({article: "indefinite"}));
       task.name = "produce "+HTomb.Things.templates[task.makes].name;
       task.ingredients = ings;
-      if (this.queue[0][1]==="finite") {
-        this.queue[0][2]-=1;
-        if (this.queue[0][2]<=0) {
-          this.queue.shift();
-        }
-      } else if (this.queue[0][1]===parseInt(this.queue[0][1])) {
-        this.queue[0][2]-=1;
-        if (this.queue[0][2]<=0) {
-          this.queue[0][2] = this.queue[0][1];
-          this.queue.push(this.queue.shift());
-        }
-      } else if (this.queue[0][1]==="infinite") {
-        // do nothing
-        // except maybe check to see if there are enough materials???
-      }
+      this.queue.shift();
     },
     commandsText: function() {
       return [
         "Up/Down: Traverse queue.",
-        "Left/Right: Alter repeat.",
-        "[/]: Alter count.",
         "a-z: Insert good below the >.",
         "Backspace/Delete: Remove good."
       ];
@@ -371,14 +291,7 @@ HTomb = (function(HTomb) {
       }
       for (let i=0; i<this.queue.length; i++) {
         let item = this.queue[i];
-        let s = "- " + HTomb.Things.templates[item[0]].describe({article: "indefinite"}) + ": ";
-        if (item[1]==="finite") {
-          s+=(" (repeat " + item[2] + ")");
-        } else if (item[1]==="infinite") {
-          s+=" (repeat infinite)";
-        } else if (item[1]===parseInt(item[1])) {
-          s+=(" (cycle " + item[2] + ")");
-        }
+        let s = "- " + HTomb.Things.templates[item].describe({article: "indefinite"});
         txt.push(s);
       }
       if (this.queue.length>0 && this.cursor>-1) {
@@ -393,6 +306,7 @@ HTomb = (function(HTomb) {
       return txt;
     }
   });
+
 
   Task.extend({
     template: "ResearchTask",
