@@ -403,6 +403,15 @@ HTomb = (function(HTomb) {
     turns: 0,
     workRange: 1,
     fulfilled: false,
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
+        return true;
+      }
+      return true;
+    },
     canAssign: function(cr) {
       if (this.fulfilled) {
         return false;
@@ -471,6 +480,10 @@ HTomb = (function(HTomb) {
       if (i<this.choices.length) {
         let template = HTomb.Things.templates[this.choices[i]];
         let dflt = HTomb.Things.templates.Researchable;
+        let ings = dflt.ingredients || {};
+        if (template.Behaviors && template.Behaviors.Researchable && template.Behaviors.Researchable.ingredients) {
+          ings = template.Behaviors.Researchable.ingredients;
+        } 
         this.current = HTomb.Things.ResearchTask({
           assigner: this.entity.owner,
           name: "research " + template.name,
@@ -481,7 +494,8 @@ HTomb = (function(HTomb) {
                   && template.Behaviors.Researchable.time)
                   ? template.Behaviors.Researchable.time
                   : dflt.time,
-          fulfilled: (HTomb.Debug.noingredients || Object.keys(template.ingredients).length===0) ? true : false
+          ingredients: ings,
+          fulfilled: (HTomb.Debug.noingredients || Object.keys(ings).length===0) ? true : false
         });
         this.current.place(this.entity.x, this.entity.y, this.entity.z);
       }
@@ -515,10 +529,15 @@ HTomb = (function(HTomb) {
       let dtime = HTomb.Things.templates.Researchable.time;
       for (let i=0; i<choices.length; i++) {
         let choice = HTomb.Things.templates[choices[i]];
-        txt.push(alphabet[i] + ") " + choice.name + " ("
-          + ((choice.Behaviors && choice.Behaviors.Researchable
-          && choice.Behaviors.Researchable.time) ? choice.Behaviors.Researchable.time
-          : dtime) + " turns.)");
+        let ings = (choice.Behaviors
+          && choice.Behaviors.Researchable
+          && choice.Behaviors.Researchable.ingredients)
+          ? choice.Behaviors.Researchable.ingredients : {};
+        let msg = alphabet[i] + ") " + choice.name + " " + HTomb.Utils.listIngredients(ings);
+        if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
+          msg = "%c{gray}" + msg;
+        }
+        txt.push(msg);
       }
       txt.push(" ");
       txt.push("Researching:");
@@ -671,12 +690,6 @@ HTomb = (function(HTomb) {
     storage: null,
     workRange: 0,
     item: null,
-    canAssign: function(cr) {
-      let result = Task.canAssign.call(this, cr);
-      console.log("trying to assign");
-      console.log(result);
-      return result;
-    },
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -740,7 +753,7 @@ HTomb = (function(HTomb) {
     ],
     Behaviors: {
       Storage: {
-        stores: ["WoodPlank","Rock"]
+        stores: ["WoodPlank","Rock","TradeGoods"]
       },
       StructureLight: {}
     }
@@ -1055,6 +1068,15 @@ HTomb = (function(HTomb) {
     turns: 100,
     workRange: 0,
     bg: "#999922",
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
+        return true;
+      }
+      return true;
+    },
     begun: function() {
       return false;
     },
@@ -1083,6 +1105,34 @@ HTomb = (function(HTomb) {
     fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
     bg: "#555544",
     offers: [],
+    trades: [
+      {
+        price: {
+          Rock: 3
+        },
+        offer: {
+          TradeGoods: 1
+        }
+      },
+      {
+        price: {
+          WoodPlank: 3
+        },
+        offer: {
+          TradeGoods: 1
+        }
+      },
+      {
+        price: {
+          TradeGoods: 1
+        },
+        offer: {
+          WoodPlank: 1,
+          Rock: 1
+        },
+        turns: 50
+      }
+    ],
     task: null,
     awaiting: [],
     onPlace: function() {
@@ -1091,36 +1141,8 @@ HTomb = (function(HTomb) {
     onTurnBegin: function() {
       if (HTomb.Utils.dice(1,100)===1) {
         let MAXOFFERS = 4;
-        let trades = [
-          {
-            price: {
-              Rock: 3
-            },
-            offer: {
-              TradeGoods: 1
-            }
-          },
-          {
-            price: {
-              WoodPlank: 3
-            },
-            offer: {
-              TradeGoods: 1
-            }
-          },
-          {
-            price: {
-              TradeGoods: 1
-            },
-            offer: {
-              WoodPlank: 1,
-              Rock: 1
-            },
-            turns: 50
-          }
-        ];
-        trades = HTomb.Utils.shuffle(trades);
-        this.offers.unshift(trades[0]);
+        this.trades = HTomb.Utils.shuffle(this.trades);
+        this.offers.unshift(this.trades[0]);
         if (this.offers.length>MAXOFFERS) {
           this.offers.pop();
         }
@@ -1192,10 +1214,11 @@ HTomb = (function(HTomb) {
       let alphabet = 'abcdefghijklmnopqrstuvwxyz';
       for (let i=0; i<this.offers.length; i++) {
         let o = this.offers[i];
-        txt.push(alphabet[i] + ") " + HTomb.Utils.listIngredients(o.price) + " : " + HTomb.Utils.listIngredients(o.offer));
+        let s = alphabet[i] + ") " + HTomb.Utils.listIngredients(o.price) + " : " + HTomb.Utils.listIngredients(o.offer);
         if (this.owner.master.ownsAllIngredients(o.price)!==true) {
-          txt = "%c{gray}" + txt;
+          s = "%c{gray}" + s;
         }
+        txt.push(s);
       }
       txt.push(" ");
       txt.push("Gathering:");
@@ -1224,9 +1247,9 @@ HTomb = (function(HTomb) {
       {WoodPlank: 1}, {}, {Rock: 1}
     ],
     Behaviors: {
-      Storage: {
-        stores: ["TradeGoods"]
-      },
+      //Storage: {
+      //  stores: ["TradeGoods"]
+      //},
       StructureLight: {}
     }
   });

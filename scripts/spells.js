@@ -103,7 +103,7 @@ HTomb = (function(HTomb) {
     name: "pound of flesh",
     Behaviors: {
       Researchable: {
-        ingredients: {}
+        ingredients: {Rock: 1, WoodPlank: 1}
         //ingredients: {Flesh: 1, Bone: 1}
       }
     },

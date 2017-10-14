@@ -61,7 +61,6 @@ HTomb = (function(HTomb) {
         claimedItems: (task) ? task.claimedItems : false
       })===false) {
         if (task) {
-          console.log("fetch failed?");
           task.onFetchFail();
         }
         return;
@@ -69,16 +68,12 @@ HTomb = (function(HTomb) {
       let inventory = cr.inventory.items.asIngredients();
       // check whether the target is a needed ingredient
       if (cr.ai.target) {
-        console.log("already targetting" + cr.ai.target.describe());
-        console.log(cr.ai.target);
         // if not, change targets
         let t = cr.ai.target.template;
         if (!ingredients[t] || inventory[t]>=ingredients[t]) {
-          console.log("target wasn't an ingredient");
           cr.ai.target = null;
         // if the item has been picked up or destroyed, change targets
         } else if (cr.ai.target.isPlaced()!==true) {
-          console.log("target wasn't placed");
           if (claims && task) {
             task.unclaim(cr.ai.target);
           }
@@ -86,7 +81,6 @@ HTomb = (function(HTomb) {
         } else if (claims && task) {
           // edge case, reclaim if item was targetted by some other task or method
           if (task.hasClaimed(cr.ai.target)===false) {
-            console.log("hadn't claimed it yet.")
             let item = cr.ai.target;
             let n = ingredients[cr.ai.target.template];
             if (n<=item.n-item.claimed) {
@@ -100,7 +94,6 @@ HTomb = (function(HTomb) {
       }
       // choosing targets is easier with claims and tasks
       if (cr.ai.target===null && claims && task) {
-        console.log("trying to target a claimed ingredient");
         let items = task.claimedItems.filter(function(e,i,a) {
           // if it is still needed and is reachable
           if (e[0].isPlaced()
@@ -120,17 +113,12 @@ HTomb = (function(HTomb) {
           return e[0];
         });
         items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
-        console.log("there are " + items.length + " items to choose from.");
-        console.log(items);
         if (items.length>0) {
           cr.ai.target = items[0];
-          console.log(items[0].describe() + " was closest");
-          console.log(items[0]);
         }
       }
       // slightly harder otherwise, or if the claimed item was moved
       if (cr.ai.target===null) {
-        console.log("trying to claim a new item instead");
         let items = [];
         for (let crd in HTomb.World.items) {
           let pile = HTomb.World.items[crd];
@@ -151,18 +139,13 @@ HTomb = (function(HTomb) {
             }
           }
         }
-        console.log("there are " + items.length + " items to choose from.");
-        console.log(items);
         items = HTomb.Path.closest(cr.x,cr.y,cr.z,items);
         if (items.length>0) {
           cr.ai.target = items[0];
-          console.log(items[0].describe() + " was closest");
-          console.log(items[0]);
         }
         if (cr.ai.target && claims) {
           let item = cr.ai.target;
           let n = ingredients[item.template];
-          console.log("going to try to claim " + n + " from " + item.describe());
           if (n<=item.n-item.claimed) {
             if (task) {
               task.claim(item,n);
@@ -189,7 +172,6 @@ HTomb = (function(HTomb) {
       // if we are standing on it, pick up as many as we need / can
       if (cr.x===t.x && cr.y===t.y && cr.z===t.z) {
         let n = ingredients[t.template];
-        console.log("trying to pick up " + n + " from " + t.describe());
         if (inventory[t.template]) {
           n-=inventory[t.template];
         }
@@ -212,7 +194,6 @@ HTomb = (function(HTomb) {
         cr.ai.target = null;
       // otherwise walk toward it
       } else {
-        console.log("walking towards " + t.describe());
         cr.ai.walkToward(t.x,t.y,t.z, {
           searcher: cr,
           searchee: t,
@@ -311,7 +292,6 @@ HTomb = (function(HTomb) {
           // ...eventually we'll want to keep equipment and certain other items
           // For now just drop items if there is no task at all?
           if (!cr.worker.task || cr.worker.task.template==="PatrolTask") {
-            console.log("dropping an unneeded item");
             cr.inventory.drop(items[i]);
             ai.acted = true;
             break;

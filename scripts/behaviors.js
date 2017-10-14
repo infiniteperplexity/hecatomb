@@ -264,7 +264,6 @@ HTomb = (function(HTomb) {
       let master = this.entity.minion.master.master;
       let that = this;
       for (let ingredient in ingredients) {
-        console.log("looking for a " + ingredient);
         let items = master.ownedItems().filter(function(item) {
           if (item.template!==ingredient) {
             return false;
@@ -278,26 +277,8 @@ HTomb = (function(HTomb) {
             return false;
           }
         });
-        console.log("ignoring claims for the moment");
-        //temporarily ignore claims
-        //let n = 0;
-        //for (let i=0; i<items.length; i++) {
-        //  n += (items[i].n-items[i].claimed || 1-items[i].claimed);
-        //}
         for (let item of items) {
-          let n = item.n;
-          if (n<ingredients[ingredient]) {
-            console.log("an acceptable" + ingredient + " was not found.");
-            console.log(this.entity.describe() + "is carrying:");
-            console.log(this.items);
-            console.log(master.entity.describe() + " owns:");
-            console.log(master.ownedItems());
-            for (let i=0; i<items.length; i++) {
-              if (items[i].template===ingredient) {
-                console.log(items[i].describe() = " was found, but" + items[i].claimed + " of " + items[i].n + " were claimed so we couldn't use " + n);
-                console.log(items[i]);
-              }
-            } 
+          if (item.n<ingredients[ingredient]) {
           // if any ingredients are missing, do not assign
             return false;
           }
@@ -405,7 +386,9 @@ HTomb = (function(HTomb) {
         ProduceTask: 1,
         RepairTask: 1,
         HaulTask: 2,
-        PatrolTask: 3
+        PatrolTask: 3,
+        ResearchTask: 1,
+        TradeTask: 1
       };
       HTomb.Utils.shuffle(this.taskList);
       //count down dormant tasks

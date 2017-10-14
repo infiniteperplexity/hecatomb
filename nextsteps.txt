@@ -1,1 +1,7 @@
-having storage *and* trading on Black Market may lead to problems...
+- can't choice research you already have
+- make it so weapons do stuff
+- make it so tasks have their own priorities
+- refactor how the guard post rally works
+- add visual cues for out-of-depth rock types
+- simplify workshop interface
+- change how dryad encounters work
