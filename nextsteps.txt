@@ -1,9 +1,1 @@
-- do we need StructureLight on every structure???  I think I do, because of how Behavior merging works.
-- use mana to build structures?  energize structure spell?  ectoplasm?
-- unite various forms of hauling and claiming so we can handle market trading?
-- so...I *could* add HaulTasks as-is...or overhaul.
-
-- test combat near guardpost
-- add highlight to guard post
-- make research work only in center?
-- patrol around guardpost by default
+having storage *and* trading on Black Market may lead to problems...

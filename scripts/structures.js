@@ -421,6 +421,7 @@ HTomb = (function(HTomb) {
       if (this.begun()!==true) {
         this.expend();
         this.begin();
+        this.unassign();
       }
     },
     work: function() {
@@ -1050,6 +1051,8 @@ HTomb = (function(HTomb) {
     template: "TradeTask",
     name: "trade",
     structure: null,
+    offer: null,
+    turns: 100,
     workRange: 0,
     bg: "#999922",
     begun: function() {
@@ -1057,7 +1060,19 @@ HTomb = (function(HTomb) {
     },
     workOnTask: function() {
       this.expend();
-    } 
+      this.finish();
+      this.complete();
+    },
+    finish: function() {
+      if (this.structure) {
+        this.structure.awaiting.push({offer: this.offer, turns: this.turns});
+      }
+    },
+    onDespawn: function() {
+      if (this.structure && this.structure.task) {
+        this.structure.task = null;
+      }
+    }
   });
 
   Structure.extend({
@@ -1068,6 +1083,7 @@ HTomb = (function(HTomb) {
     fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
     bg: "#555544",
     offers: [],
+    task: null,
     awaiting: [],
     onPlace: function() {
       HTomb.Events.subscribe(this,"TurnBegin");
@@ -1076,8 +1092,32 @@ HTomb = (function(HTomb) {
       if (HTomb.Utils.dice(1,100)===1) {
         let MAXOFFERS = 4;
         let trades = [
-          [["Rock",3],["TradeGoods",1]],
-          [["WoodPlank",3],["TradeGoods",1]]
+          {
+            price: {
+              Rock: 3
+            },
+            offer: {
+              TradeGoods: 1
+            }
+          },
+          {
+            price: {
+              WoodPlank: 3
+            },
+            offer: {
+              TradeGoods: 1
+            }
+          },
+          {
+            price: {
+              TradeGoods: 1
+            },
+            offer: {
+              WoodPlank: 1,
+              Rock: 1
+            },
+            turns: 50
+          }
         ];
         trades = HTomb.Utils.shuffle(trades);
         this.offers.unshift(trades[0]);
@@ -1087,13 +1127,14 @@ HTomb = (function(HTomb) {
       }
       let i = 0;
       while (i<this.awaiting.length) {
-        // need to record whether these have been fed somehow
         let a = this.awaiting[i];
-        a[2]-=1;
-        if (a[2]<=0) {
-          let item = HTomb.Things[a[0]]({n: a[1]});
-          item.place(this.x,this.y,this.z);
-          this.awaiting.splice(i,1);
+        a.turns-=1;
+        if (a.turns<=0) {
+          for (let ing in a.offer) {
+            let item = HTomb.Things[ing]({n: a.offer[ing]});
+            item.place(this.x, this.y, this.z);
+            this.awaiting.splice(i,1);
+          }
         } else {
           i+=1;
         }
@@ -1101,13 +1142,31 @@ HTomb = (function(HTomb) {
     },
     choiceCommand: function(i) {
       if (this.offers.length>i) {
-        let o = this.offers[i];
-        //need to remove the traded items somehow
-        //this.awaiting.push([o[1][0],o[1][1],50]);
-        let ings = {};
-        ings[o[1][0]] = o[1][1];
-        HTomb.Things.TradeTask({assigner: this.owner, ingredients: ings});
-        this.offers.splice(i,1);
+        if (this.task===null || confirm("Really cancel unfulfilled trade?")) {
+          let o = this.offers[i];
+          let ings = o.price;
+          let task = HTomb.Things.TradeTask({
+            assigner: this.owner,
+            structure: this,
+            ingredients: ings,
+            offer: o.offer,
+            turns: (o.turns!==undefined) ? o.turns : HTomb.Things.templates.TradeTask.turns
+          });
+          if (this.task) {
+            this.task.cancel();
+          }
+          this.task = task;
+          task.place(this.x, this.y, this.z);
+          this.offers.splice(i,1);
+          if (HTomb.Debug.noingredients || Object.keys(ings).length===0) {
+            task.workOnTask();
+          }
+        }
+      }
+    },
+    cancelCommand: function() {
+      if (this.task && confirm("Really cancel unfulfilled trade?")) {
+        this.task.cancel();
       }
     },
     structureText: function() {
@@ -1133,19 +1192,21 @@ HTomb = (function(HTomb) {
       let alphabet = 'abcdefghijklmnopqrstuvwxyz';
       for (let i=0; i<this.offers.length; i++) {
         let o = this.offers[i];
-        let name0 = HTomb.Things.templates[o[0][0]].name;
-        let name1 = HTomb.Things.templates[o[1][0]].name;
-        // !!!gray it out if you don't have it...
-        txt.push(alphabet[i] + ") " + o[0][1] + " " + name0 + " : " + o[1][1] + " " + name1 + ".");
-        // also gray it out if the building is full of tasks
+        txt.push(alphabet[i] + ") " + HTomb.Utils.listIngredients(o.price) + " : " + HTomb.Utils.listIngredients(o.offer));
+        if (this.owner.master.ownsAllIngredients(o.price)!==true) {
+          txt = "%c{gray}" + txt;
+        }
+      }
+      txt.push(" ");
+      txt.push("Gathering:");
+      if (this.task) {
+        txt.push(HTomb.Utils.listIngredients(this.task.ingredients));
       }
       txt.push(" ");
       txt.push("Awaiting:");
-      // gray these out if they haven't been fed yet
       for (let i=0; i<this.awaiting.length; i++) {
         let a = this.awaiting[i];
-        let name = HTomb.Things.templates[a[0]].name;
-        txt.push("- " + a[1] + " " + name + ".");
+        txt.push("- " + HTomb.Utils.listIngredients(a.offer) + " (" + a.turns + " turns.)");
       }
       txt.push(" ");
       if (this.behaviors) {
