@@ -11,6 +11,7 @@ HTomb = (function(HTomb) {
     addMixin: function(mixin, args) {
       this[mixin.name] = Object.assign(HTomb.Mixins.templates[mixin], args);
       mixin.onAdd(this, args);
+      // should we track everything the mixin has been added to?
     },
     resetSpawnIds: function() {
       this.spawnIds = {};
@@ -58,14 +59,6 @@ HTomb = (function(HTomb) {
         this.onDespawn();
       }
     },
-    //get thingId () {
-      // Calculate thingId dynamically
-    //  return HTomb.World.things.indexOf(this);
-    //},
-    //set thingId (arg) {
-      // not allowed
-    //  HTomb.Debug.pushMessage("Not allowed to set thingId");
-    //},
     // Describe for an in-game message
     describe: function(options) {
       options = options || {};
@@ -176,12 +169,6 @@ HTomb = (function(HTomb) {
       return name;
     },
     // Describe for an in-game list
-    onList: function() {
-      return this.describe();
-    },
-    //details: function() {
-    //  return ["This is " + this.describe() + "."];
-    //},
     extend: function(args) {
       let child = Object.create(this);
       child = Object.assign(child, args);
@@ -206,10 +193,44 @@ HTomb = (function(HTomb) {
   // The global list of known templates
   HTomb.Things.Thing = thing;
 
-  thing.extend({
+  // Do these actually *do* anything?  Or just hang out as listeners?
+  HTomb.Trackers = {};
+  let Tracker = thing.extend({
     template: "Tracker",
-    name: "tracker"
+    name: "tracker",
+    listens: [],
+    spawn: function(args) {
+      let o = thing.spawn.call(this, args);
+      o.track();
+      for (type of o.listens) {
+        HTomb.Events.subscribe(o, type);
+      }
+      return o;
+    },
+    track: function() {
+      HTomb.Trackers[this.template] = this;
+    }
   });
+
+  Tracker.extend({
+    template: "AngryNatureTracker",
+    name: "angry nature tracker",
+    listens: ["Destroy"],
+    trees: 0,
+    shrubs: 0,
+    grass: 0,
+    onDestroy: function(event) {
+      let e = event.entity;
+      if (e.template==="Tree") {
+        this.trees+=1;
+      } else if (e.template==="Shrub") {
+        this.shrubs+=1;
+      } else if (e.tempalte==="Grass") {
+        this.grass+=1;
+      }
+    }
+  });
+
   
   let mixin = {
     template: "Mixin",
@@ -224,9 +245,12 @@ HTomb = (function(HTomb) {
       // ready the pluralized name
       child = Object.assign(child, args);
       child.parent = this.template;
+      HTomb.Mixins[child.template] = child;
       return child;
     }
   };
+
+  HTomb.Mixins = {Mixin: mixin};
 
 return HTomb;
 })(HTomb);
