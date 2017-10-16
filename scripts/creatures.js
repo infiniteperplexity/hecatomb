@@ -3,7 +3,7 @@ HTomb = (function(HTomb) {
   "use strict";
   let coord = HTomb.Utils.coord;
 
-  let Entity = HTomb.Things.templates.Entity;
+  let Entity = HTomb.Things.Entity;
   let Creature = Entity.extend({
     template: "Creature",
     name: "creature",
@@ -138,10 +138,10 @@ HTomb = (function(HTomb) {
     leavesCorpse: false,
     symbol: "z",
     fg: "#99FF66",
-    onCreate: function(args) {
+    onSpawn: function(args) {
       args = args || {};
       if (args.sourceCreature) {
-        let creature = HTomb.Things.templates[args.sourceCreature];
+        let creature = HTomb.Things[args.sourceCreature];
         this.name = creature.name + " " + this.name;
       }
       return this;
@@ -194,7 +194,7 @@ HTomb = (function(HTomb) {
       if (HTomb.Time.dailyCycle.hour>=HTomb.Constants.DAWN || HTomb.Time.dailyCycle.hour<=HTomb.Constants.DUSK) {
         return;
       }
-      if (HTomb.Utils.dice(1,120)===1 && HTomb.Types.templates.Team.teams.GhoulTeam.members.length<10) {
+      if (HTomb.Utils.dice(1,120)===1 && HTomb.Types.Team.teams.GhoulTeam.members.length<10) {
         let graves = HTomb.Utils.where(HTomb.World.features,function(e) {
           if (e.template==="Tombstone") {
             let x = e.x;
@@ -287,7 +287,7 @@ HTomb = (function(HTomb) {
       HTomb.Events.subscribe(this, "TurnBegin");
     },
     onTurnBegin: function() {
-      if (HTomb.Utils.dice(1,180)===1 && HTomb.Types.templates.Team.teams.HungryPredatorTeam.members.length<10) {
+      if (HTomb.Utils.dice(1,180)===1 && HTomb.Types.Team.teams.HungryPredatorTeam.members.length<10) {
         let fishes = HTomb.Utils.where(HTomb.World.creatures, function(e) {
           let x = e.x;
           let y = e.y;

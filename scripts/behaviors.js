@@ -6,7 +6,7 @@ HTomb = (function(HTomb) {
   var NLEVELS = HTomb.Constants.NLEVELS;
   var coord = HTomb.Utils.coord;
 
-  let Behavior = HTomb.Things.templates.Behavior;
+  let Behavior = HTomb.Things.Behavior;
 
   Behavior.extend({
     template: "Player",
@@ -51,7 +51,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  let player = HTomb.Things.templates.Player;
+  let player = HTomb.Things.Player;
   let delegate = null;
   Object.defineProperty(player,"delegate", {
     get: function() {
@@ -174,8 +174,13 @@ HTomb = (function(HTomb) {
     template: "Inventory",
     name: "inventory",
     capacity: 10,
-    onAdd: function() {
+    onSpawn: function() {
+      console.log("spawning....");
       this.items = HTomb.Things.Items(this);
+    },
+    onAdd: function() {
+      console.log("adding...");
+      console.log(this.items);
     },
     pickup: function(item) {
       var e = this.entity;
@@ -246,10 +251,14 @@ HTomb = (function(HTomb) {
       return this.items.asIngredients();
     },
     onDespawn: function() {
-      //should probably drop all the items, right?
-      for (let item of this.items) {
-        this.drop(item);
+      if (this.hasOwnProperty("entity")===false) {
+        console.log("this behavior never got added...");
+        console.log(this);
       }
+      //should probably drop all the items, right?
+      //for (let item of this.items) {
+      //  this.drop(item);
+      //}
     },
     // !!!not used anymore?
     canFindAll: function(ingredients) {
@@ -345,7 +354,7 @@ HTomb = (function(HTomb) {
     taskList: null,
     workshops: null,
     tasks: null,
-    onCreate: function(options) {
+    onSpawn: function(options) {
       options = options || {};
       this.tasks = options.tasks || [];
       this.minions = [];
@@ -466,7 +475,7 @@ HTomb = (function(HTomb) {
     listTasks: function() {
       var tasks = [];
       for (var i=0; i<this.tasks.length; i++) {
-        tasks.push(HTomb.Things.templates[this.tasks[i]]);
+        tasks.push(HTomb.Things[this.tasks[i]]);
       }
       return tasks;
     },
@@ -504,12 +513,12 @@ HTomb = (function(HTomb) {
     name: "caster",
     baseEntropy: 20,
     entropy: 20,
-    onCreate: function(options) {
+    onSpawn: function(options) {
       options = options || {};
       options.spells = options.spells || [];
       this.spells = [];
       for (let i=0; i<options.spells.length; i++) {
-        this.spells.push(HTomb.Things[options.spells[i]]({caster: this}));
+        this.spells.push(HTomb.Things[options.spells[i]].spawn({caster: this}));
         //this.spells[i].caster = this;
       }
       HTomb.Events.subscribe(this,"TurnBegin");
@@ -671,7 +680,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  let Damage = HTomb.Types.templates.Damage;
+  let Damage = HTomb.Types.Damage;
 
   Behavior.extend({
     template: "Attacker",
@@ -784,7 +793,7 @@ HTomb = (function(HTomb) {
       let z = this.entity.z;
       let attacker = attack.entity.describe({capitalized: true, article: "indefinite"});
       let defender = this.entity.describe({article: "indefinite"});
-      let type = HTomb.Types.templates[atype].name;
+      let type = HTomb.Types[atype].name;
       if (total>=20) {
         HTomb.GUI.sensoryEvent(attacker + " deals critical " + type + " damage to " + defender + ".",x,y,z,"red");
         this.wounds.level = 8;
@@ -873,7 +882,7 @@ HTomb = (function(HTomb) {
       MainHand: null,
       OffHand: null    
     },
-    onCreate: function(args) {
+    onSpawn: function(args) {
       this.items = HTomb.Things.Items(this);
       this.slots = HTomb.Utils.copy(this.slots);
       return this;

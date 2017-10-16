@@ -7,6 +7,11 @@ HTomb = (function(HTomb) {
     maxSpawnId: -1,
     spawnIds: {},
     spawnId: -1,
+    Mixins: {},
+    addMixin: function(mixin, args) {
+      this[mixin.name] = Object.assign(HTomb.Mixins.templates[mixin], args);
+      mixin.onAdd(this, args);
+    },
     resetSpawnIds: function() {
       this.spawnIds = {};
       this.maxSpawnId = -1;
@@ -17,18 +22,22 @@ HTomb = (function(HTomb) {
       }
     },
     acquireSpawnId: function() {
-      this.spawnId = HTomb.Things.templates.Thing.maxSpawnId+1;
-      HTomb.Things.templates.Thing.maxSpawnId = this.spawnId;
-      HTomb.Things.templates.Thing.spawnIds[this.spawnId] = this;
+      this.spawnId = HTomb.Things.Thing.maxSpawnId+1;
+      HTomb.Things.Thing.maxSpawnId = this.spawnId;
+      HTomb.Things.Thing.spawnIds[this.spawnId] = this;
     },
     spawn: function(args) {
+      let o = Object.create(this);
+      o = Object.assign(o, args);
+      // could instanteate all the arrays...good or bad idea?
       HTomb.Debug.logEvent("spawn",this);
       // Add to the global things table
       HTomb.World.things.push(this);
       this.acquireSpawnId();
-      if (this.onSpawn) {
-        this.onSpawn(args);
+      if (o.onSpawn) {
+        o.onSpawn(args);
       }
+      return o;
     },
     isSpawned: function() {
       if (HTomb.World.things.indexOf(this)===-1) {
@@ -181,28 +190,43 @@ HTomb = (function(HTomb) {
         this.children = [];
       }
       this.children.push(child);
-      HTomb.Things.templates[args.template] = child;
-      HTomb.Things[args.template] = function(args2) {
-        let o = Object.create(child);
-        // !!!should this be a deep merge instead of assign?
-        o = Object.assign(o, args2);
-        o.spawn();
-        if (o.onCreate) {
-          return o.onCreate(args2);
-        }
-        return o;
-      };
+      HTomb.Things[args.template] = child;
       //!!!I feel like this is bad news but let's keep it for now...
       //!!!it doesn't know how to climb the prototype chain
       if (child.onDefine) {
         child.onDefine(args);
       }
+      // add mixins to template
+      for (let mixin in child.Mixins) {
+        child.addMixin(mixin, child.Mixins[mixin]);
+      }
       return child;
     }
   };
   // The global list of known templates
-  HTomb.Things.templates = {Thing: thing};
+  HTomb.Things.Thing = thing;
 
-  // 
+  thing.extend({
+    template: "Tracker",
+    name: "tracker"
+  });
+  
+  let mixin = {
+    template: "Mixin",
+    name: "mixin",
+    onAdd: function(thing, args) {},
+    extend: function(args) {
+      if (args===undefined || args.template===undefined) {
+        HTomb.Debug.pushMessage("invalid template definition");
+        return;
+      }
+      let child = Object.create(this);
+      // ready the pluralized name
+      child = Object.assign(child, args);
+      child.parent = this.template;
+      return child;
+    }
+  };
+
 return HTomb;
 })(HTomb);

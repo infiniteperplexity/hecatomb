@@ -24,13 +24,13 @@ HTomb = (function(HTomb) {
   HTomb.World.covers = HTomb.Utils.grid3d();
 
   HTomb.World.reset = function() {
-    HTomb.Things.templates.Player.delegate = null;
+    HTomb.Things.Player.delegate = null;
     HTomb.Time.dailyCycle.reset();
     HTomb.Events.reset();
     HTomb.Achievements.reset();
     HTomb.Path.reset();
     HTomb.Tutorial.reset();
-    HTomb.Types.templates.Team.hostilityMatrix.reset();
+    HTomb.Types.Team.hostilityMatrix.reset();
     HTomb.World.validate.reset();
     while(HTomb.World.things.length>0) {
       HTomb.World.things.pop().despawn();  
@@ -98,7 +98,7 @@ HTomb = (function(HTomb) {
     trackNesting: 0
   };
   HTomb.World.validate.teams = function() {
-    let teams = HTomb.Types.templates.Team.types;
+    let teams = HTomb.Types.Team.types;
     let types = {};
     for (let i=0; i< teams.length; i++) {
       teams[i].members = [];
@@ -110,7 +110,7 @@ HTomb = (function(HTomb) {
         types[cr.ai.team].members.push(cr);
       }
     }
-    HTomb.Types.templates.Team.teams = types;
+    HTomb.Types.Team.teams = types;
   };
   HTomb.World.validate.reset = function() {
     this.dirty = {};

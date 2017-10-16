@@ -4,7 +4,7 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var coord = HTomb.Utils.coord;
 
-  let Entity = HTomb.Things.templates.Entity;
+  let Entity = HTomb.Things.Entity;
 
   let Task = Entity.extend({
     template: "Task",
@@ -56,9 +56,9 @@ HTomb = (function(HTomb) {
         Entity.remove.call(this);
     },
     spawn: function(args) {
-      Entity.spawn.call(this,args);
-      HTomb.Events.subscribe(this, "Destroy");
-      return this;
+      let o = Entity.spawn.call(this,args);
+      HTomb.Events.subscribe(o, "Destroy");
+      return o;
     },
     claim: function(item, n) {
       n = n || 1;
@@ -241,7 +241,7 @@ HTomb = (function(HTomb) {
     // wait what's the difference between designateTile and designateSquare?
     designateTile: function(x,y,z,assigner) {
       if (this.validTile(x,y,z)) {
-        let t = HTomb.Things[this.template]({assigner: assigner}).place(x,y,z);
+        let t = HTomb.Things[this.template].spawn({assigner: assigner}).place(x,y,z);
         HTomb.Events.publish({type: "Designate", task: this});
         //HTomb.Events.publish({type: "Designate", task: t.task});
         return t;
@@ -334,7 +334,7 @@ HTomb = (function(HTomb) {
       }
     },
     begin: function() {
-      let f = HTomb.Things.IncompleteFeature({makes: this.makes});
+      let f = HTomb.Things.IncompleteFeature.spawn({makes: this.makes});
       f.place(this.x,this.y,this.z);
     },
     work: function() {
@@ -547,7 +547,7 @@ HTomb = (function(HTomb) {
     },
     designateTile: function(x,y,z,assigner) {
       if (this.validTile(x,y,z) || HTomb.World.explored[z][x][y]!==true) {
-        let t = HTomb.Things[this.template]({assigner: assigner}).place(x,y,z);
+        let t = HTomb.Things[this.template].spawn({assigner: assigner}).place(x,y,z);
         HTomb.Events.publish({type: "Designate", task: this});
         return t;
       }
@@ -623,7 +623,7 @@ HTomb = (function(HTomb) {
       // Eventually this might get folded into mining...
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
       if (Math.random()<0.25) {
-        var rock = HTomb.Things.Rock();
+        var rock = HTomb.Things.Rock.spawn();
         rock.n = 1;
         if (tiles[z][x][y]===DownSlopeTile) {
           let item = rock.place(x,y,z-1);
@@ -701,7 +701,7 @@ HTomb = (function(HTomb) {
           return (t===HTomb.Tiles.UpSlopeTile || t===HTomb.Tiles.FloorTile);
         });
       }
-      HTomb.Things.templates.Task.designateSquares.call(this, squares, options);
+      HTomb.Things.Task.designateSquares.call(this, squares, options);
     },
     designate: function(assigner) {
       let menu = HTomb.GUI.Panels.menu;
@@ -801,7 +801,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  let Feature = HTomb.Things.templates.Feature;
+  let Feature = HTomb.Things.Feature;
 
 
   Feature.extend({
@@ -813,9 +813,9 @@ HTomb = (function(HTomb) {
     finished: false,
     labor: 5,
     effort: 0,
-    onCreate: function(args) {
+    onSpawn: function(args) {
       if (args.makes) {
-        let makes = HTomb.Things.templates[args.makes];
+        let makes = HTomb.Things[args.makes];
         this.makes = args.makes;
         this.labor = makes.labor || this.labor;
         this.effort = makes.effort || this.effort;
@@ -1007,7 +1007,7 @@ HTomb = (function(HTomb) {
     workOnTask: function(x,y,z) {
       var f = HTomb.World.features[coord(x,y,z)];
       if (f) {
-        if (f.integrity===HTomb.Things.templates[f.template].integrity) {
+        if (f.integrity===HTomb.Things[f.template].integrity) {
           HTomb.GUI.pushMessage(this.blurb());
         }
         f.dismantle(this);
@@ -1115,7 +1115,7 @@ HTomb = (function(HTomb) {
     designate: function(assigner) {
       var arr = [];
       for (var i=0; i<this.features.length; i++) {
-        arr.push(HTomb.Things.templates[this.features[i]]);
+        arr.push(HTomb.Things[this.features[i]]);
       }
       var that = this;
       HTomb.GUI.choosingMenu("Choose a fixture:", arr, function(feature) {
@@ -1127,7 +1127,7 @@ HTomb = (function(HTomb) {
               if (feature.ingredients && !HTomb.Debug.noingredients) {
                 task.ingredients = HTomb.Utils.clone(feature.ingredients);
               }
-              task.name = task.name + " " + HTomb.Things.templates[feature.template].name;
+              task.name = task.name + " " + HTomb.Things[feature.template].name;
             }
           }
           function myHover(x,y,z) {
@@ -1155,7 +1155,7 @@ HTomb = (function(HTomb) {
             for (let i=0; i<ings.length; i++) {
               g+=ings[i][1];
               g+=" ";
-              g+=HTomb.Things.templates[ings[i][0]].name;
+              g+=HTomb.Things[ings[i][0]].name;
               if (i<ings.length-1) {
                 g+=", ";
               } else {

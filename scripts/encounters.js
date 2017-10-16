@@ -6,7 +6,7 @@ HTomb = (function(HTomb) {
   var coord = HTomb.Utils.coord;
 
 
-  let Entity = HTomb.Things.templates.Entity;
+  let Entity = HTomb.Things.Entity;
 
   let Encounter = Entity.extend({
     template: "Encounter",
@@ -153,7 +153,7 @@ HTomb = (function(HTomb) {
     onSpawn: function(args) {
       let r = HTomb.Utils.dice(1,4)+2;
       for (let i=0; i<r; i++) {
-        this.addCreature(HTomb.Things.Peasant());
+        this.addCreature(HTomb.Things.Peasant.spawn());
       }
       HTomb.Debug.peasants = this.creatures;
     },
@@ -196,7 +196,7 @@ HTomb = (function(HTomb) {
     },
     onSpawn: function() {
       // should add multiple dryads
-      this.addCreature(HTomb.Things.Dryad());
+      this.addCreature(HTomb.Things.Dryad.spawn());
     },
     onPlace: function(x,y,z,args) {
       let dryad = this.creatures[0];
@@ -223,17 +223,3 @@ HTomb = (function(HTomb) {
 
   return HTomb;
 })(HTomb);
-
-
-
-
-
-/*
-function f() {
-  HTomb.Debug.visible = true;
-  HTomb.Debug.explored = true;
-  HTomb.Things.templates.PeasantMob.muster();
-  HTomb.GUI.reset();
-};
-f();
-*/

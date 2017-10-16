@@ -5,9 +5,11 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var coord = HTomb.Utils.coord;
 
-  let Behavior = HTomb.Things.templates.Behavior;
+  let Behavior = HTomb.Things.Behavior;
   
-  HTomb.Types.define({
+  let Type = HTomb.Types.Type;
+
+  let Routine = Type.extend({
     template: "Routine",
     name: "routine",
     act: function(ai, args) {
@@ -18,7 +20,7 @@ HTomb = (function(HTomb) {
   });
 
   // Fetch ingredients (not specific items)
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "FetchItems",
     name: "fetch items",
     act: function(ai, args) {
@@ -204,7 +206,7 @@ HTomb = (function(HTomb) {
   });
 
   //fetch a specific item
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "FetchItem",
     name: "fetch item",
     act: function(ai, args) {
@@ -262,7 +264,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "GuardPostRally",
     name: "guard post rally",
     act: function(ai) {
@@ -271,12 +273,13 @@ HTomb = (function(HTomb) {
       }
       let cr = ai.entity;
       let post;
+      ///!!!!! Why did I think this wasn't going to work again?
       
       
     }
   });
 
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "ServeMaster",
     name: "serve master",
     act: function(ai) {
@@ -327,7 +330,7 @@ HTomb = (function(HTomb) {
       }
     }
   });
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "WanderAimlessly",
     name: "wander aimlessly",
     act: function(ai) {
@@ -336,7 +339,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "CheckForHostile",
     name: "check for hostile",
     // This whole method is an awful mess.
@@ -351,11 +354,11 @@ HTomb = (function(HTomb) {
         if (ai.team===undefined) {
           console.log("what in the world???");
         }
-        let matrix = HTomb.Types.templates.Team.hostilityMatrix.matrix;
+        let matrix = HTomb.Types.Team.hostilityMatrix.matrix;
         let m = matrix[ai.entity.spawnId];
         let hostiles = [];
         let doors = [];
-        let ids = HTomb.Things.templates.Thing.spawnIds;
+        let ids = HTomb.Things.Thing.spawnIds;
         for (let n in m) {
           if (m[n]<=10) {
             hostiles.push(ids[n]);
@@ -449,7 +452,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "LongRangeRoam",
     name: "long range roam",
     act: function(ai) {
@@ -480,7 +483,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "HuntPlayer",
     name: "hunt player",
     act: function(ai) {
@@ -528,7 +531,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.defineRoutine({
+  Routine.extend({
     template: "HuntDeadThings",
     name: "hunt dead things",
     act: function(ai) {
@@ -572,12 +575,12 @@ HTomb = (function(HTomb) {
     isHostile: function(thing) {
       if (thing.ai===undefined || thing.ai.team===null || this.team===null) {
         return false;
-      } else if (HTomb.Types.templates[this.team].vendettas.indexOf(thing)!==-1) {
+      } else if (HTomb.Types[this.team].vendettas.indexOf(thing)!==-1) {
         return true;
-      } else if (HTomb.Types.templates[thing.ai.team].vendettas.indexOf(this.entity)!==-1) {
+      } else if (HTomb.Types[thing.ai.team].vendettas.indexOf(this.entity)!==-1) {
         return true;
       } else {
-        return HTomb.Types.templates[this.team].isHostile(thing.ai.team);
+        return HTomb.Types[this.team].isHostile(thing.ai.team);
       }
     },
     // We may want to save a path for the entity
@@ -595,7 +598,7 @@ HTomb = (function(HTomb) {
     },
     setTeam: function(team) {
       this.team = team;
-      let myTeam = HTomb.Types.templates.Team.teams[team];
+      let myTeam = HTomb.Types.Team.teams[team];
       if (myTeam===undefined) {
         console.log(team);
       }
@@ -604,7 +607,7 @@ HTomb = (function(HTomb) {
       }
     },
     onDespawn: function() {
-      let myTeam = HTomb.Types.templates.Team.teams[this.team];
+      let myTeam = HTomb.Types.Team.teams[this.team];
       if (myTeam.members.indexOf(this.entity)!==-1) {
         myTeam.members.splice(myTeam.members.indexOf(this.entity),1);
       }
@@ -759,7 +762,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.define({
+  let Team = Type.extend({
     template: "Team",
     name: "team",
     members: null,
@@ -776,7 +779,7 @@ HTomb = (function(HTomb) {
       },
       onTurnBegin: function() {
         let matrix = this.matrix = {};
-        let teams = HTomb.Types.templates.Team.teams
+        let teams = HTomb.Types.Team.teams
         let keys = Object.keys(teams);
         for (let i=0; i<keys.length; i++) {
           // handle team-wide vendettas against individuals
@@ -833,7 +836,7 @@ HTomb = (function(HTomb) {
       this.allies = this.allies || [];
       this.vendettas = this.vendettas || [];
       HTomb.Events.subscribe(this,"Destroy");
-      HTomb.Types.templates.Team.teams[this.template] = this;
+      HTomb.Types.Team.teams[this.template] = this;
     },
     onDestroy: function(event) {
       if (this.members.indexOf(event.entity)>-1) {
@@ -848,7 +851,7 @@ HTomb = (function(HTomb) {
         return false;
       }
       if (typeof(team)==="string") {
-        team = HTomb.Types.templates[team];
+        team = HTomb.Types[team];
       }
       if (this.berserk || team.berserk) {
         return true;
@@ -861,46 +864,46 @@ HTomb = (function(HTomb) {
       }
     }
   });
-  HTomb.Events.subscribe(HTomb.Types.templates.Team.hostilityMatrix,"TurnBegin");
+  HTomb.Events.subscribe(HTomb.Types.Team.hostilityMatrix,"TurnBegin");
 
 
   // the player and affiliated minions
-  HTomb.Types.defineTeam({
+  Team.extend({
     template: "PlayerTeam",
     name: "player"
   });
 
-  HTomb.Types.defineTeam({
+  Team.extend({
     template: "DefaultTeam",
     name: "default"
   });
 
   // non-aggressive animals
-  HTomb.Types.defineTeam({
+  Team.extend({
     template: "AnimalTeam",
     name: "animals"
   });
 
-  HTomb.Types.defineTeam({
+  Team.extend({
     template: "GhoulTeam",
     name: "ghouls",
     enemies: ["PlayerTeam"]
   });
 
-  HTomb.Types.defineTeam({
+  Team.extend({
     template: "HungryPredatorTeam",
     name: "predators",
     enemies: ["PlayerTeam"]
     //xenophobic: true
   });
 
-  HTomb.Types.defineTeam({
+  Team.extend({
     template: "AngryNatureTeam",
     name: "angryNature",
     enemies: ["PlayerTeam","GhoulTeam"]
   });
 
-  HTomb.Types.defineTeam({
+  Team.extend({
     template: "HumanityTeam",
     name: "humanity",
     enemies: ["PlayerTeam","GhoulTeam","AngryNatureTeam"]

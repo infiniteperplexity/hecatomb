@@ -2,7 +2,7 @@ HTomb = (function(HTomb) {
   "use strict";
   var coord = HTomb.Utils.coord;
 
-  let Entity = HTomb.Things.templates.Entity;
+  let Entity = HTomb.Things.Entity;
 
   let Spell = Entity.extend({
     template: "Spell",
@@ -15,7 +15,7 @@ HTomb = (function(HTomb) {
     },
   });
 
-  HTomb.Things.templates.Behavior.extend({
+  HTomb.Things.Behavior.extend({
     template: "Researchable",
     name: "researchable",
     //time: 480,
@@ -26,14 +26,14 @@ HTomb = (function(HTomb) {
 
   HTomb.Debug.testParticles = function(args, modifiers) {
     for (let arg in args) {
-      HTomb.Things.templates.ParticleTest.args[arg] = args[arg];
+      HTomb.Things.ParticleTest.args[arg] = args[arg];
     }
     for (let arg in modifiers) {
-      HTomb.Things.templates.ParticleTest.args[arg] = modifiers[arg];
+      HTomb.Things.ParticleTest.args[arg] = modifiers[arg];
     }
   };
   HTomb.Debug.resetParticles = function() {
-    HTomb.Things.templates.ParticleTest.args = {};
+    HTomb.Things.ParticleTest.args = {};
   }
   Spell.extend({
     template: "ParticleTest",
@@ -212,12 +212,12 @@ HTomb = (function(HTomb) {
             that.spendEntropy();
             corpse.despawn();
             if (sourceCreature) {
-              zombie = HTomb.Things.Zombie({sourceCreature: sourceCreature});
+              zombie = HTomb.Things.Zombie.spawn({sourceCreature: sourceCreature});
             } else {
-              zombie = HTomb.Things.Zombie();
+              zombie = HTomb.Things.Zombie.spawn();
             }
             zombie.place(x,y,z);
-            HTomb.Things.Minion().addToEntity(zombie);
+            HTomb.Things.Minion.spawn().addToEntity(zombie);
             caster.entity.master.addMinion(zombie);
             zombie.ai.acted = true;
             zombie.ai.actionPoints-=16;
@@ -237,14 +237,14 @@ HTomb = (function(HTomb) {
               HTomb.World.tiles[z-1][x][y]=HTomb.Tiles.UpSlopeTile;
             }
             if (sourceCreature) {
-              zombie = HTomb.Things.Zombie({sourceCreature: sourceCreature});
+              zombie = HTomb.Things.Zombie.spawn({sourceCreature: sourceCreature});
             } else {
-              zombie = HTomb.Things.Zombie();
+              zombie = HTomb.Things.Zombie.spawn();
             }
             zombie.place(x,y,z-1);
-            HTomb.Things.Minion().addToEntity(zombie);
+            HTomb.Things.Minion.spawn().addToEntity(zombie);
             caster.entity.master.addMinion(zombie);
-            let task = HTomb.Things.ZombieEmergeTask({assigner: caster.entity}).place(x,y,z);
+            let task = HTomb.Things.ZombieEmergeTask.spawn({assigner: caster.entity}).place(x,y,z);
             task.assignTo(zombie);
             zombie.ai.acted = true;
             zombie.ai.actionPoints-=16;
@@ -286,7 +286,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.templates.Task.extend({
+  HTomb.Things.Task.extend({
   //HTomb.Things.defineTask({
     template: "ZombieEmergeTask",
     name: "emerge",

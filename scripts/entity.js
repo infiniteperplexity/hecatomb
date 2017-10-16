@@ -3,7 +3,7 @@ HTomb = (function(HTomb) {
   var coord = HTomb.Utils.coord;
   
 
-  let Thing = HTomb.Things.templates.Thing;
+  let Thing = HTomb.Things.Thing;
   // Define a generic entity that occupies a tile space
   let Entity = Thing.extend({
     template: "Entity",
@@ -76,33 +76,35 @@ HTomb = (function(HTomb) {
       Thing.despawn.call(this);
     },
     spawn: function(args) {
-      Thing.spawn.call(this,args);
+      args = args || {};
+      let o = Thing.spawn.call(this,args);
 
-      for (let b in this.Behaviors) {
+      for (let b in o.Behaviors) {
         if (!HTomb.Things[b]) {
           console.log(b);
         }
-        let beh = HTomb.Things[b](HTomb.Utils.merge(HTomb.Things.templates[b], this.Behaviors[b]));
-        beh.addToEntity(this);
+        let beh = HTomb.Things[b].spawn(HTomb.Utils.merge(HTomb.Things[b], o.Behaviors[b]));
+        beh.addToEntity(o);
       }
+      // !!!Should randomize be a mixin?
       // Randomly choose symbol if necessary
       if (Array.isArray(this.symbol)) {
-        this.symbol = this.symbol[Math.floor(Math.random()*this.symbol.length)];
+        o.symbol = o.symbol[Math.floor(Math.random()*o.symbol.length)];
       }
       // Randomly choose  color if necessary
-      if (Array.isArray(this.fg)) {
-        this.fg = this.fg[Math.floor(Math.random()*this.fg.length)];
+      if (Array.isArray(o.fg)) {
+        o.fg = o.fg[Math.floor(Math.random()*o.fg.length)];
       }
       // Randomly perturb color, if necessary
-      if (this.randomColor>0 && this.fg) {
-        if (this.fg) {
-          var c = ROT.Color.fromString(this.fg);
-          c = ROT.Color.randomize(c,[this.randomColor, this.randomColor, this.randomColor]);
+      if (o.randomColor>0 && o.fg) {
+        if (o.fg) {
+          var c = ROT.Color.fromString(o.fg);
+          c = ROT.Color.randomize(c,[o.randomColor, o.randomColor, o.randomColor]);
           c = ROT.Color.toHex(c);
-          this.fg = c;
+          o.fg = c;
         }
       }
-      return this;
+      return o;
     },
     highlight: function(bg) {
       this.highlightColor = bg;
@@ -310,8 +312,8 @@ HTomb = (function(HTomb) {
         item.template = args.template+"Item";
         item.tags = ["Fixtures"];
         delete item.Behaviors;
-        HTomb.Things.templates.Item.extend(item);
-        let template = HTomb.Things.templates[args.template];
+        HTomb.Things.Item.extend(item);
+        let template = HTomb.Things[args.template];
         // overwrite the item's ingredients
         template.ingredients = {};
         template.ingredients[args.template+"Item"] = 1;
