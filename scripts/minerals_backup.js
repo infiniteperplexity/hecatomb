@@ -1,14 +1,14 @@
 HTomb = (function(HTomb) {
   "use strict";
 
-  let Item = HTomb.Things.Item;
+  let Item = HTomb.Things.templates.Item;
 
   let mineral = {
     mine: function(x,y,z,owner) {
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
       owner = owner || HTomb.Player;
-      let base = HTomb.Types[this.base];
-      let ore = HTomb.Things[base.item].spawn();
+      let base = HTomb.Types.templates[this.base];
+      let ore = HTomb.Things[base.item]();
       ore.place(x,y,z);
       if (owner) {
         ore.owned = true;
@@ -16,21 +16,21 @@ HTomb = (function(HTomb) {
     }
   };
 
-  let Mineral = HTomb.Types.Type.extend({
+  let Mineral = HTomb.Types.templates.Type.extend({
     template: "Mineral",
     name: "mineral",
     onDefine: function(args) {
       let symbol = args.symbol || "\u2234";
       this.cover = args.template+((args.metallic) ? "Vein" : "Cluster")
       this.item = args.template+((args.metallic) ? "Ore" : "");
-      HTomb.Types.Cover.extend({
+      HTomb.Types.templates.Cover.extend({
         template: this.cover,
         name: args.name+((args.metallic) ? " vein" : " cluster"),
         base: args.template,
         mine: function(x,y,z,owner) {
           HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
           owner = owner || HTomb.Player;
-          let base = HTomb.Types[this.base];
+          let base = HTomb.Types.templates[this.base];
           let ore = HTomb.Things[base.item]();
           ore.place(x,y,z);
           if (owner) {
@@ -98,7 +98,7 @@ HTomb = (function(HTomb) {
     fg: "green"
   });
 
-  let Cover = HTomb.Types.Cover;
+  let Cover = HTomb.Types.templates.Cover;
 
   Cover.extend({
     template: "Soil",

@@ -43,6 +43,7 @@ HTomb = (function(HTomb) {
     }
   }
   placement.resolve = function() {
+    /// !!! Should this despawn any extras?
     var crd, stack, d;
     for (crd in this.creatures) {
       if (HTomb.World.creatures[crd]) {
@@ -316,7 +317,7 @@ HTomb = (function(HTomb) {
           let x1 = x+dirs[j][0];
           let y1 = y+dirs[j][1];
           placed.push([x1,y1,z]);
-          placement.stack(HTomb.Things.Tombstone(),x1,y1,z);
+          placement.stack(HTomb.Things.Tombstone.spawn(),x1,y1,z);
           HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.Soil;
         }
       }
@@ -324,7 +325,7 @@ HTomb = (function(HTomb) {
       if (placed.length>0) {
         let r = HTomb.Utils.dice(1,placed.length)-1;
         let g = placed[r];
-        placement.stack(HTomb.Things.TradeGoods({n: 1}),g[0],g[1],g[2]-1);
+        placement.stack(HTomb.Things.TradeGoods.spawn({n: 1}),g[0],g[1],g[2]-1);
       }
     }
   }
@@ -457,11 +458,11 @@ HTomb = (function(HTomb) {
         var plant;
         if (t!==HTomb.Covers.NoCover && t.liquid) {
           if (Math.random()<0.5) {
-            plant = HTomb.Things.Seaweed();
+            plant = HTomb.Things.Seaweed.spawn();
             placement.stack(plant,x,y,z);
           }
         } else {
-          plant = HTomb.Things[template]();
+          plant = HTomb.Things[template].spawn();
           placement.stack(plant,x,y,z);
         }
       }
@@ -510,7 +511,7 @@ HTomb = (function(HTomb) {
           } else {
             template = HTomb.Utils.shuffle(landCritters)[0];
           }
-          var critter = HTomb.Things[template]();
+          var critter = HTomb.Things[template].spawn();
           placement.stack(critter,x,y,z);
         }
       }
@@ -578,8 +579,8 @@ HTomb = (function(HTomb) {
       if (f && f.template==="Tombstone") {
         continue;
       }
-      var p = HTomb.Things.Necromancer();
-      HTomb.Things.Player().addToEntity(p);
+      var p = HTomb.Things.Necromancer.spawn();
+      HTomb.Things.Player.spawn().addToEntity(p);
       p.place(x,y,z);
       if (p.sight) {
         HTomb.FOV.findVisible(p.x, p.y, p.z, p.sight.range);

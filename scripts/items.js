@@ -1,7 +1,7 @@
 HTomb = (function(HTomb) {
   "use strict";
 
-  let Item = HTomb.Things.templates.Item;
+  let Item = HTomb.Things.Item;
   
   Item.extend({
     template: "Rock",
@@ -19,7 +19,7 @@ HTomb = (function(HTomb) {
     fg: "brown",
     randomColor: 10,
     sourceCreature: null,
-    onCreate: function(args) {
+    onSpawn: function(args) {
       if (this.sourceCreature) {
         if (typeof(this.sourceCreature)==="string") {
           this.sourceCreature = HTomb.Things[this.sourceCreature]();
@@ -71,7 +71,16 @@ HTomb = (function(HTomb) {
     symbol: "\u262D",
     fg: "#BBAA88",
     ingredients: {"WoodPlank": 1, "Rock": 1},
-    Behaviors: {Equipment: {slot: "MainHand", labor: 2}}
+    Behaviors: {Equipment: 
+      {
+        slot: "MainHand",
+        labor: 2,
+        accuracy: 0,
+        damage: {
+          type: "Slashing",
+          level: 1
+        }
+      }}
   });
 
 

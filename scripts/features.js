@@ -5,9 +5,9 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var coord = HTomb.Utils.coord;
 
-  let Feature = HTomb.Things.templates.Feature;
-  let Behavior = HTomb.Things.templates.Behavior;
-  let Item = HTomb.Things.templates.Item;
+  let Feature = HTomb.Things.Feature;
+  let Behavior = HTomb.Things.Behavior;
+  let Item = HTomb.Things.Item;
 
   Feature.extend({
     template: "Tombstone",
@@ -17,7 +17,7 @@ HTomb = (function(HTomb) {
     randomColor: 5,
     onPlace: function(x,y,z) {
       // Bury a corpse beneath the tombstone
-      HTomb.Things.Corpse().place(x,y,z-1);
+      HTomb.Things.Corpse.spawn().place(x,y,z-1);
     },
     explode: function(args) {
       var x = this.x;
@@ -39,7 +39,7 @@ HTomb = (function(HTomb) {
             continue;
           }
           if (Math.random()<0.4) {
-            var rock = HTomb.Things.Rock();
+            var rock = HTomb.Things.Rock.spawn();
             rock.n = 1;
             rock.place(x1,y1,z);
             if (args) {
@@ -248,9 +248,10 @@ HTomb = (function(HTomb) {
       if (this.unsprungSymbol) {
         this.entity.symbol = this.unsprungSymbol;
       } else {
-        this.entity.symbol = HTomb.Things.templates[this.entity.template].symbol;
+        this.entity.symbol = HTomb.Things[this.entity.template].symbol;
       }
-      this.entity.name = HTomb.Things.templates[this.entity.template].name;
+      // This should be onDescribe I think
+      this.entity.name = HTomb.Things[this.entity.template].name;
     },
     spring: function(x,y,z) {
       this.sprung = true;
@@ -264,7 +265,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.define({
+  let Cover = HTomb.Types.Type.extend({
     template: "Cover",
     name: "cover",
     liquid: false,
@@ -310,12 +311,12 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.defineCover({
+  Cover.extend({
     template: "NoCover",
     name: "none"
   });
 
-  HTomb.Types.defineCover({
+  Cover.extend({
     template: "Water",
     name: "water",
     symbol: "~",
@@ -325,7 +326,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Constants.WATERBG || "#1144BB"
   });
 
-  HTomb.Types.defineCover({
+  Cover.extend({
     template: "Lava",
     name: "lava",
     symbol: "~",
@@ -335,7 +336,7 @@ HTomb = (function(HTomb) {
     bg: "#DD4411"
   });
 
-  HTomb.Types.defineCover({
+  Cover.extend({
     template: "Grass",
     name: "grass",
     symbol: '"',
@@ -376,7 +377,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.defineCover({
+  Cover.extend({
     template: "Road",
     name: "road",
     symbol: '\u25CB',
@@ -384,7 +385,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Constants.WALLBG
   });
 
-  HTomb.Types.defineCover({
+  Cover.extend({
     template: "Flooring",
     name: "flooring",
     symbol: '\u25CB',

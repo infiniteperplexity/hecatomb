@@ -4,9 +4,9 @@ HTomb = (function(HTomb) {
 
   // Might like to have animations
 
-  let Entity = HTomb.Things.templates.Entity;
-  let Task = HTomb.Things.templates.Task;
-  let Behavior = HTomb.Things.templates.Behavior;
+  let Entity = HTomb.Things.Entity;
+  let Task = HTomb.Things.Task;
+  let Behavior = HTomb.Things.Behavior;
 
   let Structure = Entity.extend({
     template: "Structure",
@@ -38,15 +38,15 @@ HTomb = (function(HTomb) {
         for (let i=0; i<w*h; i++) {
           ings.push({});
         }
-        HTomb.Things.templates[this.template].ingredients = ings;
+        HTomb.Things[this.template].ingredients = ings;
       }
-      HTomb.Things.templates.Feature.extend({template: args.template+"Feature", name: args.name, bg: args.bg});
+      HTomb.Things.Feature.extend({template: args.template+"Feature", name: args.name, bg: args.bg});
     },
     spawn: function(args) {
-      Entity.spawn.call(this,args);
-      this.features = [];
-      this.options = HTomb.Utils.copy(this.options);
-      return this;
+      let o = Entity.spawn.call(this,args);
+      o.features = [];
+      o.options = HTomb.Utils.copy(o.options);
+      return o;
     },
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
@@ -187,7 +187,7 @@ HTomb = (function(HTomb) {
       if (this.makes.length<=i) {
         return;
       }
-      this.queue.splice(this.cursor+1,0,[this.makes[i],"finite",1]);
+      this.queue.splice(this.cursor+1,0,this.makes[i]);
       if (this.task===null) {
         this.nextGood();
       }
@@ -205,70 +205,6 @@ HTomb = (function(HTomb) {
       this.cursor+=1;
       if (this.cursor>this.queue.length-1) {
         this.cursor = -1;
-      }
-    },
-    rightCommand: function() {
-      let i = this.cursor;
-      if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite") {
-        this.queue[i][1]=1;
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1]) {
-        this.queue[i][1]="infinite";
-      } else if (this.queue[i][1]==="infinite") {
-        this.queue[i][1] = "finite";
-      }
-    },
-    leftCommand: function() {
-      let i = this.cursor;
-      if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite") {
-        this.queue[i][1]="infinite";
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1]) {
-        this.queue[i][1] = "finite";
-      } else if (this.queue[i][1]==="infinite") {
-        this.queue[i][1]=1;
-      }
-    },
-    moreCommand: function() {
-      let i = this.cursor;
-      if (i===-1 && this.task) {
-        if (this.queue[0] && this.queue[0][0]===this.task.makes) {
-          if (this.queue[0][1]!=="infinite") {
-            this.queue[0][2]+=1;
-          }
-        } else {
-          this.queue.splice(this.cursor+1,0,[this.task.makes,"finite",1]);
-        }
-        return;
-      } else if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite") {
-        this.queue[i][2]+=1;
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1]) {
-        this.queue[i][1]+=1;
-        this.queue[i][2]+=1;
-      }
-    },
-    lessCommand: function() {
-      let i = this.cursor;
-      if (i===-1 && this.task) {
-        this.cancelCommand();
-        return;
-      } else if (i===-1 || this.queue.length===0) {
-        return;
-      }
-      if (this.queue[i][1]==="finite" && this.queue[i][2]>1) {
-        this.queue[i][2]-=1;
-      } else if (parseInt(this.queue[i][1])===this.queue[i][1] && this.queue[i][1]>1) {
-        this.queue[i][1]-=1;
-        if (this.queue[i][2]>this.queue[i][1]) {
-          this.queue[i][2] = this.queue[i][1];
-        }
       }
     },
     cancelCommand: function() {
@@ -298,40 +234,24 @@ HTomb = (function(HTomb) {
         return;
       }
       // this is a good place to check for ingredients
-      let ings = HTomb.Utils.copy(HTomb.Things.templates[this.queue[0][0]].ingredients);
+      let ings = HTomb.Utils.copy(HTomb.Things[this.queue[0]].ingredients);
       if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
         this.task = null;
         this.queue.push(this.queue.shift());
         return;
       }
-      let task = HTomb.Things.templates.ProduceTask.designateTile(this.entity.x,this.entity.y,this.entity.z,this.entity.owner);
+      let task = HTomb.Things.ProduceTask.designateTile(this.entity.x,this.entity.y,this.entity.z,this.entity.owner);
       this.task = task;
-      task.makes = this.queue[0][0];
+      task.makes = this.queue[0];
       task.producer= this;
-      HTomb.GUI.pushMessage("Next good is "+HTomb.Things.templates[task.makes].describe({article: "indefinite"}));
-      task.name = "produce "+HTomb.Things.templates[task.makes].name;
+      HTomb.GUI.pushMessage("Next good is "+HTomb.Things[task.makes].describe({article: "indefinite"}));
+      task.name = "produce "+HTomb.Things[task.makes].name;
       task.ingredients = ings;
-      if (this.queue[0][1]==="finite") {
-        this.queue[0][2]-=1;
-        if (this.queue[0][2]<=0) {
-          this.queue.shift();
-        }
-      } else if (this.queue[0][1]===parseInt(this.queue[0][1])) {
-        this.queue[0][2]-=1;
-        if (this.queue[0][2]<=0) {
-          this.queue[0][2] = this.queue[0][1];
-          this.queue.push(this.queue.shift());
-        }
-      } else if (this.queue[0][1]==="infinite") {
-        // do nothing
-        // except maybe check to see if there are enough materials???
-      }
+      this.queue.shift();
     },
     commandsText: function() {
       return [
         "Up/Down: Traverse queue.",
-        "Left/Right: Alter repeat.",
-        "[/]: Alter count.",
         "a-z: Insert good below the >.",
         "Backspace/Delete: Remove good."
       ];
@@ -343,7 +263,7 @@ HTomb = (function(HTomb) {
       let txt = ["Goods:"];
       let alphabet = 'abcdefghijklmnopqrstuvwxyz';
       for (let i=0; i<this.makes.length; i++) {
-        let t = HTomb.Things.templates[this.makes[i]];
+        let t = HTomb.Things[this.makes[i]];
         let g = t.describe({article: "indefinite"});
         let ings = (HTomb.Debug.noingredients) ? {} : t.ingredients;
         if (HTomb.Utils.notEmpty(ings)) {
@@ -359,7 +279,7 @@ HTomb = (function(HTomb) {
       txt.push("Production Queue:");
       let startQueue = txt.length;
       if (this.task) {
-        let s = "@ " + HTomb.Things.templates[this.task.makes].describe({article: "indefinite"});
+        let s = "@ " + HTomb.Things[this.task.makes].describe({article: "indefinite"});
         if (this.task.assignee) {
           s+=": (active: "+this.task.assignee.describe({article: "indefinite"})+")";
         } else {
@@ -371,14 +291,7 @@ HTomb = (function(HTomb) {
       }
       for (let i=0; i<this.queue.length; i++) {
         let item = this.queue[i];
-        let s = "- " + HTomb.Things.templates[item[0]].describe({article: "indefinite"}) + ": ";
-        if (item[1]==="finite") {
-          s+=(" (repeat " + item[2] + ")");
-        } else if (item[1]==="infinite") {
-          s+=" (repeat infinite)";
-        } else if (item[1]===parseInt(item[1])) {
-          s+=(" (cycle " + item[2] + ")");
-        }
+        let s = "- " + HTomb.Things[item].describe({article: "indefinite"});
         txt.push(s);
       }
       if (this.queue.length>0 && this.cursor>-1) {
@@ -394,6 +307,7 @@ HTomb = (function(HTomb) {
     }
   });
 
+
   Task.extend({
     template: "ResearchTask",
     name: "research",
@@ -403,6 +317,15 @@ HTomb = (function(HTomb) {
     turns: 0,
     workRange: 1,
     fulfilled: false,
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
+        return true;
+      }
+      return true;
+    },
     canAssign: function(cr) {
       if (this.fulfilled) {
         return false;
@@ -421,6 +344,7 @@ HTomb = (function(HTomb) {
       if (this.begun()!==true) {
         this.expend();
         this.begin();
+        this.unassign();
       }
     },
     work: function() {
@@ -437,7 +361,7 @@ HTomb = (function(HTomb) {
       this.fulfilled = true;
     },
     finish: function() {
-      let template = HTomb.Things.templates[this.researching];
+      let template = HTomb.Things[this.researching];
       if (template.parent==="Spell") {
         HTomb.GUI.alert("You have completed research on the spell '" + template.describe()+".'");
         let spells = this.assigner.caster.spells.map(function(s) {return s.template;});
@@ -468,8 +392,12 @@ HTomb = (function(HTomb) {
         }
       }
       if (i<this.choices.length) {
-        let template = HTomb.Things.templates[this.choices[i]];
-        let dflt = HTomb.Things.templates.Researchable;
+        let template = HTomb.Things[this.choices[i]];
+        let dflt = HTomb.Things.Researchable;
+        let ings = dflt.ingredients || {};
+        if (template.Behaviors && template.Behaviors.Researchable && template.Behaviors.Researchable.ingredients) {
+          ings = template.Behaviors.Researchable.ingredients;
+        } 
         this.current = HTomb.Things.ResearchTask({
           assigner: this.entity.owner,
           name: "research " + template.name,
@@ -480,7 +408,8 @@ HTomb = (function(HTomb) {
                   && template.Behaviors.Researchable.time)
                   ? template.Behaviors.Researchable.time
                   : dflt.time,
-          fulfilled: (HTomb.Debug.noingredients || Object.keys(template.ingredients).length===0) ? true : false
+          ingredients: ings,
+          fulfilled: (HTomb.Debug.noingredients || Object.keys(ings).length===0) ? true : false
         });
         this.current.place(this.entity.x, this.entity.y, this.entity.z);
       }
@@ -511,13 +440,18 @@ HTomb = (function(HTomb) {
       let txt = ["Research choices:"];
       let alphabet = "abcdefghijklmnopqrstuvwxyz";
       let choices = this.choices;
-      let dtime = HTomb.Things.templates.Researchable.time;
+      let dtime = HTomb.Things.Researchable.time;
       for (let i=0; i<choices.length; i++) {
-        let choice = HTomb.Things.templates[choices[i]];
-        txt.push(alphabet[i] + ") " + choice.name + " ("
-          + ((choice.Behaviors && choice.Behaviors.Researchable
-          && choice.Behaviors.Researchable.time) ? choice.Behaviors.Researchable.time
-          : dtime) + " turns.)");
+        let choice = HTomb.Things[choices[i]];
+        let ings = (choice.Behaviors
+          && choice.Behaviors.Researchable
+          && choice.Behaviors.Researchable.ingredients)
+          ? choice.Behaviors.Researchable.ingredients : {};
+        let msg = alphabet[i] + ") " + choice.name + " " + HTomb.Utils.listIngredients(ings);
+        if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
+          msg = "%c{gray}" + msg;
+        }
+        txt.push(msg);
       }
       txt.push(" ");
       txt.push("Researching:");
@@ -599,9 +533,9 @@ HTomb = (function(HTomb) {
         let n = totalItems[key];
         let line;
         if (n===1) {
-          line = HTomb.Things.templates[key].describe({article: "indefinite"});
+          line = HTomb.Things[key].describe({article: "indefinite"});
         } else {
-          line = n + " " + HTomb.Things.templates[key].describe({plural: "true"});
+          line = n + " " + HTomb.Things[key].describe({plural: "true"});
         }
         txt.push(line);
       }
@@ -670,12 +604,6 @@ HTomb = (function(HTomb) {
     storage: null,
     workRange: 0,
     item: null,
-    canAssign: function(cr) {
-      let result = Task.canAssign.call(this, cr);
-      console.log("trying to assign");
-      console.log(result);
-      return result;
-    },
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -739,7 +667,7 @@ HTomb = (function(HTomb) {
     ],
     Behaviors: {
       Storage: {
-        stores: ["WoodPlank","Rock"]
+        stores: ["WoodPlank","Rock","TradeGoods"]
       },
       StructureLight: {}
     }
@@ -792,7 +720,7 @@ HTomb = (function(HTomb) {
     begin: function() {
       this.expend();
       this.started = true;
-      this.labor = HTomb.Things.templates[this.makes].labor || this.labor;
+      this.labor = HTomb.Things[this.makes].labor || this.labor;
       HTomb.GUI.pushMessage(this.blurb());
     },
     workOnTask: function(x,y,z) {
@@ -817,7 +745,7 @@ HTomb = (function(HTomb) {
       item.owned = true;
       HTomb.Events.publish({type: "Complete", task: this});
       this.producer.occupied = null;
-      HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes making " + HTomb.Things.templates[this.makes].describe({article: "indefinite"}));
+      HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " finishes making " + HTomb.Things[this.makes].describe({article: "indefinite"}));
     },
     onDespawn: function() {
       this.producer.task = null;
@@ -851,7 +779,7 @@ HTomb = (function(HTomb) {
       var arr = [];
       for (var i=0; i<this.structures.length; i++) {
         //should be pushing the entity, not the structure?
-        arr.push(HTomb.Things.templates[this.structures[i]]);
+        arr.push(HTomb.Things[this.structures[i]]);
       }
       var that = this;
       HTomb.GUI.choosingMenu("Choose a structure:", arr, function(structure) {
@@ -1050,14 +978,37 @@ HTomb = (function(HTomb) {
     template: "TradeTask",
     name: "trade",
     structure: null,
+    offer: null,
+    turns: 100,
     workRange: 0,
     bg: "#999922",
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
+        return true;
+      }
+      return true;
+    },
     begun: function() {
       return false;
     },
     workOnTask: function() {
       this.expend();
-    } 
+      this.finish();
+      this.complete();
+    },
+    finish: function() {
+      if (this.structure) {
+        this.structure.awaiting.push({offer: this.offer, turns: this.turns});
+      }
+    },
+    onDespawn: function() {
+      if (this.structure && this.structure.task) {
+        this.structure.task = null;
+      }
+    }
   });
 
   Structure.extend({
@@ -1068,6 +1019,35 @@ HTomb = (function(HTomb) {
     fgs: ["#552222",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#888844","#888844","#225522","#333333","#222266"],
     bg: "#555544",
     offers: [],
+    trades: [
+      {
+        price: {
+          Rock: 3
+        },
+        offer: {
+          TradeGoods: 1
+        }
+      },
+      {
+        price: {
+          WoodPlank: 3
+        },
+        offer: {
+          TradeGoods: 1
+        }
+      },
+      {
+        price: {
+          TradeGoods: 1
+        },
+        offer: {
+          WoodPlank: 1,
+          Rock: 1
+        },
+        turns: 50
+      }
+    ],
+    task: null,
     awaiting: [],
     onPlace: function() {
       HTomb.Events.subscribe(this,"TurnBegin");
@@ -1075,25 +1055,22 @@ HTomb = (function(HTomb) {
     onTurnBegin: function() {
       if (HTomb.Utils.dice(1,100)===1) {
         let MAXOFFERS = 4;
-        let trades = [
-          [["Rock",3],["TradeGoods",1]],
-          [["WoodPlank",3],["TradeGoods",1]]
-        ];
-        trades = HTomb.Utils.shuffle(trades);
-        this.offers.unshift(trades[0]);
+        this.trades = HTomb.Utils.shuffle(this.trades);
+        this.offers.unshift(this.trades[0]);
         if (this.offers.length>MAXOFFERS) {
           this.offers.pop();
         }
       }
       let i = 0;
       while (i<this.awaiting.length) {
-        // need to record whether these have been fed somehow
         let a = this.awaiting[i];
-        a[2]-=1;
-        if (a[2]<=0) {
-          let item = HTomb.Things[a[0]]({n: a[1]});
-          item.place(this.x,this.y,this.z);
-          this.awaiting.splice(i,1);
+        a.turns-=1;
+        if (a.turns<=0) {
+          for (let ing in a.offer) {
+            let item = HTomb.Things[ing]({n: a.offer[ing]});
+            item.place(this.x, this.y, this.z);
+            this.awaiting.splice(i,1);
+          }
         } else {
           i+=1;
         }
@@ -1101,13 +1078,31 @@ HTomb = (function(HTomb) {
     },
     choiceCommand: function(i) {
       if (this.offers.length>i) {
-        let o = this.offers[i];
-        //need to remove the traded items somehow
-        //this.awaiting.push([o[1][0],o[1][1],50]);
-        let ings = {};
-        ings[o[1][0]] = o[1][1];
-        HTomb.Things.TradeTask({assigner: this.owner, ingredients: ings});
-        this.offers.splice(i,1);
+        if (this.task===null || confirm("Really cancel unfulfilled trade?")) {
+          let o = this.offers[i];
+          let ings = o.price;
+          let task = HTomb.Things.TradeTask({
+            assigner: this.owner,
+            structure: this,
+            ingredients: ings,
+            offer: o.offer,
+            turns: (o.turns!==undefined) ? o.turns : HTomb.Things.TradeTask.turns
+          });
+          if (this.task) {
+            this.task.cancel();
+          }
+          this.task = task;
+          task.place(this.x, this.y, this.z);
+          this.offers.splice(i,1);
+          if (HTomb.Debug.noingredients || Object.keys(ings).length===0) {
+            task.workOnTask();
+          }
+        }
+      }
+    },
+    cancelCommand: function() {
+      if (this.task && confirm("Really cancel unfulfilled trade?")) {
+        this.task.cancel();
       }
     },
     structureText: function() {
@@ -1133,19 +1128,22 @@ HTomb = (function(HTomb) {
       let alphabet = 'abcdefghijklmnopqrstuvwxyz';
       for (let i=0; i<this.offers.length; i++) {
         let o = this.offers[i];
-        let name0 = HTomb.Things.templates[o[0][0]].name;
-        let name1 = HTomb.Things.templates[o[1][0]].name;
-        // !!!gray it out if you don't have it...
-        txt.push(alphabet[i] + ") " + o[0][1] + " " + name0 + " : " + o[1][1] + " " + name1 + ".");
-        // also gray it out if the building is full of tasks
+        let s = alphabet[i] + ") " + HTomb.Utils.listIngredients(o.price) + " : " + HTomb.Utils.listIngredients(o.offer);
+        if (this.owner.master.ownsAllIngredients(o.price)!==true) {
+          s = "%c{gray}" + s;
+        }
+        txt.push(s);
+      }
+      txt.push(" ");
+      txt.push("Gathering:");
+      if (this.task) {
+        txt.push(HTomb.Utils.listIngredients(this.task.ingredients));
       }
       txt.push(" ");
       txt.push("Awaiting:");
-      // gray these out if they haven't been fed yet
       for (let i=0; i<this.awaiting.length; i++) {
         let a = this.awaiting[i];
-        let name = HTomb.Things.templates[a[0]].name;
-        txt.push("- " + a[1] + " " + name + ".");
+        txt.push("- " + HTomb.Utils.listIngredients(a.offer) + " (" + a.turns + " turns.)");
       }
       txt.push(" ");
       if (this.behaviors) {
@@ -1163,9 +1161,9 @@ HTomb = (function(HTomb) {
       {WoodPlank: 1}, {}, {Rock: 1}
     ],
     Behaviors: {
-      Storage: {
-        stores: ["TradeGoods"]
-      },
+      //Storage: {
+      //  stores: ["TradeGoods"]
+      //},
       StructureLight: {}
     }
   });

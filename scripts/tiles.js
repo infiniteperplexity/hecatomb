@@ -13,9 +13,8 @@ HTomb = (function(HTomb) {
   var TWOBELOWFG = HTomb.Constants.TWOBELOWFG;
   var coord = HTomb.Utils.coord;
 
-  var Tiles = HTomb.Tiles;
   // Define a generic tile
-  HTomb.Types.define({
+  let Tile = HTomb.Types.Type.extend({
     template: "Tile",
     name: "tile",
     symbol: " ",
@@ -28,7 +27,7 @@ HTomb = (function(HTomb) {
   });
 
   // Define specific types of tiles
-  HTomb.Types.defineTile({
+  Tile.extend({
     template: "VoidTile",
     name: "boundary",
     symbol: " ",
@@ -37,7 +36,7 @@ HTomb = (function(HTomb) {
     immutable: true
   });
 
-  HTomb.Types.defineTile({
+  Tile.extend({
     template: "EmptyTile",
     name: "empty",
     //symbol: "\u25CB",
@@ -57,7 +56,7 @@ HTomb = (function(HTomb) {
       }
     }
   });
-  HTomb.Types.defineTile({
+  Tile.extend({
     template: "FloorTile",
     name: "floor",
     symbol: ".",
@@ -71,7 +70,7 @@ HTomb = (function(HTomb) {
       }
     }
   });
-  HTomb.Types.defineTile({
+  Tile.extend({
     template: "WallTile",
     name: "wall",
     symbol: "#",
@@ -81,7 +80,7 @@ HTomb = (function(HTomb) {
     bg: WALLBG
   });
 
-  HTomb.Types.defineTile({
+  Tile.extend({
     template: "UpSlopeTile",
     name: "upward slope",
     symbol: "\u02C4",
@@ -91,7 +90,7 @@ HTomb = (function(HTomb) {
     bg: WALLBG
   });
 
-  HTomb.Types.defineTile({
+  Tile.extend({
     template: "DownSlopeTile",
     name: "downward slope",
     symbol: "\u02C5",
@@ -100,6 +99,8 @@ HTomb = (function(HTomb) {
     fg: BELOWFG,
     bg: BELOWBG
   });
+
+  let Tiles = HTomb.Tiles;
 
   Tiles.getSymbol = function(x,y,z) {
     var glyph = Tiles.getGlyph(x,y,z);

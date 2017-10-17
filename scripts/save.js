@@ -125,7 +125,7 @@ HTomb = (function(HTomb) {
         } else if (topLevel===true && val.template!==undefined) {
           topLevel = false;
           let dummy = {};
-          let template = HTomb.Things.templates[val.template];
+          let template = HTomb.Things[val.template];
           // "makes" is a tricky one, needs special treatment for now
           for (let p in val) {
             if (p==="template" || p==="makes" || val[p]!==template[p]) {
@@ -182,7 +182,7 @@ HTomb = (function(HTomb) {
         return items;
       } else if (val.Type!==undefined) {
         // should not require tracking swaps
-        return HTomb.Types.templates[val.Type];
+        return HTomb.Types[val.Type];
       } else if (val.tid!==undefined) {
         tids.push([this,key,val]);
         return {tid: val.tid};
@@ -242,7 +242,7 @@ HTomb = (function(HTomb) {
         return items;
       } else if (val.Type!==undefined) {
         // should not require tracking swaps
-        return HTomb.Types.templates[val.Type];
+        return HTomb.Types[val.Type];
       } else if (val.tid!==undefined) {
         tids.push([this,key,val]);
         return {tid: val.tid};
@@ -359,7 +359,8 @@ HTomb = (function(HTomb) {
 
   function restoreTiles(z1,z2) {
     return function(json) {
-      let levels = JSON.parse(json, HTomb.Types.parseTile);
+      let parser = HTomb.Types.Tile.parse.bind(HTomb.Types.Tile);
+      let levels = JSON.parse(json, parser);
       for (let i=0; i<=z2-z1; i++) {
         for (let x=0; x<LEVELW; x++) {
           for (let y=0; y<LEVELH; y++) {
@@ -372,7 +373,8 @@ HTomb = (function(HTomb) {
 
   function restoreCovers(z1,z2) {
     return function(json) {
-      let covers = JSON.parse(json, HTomb.Types.parseCover);
+      let parser = HTomb.Types.Tile.parse.bind(HTomb.Types.Cover);
+      let covers = JSON.parse(json, parser);
       for (let i=0; i<=z2-z1; i++) {
         for (let x=0; x<LEVELW; x++) {
           for (let y=0; y<LEVELH; y++) {
@@ -474,7 +476,7 @@ HTomb = (function(HTomb) {
     HTomb.Path.reset();
     HTomb.Tutorial.finish();
     HTomb.Tutorial.enabled = false;
-    HTomb.Types.templates.Team.hostilityMatrix.reset();
+    HTomb.Types.Team.hostilityMatrix.reset();
     HTomb.World.validate.reset();
     HTomb.World.validate.all();
     HTomb.FOV.resetVisible();

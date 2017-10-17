@@ -1,9 +1,13 @@
-- do we need StructureLight on every structure???  I think I do, because of how Behavior merging works.
-- use mana to build structures?  energize structure spell?  ectoplasm?
-- unite various forms of hauling and claiming so we can handle market trading?
-- so...I *could* add HaulTasks as-is...or overhaul.
+- can't choice research you already have
+- make it so weapons do stuff
+- make it so tasks have their own priorities
+- refactor how the guard post rally works
+- add visual cues for out-of-depth rock types
+- simplify workshop interface
+- change how dryad encounters work
 
-- test combat near guardpost
-- add highlight to guard post
-- make research work only in center?
-- patrol around guardpost by default
+- entropy to sanity
+- more spells
+- condense ectoplasm
+- shadow step
+

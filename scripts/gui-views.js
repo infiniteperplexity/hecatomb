@@ -731,7 +731,7 @@ HTomb = (function(HTomb) {
       let wounds = c.defender.wounds.level;
       let type = null;
       if (c.defender.wounds.type) {
-        type = HTomb.Types.templates[c.defender.wounds.type].name;
+        type = HTomb.Types[c.defender.wounds.type].name;
       }
       txt.push("Health: ");
       if (wounds===0) {

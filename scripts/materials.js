@@ -6,36 +6,42 @@ HTomb = (function(HTomb) {
   var coord = HTomb.Utils.coord;
 
   //***********Types of material
-  HTomb.Types.define({
+  let Type = HTomb.Types.Type;
+
+  let Material = Type.extend({
   	template: "Material",
   	name: "material"
   });
 
-  HTomb.Types.defineMaterial({
+  Material.extend({
   	template: "Flesh",
   	name: "flesh"
   });
 
-  HTomb.Types.defineMaterial({
+  Material.extend({
   	template: "Bone",
   	name: "bone"
   });
 
-  HTomb.Types.defineMaterial({
+  Material.extend({
     template: "Wood",
     name: "wood"
   });
 
 
   //******Types of damage
-  HTomb.Types.define({
+  let Damage = Type.extend({
   	template: "Damage",
     plural: "Damage",
   	name: "damage",
     table: {},
     onDefine: function() {
+      // don't fire for the parent
+      if (this.template==="Damage") {
+        return;
+      }
       this.table[this.template] = {};
-      var types = HTomb.Types.templates.Material.types;
+      var types = HTomb.Types.Material.types;
       for (var i=0; i<types.length; i++) {
         if (this[types[i].template]!==undefined) {
           this.table[this.template][types[i].template] = this[types[i].template];
@@ -46,7 +52,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Types.defineDamage({
+  Damage.extend({
   	template: "Slashing",
   	name: "slashing",
     hits: {
@@ -65,7 +71,7 @@ HTomb = (function(HTomb) {
     Wood: +1,
   });
 
-  HTomb.Types.defineDamage({
+  Damage.extend({
   	template: "Piercing",
   	name: "piercing",
     Bone: -1,
@@ -74,7 +80,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  HTomb.Types.defineDamage({
+  Damage.extend({
     template: "Crushing",
     name: "crushing",
     Bone: +1,
@@ -82,7 +88,7 @@ HTomb = (function(HTomb) {
     Wood: -1
   });
 
-  HTomb.Types.defineDamage({
+  Damage.extend({
     template: "Acid",
     name: "acid",
     Bone: +1,
@@ -90,7 +96,7 @@ HTomb = (function(HTomb) {
     Wood: +1
   });
 
-  HTomb.Types.defineDamage({
+  Damage.extend({
     template: "Wither",
     name: "wither",
     Bone: -1,

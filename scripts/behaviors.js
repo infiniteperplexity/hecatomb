@@ -6,7 +6,7 @@ HTomb = (function(HTomb) {
   var NLEVELS = HTomb.Constants.NLEVELS;
   var coord = HTomb.Utils.coord;
 
-  let Behavior = HTomb.Things.templates.Behavior;
+  let Behavior = HTomb.Things.Behavior;
 
   Behavior.extend({
     template: "Player",
@@ -51,7 +51,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  let player = HTomb.Things.templates.Player;
+  let player = HTomb.Things.Player;
   let delegate = null;
   Object.defineProperty(player,"delegate", {
     get: function() {
@@ -174,8 +174,13 @@ HTomb = (function(HTomb) {
     template: "Inventory",
     name: "inventory",
     capacity: 10,
-    onAdd: function() {
+    onSpawn: function() {
+      console.log("spawning....");
       this.items = HTomb.Things.Items(this);
+    },
+    onAdd: function() {
+      console.log("adding...");
+      console.log(this.items);
     },
     pickup: function(item) {
       var e = this.entity;
@@ -246,10 +251,14 @@ HTomb = (function(HTomb) {
       return this.items.asIngredients();
     },
     onDespawn: function() {
-      //should probably drop all the items, right?
-      for (let item of this.items) {
-        this.drop(item);
+      if (this.hasOwnProperty("entity")===false) {
+        console.log("this behavior never got added...");
+        console.log(this);
       }
+      //should probably drop all the items, right?
+      //for (let item of this.items) {
+      //  this.drop(item);
+      //}
     },
     // !!!not used anymore?
     canFindAll: function(ingredients) {
@@ -264,7 +273,6 @@ HTomb = (function(HTomb) {
       let master = this.entity.minion.master.master;
       let that = this;
       for (let ingredient in ingredients) {
-        console.log("looking for a " + ingredient);
         let items = master.ownedItems().filter(function(item) {
           if (item.template!==ingredient) {
             return false;
@@ -278,26 +286,8 @@ HTomb = (function(HTomb) {
             return false;
           }
         });
-        console.log("ignoring claims for the moment");
-        //temporarily ignore claims
-        //let n = 0;
-        //for (let i=0; i<items.length; i++) {
-        //  n += (items[i].n-items[i].claimed || 1-items[i].claimed);
-        //}
         for (let item of items) {
-          let n = item.n;
-          if (n<ingredients[ingredient]) {
-            console.log("an acceptable" + ingredient + " was not found.");
-            console.log(this.entity.describe() + "is carrying:");
-            console.log(this.items);
-            console.log(master.entity.describe() + " owns:");
-            console.log(master.ownedItems());
-            for (let i=0; i<items.length; i++) {
-              if (items[i].template===ingredient) {
-                console.log(items[i].describe() = " was found, but" + items[i].claimed + " of " + items[i].n + " were claimed so we couldn't use " + n);
-                console.log(items[i]);
-              }
-            } 
+          if (item.n<ingredients[ingredient]) {
           // if any ingredients are missing, do not assign
             return false;
           }
@@ -364,7 +354,7 @@ HTomb = (function(HTomb) {
     taskList: null,
     workshops: null,
     tasks: null,
-    onCreate: function(options) {
+    onSpawn: function(options) {
       options = options || {};
       this.tasks = options.tasks || [];
       this.minions = [];
@@ -405,7 +395,9 @@ HTomb = (function(HTomb) {
         ProduceTask: 1,
         RepairTask: 1,
         HaulTask: 2,
-        PatrolTask: 3
+        PatrolTask: 3,
+        ResearchTask: 1,
+        TradeTask: 1
       };
       HTomb.Utils.shuffle(this.taskList);
       //count down dormant tasks
@@ -483,7 +475,7 @@ HTomb = (function(HTomb) {
     listTasks: function() {
       var tasks = [];
       for (var i=0; i<this.tasks.length; i++) {
-        tasks.push(HTomb.Things.templates[this.tasks[i]]);
+        tasks.push(HTomb.Things[this.tasks[i]]);
       }
       return tasks;
     },
@@ -521,12 +513,12 @@ HTomb = (function(HTomb) {
     name: "caster",
     baseEntropy: 20,
     entropy: 20,
-    onCreate: function(options) {
+    onSpawn: function(options) {
       options = options || {};
       options.spells = options.spells || [];
       this.spells = [];
       for (let i=0; i<options.spells.length; i++) {
-        this.spells.push(HTomb.Things[options.spells[i]]({caster: this}));
+        this.spells.push(HTomb.Things[options.spells[i]].spawn({caster: this}));
         //this.spells[i].caster = this;
       }
       HTomb.Events.subscribe(this,"TurnBegin");
@@ -688,7 +680,7 @@ HTomb = (function(HTomb) {
   });
 
 
-  let Damage = HTomb.Types.templates.Damage;
+  let Damage = HTomb.Types.Damage;
 
   Behavior.extend({
     template: "Attacker",
@@ -722,6 +714,11 @@ HTomb = (function(HTomb) {
       let e = this.entity;
       let evade = (victim.defender) ? victim.defender.evasion - victim.defender.wounds.level : -10;
       let roll = HTomb.Utils.dice(1,20);
+      if (e.entity && e.entity.equipper
+            && e.entity.equipper.slots.MainHand
+            && e.entity.equipper.slots.MainHand.accuracy) {
+        roll += e.entity.equipper.slots.MainHand.accuracy;
+      }
       roll = this.checkTerrain(victim, roll);
       if (roll+this.accuracy >= 11 + evade) {
         (victim.defender) ? victim.defender.defend(this) : {};       
@@ -765,10 +762,24 @@ HTomb = (function(HTomb) {
       }
     },
     endure: function(roll, attack) {
-      let modifier = Damage.table[attack.damage.type][this.material];
-      let penetrate = Damage.table[attack.damage.type][this.armor.material];
+      let atype = attack.damage.type;
+      let alevel = attack.damage.level;
+
+      if (attack.entity && attack.entity.equipper
+            && attack.entity.equipper.slots.MainHand
+            && attack.entity.equipper.slots.MainHand.damage) {
+        let d = attack.entity.equipper.slots.MainHand;
+        if (d.type) {
+          atype = d.type;
+        }
+        if (d.level) {
+          alevel = d.level;
+        }
+      }
+      let modifier = Damage.table[atype][this.material];
+      let penetrate = Damage.table[atype][this.armor.material];
       let total = roll;
-      total += attack.damage.level;
+      total += alevel;
       total += modifier;
       total += this.wounds.level;
       if (attack.entity.defender) {
@@ -782,11 +793,11 @@ HTomb = (function(HTomb) {
       let z = this.entity.z;
       let attacker = attack.entity.describe({capitalized: true, article: "indefinite"});
       let defender = this.entity.describe({article: "indefinite"});
-      let type = HTomb.Types.templates[attack.damage.type].name;
+      let type = HTomb.Types[atype].name;
       if (total>=20) {
         HTomb.GUI.sensoryEvent(attacker + " deals critical " + type + " damage to " + defender + ".",x,y,z,"red");
         this.wounds.level = 8;
-        this.wounds.type = attack.damage.type;
+        this.wounds.type = atype;
       } else if (total>=17) {
         HTomb.GUI.sensoryEvent(attacker + " deals severe " + type + " damage to " + defender + ".",x,y,z,"#FFBB00");
         if (this.wounds.level<6) {
@@ -794,31 +805,31 @@ HTomb = (function(HTomb) {
         } else {
           this.wounds.level = 8;
         }
-        this.wounds.type = attack.damage.type;
+        this.wounds.type = atype;
       } else if (total>=14) {
         HTomb.GUI.sensoryEvent(attacker + " deals " + type + " damage to " + defender + ".",x,y,z,"orange");
         if (this.wounds.level<4) {
           this.wounds.level = 4;
-          this.wounds.type = attack.damage.type;
+          this.wounds.type = atype;
         } else if (this.wounds.level===4) {
           this.wounds.level+=2;
-          this.wounds.type = attack.damage.type;
+          this.wounds.type = atype;
         } else {
           this.wounds.level+=2;
-          if (!attack.damage.type) {
-            this.wounds.type = attack.damage.type;
+          if (!type) {
+            this.wounds.type = atype;
           }
         }
       } else if (total>=8) {
         HTomb.GUI.sensoryEvent(attacker + " deals mild " + type + " damage to " + defender + ".",x,y,z,"#FFBB00");
         if (this.wounds.level<2) {
           this.wounds.level = 2;
-          this.wounds.type = attack.damage.type;
+          this.wounds.type = atype;
         // cannot die of a mild wound
         } else if (this.wounds.level<7) {
           this.wounds.level+=1;
-          if (!attack.damage.type) {
-            this.wounds.type = attack.damage.type;
+          if (!atype) {
+            this.wounds.type = atype;
           }
         }
       } else {
@@ -871,7 +882,7 @@ HTomb = (function(HTomb) {
       MainHand: null,
       OffHand: null    
     },
-    onCreate: function(args) {
+    onSpawn: function(args) {
       this.items = HTomb.Things.Items(this);
       this.slots = HTomb.Utils.copy(this.slots);
       return this;
