@@ -22,6 +22,7 @@ HTomb = (function(HTomb) {
   HTomb.World.encounters = [];
   HTomb.World.blocks = {};
   HTomb.World.covers = HTomb.Utils.grid3d();
+  HTomb.World.trackers = {};
 
   HTomb.World.reset = function() {
     HTomb.Things.Player.delegate = null;
@@ -35,6 +36,7 @@ HTomb = (function(HTomb) {
     while(HTomb.World.things.length>0) {
       HTomb.World.things.pop().despawn();  
     }
+    HTomb.Things.Tracker.resetAll();
     var oldkeys;
     oldkeys = Object.keys(HTomb.World.creatures);
     for (let i=0; i<oldkeys.length; i++) {

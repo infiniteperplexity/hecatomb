@@ -19,7 +19,7 @@ HTomb = (function(HTomb) {
     name: "tile",
     symbol: " ",
     stringify: function() {
-      return HTomb.Types.templates[this.parent].types.indexOf(this);
+      return HTomb.Types[this.parent].types.indexOf(this);
     },
     specialTileName: function(x,y,z) {
       return this.name;

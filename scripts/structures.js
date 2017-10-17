@@ -366,7 +366,7 @@ HTomb = (function(HTomb) {
         HTomb.GUI.alert("You have completed research on the spell '" + template.describe()+".'");
         let spells = this.assigner.caster.spells.map(function(s) {return s.template;});
         if (spells.indexOf(template.template)===-1) {
-          this.assigner.caster.spells.push(HTomb.Things[template.template]({caster: this.assigner.caster}));
+          this.assigner.caster.spells.push(HTomb.Things[template.template].spawn({caster: this.assigner.caster}));
         }
       }
     },
@@ -741,7 +741,7 @@ HTomb = (function(HTomb) {
       let x = this.x;
       let y = this.y;
       let z = this.z;
-      let item = HTomb.Things[this.makes]().place(x,y,z);
+      let item = HTomb.Things[this.makes].spawn().place(x,y,z);
       item.owned = true;
       HTomb.Events.publish({type: "Complete", task: this});
       this.producer.occupied = null;
@@ -811,7 +811,7 @@ HTomb = (function(HTomb) {
           if (struc!==null) {
             w = struc;
           } else {
-            w = HTomb.Things[structure.template]();
+            w = HTomb.Things[structure.template].spawn();
             w.owner = assigner;
             w.squares = squares;
             w.x = squares[mid][0];
@@ -1067,7 +1067,7 @@ HTomb = (function(HTomb) {
         a.turns-=1;
         if (a.turns<=0) {
           for (let ing in a.offer) {
-            let item = HTomb.Things[ing]({n: a.offer[ing]});
+            let item = HTomb.Things[ing].spawn({n: a.offer[ing]});
             item.place(this.x, this.y, this.z);
             this.awaiting.splice(i,1);
           }

@@ -187,7 +187,7 @@ HTomb = (function(HTomb) {
         tids.push([this,key,val]);
         return {tid: val.tid};
       } else if (val.template) {
-        let template = HTomb.Things.templates[val.template];
+        let template = HTomb.Things[val.template];
         let dummy = Object.create(template);
         for (let p in val) {
           if (p!=="template" || val[p]!==template[p]) {
@@ -247,7 +247,7 @@ HTomb = (function(HTomb) {
         tids.push([this,key,val]);
         return {tid: val.tid};
       } else if (val.template) {
-        let template = HTomb.Things.templates[val.template];
+        let template = HTomb.Things[val.template];
         let dummy = Object.create(template);
         for (let p in val) {
           if (p!=="template" || val[p]!==template[p]) {
@@ -277,14 +277,14 @@ HTomb = (function(HTomb) {
       itemLists[tid].addItem(things[tid]);
     }
     HTomb.Player = player.entity;
-    HTomb.Things.templates.Player.delegate = null;
+    HTomb.Things.Player.delegate = null;
     // Fix ItemContainer references
     while(HTomb.World.things.length>0) {
       let thing = HTomb.World.things.pop();
       thing.despawn();
     }
     fillListFrom(things, HTomb.World.things);
-    HTomb.Things.templates.Thing.resetSpawnIds();
+    HTomb.Things.Thing.resetSpawnIds();
     var oldkeys;
     oldkeys = Object.keys(HTomb.World.creatures);
     for (let i=0; i<oldkeys.length; i++) {
@@ -321,29 +321,28 @@ HTomb = (function(HTomb) {
       // A lot of these things may need explicit placement
       if (thing.parent==="Creature") {
         HTomb.World.creatures[coord(x,y,z)]=thing;
-      }
-      if (thing.parent==="Feature") {
+      } else if (thing.parent==="Feature") {
         HTomb.World.features[coord(x,y,z)]=thing;
         if (thing.solid) {
           HTomb.World.blocks[coord(x,y,z)]=thing;
         }
-      }
-      if (thing.parent==="Task") {
+      } else if (thing.parent==="Task") {
         HTomb.World.tasks[coord(x,y,z)]=thing;
-      }
-      if (thing.parent==="Encounter") {
+      } else if (thing.parent==="Encounter") {
         HTomb.World.encounters.push(thing);
-      }
-      if (thing.parent==="Item") {
+      } else if (thing.parent==="Item") {
         if (!thing.onlist) {
           thing.onlist = null;
           let pile = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
           pile.addItem(thing);
           HTomb.World.items[coord(x,y,z)] = pile;
         }
+      } else if (thing.parent==="Tracker") {
+        thing.track();
       }
+
     }
-    let behaviors = HTomb.Things.templates.Behavior.children.map(function(e,i,a) {return e.name;});
+    let behaviors = HTomb.Things.Behavior.children.map(function(e,i,a) {return e.name;});
     for (let i=0; i<HTomb.World.things.length; i++) {
       let thing = HTomb.World.things[i];
       for (let key of Object.keys(thing)) {

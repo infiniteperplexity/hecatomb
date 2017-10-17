@@ -358,7 +358,7 @@ HTomb = (function(HTomb) {
       let z = this.z;
       let f = HTomb.World.features[coord(x,y,z)];
       f.remove();
-      let newf = HTomb.Things[f.makes]();
+      let newf = HTomb.Things[f.makes].spawn();
       newf.owner = this.assigner;
       newf.place(x,y,z);
       if (newf.solid) {
@@ -1047,7 +1047,7 @@ HTomb = (function(HTomb) {
         if (cr && cr.ai && cr.ai.isHostile(assigner)===false) {
           if (cr.ai.team!=="PlayerTeam" || confirm("Really declare hostility to " + cr.describe({article: "definite"}) + "?")) {
             HTomb.Particles.addEmitter(cr.x, cr.y, cr.z, HTomb.Particles.Anger);
-            HTomb.Types.templates[assigner.ai.team].vendettas.push(cr);
+            HTomb.Types[assigner.ai.team].vendettas.push(cr);
           }
         }
       };

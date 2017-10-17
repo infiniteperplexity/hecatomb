@@ -60,6 +60,15 @@ HTomb = (function(HTomb) {
     randomColor: 10,
     integrity: 15,
     yields: {WoodPlank: {n: 1, nozero: true}}
+    // ,
+    // Mixins: {
+    //   Harvestable: {
+    //     labor: 15,
+    //     yields: {
+    //       WoodPlank: 1
+    //     }
+    //   }
+    // }
   });
 
   Feature.extend({
@@ -270,7 +279,7 @@ HTomb = (function(HTomb) {
     name: "cover",
     liquid: false,
     stringify: function() {
-      return HTomb.Types.templates[this.parent].types.indexOf(this);
+      return HTomb.Types[this.parent].types.indexOf(this);
     },
     shimmer: function() {
       var bg = ROT.Color.fromString(this.bg);
@@ -336,21 +345,10 @@ HTomb = (function(HTomb) {
     bg: "#DD4411"
   });
 
-  Cover.extend({
-    template: "Grass",
-    name: "grass",
-    symbol: '"',
-    fg: HTomb.Constants.GRASSFG ||"#668844",
-    bg: HTomb.Constants.GRASSBG || "#334422",
-    darken: function() {
-      var bg = ROT.Color.fromString(this.bg);
-      bg = ROT.Color.multiply(bg,[72,128,128]);
-      bg = ROT.Color.toHex(bg);
-      return bg;
-    },
-    onDefine: function() {
-      HTomb.Events.subscribe(this,"TurnBegin");
-    },
+  HTomb.Things.Tracker.extend({
+    template: "GrassGrowth",
+    name: "grass growth",
+    listens: ["TurnBegin"],
     onTurnBegin: function() {
       if (HTomb.Time.dailyCycle.turn%50!==0) {
         return;
@@ -376,6 +374,21 @@ HTomb = (function(HTomb) {
       }
     }
   });
+  Cover.extend({
+    template: "Grass",
+    name: "grass",
+    symbol: '"',  
+    Trackers: ["GrassGrowth"],
+    fg: HTomb.Constants.GRASSFG ||"#668844",
+    bg: HTomb.Constants.GRASSBG || "#334422",
+    darken: function() {
+      var bg = ROT.Color.fromString(this.bg);
+      bg = ROT.Color.multiply(bg,[72,128,128]);
+      bg = ROT.Color.toHex(bg);
+      return bg;
+    }
+  });
+  
 
   Cover.extend({
     template: "Road",

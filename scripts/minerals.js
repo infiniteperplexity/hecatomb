@@ -31,7 +31,7 @@ HTomb = (function(HTomb) {
           HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
           owner = owner || HTomb.Player;
           let base = HTomb.Types[this.base];
-          let ore = HTomb.Things[base.item]();
+          let ore = HTomb.Things[base.item].spawn();
           ore.place(x,y,z);
           if (owner) {
             ore.owned = true;

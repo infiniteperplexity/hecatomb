@@ -22,7 +22,7 @@ HTomb = (function(HTomb) {
     onSpawn: function(args) {
       if (this.sourceCreature) {
         if (typeof(this.sourceCreature)==="string") {
-          this.sourceCreature = HTomb.Things[this.sourceCreature]();
+          this.sourceCreature = HTomb.Things[this.sourceCreature].spawn();
           this.sourceCreature.despawn();
         }
         this.name = this.sourceCreature.name + " " + this.name;

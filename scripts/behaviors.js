@@ -513,7 +513,7 @@ HTomb = (function(HTomb) {
       this.spells = [];
       for (let i=0; i<options.spells.length; i++) {
         this.spells.push(HTomb.Things[options.spells[i]].spawn({caster: this}));
-        //this.spells[i].caster = this;
+        this.spells[i].caster = this;
       }
       HTomb.Events.subscribe(this,"TurnBegin");
       return this;
@@ -739,6 +739,9 @@ HTomb = (function(HTomb) {
     wounds: {
       type: null,
       level: 0 // 2 is mild, 4 is moderate, 6 is severe, 8 is dead
+    },
+    onSpawn: function() {
+      this.wounds = HTomb.Utils.copy(HTomb.Things.Defender.wounds);
     },
     tallyWounds: function() {
       console.log("Wounds: ",this.wounds.level);

@@ -9,6 +9,7 @@ HTomb = (function(HTomb) {
     template: "Type",
     name: "type",
     plural: null,
+    Trackers: [],
     stringify: function() {
       return {"Type" : this.template};
     },
@@ -25,12 +26,13 @@ HTomb = (function(HTomb) {
         return;
       }
       let child = Object.create(this);
-      // ready the pluralized name
+      // I think this is safe because we never modify Types after creation
       child = Object.assign(child, args);
       child.parent = this;
-      HTomb.Types[child.template] = child;
+      HTomb.Types[child.template] = child;   
       // either create the registry of types, or add to it
       if (this===type) {
+        // ready the pluralized name
         if (args.plural) {
           child.plural = args.plural;
         } else {
@@ -47,6 +49,7 @@ HTomb = (function(HTomb) {
       if (child.onDefine) {
         child.onDefine(args);
       }
+      //!!!!Anything about Mixins here?
       return child;
     }
   }

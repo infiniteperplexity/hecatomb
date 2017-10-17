@@ -7,6 +7,7 @@ HTomb = (function(HTomb) {
   let Spell = Entity.extend({
     template: "Spell",
     name: "spell",
+    caster: null,
     getCost: function() {
       return 10;
     },

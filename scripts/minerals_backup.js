@@ -7,8 +7,8 @@ HTomb = (function(HTomb) {
     mine: function(x,y,z,owner) {
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
       owner = owner || HTomb.Player;
-      let base = HTomb.Types.templates[this.base];
-      let ore = HTomb.Things[base.item]();
+      let base = HTomb.Types[this.base];
+      let ore = HTomb.Things[base.item].spawn();
       ore.place(x,y,z);
       if (owner) {
         ore.owned = true;
@@ -30,8 +30,8 @@ HTomb = (function(HTomb) {
         mine: function(x,y,z,owner) {
           HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
           owner = owner || HTomb.Player;
-          let base = HTomb.Types.templates[this.base];
-          let ore = HTomb.Things[base.item]();
+          let base = HTomb.Types[this.base];
+          let ore = HTomb.Things[base.item].spawn();
           ore.place(x,y,z);
           if (owner) {
             ore.owned = true;

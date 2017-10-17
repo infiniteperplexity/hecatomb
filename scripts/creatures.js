@@ -187,7 +187,7 @@ HTomb = (function(HTomb) {
       }
     },
     onDefine: function(args) {
-      HTomb.Events.subscribe(this, "TurnBegin");
+      //HTomb.Events.subscribe(this, "TurnBegin");
     },
     onTurnBegin: function(args) {
       // ghouls only show up at night
@@ -282,33 +282,33 @@ HTomb = (function(HTomb) {
         accuracy: 1,
       },
       Defender: {}
-    },
-    onDefine: function() {
-      HTomb.Events.subscribe(this, "TurnBegin");
-    },
-    onTurnBegin: function() {
-      if (HTomb.Utils.dice(1,180)===1 && HTomb.Types.Team.teams.HungryPredatorTeam.members.length<10) {
-        let fishes = HTomb.Utils.where(HTomb.World.creatures, function(e) {
-          let x = e.x;
-          let y = e.y;
-          let z = e.z;
-          if (HTomb.World.visible[HTomb.Utils.coord(x,y,z)]) {
-            return false;
-          }
-          return (e.template==="Fish");
-        });
-        if (fishes.length>0) {
-          HTomb.Utils.shuffle(fishes);
-          let fish = fishes[0];
-          let x = fish.x;
-          let y = fish.y;
-          let z = fish.z;
-          fish.destroy();
-          HTomb.Things.DeathCarp().place(x,y,z);
-          HTomb.GUI.sensoryEvent("A peaceful-looking fish turns out to be a ravenous death carp!",x,y,z,"red");
-        }
-      }
     }
+    // onDefine: function() {
+    //   HTomb.Events.subscribe(this, "TurnBegin");
+    // },
+    // onTurnBegin: function() {
+    //   if (HTomb.Utils.dice(1,180)===1 && HTomb.Types.Team.teams.HungryPredatorTeam.members.length<10) {
+    //     let fishes = HTomb.Utils.where(HTomb.World.creatures, function(e) {
+    //       let x = e.x;
+    //       let y = e.y;
+    //       let z = e.z;
+    //       if (HTomb.World.visible[HTomb.Utils.coord(x,y,z)]) {
+    //         return false;
+    //       }
+    //       return (e.template==="Fish");
+    //     });
+    //     if (fishes.length>0) {
+    //       HTomb.Utils.shuffle(fishes);
+    //       let fish = fishes[0];
+    //       let x = fish.x;
+    //       let y = fish.y;
+    //       let z = fish.z;
+    //       fish.destroy();
+    //       HTomb.Things.DeathCarp().place(x,y,z);
+    //       HTomb.GUI.sensoryEvent("A peaceful-looking fish turns out to be a ravenous death carp!",x,y,z,"red");
+    //     }
+    //   }
+    // }
   });
 
   Creature.extend({

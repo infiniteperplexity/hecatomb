@@ -8,11 +8,7 @@ HTomb = (function(HTomb) {
     spawnIds: {},
     spawnId: -1,
     Mixins: {},
-    addMixin: function(mixin, args) {
-      this[mixin.name] = Object.assign(HTomb.Mixins.templates[mixin], args);
-      mixin.onAdd(this, args);
-      // should we track everything the mixin has been added to?
-    },
+    behaviors: [],
     resetSpawnIds: function() {
       this.spawnIds = {};
       this.maxSpawnId = -1;
@@ -28,9 +24,15 @@ HTomb = (function(HTomb) {
       HTomb.Things.Thing.spawnIds[this.spawnId] = this;
     },
     spawn: function(args) {
+      args = args || {};
       let o = Object.create(this);
-      o = Object.assign(o, args);
-      // could instanteate all the arrays...good or bad idea?
+      for (let a in args) {
+        // if the thing has complex, instantiated properties, copy them manually
+        if (args[a]!==this[a]) {
+          o[a] = HTomb.Utils.merge(this[a],args[a]);
+        }
+      }
+      // could instantiate all the arrays...good or bad idea?
       HTomb.Debug.logEvent("spawn",o);
       // Add to the global things table
       HTomb.World.things.push(o);
@@ -168,9 +170,9 @@ HTomb = (function(HTomb) {
       }
       return name;
     },
-    // Describe for an in-game list
     extend: function(args) {
       let child = Object.create(this);
+      // Object.assign should be fine because templates do not get changed after the fact
       child = Object.assign(child, args);
       child.parent = this.template;
       if (this.hasOwnProperty("children")===false) {
@@ -184,31 +186,59 @@ HTomb = (function(HTomb) {
         child.onDefine(args);
       }
       // add mixins to template
-      for (let mixin in child.Mixins) {
-        child.addMixin(mixin, child.Mixins[mixin]);
+      for (let m in child.Mixins) {
+        let defaults = HTomb.Mixins[m];
+        let margs = child.Mixins[m];
+        // the way these arguments nest and inherit is pretty subtle...
+        for (let key in margs) {
+          if (margs.hasOwnProperty(key)) {
+            if (margs[key]!==defaults[key]) {
+              margs[key] = HTomb.Utils.merge(defaults[key],margs[key]);
+            }
+          }
+        }
+        let mixin = HTomb.Mixins[m].create(margs);
+        mixin.addToTemplate(child);
       }
+      child.behaviors = [];
       return child;
     }
   };
   // The global list of known templates
   HTomb.Things.Thing = thing;
 
-  // Do these actually *do* anything?  Or just hang out as listeners?
-  HTomb.Trackers = {};
   let Tracker = thing.extend({
     template: "Tracker",
     name: "tracker",
     listens: [],
+    resetAll: function(args) {
+      for (let tracker in HTomb.World.trackers) {
+        HTomb.World.trackers[tracker] = null;
+        HTomb.Things[tracker].spawn();
+      }
+    },
     spawn: function(args) {
+      // Trackers are singletons
+      if (HTomb.World.trackers[this.template]) {
+        return HTomb.World.trackers[this.template];
+      }
       let o = thing.spawn.call(this, args);
-      o.track();
-      for (type of o.listens) {
+      for (let type of o.listens) {
         HTomb.Events.subscribe(o, type);
       }
+      o.track();
       return o;
     },
     track: function() {
-      HTomb.Trackers[this.template] = this;
+      HTomb.World.trackers[this.template] = this;
+    },
+    despawn: function(args) {
+      HTomb.World.trackers[this.template] = null;
+      thing.despawn.call(this,args);
+    },
+    extend: function(args) {
+      let t = HTomb.Things.Thing.extend.call(this, args);
+      HTomb.World.trackers[t.template] = null;
     }
   });
 
@@ -230,12 +260,30 @@ HTomb = (function(HTomb) {
       }
     }
   });
+  HTomb.Things.AngryNatureTracker.spawn();
 
-  
+  // Mixins impersonate Behaviors, but they hang out on the template not the entity?
+  // This sounds like a disaster waiting to happen
   let mixin = {
     template: "Mixin",
     name: "mixin",
-    onAdd: function(thing, args) {},
+    // we gotta be careful about layers of nesting and value/reference stuff
+    addToTemplate: function(template, args) {
+      if (Object.hasOwnProperty(template,"mixins")===false) {
+        template.mixins = [];
+      }
+      template.mixins.push(this);
+      template[this.name] = this;
+      if (this.onAdd) {
+        this.onAdd(template, args);
+      }
+    },
+    create: function(args) {
+      let o = Object.create(this);
+      // is this really how I want to do it?
+      o = Object.assign(o, args);
+      return o;
+    },
     extend: function(args) {
       if (args===undefined || args.template===undefined) {
         HTomb.Debug.pushMessage("invalid template definition");
@@ -251,6 +299,14 @@ HTomb = (function(HTomb) {
   };
 
   HTomb.Mixins = {Mixin: mixin};
+
+  // mixin.extend({
+  //   template: "Testable",
+  //   name: "testable",
+  //   foo: 1,
+  //   bar: {baz: 2},
+  //   f: function() {console.log(3);}
+  // });
 
 return HTomb;
 })(HTomb);

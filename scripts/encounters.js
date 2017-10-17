@@ -57,7 +57,7 @@ HTomb = (function(HTomb) {
     },
     // this "spawns" the encounter, since the name "spawn" is already taken
     muster: function(x,y,z,args) {
-      let encounter = HTomb.Things[this.template]();
+      let encounter = HTomb.Things[this.template].spawn();
       encounter.place(x,y,z,args);
     },
     place: function(x,y,z,args) {

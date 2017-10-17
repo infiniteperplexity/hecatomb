@@ -83,7 +83,18 @@ HTomb = (function(HTomb) {
         if (!HTomb.Things[b]) {
           console.log(b);
         }
-        let beh = HTomb.Things[b].spawn(HTomb.Utils.merge(HTomb.Things[b], o.Behaviors[b]));
+        let defaults = HTomb.Things[b];
+        let bargs = o.Behaviors[b];
+        // the way these arguments nest and inherit is pretty subtle...
+        for (let key in bargs) {
+          if (bargs.hasOwnProperty(key)) {
+            if (bargs[key]!==defaults[key]) {
+              bargs[key] = HTomb.Utils.merge(defaults[key],bargs[key]);
+            }
+          }
+        }
+        let beh = HTomb.Things[b].spawn(bargs);
+        //let beh = HTomb.Things[b].spawn(HTomb.Utils.merge(defaults, o.Behaviors[b]));
         beh.addToEntity(o);
       }
       // !!!Should randomize be a mixin?
@@ -112,6 +123,16 @@ HTomb = (function(HTomb) {
         delete this.highlightColor;
       }
     },
+    extend: function(args) {
+      let template = HTomb.Things.Thing.extend.call(this, args);
+      for (let b in args.Behaviors) {
+        let beh = HTomb.Things[b];
+        let mod = args.Behaviors[b];
+        beh = HTomb.Utils.merge(beh,mod);
+        template[beh.name] = beh;
+      }
+      return template;
+    }
   });
 
   let Behavior = Thing.extend({
@@ -365,7 +386,7 @@ HTomb = (function(HTomb) {
             n = Math.max(n,1);
           }
           for (var i=0; i<n; i++) {
-            var thing = HTomb.Things[template]().place(x,y,z);
+            var thing = HTomb.Things[template].spawn().place(x,y,z);
             thing.owned = true;
           }
         }
@@ -448,7 +469,7 @@ HTomb = (function(HTomb) {
         if (item.template===template) {
           if (item.n>n) {
             item.n-=n;
-            return HTomb.Things[template]({n: n});
+            return HTomb.Things[template].spawn({n: n});
           } else {
             return this.removeItem(item);
           }
