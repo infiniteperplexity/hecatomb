@@ -303,7 +303,7 @@ HTomb = (function(HTomb) {
       }
       if (cr.worker && cr.worker.task) {
         ai.entity.worker.task.ai();
-      } else {
+      } else if (HTomb.Player.master) {
         //!!!a very strange place to define guard post rally behavior...
         let post;
         for (let structure of HTomb.Player.master.structures) {

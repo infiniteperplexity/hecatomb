@@ -31,10 +31,10 @@ HTomb = (function(HTomb) {
       let o = Object.create(this);
       o = Object.assign(o, args);
       // could instanteate all the arrays...good or bad idea?
-      HTomb.Debug.logEvent("spawn",this);
+      HTomb.Debug.logEvent("spawn",o);
       // Add to the global things table
-      HTomb.World.things.push(this);
-      this.acquireSpawnId();
+      HTomb.World.things.push(o);
+      o.acquireSpawnId();
       if (o.onSpawn) {
         o.onSpawn(args);
       }

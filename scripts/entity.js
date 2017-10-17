@@ -89,20 +89,18 @@ HTomb = (function(HTomb) {
       // !!!Should randomize be a mixin?
       // Randomly choose symbol if necessary
       if (Array.isArray(this.symbol)) {
-        o.symbol = o.symbol[Math.floor(Math.random()*o.symbol.length)];
+        o.symbol = this.symbol[Math.floor(Math.random()*this.symbol.length)];
       }
       // Randomly choose  color if necessary
-      if (Array.isArray(o.fg)) {
-        o.fg = o.fg[Math.floor(Math.random()*o.fg.length)];
+      if (Array.isArray(this.fg)) {
+        o.fg = this.fg[Math.floor(Math.random()*this.fg.length)];
       }
       // Randomly perturb color, if necessary
-      if (o.randomColor>0 && o.fg) {
-        if (o.fg) {
-          var c = ROT.Color.fromString(o.fg);
-          c = ROT.Color.randomize(c,[o.randomColor, o.randomColor, o.randomColor]);
-          c = ROT.Color.toHex(c);
-          o.fg = c;
-        }
+      if (this.randomColor>0 && this.fg) {
+        var c = ROT.Color.fromString(this.fg);
+        c = ROT.Color.randomize(c,[o.randomColor, o.randomColor, o.randomColor]);
+        c = ROT.Color.toHex(c);
+        o.fg = c;
       }
       return o;
     },

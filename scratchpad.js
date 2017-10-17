@@ -40,6 +40,8 @@ Behaviors.extend({
 })
 
 
+f = HTomb.World.things.filter(function(e) {return (e.template==="Inventory");});
+
 
 
 // the initial seed

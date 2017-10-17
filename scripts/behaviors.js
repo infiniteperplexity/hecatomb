@@ -175,12 +175,7 @@ HTomb = (function(HTomb) {
     name: "inventory",
     capacity: 10,
     onSpawn: function() {
-      console.log("spawning....");
       this.items = HTomb.Things.Items(this);
-    },
-    onAdd: function() {
-      console.log("adding...");
-      console.log(this.items);
     },
     pickup: function(item) {
       var e = this.entity;
@@ -250,15 +245,14 @@ HTomb = (function(HTomb) {
     asIngredients: function() {
       return this.items.asIngredients();
     },
+    // !!!! should there be an "onEntityDestroyed"?
     onDespawn: function() {
-      if (this.hasOwnProperty("entity")===false) {
-        console.log("this behavior never got added...");
-        console.log(this);
-      }
       //should probably drop all the items, right?
-      //for (let item of this.items) {
-      //  this.drop(item);
-      //}
+      if (this.entity.isPlaced()) {
+        for (let item of this.items) {
+          this.drop(item);
+        }
+      }
     },
     // !!!not used anymore?
     canFindAll: function(ingredients) {
