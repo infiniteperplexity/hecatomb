@@ -392,24 +392,15 @@ HTomb = (function(HTomb) {
         }
       }
       if (i<this.choices.length) {
-        let template = HTomb.Things[this.choices[i]];
-        let dflt = HTomb.Things.Researchable;
-        let ings = dflt.ingredients || {};
-        if (template.Behaviors && template.Behaviors.Researchable && template.Behaviors.Researchable.ingredients) {
-          ings = template.Behaviors.Researchable.ingredients;
-        } 
-        this.current = HTomb.Things.ResearchTask({
+        let choice = HTomb.Things[this.choices[i]];
+        this.current = HTomb.Things.ResearchTask.spawn({
           assigner: this.entity.owner,
-          name: "research " + template.name,
+          name: "research " + choice.name,
           structure: this.entity,
           researching: this.choices[i],
-          turns: (template.Behaviors 
-                  && template.Behaviors.Researchable
-                  && template.Behaviors.Researchable.time)
-                  ? template.Behaviors.Researchable.time
-                  : dflt.time,
-          ingredients: ings,
-          fulfilled: (HTomb.Debug.noingredients || Object.keys(ings).length===0) ? true : false
+          turns: choice.researchable.turns,
+          ingredients: choice.researchable.ingredients,
+          fulfilled: (HTomb.Debug.noingredients || Object.keys(choice.researchable.ingredients).length===0) ? true : false
         });
         this.current.place(this.entity.x, this.entity.y, this.entity.z);
       }
@@ -440,17 +431,13 @@ HTomb = (function(HTomb) {
       let txt = ["Research choices:"];
       let alphabet = "abcdefghijklmnopqrstuvwxyz";
       let choices = this.choices;
-      let dtime = HTomb.Things.Researchable.time;
       for (let i=0; i<choices.length; i++) {
         let choice = HTomb.Things[choices[i]];
-        let ings = (choice.Behaviors
-          && choice.Behaviors.Researchable
-          && choice.Behaviors.Researchable.ingredients)
-          ? choice.Behaviors.Researchable.ingredients : {};
-        let msg = alphabet[i] + ") " + choice.name + " " + HTomb.Utils.listIngredients(ings);
-        if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
+        let msg = choice.name + " " + HTomb.Utils.listIngredients(choice.researchable.ingredients);
+        if (this.entity.owner.master.ownsAllIngredients(choice.researchable.ingredients)!==true) {
           msg = "%c{gray}" + msg;
         }
+        msg = alphabet[i] + ") " + msg;
         txt.push(msg);
       }
       txt.push(" ");

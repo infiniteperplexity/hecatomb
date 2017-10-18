@@ -4,6 +4,16 @@ HTomb = (function(HTomb) {
 
   let Entity = HTomb.Things.Entity;
 
+  HTomb.Things.Behavior.extend({
+    template: "Researchable",
+    name: "researchable",
+    //time: 480,
+    turns: 120,
+    nospawn: true,
+    cost: {}
+  });
+
+
   let Spell = Entity.extend({
     template: "Spell",
     name: "spell",
@@ -16,13 +26,6 @@ HTomb = (function(HTomb) {
     },
   });
 
-  HTomb.Things.Behavior.extend({
-    template: "Researchable",
-    name: "researchable",
-    //time: 480,
-    time: 120,
-    cost: {}
-  });
 
 
   HTomb.Debug.testParticles = function(args, modifiers) {

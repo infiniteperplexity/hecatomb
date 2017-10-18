@@ -145,7 +145,7 @@ HTomb = (function(HTomb) {
           }
         }
         //!!!so at this point, it doesn't know what it's getting attached to...
-        bargs.Entity = template;
+        bargs.Template = template;
         let beh = HTomb.Things[b].prespawn(bargs);
         //template.behaviors.push(beh);
         template[beh.name] = beh;

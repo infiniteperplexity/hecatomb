@@ -241,7 +241,7 @@ HTomb = (function(HTomb) {
     labor: 5,
     ingredients: {WoodPlank: 1},
     onPrespawn: function(args) {
-      //console.log("attaching myself to " + args.Entity.template);
+      //console.log("attaching myself to " + args.Template.template);
     }
   });
 
