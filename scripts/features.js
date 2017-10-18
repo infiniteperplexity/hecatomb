@@ -51,6 +51,21 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Behavior.extend({
+    template: "Harvestable",
+    name: "harvestable",
+    labor: 10,
+    yields: {WoodPlank: 1},
+    harvest: function() {
+      let x = this.entity.x;
+      let y = this.entity.y;
+      let z = this.entity.z;
+      for (let ing in this.yields) {
+        HTomb.Things[ing].spawn({owned: true, n: this.yields[ing]}).place(x,y,z);
+      }
+    }
+  });
+
   Feature.extend({
     template: "Tree",
     name: "tree",
@@ -59,16 +74,14 @@ HTomb = (function(HTomb) {
     fg: "#77BB00",
     randomColor: 10,
     integrity: 15,
-    yields: {WoodPlank: {n: 1, nozero: true}}
-    // ,
-    // Behaviors: {
-    //   Harvestable: {
-    //     labor: 15,
-    //     yields: {
-    //       WoodPlank: 1
-    //     }
-    //   }
-    // }
+    Behaviors: {
+      Harvestable: {
+        labor: 15,
+        yields: {
+          WoodPlank: 1
+        }
+      }
+    }
   });
 
   Feature.extend({
@@ -97,43 +110,101 @@ HTomb = (function(HTomb) {
     randomColor: 20
   });
 
+  Behavior.extend({
+    template: "Craftable",
+    name: "craftable",
+    nospawn: true,
+    labor: 15,
+    ingredients: {WoodPlank: 1}
+  });
+
+  Behavior.extend({
+    template: "Fixture",
+    name: "fixture",
+    nospawn: true,
+    labor: 5,
+    // this will play out kind of weirdly...
+    tooltip: null,
+    unplacedSymbol: null,
+    unplacedFg: null,
+    incompleteSymbol: null,
+    incompleteFg: null,
+    onPrespawn(args) {
+      // Craftable Fixtures work much differently than non-Craftable Fixtures
+      if (this.Template.Behaviors.Craftable) {
+        let iargs = {
+          template: "Unplaced" + this.Template.template,
+          name: "unplaced " + this.Template.name,
+          symbol: this.unplacedSymbol || this.Template.symbol,
+          fg: this.unplacedFg || this.Template.fg,
+          makes: this.Template.template,
+          Behaviors: {
+            Craftable: {
+              ingredients: this.Template.Behaviors.Craftable.ingredients || HTomb.Things.Craftable.ingredients
+            }
+          }
+        };
+        HTomb.Things.Item.extend(iargs);
+        this.ingredients = {};
+        this.ingredients["Unplaced" + this.Template.template] = 1;
+      }
+    }
+    // ,dismantle() // should it be easier to dismantle?  into the item version?
+  });
+
   Feature.extend({
     template: "Throne",
     name: "throne",
-    craftable: true,
-    //symbol: "\u2655",
     symbol: "\u265B",
     fg: "#CCAA00",
-    ingredients: {GoldOre: 1}
+    Behaviors: {
+      Craftable: {
+        ingredients: {GoldOre: 1}
+      },
+      Fixture: {}
+    }
   });
 
   Feature.extend({
     template: "ScryingGlass",
-    craftable: true,
     name: "scrying glass",
     symbol: "\u25CB",
     fg: "cyan",
-    ingredients: {Moonstone: 1}
+    Behaviors: {
+      Craftable: {
+        ingredients: {MoonStone: 1}
+      },
+      Fixture: {}
+    }
   });
 
   Feature.extend({
     template: "Pentagram",
-    craftable: true,
     name: "pentagram",
     symbol: "\u26E7",
     fg: "red",
-    ingredients: {Bloodstone: 1}
+    Behaviors: {
+      Craftable: {
+        ingredients: {BloodStone: 1}
+      },
+      Fixture: {}
+    }
   });
 
   Feature.extend({
     template: "Torch",
     name: "torch",
-    tooltip: "(A furnished torch provides stationary light.)",
-    craftable: true,
     symbol: "\u2AEF",
     fg: "yellow",
-    Behaviors: {PointLight: {}},
-    ingredients: {WoodPlank: 1}
+    Behaviors: {
+      PointLight: {},
+      Craftable: {
+        ingredients: {WoodPlank: 1}
+      },
+      Fixture: {
+        tooltip: "(A furnished torch provides stationary light.)"
+      }
+    }
   });
 
   Feature.extend({
@@ -146,15 +217,8 @@ HTomb = (function(HTomb) {
   Feature.extend({
     template: "Ramp",
     name: "ramp",
-    tooltip: "(Creates an upward slope.)",
-    incompleteSymbol: "\u2692",
-    incompleteFg: HTomb.Constants.WALLFG,
-    labor: 5,
     // for pathing resets
     solid: true,
-    // !!!!very ad hoc solution
-    placeholder: true,
-    ingredients: {Rock: 1},
     onPlace: function(x,y,z) {
       let t = HTomb.World.tiles;
       if (t[z][x][y]===HTomb.Tiles.FloorTile) {
@@ -162,6 +226,16 @@ HTomb = (function(HTomb) {
         if (t[z+1][x][y]===HTomb.Tiles.EmptyTile) {
           t[z+1][x][y] = HTomb.Tiles.DownSlopeTile;
         } 
+      }
+      this.despawn();
+    },
+    Behaviors: {
+      Fixture: {
+        labor: 5,
+        ingredients: {Rock: 1},
+        incompleteSymbol: "\u2692",
+        incompleteFg: HTomb.Constants.WALLFG,
+        tooltip: "(Creates an upward slope.)"
       }
     }
   });
@@ -172,18 +246,22 @@ HTomb = (function(HTomb) {
     solid: true,
     opaque: true,
     locked: false,
-    tooltip: "(A door blocks your enemies but not you or your minions.)",
     symbol: "\u25A5",
     fg: "#BB9922",
-    labor: 20,
-    craftable: true,
     integrity: 50,
-    ingredients: {WoodPlank: 1},
     Behaviors: {
       Defender: {
         material: "Wood",
         toughness: 9,
         evasion: -10
+      },
+      Craftable: {
+        labor: 20,
+        ingredients: {WoodPlank: 1}
+      },
+      Fixture: {
+        tooltip: "(A door blocks your enemies but not you or your minions.)",
+        unplacedSymbol: "\u25A4"
       }
     }
   });
@@ -233,29 +311,14 @@ HTomb = (function(HTomb) {
     }
   });
 
-  //!!!Test this out
-  Behavior.extend({
-    template: "CraftableB",
-    name: "craftableb",
-    nospawn: true,
-    labor: 5,
-    ingredients: {WoodPlank: 1},
-    onPrespawn: function(args) {
-      //console.log("attaching myself to " + args.Template.template);
-    }
-  });
+
 
   Feature.extend({
     template: "SpearTrap",
     name: "spear trap",
     symbol: "\u2963",
     fg: "#CC9944",
-    tooltip: "(A spring-loaded, spiked stick that attacks your enemies.)",
-    labor: 10,
-    craftable: true,
     integrity: 10,
-    sprung: false,
-    ingredients: {WoodPlank: 2},
     Behaviors: {
       Attacker: {
         damage: {
@@ -268,9 +331,13 @@ HTomb = (function(HTomb) {
         sprungSymbol: "\u2964",
         rearmCost: {WoodPlank: 1}
       },
-      CraftableB: {
+      Craftable: {
         labor: 10,
         ingredients: {WoodPlank: 2}
+      },
+      Fixture: {
+        unplacedSymbol: "\u2964",
+        tooltip: "(A spring-loaded, spiked stick that attacks your enemies.)"
       }
     },
     onSpring: function(x,y,z) {

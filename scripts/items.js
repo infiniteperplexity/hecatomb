@@ -70,9 +70,8 @@ HTomb = (function(HTomb) {
     name: "work axe",
     symbol: "\u262D",
     fg: "#BBAA88",
-    ingredients: {"WoodPlank": 1, "Rock": 1},
-    Behaviors: {Equipment: 
-      {
+    Behaviors: {
+      Equipment: {
         slot: "MainHand",
         labor: 2,
         accuracy: 0,
@@ -80,7 +79,11 @@ HTomb = (function(HTomb) {
           type: "Slashing",
           level: 1
         }
-      }}
+      },
+      Craftable: {
+        ingredients: {"WoodPlank": 1, "Rock": 1}
+      }
+    }
   });
 
 

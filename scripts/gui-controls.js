@@ -352,6 +352,9 @@ HTomb = (function(HTomb) {
       });
       choices.push(alpha[i]+") " + desc);
     }
+    context.hoverTile = Contexts.main.hoverTile;
+    let keyCursor = GUI.getKeyCursor();
+    context.hoverTile(keyCursor[0],keyCursor[1]);
     Contexts.active = context;
     Contexts.active.menuText = choices;
     menu.refresh();
@@ -361,7 +364,6 @@ HTomb = (function(HTomb) {
   GUI.selectSquare = function(z, callb, options) {
     options = options || {};
     let hover = options.hover || function(x, y, z) {};
-    //var context = Object.create(survey);
     var context = HTomb.Utils.clone(survey);
     if (options.contextName) {
       context.contextName = options.contextName;

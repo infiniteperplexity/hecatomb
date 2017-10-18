@@ -361,6 +361,9 @@ HTomb = (function(HTomb) {
     },
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
+      if (this.isPlaced()===false) {
+        return;
+      }
       let c = coord(x,y,z);
       let f = HTomb.World.features[c];
       if (f) {
@@ -392,26 +395,11 @@ HTomb = (function(HTomb) {
       this.integrity-=labor;
       // need to account for work axes somehow
       if (this.integrity<=0) {
-        this.harvest();
-      }
-    },
-    harvest: function() {
-      if (this.yields!==null) {
-        var x = this.x;
-        var y = this.y;
-        var z = this.z;
-        for (var template in this.yields) {
-          var n = HTomb.Utils.diceUntil(2,2);
-          if (this.yields[template].nozero) {
-            n = Math.max(n,1);
-          }
-          for (var i=0; i<n; i++) {
-            var thing = HTomb.Things[template].spawn().place(x,y,z);
-            thing.owned = true;
-          }
+        if (this.harvestable) {
+          this.harvestable.harvest();
         }
+        this.destroy();
       }
-      this.destroy();
     }
   });
 

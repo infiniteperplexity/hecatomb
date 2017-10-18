@@ -422,7 +422,14 @@ HTomb = (function(HTomb) {
       {
         format: function(task) {
           let name = task.description;
-          return (name.substr(0,1).toUpperCase() + name.substr(1)+".");
+          name = (name.substr(0,1).toUpperCase() + name.substr(1)+".");
+          if (task.ingredients && Object.keys(task.ingredients).length>0) {
+            name = name + " " + HTomb.Utils.listIngredients(task.ingredients);
+            if (HTomb.Player.master.ownsAllIngredients(task.ingredients)!==true) {
+              name = "%c{gray}"+name;
+            }
+          }
+          return name;
         },
         contextName: "ShowJobs"
       }

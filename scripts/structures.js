@@ -40,7 +40,14 @@ HTomb = (function(HTomb) {
         }
         HTomb.Things[this.template].ingredients = ings;
       }
-      HTomb.Things.Feature.extend({template: args.template+"Feature", name: args.name, bg: args.bg});
+      HTomb.Things.Feature.extend({
+        template: args.template+"Feature",
+        name: args.name,
+        bg: args.bg,
+        Behaviors: {
+          Fixture: {}
+        }
+      });
     },
     spawn: function(args) {
       let o = Entity.spawn.call(this,args);
@@ -234,7 +241,7 @@ HTomb = (function(HTomb) {
         return;
       }
       // this is a good place to check for ingredients
-      let ings = HTomb.Utils.copy(HTomb.Things[this.queue[0]].ingredients);
+      let ings = HTomb.Utils.copy(HTomb.Things[this.queue[0]].craftable.ingredients);
       if (this.entity.owner.master.ownsAllIngredients(ings)!==true) {
         this.task = null;
         this.queue.push(this.queue.shift());
@@ -242,10 +249,11 @@ HTomb = (function(HTomb) {
       }
       let task = HTomb.Things.ProduceTask.designateTile(this.entity.x,this.entity.y,this.entity.z,this.entity.owner);
       this.task = task;
+      task.labor = HTomb.Things[this.queue[0]].craftable.labor;
       task.makes = this.queue[0];
       task.producer= this;
       HTomb.GUI.pushMessage("Next good is "+HTomb.Things[task.makes].describe({article: "indefinite"}));
-      task.name = "produce "+HTomb.Things[task.makes].name;
+      task.name = "produce "+HTomb.Things[task.makes].describe();
       task.ingredients = ings;
       this.queue.shift();
     },
@@ -263,9 +271,15 @@ HTomb = (function(HTomb) {
       let txt = ["Goods:"];
       let alphabet = 'abcdefghijklmnopqrstuvwxyz';
       for (let i=0; i<this.makes.length; i++) {
-        let t = HTomb.Things[this.makes[i]];
-        let g = t.describe({article: "indefinite"});
-        let ings = (HTomb.Debug.noingredients) ? {} : t.ingredients;
+        let makes = HTomb.Things[this.makes[i]];
+        let g = (makes.makes) ? HTomb.Things[makes.makes] : makes;
+        g = g.describe({article: "indefinite"});
+        let ings;
+        if (makes.makes) {
+          ings = (HTomb.Debug.noingredients) ? {} : HTomb.Things[makes.makes].craftable.ingredients;
+        } else {
+          ings = (HTomb.Debug.noingredients) ? {} : makes.craftable.ingredients;
+        }
         if (HTomb.Utils.notEmpty(ings)) {
           g+=" ";
           g+=HTomb.Utils.listIngredients(ings);
@@ -290,8 +304,9 @@ HTomb = (function(HTomb) {
         txt.push("@ (none)");
       }
       for (let i=0; i<this.queue.length; i++) {
-        let item = this.queue[i];
-        let s = "- " + HTomb.Things[item].describe({article: "indefinite"});
+        let making = HTomb.Things[this.queue[i]];
+        let item = (making.makes) ? HTomb.Things[making.makes] : making;
+        let s = "- " + item.describe({article: "indefinite"});
         txt.push(s);
       }
       if (this.queue.length>0 && this.cursor>-1) {
@@ -473,9 +488,9 @@ HTomb = (function(HTomb) {
       Producer: {
         makes: [
           "WorkAxe",
-          "DoorItem",
-          "TorchItem",
-          "SpearTrapItem"
+          "UnplacedDoor",
+          "UnplacedTorch",
+          "UnplacedSpearTrap"
         ]
       },
       StructureLight: {}

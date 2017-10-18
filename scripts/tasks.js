@@ -652,8 +652,8 @@ HTomb = (function(HTomb) {
   Task.extend({
     template: "BuildTask",
     name: "build",
-    //description: "build walls/floors/slopes",
     description: "build walls or floors",
+    //description: "build walls or floors ($: 1 rock)",
     bg: "#440088",
     makes: "Construction",
     ingredients: {Rock: 1},
@@ -817,31 +817,42 @@ HTomb = (function(HTomb) {
       if (args.makes) {
         let makes = HTomb.Things[args.makes];
         this.makes = args.makes;
-        this.labor = makes.labor || this.labor;
-        this.effort = makes.effort || this.effort;
-        this.symbol = makes.incompleteSymbol || this.symbol;
-        this.fg = makes.incompleteFg || makes.fg || this.fg;
-        this.name = "incomplete "+ makes.name;
+        this.labor = makes.fixture.labor || this.labor;
+        this.effort = makes.fixture.effort || this.effort;
+        this.symbol = makes.fixture.incompleteSymbol || this.symbol;
+        this.fg = makes.fixture.incompleteFg || makes.fg || this.fg;
       }
       return this;
+    },
+    onDescribe: function(args) {
+      args.name = "incomplete " + HTomb.Things[this.makes].name;
+      return args;
     }
   });
 
   Feature.extend({
     template: "Excavation",
     name: "excavation",
-    labor: 10,
-    effort: 0,
-    incompleteSymbol: "\u2717",
-    incompleteFg: HTomb.Constants.BELOWFG
+    Behaviors: {
+      Fixture: {
+        labor: 10,
+        effort: 0,
+        incompleteSymbol: "\u2717",
+        incompleteFg: HTomb.Constants.BELOWFG
+      }
+    }
   });
 
   Feature.extend({
     template: "Construction",
     name: "construction",
-    incompleteSymbol: "\u2692",
-    labor: 15,
-    incompleteFg: HTomb.Constants.WALLFG
+    Behaviors: {
+      Fixture: {
+        incompleteSymbol: "\u2692",
+        labor: 15,
+        incompleteFg: HTomb.Constants.WALLFG
+      }
+    }
   });
 
   Task.extend({
@@ -1009,12 +1020,13 @@ HTomb = (function(HTomb) {
       if (f) {
         if (f.integrity===HTomb.Things[f.template].integrity) {
           HTomb.GUI.pushMessage(this.blurb());
+
         }
         f.dismantle(this);
         this.assignee.ai.acted = true;
         this.assignee.ai.actionPoints-=16;
         if (f.isPlaced()===false) {
-          this.complete(this.assignee);
+          this.complete();
         }
       } else {
         f = HTomb.World.covers[z][x][y];
@@ -1024,7 +1036,7 @@ HTomb = (function(HTomb) {
           HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
           this.assignee.ai.acted = true;
           this.assignee.ai.actionPoints-=16;
-          this.complete(this.assignee);
+          this.complete();
         }
       }
     }
@@ -1111,7 +1123,7 @@ HTomb = (function(HTomb) {
     name: "furnish",
     description: "furnish a fixture",
     bg: "#553300",
-    features: ["Ramp","Door",/*"Throne",*/"Torch","SpearTrap"],
+    features: ["Ramp","Door","Torch","SpearTrap"],
     designate: function(assigner) {
       var arr = [];
       for (var i=0; i<this.features.length; i++) {
@@ -1124,15 +1136,17 @@ HTomb = (function(HTomb) {
             var task = that.designateTile(x,y,z,assigner);
             if (task) {
               task.makes = feature.template;
-              if (feature.ingredients && !HTomb.Debug.noingredients) {
-                task.ingredients = HTomb.Utils.clone(feature.ingredients);
+              if (HTomb.Debug.noingredients) {
+                task.ingredients = {};
+              } else {
+                task.ingredients = feature.fixture.ingredients;
               }
               task.name = task.name + " " + HTomb.Things[feature.template].name;
             }
           }
           function myHover(x,y,z) {
             HTomb.GUI.Panels.menu.middle = ["%c{lime}Furnish " + feature.describe({article: "indefinite"}) + " here.",
-            "","%c{lime}"+feature.tooltip];
+            "","%c{lime}"+feature.fixture.tooltip];
           }
           HTomb.GUI.selectSquare(assigner.z,that.designateSquare,{
             assigner: assigner,
@@ -1147,8 +1161,8 @@ HTomb = (function(HTomb) {
         format: function(feature) {
           let g = feature.describe();
           let ings = [];
-          for (let ing in feature.ingredients) {
-            ings.push([ing, feature.ingredients[ing]]);
+          for (let ing in feature.fixture.ingredients) {
+            ings.push([ing, feature.fixture.ingredients[ing]]);
           }
           if (ings.length>0) {
             g+=" ($: ";
@@ -1163,7 +1177,7 @@ HTomb = (function(HTomb) {
               }
             }
           }
-          if (assigner && assigner.master && assigner.master.ownsAllIngredients(feature.ingredients)!==true) {
+          if (assigner && assigner.master && assigner.master.ownsAllIngredients(feature.fixture.ingredients)!==true) {
             g = "%c{gray}"+g;
           }
           return g;
