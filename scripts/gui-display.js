@@ -273,6 +273,7 @@ HTomb = (function(HTomb) {
     let br=null;
     let fgpat = /%c{\w*}/g;
     let bgpat = /%b{\w*}/g;
+    // !!!!!More like mishandle line breaks...
     while(c<menuText.length) {
       let txt = menuText[c];
       let fg = fgpat.exec(txt);

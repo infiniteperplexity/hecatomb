@@ -434,7 +434,7 @@ HTomb = (function(HTomb) {
             minion.equipper.equipItem(invenTools[0]);
             continue;
           } else if (groundTools.length>0) {
-            let task = HTomb.Things.EquipTask({
+            let task = HTomb.Things.EquipTask.spawn({
               assigner: this.entity,
               item: groundTools[0],
               name: "equip " + groundTools[0].describe()

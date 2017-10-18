@@ -84,6 +84,12 @@ HTomb = (function(HTomb) {
           console.log(b);
         }
         let defaults = HTomb.Things[b];
+        if (defaults.nospawn) {
+          //!!!For now, these don't even get added to the behaviors list
+          //!!!That means they can't listen for events other than onDefine
+          //!!!We may revisit that in the future
+          continue;
+        }
         let bargs = o.Behaviors[b];
         // the way these arguments nest and inherit is pretty subtle...
         for (let key in bargs) {
@@ -94,10 +100,9 @@ HTomb = (function(HTomb) {
           }
         }
         let beh = HTomb.Things[b].spawn(bargs);
-        //let beh = HTomb.Things[b].spawn(HTomb.Utils.merge(defaults, o.Behaviors[b]));
         beh.addToEntity(o);
       }
-      // !!!Should randomize be a mixin?
+      // !!!Should randomize be a behavior???
       // Randomly choose symbol if necessary
       if (Array.isArray(this.symbol)) {
         o.symbol = this.symbol[Math.floor(Math.random()*this.symbol.length)];
@@ -125,10 +130,24 @@ HTomb = (function(HTomb) {
     },
     extend: function(args) {
       let template = HTomb.Things.Thing.extend.call(this, args);
-      for (let b in args.Behaviors) {
-        let beh = HTomb.Things[b];
-        let mod = args.Behaviors[b];
-        beh = HTomb.Utils.merge(beh,mod);
+      template.behaviors = [];
+      for (let b in template.Behaviors) {
+        if (!HTomb.Things[b]) {
+          console.log(b);
+        }
+        let defaults = HTomb.Things[b];
+        let bargs = template.Behaviors[b];
+        for (let key in bargs) {
+          if (bargs.hasOwnProperty(key)) {
+            if (bargs[key]!==defaults[key]) {
+              bargs[key] = HTomb.Utils.merge(defaults[key],bargs[key]);
+            }
+          }
+        }
+        //!!!so at this point, it doesn't know what it's getting attached to...
+        bargs.Entity = template;
+        let beh = HTomb.Things[b].prespawn(bargs);
+        //template.behaviors.push(beh);
         template[beh.name] = beh;
       }
       return template;
@@ -139,11 +158,12 @@ HTomb = (function(HTomb) {
     template: "Behavior",
     name: "behavior",
     entity: null,
+    nospawn: false,
     addToEntity: function(ent) {
       HTomb.Debug.logEvent("add",this);
       this.entity = ent;
       ent[this.name] = this;
-      if (!ent.behaviors) {
+      if (ent.hasOwnProperty("behaviors")===false) {
         ent.behaviors = [];
       }
       ent.behaviors.push(this);

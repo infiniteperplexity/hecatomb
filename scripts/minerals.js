@@ -149,5 +149,13 @@ HTomb = (function(HTomb) {
     bg: "#555555"
   });
 
+  //!!! failed experiment, revisit later
+  HTomb.Covers.Soil.extend({
+    template: "Sand",
+    name: "sand",
+    fg: "#BBBB88",
+    bg: "#888855"
+  });
+
 return HTomb;
 })(HTomb);

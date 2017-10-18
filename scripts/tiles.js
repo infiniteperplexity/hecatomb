@@ -617,7 +617,6 @@ HTomb = (function(HTomb) {
           break;
         }
       }
-      console.log("At the end of the check, had " + n + " left to find.");
       // if we did not find enough, return false
       if (n>0) {
         return false;

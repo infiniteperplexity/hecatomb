@@ -61,7 +61,7 @@ HTomb = (function(HTomb) {
     integrity: 15,
     yields: {WoodPlank: {n: 1, nozero: true}}
     // ,
-    // Mixins: {
+    // Behaviors: {
     //   Harvestable: {
     //     labor: 15,
     //     yields: {
@@ -197,47 +197,6 @@ HTomb = (function(HTomb) {
 // U+2964
 // U+2ADD
 
-  Feature.extend({
-    template: "SpearTrap",
-    name: "spear trap",
-    symbol: "\u2963",
-    fg: "#CC9944",
-    tooltip: "(A spring-loaded, spiked stick that attacks your enemies.)",
-    labor: 10,
-    craftable: true,
-    integrity: 10,
-    sprung: false,
-    ingredients: {WoodPlank: 2},
-    Behaviors: {
-      Attacker: {
-        damage: {
-          type: "Piercing",
-          level: 2
-        },
-        accuracy: 2
-      },
-      Trap: {
-        sprungSymbol: "\u2964",
-        rearmCost: {WoodPlank: 1}
-      }
-    },
-    onSpring: function(x,y,z) {
-      let c = HTomb.World.creatures[coord(x,y,z)];
-      this.attacker.attack(c);
-    },
-    onStep: function(event) {
-      if (this.trap.sprung) {
-        return;
-      }
-      let c = event.creature;
-      if (c.x===this.x && c.y===this.y && c.z===this.z
-      && (!this.owner || !c.ai || this.owner.ai.team!==c.ai.team)
-      && !c.movement.flies) {
-        this.trap.spring(c.x,c.y,c.z);
-      }
-    }
-  });
-
   Behavior.extend({
     template: "Trap",
     name: "trap",
@@ -273,6 +232,65 @@ HTomb = (function(HTomb) {
       this.entity.effort = this.rearmEffort;
     }
   });
+
+  //!!!Test this out
+  Behavior.extend({
+    template: "CraftableB",
+    name: "craftableb",
+    nospawn: true,
+    labor: 5,
+    ingredients: {WoodPlank: 1},
+    onPrespawn: function(args) {
+      //console.log("attaching myself to " + args.Entity.template);
+    }
+  });
+
+  Feature.extend({
+    template: "SpearTrap",
+    name: "spear trap",
+    symbol: "\u2963",
+    fg: "#CC9944",
+    tooltip: "(A spring-loaded, spiked stick that attacks your enemies.)",
+    labor: 10,
+    craftable: true,
+    integrity: 10,
+    sprung: false,
+    ingredients: {WoodPlank: 2},
+    Behaviors: {
+      Attacker: {
+        damage: {
+          type: "Piercing",
+          level: 2
+        },
+        accuracy: 2
+      },
+      Trap: {
+        sprungSymbol: "\u2964",
+        rearmCost: {WoodPlank: 1}
+      },
+      CraftableB: {
+        labor: 10,
+        ingredients: {WoodPlank: 2}
+      }
+    },
+    onSpring: function(x,y,z) {
+      let c = HTomb.World.creatures[coord(x,y,z)];
+      this.attacker.attack(c);
+    },
+    onStep: function(event) {
+      if (this.trap.sprung) {
+        return;
+      }
+      let c = event.creature;
+      if (c.x===this.x && c.y===this.y && c.z===this.z
+      && (!this.owner || !c.ai || this.owner.ai.team!==c.ai.team)
+      && !c.movement.flies) {
+        this.trap.spring(c.x,c.y,c.z);
+      }
+    }
+  });
+
+  
 
   let Cover = HTomb.Types.Type.extend({
     template: "Cover",

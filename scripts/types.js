@@ -9,7 +9,6 @@ HTomb = (function(HTomb) {
     template: "Type",
     name: "type",
     plural: null,
-    Trackers: [],
     stringify: function() {
       return {"Type" : this.template};
     },
@@ -29,27 +28,27 @@ HTomb = (function(HTomb) {
       // I think this is safe because we never modify Types after creation
       child = Object.assign(child, args);
       child.parent = this;
-      HTomb.Types[child.template] = child;   
-      // either create the registry of types, or add to it
-      if (this===type) {
-        // ready the pluralized name
-        if (args.plural) {
-          child.plural = args.plural;
-        } else {
-          child.plural = child.template + "s";
-        }
-        HTomb[child.plural] = {};
-        child.types = [];
+      HTomb.Types[child.template] = child;
+      // ready the pluralized name
+      if (args.plural) {
+        child.plural = args.plural;
       } else {
+        child.plural = child.template + "s";
+      }
+      // add to the registry of types
+      if (this!==type) {
+        if (!HTomb[this.plural]) {
+          HTomb[this.plural] = {};
+        }
         HTomb[this.plural][args.template] = child;
-        // create an enum-like construct
-        // I don't like this syntax
-        HTomb.Types[this.template].types.push(child);
+        if (this.hasOwnProperty("types")===false) {
+          this.types = [];
+        }
+        this.types.push(child);
       }
       if (child.onDefine) {
         child.onDefine(args);
       }
-      //!!!!Anything about Mixins here?
       return child;
     }
   }
