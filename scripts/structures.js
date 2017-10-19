@@ -1186,12 +1186,32 @@ HTomb = (function(HTomb) {
     },
   });
 
-  //!!!!!Weird that its behavior is defined in defender, not here
   Structure.extend({
     template: "GuardPost",
     name: "guard post",
     defenseRange: 3,
     rallying: false,
+    onPlace: function() {
+      HTomb.Events.subscribe(this, "Act");
+    },
+    onAct: function(event) {
+      let actor = event.actor;
+      if (!actor.entity.minion || actor.entity.minion.master!==this.owner) {
+        return;
+      }
+      if (actor.acted===false) {
+        actor.alert.act(actor);
+      }
+      if (actor.acted===false) {
+        actor.patrol(this.x,this.y,this.z, {
+          min: 0,
+          max: this.defenseRange,
+          searcher: actor.entity,
+          searchee: this,
+          searchTimeout: 10
+        });
+      }
+    },
     highlight: function(bg) {
       Structure.highlight.call(this,bg);
       let z = this.z;

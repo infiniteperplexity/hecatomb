@@ -304,29 +304,11 @@ HTomb = (function(HTomb) {
       if (cr.worker && cr.worker.task) {
         ai.entity.worker.task.ai();
       } else if (HTomb.Player.master) {
-        //!!!a very strange place to define guard post rally behavior...
-        let post;
-        for (let structure of HTomb.Player.master.structures) {
-          if (structure.template==="GuardPost" && structure.rallying) {
-            post = structure;
-          }
-        }
-        if (post) {
-          ai.patrol(post.x,post.y,post.z, {
-            min: 0,
-            max: post.defenseRange,
-            searcher: ai.entity,
-            searchee: post,
-            searchTimeout: 10
-          });
-        } else {
-          // Otherwise, patrol around the creature's master
-          ai.patrol(ai.entity.minion.master.x,ai.entity.minion.master.y,ai.entity.minion.master.z, {
-            searcher: ai.entity,
-            searchee: ai.entity.minion.master,
-            searchTimeout: 10
-          });
-        }
+        ai.patrol(ai.entity.minion.master.x,ai.entity.minion.master.y,ai.entity.minion.master.z, {
+          searcher: ai.entity,
+          searchee: ai.entity.minion.master,
+          searchTimeout: 10
+        });
       }
     }
   });
@@ -623,6 +605,7 @@ HTomb = (function(HTomb) {
       //  return false;
       //}
       // If the creature has already acted, bail out
+      HTomb.Events.publish({type: "Act", actor: this});
       if (this.acted===false) {
         this.alert.act(this);
       }
