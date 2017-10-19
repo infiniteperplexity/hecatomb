@@ -36,6 +36,7 @@ HTomb = (function(HTomb) {
       }
     }
     HTomb.Tutorial.onEvent(event);
+    return event;
   };
   Events.unsubscribeAll = function(listener) {
     for (let i=0; i<Events.types.length; i++) {

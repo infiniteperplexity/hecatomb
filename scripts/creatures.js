@@ -17,7 +17,7 @@ HTomb = (function(HTomb) {
           this.player.playerDeath();
         } else {
           if (this.leavesCorpse) {
-            let corpse = HTomb.Things.Corpse({sourceCreature: this});
+            let corpse = HTomb.Things.Corpse.spawn({sourceCreature: this});
             corpse.place(this.x, this.y, this.z);
           }
           this.destroy();

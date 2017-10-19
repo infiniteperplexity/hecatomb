@@ -690,23 +690,35 @@ HTomb = (function(HTomb) {
       if (e.z>v.z) {
         r+=1;
       }
-      // guard post
-      if (v.minion && v.minion.master && v.minion.master.master) {
-        let gp = false;
-        for (let s of v.minion.master.master.structures) {
-          if (s.template==="GuardPost" && s.z===v.z && HTomb.Path.quickDistance(s.x,s.y,s.z,v.x,v.y,v.z)<=s.defenseRange) {
-            gp = true;
-          }
-        }
-        if (gp) {
-          r-=1;
-        }
-      }
       return r;
     },
     attack: function(victim) {
       let e = this.entity;
+      // publish an event, giving listeners a chance to modify it
+      let event = {
+        type: "Attack",
+        attacker: e,
+        target: victim,
+        modifiers: {
+          accuracy: 0,
+          evasion: 0,
+          toughness: 0,
+          damage: {
+            type: null,
+            level: 0
+          },
+          armor: {
+            material: null,
+            level: 0
+          }
+        }
+      };
+      event = HTomb.Events.publish(event);
+      e = event.attacker;
+      victim = event.target;
+      let modifiers = event.modifiers;
       let evade = (victim.defender) ? victim.defender.evasion - victim.defender.wounds.level : -10;
+      evade += modifiers.evasion;
       let roll = HTomb.Utils.dice(1,20);
       if (e.entity && e.entity.equipper
             && e.entity.equipper.slots.MainHand
@@ -714,8 +726,8 @@ HTomb = (function(HTomb) {
         roll += e.entity.equipper.slots.MainHand.accuracy;
       }
       roll = this.checkTerrain(victim, roll);
-      if (roll+this.accuracy >= 11 + evade) {
-        (victim.defender) ? victim.defender.defend(this) : {};       
+      if (roll+this.accuracy + modifiers.evasion >= 11 + evade) {
+        (victim.defender) ? victim.defender.defend(event) : {};       
       } else {
         HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + victim.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
       }
@@ -758,24 +770,30 @@ HTomb = (function(HTomb) {
         }
       }
     },
-    endure: function(roll, attack) {
-      let atype = attack.damage.type;
-      let alevel = attack.damage.level;
-
+    endure: function(roll, event) {
+      let attack = event.attacker.attacker;
+      let modifiers = event.modifiers;
+      let atype = modifiers.damage.type || attack.damage.type;
+      let alevel = attack.damage.level + modifiers.damage.level;
+      let armor = {
+        material: modifiers.armor.type || this.armor.material,
+        level: this.armor.level + modifiers.armor.level
+      };
       if (attack.entity && attack.entity.equipper
             && attack.entity.equipper.slots.MainHand
             && attack.entity.equipper.slots.MainHand.damage) {
         let d = attack.entity.equipper.slots.MainHand;
         if (d.type) {
-          atype = d.type;
+          atype = modifiers.damage.type || d.type;
         }
         if (d.level) {
-          alevel = d.level;
+          alevel = d.level + modifiers.damage.level;
         }
       }
       let modifier = Damage.table[atype][this.material];
-      let penetrate = Damage.table[atype][this.armor.material];
+      let penetrate = Damage.table[atype][armor.material];
       let total = roll;
+      console.log("Roll: " + total);
       total += alevel;
       total += modifier;
       total += this.wounds.level;
@@ -783,8 +801,9 @@ HTomb = (function(HTomb) {
         total -= attack.entity.defender.wounds.level;
       }
       // armor can never leave you worse off
-      total -= Math.max(0,this.armor.level-penetrate);
-      total -= this.toughness;
+      total -= Math.max(0, armor.level-penetrate);
+      total -= (this.toughness + modifiers.toughness);
+      console.log("Total: " + total);
       let x = this.entity.x;
       let y = this.entity.y;
       let z = this.entity.z;
@@ -834,9 +853,9 @@ HTomb = (function(HTomb) {
       }
       this.tallyWounds();
     },
-    defend: function(attack) {
+    defend: function(event) {
       let roll = HTomb.Utils.dice(1,20);
-      this.endure(roll, attack);      
+      this.endure(roll, event);      
     },
     onDescribe: function(options) {
       let pre = options.pre || [];

@@ -1190,11 +1190,26 @@ HTomb = (function(HTomb) {
     template: "GuardPost",
     name: "guard post",
     defenseRange: 3,
+    defenseBonus: 1,
     rallying: false,
     onPlace: function() {
       HTomb.Events.subscribe(this, "Act");
+      HTomb.Events.subscribe(this, "Attack");
+    },
+    onAttack: function(event) {
+      let v = event.target;
+      let m = event.modifiers;
+      if (v.minion && v.minion.master && v.minion.master.master===this.owner) {
+        if (HTomb.Path.quickDistance(this.x, this.y, this.z, v.x, v.y, v.z)<s.defenseRange) {
+          m.evasion = Math.max(m.evasion, this.defenseBonus);
+        }
+      }
+      return event;
     },
     onAct: function(event) {
+      if (this.rallying!==true) {
+        return;
+      }
       let actor = event.actor;
       if (!actor.entity.minion || actor.entity.minion.master!==this.owner) {
         return;
