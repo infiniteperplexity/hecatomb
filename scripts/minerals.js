@@ -98,6 +98,7 @@ HTomb = (function(HTomb) {
     fg: "green"
   });
 
+
   let Cover = HTomb.Types.Cover;
 
   Cover.extend({
@@ -116,8 +117,8 @@ HTomb = (function(HTomb) {
     earth: true,
     hardness: 1,
     thickness: 5,
-    fg: "#AAAAAA",
-    bg: "#777777"
+    fg: "#999999",
+    bg: "#666666"
   });
 
   Cover.extend({
@@ -126,8 +127,8 @@ HTomb = (function(HTomb) {
     earth: true,
     hardness: 2,
     thickness: 12,
-    fg: "#999999",
-    bg: "#666666"
+    fg: "#9999BB",
+    bg: "#666688"
   });
 
   Cover.extend({

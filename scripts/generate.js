@@ -185,7 +185,7 @@ HTomb = (function(HTomb) {
       for (var y=0; y<LEVELH; y++) {
         for (var z=0; z<NLEVELS-1; z++) {
           if (tiles[z][x][y]===HTomb.Tiles.FloorTile && tiles[z+1][x][y]===HTomb.Tiles.EmptyTile) {
-            squares = HTomb.Tiles.neighbors(x,y);
+            squares = HTomb.Tiles.neighboringColumns(x,y);
             slope = false;
             for (var i=0; i<squares.length; i++) {
               square = squares[i];

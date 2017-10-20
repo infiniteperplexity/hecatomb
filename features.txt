@@ -1,6 +1,7 @@
 Certain:
 - Add morale to bad guys.
 - Chirurgeon.
+- Seeded randomness.
 
 
 Tentative:

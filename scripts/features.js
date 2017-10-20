@@ -362,15 +362,8 @@ HTomb = (function(HTomb) {
   let Cover = HTomb.Types.Type.extend({
     template: "Cover",
     name: "cover",
-    liquid: false,
     stringify: function() {
       return HTomb.Types[this.parent].types.indexOf(this);
-    },
-    shimmer: function() {
-      var bg = ROT.Color.fromString(this.bg);
-      bg = ROT.Color.randomize(bg,[bg[0]/16, bg[1]/16, bg[2]/16]);
-      bg = ROT.Color.toHex(bg);
-      return bg;
     },
     darken: function() {
       if (this.bg===undefined) {
@@ -381,27 +374,6 @@ HTomb = (function(HTomb) {
       bg = ROT.Color.multiply(bg,[72,128,192]);
       bg = ROT.Color.toHex(bg);
       return bg;
-    },
-    flood: function(x,y,z) {
-      var t = HTomb.World.covers[z-1][x][y];
-      var water;
-      if (HTomb.World.tiles[z-1][x][y].solid!==true && t.liquid===undefined) {
-        HTomb.World.covers[z][x][y] = this;
-        this.flood(x,y,z);
-        // if we flood below, don't flood to the sides...should this happen each turn?
-        return;
-      }
-      var neighbors = HTomb.Tiles.neighbors(x,y,4);
-      for (var i=0; i<neighbors.length; i++) {
-        x = neighbors[i][0];
-        y = neighbors[i][1];
-        t = HTomb.World.covers[z][x][y];
-        if (HTomb.World.tiles[z][x][y].solid===true || t.liquid) {
-          continue;
-        }
-        HTomb.World.covers[z][x][y] = this;
-        this.flood(x,y,z);
-      }
     }
   });
 
@@ -410,14 +382,49 @@ HTomb = (function(HTomb) {
     name: "none"
   });
 
+
+  Behavior.extend({
+    template: "Liquid",
+    name: "liquid",
+    nospawn: true,
+    flowSymbol: "\u2248",
+    shimmer: function() {
+      let bg = ROT.Color.fromString(this.Template.bg);
+      bg = ROT.Color.randomize(bg,[bg[0]/16, bg[1]/16, bg[2]/16]);
+      bg = ROT.Color.toHex(bg);
+      return bg;
+    },
+    flood: function(x,y,z) {
+      let t = HTomb.World.covers[z-1][x][y];
+      if (HTomb.World.tiles[z-1][x][y].solid!==true && !t.liquid) {
+        HTomb.World.covers[z-1][x][y] = this.Template;
+        this.flood(x,y,z-1);
+        // if we flood below, don't flood to the sides...should this happen each turn?
+        return;
+      }
+      let neighbors = HTomb.Tiles.neighboringColumns(x,y,4);
+      for (var i=0; i<neighbors.length; i++) {
+        x = neighbors[i][0];
+        y = neighbors[i][1];
+        t = HTomb.World.covers[z][x][y];
+        if (HTomb.World.tiles[z][x][y].solid===true || t.liquid) {
+          continue;
+        }
+        HTomb.World.covers[z][x][y] = this.Template;
+        this.flood(x,y,z);
+      }
+    }
+  });
+
   Cover.extend({
     template: "Water",
     name: "water",
     symbol: "~",
-    flowSymbol: "\u2248",
-    liquid: true,
     fg: HTomb.Constants.WATERFG || "#3388FF",
-    bg: HTomb.Constants.WATERBG || "#1144BB"
+    bg: HTomb.Constants.WATERBG || "#1144BB",
+    Behaviors: {
+      Liquid: {}
+    }
   });
 
   Cover.extend({
@@ -427,7 +434,10 @@ HTomb = (function(HTomb) {
     flowSymbol: "\u2248",
     liquid: true,
     fg: "#FF8833",
-    bg: "#DD4411"
+    bg: "#DD4411",
+    Behaviors: {
+      Liquid: {}
+    }
   });
 
   HTomb.Things.Tracker.extend({

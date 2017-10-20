@@ -377,6 +377,15 @@ HTomb = (function(HTomb) {
     GUI.reset();
   }
 
+  Context.prototype.clone = function() {
+    let c = Object.create(this);
+    c.boundKeys = {};
+    for (let key in this.boundKeys) {
+      c.boundKeys[key] = this.boundKeys[key];
+    }
+    return c;
+  };
+
   GUI.Contexts.new = function(args) {
     return new Context(args);
   }

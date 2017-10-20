@@ -141,7 +141,7 @@ HTomb = (function(HTomb) {
     options = options || {};
     let hover = options.hover || function(x, y, z, sq) {};
     //var context = Object.create(survey);
-    var context = HTomb.Utils.clone(survey);
+    var context = survey.clone();
     if (options.contextName) {
       context.contextName = options.contextName;
     }
@@ -173,7 +173,7 @@ HTomb = (function(HTomb) {
     };
     context.selectTile = function (x,y) {
       context.menuText[1] = "%c{yellow}Select second corner with keys or mouse.";
-      var context2 = HTomb.Utils.clone(survey);
+      var context2 = survey.clone();
       GUI.bindKey(context2, "VK_ESCAPE", GUI.reset);
       Contexts.active = context2;
       if (options.contextName) {
@@ -261,7 +261,7 @@ HTomb = (function(HTomb) {
     let hover = options.hover || function(sq) {};
     var gameScreen = GUI.Panels.gameScreen;
     //var context = Object.create(survey);
-    var context = HTomb.Utils.clone(survey);
+    var context = survey.clone();
     if (options.contextName) {
       context.contextName = options.contextName;
     }
@@ -329,7 +329,7 @@ HTomb = (function(HTomb) {
       "%c{orange}**Esc: Cancel**.",
       "%c{yellow}"+header
     ];
-    let context = HTomb.Utils.clone(survey);
+    let context = survey.clone();
     if (options.contextName) {
       context.contextName = options.contextName;
     }
@@ -352,9 +352,9 @@ HTomb = (function(HTomb) {
       });
       choices.push(alpha[i]+") " + desc);
     }
-    context.hoverTile = Contexts.main.hoverTile;
-    let keyCursor = GUI.getKeyCursor();
-    context.hoverTile(keyCursor[0],keyCursor[1]);
+    // context.hoverTile = Contexts.main.hoverTile;
+    // let keyCursor = GUI.getKeyCursor();
+    // context.hoverTile(keyCursor[0],keyCursor[1]);
     Contexts.active = context;
     Contexts.active.menuText = choices;
     menu.refresh();
@@ -364,7 +364,7 @@ HTomb = (function(HTomb) {
   GUI.selectSquare = function(z, callb, options) {
     options = options || {};
     let hover = options.hover || function(x, y, z) {};
-    var context = HTomb.Utils.clone(survey);
+    var context = survey.clone();
     if (options.contextName) {
       context.contextName = options.contextName;
     }

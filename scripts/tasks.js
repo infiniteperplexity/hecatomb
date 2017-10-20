@@ -307,6 +307,7 @@ HTomb = (function(HTomb) {
       //cancel the task if something weird happened to the tile
       if (this.validTile(x,y,z)!==true) {
         this.cancel();
+        return;
       }
       //do I want to make demolishing unowned features the default?
       // maybe do that with "subsidiary tasks"
@@ -418,8 +419,15 @@ HTomb = (function(HTomb) {
       if (cr.worker) {
         labor = cr.worker.getLabor();
       }
+      // if this minion can't do it...
       if (labor-hardness<=0) {
-        return false;
+        for (let minion of this.assigner.master.minions) {
+          labor = Math.max(labor, minion.worker.getLabor());
+        }
+        // ...but some other minion can, return false
+        if (labor-hardness>0) {
+          return false;
+        }
       }
       return true;
     },
@@ -958,7 +966,7 @@ HTomb = (function(HTomb) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
       }
-      if (HTomb.World.features[coord(x,y,z)] || (HTomb.World.covers[z][x][y].liquid!==true && HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover)) {
+      if (HTomb.World.features[coord(x,y,z)] || (!HTomb.World.covers[z][x][y].liquid && HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover)) {
         return true;
       } else {
         return false;

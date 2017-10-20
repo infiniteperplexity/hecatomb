@@ -1,2 +1,6 @@
 - Revisit "integrity" on features.
 - Figure out some way to "mixin" Types...for example, to make Soils a subtype of Covers.
+- Make randomized appearance a nospawn behavior
+- Check length of files and consider redistributing them
+- Make the thing run off configuration files?
+- Make it so you can load code dynamically?

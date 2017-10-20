@@ -260,7 +260,7 @@ HTomb = (function(HTomb) {
   HTomb.World.validate.liquids = function(x,y,z) {
     var t = HTomb.World.covers[z][x][y];
     if (t.liquid) {
-      t.flood(x,y,z);
+      t.liquid.flood(x,y,z);
     }
   };
 
