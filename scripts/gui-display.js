@@ -190,7 +190,7 @@ HTomb = (function(HTomb) {
     }
     let txt = "X:"+x+" Y:"+y+" Z:"+z+" "+HTomb.Time.dailyCycle.getPhase().symbol+day+":"+hour+":"+minute;
     if (p.caster) {
-      txt = "Entropy:" + p.caster.entropy + "/" + p.caster.getMaxEntropy() + " " + txt;
+      txt = "Sanity:" + p.caster.sanity + "/" + p.caster.getMaxSanity() + " " + txt;
     }
     if (HTomb.Time.isPaused()===true || HTomb.GUI.autopause===true) {
       txt = txt + " %c{yellow}Pause";

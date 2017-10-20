@@ -7,10 +7,12 @@ HTomb = (function(HTomb) {
   HTomb.Things.Behavior.extend({
     template: "Researchable",
     name: "researchable",
-    //time: 480,
-    turns: 120,
+    turns: 48,
     nospawn: true,
-    cost: {}
+    ingredients: {},
+    finish: function() {
+      //!!!odd that we have no logic here
+    }
   });
 
 
@@ -18,11 +20,12 @@ HTomb = (function(HTomb) {
     template: "Spell",
     name: "spell",
     caster: null,
+    cost: 10,
     getCost: function() {
-      return 10;
+      return this.cost;
     },
-    spendEntropy: function() {
-      this.caster.entropy-=this.getCost();
+    spend: function() {
+      this.caster.sanity-=this.getCost();
     },
   });
 
@@ -69,7 +72,7 @@ HTomb = (function(HTomb) {
         let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
         if (cr) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-          that.spendEntropy();
+          that.spend();
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.Acid,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.Acid,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " casts an acid bolt at " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
@@ -107,7 +110,7 @@ HTomb = (function(HTomb) {
     name: "pound of flesh",
     Behaviors: {
       Researchable: {
-        ingredients: {Rock: 1, WoodPlank: 1}
+        ingredients: {Ectoplasm: 1}
         //ingredients: {Flesh: 1, Bone: 1}
       }
     },
@@ -119,7 +122,7 @@ HTomb = (function(HTomb) {
         let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
         if (cr && cr.template==="Zombie") {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-          that.spendEntropy();
+          that.spend();
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh to " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
@@ -138,7 +141,7 @@ HTomb = (function(HTomb) {
           c.ai.actionPoints-=16;
         } else if (cr) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-          that.spendEntropy();
+          that.spend();
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh from " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
@@ -183,6 +186,80 @@ HTomb = (function(HTomb) {
   });
 
   Spell.extend({
+    template: "CondenseEctoplasm",
+    name: "condense ectoplasm",
+    cost: 20,
+    Behaviors: {
+      Researchable: {}
+    },
+    cast: function() {
+      let caster = this.caster;
+      var c = caster.entity;
+      let that = this;  
+      function castBolt(x,y,z) {
+        if (HTomb.World.tiles[z][x][y]===true || (HTomb.Debug.explored===false && HTomb.World.explored[z][x][y]!==true)) { 
+          HTomb.GUI.pushMessage("Can't cast the spell there.");
+        } else {
+          that.spend();
+          HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{fg: "cyan", alwaysVisible: true});
+          HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{fg: "cyan", alwaysVisible: true});
+          HTomb.Things.Ectoplasm.spawn().place(x,y,z); 
+        }
+      }
+      function myHover(x, y, z) {
+        if (HTomb.World.explored[z][x][y]!==true) {
+          HTomb.GUI.Panels.menu.middle = ["%c{orange}Unexplored tile."];
+          return;
+        } else if (HTomb.World.tiles[z][x][y].solid===true) {
+          HTomb.GUI.Panels.menu.middle = ["%c{orange}Cannot condense ectoplasm there."];
+          return;
+        } else {
+          HTomb.GUI.Panels.menu.middle = ["%c{lime}Condense ectoplasm here."];
+        }
+      }
+      HTomb.GUI.selectSquare(
+        c.z,
+        castBolt,
+        {hover: myHover}
+      );
+    }
+  });
+
+  // castable only at night?
+  Spell.extend({
+    template: "StepIntoShadow",
+    name: "step into shadow",
+    cost: 6,
+    range: 6,
+    Behaviors: {
+      Researchable: {
+        ingredients: {
+          Ectoplasm: 1
+        }
+      }
+    },
+    cast: function() {
+      let caster = this.caster;
+      let c = caster.entity;
+      let x = c.x;
+      let y = c.y;
+      let z = c.z;
+      console.log([x,y,z]);
+      let s = HTomb.Tiles.getRandomWithinRange(c.x,c.y,c.z,this.range);
+      console.log(s);
+      if (!s) {
+        HTomb.GUI.sensoryEvent("Spell fizzled!",c.x,c.y,c.z);
+        return;
+      }
+      c.movement.stepTo(s[0],s[1],s[2]);
+      HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});      
+      HTomb.Particles.addEmitter(s.x,s.y,s.z,HTomb.Particles.SpellTarget,{alwaysVisible: true});        
+      HTomb.GUI.sensoryEvent(c.describe({article: "indefinite", capitalized: true}) + " disappears into a shadow and emerges elsewhere.",c.x,c.y,c.z);
+    }
+  });
+
+
+  Spell.extend({
     template: "RaiseZombie",
     name: "raise zombie",
     getCost: function() {
@@ -213,7 +290,7 @@ HTomb = (function(HTomb) {
             HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
             let corpse = items.take("Corpse");
             let sourceCreature = corpse.sourceCreature;
-            that.spendEntropy();
+            that.spend();
             corpse.despawn();
             if (sourceCreature) {
               zombie = HTomb.Things.Zombie.spawn({sourceCreature: sourceCreature});
@@ -235,7 +312,7 @@ HTomb = (function(HTomb) {
             HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z-1});
             let corpse = items.take("Corpse");
             let sourceCreature = corpse.sourceCreature;
-            that.spendEntropy();
+            that.spend();
             corpse.despawn();
             if (HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile) {
               HTomb.World.tiles[z-1][x][y]=HTomb.Tiles.UpSlopeTile;

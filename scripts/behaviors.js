@@ -348,12 +348,14 @@ HTomb = (function(HTomb) {
     taskList: null,
     workshops: null,
     tasks: null,
+    researched: null,
     onSpawn: function(options) {
       options = options || {};
       this.tasks = options.tasks || [];
       this.minions = [];
       this.taskList = [];
       this.structures = [];
+      this.researched = [];
       HTomb.Events.subscribe(this, "Destroy");
       return this;
     },
@@ -380,19 +382,6 @@ HTomb = (function(HTomb) {
       tsk.designate(this.entity);
     },
     assignTasks: function() {
-      let priorities = {
-        DigTask: 1,
-        BuildTask: 1,
-        ConstructTask: 1,
-        DismantleTask: 1,
-        FurnishTask: 1,
-        ProduceTask: 1,
-        RepairTask: 1,
-        HaulTask: 2,
-        PatrolTask: 3,
-        ResearchTask: 1,
-        TradeTask: 1
-      };
       HTomb.Utils.shuffle(this.taskList);
       //count down dormant tasks
       for (let i=0; i<this.taskList.length; i++) {
@@ -444,7 +433,7 @@ HTomb = (function(HTomb) {
           }
           let MAXPRIORITY = 3;
           for (let j=0; j<=MAXPRIORITY; j++) {
-            let tasks = this.taskList.filter(function(task,i,a) {return (priorities[task.template]===j && !(task.dormant>0) && task.assignee===null)});
+            let tasks = this.taskList.filter(function(task,i,a) {return (task.priority===j && !(task.dormant>0) && task.assignee===null)});
             // for hauling tasks, this gives misleading results...but I could fix that
             tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
             for (let k=0; k<tasks.length; k++) {
@@ -505,8 +494,8 @@ HTomb = (function(HTomb) {
   Behavior.extend({
     template: "SpellCaster",
     name: "caster",
-    baseEntropy: 20,
-    entropy: 20,
+    baseSanity: 20,
+    sanity: 20,
     onSpawn: function(options) {
       options = options || {};
       options.spells = options.spells || [];
@@ -519,12 +508,12 @@ HTomb = (function(HTomb) {
       return this;
     },
     onTurnBegin: function() {
-      if (this.entropy<this.getMaxEntropy() && Math.random()<(1/10)) {
-        this.entropy+=1;
+      if (this.sanity<this.getMaxSanity() && Math.random()<(1/10)) {
+        this.sanity+=1;
       }
     },
-    getMaxEntropy: function() {
-      let ent = this.baseEntropy;
+    getMaxSanity: function() {
+      let ent = this.baseSanity;
       if (this.entity.master) {
         for (let s of this.entity.master.structures) {
           if (s.template==="Sanctum") {
@@ -536,7 +525,7 @@ HTomb = (function(HTomb) {
     },
     cast: function(sp) {
       let cost = sp.getCost();
-      if (this.entropy>=cost) {
+      if (this.sanity>=cost) {
         sp.cast();
       }
     }

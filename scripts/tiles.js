@@ -669,5 +669,44 @@ HTomb = (function(HTomb) {
     }
     return squares;
   };
+
+
+  HTomb.Tiles.getSquaresWithinRange = function(x,y,z,n,callb) {
+    callb = callb || function(x1,y1,z1,n1) {
+      z1 = HTomb.Tiles.groundLevel(x1,y1);
+      if (HTomb.Path.quickDistance(x,y,z,x1,y1,z1)<=n1) {
+        return [x1,y1,z1];
+      } else {
+        return null;
+      }
+    }
+    let squares = [];
+    for (let dx = -n; dx<n; dx++) {
+      for (let dy = -n; dy<n; dy++) {
+        for (let dz = -n; dz<n; dz++) {
+          let x1 = x+dx;
+          let y1 = y+dy;
+          let z1 = z+dz;
+          if (HTomb.Path.quickDistance(x,y,z,x1,y1,z1)<=n) {
+            let s = callb(x1,y1,z1,n);
+            if (s && HTomb.Utils.arrayInArray(s,squares)!==true) {
+              squares.push(s);
+            }
+          }
+        }
+      }
+    }
+    return squares;
+  };
+
+  HTomb.Tiles.getRandomWithinRange = function(x,y,z,n,callb) {
+    let squares = HTomb.Tiles.getSquaresWithinRange(x,y,z,n,callb);
+    if (squares.length>0) {
+      let r = HTomb.Utils.dice(1,squares.length);
+      return squares[r-1];
+    }
+    return null;
+  };
+
   return HTomb;
 })(HTomb);

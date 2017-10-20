@@ -376,6 +376,7 @@ HTomb = (function(HTomb) {
       this.fulfilled = true;
     },
     finish: function() {
+      //!!!odd place to put this logic
       let template = HTomb.Things[this.researching];
       if (template.parent==="Spell") {
         HTomb.GUI.alert("You have completed research on the spell '" + template.describe()+".'");
@@ -383,6 +384,9 @@ HTomb = (function(HTomb) {
         if (spells.indexOf(template.template)===-1) {
           this.assigner.caster.spells.push(HTomb.Things[template.template].spawn({caster: this.assigner.caster}));
         }
+      }
+      if (this.assigner.master.researched.indexOf(template.template)===-1) {
+        this.assigner.master.researched.push(template.template);
       }
     },
     onDespawn: function() {
@@ -399,20 +403,22 @@ HTomb = (function(HTomb) {
       HTomb.Events.subscribe(this, "TurnBegin");
     },
     choiceCommand: function(i) {
-      if (this.current) {
-        if (confirm("Really cancel current research?")) {
-          this.current.cancel();
-        } else {
-          return;
+      let choices = this.choices;
+      choices = choices.filter(e => this.entity.owner.master.researched.indexOf(e)===-1);
+      if (i<choices.length) {
+        if (this.current) {
+          if (confirm("Really cancel current research?")) {
+            this.current.cancel();
+          } else {
+            return;
+          }
         }
-      }
-      if (i<this.choices.length) {
-        let choice = HTomb.Things[this.choices[i]];
+        let choice = HTomb.Things[choices[i]];
         this.current = HTomb.Things.ResearchTask.spawn({
           assigner: this.entity.owner,
           name: "research " + choice.name,
           structure: this.entity,
-          researching: this.choices[i],
+          researching: choices[i],
           turns: choice.researchable.turns,
           ingredients: choice.researchable.ingredients,
           fulfilled: (HTomb.Debug.noingredients || Object.keys(choice.researchable.ingredients).length===0) ? true : false
@@ -446,6 +452,7 @@ HTomb = (function(HTomb) {
       let txt = ["Research choices:"];
       let alphabet = "abcdefghijklmnopqrstuvwxyz";
       let choices = this.choices;
+      choices = choices.filter(e => this.entity.owner.master.researched.indexOf(e)===-1);
       for (let i=0; i<choices.length; i++) {
         let choice = HTomb.Things[choices[i]];
         let msg = choice.name + " " + HTomb.Utils.listIngredients(choice.researchable.ingredients);
@@ -587,7 +594,7 @@ HTomb = (function(HTomb) {
       }
       HTomb.Utils.shuffle(slots);
       let f = this.entity.features[slots[0]];
-      let t = HTomb.Things.HaulTask({
+      let t = HTomb.Things.HaulTask.spawn({
          assigner: this.entity.owner,
          name: "haul " + item.name
        });
@@ -605,6 +612,7 @@ HTomb = (function(HTomb) {
     bg: "#773366",
     storage: null,
     workRange: 0,
+    priority: 2,
     item: null,
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
@@ -1173,14 +1181,14 @@ HTomb = (function(HTomb) {
   Structure.extend({
     template: "Sanctum",
     name: "sanctum",
-    tooltip: "(The sanctum grants you addition entropy and researchable spells.)",
+    tooltip: "(The sanctum grants you more sanity and researchable spells.)",
     symbols: ["\u2625",".","\u2AEF",".","\u2135",".","\u2AEF","\u2606","\u263F"],
     fgs: ["magenta",HTomb.Constants.FLOORFG,"cyan",HTomb.Constants.FLOORFG,"green",HTomb.Constants.FLOORFG,"yellow","red","orange"],
     bg: "#222244",
     // do we want some sort of mana activation thing?,
     Behaviors: {
       Research: {
-        choices: ["PoundOfFlesh"]
+        choices: ["CondenseEctoplasm","PoundOfFlesh","StepIntoShadow"]
       },
       StructureLight: {}
     },

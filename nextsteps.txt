@@ -1,14 +1,8 @@
-- can't choose research you already have
-? make it so weapons do stuff
-- make it so tasks have their own priorities
-* refactor how the guard post rally works
+- change foreground for deeper rock types?
+- make dig tasks unassign from wrong undiggable rock types
+
 - add visual cues for out-of-depth rock types
-* simplify workshop interface
 - change how dryad encounters work
 
-- entropy to sanity
-- more spells
-- condense ectoplasm
-- shadow step
-
-- declaring hostility seems to maek everything hostile to the target
+- research still shows ingredients when noingredients is enabled
+- may need to revisit particle code in case someone moved?

@@ -19,6 +19,7 @@ HTomb = (function(HTomb) {
     // do I need to manually create this for instances?
     claimedItems: [],
     makes: null,
+    priority: 1,
     // tasks sometimes go dormant when assignment fails
     dormant: 0,
     dormancy: 6,
@@ -890,6 +891,7 @@ HTomb = (function(HTomb) {
     name: "patrol",
     description: "patrol an area",
     bg: "#880088",
+    priority: 3,
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;

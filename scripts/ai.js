@@ -814,10 +814,10 @@ HTomb = (function(HTomb) {
       }
     },
     onDefine: function(args) {
-      this.members = this.members || [];
-      this.enemies = this.enemies || [];
-      this.allies = this.allies || [];
-      this.vendettas = this.vendettas || [];
+      this.members = [];
+      this.enemies = [];
+      this.allies = [];
+      this.vendettas = [];
       HTomb.Events.subscribe(this,"Destroy");
       HTomb.Types.Team.teams[this.template] = this;
     },
@@ -850,6 +850,7 @@ HTomb = (function(HTomb) {
   HTomb.Events.subscribe(HTomb.Types.Team.hostilityMatrix,"TurnBegin");
 
 
+  // Teams might work better as Trackers, not Types
   // the player and affiliated minions
   Team.extend({
     template: "PlayerTeam",

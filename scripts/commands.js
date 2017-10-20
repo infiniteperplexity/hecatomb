@@ -382,25 +382,25 @@ HTomb = (function(HTomb) {
       return;
     }
     HTomb.Events.publish({type: "Command", command: "ShowSpells"});
-    GUI.choosingMenu("Choose a spell (entropy cost):", p.caster.spells,
+    GUI.choosingMenu("Choose a spell (sanity cost):", p.caster.spells,
       function(sp) {
         return function() {
-          if (p.caster.entropy>=sp.getCost()) {
+          if (p.caster.sanity>=sp.getCost()) {
             HTomb.GUI.Panels.menu.middle = [];
             HTomb.GUI.Panels.menu.refresh();
             HTomb.Events.publish({type: "Command", command: "ChooseSpell", spell: sp});
             p.caster.cast(sp);
           } else {
-            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough entropy."];
+            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough sanity."];
             HTomb.GUI.Panels.menu.refresh();
-            HTomb.GUI.pushMessage("Not enough entropy!");
+            HTomb.GUI.pushMessage("Not enough sanity!");
           }
         };
       },
       {
         format: function(spell) {
           let descrip = spell.describe()+" ("+spell.getCost()+")";
-          if (spell.getCost()>spell.caster.entropy) {
+          if (spell.getCost()>spell.caster.sanity) {
             descrip = "%c{gray}"+descrip;
           }
           return descrip;
