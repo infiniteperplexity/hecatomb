@@ -74,7 +74,6 @@ HTomb = (function(HTomb) {
         Equipper: {},
         Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask","RepairTask"]},
         SpellCaster: {spells: ["RaiseZombie"]},
-        //Worker: {allowedTasks: ["ResearchTask"]},
         Attacker: {
           damage: {
             level: 1

@@ -1,0 +1,5 @@
+- change foreground for deeper rock types?
+- make dig tasks unassign from wrong undiggable rock types
+- add visual cues for out-of-depth rock types
+
+

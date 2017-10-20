@@ -86,14 +86,14 @@ HTomb = (function(HTomb) {
       gameScreen.z = z;
     }
   };
-  var oldSquares;
+  let oldSquares;
   gameScreen.renderParticles = function() {
-    var squares = {};
-    var p,c,x,y,z;
+    let squares = {};
+    let p,c,x,y,z;
     // collect the particles
-    for (var j=0; j<HTomb.Particles.emitters.length; j++) {
-      var emitter = HTomb.Particles.emitters[j];
-      for (var i=0; i<emitter.particles.length; i++) {
+    for (let j=0; j<HTomb.Particles.emitters.length; j++) {
+      let emitter = HTomb.Particles.emitters[j];
+      for (let i=0; i<emitter.particles.length; i++) {
         p = emitter.particles[i];
         // don't collect particles that aren't on the screen
         x = Math.round(p.x);
@@ -119,7 +119,7 @@ HTomb = (function(HTomb) {
       }
     }
     // process the particles
-    for (var s in squares) {
+    for (let s in squares) {
       if (oldSquares[s]) {
         delete oldSquares[s];
       }

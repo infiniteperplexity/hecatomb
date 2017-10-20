@@ -225,7 +225,7 @@ HTomb = (function(HTomb) {
     }
   });
 
-  // castable only at night?
+  // castable only at night? or can only teleport from darkness to darkness?
   Spell.extend({
     template: "StepIntoShadow",
     name: "step into shadow",
@@ -244,17 +244,19 @@ HTomb = (function(HTomb) {
       let x = c.x;
       let y = c.y;
       let z = c.z;
-      console.log([x,y,z]);
       let s = HTomb.Tiles.getRandomWithinRange(c.x,c.y,c.z,this.range);
-      console.log(s);
+      HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});
+      this.spend();
       if (!s) {
         HTomb.GUI.sensoryEvent("Spell fizzled!",c.x,c.y,c.z);
+        HTomb.GUI.reset();
         return;
       }
-      c.movement.stepTo(s[0],s[1],s[2]);
-      HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});      
-      HTomb.Particles.addEmitter(s.x,s.y,s.z,HTomb.Particles.SpellTarget,{alwaysVisible: true});        
+      c.movement.stepTo(s[0],s[1],s[2]);            
+      HTomb.Particles.addEmitter(s[0],s[1],s[2],HTomb.Particles.SpellTarget,{alwaysVisible: true});   
       HTomb.GUI.sensoryEvent(c.describe({article: "indefinite", capitalized: true}) + " disappears into a shadow and emerges elsewhere.",c.x,c.y,c.z);
+      HTomb.GUI.Panels.gameScreen.recenter();
+      HTomb.GUI.reset();
     }
   });
 

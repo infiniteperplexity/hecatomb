@@ -1,0 +1,15 @@
+Certain:
+- Add morale to bad guys.
+- Chirurgeon.
+
+
+Tentative:
+- Add farming back in?
+- Revisit aquifers, eventually.
+- Hermits & Hags.
+- Ant colonies.
+- Ant lions.
+- Terrain types.
+- Google how to procedural generate biome borders.
+- More types of angry nature.
+- Ghoul dens.

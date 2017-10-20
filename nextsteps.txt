@@ -1,8 +1,0 @@
-- change foreground for deeper rock types?
-- make dig tasks unassign from wrong undiggable rock types
-
-- add visual cues for out-of-depth rock types
-- change how dryad encounters work
-
-- research still shows ingredients when noingredients is enabled
-- may need to revisit particle code in case someone moved?

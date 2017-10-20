@@ -1,0 +1,2 @@
+- Revisit "integrity" on features.
+- Figure out some way to "mixin" Types...for example, to make Soils a subtype of Covers.

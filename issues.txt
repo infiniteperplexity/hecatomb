@@ -1,58 +1,8 @@
-refactoring brings up a ton of new issues...
-- it's unclear that Types should still work exactly the way they do
-- some things, like Crops, aren't working correctly
-- some things like craftable should probably be made into behaviors
-- probably need a "claim item" task or some such thing to block multiple claims on the same item...subsidiary tasks
-- should rework how ownership and forbidding works
-
-- Long messages get truncated instead of wrapping.
-- Alert box is distracting and should be customized.
-
-
-*make it so soil/rock types work really well
-
-*add genuine threats, soon.
-
-*Make aquifers easy to get through, or nonexistent.
-
-So, I think right now it's important that I not let myself get overwhelmed.  Just get back in the game.  So the thing to do *right* *now* is to change...
-1) What buildings are available...
-2) How furnishing works.
-
-What does each of these things entail?
-
-1) We currently have Structures (good), Workshop ()
-2) Don't show the fixture if the building doesn't exist or you don't have the item.  If you assign the task and no item exists but you do have the building, add to the queue.
-
-- Does displacement really work?  Yes...there's a quirk where preference for diagonal working spaces tends to result in blockage.
-
-- The workshop queue is too eager to unassign.
-- ore is just sitting around a lot.
-- should zombies cluster around the guard post instead of the necro?
-- it's a little weird to have no vision of one's buildings, but it makes sense...do we want a "fly on the wall" spell?
-- is the number of "failed to acts" unreasonably high?
-
-
-
-Okay, what are the steps to this peasant mob thing?
-- Make the guard post do something
-	- display its function
-	- give alerts
-	- call to arms
-	- give combat bonuses
-	- attract zombies normally
-- Make the black market do something
-	- offer gold in exchange for other stuff
-	- offer trade goods in exchange for other stuff
-- Make the sanctum do stuff.
-	- enable an additional zombie.
-	- regenerate mana faster?
-- Make life drain / healing spells...like death coil?  drains life from the living, donates life to the dead...vampiric mending? or something to do with leeches?
-- Make doors repairable?
-- Add deadfall traps
-- Add a "treasury" building...actually maybe just keep gold in the market for now?
-- Get the subsidiary tasks thing working.
-- Make the peasant mobs
-	- Give them morale
-	- Have them respond to wealth
-
+- research still shows ingredients when noingredients is enabled
+- rock types are hard to notice and don't unassign automatically
+- furnishing should try to add production tasks
+- minions digging out rooms have a tendency to block the hallway
+- is the number of "spider failed to acts" unreasonably high?
+- ore doesn't get stored anywhere
+- I bet this Guard Post rallying thing is less flexible than you'd want...also, minions probably run outside the radius when facgint threats.
+- Think about whether to show letter choices when ingredients aren't available.
