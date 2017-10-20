@@ -1,10 +1,11 @@
 - research still shows ingredients when noingredients is enabled
-- furnishing should try to add production tasks
+- furnishing should try to add production tasks...unless we simplify this even further by making it so those things get built like ramps do and just have prereqs.  But in that case, how much production actually happens?
 - minions digging out rooms have a tendency to block the hallway
 - is the number of "spider failed to acts" unreasonably high?
 - ore doesn't get stored anywhere
 - you can kind of "cheat" and reveal unexplored terrain by seeing how DigTask assigns.  You could fight this by tagging the DigTask with the kind of terrain it's supposed to be on.
-- I bet this Guard Post rallying thing is less flexible than you'd want...also, minions probably run outside the radius when facgint threats.
+- I bet this Guard Post rallying thing is less flexible than you'd want...also, minions probably run outside the radius when facing threats.
 - Think about whether to show letter choices when ingredients aren't available.
 - Soil types break aquifers, currently.  Aquifers should be their own cover, I think.
 - I don't think ore currently has hardness.
+- Need a better strategy for avoiding displacement loops.

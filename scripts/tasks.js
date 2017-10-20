@@ -286,7 +286,31 @@ HTomb = (function(HTomb) {
         // can always work from range 0
         this.workOnTask(this.x,this.y,this.z);
       } else if (this.workRange>=1 && HTomb.Tiles.isTouchableFrom(this.x,this.y,this.z,cr.x,cr.y,cr.z)) {
-        this.workOnTask(this.x,this.y,this.z);
+        //if we are diagonal to it and adjacent to another zombie
+       // !!! This tends to create crazy displacement loops
+        // if (Math.abs(this.x-cr.x)+Math.abs(this.y-cr.y)===2) {
+           // && HTomb.Tiles.countNeighborsWhere(cr.x,cr.y,cr.z, function(x,y,z) {
+            //   let c = HTomb.World.creatures[coord(x,y,z)];
+            //   if (c && c.minion && c.minion.master===cr.minion.master) {
+            //     return true;
+            //   } else {
+            //     return false;
+            //   }
+            // })>0) {
+          // does a cardinally-adjacent walkable square exist?
+          // for (let xy of ROT.DIRS[4]) {
+          //   let x0 = cr.x+xy[0];
+          //   let y0 = cr.y+xy[1];
+            // ignore z-axis for now
+        //     if (HTomb.Tiles.isTouchableFrom(this.x,this.y,this.z,x0,y0,cr.z)  && cr.movement.canPass(x0,y0,this.z)) {
+        //       // this helps keep zombies from blocking doorways
+        //       cr.movement.stepTo(x0,y0,cr.z)
+        //       break;
+        //     }
+        //   }
+        // } else {
+          this.workOnTask(this.x,this.y,this.z);
+        // }
       // otherwise, walk toward
       } else {
         cr.ai.walkToward(this.x,this.y,this.z, {
@@ -1134,6 +1158,47 @@ HTomb = (function(HTomb) {
     description: "furnish a fixture",
     bg: "#553300",
     features: ["Ramp","Door","Torch","SpearTrap"],
+    // !!! this is a bit of a quagmire and maybe should be handled elsewhere?
+    // !!! another options, perhaps simpler, is to get rid of craftable fixtures entirely...
+    // ...and simply make certain structures a prereq for certain fixtures.
+    // ...no doors without workshops, etc.
+    // canAssign: function(cr) {
+    //   let x = this.x;
+    //   let y = this.y;
+    //   let z = this.z;
+    //   // there are a total of three checks - valid tile, reachable, and ingredients
+    //   // if validatetile fails it should cancel, but that's neither here nor there
+    //   // if reachable fails, it should try someo
+    //   if (this.validTile(x,y,z) && HTomb.Tiles.isReachableFrom(x,y,z,cr.x,cr.y,cr.z,{
+    //     searcher: cr,
+    //     searchee: this,
+    //     canPass: cr.movement.boundMove(),
+    //     searchTimeout: 10
+    //   })) {
+    //     if (HTomb.Tiles.canFindAll(cr.x, cr.y, cr.z, this.ingredients, {
+    //       searcher: cr,
+    //       respectClaims: (this.assigner===HTomb.Player) ? true : false,
+    //       ownedOnly: (this.assigner===HTomb.Player) ? true : false
+    //     })) {
+    //     return true;
+    //     } else {
+    //       for (let structure of cr.master.master.structures) {
+    //         if (structure.producer) {
+    //           let makes = structure.producer.makes;
+    //           for (let template of makes) {
+    //             let t = HTomb.Things[template];
+    //             if (t.makes===this.makes && HTomb.Tiles.canFindAll(cr.x, cr.y, cr.z, this.ingredients, {
+
+    //             })
+    //           }
+    //         }
+    //       }
+
+    //     }
+    //   } else {
+    //     return false;
+    //   }
+    // },
     designate: function(assigner) {
       var arr = [];
       for (var i=0; i<this.features.length; i++) {

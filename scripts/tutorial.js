@@ -680,7 +680,6 @@ HTomb = (function(HTomb) {
       }
     },
     trigger: function(event) {
-      console.log("testing this thing");
       return (event.spell.template==="RaiseZombie");
     },
     onComplete: function() {
