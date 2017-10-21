@@ -538,6 +538,7 @@ HTomb = (function(HTomb) {
     // flags for different kinds of movement
     walks: true,
     climbs: true,
+    displaced: null,
     displaceCreature: function(cr) {
       var x0 = this.entity.x;
       var y0 = this.entity.y;
@@ -547,8 +548,10 @@ HTomb = (function(HTomb) {
       var z = cr.z;
       cr.remove();
       this.stepTo(x,y,z);
+      this.movement.displaced = cr;
       if (cr.movement) {
         cr.movement.stepTo(x0,y0,z0);
+        cr.movement.displaced = this;
       } else {
         cr.place(x0,y0,z0);
       }
