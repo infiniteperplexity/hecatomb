@@ -1,5 +1,35 @@
-- change foreground for deeper rock types?
-- make dig tasks unassign from wrong undiggable rock types
-- add visual cues for out-of-depth rock types
+- add dens
+- terrain boundaries maybe?
+
+so...it's common with terrain generation, I think, to do cross-references of things like elevation, temperature, and moisture.
+
+so...in this game, we'd like to have...
+
+- swamps (moist, low)
+- wastes (dry, low)
+- forests (moist, medium)
+- hills (dry, medium)
+- mountains (high)
+
+- lakes
+
+- graveyards
 
 
+...could be...
+- mountains on left, lake on right.
+- swamps bottom, forests middle, scrubland middle, wastes top?
+Or do a "four corners" kind of approach?  We could do a gradient laid out on top of that.
+
+So...what's in these terrains?
+- rocks would be mostly in the mountains and wastes
+- trees mostly in the forests
+- sand in the wastes?
+- herbs in their own places?
+- graveyards in scrublands & forests...definitely not swamps.
+- ores in mountains
+special dangers in each corner (swamp, mountain, waste, lake)
+
+Do the peasants/humans come from any particular direction?  Across the sea?
+
+Ruins instead of wastelands?  or maybe make that the "good" area, with fewer graveyards, et cetera.
