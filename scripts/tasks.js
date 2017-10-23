@@ -288,28 +288,31 @@ HTomb = (function(HTomb) {
       } else if (this.workRange>=1 && HTomb.Tiles.isTouchableFrom(this.x,this.y,this.z,cr.x,cr.y,cr.z)) {
         //if we are diagonal to it and adjacent to another zombie
        // !!! This tends to create crazy displacement loops
-        // if (Math.abs(this.x-cr.x)+Math.abs(this.y-cr.y)===2) {
-           // && HTomb.Tiles.countNeighborsWhere(cr.x,cr.y,cr.z, function(x,y,z) {
-            //   let c = HTomb.World.creatures[coord(x,y,z)];
-            //   if (c && c.minion && c.minion.master===cr.minion.master) {
-            //     return true;
-            //   } else {
-            //     return false;
-            //   }
-            // })>0) {
-          // does a cardinally-adjacent walkable square exist?
-          // for (let xy of ROT.DIRS[4]) {
-          //   let x0 = cr.x+xy[0];
-          //   let y0 = cr.y+xy[1];
-            // ignore z-axis for now
+        // if (Math.abs(this.x-cr.x)+Math.abs(this.y-cr.y)===2
+        //    && HTomb.Tiles.countNeighborsWhere(cr.x,cr.y,cr.z, function(x,y,z) {
+        //       let c = HTomb.World.creatures[coord(x,y,z)];
+        //       if (c && c.minion && c.minion.master===cr.minion.master) {
+        //         return true;
+        //       } else {
+        //         return false;
+        //       }
+        //     })>0) {
+        //   //does a cardinally-adjacent walkable square exist?
+        //   for (let xy of ROT.DIRS[4]) {
+        //     let x0 = cr.x+xy[0];
+        //     let y0 = cr.y+xy[1];
+        //     //ignore z-axis for now
         //     if (HTomb.Tiles.isTouchableFrom(this.x,this.y,this.z,x0,y0,cr.z)  && cr.movement.canPass(x0,y0,this.z)) {
         //       // this helps keep zombies from blocking doorways
-        //       cr.movement.stepTo(x0,y0,cr.z)
+        //       cr.ai.walkToward(x0,y0,cr.z);
         //       break;
         //     }
         //   }
+        //   if (cr.ai.acted!==true) {
+        //     this.workOnTask(this.x,this.y,this.z);
+        //   }
         // } else {
-          this.workOnTask(this.x,this.y,this.z);
+        this.workOnTask(this.x,this.y,this.z);
         // }
       // otherwise, walk toward
       } else {
@@ -448,10 +451,11 @@ HTomb = (function(HTomb) {
         for (let minion of this.assigner.master.minions) {
           labor = Math.max(labor, minion.worker.getLabor());
         }
-        // ...but some other minion can, return false
-        if (labor-hardness>0) {
-          return false;
+        // ...if no minion can, cancel the task
+        if (labor-hardness<=0) {
+          this.cancel();
         }
+        return false;
       }
       return true;
     },

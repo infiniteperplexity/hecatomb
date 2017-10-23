@@ -137,7 +137,6 @@ HTomb = (function(HTomb) {
     leavesCorpse: false,
     symbol: "z",
     fg: "#99FF66",
-    randomColor: 50,
     onSpawn: function(args) {
       args = args || {};
       if (args.sourceCreature) {

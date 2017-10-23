@@ -86,6 +86,8 @@ HTomb = (function(HTomb) {
   HTomb.World.generators.revised = function() {
     timeIt("elevation", function() {
         assignElevation(50);
+    //}); timeIt("biomes", function() {
+    //    generateBiomes();
     }); timeIt("lava", function() {
         placeLava(10);
     }); timeIt("water", function() {
@@ -164,17 +166,7 @@ HTomb = (function(HTomb) {
     lowest = mn;
     highest = mx;
     elevation = grid;
-    console.log("Highest at " + mx + ", lowest at " + mn);
   }
-
-  HTomb.World.elevation = function(x,y) {
-    x = Math.round(x);
-    y = Math.round(y);
-    if (elevation[x]===undefined) {
-      console.log([x,y]);
-    }
-    return elevation[x][y];
-  };
 
   function addSlopes() {
     var tiles = HTomb.World.tiles;
@@ -185,6 +177,7 @@ HTomb = (function(HTomb) {
       for (var y=0; y<LEVELH; y++) {
         for (var z=0; z<NLEVELS-1; z++) {
           if (tiles[z][x][y]===HTomb.Tiles.FloorTile && tiles[z+1][x][y]===HTomb.Tiles.EmptyTile) {
+            // this is kind of weird now right? could I use countNeighborsWhere?
             squares = HTomb.Tiles.neighboringColumns(x,y);
             slope = false;
             for (var i=0; i<squares.length; i++) {
@@ -203,6 +196,22 @@ HTomb = (function(HTomb) {
         }
       }
     }
+  }
+
+  function generateBiomes() {
+    let corners = ["Mountains","Swamp","Forest","Ocean"];
+    //corners = HTomb.Utils.shuffle(corners);
+    let b;
+    b = HTomb.Things[corners[0]].spawn({
+      x0: 1,
+      y0: 1,
+      z0: NLEVELS-1,
+      x1: LEVELW/4,
+      y1: LEVELH/4,
+      z1: 45,
+      corner: [1,1]
+    });
+    b.modifyElevations();
   }
 
   function waterTable(depth, elev) {
@@ -479,7 +488,11 @@ HTomb = (function(HTomb) {
         var z = HTomb.Tiles.groundLevel(x,y);
         //if (tiles[z][x][y]===HTomb.Tiles.FloorTile && HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
         if (HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
-          HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
+          if (z>=54) {
+            HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
+          } else {
+            HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
+          }
         }
       }
     }

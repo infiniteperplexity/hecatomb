@@ -127,6 +127,9 @@ HTomb = (function(HTomb) {
   };
 
   HTomb.Debug.teleport = function(x,y,z) {
+    if (z===undefined) {
+      z = HTomb.Tiles.groundLevel(x,y);
+    }
     HTomb.Player.player.delegate.remove();
     HTomb.Player.player.delegate.place(x,y,z);
     HTomb.Time.resumeActors(HTomb.Player.player.delegate);

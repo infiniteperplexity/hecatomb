@@ -458,12 +458,16 @@ HTomb = (function(HTomb) {
           if (HTomb.World.tiles[z][x][y]!==HTomb.Tiles.FloorTile || HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover || HTomb.World.features[coord(x,y,z)]) {
             continue;
           }
-          // count adjacent grass
-          var n = HTomb.Tiles.countNeighborsWhere(x,y,z,function(x,y,z) {
-            return (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass);
-          });
-          if (n>0) {
-            HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
+          
+          if (z<54) {
+            var n = HTomb.Tiles.countNeighborsWhere(x,y,z,function(x,y,z) {
+              return (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass);
+            });
+            if (n>0) {
+              HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
+            }
+          } else {
+            HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
           }
         }
       }
@@ -476,6 +480,20 @@ HTomb = (function(HTomb) {
     Trackers: ["GrassGrowth"],
     fg: HTomb.Constants.GRASSFG ||"#668844",
     bg: HTomb.Constants.GRASSBG || "#334422",
+    darken: function() {
+      var bg = ROT.Color.fromString(this.bg);
+      bg = ROT.Color.multiply(bg,[72,128,128]);
+      bg = ROT.Color.toHex(bg);
+      return bg;
+    }
+  });
+
+  Cover.extend({
+    template: "Snow",
+    name: "snow",
+    symbol: ".",  
+    fg: "#CCCCEE",
+    bg: "#BBBBCC",
     darken: function() {
       var bg = ROT.Color.fromString(this.bg);
       bg = ROT.Color.multiply(bg,[72,128,128]);

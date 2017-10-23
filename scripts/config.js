@@ -32,6 +32,10 @@ HTomb = (function(HTomb) {
       } while (Debug.eventLog.length>Debug.maxEvents);
     }
   };
+
+  HTomb.Debug.minimap = function() {
+
+  };
   
   return HTomb;
 })(HTomb);

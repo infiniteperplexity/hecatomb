@@ -169,6 +169,7 @@ HTomb = (function(HTomb) {
           console.log("Danger of infinite recursion from " + actor);
         }
         // If the actor can still act, put it on deck
+        //actor.ai.acted = false;
         if (actor.ai.actionPoints>0 && actor.isPlaced()) {
           deck.push(actor);
         }

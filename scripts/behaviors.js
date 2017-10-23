@@ -538,34 +538,24 @@ HTomb = (function(HTomb) {
     // flags for different kinds of movement
     walks: true,
     climbs: true,
-    displaced: null,
-    displaceCreature: function(cr) {
-      var x0 = this.entity.x;
-      var y0 = this.entity.y;
-      var z0 = this.entity.z;
-      var x = cr.x;
-      var y = cr.y;
-      var z = cr.z;
+    displaceCreature: function(cr,x,y,z) {
+      //x y z are optional arguments
+      x = (x!==undefined) ? x : this.entity.x;
+      y = (y!==undefined) ? y : this.entity.y;
+      z = (z!==undefined) ? z : this.entity.z;
+      let x1 = cr.x;
+      let y1 = cr.y;
+      let z1 = cr.z;
       cr.remove();
-      this.stepTo(x,y,z);
-      this.movement.displaced = cr;
+      this.stepTo(x1,y1,z1);
       if (cr.movement) {
-        cr.movement.stepTo(x0,y0,z0);
-        cr.movement.displaced = this;
+        cr.movement.stepTo(x,y,z);
       } else {
-        cr.place(x0,y0,z0);
-      }
-      //HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " displaces " + cr.describe({article: "indefinite"}) + ".",x,y,z);
-      if (this.entity.ai) {
-        this.entity.ai.acted = true;
-        this.entity.ai.actionPoints-=16;
-      }
-      if (cr.ai) {
-        cr.ai.acted = true;
-        this.entity.ai.actionPoints-=16;
+        cr.place(x,y,z);
       }
     },
     stepTo: function(x,y,z) {
+      this.displaced = null;
       this.entity.place(x,y,z);
       let cost = 16;
       if (HTomb.World.items[coord(x,y,z)] && !this.flies) {
