@@ -150,9 +150,8 @@ HTomb = (function(HTomb) {
         grid[x][y]+= noise.get(x/hscale1,y/hscale1)*vscale1;
         grid[x][y]+= noise.get(x/hscale2,y/hscale2)*vscale2;
         grid[x][y]+= noise.get(x/hscale3,y/hscale3)*vscale3;
-        let r = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
-        r = 2*(2*NLEVELS-r)/(NLEVELS/2);
-        grid[x][y] = parseInt(grid[x][y]+Math.max(0,r));
+        
+        grid[x][y] = parseInt(grid[x][y]);
         mx = Math.max(mx,grid[x][y]);
         mn = Math.min(mn,grid[x][y]);
         if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
