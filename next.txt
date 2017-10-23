@@ -33,3 +33,5 @@ special dangers in each corner (swamp, mountain, waste, lake)
 Do the peasants/humans come from any particular direction?  Across the sea?
 
 Ruins instead of wastelands?  or maybe make that the "good" area, with fewer graveyards, et cetera.
+
+- Need to make it so elevations get rounded after biome placement.

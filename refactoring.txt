@@ -8,7 +8,7 @@
 - Change Routine to something...
 - Change Behavior to component
 
-
+- refactor world generation...what a mess...get rid of magic numbers
 
 So the prime candidates for splitting:
 	1) Structures

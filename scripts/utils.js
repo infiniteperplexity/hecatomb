@@ -160,6 +160,19 @@ HTomb = (function(HTomb) {
     return grid;
   };
 
+  HTomb.Utils.grid2d = function(filling) {
+    let grid = [];
+    for (let x=0; x<LEVELW; x++) {
+      grid.push([]);
+      if (filling!==undefined) {
+        for (let y=0; y<LEVELH; y++) {
+          grid[x].push(filling);
+        }
+      }
+    }
+    return grid;
+  };
+
   HTomb.Utils.where = function(obj,callb) {
     var result = [];
     for (var key in obj) {
