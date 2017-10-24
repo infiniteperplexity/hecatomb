@@ -25,10 +25,9 @@ HTomb = (function(HTomb) {
       HTomb.Debug.tiles = HTomb.World.tiles;
       for (let x=this.x0; x<LEVELW-1; x++) {
         for (let y=this.y0; y<LEVELH-1; y++) {
-          let z0 = HTomb.Tiles.groundLevel(x,y);
           let r = Math.sqrt(Math.pow(x-this.corner[0],2) + Math.pow(y-this.corner[1],2));
-          r = 2*(2*NLEVELS-r)/(NLEVELS/2);
-          HTomb.World.elevations[x][y]+=r;
+          r = 2*(2*NLEVELS-r)/(NLEVELS/3);
+          HTomb.World.elevations[x][y]+=Math.max(0,r);
         }
       }
     }

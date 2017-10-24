@@ -135,23 +135,17 @@ HTomb = (function(HTomb) {
 
   function assignElevation(ground) {
     ground = ground || 50;
-    //var hscale1 = 128;
-    var hscale1 = 256;
-    var vscale1 = 3;
-    var hscale2 = 64;
-    //var hscale2 = 128;
-    var vscale2 = 2;
-    //var hscale3 = 32;
-    var hscale3 = 64;
-    var vscale3 = 1;
+    // these cannot be modified by terrains
+    let hscales = [256,128,64,32,16,8];
+    // these can be modified by terrains
+    let vscales = [2,1,1,0,0,0];
     var grid = HTomb.World.elevations;
     for (var x=0; x<LEVELW; x++) {
       for (var y=0; y<LEVELH; y++) {
         grid[x][y] = ground;
-        grid[x][y]+= noise.get(x/hscale1,y/hscale1)*vscale1;
-        grid[x][y]+= noise.get(x/hscale2,y/hscale2)*vscale2;
-        grid[x][y]+= noise.get(x/hscale3,y/hscale3)*vscale3;
-        grid[x][y] = parseInt(grid[x][y]);
+        for (let o=0; o<hscales.length; o++) {
+          grid[x][y]+= noise.get(x/hscales[o],y/hscales[o])*vscales[o];
+        }
       }
     }
   }

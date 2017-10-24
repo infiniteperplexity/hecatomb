@@ -117,8 +117,8 @@ HTomb = (function(HTomb) {
     earth: true,
     hardness: 1,
     thickness: 5,
-    fg: "#99AA99",
-    bg: "#667766"
+    fg: "#999999",
+    bg: "#666666"
   });
 
   Cover.extend({
