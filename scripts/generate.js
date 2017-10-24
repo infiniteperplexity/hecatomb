@@ -82,9 +82,12 @@ HTomb = (function(HTomb) {
   HTomb.World.generators = {};
 
 
+  let GROUND = 50;
+  let SEALEVEL = 48;
+
   HTomb.World.generators.revised = function() {
     timeIt("elevation", function() {
-        assignElevation(50);
+        assignElevation(GROUND);
     }); timeIt("biomes", function() {
         generateBiomes();
     }); timeIt("elevations", function() {
@@ -92,7 +95,7 @@ HTomb = (function(HTomb) {
     }); timeIt("lava", function() {
         placeLava(10);
     }); timeIt("water", function() {
-        waterTable(4);
+        waterTable(4, SEALEVEL);
     }); timeIt("earths", function() {
         placeEarths();
     }); timeIt("slopes", function() {
@@ -215,8 +218,6 @@ HTomb = (function(HTomb) {
     }
   }
 
-
-
   function waterTable(depth, elev) {
     elev = elev || 47;
     depth = depth || 4;
@@ -226,9 +227,9 @@ HTomb = (function(HTomb) {
       rock.create();
     }
     function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
-    for (var x=1; x<LEVELW-1; x++) {
-      for (var y=1; y<LEVELH-1; y++) {
-        for (var z=elev; z>42; z--) {
+    for (let x=1; x<LEVELW-1; x++) {
+      for (let y=1; y<LEVELH-1; y++) {
+        for (let z=elev; z>elev-12; z--) {
           if (z<elev-depth && HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile) {
             break;
           } else if (rock._map[x][y]===0 || HTomb.World.tiles[z][x][y]!==HTomb.Tiles.WallTile
