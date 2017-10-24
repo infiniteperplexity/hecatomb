@@ -135,7 +135,10 @@ HTomb = (function(HTomb) {
     template: "Zombie",
     name: "zombie",
     leavesCorpse: false,
-    symbol: "z",
+    //symbol: "z",
+    symbol: ["z","\u01B6","\u017A","\u017E",
+    "\u1E91","\u0291","\u017C","\u1E93","\u0225",
+    "\u1E95","\u0290","\u0240","\u1D22","\u0179"],
     fg: "#99FF66",
     onSpawn: function(args) {
       args = args || {};
