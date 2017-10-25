@@ -7,3 +7,4 @@
 - The way spells you can't cast are displayed is not consistent with ingredient deficits.
 - Soil types break aquifers, currently.  Aquifers should be their own cover, I think.
 - I don't think ore currently has hardness.
+- I'm guessing that saved games are going to be hideously broken after all this refactoring.

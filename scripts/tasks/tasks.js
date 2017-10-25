@@ -104,6 +104,8 @@ HTomb = (function(HTomb) {
     name: "dismantle",
     description: "harvest resources/remove fixtures",
     bg: "#446600",
+    wounds: 8,
+    labor: null,
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
@@ -167,30 +169,58 @@ HTomb = (function(HTomb) {
         contextName: "Designate"+this.template
       });
     },
-    workOnTask: function(x,y,z) {
-      var f = HTomb.World.features[coord(x,y,z)];
+    begin: function() {
+      let f = HTomb.World.features[coord(this.x, this.y, this.z)];
       if (f) {
-        if (f.integrity===HTomb.Things[f.template].integrity) {
-          HTomb.GUI.pushMessage(this.blurb());
-
-        }
-        f.dismantle(this);
+        this.work();
+      } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover) {
+        HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " removes " + f.name
+          + " at " + x + ", " + y + ", " + z + ".");
+        HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
         this.assignee.actor.acted = true;
         this.assignee.actor.actionPoints-=16;
-        if (f.isPlaced()===false) {
-          this.complete();
-        }
+        this.complete();
+      }
+    },
+    begun: function() {
+      return (this.labor!==null);
+    },
+    done: function() {
+      let f = HTomb.World.features[coord(this.x, this.y, this.z)];
+      if (!f) {
+        return true;
       } else {
-        f = HTomb.World.covers[z][x][y];
-        if (f!==HTomb.Covers.NoCover) {
-          HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " removes " + f.name
-            + " at " + x + ", " + y + ", " + z + ".");
-          HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
-          this.assignee.actor.acted = true;
-          this.assignee.actor.actionPoints-=16;
-          this.complete();
+        return false;
+      }
+    },
+    work: function() {
+      let f = HTomb.World.features[coord(this.x, this.y, this.z)];
+      let toughness = (f && f.defender) ? f.defender.toughness : 5;
+      if (this.labor<=0 || this.labor===null) {
+        this.labor = Math.ceil(2*toughness/3);
+      }
+      this.labor-=this.assignee.worker.getLabor();
+      if (this.labor<=0) {
+        if (f.defender) {
+          f.defender.wounds.level+=1;
+          f.defender.wounds.type = "Dismantle";
+          if (f.defender.wounds.level>=8 && f.harvestable) {
+            f.harvestable.harvest();
+          }
+          f.defender.tallyWounds();
+        } else {
+          this.wounds-=1;
+          if (this.wounds<=0 && f.harvestable) {
+            f.harvestable.harvest();
+            f.destroy();
+          }
         }
       }
+      this.assignee.actor.acted = true;
+      this.assignee.actor.actionPoints-=16;
+    },
+    finish: function() {
+      //odd that we do not put harvesting here...
     }
   });
 

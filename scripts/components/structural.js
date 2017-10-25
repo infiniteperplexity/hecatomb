@@ -141,7 +141,7 @@ HTomb = (function(HTomb) {
         if (HTomb.Utils.notEmpty(ings)) {
           g+=" ";
           g+=HTomb.Utils.listIngredients(ings);
-          if (this.entity.owner && this.entity.owner.owner && this.entity.owner.master.ownsAllIngredients(ings)!==true) {
+          if (this.entity.owner && this.entity.owner.owner && this.entity.owner.owner.ownsAllIngredients(ings)!==true) {
             g = "%c{gray}"+g;
           }
         }

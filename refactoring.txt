@@ -1,8 +1,4 @@
 - Revisit "integrity" on features.
-- Make randomized appearance a nospawn behavior
-- Check length of files and consider redistributing them
-- Make the thing run off configuration files?
-- Make it so you can load code dynamically?
 - Probably split Master and Owner
 - Maybe move Commands to Player Component?  Or not, it's really big.
 
@@ -10,57 +6,11 @@ master.master and owner.owner are clumsy...maybe ruledBy and ownedBy?
 
 - refactor world generation...what a mess...get rid of magic numbers
 
-So the prime candidates for splitting:
-	1) *Structures
-	1) *Tasks
-	1) *AI
-	2) *Behaviors
-	2) *Entity
-	2) *GUI Controls
-	2) *GUI Views
-	2) * (could still use some work but I'm not sure where) Tiles
-	2) *Time
-	3) Generate
-	3) GUI Display
-	3) Save
+- Most of the restructuring of files is done, but some candidates remain:
+	- tiles.js
+	- generate.js
+	- display.js
 
+- use the new "done" method on task more often
 
-
-achievements - 304 lines
-ai - 898 lines
-behaviors - 586 lines
-cells - not used?
-colors - 84 lines
-config - 36 lines
-commands - 462 lines
-creatures - 336 lines
-dirs - 241 lines
-encounters - 226 lines
-entity - 572 - lines
-events - 87 lines
-features - 507 lines
-fonts - 93 lines
-fov - 183 lines
-generate - 594 lines
-gui-control - 894 lines
-gui-display - 615 lines
-gui-foundation - 397 lines
-gui-views - 807 lines
-htomb - 103 lines
-intro - 116 lines
-items - 92 lines
-materials - 116 lines
-minerals - 163 lines
-particles - 178 lines
-path - 420 lines
-save - 543 lines
-spells - 415 lines
-structures - 1296 lines
-tasks - 1351 lines
-things - 257 lines
-tiles - 725 lines
-time - 734 lines
-tutorial - 1039 lines
-types - 81 lines
-utils - 396 lines
-world - 301 lines
+- should probably make "wound" a method

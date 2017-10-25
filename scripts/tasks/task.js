@@ -316,10 +316,17 @@ HTomb = (function(HTomb) {
         this.begin();
       }
       this.work();
-      let f = HTomb.World.features[coord(x,y,z)];
-      if (f && f.labor<=0) {
+      if (this.done()) {
         this.finish();
         this.complete();
+      }
+    },
+    done: function() {
+      let f = HTomb.World.features[coord(this.x,this.y,this.z)];
+      if (f && f.labor<=0) {
+        return true;
+      } else {
+        return false;
       }
     },
     expend: function() {

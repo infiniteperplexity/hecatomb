@@ -135,7 +135,7 @@ HTomb = (function(HTomb) {
         this.active+=1;
       }
       this.tutorials[this.active].tracking = {};
-      console.log("Beginning tutorial: "+this.tutorials[this.active].template);
+      //console.log("Beginning tutorial: "+this.tutorials[this.active].template);
       this.tutorials[this.active].onBegin();
     }
   };
