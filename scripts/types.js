@@ -9,7 +9,7 @@ HTomb = (function(HTomb) {
     template: "Type",
     name: "type",
     plural: null,
-    Behaviors: {},
+    Components: {},
     stringify: function() {
       return {"Type" : this.template};
     },
@@ -47,25 +47,25 @@ HTomb = (function(HTomb) {
         }
         this.types.push(child);
       }
-      for (let b in child.Behaviors) {
+      for (let b in child.Components) {
         if (!HTomb.Things[b]) {
           console.log(b);
         }
         let defaults = HTomb.Things[b];
         if (defaults.nospawn!==true) {
-          throw Error("Can't add a spawnable behavior to a Type.");
+          throw Error("Can't add a spawnable component to a Type.");
         }
-        let bargs = child.Behaviors[b];
-        for (let key in bargs) {
-          if (bargs.hasOwnProperty(key)) {
-            if (bargs[key]!==defaults[key]) {
-              bargs[key] = HTomb.Utils.merge(defaults[key],bargs[key]);
+        let cargs = child.Components[b];
+        for (let key in cargs) {
+          if (cargs.hasOwnProperty(key)) {
+            if (cargs[key]!==defaults[key]) {
+              cargs[key] = HTomb.Utils.merge(defaults[key],cargs[key]);
             }
           }
         }
-        bargs.Template = child;
-        let beh = HTomb.Things[b].prespawn(bargs);
-        child[beh.name] = beh;
+        cargs.Template = child;
+        let comp = HTomb.Things[b].prespawn(cargs);
+        child[comp.name] = comp;
       }
       if (child.onDefine) {
         child.onDefine(args);

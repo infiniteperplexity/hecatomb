@@ -113,7 +113,7 @@ HTomb = (function(HTomb) {
         } else if (val===null) {
           //console.log("could I just do null normally?");
           return null;
-        } else if (key==="behaviors") {
+        } else if (key==="components") {
           return undefined;
         } else if (key==="onlist") {
           return undefined;
@@ -342,15 +342,15 @@ HTomb = (function(HTomb) {
       }
 
     }
-    let behaviors = HTomb.Things.Behavior.children.map(function(e,i,a) {return e.name;});
+    let components = HTomb.Things.Component.children.map(function(e,i,a) {return e.name;});
     for (let i=0; i<HTomb.World.things.length; i++) {
       let thing = HTomb.World.things[i];
       for (let key of Object.keys(thing)) {
-        if (behaviors.indexOf(key)!==-1) {
-          if (thing.behaviors===undefined) {
-            thing.behaviors = [];
+        if (components.indexOf(key)!==-1) {
+          if (thing.components===undefined) {
+            thing.components = [];
           }
-          thing.behaviors.push(thing[key]);
+          thing.components.push(thing[key]);
         }
       }
     }

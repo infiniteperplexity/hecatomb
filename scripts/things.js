@@ -7,7 +7,7 @@ HTomb = (function(HTomb) {
     maxSpawnId: -1,
     spawnIds: {},
     spawnId: -1,
-    behaviors: [],
+    components: [],
     resetSpawnIds: function() {
       this.spawnIds = {};
       this.maxSpawnId = -1;
@@ -71,13 +71,13 @@ HTomb = (function(HTomb) {
     describe: function(options) {
       options = options || {};
       options.name = this.name || "(nameless)";
-      // behaviors can augment or alter the description via options
-      let nobehaviors = options.nobehaviors || false;
+      // components can augment or alter the description via options
+      let nocomponents = options.nocomponents || false;
       if (this.onDescribe) {
         options = this.onDescribe(options);
       }
-      if (this.behaviors && !nobehaviors) {
-        let beh = this.behaviors;
+      if (this.components && !nocomponents) {
+        let beh = this.components;
         for (let i=0; i<beh.length; i++) {
           if (beh[i].onDescribe) {
             options = beh[i].onDescribe(options);
@@ -196,61 +196,6 @@ HTomb = (function(HTomb) {
   };
   // The global list of known templates
   HTomb.Things.Thing = thing;
-
-  let Tracker = thing.extend({
-    template: "Tracker",
-    name: "tracker",
-    listens: [],
-    resetAll: function(args) {
-      for (let tracker in HTomb.World.trackers) {
-        HTomb.World.trackers[tracker] = null;
-        HTomb.Things[tracker].spawn();
-      }
-    },
-    spawn: function(args) {
-      // Trackers are singletons
-      if (HTomb.World.trackers[this.template]) {
-        return HTomb.World.trackers[this.template];
-      }
-      let o = thing.spawn.call(this, args);
-      for (let type of o.listens) {
-        HTomb.Events.subscribe(o, type);
-      }
-      o.track();
-      return o;
-    },
-    track: function() {
-      HTomb.World.trackers[this.template] = this;
-    },
-    despawn: function(args) {
-      HTomb.World.trackers[this.template] = null;
-      thing.despawn.call(this,args);
-    },
-    extend: function(args) {
-      let t = HTomb.Things.Thing.extend.call(this, args);
-      HTomb.World.trackers[t.template] = null;
-    }
-  });
-
-  Tracker.extend({
-    template: "AngryNatureTracker",
-    name: "angry nature tracker",
-    listens: ["Destroy"],
-    trees: 0,
-    shrubs: 0,
-    grass: 0,
-    onDestroy: function(event) {
-      let e = event.entity;
-      if (e.template==="Tree") {
-        this.trees+=1;
-      } else if (e.template==="Shrub") {
-        this.shrubs+=1;
-      } else if (e.tempalte==="Grass") {
-        this.grass+=1;
-      }
-    }
-  });
-  HTomb.Things.AngryNatureTracker.spawn();
 
 return HTomb;
 })(HTomb);

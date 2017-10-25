@@ -159,7 +159,9 @@ HTomb = (function(HTomb) {
           for (let z=grid[x][y]; z>=0; z--) {
             HTomb.World.tiles[z][x][y] = HTomb.Tiles.WallTile;
           }
-          HTomb.World.tiles[grid[x][y]+1][x][y] = HTomb.Tiles.FloorTile;
+          if (grid[x][y]<NLEVELS-1) {
+            HTomb.World.tiles[grid[x][y]+1][x][y] = HTomb.Tiles.FloorTile;
+          }
           HTomb.World.exposed[x][y] = grid[x][y]+1;
         }
       }

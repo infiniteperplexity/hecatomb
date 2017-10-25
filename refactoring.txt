@@ -3,23 +3,23 @@
 - Check length of files and consider redistributing them
 - Make the thing run off configuration files?
 - Make it so you can load code dynamically?
-- Change AI to Actor
-- Change Routine to something...
-- Change Behavior to component
 - Probably split Master and Owner
+- Maybe move Commands to Player Component?  Or not, it's really big.
+
+master.master and owner.owner are clumsy...maybe ruledBy and ownedBy?
 
 - refactor world generation...what a mess...get rid of magic numbers
 
 So the prime candidates for splitting:
-	1) Structures
-	1) Tasks
-	1) AI
-	2) Behaviors
-	2) Entity
-	2) GUI Controls
-	2) GUI Views
-	2) Tiles
-	2) Time
+	1) *Structures
+	1) *Tasks
+	1) *AI
+	2) *Behaviors
+	2) *Entity
+	2) *GUI Controls
+	2) *GUI Views
+	2) * (could still use some work but I'm not sure where) Tiles
+	2) *Time
 	3) Generate
 	3) GUI Display
 	3) Save

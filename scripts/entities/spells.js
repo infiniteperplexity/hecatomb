@@ -4,18 +4,6 @@ HTomb = (function(HTomb) {
 
   let Entity = HTomb.Things.Entity;
 
-  HTomb.Things.Behavior.extend({
-    template: "Researchable",
-    name: "researchable",
-    turns: 48,
-    nospawn: true,
-    ingredients: {},
-    finish: function() {
-      //!!!odd that we have no logic here
-    }
-  });
-
-
   let Spell = Entity.extend({
     template: "Spell",
     name: "spell",
@@ -79,8 +67,8 @@ HTomb = (function(HTomb) {
           if (cr.body) {
             cr.body.endure(that.attack);
           }
-          c.ai.acted = true;
-          c.ai.actionPoints-=16;
+          c.actor.acted = true;
+          c.actor.actionPoints-=16;
         } else {
           HTomb.GUI.pushMessage("Can't cast the spell there.");
         }
@@ -108,7 +96,7 @@ HTomb = (function(HTomb) {
   Spell.extend({
     template: "PoundOfFlesh",
     name: "pound of flesh",
-    Behaviors: {
+    Components: {
       Researchable: {
         ingredients: {Ectoplasm: 1}
         //ingredients: {Flesh: 1, Bone: 1}
@@ -137,8 +125,8 @@ HTomb = (function(HTomb) {
               cr.defender.tallyWounds();
             }
           }
-          c.ai.acted = true;
-          c.ai.actionPoints-=16;
+          c.actor.acted = true;
+          c.actor.actionPoints-=16;
         } else if (cr) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
           that.spend();
@@ -157,8 +145,8 @@ HTomb = (function(HTomb) {
               c.defender.tallyWounds();
             }
           }
-          c.ai.acted = true;
-          c.ai.actionPoints-=16;
+          c.actor.acted = true;
+          c.actor.actionPoints-=16;
         } else {
           HTomb.GUI.pushMessage("Can't cast the spell there.");
         }
@@ -189,7 +177,7 @@ HTomb = (function(HTomb) {
     template: "CondenseEctoplasm",
     name: "condense ectoplasm",
     cost: 20,
-    Behaviors: {
+    Components: {
       Researchable: {}
     },
     cast: function() {
@@ -231,7 +219,7 @@ HTomb = (function(HTomb) {
     name: "step into shadow",
     cost: 6,
     range: 6,
-    Behaviors: {
+    Components: {
       Researchable: {
         ingredients: {
           Ectoplasm: 1
@@ -302,8 +290,8 @@ HTomb = (function(HTomb) {
             zombie.place(x,y,z);
             HTomb.Things.Minion.spawn().addToEntity(zombie);
             caster.entity.master.addMinion(zombie);
-            zombie.ai.acted = true;
-            zombie.ai.actionPoints-=16;
+            zombie.actor.acted = true;
+            zombie.actor.actionPoints-=16;
             HTomb.GUI.sensoryEvent("The corpse stirs and rises...",x,y,z);
             HTomb.Time.resumeActors();
             return;
@@ -329,8 +317,8 @@ HTomb = (function(HTomb) {
             caster.entity.master.addMinion(zombie);
             let task = HTomb.Things.ZombieEmergeTask.spawn({assigner: caster.entity}).place(x,y,z);
             task.assignTo(zombie);
-            zombie.ai.acted = true;
-            zombie.ai.actionPoints-=16;
+            zombie.actor.acted = true;
+            zombie.actor.actionPoints-=16;
             HTomb.GUI.sensoryEvent("You hear an ominous stirring below the earth...",x,y,z);
             HTomb.Time.resumeActors();
             return;
@@ -366,47 +354,6 @@ HTomb = (function(HTomb) {
         return true;
       }
       return false;
-    }
-  });
-
-  HTomb.Things.Task.extend({
-  //HTomb.Things.defineTask({
-    template: "ZombieEmergeTask",
-    name: "emerge",
-    bg: "#884400",
-    //beginDescription: function() {
-    //  return "digging up from its grave";
-    //},
-    validTile: function() {
-      // this thing is going to be special...it should keep respawning if thwarted
-      return true;
-    },
-    workOnTask: function(x,y,z) {
-      let f = HTomb.World.features[HTomb.Utils.coord(x,y,z)];
-      // There is a special case of digging upward under a tombstone...
-      if (f && f.template==="Tombstone") {
-        if (f.integrity===null || f.integrity===undefined) {
-          f.integrity=10;
-        }
-        if (f.integrity===10) {
-          HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " begins digging toward the surface.");
-        }
-        f.integrity-=1;
-        this.assignee.ai.acted = true;
-        this.assignee.ai.actionPoints-=16;
-        if (f.integrity<=0) {
-          f.explode(this.assigner);
-          var cr = this.assignee;
-          HTomb.GUI.sensoryEvent(cr.describe({capitalized: true, article: "indefinite"}) + " bursts forth from the ground!",x,y,z);
-          HTomb.World.tiles[z][x][y] = HTomb.Tiles.DownSlopeTile;
-          let c = HTomb.World.covers[z][x][y];
-          if (c.mine) {
-            c.mine(x,y,z,this.assigner);
-          }
-          this.complete();
-          HTomb.World.validate.cleanNeighbors(x,y,z);
-        }
-      }
     }
   });
 

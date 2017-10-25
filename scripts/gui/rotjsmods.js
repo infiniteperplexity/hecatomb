@@ -1,0 +1,1 @@
+ROT.Display.Rect.cache = true;

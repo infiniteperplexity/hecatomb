@@ -224,7 +224,7 @@ HTomb = (function(HTomb) {
     listens: ["Destroy"],
     onDestroy: function(event) {
       let e = event.entity;
-      if (e.creature && HTomb.World.visible[coord(e.x, e.y, e.z)] && e.ai && e.ai.isHostile(HTomb.Player)) {
+      if (e.creature && HTomb.World.visible[coord(e.x, e.y, e.z)] && e.actor && e.actor.isHostile(HTomb.Player)) {
         this.achieve();
       }
     }

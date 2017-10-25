@@ -14,3 +14,5 @@ Tentative:
 - Google how to procedural generate biome borders.
 - More types of angry nature.
 - Ghoul dens.
+
+Building animations?

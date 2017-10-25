@@ -269,42 +269,16 @@ HTomb = (function(HTomb) {
       menuText = menuText.concat([" "], menuBottom);
     }
     // handle line breaks
-    let c=0;
-    let br=null;
-    let fgpat = /%c{\w*}/g;
-    let bgpat = /%b{\w*}/g;
-    // !!!!!More like mishandle line breaks...
-    while(c<menuText.length) {
-      let txt = menuText[c];
-      let fg = fgpat.exec(txt);
-      let bg = bgpat.exec(txt);
-      let measure = txt.replace(fgpat,"").replace(bgpat,"");
-      if (measure.length<MENUW-2) {
-        c++;
-        continue;
-      }
-      for (var j=0; j<measure.length; j++) {
-        if (measure[j]===" ") {
-          br = j;
-        }
-        if (j>=MENUW-2) {
-          var one = measure.substring(0,br);
-          var two = measure.substring(br+1);
-          if (fg!==null) {
-            one = fg[0]+one;
-            two = fg[0]+two;
-          }
-          if (bg!==null) {
-            one = bg[0]+one;
-            two = bg[0]+two;
-          }
-          menuText[c] = one;
-          menuText.splice(c+1,0,two);
-          break;
+    let i = 0;
+    while (i<menuText.length) {
+      if (HTomb.Utils.cleanText(menuText[i]).length>MENUW-2) {
+        let lines = HTomb.Utils.lineBreak(menuText[i],MENUW-2);
+        menuText.splice(i,1);
+        for (let j=lines.length-1; j>=0; j--) {
+          menuText.splice(i,0,lines[j]);
         }
       }
-      c++;
-      br = null;
+      i+=1;
     }
     menuDisplay.clear();
     for (let i=0; i<MENUH; i++) {
@@ -393,28 +367,6 @@ HTomb = (function(HTomb) {
   //******end defaults
 
   // ***** Basic right-hand menu stuff *****
-  menu.defaultTop = [
-    "Esc: System view.",
-    "%c{yellow}Avatar mode (Tab: Navigation mode)",
-    " ",
-    "Move: NumPad/Arrows, ,/.: Up/Down.",
-    "(Control+Arrows for diagonal.)",
-    "Wait: NumPad 5 / Space.",
-    " ",
-    "Enter: Enable auto-pause.",
-    "+/-: Change speed.",
-    " ",
-    "Z: Cast spell, J: Assign job.",
-    "M: Minions, S: Structures, U: Summary.",
-    "G: Pick Up, D: Drop.",
-    "I: Inventory, E: Equip/Unequip.",
-    " ",
-    "PageUp/Down: Scroll messages.",
-    "A: Achievements, /: Toggle tutorial."
-  ];
-  menu.defaultMiddle = [];
-  menu.defaultBottom = [];
-
   menu.refresh = function() {
     menu.render();
   };

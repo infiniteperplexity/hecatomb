@@ -64,15 +64,16 @@ HTomb = (function(HTomb) {
       name: "necromancer",
       symbol: "@",
       fg: "#DD66FF",
-      Behaviors: {
+      Components: {
         Movement: {swims: true},
         Inventory: {},
         Sight: {},
-        AI: {
+        Actor: {
           team: "PlayerTeam"
         },
         Equipper: {},
         Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask","RepairTask"]},
+        Owner: {},
         SpellCaster: {spells: ["RaiseZombie"]},
         Attacker: {
           damage: {
@@ -92,8 +93,8 @@ HTomb = (function(HTomb) {
     name: "dryad",
     symbol: "n",
     fg: "#44AA44",
-    Behaviors: {
-      AI: {
+    Components: {
+      Actor: {
         team: "AngryNatureTeam"
       },
       Movement: {swims: true},
@@ -113,8 +114,8 @@ HTomb = (function(HTomb) {
     name: "peasant",
     symbol: "@",
     fg: "brown",
-    Behaviors: {
-      AI: {
+    Components: {
+      Actor: {
         goals: ["HuntPlayer"],
         team: "HumanityTeam"
       },
@@ -135,10 +136,7 @@ HTomb = (function(HTomb) {
     template: "Zombie",
     name: "zombie",
     leavesCorpse: false,
-    //symbol: "z",
-    symbol: ["z","\u01B6","\u017A","\u017E",
-    "\u1E91","\u0291","\u017C","\u1E93","\u0225",
-    "\u1E95","\u0290","\u0240","\u1D22","\u0179"],
+    symbol: "z",
     fg: "#99FF66",
     onSpawn: function(args) {
       args = args || {};
@@ -148,8 +146,8 @@ HTomb = (function(HTomb) {
       }
       return this;
     },
-    Behaviors: {
-      AI: {
+    Components: {
+      Actor: {
         goals: ["ServeMaster"]
       },
       Movement: {swims: true},
@@ -160,6 +158,14 @@ HTomb = (function(HTomb) {
       Attacker: {},
       Defender: {
         toughness: 1
+      },
+      Distinctive: {
+        fgRandomRed: 15,
+        fgRandomGreen: 15,
+        fgRandomBlue: 15
+    //         symbol: ["z","\u01B6","\u017A","\u017E",
+    // "\u1E91","\u0291","\u017C","\u1E93","\u0225",
+    // "\u1E95","\u0290","\u0240","\u1D22","\u0179"],
       }
     }
   });
@@ -170,8 +176,8 @@ HTomb = (function(HTomb) {
     name: "ghoul",
     symbol: "z",
     fg: "#FF5522",
-    Behaviors: {
-      AI: {
+    Components: {
+      Actor: {
         team: "GhoulTeam",
         goals: ["LongRangeRoam"]
       },
@@ -232,8 +238,8 @@ HTomb = (function(HTomb) {
     name: "bat",
     symbol: "b",
     fg: "#999999",
-    Behaviors: {
-      AI: {},
+    Components: {
+      Actor: {},
       Movement: {flies: true, swims: false},
       Sight: {},
       Attacker: {
@@ -253,8 +259,8 @@ HTomb = (function(HTomb) {
     vermin: true,
     symbol: "s",
     fg: "#BBBBBB",
-    Behaviors: {
-      AI: {},
+    Components: {
+      Actor: {},
       Movement: {swims: false},
       Attacker: {
         damage: {
@@ -272,8 +278,8 @@ HTomb = (function(HTomb) {
     name: "death carp",
     symbol: "p",
     fg: "red",
-    Behaviors: {
-      AI: {
+    Components: {
+      Actor: {
         team: "HungryPredatorTeam"
       },
       Movement: {swims: true, walks: false},
@@ -319,8 +325,8 @@ HTomb = (function(HTomb) {
     name: "fish",
     symbol: "p",
     fg: "#FF8888",
-    Behaviors: {
-      AI: {},
+    Components: {
+      Actor: {},
       Movement: {swims: true, walks: false},
       Attacker: {
         damage: {

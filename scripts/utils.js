@@ -21,8 +21,15 @@ HTomb = (function(HTomb) {
   // };
 
   HTomb.Utils.lineBreak = function(str,len) {
-    str = HTomb.Utils.cleanText(str);
-    let tokens = str.split(" ");
+    // this remembers where the tags are
+    let pat = /%c{\w*}|%b{\w*}/g;
+    let match;
+    let formats = {};
+    while (match = pat.exec(str)) {
+      formats[match.index] = match[0];
+    }
+    let clean = HTomb.Utils.cleanText(str);
+    let tokens = clean.split(" ");
     let lines = [tokens[0]];
     tokens.splice(0,1);
     let i = 0;
@@ -32,6 +39,34 @@ HTomb = (function(HTomb) {
         lines.push(word);
       } else {   
         lines[i] = lines[i] + " " + word;
+      }
+    }
+    // put the tags back in
+    let fg = "";
+    let bg = "";
+    let fgpat = /%c{\w*}/g;
+    let bgpat = /%b{\w*}/g;
+    for (let f in formats) {
+      let format = formats[f];
+      let tally = 0;
+      let ind = f-tally;
+      for (let j=0; j<lines.length; j++) {
+        if (tally+lines[j].length>f) {
+          let line;
+          if (tally<=f) {
+            line = fg + bg + lines[j].substr(0,ind) + format + lines[j].substr(ind);
+          } else {
+            line = fg + bg + lines[j];
+          }
+          lines[j] = line;
+          if (format.match(fgpat)) {
+            fg = format;
+          } else if (format.match(bgpat)) {
+            bg = format;
+          }
+        }
+        tally+=lines[j].length;
+        tally+=1;
       }
     }
     return lines;

@@ -108,8 +108,8 @@ HTomb = (function(HTomb) {
     }
     for (let c in HTomb.World.creatures) {
       let cr = HTomb.World.creatures[c];
-      if (cr.ai && cr.ai.team) {
-        types[cr.ai.team].members.push(cr);
+      if (cr.actor && cr.actor.team) {
+        types[cr.actor.team].members.push(cr);
       }
     }
     HTomb.Types.Team.teams = types;
