@@ -1,5 +1,4 @@
 - Revisit "integrity" on features.
-- Figure out some way to "mixin" Types...for example, to make Soils a subtype of Covers.
 - Make randomized appearance a nospawn behavior
 - Check length of files and consider redistributing them
 - Make the thing run off configuration files?
@@ -7,6 +6,7 @@
 - Change AI to Actor
 - Change Routine to something...
 - Change Behavior to component
+- Probably split Master and Owner
 
 - refactor world generation...what a mess...get rid of magic numbers
 

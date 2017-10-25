@@ -1,3 +1,6 @@
+fix up aquifers and ore?
+
+
 - add dens
 - terrain boundaries maybe?
 
@@ -12,6 +15,9 @@ so...in this game, we'd like to have...
 - mountains (high)
 
 - lakes
+
+
+
 
 - graveyards
 

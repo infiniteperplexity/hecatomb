@@ -146,8 +146,8 @@ HTomb = (function(HTomb) {
     name: "bedrock",
     earth: true,
     hardness: 4,
-    fg: "#888888",
-    bg: "#555555"
+    fg: "#778877",
+    bg: "#445544"
   });
 
   //!!! failed experiment, revisit later
