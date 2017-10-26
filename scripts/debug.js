@@ -61,11 +61,11 @@ HTomb = (function(HTomb) {
       42: "#222299",
       41: "#111188",
       40: "#000077",
-      39: "blue",
-      38: "blue",
-      37: "blue",
-      36: "blue",
-      35: "blue"
+      39: "#000055",
+      38: "#000044",
+      37: "#000033",
+      36: "#000022",
+      35: "#000011"
     };
     let loopText = [];
     let scale = 2;
@@ -74,8 +74,8 @@ HTomb = (function(HTomb) {
       + 256*scale + "; c.width = "
       + 256*scale + '; let ctx = c.getContext("2d"); document.body.appendChild(c);'
     ;
-    for (let x=0; x<256; x++) {
-      for (let y=0; y<256; y++) {
+    for (let x=1; x<255; x++) {
+      for (let y=1; y<255; y++) {
         let z = HTomb.Tiles.groundLevel(x,y);
         let joiner = [scale*x,scale*y,scale*x+scale,scale*y+scale];
         let fill = lookup[z];

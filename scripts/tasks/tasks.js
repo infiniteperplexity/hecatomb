@@ -461,6 +461,34 @@ HTomb = (function(HTomb) {
       // this thing is going to be special...it should keep respawning if thwarted
       return true;
     },
+    burstForth: function(f) {
+      var x = f.x;
+      var y = f.y;
+      var z = f.z;
+      f.destroy();
+      let buriedItems = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();
+      for (let item of buriedItems) {
+        item.owned = true;
+      }
+      HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
+      for (let i=0; i<ROT.DIRS[8].length; i++) {
+        var x1 = ROT.DIRS[8][i][0]+x;
+        var y1 = ROT.DIRS[8][i][1]+y;
+        if (HTomb.World.tiles[z][x1][y1].solid!==true) {
+          // don't drop rocks on tombstones, it could confuse new players
+          let feat = HTomb.World.features[coord(x1,y1,z)];
+          if (feat && feat.template==="Tombstone") {
+            continue;
+          }
+          if (Math.random()<0.25) {
+            var rock = HTomb.Things.Rock.spawn();
+            rock.n = 1;
+            rock.place(x1,y1,z);
+            rock.owned = true; 
+          }
+        }
+      }
+    },
     workOnTask: function(x,y,z) {
       let f = HTomb.World.features[HTomb.Utils.coord(x,y,z)];
       // There is a special case of digging upward under a tombstone...
@@ -474,8 +502,9 @@ HTomb = (function(HTomb) {
         f.integrity-=1;
         this.assignee.actor.acted = true;
         this.assignee.actor.actionPoints-=16;
+        // shouldn't depend on the feature being there
         if (f.integrity<=0) {
-          f.explode(this.assigner);
+          this.burstForth(f);
           var cr = this.assignee;
           HTomb.GUI.sensoryEvent(cr.describe({capitalized: true, article: "indefinite"}) + " bursts forth from the ground!",x,y,z);
           HTomb.World.tiles[z][x][y] = HTomb.Tiles.DownSlopeTile;

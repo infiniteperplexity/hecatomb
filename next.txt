@@ -1,17 +1,17 @@
 My ideas for today were...
-- Add decay.
-- Work on terrain some more.
+- Improve decay
 
-- fix range so worldgen never crashes
+- Make snow smoother
 
--- would be better, in the wastes, if we could also modify the octaves to use smaller ones.
+- figure out why flooding sometimes fails...is it caves?
 
-- Take explode off tombstones and add it to ZombieEmerge.
+- push a new copy online
+- Fine-tune zombie emergence just a little bit more.
 - Add decay to corpses and zombies.
 
 Add in the ROT.RNG stuff.
 
-
+- some notification for unowned items
 
 fix up aquifers and ore?
 
@@ -19,40 +19,11 @@ fix up aquifers and ore?
 - add dens
 - terrain boundaries maybe?
 
-so...it's common with terrain generation, I think, to do cross-references of things like elevation, temperature, and moisture.
 
-so...in this game, we'd like to have...
+Change how graveyards and player starting locations work.
 
-- swamps (moist, low)
-- wastes (dry, low)
-- forests (moist, medium)
-- hills (dry, medium)
-- mountains (high)
-
-- lakes
-
-
-
+- Place more ores in mountains and wastes.
 
 - graveyards
 
-
-...could be...
-- mountains on left, lake on right.
-- swamps bottom, forests middle, scrubland middle, wastes top?
-Or do a "four corners" kind of approach?  We could do a gradient laid out on top of that.
-
-So...what's in these terrains?
-- rocks would be mostly in the mountains and wastes
-- trees mostly in the forests
-- sand in the wastes?
-- herbs in their own places?
-- graveyards in scrublands & forests...definitely not swamps.
-- ores in mountains
-special dangers in each corner (swamp, mountain, waste, lake)
-
-Do the peasants/humans come from any particular direction?  Across the sea?
-
-Ruins instead of wastelands?  or maybe make that the "good" area, with fewer graveyards, et cetera.
-
-- Need to make it so elevations get rounded after biome placement.
+- wait do those coins exist in this font?

@@ -205,6 +205,7 @@ HTomb = (function(HTomb) {
     }
   }
 
+  let lowest = NLEVELS;
   function finalizeElevations() {
     let grid = HTomb.Utils.grid2d();
     for (let x=1; x<LEVELW-1; x++) {
@@ -218,6 +219,7 @@ HTomb = (function(HTomb) {
             HTomb.World.tiles[grid[x][y]+1][x][y] = HTomb.Tiles.FloorTile;
           }
           HTomb.World.exposed[x][y] = grid[x][y]+1;
+          lowest = Math.min(lowest, grid[x][y]+1);
         }
       }
     }
@@ -325,7 +327,7 @@ HTomb = (function(HTomb) {
     function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
     for (let x=1; x<LEVELW-1; x++) {
       for (let y=1; y<LEVELH-1; y++) {
-        for (let z=elev; z>elev-12; z--) {
+        for (let z=elev; z>=lowest; z--) {
           if (z<elev-depth && HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile) {
             break;
           } else if (rock._map[x][y]===0 || HTomb.World.tiles[z][x][y]!==HTomb.Tiles.WallTile

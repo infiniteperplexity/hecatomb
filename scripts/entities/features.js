@@ -96,36 +96,6 @@ HTomb = (function(HTomb) {
     onPlace: function(x,y,z) {
       // Bury a corpse beneath the tombstone
       HTomb.Things.Corpse.spawn().place(x,y,z-1);
-    },
-    explode: function(args) {
-      var x = this.x;
-      var y = this.y;
-      var z = this.z;
-      this.destroy();
-      let buriedItems = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();
-      for (let item of buriedItems) {
-        item.owned = true;
-      }
-      HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
-      for (let i=0; i<ROT.DIRS[8].length; i++) {
-        var x1 = ROT.DIRS[8][i][0]+x;
-        var y1 = ROT.DIRS[8][i][1]+y;
-        if (HTomb.World.tiles[z][x1][y1].solid!==true) {
-          // don't drop rocks on tombstones, it could confuse new players
-          let f = HTomb.World.features[coord(x1,y1,z)];
-          if (f && f.template==="Tombstone") {
-            continue;
-          }
-          if (Math.random()<0.4) {
-            var rock = HTomb.Things.Rock.spawn();
-            rock.n = 1;
-            rock.place(x1,y1,z);
-            if (args) {
-              rock.owned = true;
-            }
-          }
-        }
-      }
     }
   });
 
@@ -171,7 +141,7 @@ HTomb = (function(HTomb) {
     fg: "#779922",
     Components: {
       Distinctive: {
-        symbols: ["\u0633","\u2724","\u060F"],
+        symbols: ["\u0633","\u2724"],
         fgRandomRed: 20,
         fgRandomGreen: 20,
         fgRandomBlue: 20
@@ -255,7 +225,7 @@ HTomb = (function(HTomb) {
     fg: "#999999",
     Components: {
       Distinctive: {
-        symbols: ["\u26AB","\u25CF","\u2022"],
+        symbols: ["\u26AB","\u25CF","\u2022","\u23FA"],
         fgRandomRed: 5,
         fgRandomGreen: 5,
         fgRandomBlue: 5
