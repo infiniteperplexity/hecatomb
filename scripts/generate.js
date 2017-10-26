@@ -84,10 +84,15 @@ HTomb = (function(HTomb) {
 
   let GROUND = 50;
   let SEALEVEL = 48;
+  let SNOWLINE = 54;
+  let TREECHANCE = 5;
+  let MUCKCHANCE = -10;
 
   HTomb.World.generators.revised = function() {
     timeIt("elevation", function() {
         assignElevation(GROUND);
+    }); timeIt("vegetation", function() {
+        assignVegetation(TREECHANCE);
     }); timeIt("biomes", function() {
         generateBiomes();
     }); timeIt("elevations", function() {
@@ -110,8 +115,9 @@ HTomb = (function(HTomb) {
     }); timeIt("grass", function() {
         grassify();
     }); timeIt("plants", function() {
-        growPlants({template: "Tree", p: 0.05});
-        growPlants({template: "Shrub", p: 0.05});
+        finalizeTrees();
+        //growPlants({template: "Tree", p: 0.05});
+        //growPlants({template: "Shrub", p: 0.05});
         //growPlants({template: "WolfsbanePlant", p: 0.001});
         //growPlants({template: "AmanitaPlant", p: 0.001});
         //growPlants({template: "MandrakePlant", p: 0.001});
@@ -130,7 +136,50 @@ HTomb = (function(HTomb) {
     });
   };
 
-  let noise = new ROT.Noise.Simplex();
+  let treeNoise = new ROT.Noise.Simplex();
+  HTomb.World.vegetation = HTomb.Utils.grid2d();
+  function assignVegetation(base) {
+    base = base || 25;
+    // these cannot be modified by terrains
+    let hscales = [256,128,64,32,16,8];
+    // these can be modified by terrains
+    let vscales = [0,0,0,10,10,10]
+    var grid = HTomb.World.vegetation;
+    for (var x=0; x<LEVELW; x++) {
+      for (var y=0; y<LEVELH; y++) {
+        grid[x][y] = base;
+        for (let o=0; o<hscales.length; o++) {
+          grid[x][y]+= treeNoise.get(x/hscales[o],y/hscales[o])*vscales[o];
+        }
+      }
+    }
+  }
+  function finalizeTrees() {
+    let treeChances = HTomb.Utils.grid2d();
+    for (let x=0; x<LEVELW; x++) {
+      for (let y=0; y<LEVELH; y++) {
+        treeChances[x][y] = parseInt(HTomb.World.vegetation[x][y]);
+        if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
+          let z = HTomb.Tiles.groundLevel(x,y);
+          if (treeChances[x][y]>=HTomb.Utils.dice(1,100)-1) {
+            if (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass) {
+              let plant = HTomb.Things.Tree.spawn();
+              placement.stack(plant,x,y,z);
+            }
+          } else {
+            // let muckChance = MUCKCHANCE+TREECHANCE-treeChances[x][y];
+            // if (muckChance>=HTomb.Utils.dice(1,100)-1) {
+            //   if (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass) {
+            //     HTomb.World.covers[z][x][y] = HTomb.Covers.Muck;
+            //   }
+            // }
+          }
+        }
+      }
+    }
+  }
+
+  let elevationNoise = new ROT.Noise.Simplex();
   HTomb.World.elevations = HTomb.Utils.grid2d();
 
   function assignElevation(ground) {
@@ -138,13 +187,13 @@ HTomb = (function(HTomb) {
     // these cannot be modified by terrains
     let hscales = [256,128,64,32,16,8];
     // these can be modified by terrains
-    let vscales = [2,1,1,0,0,0];
+    let vscales = [2,1,1,0.5,0,0]
     var grid = HTomb.World.elevations;
     for (var x=0; x<LEVELW; x++) {
       for (var y=0; y<LEVELH; y++) {
         grid[x][y] = ground;
         for (let o=0; o<hscales.length; o++) {
-          grid[x][y]+= noise.get(x/hscales[o],y/hscales[o])*vscales[o];
+          grid[x][y]+= elevationNoise.get(x/hscales[o],y/hscales[o])*vscales[o];
         }
       }
     }
@@ -170,18 +219,48 @@ HTomb = (function(HTomb) {
 
   function generateBiomes() {
     let corners = ["Mountains","Swamp","Forest","Ocean"];
-    //corners = HTomb.Utils.shuffle(corners);
+    corners = HTomb.Utils.shuffle(corners);
     let b;
     b = HTomb.Things[corners[0]].spawn({
       x0: 1,
       y0: 1,
       z0: NLEVELS-1,
-      x1: LEVELW/4,
-      y1: LEVELH/4,
-      z1: 45,
+      x1: LEVELW/2,
+      y1: LEVELH/2,
+      z1: 30,
       corner: [1,1]
     });
-    b.modifyElevations();
+    b.modifyTerrain();
+      b = HTomb.Things[corners[1]].spawn({
+      x0: LEVELW/2,
+      y0: 1,
+      z0: NLEVELS-1,
+      x1: LEVELW-2,
+      y1: LEVELH/2,
+      z1: 30,
+      corner: [LEVELW-2,1]
+    });
+    b.modifyTerrain();
+    b = HTomb.Things[corners[2]].spawn({
+      x0: LEVELW/2,
+      y0: LEVELH/2,
+      z0: NLEVELS-1,
+      x1: LEVELW-2,
+      y1: LEVELH-2,
+      z1: 30,
+      corner: [LEVELW-2,LEVELH-2]
+    });
+    b.modifyTerrain();
+    b = HTomb.Things[corners[3]].spawn({
+      x0: 1,
+      y0: LEVELH/2,
+      z0: NLEVELS-1,
+      x1: LEVELW/2,
+      y1: LEVELH-2,
+      z1: 30,
+      corner: [1,LEVELH-2]
+    });
+    b.modifyTerrain();
   }
 
   function addSlopes() {

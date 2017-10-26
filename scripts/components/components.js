@@ -310,5 +310,79 @@ HTomb = (function(HTomb) {
     }
   });
 
+  // what exactly does this entail
+  // - it could cause wounds
+  // - it could lower toughness and cause penalties
+  // is it worse than ordinary damage, parallel, et cetera?
+  Component.extend({
+    template: "Decaying",
+    name: "decaying",
+    level: 0,
+    rate: 1,
+    suspended: false,
+    breakpoints: {
+      mild: 2560,
+      moderate: 4800,
+      severe: 6400,
+      critical: 7200
+    },
+    onAdd: function() {
+      HTomb.Events.subscribe(this, "TurnBegin");
+    },
+    onTurnBegin: function() {
+      // buried corpses will not rot, for now
+      if (this.suspended || HTomb.Debug.nodecay) {
+        return;
+      }
+      this.level+=this.rate;
+      if (this.entity.defender) {
+        let wounds = this.entity.defender.wounds;
+        if (this.level>=this.breakpoints.critical) {
+          wounds.level = 7;
+          if (HTomb.Utils.dice(1,100)===1) {
+            wounds.level = 8;
+          }
+          wounds.type = "Decay";
+        } else if (this.level>=this.breakpoints.severe && wounds.level<6) {
+          wounds.level = 6;
+          wounds.type = "Decay";
+        } else if (this.level>=this.breakpoints.moderate && wounds.level<4) {
+          wounds.level = 4;
+          wounds.type = "Decay";
+        } else if (this.level>=this.breakpoints.mild && wounds.level<2) {
+          wounds.level = 2;
+          wounds.type = "Decay";
+        }
+        this.entity.defender.tallyWounds();
+      } else if (this.level>=this.breakpoints.critical) {
+        if (HTomb.Utils.dice(1,100)===1) {
+          this.entity.destroy();
+        }
+      }
+      // is there an elegant way to modify the color of the entity?
+    }
+  });
+
+  Component.extend({
+    template: "Remains",
+    name: "remains",
+    // not sure how to make this one thing
+      // a busted-up door leaves scraps
+      // a busted-up creature might leave a corpse or scraps
+    onAdd: function() {
+      HTomb.Events.subscribe(this, "Destroy");
+    },
+    onDestroy: function(event) {
+      if (event.entity===this.entity) {
+        this.leave();
+      }
+    },
+    leave: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
+    }
+  });
+
   return HTomb;
 })(HTomb);

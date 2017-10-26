@@ -1,3 +1,16 @@
+My ideas for today were...
+- Add decay.
+- Work on terrain some more.
+
+- fix range so worldgen never crashes
+
+- Take explode off tombstones and add it to ZombieEmerge.
+- Add decay to corpses and zombies.
+
+Add in the ROT.RNG stuff.
+
+
+
 fix up aquifers and ore?
 
 

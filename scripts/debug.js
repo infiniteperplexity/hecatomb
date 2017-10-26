@@ -4,6 +4,7 @@ HTomb = (function(HTomb) {
   var Debug = HTomb.Debug;
 
   Debug.noingredients = true;
+  Debug.nodecay = false;
   //Debug.explored = true;
   //Debug.visible = true;
   //Debug.mobility = true;
@@ -33,7 +34,72 @@ HTomb = (function(HTomb) {
   };
 
   HTomb.Debug.minimap = function() {
-
+    let coord = HTomb.Utils.coord;
+    let w = window.open();
+    let lookup = {
+      63: "#FFFFFF",
+      62: "#FFFFFF",
+      61: "#FFFFFF",
+      60: "#FFFFFF",
+      59: "#FFFFFF",
+      58: "#FFFFFF",
+      57: "#FFFFFF",
+      56: "#EEEEFF",
+      55: "#DDDDEE",
+      54: "#CCCCDD",
+      53: "#9999AA",
+      52: "#888899",
+      51: "#777788",
+      50: "#666666",
+      49: "#555555",
+      48: "#8888FF",
+      47: "#7777EE",
+      46: "#6666DD",
+      45: "#5555CC",
+      44: "#4444BB",
+      43: "#3333AA",
+      42: "#222299",
+      41: "#111188",
+      40: "#000077",
+      39: "blue",
+      38: "blue",
+      37: "blue",
+      36: "blue",
+      35: "blue"
+    };
+    let loopText = [];
+    let scale = 2;
+    let setupTxt =
+      'let c = document.createElement("canvas"); c.height = '
+      + 256*scale + "; c.width = "
+      + 256*scale + '; let ctx = c.getContext("2d"); document.body.appendChild(c);'
+    ;
+    for (let x=0; x<256; x++) {
+      for (let y=0; y<256; y++) {
+        let z = HTomb.Tiles.groundLevel(x,y);
+        let joiner = [scale*x,scale*y,scale*x+scale,scale*y+scale];
+        let fill = lookup[z];
+        let f = HTomb.World.features[coord(x,y,z)];
+        if (f) {
+          if (f.template==="Tree") {
+            fill = "#005500";
+          } else if (f.template==="Shrub") {
+            fill = "#008800";
+          }
+        }
+        if (HTomb.World.covers[z][x][y]===HTomb.Covers.Muck) {
+          fill = HTomb.Covers.Muck.bg;
+        }
+        let c = HTomb.World.creatures[coord(x,y,z)];
+        if (c && c.template==="Necromancer") {
+          fill = "#FF0088";
+        }
+        let txt = "ctx.fillStyle = '" + fill + "'; ctx.fillRect("+joiner.join()+");";
+        loopText.push(txt);
+      }
+    }
+    loopText = loopText.join(" ");
+    w.eval(setupTxt + loopText);
   };
   
   return HTomb;

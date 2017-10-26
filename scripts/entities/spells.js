@@ -117,7 +117,7 @@ HTomb = (function(HTomb) {
           if (c.defender) {
             c.defender.wounds.level+=1;
             if (c.defender.wounds.type===null) {
-              c.defender.wounds.type = "Wither";
+              c.defender.wounds.type = "Decay";
             }
             c.defender.tallyWounds();
             if (cr.defender) {
@@ -137,7 +137,7 @@ HTomb = (function(HTomb) {
           if (cr.defender) {
            cr.defender.wounds.level+=1;
             if (cr.defender.wounds.type===null) {
-              cr.defender.wounds.type = "Wither";
+              cr.defender.wounds.type = "Decay";
             }
             cr.defender.tallyWounds();
             if (c.defender) {

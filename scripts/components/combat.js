@@ -91,7 +91,6 @@ HTomb = (function(HTomb) {
       this.wounds = HTomb.Utils.copy(HTomb.Things.Defender.wounds);
     },
     tallyWounds: function() {
-      console.log("Wounds: ",this.wounds.level);
       if (this.wounds.level<=0) {
         this.wounds.level = 0;
         this.wounds.type = null;
@@ -186,6 +185,7 @@ HTomb = (function(HTomb) {
       } else {
         HTomb.GUI.sensoryEvent(attacker + " hits " + defender +" but deals no damage.",x,y,z,"yellow");
       }
+      console.log("Wounds: ",this.wounds.level);
       this.tallyWounds();
     },
     defend: function(event) {

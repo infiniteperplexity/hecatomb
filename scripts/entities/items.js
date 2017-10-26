@@ -17,6 +17,7 @@ HTomb = (function(HTomb) {
     symbol: "%",
     fg: "brown",
     sourceCreature: null,
+    // !!! should change to onDescribe;
     onSpawn: function(args) {
       if (this.sourceCreature) {
         if (typeof(this.sourceCreature)==="string") {
@@ -29,6 +30,11 @@ HTomb = (function(HTomb) {
         this.sourceCreature = this.sourceCreature.template;
       }
       return this;
+    },
+    Components: {
+      Decaying: {
+        suspended: true
+      }
     }
   });
 

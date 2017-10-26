@@ -155,10 +155,12 @@ HTomb = (function(HTomb) {
     name: "shrub",
     symbol: "\u2698",
     fg: "#779922",
-    Distinctive: {
-      fgRandomRed: 15,
-      fgRandomGreen: 15,
-      fgRandomBlue: 15
+    Components: {
+      Distinctive: {
+        fgRandomRed: 15,
+        fgRandomGreen: 15,
+        fgRandomBlue: 15
+      }
     }
   });
 
@@ -167,11 +169,13 @@ HTomb = (function(HTomb) {
     name: "seaweed",
     plural: true,
     fg: "#779922",
-    Distinctive: {
-      symbols: ["\u0633","\u2724","\u060F"],
-      fgRandomRed: 20,
-      fgRandomGreen: 20,
-      fgRandomBlue: 20
+    Components: {
+      Distinctive: {
+        symbols: ["\u0633","\u2724","\u060F"],
+        fgRandomRed: 20,
+        fgRandomGreen: 20,
+        fgRandomBlue: 20
+      }
     }
   });
 
@@ -179,8 +183,7 @@ HTomb = (function(HTomb) {
     template: "Puddle",
     name: "puddle",
     symbol: "~",
-    fg: "#0088DD",
-    randomColor: 20
+    fg: "#0088DD"
   });
 
   Feature.extend({

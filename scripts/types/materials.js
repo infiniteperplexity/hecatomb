@@ -97,8 +97,16 @@ HTomb = (function(HTomb) {
   });
 
   Damage.extend({
-    template: "Wither",
-    name: "wither",
+    template: "Decay",
+    name: "decay",
+    Bone: -1,
+    Flesh: +1,
+    Wood: +1
+  });
+
+  Damage.extend({
+    template: "Dismantle",
+    name: "dismantle",
     Bone: -1,
     Flesh: +1,
     Wood: +1

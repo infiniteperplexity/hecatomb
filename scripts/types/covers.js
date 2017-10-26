@@ -113,6 +113,20 @@ HTomb = (function(HTomb) {
       return bg;
     }
   });
+
+  Cover.extend({
+    template: "Muck",
+    name: "muck",
+    symbol: '"',  
+    fg: HTomb.Constants.GRASSBG || "#334422",
+    bg: "#223311",
+    darken: function() {
+      var bg = ROT.Color.fromString(this.bg);
+      bg = ROT.Color.multiply(bg,[72,128,128]);
+      bg = ROT.Color.toHex(bg);
+      return bg;
+    }
+  });
   
 
   Cover.extend({

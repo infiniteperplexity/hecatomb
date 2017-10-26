@@ -14,17 +14,16 @@ HTomb = (function(HTomb) {
     y1: null,
     z1: null,
     corner: [null,null],
-    modifyElevations: function() {
+    modifyTerrain: function() {
     }
   });
 
   Biome.extend({
     template: "Mountains",
     name: "mountains",
-    modifyElevations: function() {
-      HTomb.Debug.tiles = HTomb.World.tiles;
-      for (let x=this.x0; x<LEVELW-1; x++) {
-        for (let y=this.y0; y<LEVELH-1; y++) {
+    modifyTerrain: function() {
+      for (let x=this.x0; x<this.x1; x++) {
+        for (let y=this.y0; y<this.y1; y++) {
           let r = Math.sqrt(Math.pow(x-this.corner[0],2) + Math.pow(y-this.corner[1],2));
           r = 2*(2*NLEVELS-r)/(NLEVELS/3);
           HTomb.World.elevations[x][y]+=Math.max(0,r);
@@ -35,17 +34,44 @@ HTomb = (function(HTomb) {
 
   Biome.extend({
     template: "Swamp",
-    name: "swamp"
+    name: "swamp",
+    // modifyTerrain: function() {
+    //   for (let x=this.x0; x<this.x1; x++) {
+    //     for (let y=this.y0; y<this.y1; y++) {
+    //       let r = Math.sqrt(Math.pow(x-this.corner[0],2) + Math.pow(y-this.corner[1],2));
+    //       r = 10*(2*NLEVELS-r)/(NLEVELS/3);
+    //       HTomb.World.vegetation[x][y]-=Math.max(0,r);
+    //     }
+    //   }
+    // }
   });
 
   Biome.extend({
     template: "Forest",
-    name: "forest"
+    name: "forest",
+    modifyTerrain: function() {
+      for (let x=this.x0; x<this.x1; x++) {
+        for (let y=this.y0; y<this.y1; y++) {
+          let r = Math.sqrt(Math.pow(x-this.corner[0],2) + Math.pow(y-this.corner[1],2));
+          r = 10*(2*NLEVELS-r)/(NLEVELS/3);
+          HTomb.World.vegetation[x][y]+=Math.max(0,r);
+        }
+      }
+    }
   });
 
   Biome.extend({
     template: "Ocean",
-    name: "ocean"
+    name: "ocean",
+    modifyTerrain: function() {
+      for (let x=this.x0; x<this.x1; x++) {
+        for (let y=this.y0; y<this.y1; y++) {
+          let r = Math.sqrt(Math.pow(x-this.corner[0],2) + Math.pow(y-this.corner[1],2));
+          r = 2*(2*NLEVELS-r)/(NLEVELS/3);
+          HTomb.World.elevations[x][y]-=Math.max(0,r);
+        }
+      }
+    }
   });
 
   return HTomb;
