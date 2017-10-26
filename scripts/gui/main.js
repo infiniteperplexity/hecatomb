@@ -114,6 +114,7 @@ HTomb = (function(HTomb) {
 
   Contexts.default.selectTile = function(x,y) {
     console.log(x + ", " + y + ", " + gameScreen.z);
+    HTomb.Debug.s = HTomb.Tiles.getSquare(x,y,gameScreen.z);
     // If we clicked on a creature, go to creature view
     let c = HTomb.World.creatures[coord(x,y,gameScreen.z)];
     let visible = HTomb.World.visible[coord(x,y,gameScreen.z)];

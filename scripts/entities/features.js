@@ -249,6 +249,28 @@ HTomb = (function(HTomb) {
   });
 
   Feature.extend({
+    template: "Boulder",
+    name: "boulder",
+    symbol: "\u26AB",
+    fg: "#999999",
+    Components: {
+      Distinctive: {
+        symbols: ["\u26AB","\u25CF","\u2022"],
+        fgRandomRed: 5,
+        fgRandomGreen: 5,
+        fgRandomBlue: 5
+      },
+      Harvestable: {
+        labor: 15,
+        yields: {Rock: 1}
+      }
+    }
+  });
+
+//2617 is the tombstone looking thing, 26AB, 25CF
+  //https://unicode-table.com/en/#2042
+
+  Feature.extend({
     template: "Ramp",
     name: "ramp",
     // for pathing resets

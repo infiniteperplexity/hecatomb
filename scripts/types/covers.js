@@ -71,6 +71,18 @@ HTomb = (function(HTomb) {
             continue;
           }
           
+          if (z===54) {
+            if (HTomb.Utils.dice(1,2)===1) {
+              var n = HTomb.Tiles.countNeighborsWhere(x,y,z,function(x,y,z) {
+                return (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass);
+              });
+              if (n>0) {
+                HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
+              }
+            } else {
+              HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
+            }
+          }
           if (z<54) {
             var n = HTomb.Tiles.countNeighborsWhere(x,y,z,function(x,y,z) {
               return (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass);

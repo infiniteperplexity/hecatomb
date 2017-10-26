@@ -46,12 +46,12 @@ HTomb = (function(HTomb) {
       57: "#FFFFFF",
       56: "#EEEEFF",
       55: "#DDDDEE",
-      54: "#CCCCDD",
-      53: "#9999AA",
-      52: "#888899",
-      51: "#777788",
-      50: "#666666",
-      49: "#555555",
+      54: "#BBCCCC",
+      53: "#99AA99",
+      52: "#889988",
+      51: "#778877",
+      50: "#667766",
+      49: "#556655",
       48: "#8888FF",
       47: "#7777EE",
       46: "#6666DD",
@@ -85,6 +85,8 @@ HTomb = (function(HTomb) {
             fill = "#005500";
           } else if (f.template==="Shrub") {
             fill = "#008800";
+          } else if (f.template==="Boulder") {
+            fill = "#555544";
           }
         }
         if (HTomb.World.covers[z][x][y]===HTomb.Covers.Muck) {

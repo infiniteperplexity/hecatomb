@@ -4,6 +4,8 @@ My ideas for today were...
 
 - fix range so worldgen never crashes
 
+-- would be better, in the wastes, if we could also modify the octaves to use smaller ones.
+
 - Take explode off tombstones and add it to ZombieEmerge.
 - Add decay to corpses and zombies.
 

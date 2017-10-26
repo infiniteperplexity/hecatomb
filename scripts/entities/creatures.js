@@ -166,6 +166,7 @@ HTomb = (function(HTomb) {
     //         symbol: ["z","\u01B6","\u017A","\u017E",
     // "\u1E91","\u0291","\u017C","\u1E93","\u0225",
     // "\u1E95","\u0290","\u0240","\u1D22","\u0179"],
+    // FF5A, A641 A643 1DBB 1DBD 1DBC 1D76 1BA6 1BA7 0291  007A
       },
       Decaying: {}
     }

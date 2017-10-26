@@ -86,7 +86,8 @@ HTomb = (function(HTomb) {
   let SEALEVEL = 48;
   let SNOWLINE = 54;
   let TREECHANCE = 5;
-  let MUCKCHANCE = -10;
+  let SHRUBCHANCE = 10;
+  let BOULDER = 5;
 
   HTomb.World.generators.revised = function() {
     timeIt("elevation", function() {
@@ -141,12 +142,12 @@ HTomb = (function(HTomb) {
   function assignVegetation(base) {
     base = base || 25;
     // these cannot be modified by terrains
-    let hscales = [256,128,64,32,16,8];
+    let hscales = [256,128,64,32,16,8,4];
     // these can be modified by terrains
-    let vscales = [0,0,0,10,10,10]
+    let vscales = [0,0,0,10,10,10,0];
     var grid = HTomb.World.vegetation;
-    for (var x=0; x<LEVELW; x++) {
-      for (var y=0; y<LEVELH; y++) {
+    for (var x=1; x<LEVELW; x++) {
+      for (var y=1; y<LEVELH; y++) {
         grid[x][y] = base;
         for (let o=0; o<hscales.length; o++) {
           grid[x][y]+= treeNoise.get(x/hscales[o],y/hscales[o])*vscales[o];
@@ -154,25 +155,29 @@ HTomb = (function(HTomb) {
       }
     }
   }
-  function finalizeTrees() {
-    let treeChances = HTomb.Utils.grid2d();
-    for (let x=0; x<LEVELW; x++) {
-      for (let y=0; y<LEVELH; y++) {
-        treeChances[x][y] = parseInt(HTomb.World.vegetation[x][y]);
-        if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
-          let z = HTomb.Tiles.groundLevel(x,y);
-          if (treeChances[x][y]>=HTomb.Utils.dice(1,100)-1) {
-            if (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass) {
-              let plant = HTomb.Things.Tree.spawn();
-              placement.stack(plant,x,y,z);
-            }
-          } else {
-            // let muckChance = MUCKCHANCE+TREECHANCE-treeChances[x][y];
-            // if (muckChance>=HTomb.Utils.dice(1,100)-1) {
-            //   if (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass) {
-            //     HTomb.World.covers[z][x][y] = HTomb.Covers.Muck;
-            //   }
-            // }
+  function finalizeTrees() {;
+    for (let x=1; x<LEVELW-1; x++) {
+      for (let y=1; y<LEVELH-1; y++) {
+        let z = HTomb.Tiles.groundLevel(x,y);
+        if (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass || HTomb.World.covers[z][x][y]===HTomb.Covers.Snow) {
+          let v = parseInt(HTomb.World.vegetation[x][y]);
+          let r = HTomb.Utils.dice(1,100)-1;
+          if (v>=r) {
+            let plant = HTomb.Things.Tree.spawn();
+            placement.stack(plant,x,y,z);
+          } else if (v+SHRUBCHANCE>=r) {
+            let plant = HTomb.Things.Shrub.spawn();
+            placement.stack(plant,x,y,z);
+          } else if (BOULDER-v>r) {
+            let f = HTomb.Things.Boulder.spawn();
+            placement.stack(f,x,y,z);
+          }
+        } else if (HTomb.World.covers[z][x][y]===HTomb.Covers.Water) {
+          let v = parseInt(HTomb.World.vegetation[x][y]);
+          let r = HTomb.Utils.dice(1,100)-1;
+          if (v>=r) {
+            let plant = HTomb.Things.Seaweed.spawn();
+            placement.stack(plant,x,y,z);
           }
         }
       }
@@ -180,14 +185,15 @@ HTomb = (function(HTomb) {
   }
 
   let elevationNoise = new ROT.Noise.Simplex();
+  HTomb.World.elevationNoise = elevationNoise;
   HTomb.World.elevations = HTomb.Utils.grid2d();
 
   function assignElevation(ground) {
     ground = ground || 50;
     // these cannot be modified by terrains
-    let hscales = [256,128,64,32,16,8];
+    let hscales = [256,128,64,32,16,8,4];
     // these can be modified by terrains
-    let vscales = [2,1,1,0.5,0,0]
+    let vscales = [2,1,1,0.5,0,0,0]
     var grid = HTomb.World.elevations;
     for (var x=0; x<LEVELW; x++) {
       for (var y=0; y<LEVELH; y++) {
@@ -201,8 +207,8 @@ HTomb = (function(HTomb) {
 
   function finalizeElevations() {
     let grid = HTomb.Utils.grid2d();
-    for (let x=0; x<LEVELW; x++) {
-      for (let y=0; y<LEVELH; y++) {
+    for (let x=1; x<LEVELW-1; x++) {
+      for (let y=1; y<LEVELH-1; y++) {
         grid[x][y] = parseInt(HTomb.World.elevations[x][y]);
         if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
           for (let z=grid[x][y]; z>=0; z--) {
@@ -218,7 +224,7 @@ HTomb = (function(HTomb) {
   }
 
   function generateBiomes() {
-    let corners = ["Mountains","Swamp","Forest","Ocean"];
+    let corners = ["Mountains","Wastes","Forest","Ocean"];
     corners = HTomb.Utils.shuffle(corners);
     let b;
     b = HTomb.Things[corners[0]].spawn({
@@ -270,7 +276,23 @@ HTomb = (function(HTomb) {
     var slope;
     for (var x=0; x<LEVELW; x++) {
       for (var y=0; y<LEVELH; y++) {
-        for (var z=0; z<NLEVELS-1; z++) {
+        for (var z=0; z<=NLEVELS-1; z++) {
+          // handle the top level first
+          if (tiles[z][x][y]===HTomb.Tiles.FloorTile && z===NLEVELS-1) {
+            squares = HTomb.Tiles.neighboringColumns(x,y);
+            slope = false;
+            for (var i=0; i<squares.length; i++) {
+              square = squares[i];
+              if (tiles[z][square[0]][square[1]]===HTomb.Tiles.WallTile) {
+                slope = true;
+              }
+            }
+            if (slope===true) {
+              tiles[z][x][y] = HTomb.Tiles.UpSlopeTile;
+            }
+            continue;
+          }
+          // handle normal elevation
           if (tiles[z][x][y]===HTomb.Tiles.FloorTile && tiles[z+1][x][y]===HTomb.Tiles.EmptyTile) {
             // this is kind of weird now right? could I use countNeighborsWhere?
             squares = HTomb.Tiles.neighboringColumns(x,y);
@@ -283,7 +305,6 @@ HTomb = (function(HTomb) {
               }
             }
             if (slope===true) {
-              //HTomb.Entity.create("UpSlope").place(x,y,z);
               tiles[z][x][y] = HTomb.Tiles.UpSlopeTile;
               tiles[z+1][x][y] = HTomb.Tiles.DownSlopeTile;
             }
@@ -567,7 +588,13 @@ HTomb = (function(HTomb) {
         var z = HTomb.Tiles.groundLevel(x,y);
         //if (tiles[z][x][y]===HTomb.Tiles.FloorTile && HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
         if (HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
-          if (z>=54) {
+          if (z===54) {
+            if (HTomb.Utils.dice(1,2)==1) {
+              HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
+            } else {
+              HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
+            }
+          } else if (z>54) {
             HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
           } else {
             HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;

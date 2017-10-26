@@ -490,6 +490,36 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Task.extend({
+    template: "ClaimTask",
+    name: "claim task",
+    description: "claim unclaimed items",
+    validTile: function() {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      return true;
+    },
+    designate: function(assigner) {
+      var claimItems = function(x,y,z, assigner) {
+        let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
+        for (let item of items) {
+          item.owned = true;
+        }
+      };
+      function myHover() {
+        HTomb.GUI.Panels.menu.middle = ["%c{lime}Claim all unclaimed items in this area."];
+      }
+      HTomb.GUI.selectSquareZone(assigner.z,this.designateSquares,{
+        context: this,
+        assigner: assigner,
+        callback: claimItems,
+        hover: myHover,
+        contextName: "Designate"+this.template
+      });
+    }
+  });
+
 
   return HTomb;
 })(HTomb);
