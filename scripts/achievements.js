@@ -224,7 +224,7 @@ HTomb = (function(HTomb) {
     listens: ["Destroy"],
     onDestroy: function(event) {
       let e = event.entity;
-      if (e.creature && HTomb.World.visible[coord(e.x, e.y, e.z)] && e.ai && e.ai.isHostile(HTomb.Player)) {
+      if (e.creature && HTomb.World.visible[coord(e.x, e.y, e.z)] && e.actor && e.actor.isHostile(HTomb.Player)) {
         this.achieve();
       }
     }
@@ -275,8 +275,8 @@ HTomb = (function(HTomb) {
     onComplete: function(event) {
       if (event.task.template==="ConstructTask") {
         let structures = {};
-        for (let i=0; i<HTomb.Player.master.structures.length; i++) {
-          let s = HTomb.Player.master.structures[i];
+        for (let i=0; i<HTomb.Player.owner.structures.length; i++) {
+          let s = HTomb.Player.owner.structures[i];
           structures[s.template] = true;
         }
         if (Object.keys(structures).length===4) {

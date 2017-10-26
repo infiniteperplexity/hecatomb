@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+
+<title>Unicode tester</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Verdana');
+@import url('https://fonts.googleapis.com/css?family=PT+Mono');
+</style>
+<script src="scripts/rot.min.js"></script>
+<script src="scripts/rotjsmods.js"></script>
+</head>
+<body>
+</body>
+<script>
+let rows = 500;
+let scale = 2;
+let columns = 7;
+let space = 10;
+let display = new ROT.Display({
+    width: space*columns,
+    height: scale*rows,
+    fontSize: 18,
+    fontFamily: "Verdana"
+});
+document.body.appendChild(display.getContainer());
+let missingChars = ["\uFFFF","\uFFFD"];
+let col = -1;
+let u = 0;
+let skippers = [];
+for (let i=0x0000; i<=0x0020; i++) {
+	skippers.push(i);
+}
+for (let i=0x007F; i<=0x00A0; i++) {
+	skippers.push(i);
+}
+for (let i=0x0370; i<=0x0373; i++) {
+	skippers.push(i);
+}
+for (let i=0x0376; i<=0x0379; i++) {
+	skippers.push(i);
+}
+for (let i=0x037F; i<=0x0383; i++) {
+	skippers.push(i);
+}
+for (let i=0x0514; i<=0x0519; i++) {
+	skippers.push(i);
+}
+for (let i=0x051E; i<=0x0523; i++) {
+	skippers.push(i);
+}
+for (let i=0x0526; i<=0x0530; i++) {
+	skippers.push(i);
+}
+for (let i=0x05C8; i<=0x05CF; i++) {
+	skippers.push(i);
+}
+for (let i=0x07FB; i<=0x08FF; i++) {
+	skippers.push(i);
+}
+//maybe check for that little box thing?
+let i=0;
+while(u<columns*rows) {
+	i+=1;
+	if (skippers.indexOf(i)!==-1) {
+		continue;
+	}
+	if (u%rows===0) {
+		col+=1;
+	}
+	let hex = i.toString(16);
+	while(hex.length<4) {
+		hex = "0"+hex;
+	}
+	hex = hex.toUpperCase();
+	let char = String.fromCharCode(parseInt(hex,16));
+	if (charFound(char,"Verdana")) {
+		u+=1;
+		display.drawText(col*space+1,scale*(u-col*rows), char + " : " + hex);
+	}
+}
+function charFound(chr, font) {
+	let canvas = document.createElement("canvas");
+	let ctx = canvas.getContext('2d');
+	let h = 20;
+	let w = 20;
+	canvas.width = w;
+	canvas.height = h;
+	ctx.font = "10px " + font;
+	ctx.fillText(chr,0,h/2);
+	let arr = ctx.getImageData(0,0,w,h).data;
+	let arrs = [];
+	for (let i=0; i<missingChars.length; i++) {
+	  ctx.clearRect(0,0,w,h);
+	  ctx.fillText(missingChars[i],0,h/2);
+	  arrs.push(ctx.getImageData(0,0,w,h).data);
+	}
+	for (let i=0; i<arr.length; i++) {
+	  let bit = arr[i];
+	  let allDiffer = true;
+	  for (let j=0; j<arrs.length; j++) {
+	    if (bit===arrs[j][i]) {
+	      allDiffer = false;
+	    }
+	  }
+	  if (allDiffer) {
+	    return true;
+	  }
+	}
+	return false;
+}
+</script>
+</html>

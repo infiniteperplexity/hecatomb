@@ -54,18 +54,18 @@ HTomb = (function(HTomb) {
     if (p.movement===undefined) {
       HTomb.GUI.pushMessage("You can't move!");
     // attack a touchable, hostile creature
-    } else if (square.creature && square.creature.ai && square.creature.ai.isHostile(p) && HTomb.Tiles.isTouchableFrom(newx, newy, newz, x, y, z)) {
-    //} else if (square.creature && square.creature.ai && square.creature.ai.hostile && HTomb.Tiles.isTouchableFrom(newx, newy, newz, x, y, z)) {
+    } else if (square.creature && square.creature.actor && square.creature.actor.isHostile(p) && HTomb.Tiles.isTouchableFrom(newx, newy, newz, x, y, z)) {
+    //} else if (square.creature && square.creature.actor && square.creature.actor.hostile && HTomb.Tiles.isTouchableFrom(newx, newy, newz, x, y, z)) {
       p.attacker.attack(square.creature);
       HTomb.Time.resumeActors(p);
       return;
     // if you can move, either move or displace
-    } else if (square.feature && square.feature.solid && square.feature.defender && (!square.feature.owner || square.feature.owner.ai.isHostile(p))) {
+    } else if (square.feature && square.feature.solid && square.feature.defender && (!square.feature.owner || square.feature.owner.actor.isHostile(p))) {
       p.attacker.attack(square.feature);
       HTomb.Time.resumeActors(p);
       return;
     } else if (p.movement.canMove(newx,newy,newz)) {
-      if (square.creature && square.creature.ai && square.creature.ai.isHostile(p)===false) {
+      if (square.creature && square.creature.actor && square.creature.actor.isHostile(p)===false) {
         HTomb.Events.publish({type: "Command", command: "Move", dir: dir});
         Commands.displaceCreature(newx,newy,newz);
         HTomb.GUI.pushMessage("You displace " + square.creature.describe({article: "indefinite"}) + ".");
@@ -108,8 +108,8 @@ HTomb = (function(HTomb) {
   // Do nothing
   Commands.wait = function() {
     let p = HTomb.Player.player.delegate;
-    p.ai.acted = true;
-    p.ai.actionPoints-=16;
+    p.actor.acted = true;
+    p.actor.actionPoints-=16;
     HTomb.Time.resumeActors(p);
     if (HTomb.GUI.mouseMovedLast || HTomb.GUI.Contexts.active===HTomb.GUI.Contexts.main) {
       let gameScreen = HTomb.GUI.Panels.gameScreen;
@@ -127,6 +127,9 @@ HTomb = (function(HTomb) {
   };
 
   HTomb.Debug.teleport = function(x,y,z) {
+    if (z===undefined) {
+      z = HTomb.Tiles.groundLevel(x,y);
+    }
     HTomb.Player.player.delegate.remove();
     HTomb.Player.player.delegate.place(x,y,z);
     HTomb.Time.resumeActors(HTomb.Player.player.delegate);
@@ -382,25 +385,25 @@ HTomb = (function(HTomb) {
       return;
     }
     HTomb.Events.publish({type: "Command", command: "ShowSpells"});
-    GUI.choosingMenu("Choose a spell (entropy cost):", p.caster.spells,
+    GUI.choosingMenu("Choose a spell (sanity cost):", p.caster.spells,
       function(sp) {
         return function() {
-          if (p.caster.entropy>=sp.getCost()) {
+          if (p.caster.sanity>=sp.getCost()) {
             HTomb.GUI.Panels.menu.middle = [];
             HTomb.GUI.Panels.menu.refresh();
             HTomb.Events.publish({type: "Command", command: "ChooseSpell", spell: sp});
             p.caster.cast(sp);
           } else {
-            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough entropy."];
+            HTomb.GUI.Panels.menu.middle = ["%c{orange}Not enough sanity."];
             HTomb.GUI.Panels.menu.refresh();
-            HTomb.GUI.pushMessage("Not enough entropy!");
+            HTomb.GUI.pushMessage("Not enough sanity!");
           }
         };
       },
       {
         format: function(spell) {
           let descrip = spell.describe()+" ("+spell.getCost()+")";
-          if (spell.getCost()>spell.caster.entropy) {
+          if (spell.getCost()>spell.caster.sanity) {
             descrip = "%c{gray}"+descrip;
           }
           return descrip;
@@ -422,7 +425,14 @@ HTomb = (function(HTomb) {
       {
         format: function(task) {
           let name = task.description;
-          return (name.substr(0,1).toUpperCase() + name.substr(1)+".");
+          name = (name.substr(0,1).toUpperCase() + name.substr(1)+".");
+          if (task.ingredients && Object.keys(task.ingredients).length>0) {
+            name = name + " " + HTomb.Utils.listIngredients(task.ingredients);
+            if (HTomb.Player.owner.ownsAllIngredients(task.ingredients)!==true) {
+              name = "%c{gray}"+name;
+            }
+          }
+          return name;
         },
         contextName: "ShowJobs"
       }
@@ -431,8 +441,8 @@ HTomb = (function(HTomb) {
 
   Commands.possess = function(cr) {
     let p = HTomb.Player.player.delegate;
-    p.ai.acted = true;
-    p.ai.actionPoints-=16;
+    p.actor.acted = true;
+    p.actor.actionPoints-=16;
     HTomb.Player.player.delegate = cr;
     HTomb.GUI.Panels.gameScreen.recenter();
     HTomb.Time.resumeActors(p);

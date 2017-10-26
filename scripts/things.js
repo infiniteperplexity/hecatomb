@@ -7,12 +7,7 @@ HTomb = (function(HTomb) {
     maxSpawnId: -1,
     spawnIds: {},
     spawnId: -1,
-    Mixins: {},
-    addMixin: function(mixin, args) {
-      this[mixin.name] = Object.assign(HTomb.Mixins.templates[mixin], args);
-      mixin.onAdd(this, args);
-      // should we track everything the mixin has been added to?
-    },
+    components: [],
     resetSpawnIds: function() {
       this.spawnIds = {};
       this.maxSpawnId = -1;
@@ -28,15 +23,28 @@ HTomb = (function(HTomb) {
       HTomb.Things.Thing.spawnIds[this.spawnId] = this;
     },
     spawn: function(args) {
-      let o = Object.create(this);
-      o = Object.assign(o, args);
-      // could instanteate all the arrays...good or bad idea?
-      HTomb.Debug.logEvent("spawn",this);
+      let o = this.prespawn(args);
+      // could instantiate all the arrays...good or bad idea?
+      HTomb.Debug.logEvent("spawn",o);
       // Add to the global things table
-      HTomb.World.things.push(this);
-      this.acquireSpawnId();
+      HTomb.World.things.push(o);
+      o.acquireSpawnId();
       if (o.onSpawn) {
         o.onSpawn(args);
+      }
+      return o;
+    },
+    // sometimes you want to create an "unspawned" instance
+    prespawn: function(args) {
+      args = args || {};
+      let o = Object.create(this);
+      for (let a in args) {
+        if (args[a]!==this[a]) {
+          o[a] = HTomb.Utils.merge(this[a],args[a]);
+        }
+      }
+      if (o.onPrespawn) {
+        o.onPrespawn(args);
       }
       return o;
     },
@@ -63,13 +71,13 @@ HTomb = (function(HTomb) {
     describe: function(options) {
       options = options || {};
       options.name = this.name || "(nameless)";
-      // behaviors can augment or alter the description via options
-      let nobehaviors = options.nobehaviors || false;
+      // components can augment or alter the description via options
+      let nocomponents = options.nocomponents || false;
       if (this.onDescribe) {
         options = this.onDescribe(options);
       }
-      if (this.behaviors && !nobehaviors) {
-        let beh = this.behaviors;
+      if (this.components && !nocomponents) {
+        let beh = this.components;
         for (let i=0; i<beh.length; i++) {
           if (beh[i].onDescribe) {
             options = beh[i].onDescribe(options);
@@ -168,9 +176,9 @@ HTomb = (function(HTomb) {
       }
       return name;
     },
-    // Describe for an in-game list
     extend: function(args) {
       let child = Object.create(this);
+      // Object.assign should be fine because templates do not get changed after the fact
       child = Object.assign(child, args);
       child.parent = this.template;
       if (this.hasOwnProperty("children")===false) {
@@ -183,74 +191,11 @@ HTomb = (function(HTomb) {
       if (child.onDefine) {
         child.onDefine(args);
       }
-      // add mixins to template
-      for (let mixin in child.Mixins) {
-        child.addMixin(mixin, child.Mixins[mixin]);
-      }
       return child;
     }
   };
   // The global list of known templates
   HTomb.Things.Thing = thing;
-
-  // Do these actually *do* anything?  Or just hang out as listeners?
-  HTomb.Trackers = {};
-  let Tracker = thing.extend({
-    template: "Tracker",
-    name: "tracker",
-    listens: [],
-    spawn: function(args) {
-      let o = thing.spawn.call(this, args);
-      o.track();
-      for (type of o.listens) {
-        HTomb.Events.subscribe(o, type);
-      }
-      return o;
-    },
-    track: function() {
-      HTomb.Trackers[this.template] = this;
-    }
-  });
-
-  Tracker.extend({
-    template: "AngryNatureTracker",
-    name: "angry nature tracker",
-    listens: ["Destroy"],
-    trees: 0,
-    shrubs: 0,
-    grass: 0,
-    onDestroy: function(event) {
-      let e = event.entity;
-      if (e.template==="Tree") {
-        this.trees+=1;
-      } else if (e.template==="Shrub") {
-        this.shrubs+=1;
-      } else if (e.tempalte==="Grass") {
-        this.grass+=1;
-      }
-    }
-  });
-
-  
-  let mixin = {
-    template: "Mixin",
-    name: "mixin",
-    onAdd: function(thing, args) {},
-    extend: function(args) {
-      if (args===undefined || args.template===undefined) {
-        HTomb.Debug.pushMessage("invalid template definition");
-        return;
-      }
-      let child = Object.create(this);
-      // ready the pluralized name
-      child = Object.assign(child, args);
-      child.parent = this.template;
-      HTomb.Mixins[child.template] = child;
-      return child;
-    }
-  };
-
-  HTomb.Mixins = {Mixin: mixin};
 
 return HTomb;
 })(HTomb);

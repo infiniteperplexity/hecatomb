@@ -21,19 +21,25 @@ HTomb = (function(HTomb) {
       Events[event.type] = [];
       Events.types.push(event.type);
     }
-    var listeners = Events[event.type] || [];
-    for (var j=0; j<listeners.length; j++) {
+    let listeners = Events[event.type] || [];
+    let passed;
+    for (let j=0; j<listeners.length; j++) {
       if (listeners[j]["on"+event.type]) {
-        listeners[j]["on"+event.type](event);
+        // I think this is called "chain of responsibility"
+        passed = listeners[j]["on"+event.type](event);
+        if (passed) {
+          event = passed;
+        }
       } else {
         console.log([listeners[j],event.type]);
         throw new Error("listener lacked method!");
       }
     }
     HTomb.Tutorial.onEvent(event);
+    return event;
   };
   Events.unsubscribeAll = function(listener) {
-    for (var i=0; i<Events.types.length; i++) {
+    for (let i=0; i<Events.types.length; i++) {
       Events.unsubscribe(listener, Events.types[i]);
     }
   };

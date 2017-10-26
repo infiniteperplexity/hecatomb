@@ -41,7 +41,7 @@ HTomb = (function(HTomb) {
       if (this.tutorials[this.active].listens.indexOf(event.type)!==-1) {
         let completed = this.tutorials[this.active].trigger(event);
         if (completed) {
-          console.log("Completed tutorial: "+this.tutorials[this.active].template);
+          //console.log("Completed tutorial: "+this.tutorials[this.active].template);
           this.tutorials[this.active].completed = true;
           this.tutorials[this.active].onComplete();
           if (this.active<this.tutorials.length-1) {
@@ -50,14 +50,14 @@ HTomb = (function(HTomb) {
               this.active+=1;
             }
             this.tutorials[this.active].tracking = {};
-            console.log("Beginning tutorial: "+this.tutorials[this.active].template);
+            //console.log("Beginning tutorial: "+this.tutorials[this.active].template);
             this.tutorials[this.active].onBegin();
             return;
           }
         }
       }
       if (event.type==="Command" && (event.command==="MainMode" || event.command==="SurveyMode") && this.tutorials[this.active].rollback) {
-       console.log("Rolling back tutorial: "+this.tutorials[this.active].rollback);
+       //console.log("Rolling back tutorial: "+this.tutorials[this.active].rollback);
        this.goto(this.tutorials[this.active].rollback);
        return;
      }
@@ -68,12 +68,12 @@ HTomb = (function(HTomb) {
       let index = this.tutorials.indexOf(skip);
       if (skip.listens.indexOf(event.type)!==-1 && skip.trigger(event)) {
         do {
-          console.log("Skipping tutorial: "+this.tutorials[this.active].template);
+          //console.log("Skipping tutorial: "+this.tutorials[this.active].template);
           this.tutorials[this.active].onComplete();
           if (this.active<this.tutorials.length-1) {
             this.active+=1;
             this.tutorials[this.active].tracking = {};
-            console.log("Beginning tutorial: "+this.tutorials[this.active].template);
+            //console.log("Beginning tutorial: "+this.tutorials[this.active].template);
             this.tutorials[this.active].onBegin();
           }
         } while (this.active<=index);
@@ -135,7 +135,7 @@ HTomb = (function(HTomb) {
         this.active+=1;
       }
       this.tutorials[this.active].tracking = {};
-      console.log("Beginning tutorial: "+this.tutorials[this.active].template);
+      //console.log("Beginning tutorial: "+this.tutorials[this.active].template);
       this.tutorials[this.active].onBegin();
     }
   };
@@ -665,9 +665,9 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}This decaying wretch is but the beginning - soon, you will command an undead horde.",
       " ",
-      "Every zombie under your control raises the cost of the 'raise zombie' spell in entropy points.  Your current entropy points are listed above the left-hand side of the message bar.",
+      "Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed above the left-hand side of the message bar.",
       " ",
-      "%c{cyan}%b{DarkRed}Wait (pass turns) until you have 15 entropy points, then raise a second zombie and wait for it to emerge.  Press Z to cast a spell, press A to choose 'raise zombie', and then select a tombstone."
+      "%c{cyan}%b{DarkRed}Wait (pass turns) until you have 15 sanity points, then raise a second zombie and wait for it to emerge.  Press Z to cast a spell, press A to choose 'raise zombie', and then select a tombstone."
     ],
     listens: ["Cast"],
     skip: "WaitForSecondZombie",
@@ -680,7 +680,6 @@ HTomb = (function(HTomb) {
       }
     },
     trigger: function(event) {
-      console.log("testing this thing");
       return (event.spell.template==="RaiseZombie");
     },
     onComplete: function() {
@@ -710,7 +709,7 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}This decaying wretch is but the beginning - soon, you will command an undead horde.",
       " ",
-      "Every zombie under your control raises the cost of the 'raise zombie' spell in entropy points.  Your current entropy points are listed above the left-hand side of the message bar.",
+      "Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed above the left-hand side of the message bar.",
       " ",
       "%c{cyan}%b{DarkRed}Wait (pass turns) until your zombie emerges."
     ],
@@ -885,7 +884,7 @@ HTomb = (function(HTomb) {
     trigger: function(event) {
       // This logic attempts to catch whether someone harvested the wrong thing
       if (event.task && event.task.template==="DismantleTask") {
-        if (HTomb.Player.master.ownsAllIngredients({WoodPlank: 1})) {
+        if (HTomb.Player.owner.ownsAllIngredients({WoodPlank: 1})) {
           return true;
         } else if (HTomb.Player.master.taskList.length<=1) {
           HTomb.Tutorial.goto("HarvestResourcesStepOne");

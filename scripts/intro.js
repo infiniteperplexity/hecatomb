@@ -92,7 +92,7 @@ HTomb = (function(HTomb) {
       //HTomb.Intro.setup();
     }
     if (HTomb.Utils.dice(1,4)===1) {
-      necro.ai.patrol(throne.x, throne.y, throne.z, {min: 1, max: 3});
+      necro.actor.patrol(throne.x, throne.y, throne.z, {min: 1, max: 3});
     }
     let tasks = HTomb.Utils.shuffle(necro.master.taskList);
     HTomb.Utils.shuffle(zombies);
@@ -106,8 +106,8 @@ HTomb = (function(HTomb) {
           }
         }
       }
-      zombie.ai.acted = false;
-      zombie.ai.act();
+      zombie.actor.acted = false;
+      zombie.actor.act();
     }
   };
 

@@ -22,6 +22,7 @@ HTomb = (function(HTomb) {
   HTomb.World.encounters = [];
   HTomb.World.blocks = {};
   HTomb.World.covers = HTomb.Utils.grid3d();
+  HTomb.World.trackers = {};
 
   HTomb.World.reset = function() {
     HTomb.Things.Player.delegate = null;
@@ -35,6 +36,7 @@ HTomb = (function(HTomb) {
     while(HTomb.World.things.length>0) {
       HTomb.World.things.pop().despawn();  
     }
+    HTomb.Things.Tracker.resetAll();
     var oldkeys;
     oldkeys = Object.keys(HTomb.World.creatures);
     for (let i=0; i<oldkeys.length; i++) {
@@ -106,8 +108,8 @@ HTomb = (function(HTomb) {
     }
     for (let c in HTomb.World.creatures) {
       let cr = HTomb.World.creatures[c];
-      if (cr.ai && cr.ai.team) {
-        types[cr.ai.team].members.push(cr);
+      if (cr.actor && cr.actor.team) {
+        types[cr.actor.team].members.push(cr);
       }
     }
     HTomb.Types.Team.teams = types;
@@ -258,7 +260,7 @@ HTomb = (function(HTomb) {
   HTomb.World.validate.liquids = function(x,y,z) {
     var t = HTomb.World.covers[z][x][y];
     if (t.liquid) {
-      t.flood(x,y,z);
+      t.liquid.flood(x,y,z);
     }
   };
 

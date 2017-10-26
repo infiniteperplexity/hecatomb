@@ -21,8 +21,15 @@ HTomb = (function(HTomb) {
   // };
 
   HTomb.Utils.lineBreak = function(str,len) {
-    str = HTomb.Utils.cleanText(str);
-    let tokens = str.split(" ");
+    // this remembers where the tags are
+    let pat = /%c{\w*}|%b{\w*}/g;
+    let match;
+    let formats = {};
+    while (match = pat.exec(str)) {
+      formats[match.index] = match[0];
+    }
+    let clean = HTomb.Utils.cleanText(str);
+    let tokens = clean.split(" ");
     let lines = [tokens[0]];
     tokens.splice(0,1);
     let i = 0;
@@ -32,6 +39,34 @@ HTomb = (function(HTomb) {
         lines.push(word);
       } else {   
         lines[i] = lines[i] + " " + word;
+      }
+    }
+    // put the tags back in
+    let fg = "";
+    let bg = "";
+    let fgpat = /%c{\w*}/g;
+    let bgpat = /%b{\w*}/g;
+    for (let f in formats) {
+      let format = formats[f];
+      let tally = 0;
+      let ind = f-tally;
+      for (let j=0; j<lines.length; j++) {
+        if (tally+lines[j].length>f) {
+          let line;
+          if (tally<=f) {
+            line = fg + bg + lines[j].substr(0,ind) + format + lines[j].substr(ind);
+          } else {
+            line = fg + bg + lines[j];
+          }
+          lines[j] = line;
+          if (format.match(fgpat)) {
+            fg = format;
+          } else if (format.match(bgpat)) {
+            bg = format;
+          }
+        }
+        tally+=lines[j].length;
+        tally+=1;
       }
     }
     return lines;
@@ -51,6 +86,8 @@ HTomb = (function(HTomb) {
     } else if (newer===null) {
       return null;
     } else if (obj!==null && typeof(obj)!==typeof(newer)) {
+      console.log(obj);
+      console.log(newer);
       throw new Error("Malformed deep merge arguments.");
     } else if (obj===null) {
       return HTomb.Utils.copy(newer);
@@ -60,22 +97,31 @@ HTomb = (function(HTomb) {
       if (Array.isArray(newer)) {
         nobj = [];
         for (let i=0; i<newer.length; i++) {
-          nobj[i] = HTomb.Utils.copy(newer[i]);
+          if (typeof(newer[i]!=="function")) {
+            nobj[i] = HTomb.Utils.copy(newer[i]);
+          }
         }
       } else if (Array.isArray(obj)) {
         nobj = [];
-        for (var i=0; i<obj.length; i++) {
-          nobj[i] = HTomb.Utils.copy(obj[i]);
+        for (let i=0; i<obj.length; i++) {
+          if (typeof(nobj[i]!=="function")) {
+            nobj[i] = HTomb.Utils.copy(obj[i]);
+          }
         }
+      // pass specialized objects by reference
+      } else if (Object.getPrototypeOf(newer)!==Object.getPrototypeOf({})) {
+        return newer;
+      } else if (Object.getPrototypeOf(obj)!==Object.getPrototypeOf({})) {
+        return obj;
       } else {
         let keys = [];
         for (let key of Object.keys(obj)) {
-          if (obj.hasOwnProperty(key)) {
+          if (obj.hasOwnProperty(key) && typeof(obj[key])!=="function") {
             keys.push(key);
           }
         }
         for (let key of Object.keys(newer)) {
-          if (newer.hasOwnProperty(key) && keys.indexOf(key)===-1) {
+          if (newer.hasOwnProperty(key) && keys.indexOf(key)===-1 && typeof(newer[key]!=="function")) {
             keys.push(key);
           }
         }
@@ -149,6 +195,19 @@ HTomb = (function(HTomb) {
     return grid;
   };
 
+  HTomb.Utils.grid2d = function(filling) {
+    let grid = [];
+    for (let x=0; x<LEVELW; x++) {
+      grid.push([]);
+      if (filling!==undefined) {
+        for (let y=0; y<LEVELH; y++) {
+          grid[x].push(filling);
+        }
+      }
+    }
+    return grid;
+  };
+
   HTomb.Utils.where = function(obj,callb) {
     var result = [];
     for (var key in obj) {
@@ -201,7 +260,7 @@ HTomb = (function(HTomb) {
     for (let i=0; i<arr.length; i++) {
       s+=arr[i][1];
       s+=" ";
-      s+=HTomb.Things.templates[arr[i][0]].name;
+      s+=HTomb.Things[arr[i][0]].name;
       if (i<arr.length-1) {
         s+=", ";
       } else {
@@ -218,17 +277,26 @@ HTomb = (function(HTomb) {
         return null;
       }
       // recursively copy arrays and objects
-      var nobj;
+      let nobj;
       if (Array.isArray(obj)) {
         nobj = [];
-        for (var i=0; i<obj.length; i++) {
-          nobj[i] = HTomb.Utils.copy(obj[i]);
+        for (let i=0; i<obj.length; i++) {
+          // ignore functions
+          if (typeof(nobj[i])!=="function") {
+            nobj[i] = HTomb.Utils.copy(obj[i]);
+          }
         }
-      } else {
+      // pass complex objects by reference
+      } else if (Object.getPrototypeOf(obj)!==Object.getPrototypeOf({})) {
+        return obj;
+      }else {
         nobj = {};
         for (let key in obj) {
+          // ignore functions
           if (obj.hasOwnProperty(key)) {
-            nobj[key] = HTomb.Utils.copy(obj[key]);
+            if (typeof(nobj[key])!=="function") {
+              nobj[key] = HTomb.Utils.copy(obj[key]);
+            }
           }
         }
       }
@@ -245,18 +313,28 @@ HTomb = (function(HTomb) {
         return null;
       }
       // recursively copy arrays and objects
-      var nobj = Object.create(obj);
+      let nobj = Object.create(obj);
       if (Array.isArray(obj)) {
-        for (var i=0; i<obj.length; i++) {
-          nobj[i] = HTomb.Utils.clone(obj[i]);
+        for (let i=0; i<obj.length; i++) {
+          // ignore and inherit functions
+          if (typeof(nobj[i])!=="function") {
+            nobj[i] = HTomb.Utils.clone(obj[i]);
+          }
         }
+      // pass specialized objects by reference
+      } else if (Object.getPrototypeOf(obj)!==Object.getPrototypeOf({})) {
+        return obj;
       } else {
-        for (var key in obj) {
+        for (let key in obj) {
           nobj[key] = HTomb.Utils.clone(obj[key]);
+          // ignore and inherit functions
+          if (typeof(nobj[key])!=="function") {
+            nobj[key] = HTomb.Utils.clone(obj[key]);
+          }
         }
       }
       return nobj;
-    // pass primitives by value and functions by reference
+    // pass primitives by value
     } else {
       return obj;
     }

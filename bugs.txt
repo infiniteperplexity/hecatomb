@@ -1,0 +1,4 @@
+- I have seen a screw-up with claiming, still.  The error message in the middle of FetchItems got thrown.  Not sure if it was a side effect of something that later got fixed.
+- Text colors for menu wrapping work wrong.
+- Saving/restoring doesn't work when packaged as executable.
+- Saving/restoring hasn't been tested since refactoring.
