@@ -225,7 +225,7 @@ HTomb = (function(HTomb) {
     fg: "#999999",
     Components: {
       Distinctive: {
-        symbols: ["\u26AB","\u25CF","\u2022","\u23FA"],
+        symbols: ["\u26AB","\u25CF","\u2022"],
         fgRandomRed: 5,
         fgRandomGreen: 5,
         fgRandomBlue: 5

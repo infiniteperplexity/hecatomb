@@ -1,8 +1,6 @@
 My ideas for today were...
 - Improve decay
 
-- Make snow smoother
-
 - figure out why flooding sometimes fails...is it caves?
 
 - push a new copy online
@@ -27,3 +25,16 @@ Change how graveyards and player starting locations work.
 - graveyards
 
 - wait do those coins exist in this font?
+
+...So now I think I just start piling on interesting Encounters.
+- Ant lions.
+- Antman colonies.
+- Peasants and adventurers (hamlet? homestead?)
+- Small ruins (of buildings?)
+- Huntsman's snare / huntsman.
+- Grave robber.
+- Ghul den.
+- Proper graveyards.
+- Fountains (1 wish? or other random effect like in NetHack?)
+- Giant serpent's corpse.
+

@@ -208,11 +208,11 @@ HTomb = (function(HTomb) {
   let lowest = NLEVELS;
   function finalizeElevations() {
     let grid = HTomb.Utils.grid2d();
-    for (let x=1; x<LEVELW-1; x++) {
-      for (let y=1; y<LEVELH-1; y++) {
+    for (let x=0; x<LEVELW-1; x++) {
+      for (let y=0; y<LEVELH-1; y++) {
         grid[x][y] = parseInt(HTomb.World.elevations[x][y]);
         if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
-          for (let z=grid[x][y]; z>=0; z--) {
+          for (let z=grid[x][y]; z>0; z--) {
             HTomb.World.tiles[z][x][y] = HTomb.Tiles.WallTile;
           }
           if (grid[x][y]<NLEVELS-1) {
@@ -585,16 +585,15 @@ HTomb = (function(HTomb) {
     var squares;
     var square;
     var slope;
-    for (var x=0; x<LEVELW; x++) {
-      for (var y=0; y<LEVELH; y++) {
+    for (var x=1; x<LEVELW-2; x++) {
+      for (var y=1; y<LEVELH-2; y++) {
         var z = HTomb.Tiles.groundLevel(x,y);
-        //if (tiles[z][x][y]===HTomb.Tiles.FloorTile && HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
         if (HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
           if (z===54) {
-            if (HTomb.Utils.dice(1,2)==1) {
-              HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
-            } else {
+            if (ROT.RNG.getUniform()<54-HTomb.World.elevations[x][y]) {
               HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
+            } else {
+              HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
             }
           } else if (z>54) {
             HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
@@ -641,7 +640,7 @@ HTomb = (function(HTomb) {
 
   function placePlayer() {
     var placed = false;
-    let padding = 25;
+    let padding = 72;
     // place the player near some graves
     let graves = HTomb.Utils.where(HTomb.World.features, function(v,k,o) {
       if (v.template!=="Tombstone") {
