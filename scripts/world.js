@@ -6,13 +6,13 @@ HTomb = (function(HTomb) {
   var coord = HTomb.Utils.coord;
 
   HTomb.World.things = [];
-  HTomb.World.tiles = HTomb.Utils.grid3d();
-  HTomb.World.explored = HTomb.Utils.grid3d();
+  HTomb.World.tiles = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
+  HTomb.World.explored = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
   HTomb.World.exposed = [];
   for (let x=0; x<LEVELW; x++) {
     HTomb.World.exposed.push([]);
   }
-  HTomb.World.lit = HTomb.Utils.grid3d();
+  HTomb.World.lit = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
   HTomb.World.lights = [];
   HTomb.World.visible = {};
   HTomb.World.creatures = {};
@@ -21,7 +21,7 @@ HTomb = (function(HTomb) {
   HTomb.World.tasks = {};
   HTomb.World.encounters = [];
   HTomb.World.blocks = {};
-  HTomb.World.covers = HTomb.Utils.grid3d();
+  HTomb.World.covers = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
   HTomb.World.trackers = {};
 
   HTomb.World.reset = function() {

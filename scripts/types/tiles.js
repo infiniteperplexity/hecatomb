@@ -294,11 +294,15 @@ HTomb = (function(HTomb) {
     if(x1===x0 && y1===y0 && z1===z0) {
       return true;
     }
-    if (HTomb.Utils.arrayInArray([x1,y1,z1],HTomb.Tiles.touchableFrom(x0,y0,z0,options))>-1) {
-      return true;
-    } else {
-      return false;
+    let squares = HTomb.Tiles.touchableFrom(x0,y0,z0,options);
+    for (let i=0; i<squares.length; i++) {
+      let s = squares[i];
+      squares[i] = HTomb.Utils.coord(s[0],s[1],s[2]);
     }
+    if (squares.indexOf(HTomb.Utils.coord(x1,y1,z1))!==-1) {
+      return true;
+    }
+    return false;
   };
   HTomb.Tiles.isReachableFrom = function(x1,y1,z1,x0,y0,z0, options) {
     if (HTomb.Tiles.isTouchableFrom(x1,y1,z1,x0,y0,z0, options)) {
@@ -450,20 +454,23 @@ HTomb = (function(HTomb) {
           let z1 = z+dz;
           if (HTomb.Path.quickDistance(x,y,z,x1,y1,z1)<=n) {
             let s = callb(x1,y1,z1,n);
-            if (s && HTomb.Utils.arrayInArray(s,squares)!==true) {
-              squares.push(s);
+            if (s) {
+              s = coord(s[0],s[1],s[2]);
+              if (squares.indexOf(s)===-1) {
+                squares.push(s);
+              }
             }
           }
         }
       }
     }
-    return squares;
+    return squares.map(HTomb.Utils.decoord);
   };
 
   HTomb.Tiles.getRandomWithinRange = function(x,y,z,n,callb) {
     let squares = HTomb.Tiles.getSquaresWithinRange(x,y,z,n,callb);
     if (squares.length>0) {
-      let r = HTomb.Utils.dice(1,squares.length);
+      let r = ROT.RNG.getUniformInt(1,squares.length);
       return squares[r-1];
     }
     return null;

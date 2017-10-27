@@ -160,7 +160,7 @@ HTomb = (function(HTomb) {
         format: function(structure) {
           let g = structure.describe();
           let ings = structure.totalIngredients();
-          if (HTomb.Utils.notEmpty(ings)) {
+          if (Object.keys(ings).length>0) {
             g+=" ";
             g+=HTomb.Utils.listIngredients(ings);
             if (!assigner || !assigner.master) {
@@ -183,7 +183,7 @@ HTomb = (function(HTomb) {
       }
       // more intuitive if ingredient-needing features are built first
       let ings = this.structure.neededIngredients();
-      if (HTomb.Utils.notEmpty(ings) && HTomb.Utils.notEmpty(this.ingredients)!==true) {
+      if (Object.keys(ings).length>0 && Object.keys(this.ingredients).length>0) {
         return false;
       }
       return true;

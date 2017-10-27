@@ -91,14 +91,14 @@ HTomb = (function(HTomb) {
       let y;
       let z;
       while (tries<TRIES) {
-        let edge = HTomb.Utils.dice(1,4);
+        let edge = ROT.RNG.getUniformInt(1,4);
         let span;
         if (edge===1 || edge===3) {
           span = LEVELH;
         } else {
           span = LEVELW;
         }
-        let center = HTomb.Utils.dice(1,span-2-len)+Math.floor(len/2);
+        let center = ROT.RNG.getUniformInt(1,span-2-len)+Math.floor(len/2);
         let line = [];
         for (let i=0; i<len; i++) {
           line.push(center-Math.floor(len/2)+i);
@@ -151,7 +151,7 @@ HTomb = (function(HTomb) {
       }
     },
     onSpawn: function(args) {
-      let r = HTomb.Utils.dice(1,4)+2;
+      let r = ROT.RNG.getUniformInt(3,6);
       for (let i=0; i<r; i++) {
         this.addCreature(HTomb.Things.Peasant.spawn());
       }
@@ -189,7 +189,7 @@ HTomb = (function(HTomb) {
         let x = t.x;
         let y = t.y;
         let z = t.z;
-        if (HTomb.Utils.dice(1,50)===1) {
+        if (ROT.RNG.getUniformInt(1,50)===1) {
           this.muster(x,y,z,{});
         }
       }

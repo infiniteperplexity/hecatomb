@@ -85,8 +85,9 @@ HTomb = (function(HTomb) {
       }
     },
     onTurnBegin: function() {
+      // is this still useful???
       if (this.task===null) {
-        if (HTomb.Utils.dice(2,6)===12) {
+        if (ROT.RNG.getUniformInt(1,36)===1) {
           this.nextGood();
         }
       }
@@ -138,7 +139,7 @@ HTomb = (function(HTomb) {
         } else {
           ings = (HTomb.Debug.noingredients) ? {} : makes.craftable.ingredients;
         }
-        if (HTomb.Utils.notEmpty(ings)) {
+        if (Object.keys(ings).length>0) {
           g+=" ";
           g+=HTomb.Utils.listIngredients(ings);
           if (this.entity.owner && this.entity.owner.owner && this.entity.owner.owner.ownsAllIngredients(ings)!==true) {
@@ -365,7 +366,7 @@ HTomb = (function(HTomb) {
   // add this component to a structure to make it into a ruins
   Component.extend({
     template: "Ruins",
-    template: "ruins",
+    name: "ruins",
     onDescribe: function(args) {
 
     },

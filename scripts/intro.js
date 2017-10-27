@@ -54,10 +54,10 @@ HTomb = (function(HTomb) {
     }
     let ores = ["GoldOre","Bloodstone","Moonstone","Jade","IronOre","Corpse"];
     for (let i=0; i<100; i++) {
-      let x = HTomb.Utils.dice(1,width);
-      let y = HTomb.Utils.dice(1,height);
+      let x = ROT.RNG.getUniformInt(1,width);
+      let y = ROT.RNG.getUniformInt(1,height);
       if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile) {
-        let template = ores[HTomb.Utils.dice(1,ores.length)-1];
+        let template = ores[ROT.RNG.getUniformInt(1,ores.length)-1];
         HTomb.Things[template].spawn().place(x,y,z);
       }
     }
@@ -91,7 +91,7 @@ HTomb = (function(HTomb) {
     if (necro.master.taskList.length===0) {
       //HTomb.Intro.setup();
     }
-    if (HTomb.Utils.dice(1,4)===1) {
+    if (ROT.RNG.getUniformInt(1,4)===1) {
       necro.actor.patrol(throne.x, throne.y, throne.z, {min: 1, max: 3});
     }
     let tasks = HTomb.Utils.shuffle(necro.master.taskList);

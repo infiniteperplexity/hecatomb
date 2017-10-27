@@ -138,7 +138,7 @@ HTomb = (function(HTomb) {
   };
 
   let treeNoise = new ROT.Noise.Simplex();
-  HTomb.World.vegetation = HTomb.Utils.grid2d();
+  HTomb.World.vegetation = HTomb.Utils.multiarray(LEVELW,LEVELH);
   function assignVegetation(base) {
     base = base || 25;
     // these cannot be modified by terrains
@@ -161,7 +161,7 @@ HTomb = (function(HTomb) {
         let z = HTomb.Tiles.groundLevel(x,y);
         if (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass || HTomb.World.covers[z][x][y]===HTomb.Covers.Snow) {
           let v = parseInt(HTomb.World.vegetation[x][y]);
-          let r = HTomb.Utils.dice(1,100)-1;
+          let r = ROT.RNG.getUniformInt(0,99);
           if (v>=r) {
             let plant = HTomb.Things.Tree.spawn();
             placement.stack(plant,x,y,z);
@@ -174,7 +174,7 @@ HTomb = (function(HTomb) {
           }
         } else if (HTomb.World.covers[z][x][y]===HTomb.Covers.Water) {
           let v = parseInt(HTomb.World.vegetation[x][y]);
-          let r = HTomb.Utils.dice(1,100)-1;
+          let r = ROT.RNG.getUniformInt(0,99);
           if (v>=r) {
             let plant = HTomb.Things.Seaweed.spawn();
             placement.stack(plant,x,y,z);
@@ -186,7 +186,7 @@ HTomb = (function(HTomb) {
 
   let elevationNoise = new ROT.Noise.Simplex();
   HTomb.World.elevationNoise = elevationNoise;
-  HTomb.World.elevations = HTomb.Utils.grid2d();
+  HTomb.World.elevations = HTomb.Utils.multiarray(LEVELW,LEVELH);
 
   function assignElevation(ground) {
     ground = ground || 50;
@@ -207,7 +207,7 @@ HTomb = (function(HTomb) {
 
   let lowest = NLEVELS;
   function finalizeElevations() {
-    let grid = HTomb.Utils.grid2d();
+    let grid = HTomb.Utils.multiarray(LEVELW,LEVELH);
     for (let x=0; x<LEVELW-1; x++) {
       for (let y=0; y<LEVELH-1; y++) {
         grid[x][y] = parseInt(HTomb.World.elevations[x][y]);
@@ -382,10 +382,10 @@ HTomb = (function(HTomb) {
     function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
     for (let z=1; z<NLEVELS-1; z++) {
       for (let i=0; i<LEVELW*LEVELH*nodeChance; i++) {
-        let x0 = HTomb.Utils.dice(1,LEVELW-2);
-        let y0 = HTomb.Utils.dice(1,LEVELH-2);
-        let d = HTomb.Utils.dice(1,4)+3;
-        let a = Math.random()*2*Math.PI;
+        let x0 = ROT.RNG.getUniformInt(1,LEVELW-2);
+        let y0 = ROT.RNG.getUniformInt(1,LEVELH-2);
+        let d = ROT.RNG.getUniformInt(4,7);
+        let a = ROT.RNG.getUniform()*2*Math.PI;
         let x1 = x0+Math.round(d*Math.cos(a));
         let y1 = y0+Math.round(d*Math.sin(a));
         let vein = HTomb.Path.line(x0,y0,x1,y1);
@@ -395,7 +395,7 @@ HTomb = (function(HTomb) {
           if (x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
             if (HTomb.Tiles.countNeighborsWhere(x,y,z,nonsolids)>0) {
               continue;
-            } else if (Math.random()<oreChance && x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
+            } else if (ROT.RNG.getUniform()<oreChance && x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
               let ind = layers.indexOf(HTomb.World.covers[z][x][y].template);
               if (ind>-1 && ind<layers.length-1) {
                 HTomb.World.covers[z][x][y] = HTomb.Covers[layers[ind+1]];
@@ -414,8 +414,8 @@ HTomb = (function(HTomb) {
     function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
     let dirs = ROT.DIRS[4];
     for (let i=0; i<LEVELW*LEVELH*yardChance; i++) {
-      let x = HTomb.Utils.dice(1,LEVELW/2-2)*2;
-      let y = HTomb.Utils.dice(1,LEVELH/2-2)*2;
+      let x = ROT.RNG.getUniformInt(1,LEVELW/2-2)*2;
+      let y = ROT.RNG.getUniformInt(1,LEVELH/2-2)*2;
       let z = HTomb.Tiles.groundLevel(x,y);
       if (z<=48) {
         continue;
@@ -424,7 +424,7 @@ HTomb = (function(HTomb) {
       for (let j=0; j<dirs.length; j++) {
         if (HTomb.Tiles.countNeighborsWhere(x+dirs[j][0],y+dirs[j][1],z-1,nonsolids)>0) {
           continue;
-        } else if (Math.random()<graveChance) {
+        } else if (ROT.RNG.getUniform()<graveChance) {
           let x1 = x+dirs[j][0];
           let y1 = y+dirs[j][1];
           placed.push([x1,y1,z]);
@@ -434,7 +434,7 @@ HTomb = (function(HTomb) {
       }
       //place one trade good in each cluster of graves
       if (placed.length>0) {
-        let r = HTomb.Utils.dice(1,placed.length)-1;
+        let r = ROT.RNG.getUniformInt(0,placed.length-1);
         let g = placed[r];
         placement.stack(HTomb.Things.TradeGoods.spawn({n: 1}),g[0],g[1],g[2]-1);
       }
@@ -451,13 +451,13 @@ HTomb = (function(HTomb) {
       var tries = 0;
       var max = 50;
       while (placed===false && tries<max) {
-        var z = parseInt(Math.random()*40)+11;
+        var z = parseInt(ROT.RNG.getUniform()*40)+11;
         if (used.indexOf(z)!==-1) {
           tries+=1;
           continue;
         }
         placed = true;
-        var z = parseInt(Math.random()*30)+11;
+        var z = parseInt(ROT.RNG.getUniform()*30)+11;
         used.push(z);
         used.push(z+1);
         used.push(z-1);
@@ -483,15 +483,15 @@ HTomb = (function(HTomb) {
     n = n || 12;
     n = parseInt(ROT.RNG.getNormal(n,n/4));
     for (var k=0; k<n; k++) {
-      var width = parseInt(Math.random()*8)+8;
-      var height = parseInt(Math.random()*8)+8;
+      var width = parseInt(ROT.RNG.getUniform()*8)+8;
+      var height = parseInt(ROT.RNG.getUniform()*8)+8;
       var placed = false;
       var tries = 0;
       var max = 50;
       while (placed===false && tries<max) {
-        var x = parseInt(Math.random()*(LEVELW-20))+10;
-        var y = parseInt(Math.random()*(LEVELH-20))+10;
-        var z = parseInt(Math.random()*(38))+11;
+        var x = parseInt(ROT.RNG.getUniform()*(LEVELW-20))+10;
+        var y = parseInt(ROT.RNG.getUniform()*(LEVELH-20))+10;
+        var z = parseInt(ROT.RNG.getUniform()*(38))+11;
         placed = true;
         outerLoop:
         for (var i=x; i<x+width; i++) {
@@ -527,10 +527,10 @@ HTomb = (function(HTomb) {
     function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
     for (let z=bottom; z<NLEVELS-1; z++) {
       for (let i=0; i<LEVELW*LEVELH*nodeChance; i++) {
-        let x0 = HTomb.Utils.dice(1,LEVELW-2);
-        let y0 = HTomb.Utils.dice(1,LEVELH-2);
-        let d = HTomb.Utils.dice(1,4)+3;
-        let a = Math.random()*2*Math.PI;
+        let x0 = ROT.RNG.getUniformInt(1,LEVELW-2);
+        let y0 =ROT.RNG.getUniformInt(1,LEVELH-2);
+        let d = ROT.RNG.getUniformInt(4,7);
+        let a = ROT.RNG.getUniform()*2*Math.PI;
         let x1 = x0+Math.round(d*Math.cos(a));
         let y1 = y0+Math.round(d*Math.sin(a));
         let vein = HTomb.Path.line(x0,y0,x1,y1);
@@ -540,7 +540,7 @@ HTomb = (function(HTomb) {
           if (x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
             if (HTomb.Tiles.countNeighborsWhere(x,y,z,nonsolids)>0) {
               continue;
-            } else if (Math.random()<oreChance && x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
+            } else if (ROT.RNG.getUniform()<oreChance && x>0 && y>0 && x<LEVELW-1 && y<LEVELH-1) {
               HTomb.World.covers[z][x][y] = HTomb.Covers[template];
             }
           }
@@ -568,7 +568,7 @@ HTomb = (function(HTomb) {
         var t = HTomb.World.covers[z][x][y];
         var plant;
         if (t!==HTomb.Covers.NoCover && t.liquid) {
-          if (Math.random()<0.5) {
+          if (ROT.RNG.getUniform()<0.5) {
             plant = HTomb.Things.Seaweed.spawn();
             placement.stack(plant,x,y,z);
           }
@@ -585,8 +585,8 @@ HTomb = (function(HTomb) {
     var squares;
     var square;
     var slope;
-    for (var x=1; x<LEVELW-2; x++) {
-      for (var y=1; y<LEVELH-2; y++) {
+    for (var x=1; x<LEVELW-1; x++) {
+      for (var y=1; y<LEVELH-1; y++) {
         var z = HTomb.Tiles.groundLevel(x,y);
         if (HTomb.World.covers[z][x][y]===HTomb.Covers.NoCover) {
           if (z===54) {
@@ -623,7 +623,7 @@ HTomb = (function(HTomb) {
     var template;
     for (var x=1; x<LEVELW-1; x++) {
       for (var y=1; y<LEVELH-1; y++) {
-        if (Math.random()<p) {
+        if (ROT.RNG.getUniform()<p) {
           var z = HTomb.Tiles.groundLevel(x,y);
           var t = HTomb.World.covers[z][x][y]
           if (t.liquid) {
@@ -643,6 +643,7 @@ HTomb = (function(HTomb) {
     let padding = 72;
     // place the player near some graves
     let graves = HTomb.Utils.where(HTomb.World.features, function(v,k,o) {
+    //let graves = HTomb.Utils.where(HTomb.World.features, function(v,k,o) {
       if (v.template!=="Tombstone") {
         return false;
       }
@@ -674,8 +675,8 @@ HTomb = (function(HTomb) {
       while (placed===false) {
       HTomb.Utils.shuffle(graves);
       let grave = graves[0];
-      let xdiff = HTomb.Utils.dice(2,6)-7;
-      let ydiff = HTomb.Utils.dice(2,6)-7;
+      let xdiff = ROT.RNG.getUniformInt(1,6)+ROT.RNG.getUniformInt(1,6)-7;
+      let ydiff = ROT.RNG.getUniformInt(1,6)+ROT.RNG.getUniformInt(1,6)-7;
       let x = grave.x+xdiff;
       let y = grave.y+ydiff;
       if (x<=0 || y<=0 || x>=LEVELW-1 || y>=LEVELH-1) {

@@ -6,7 +6,8 @@ HTomb = (function(HTomb) {
   Item.extend({
     template: "Rock",
     name: "rock",
-    symbol: "\u2022",
+    //symbol: "\u2022",
+    symbol: "\u2981",
     fg: "#999999",
     tags: ["Minerals"]
   });

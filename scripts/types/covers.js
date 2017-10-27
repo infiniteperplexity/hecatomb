@@ -52,56 +52,11 @@ HTomb = (function(HTomb) {
     }
   });
 
-  HTomb.Things.Tracker.extend({
-    template: "GrassGrowth",
-    name: "grass growth",
-    listens: ["TurnBegin"],
-    onTurnBegin: function() {
-      if (HTomb.Time.dailyCycle.turn%50!==0) {
-        return;
-      }
-      for (let x=1; x<LEVELW-1; x++) {
-        for (let y=1; y<LEVELH-1; y++) {
-          if (Math.random()>=0.1) {
-            continue;
-          }
-          let z = HTomb.Tiles.groundLevel(x,y);
-          // don't grow over slopes or features I guess
-          if (HTomb.World.tiles[z][x][y]!==HTomb.Tiles.FloorTile || HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover || HTomb.World.features[coord(x,y,z)]) {
-            continue;
-          }
-          
-          if (z===54) {
-            if (HTomb.Utils.dice(1,2)===1) {
-              var n = HTomb.Tiles.countNeighborsWhere(x,y,z,function(x,y,z) {
-                return (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass);
-              });
-              if (n>0) {
-                HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
-              }
-            } else {
-              HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
-            }
-          }
-          if (z<54) {
-            var n = HTomb.Tiles.countNeighborsWhere(x,y,z,function(x,y,z) {
-              return (HTomb.World.covers[z][x][y]===HTomb.Covers.Grass);
-            });
-            if (n>0) {
-              HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
-            }
-          } else {
-            HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
-          }
-        }
-      }
-    }
-  });
+  
   Cover.extend({
     template: "Grass",
     name: "grass",
-    symbol: '"',  
-    Trackers: ["GrassGrowth"],
+    symbol: '"',
     fg: HTomb.Constants.GRASSFG ||"#668844",
     bg: HTomb.Constants.GRASSBG || "#334422",
     darken: function() {

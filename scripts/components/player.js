@@ -215,7 +215,7 @@ HTomb = (function(HTomb) {
       }
       for (let i=0; i<failed.length; i++) {
         let task = failed[i];
-        task.dormant = HTomb.Utils.perturb(task.dormancy);
+        task.dormant = task.dormancy + ROT.RNG.getUniformInt(-1,1);
       }
     },
     listTasks: function() {

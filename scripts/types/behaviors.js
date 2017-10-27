@@ -421,8 +421,8 @@ HTomb = (function(HTomb) {
     name: "long range roam",
     act: function(actor) {
       if (actor.target===null) {
-        let x = HTomb.Utils.dice(1,LEVELW-2);
-        let y = HTomb.Utils.dice(1,LEVELH-2);
+        let x = ROT.RNG.getUniformInt(1,LEVELW-2);
+        let y = ROT.RNG.getUniformInt(1,LEVELH-2);
         let z = HTomb.Tiles.groundLevel(x,y);
         let cr = actor.entity;
         let canMove = cr.movement.canMove.bind(cr);

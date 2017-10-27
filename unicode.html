@@ -18,11 +18,14 @@ let rows = 500;
 let scale = 2;
 let columns = 7;
 let space = 10;
-let display = new ROT.Display({
-    width: space*columns,
-    height: scale*rows,
-    fontSize: 18,
-    fontFamily: "Verdana"
+let size = 18;
+display = new ROT.Display({
+	height: scale*rows,
+	width: space*columns,
+	fontSize: 18,
+	fontFamily: "Verdana",
+	bg: "white",
+	fg: "black"
 });
 document.body.appendChild(display.getContainer());
 let missingChars = ["\uFFFF","\uFFFD"];
@@ -53,10 +56,73 @@ for (let i=0x051E; i<=0x0523; i++) {
 for (let i=0x0526; i<=0x0530; i++) {
 	skippers.push(i);
 }
+for (let i=0x058B; i<=0x058F; i++) {
+	skippers.push(i);
+}
 for (let i=0x05C8; i<=0x05CF; i++) {
 	skippers.push(i);
 }
+for (let i=0x05EC; i<=0x05EF; i++) {
+	skippers.push(i);
+}
+for (let i=0x05F6; i<=0x05FF; i++) {
+	skippers.push(i);
+}
+for (let i=0x07B2; i<=0x07BF; i++) {
+	skippers.push(i);
+}
 for (let i=0x07FB; i<=0x08FF; i++) {
+	skippers.push(i);
+}
+for (let i=0x0973; i<=0x097A; i++) {
+	skippers.push(i);
+}
+for (let i=0x09CF; i<=0x09D6; i++) {
+	skippers.push(i);
+}
+for (let i=0x09D8; i<=0x09DB; i++) {
+	skippers.push(i);
+}
+for (let i=0x0AF3; i<=0x0B00; i++) {
+	skippers.push(i);
+}
+for (let i=0x0B4E; i<=0x0B55; i++) {
+	skippers.push(i);
+}
+for (let i=0x0B58; i<=0x0B5B; i++) {
+	skippers.push(i);
+}
+for (let i=0x0B72; i<=0x0B81; i++) {
+	skippers.push(i);
+}
+for (let i=0x0C4E; i<=0x0C54; i++) {
+	skippers.push(i);
+}
+for (let i=0x0C5A; i<=0x0C5F; i++) {
+	skippers.push(i);
+}
+for (let i=0x0D4F; i<=0x0D56; i++) {
+	skippers.push(i);
+}
+for (let i=0x0D58; i<=0x0D5F; i++) {
+	skippers.push(i);
+}
+for (let i=0x0F6B; i<=0x0F70; i++) {
+	skippers.push(i);
+}
+for (let i=0x0FD9; i<=0x0FF4; i++) {
+	skippers.push(i);
+}
+for (let i=0x0FF6; i<=0x1017; i++) {
+	skippers.push(i);
+}
+for (let i=0x09FC; i<=0x0A00; i++) {
+	skippers.push(i);
+}
+for (let i=0x0A0B; i<=0x0A0E; i++) {
+	skippers.push(i);
+}
+for (let i=0x0BD1; i<=0x0BD6; i++) {
 	skippers.push(i);
 }
 //maybe check for that little box thing?
@@ -75,40 +141,9 @@ while(u<columns*rows) {
 	}
 	hex = hex.toUpperCase();
 	let char = String.fromCharCode(parseInt(hex,16));
-	if (charFound(char,"Verdana")) {
-		u+=1;
-		display.drawText(col*space+1,scale*(u-col*rows), char + " : " + hex);
-	}
-}
-function charFound(chr, font) {
-	let canvas = document.createElement("canvas");
-	let ctx = canvas.getContext('2d');
-	let h = 20;
-	let w = 20;
-	canvas.width = w;
-	canvas.height = h;
-	ctx.font = "10px " + font;
-	ctx.fillText(chr,0,h/2);
-	let arr = ctx.getImageData(0,0,w,h).data;
-	let arrs = [];
-	for (let i=0; i<missingChars.length; i++) {
-	  ctx.clearRect(0,0,w,h);
-	  ctx.fillText(missingChars[i],0,h/2);
-	  arrs.push(ctx.getImageData(0,0,w,h).data);
-	}
-	for (let i=0; i<arr.length; i++) {
-	  let bit = arr[i];
-	  let allDiffer = true;
-	  for (let j=0; j<arrs.length; j++) {
-	    if (bit===arrs[j][i]) {
-	      allDiffer = false;
-	    }
-	  }
-	  if (allDiffer) {
-	    return true;
-	  }
-	}
-	return false;
+	u+=1;
+	display.drawText(col*space+1,scale*(u-col*rows),char);
+	display.drawText(2+col*space+1,scale*(u-col*rows),"%c{#BBBBBB} :" + hex);
 }
 </script>
 </html>

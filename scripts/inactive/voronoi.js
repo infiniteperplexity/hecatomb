@@ -50,7 +50,7 @@ HTomb = (function(HTomb) {
       points = [];
       for (let i=1; i<LEVELW-1; i++) {
         for (let j=1; j<LEVELH-1; j++) {
-          if (Math.random()<0.001) {
+          if (ROT.RNG.getUniform()<0.001) {
             points.push([i,j]);
           }
         }
@@ -190,7 +190,7 @@ HTomb = (function(HTomb) {
   	this.point = p;
   	this.pe = pe;
   	this.y = p.y;
-  	this.key = Math.random()*100000000;
+  	this.key = ROT.RNG.getUniform()*100000000;
 
   	this.arch = null;
   	this.value = 0;
