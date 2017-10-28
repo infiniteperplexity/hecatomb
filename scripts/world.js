@@ -14,15 +14,15 @@ HTomb = (function(HTomb) {
   }
   HTomb.World.lit = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
   HTomb.World.lights = [];
-  HTomb.World.visible = {};
-  HTomb.World.creatures = {};
-  HTomb.World.items = {};
-  HTomb.World.features = {};
-  HTomb.World.tasks = {};
+  HTomb.World.visible = [];
+  HTomb.World.creatures = [];
+  HTomb.World.items = [];
+  HTomb.World.features = [];
+  HTomb.World.tasks = [];
   HTomb.World.encounters = [];
-  HTomb.World.blocks = {};
+  HTomb.World.blocks = [];
   HTomb.World.covers = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
-  HTomb.World.trackers = {};
+  HTomb.World.trackers = [];
 
   HTomb.World.reset = function() {
     HTomb.Things.Player.delegate = null;
@@ -42,6 +42,9 @@ HTomb = (function(HTomb) {
     for (let i=0; i<oldkeys.length; i++) {
       delete HTomb.World.creatures[oldkeys[i]];
     }
+    //for (let key in HTomb.World.creatures) {
+    //  delete HTomb.World.creatures[key];
+    //}
     oldkeys = Object.keys(HTomb.World.features);
     for (let i=0; i<oldkeys.length; i++) {
       delete HTomb.World.features[oldkeys[i]];

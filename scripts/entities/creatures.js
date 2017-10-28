@@ -205,7 +205,7 @@ HTomb = (function(HTomb) {
         return;
       }
       if (ROT.RNG.getUniformInt(1,120)===1 && HTomb.Types.Team.teams.GhoulTeam.members.length<10) {
-        let graves = HTomb.Utils.where(HTomb.World.features,function(e) {
+        let graves = HTomb.World.features.filter(function(e) {
           if (e.template==="Tombstone") {
             let x = e.x;
             let y = e.y;

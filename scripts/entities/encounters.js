@@ -200,9 +200,9 @@ HTomb = (function(HTomb) {
     },
     onPlace: function(x,y,z,args) {
       let dryad = this.creatures[0];
-      let trees = HTomb.Utils.where(HTomb.World.features,
-      function(e) {
-        let d = HTomb.Path.quickDistance(e.x,e.y,e.z,x,y,z);
+      let trees = HTomb.World.features.filter(
+        function(e) {
+          let d = HTomb.Path.quickDistance(e.x,e.y,e.z,x,y,z);
           return (e.template==="Tree" && d>=5 && d<=9);
         }
       );

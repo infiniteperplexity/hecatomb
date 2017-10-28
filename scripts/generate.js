@@ -642,8 +642,7 @@ HTomb = (function(HTomb) {
     var placed = false;
     let padding = 72;
     // place the player near some graves
-    let graves = HTomb.Utils.where(HTomb.World.features, function(v,k,o) {
-    //let graves = HTomb.Utils.where(HTomb.World.features, function(v,k,o) {
+    let graves = HTomb.World.features.filter(function(v,k,o) {
       if (v.template!=="Tombstone") {
         return false;
       }
