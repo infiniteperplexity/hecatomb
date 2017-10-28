@@ -3,7 +3,7 @@ HTomb = (function(HTomb) {
   "use strict";
   var Debug = HTomb.Debug;
 
-  Debug.noingredients = true;
+  //Debug.noingredients = true;
   Debug.nodecay = false;
   //Debug.explored = true;
   //Debug.visible = true;

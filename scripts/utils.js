@@ -279,17 +279,18 @@ HTomb = (function(HTomb) {
   };
 
   // ******* Oddballs ************************
+  // this feels kind of misplaced but I'm not sure where it goes...
   HTomb.Utils.listIngredients = function(ingredients) {
-    let arr = HTomb.Utils.ingredientArray(ingredients);
-    if (arr.length===0) {
+    let keys = Object.keys(ingredients);
+    if (keys.length===0) {
       return "";
     }
     let s = "($: ";
-    for (let i=0; i<arr.length; i++) {
-      s+=arr[i][1];
+    for (let key of keys) {
+      s+=ingredients[key];
       s+=" ";
-      s+=HTomb.Things[arr[i][0]].name;
-      if (i<arr.length-1) {
+      s+=HTomb.Things[key].name;
+      if (i<keys.length-1) {
         s+=", ";
       } else {
         s+=")";
@@ -298,18 +299,5 @@ HTomb = (function(HTomb) {
     return s;
   };
 
-  HTomb.Utils.where = function(obj,callb) {
-    var result = [];
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key) && callb(obj[key],key,obj)) {
-        result.push(obj[key]);
-      }
-    }
-    return result;
-  };
-
   return HTomb;
 })(HTomb);
-
-
-  

@@ -169,8 +169,13 @@ HTomb = (function(HTomb) {
             let plant = HTomb.Things.Shrub.spawn();
             placement.stack(plant,x,y,z);
           } else if (BOULDER-v>r) {
-            let f = HTomb.Things.Boulder.spawn();
-            placement.stack(f,x,y,z);
+            if (ROT.RNG.getUniformInt(1,3)===1) {
+              let f = HTomb.Things.Rock.spawn({n: 1, owned: false});
+              placement.stack(f,x,y,z);
+            } else {
+              let f = HTomb.Things.Boulder.spawn();
+              placement.stack(f,x,y,z);
+            }
           }
         } else if (HTomb.World.covers[z][x][y]===HTomb.Covers.Water) {
           let v = parseInt(HTomb.World.vegetation[x][y]);
@@ -207,19 +212,19 @@ HTomb = (function(HTomb) {
 
   let lowest = NLEVELS;
   function finalizeElevations() {
-    let grid = HTomb.Utils.multiarray(LEVELW,LEVELH);
     for (let x=0; x<LEVELW-1; x++) {
       for (let y=0; y<LEVELH-1; y++) {
-        grid[x][y] = parseInt(HTomb.World.elevations[x][y]);
+        let z0 = parseInt(HTomb.World.elevations[x][y]);
+        z0 = Math.min(z0,NLEVELS-2);
         if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
-          for (let z=grid[x][y]; z>0; z--) {
+          for (let z=z0; z>0; z--) {
             HTomb.World.tiles[z][x][y] = HTomb.Tiles.WallTile;
           }
-          if (grid[x][y]<NLEVELS-1) {
-            HTomb.World.tiles[grid[x][y]+1][x][y] = HTomb.Tiles.FloorTile;
+          if (z0<NLEVELS-2) {
+            HTomb.World.tiles[z0+1][x][y] = HTomb.Tiles.FloorTile;
           }
-          HTomb.World.exposed[x][y] = grid[x][y]+1;
-          lowest = Math.min(lowest, grid[x][y]+1);
+          HTomb.World.exposed[x][y] = z0+1;
+          lowest = Math.min(lowest, z0+1);
         }
       }
     }

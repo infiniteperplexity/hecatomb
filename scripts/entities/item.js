@@ -266,9 +266,10 @@ HTomb = (function(HTomb) {
       }
       return mesg;
     }
-    asIngredients() {
+    asIngredients(optional) {
       let ingredients = {};
-      for (let item of this) {
+      let ings = optional || this;
+      for (let item of optional) {
         ingredients[item.template] = item.n;
       }
       return ingredients;
