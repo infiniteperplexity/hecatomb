@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+
+<title>Unicode tester</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Verdana');
+@import url('https://fonts.googleapis.com/css?family=PT+Mono');
+</style>
+<script src="scripts/rot.min.js"></script>
+<script src="scripts/rotjsmods.js"></script>
+</head>
+<body>
+</body>
+<script>
+let canv = document.createElement("canvas");
+document.body.appendChild(canv);
+let ctx = canv.getContext("2d");
+canv.height = 500;
+canv.width = 500;
+
+let a0 = ROT.RNG.getUniform()*2*Math.PI;
+let x0 = 250;
+let y0 = 250;
+let noise = new ROT.Noise.Simplex();
+let znoise = new ROT.Noise.Simplex();
+let scale = 10;
+let len = 10;
+let angle = a0;
+let x = x0;
+let y = y0;
+let c = 0.01;
+let segs = 100;
+for (let j=0; j<5; j++) {
+	ctx.beginPath();
+	ctx.moveTo(x0,y0);
+	for (let i=0; i<segs; i++) {
+		angle = angle + scale*noise.get(x,y);  
+		x += len*Math.cos(angle);
+		y += len*Math.sin(angle);
+		ctx.lineTo(x,y);
+		ctx.stroke();
+	}
+	ctx.closePath();
+}
+//ctx.stroke();
+
+
+
+
+</script>
+</html>
