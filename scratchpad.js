@@ -223,3 +223,66 @@ HTomb.Utils.seed = 6;
         }
       }
     }
+
+
+
+// How does world generation currently work?
+// - You set up stack/resolve.
+// - Simplex noise for elevation.
+// - Simplex noise for soil quality.
+// - Apply biomes to the four corners.
+// - Finalize elevations.
+// - Add lava to the bottom.
+// - Add water.
+// - Apply mineral layers.
+// - Add slopes.
+// - Add caverns and labyrinths.
+// - Add mineral clusters.
+// - Add trees and shrubs.
+// - Think about adding herbs and players.
+// - Add graveyards.
+// - Add vermin.
+// - Resolve stacks.
+// - Make all items unowned.
+// - Place the player.
+
+// So...one thi
+
+
+  HTomb.World.generators.slabBased = function() {
+    timeIt("lava", function() {
+      //place lava
+    }); timeIt("biomes", function() {
+      // assign biomes...maybe keep a grid of the columns?
+      // are there underground biomes?
+        // undermountain
+        // underwastes
+        // underforests - more mushrooms?
+        // undersea
+        // would these correspond to the surface biomes?
+    }); timeit("elevation", function() {
+      // perlin noise for elevation.
+      // modified by biomes.
+      // add slopes
+    }); timeit("water", function() {
+        // add water
+        // should there be a river?  could do perlin worms off the ocean...
+        // add aquifers
+        // could some of it in wastelands be lava instead?
+    }); timeit("soilquality", function() {
+      // perlin noise for soil quality.
+      // deal with soil layers here too?
+      // the problem with no doing plants here is we need soil richness for plants.
+      // i mean it's fine to just save it...
+      // modified by biomes
+      // place trees now, or wait?
+    }); timeit("slabstuff", function() {
+      // go slab by slab, adding stuff.
+      // how do I know the list?
+    }); timeit("underground", function() {
+      // 3d or 2d?  'tis the question...
+      // 3d is kinda cool.
+      // 2d might fit better with the planned depth approach
+      // underground biomes...
+        //...ice caves, lava caves, flooded caves, fungus caves
+    });

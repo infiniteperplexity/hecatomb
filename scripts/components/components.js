@@ -384,5 +384,34 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Component.extend({
+    template: "Herb",
+    name: "herb",
+    nospawn: true,
+    symbol: "\u2698",
+    labor: 5,
+    // should it spawn a tracker or something?
+    onPrespawn: function(args) {
+      this.Template.symbol = this.Template.symbol || "\u273F";
+      let feat = {
+        template: this.Template.template + "Plant",
+        name: this.Template.name,
+        symbol: this.symbol,
+        fg: this.Template.fg || "green",
+        Components: {
+          Harvestable: {
+            labor: this.labor,
+            yields: {}
+          }
+        }
+      }
+      feat.Components.Harvestable.yields[this.Template.template] = 1;
+      HTomb.Things.Feature.extend(feat);
+    }
+  });
+ 
+
+
+
   return HTomb;
 })(HTomb);

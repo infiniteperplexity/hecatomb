@@ -124,6 +124,8 @@ HTomb = (function(HTomb) {
         //growPlants({template: "MandrakePlant", p: 0.001});
         //growPlants({template: "WormwoodPlant", p: 0.001});
         //growPlants({template: "BloodwortPlant", p: 0.001});
+    }); timeIt("setpieces", function() {
+        setpieces();
     }); timeIt("graveyards", function() {
         graveyards();
     }); timeIt("critters", function() {
@@ -185,6 +187,21 @@ HTomb = (function(HTomb) {
             placement.stack(plant,x,y,z);
           }
         }
+      }
+    }
+  }
+
+  function setpieces() {
+    let BORDER = 6;
+    let SIZE = 22;
+    let N = 11;
+    let Px = 6;
+    let Py = 6;
+    // so...so far we want to place herbs, graveyards, and the player in here.
+    for (let i=0; i<N; i++) {
+      for (let j=0; j<N; j++) {
+        // the player should go at 6, 6, along with at least one small graveyard
+        
       }
     }
   }

@@ -33,7 +33,8 @@ HTomb = (function(HTomb) {
     }
   };
 
-  HTomb.Debug.minimap = function() {
+  HTomb.Debug.minimap = function(options) {
+    options = options || {};
     let coord = HTomb.Utils.coord;
     let w = window.open();
     let lookup = {
@@ -67,6 +68,9 @@ HTomb = (function(HTomb) {
       36: "#000022",
       35: "#000011"
     };
+    let SIZE = 22;
+    let PAD = 6;
+    let N = 11;
     let loopText = [];
     let scale = 2;
     let setupTxt =
@@ -96,6 +100,10 @@ HTomb = (function(HTomb) {
         if (c && c.template==="Necromancer") {
           fill = "#FF0088";
         }
+        if (options.ruled===true && (x%SIZE===PAD+1 || y%SIZE===PAD+1) {
+          fill="red";
+        }
+
         let txt = "ctx.fillStyle = '" + fill + "'; ctx.fillRect("+joiner.join()+");";
         loopText.push(txt);
       }

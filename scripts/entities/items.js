@@ -91,6 +91,34 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Item.extend({
+    template: "Wolfsbane",
+    name: "wolfsbane",
+    fg: "purple",
+    Components: {
+      Herb: {}
+    }
+  });
+
+  Item.extend({
+    template: "Mandrake",
+    name: "mandrake",
+    fg: "orange",
+    Components: {
+      Herb: {}
+    }
+  });
+
+  Item.extend({
+    template: "Bloodwort",
+    name: "bloodwort",
+    fg: "red",
+    Components: {
+      Herb: {}
+    }
+  });
+
+
 
   return HTomb;
 })(HTomb);
