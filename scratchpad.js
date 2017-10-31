@@ -286,3 +286,37 @@ HTomb.Utils.seed = 6;
       // underground biomes...
         //...ice caves, lava caves, flooded caves, fungus caves
     });
+  };
+
+  // slab ideas...
+  // pure mountain
+  // border mountain
+  // ...etc...
+  // ...inner plains...
+  // ...outer plains...
+  // three or four different herb slabs
+  // big graveyard
+  // starting graveyard
+  // ghoul den
+  // ant lion
+
+  // This is how many of each thing there will be...
+  // 13 mountain
+  // 6 foothill
+  // 13 badlands
+  // 6 wastes
+  // 13 ocean
+  // 6 shore
+  // 13 forests
+  // 6 scrublands
+  // 1 player start
+  // 8 near plains
+  // 32 far plains
+  // 4 borderlands
+
+  // so let's ignore the borderlands and the player start for now...
+  // the near plains should be relatively safe...maybe put ruins, herbs, vermin, et cetera.
+  // the far plains are about a quarter of the map
+  // maybe four each of "deep" biomes?  deep forest, deep badlands, deep mountains, deep oceans
+  // 
+
