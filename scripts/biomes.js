@@ -33,7 +33,6 @@ HTomb = (function(HTomb) {
           for (let o=0; o<hscales.length; o++) {
             HTomb.World.elevations[x][y] += 1.5*r*vscales[o]*HTomb.World.elevationNoise.get(x/hscales[o],y/hscales[o]);
           }
-
           HTomb.World.vegetation[x][y]-=1.25*r;
         }
       }

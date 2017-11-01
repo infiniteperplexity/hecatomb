@@ -81,7 +81,6 @@ HTomb = (function(HTomb) {
 
   HTomb.World.generators = {};
 
-  let biomes = ;
 
   let GROUND = 50;
   let SEALEVEL = 48;
@@ -126,17 +125,17 @@ HTomb = (function(HTomb) {
         //growPlants({template: "WormwoodPlant", p: 0.001});
         //growPlants({template: "BloodwortPlant", p: 0.001});
     }); timeIt("setpieces", function() {
-        //setpieces();
+        setpieces();
     }); timeIt("graveyards", function() {
-        //graveyards();
+        graveyards();
     }); timeIt("critters", function() {
-        //placeCritters();
+        placeCritters();
     }); timeIt("resolving", function() {
-        //placement.resolve();
+        placement.resolve();
     }); timeIt("no hauling", function() {
-        //notOwned();
+        notOwned();
     }); timeIt("player", function() {
-        //placePlayer();
+        placePlayer();
     });
   };
 
@@ -192,80 +191,6 @@ HTomb = (function(HTomb) {
     }
   }
 
-  let graveyard = {
-    width: 3,
-    height: 3,
-    findBox: function() {
-
-    },
-    
-    getBox()
-  };
-
-  let playerParcel = {
-    place: function(x0,y0) {
-      let SIZE = 22;
-      let graveyardsPlaced = 0;
-      let tries = 0;
-      let MAXTRIES = 100;
-      while (graveyardsPlaced<3 && tries<MAXTRIES) {
-        let x = x0 + SIZE/2 + ROT.RNG.GetUniformInt(-9,9);
-        let y = y0 + SIZE/2 + ROT.RNG.GetUniformInt(-9,9);
-        let z = HTomb.Tiles.groundLevel(x,y);
-        if (z<=SEALEVEL+1) {
-          // this is a dangerous condition.
-          continue;
-        }
-        let dirs = ROT.DIRS[4];
-        for (let dir of ROT.DIRS[4]) {
-          let x1 = x + dir[0];
-          let y1 = y + dir[1];
-          let z1 = HTomb.Tiles.groundLevel(z) {
-            if ()
-          }
-        }
-      }
-    }
-  };
-
-  function placeGraveyard(x,y,z) {
-
-  }
-
-
-function graveyards(options) {
-    options = options || {};
-    let yardChance = options.p || 0.005;
-    let graveChance = 0.5;
-    function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
-    let dirs = ROT.DIRS[4];
-    for (let i=0; i<LEVELW*LEVELH*yardChance; i++) {
-      let x = ROT.RNG.getUniformInt(1,LEVELW/2-2)*2;
-      let y = ROT.RNG.getUniformInt(1,LEVELH/2-2)*2;
-      let z = HTomb.Tiles.groundLevel(x,y);
-      if (z<=48) {
-        continue;
-      }
-      let placed = [];
-      for (let j=0; j<dirs.length; j++) {
-        if (HTomb.Tiles.countNeighborsWhere(x+dirs[j][0],y+dirs[j][1],z-1,nonsolids)>0) {
-          continue;
-        } else if (ROT.RNG.getUniform()<graveChance) {
-          let x1 = x+dirs[j][0];
-          let y1 = y+dirs[j][1];
-          placed.push([x1,y1,z]);
-          placement.stack(HTomb.Things.Tombstone.spawn(),x1,y1,z);
-          HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.Soil;
-        }
-      }
-      //place one trade good in each cluster of graves
-      if (placed.length>0) {
-        let r = ROT.RNG.getUniformInt(0,placed.length-1);
-        let g = placed[r];
-        placement.stack(HTomb.Things.TradeGoods.spawn({n: 1}),g[0],g[1],g[2]-1);
-      }
-    }
-  }
   function setpieces() {
     let BORDER = 6;
     let SIZE = 22;
@@ -276,15 +201,10 @@ function graveyards(options) {
     for (let i=0; i<N; i++) {
       for (let j=0; j<N; j++) {
         // the player should go at 6, 6, along with at least one small graveyard
-        if (i===Px && j===Py) {
-          playerParcel.place(i*SIZE,j*SIZE);
-        }
+        
       }
     }
   }
-
-
-
 
   let elevationNoise = new ROT.Noise.Simplex();
   HTomb.World.elevationNoise = elevationNoise;
@@ -330,7 +250,6 @@ function graveyards(options) {
   function generateBiomes() {
     let corners = ["Mountains","Wastes","Forest","Ocean"];
     corners = HTomb.Utils.shuffle(corners);
-    biomes = corners;
     let b;
     b = HTomb.Things[corners[0]].spawn({
       x0: 1,
@@ -510,7 +429,39 @@ function graveyards(options) {
     }
   }
 
-  
+  function graveyards(options) {
+    options = options || {};
+    let yardChance = options.p || 0.005;
+    let graveChance = 0.5;
+    function nonsolids(x,y,z) {return HTomb.World.tiles[z][x][y].solid!==true;}
+    let dirs = ROT.DIRS[4];
+    for (let i=0; i<LEVELW*LEVELH*yardChance; i++) {
+      let x = ROT.RNG.getUniformInt(1,LEVELW/2-2)*2;
+      let y = ROT.RNG.getUniformInt(1,LEVELH/2-2)*2;
+      let z = HTomb.Tiles.groundLevel(x,y);
+      if (z<=48) {
+        continue;
+      }
+      let placed = [];
+      for (let j=0; j<dirs.length; j++) {
+        if (HTomb.Tiles.countNeighborsWhere(x+dirs[j][0],y+dirs[j][1],z-1,nonsolids)>0) {
+          continue;
+        } else if (ROT.RNG.getUniform()<graveChance) {
+          let x1 = x+dirs[j][0];
+          let y1 = y+dirs[j][1];
+          placed.push([x1,y1,z]);
+          placement.stack(HTomb.Things.Tombstone.spawn(),x1,y1,z);
+          HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.Soil;
+        }
+      }
+      //place one trade good in each cluster of graves
+      if (placed.length>0) {
+        let r = ROT.RNG.getUniformInt(0,placed.length-1);
+        let g = placed[r];
+        placement.stack(HTomb.Things.TradeGoods.spawn({n: 1}),g[0],g[1],g[2]-1);
+      }
+    }
+  }
 
 
   function cavernLevels(n) {
@@ -620,6 +571,37 @@ function graveyards(options) {
     }
   };
 
+  function growPlants(options) {
+    options = options || {};
+    var template = options.template || "Shrub";
+    var p = options.p || 0.01;
+    var n = options.n || 3;
+    var born = options.born || [0,0.1,0.2,0.3,0.5,0.5,0.8,0.8];
+    var survive = options.survive || [0.9,0.8,0.8,0.7,0.7,0.2,0.2,0.2];
+    var cells = new HTomb.Cells({
+      born: born,
+      survive: survive
+    });
+    cells.randomize(p);
+    cells.iterate(n);
+    cells.apply(function(x,y,val) {
+      if (val) {
+        var z = HTomb.Tiles.groundLevel(x,y);
+        var t = HTomb.World.covers[z][x][y];
+        var plant;
+        if (t!==HTomb.Covers.NoCover && t.liquid) {
+          if (ROT.RNG.getUniform()<0.5) {
+            plant = HTomb.Things.Seaweed.spawn();
+            placement.stack(plant,x,y,z);
+          }
+        } else {
+          plant = HTomb.Things[template].spawn();
+          placement.stack(plant,x,y,z);
+        }
+      }
+    });
+  }
+
   function grassify() {
     var tiles = HTomb.World.tiles;
     var squares;
@@ -642,6 +624,110 @@ function graveyards(options) {
           }
         }
       }
+    }
+  }
+  function notOwned() {
+    for (var fe in HTomb.World.features) {
+      HTomb.World.features[fe].owner = null;
+    }
+    for (var it in HTomb.World.items) {
+      var items = HTomb.World.items[it];
+      for (let item of items) {
+        item.owned = false;
+      }
+    }
+  }
+
+  function placeCritters(p) {
+    p = p || 0.01;
+    var landCritters = ["Bat","Spider"];
+    var waterCritters = ["Fish"];
+    var template;
+    for (var x=1; x<LEVELW-1; x++) {
+      for (var y=1; y<LEVELH-1; y++) {
+        if (ROT.RNG.getUniform()<p) {
+          var z = HTomb.Tiles.groundLevel(x,y);
+          var t = HTomb.World.covers[z][x][y]
+          if (t.liquid) {
+            template = HTomb.Utils.shuffle(waterCritters)[0];
+          } else {
+            template = HTomb.Utils.shuffle(landCritters)[0];
+          }
+          var critter = HTomb.Things[template].spawn();
+          placement.stack(critter,x,y,z);
+        }
+      }
+    }
+  }
+
+  function placePlayer() {
+    var placed = false;
+    let padding = 72;
+    // place the player near some graves
+    let graves = HTomb.World.features.filter(function(v,k,o) {
+      if (v.template!=="Tombstone") {
+        return false;
+      }
+      let c = HTomb.Utils.decoord(k);
+      let x = c[0];
+      let y = c[1];
+      let z = c[2];
+      // look for graves that are not near the edge
+      if (x<padding || x>LEVELW-padding || y<padding || y>LEVELH-padding) {
+        return false;
+      }
+      // make sure there are at least two graves close together
+      let n = HTomb.Tiles.countNeighborsWhere(x,y,z,function(x1,y1,z1) {
+        let f = HTomb.World.features[coord(x1,y1,z1)];
+        if (f && f.template==="Tombstone") {
+          return true;
+        }
+        return false;
+      });
+      if (n>=1) {
+        return true;
+      }
+      return false;
+    });
+    if (graves.length===0) {
+      alert("no valid starting locations!");
+      return;
+    }
+      while (placed===false) {
+      HTomb.Utils.shuffle(graves);
+      let grave = graves[0];
+      let xdiff = ROT.RNG.getUniformInt(1,6)+ROT.RNG.getUniformInt(1,6)-7;
+      let ydiff = ROT.RNG.getUniformInt(1,6)+ROT.RNG.getUniformInt(1,6)-7;
+      let x = grave.x+xdiff;
+      let y = grave.y+ydiff;
+      if (x<=0 || y<=0 || x>=LEVELW-1 || y>=LEVELH-1) {
+        continue;
+      }
+      let z = HTomb.Tiles.groundLevel(x,y);
+      // do not displace another creature
+      if (HTomb.World.creatures[coord(x,y,z)]) {
+        continue;
+      }
+      // do not place under water
+      if (HTomb.World.covers[z][x][y].liquid) {
+        continue;
+      }
+      // do not place on a different Z level from the graves
+      if (z!==grave.z) {
+        continue;
+      }
+      // do not place directly on top of a tombstone
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f && f.template==="Tombstone") {
+        continue;
+      }
+      var p = HTomb.Things.Necromancer.spawn();
+      HTomb.Things.Player.spawn().addToEntity(p);
+      p.place(x,y,z);
+      if (p.sight) {
+        HTomb.FOV.findVisible(p.x, p.y, p.z, p.sight.range);
+      }
+      placed = true;
     }
   }
 

@@ -248,6 +248,7 @@ HTomb.Utils.seed = 6;
 
 // So...one thi
 
+  HTomb.World.generators.parcelBased()
 
   HTomb.World.generators.slabBased = function() {
     timeIt("lava", function() {
@@ -319,4 +320,3 @@ HTomb.Utils.seed = 6;
   // the far plains are about a quarter of the map
   // maybe four each of "deep" biomes?  deep forest, deep badlands, deep mountains, deep oceans
   // 
-

@@ -90,5 +90,10 @@ HTomb = (function(HTomb) {
   };
 
 
+// Cave generation
+// B678/S345678
+// Cave smoothing
+// B5678/S5678
+
 return HTomb;
 })(HTomb);
