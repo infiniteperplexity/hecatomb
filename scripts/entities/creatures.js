@@ -39,6 +39,18 @@ HTomb = (function(HTomb) {
       delete HTomb.World.creatures[coord(this.x, this.y, this.z)];
       Entity.remove.call(this);
     },
+    validPlace: function(x,y,z) {
+      if (HTomb.World.creatures[coord(x,y,z)]) {
+        return false;
+      // probably these should check for movement
+      } else if (HTomb.World.tiles[z][x][y].solid) {
+        return false;
+      } else if (HTomb.World.tiles[z][x][y].fallable) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     fall: function() {
       var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
       if (HTomb.World.creatures[coord(this.x,this.y,g)]) {

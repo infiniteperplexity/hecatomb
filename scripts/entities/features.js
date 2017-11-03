@@ -14,6 +14,7 @@ HTomb = (function(HTomb) {
     //i kind of hate this name
     integrity: null,
     tooltip: "A generic feature tooltip",
+    validTiles: ["FloorTile"],
     fall: function() {
       var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
       if (this.creature) {
@@ -72,6 +73,16 @@ HTomb = (function(HTomb) {
       }
       Entity.remove.call(this,args);
     },
+    validPlace: function(x,y,z) {
+      if (HTomb.World.features[coord(x,y,z)]) {
+        return false;
+      // some features can be placed on slopes
+      } else if (this.validTiles.indexOf(HTomb.World.tiles[z][x][y].template)!==-1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     dismantle: function(optionalTask) {
       if (this.integrity===null) {
         this.integrity=5;
@@ -93,6 +104,7 @@ HTomb = (function(HTomb) {
     name: "tombstone",
     symbol: "\u2670",
     fg: "#AAAAAA",
+    validTiles: ["FloorTile","UpSlopeTile"],
     onPlace: function(x,y,z) {
       // Bury a corpse beneath the tombstone
       HTomb.Things.Corpse.spawn().place(x,y,z-1);
@@ -104,6 +116,7 @@ HTomb = (function(HTomb) {
     name: "tree",
     fg: "#77BB00",
     integrity: 15,
+    validTiles: ["FloorTile","UpSlopeTile"],
     Components: {
       Harvestable: {
         labor: 15,
@@ -125,6 +138,7 @@ HTomb = (function(HTomb) {
     name: "shrub",
     symbol: "\u2698",
     fg: "#779922",
+    validTiles: ["FloorTile","UpSlopeTile"],
     Components: {
       Distinctive: {
         fgRandomRed: 15,
@@ -139,6 +153,7 @@ HTomb = (function(HTomb) {
     name: "seaweed",
     plural: true,
     fg: "#779922",
+    validTiles: ["FloorTile","UpSlopeTile"],
     Components: {
       Distinctive: {
         symbols: ["\u0633","\u2724"],
@@ -223,6 +238,7 @@ HTomb = (function(HTomb) {
     name: "boulder",
     symbol: "\u26AB",
     fg: "#999999",
+    validTiles: ["FloorTile","UpSlopeTile"],
     Components: {
       Distinctive: {
         symbols: ["\u2B24","\u25CF","\u25CF","\u2022","\u2022"],

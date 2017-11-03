@@ -354,6 +354,44 @@ HTomb = (function(HTomb) {
     }
   }
 
+  let Parcel = HTomb.Types.Type.extend({
+    template: "Parcel",
+    name: "parcel",
+    biomes: [],
+    deal: function() {
+
+    }
+  });
+
+  Parcel.extend({
+    template: "PlayerParcel",
+    name: "player parcel",
+    biomes: ["CentralHills"],
+    deal: function() {
+      
+    }
+  });
+
+  function dealParcels() {
+    // place the player and several graveyards first
+    HTomb.Types.PlayerParcel.deal() {
+
+    }
+    let deck = [];
+    for (let type of HTomb.Types.Parcel.types) {
+      if (type.template!=="PlayerParcel") {
+        for (let i=0; i<type.frequency; i++) {
+          deck.push(type);
+        }
+      }
+    }
+    deck = HTomb.Utils.shuffle(deck);
+    let nParcels = 100;
+    for (let i=0; i<nParcels; i++) {
+      deck[i].deal();
+    }
+  }
+
   function placeLava() {
     for (var x=1; x<LEVELW-1; x++) {
       for (var y=1; y<LEVELH-1; y++) {
