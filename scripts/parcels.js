@@ -56,131 +56,81 @@ HTomb = (function(HTomb) {
     let corners = HTomb.Utils.shuffle(["Mountains","Wastes","Forest","Ocean"]);
     let parcels = HTomb.World.generate.parcels;
     let biome;
-    parcels[0][5] = "OuterHills";
-    parcels[1][5] = "OuterHills";
-    parcels[2][5] = "OuterHills";
-    parcels[3][5] = "OuterHills";
-    parcels[4][5] = "InnerHills";
-    parcels[5][5] = "CenterHills";
-    parcels[6][5] = "InnerHills";
-    parcels[7][5] = "OuterHills";
-    parcels[8][5] = "OuterHills";
-    parcels[9][5] = "OuterHills";
-    parcels[10][5] = "OuterHills";
-    parcels[5][0] = "OuterHills";
-    parcels[5][1] = "OuterHills";
-    parcels[5][2] = "OuterHills";
-    parcels[5][3] = "OuterHills";
-    parcels[5][4] = "InnerHills";
-    parcels[5][6] = "InnerHills";
-    parcels[5][7] = "OuterHills";
-    parcels[5][8] = "OuterHills";
-    parcels[5][9] = "OuterHills";
-    parcels[5][10] = "OuterHills";
+    parcels["CentralHills"].push([5,5]);
+    parcels["InnerHills"].push(
+      [4,4],[5,4],[6,4],
+      [4,5],      [6,5],
+      [4,6],[5,6],[6,6]
+    );
+    parcels["Outerhills"].push(
+                        [5,0],
+                        [5,1],
+                  [4,2],[5,2],[6,2]
+            [3,3],[4,3],[5,3],[6,3],[7,3],
+            [2,4],[3,4],      [7,4],[8,4],
+[0,5],[1,5],[2,5],[3,5],      [7,5],[8,5],[9,5],[10,5],
+            [2,6],[3,6],      [7,6],[8,6],
+            [3,7],[4,7],[5,7],[6,7],[7,7],
+                  [4,8],[5,8],[6,8],
+                        [5,9],
+                        [5,10]
+    );
     biome = corners[0];
-    parcels[0][0] = "Deep"+biome;
-    parcels[1][0] = "Deep"+biome;
-    parcels[2][0] = "Deep"+biome;
-    parcels[3][0] = "Deep"+biome;
-    parcels[4][0] = "Border"+biome;
-    parcels[0][1] = "Deep"+biome;
-    parcels[1][1] = "Deep"+biome;
-    parcels[2][1] = "Deep"+biome;
-    parcels[3][1] = "Deep"+biome;
-    parcels[4][1] = "Border"+biome;
-    parcels[0][2] = "Deep"+biome;
-    parcels[1][2] = "Deep"+biome;
-    parcels[2][2] = "Deep"+biome;
-    parcels[3][2] = "Border"+biome;
-    parcels[4][2] = "OuterHills";
-    parcels[0][3] = "Deep"+biome;
-    parcels[1][3] = "Deep"+biome;
-    parcels[2][3] = "Border"+biome;
-    parcels[3][3] = "OuterHills";
-    parcels[4][3] = "OuterHills";
-    parcels[0][4] = "Border"+biome;
-    parcels[1][4] = "Border"+biome;
-    parcels[2][4] = "OuterHills";
-    parcels[3][4] = "OuterHills";
-    parcels[4][4] = "InnerHills";
+    parcels["Deep"+biome].push(
+      [0,0],[1,0],[2,0],[3,0],
+      [0,1],[1,1],[2,1],[3,1],
+      [0,2],[1,2],[2,2],
+      [0,3],[1,3]
+    );
+    parcels["Border"+biome].push(
+                  [4,0],
+                  [4,1],
+                [3,2],
+              [2,3],
+      [0,4],[1,4]
+    );
     biome = corners[1];
-    parcels[6][0] = "Border"+biome;
-    parcels[7][0] = "Deep"+biome;
-    parcels[8][0] = "Deep"+biome;
-    parcels[9][0] = "Deep"+biome;
-    parcels[10][0] = "Deep"+biome;
-    parcels[6][1] = "Border"+biome;
-    parcels[7][1] = "Deep"+biome;
-    parcels[8][1] = "Deep"+biome;
-    parcels[9][1] = "Deep"+biome;
-    parcels[10][1] = "Deep"+biome;
-    parcels[6][2] = "OuterHills";
-    parcels[7][2] = "Border"+biome;
-    parcels[8][2] = "Deep"+biome;
-    parcels[9][2] = "Deep"+biome;
-    parcels[10][2] = "Deep"+biome;
-    parcels[6][3] = "OuterHills";
-    parcels[7][3] = "OuterHills";
-    parcels[8][3] = "Border"+biome;
-    parcels[9][3] = "Deep"+biome;
-    parcels[10][3] = "Deep"+biome;
-    parcels[6][4] = "Border"+biome;
-    parcels[7][4] = "Border"+biome;
-    parcels[8][4] = "InnerHills";
-    parcels[9][4] = "OuterHills";
-    parcels[10][4] = "OuterHills";
+    parcels["Deep"+biome].push(
+      [7,0],[8,0],[9,0],[10,0],
+      [7,1],[8,1],[9,1],[10,1],
+            [8,2],[9,2],[10,2],
+                  [9,3],[10,3]
+    );
+    parcels["Border"+biome].push(
+      [6,0],
+      [6,1],
+        [7,2],
+          [8,3],
+            [9,4],[10,4]
+    );
     biome = corners[3];
-    parcels[0][6] = "Border"+biome;
-    parcels[1][6] = "Border"+biome;
-    parcels[2][6] = "OuterHills";
-    parcels[3][6] = "OuterHills";
-    parcels[4][6] = "InnerHills";
-    parcels[0][7] = "Deep"+biome;
-    parcels[1][7] = "Deep"+biome;
-    parcels[2][7] = "Border"+biome;
-    parcels[3][7] = "OuterHills";
-    parcels[4][7] = "OuterHills";
-    parcels[0][8] = "Deep"+biome;
-    parcels[1][8] = "Deep"+biome;
-    parcels[2][8] = "Deep"+biome;
-    parcels[3][8] = "Border"+biome;
-    parcels[4][8] = "OuterHills";
-    parcels[0][9] = "Deep"+biome;
-    parcels[1][9] = "Deep"+biome;
-    parcels[2][9] = "Deep"+biome;
-    parcels[3][9] = "Deep"+biome;
-    parcels[4][9] = "Border"+biome;
-    parcels[0][10] = "Deep"+biome;
-    parcels[1][10] = "Deep"+biome;
-    parcels[2][10] = "Deep"+biome;
-    parcels[3][10] = "Deep"+biome;
-    parcels[4][10] = "Border"+biome;
+    parcels["Deep"+biome].push(
+      [0,7],[1,7],
+      [0,8],[1,8],[2,8],
+      [0,9],[1,9],[2,9],[3,9],
+      [0,10],[1,10],[2,10],[3,10]
+    );
+    parcels["Border"+biome].push(
+    [0,6],[1,6],
+            [3,7],
+              [4,8],
+                [5,9],
+                [5,10]
+    );
     biome = corners[2];
-    parcels[6][6] = "Border"+biome;
-    parcels[7][6] = "Border"+biome;
-    parcels[8][6] = "InnerHills";
-    parcels[9][6] = "OuterHills";
-    parcels[10][6] = "OuterHills";
-    parcels[6][7] = "OuterHills";
-    parcels[7][7] = "OuterHills";
-    parcels[8][7] = "Border"+biome;
-    parcels[9][7] = "Deep"+biome;
-    parcels[10][7] = "Deep"+biome;
-    parcels[6][8] = "OuterHills";
-    parcels[7][8] = "Border"+biome;
-    parcels[8][8] = "Deep"+biome;
-    parcels[9][8] = "Deep"+biome;
-    parcels[10][8] = "Deep"+biome;
-    parcels[6][9] = "Border"+biome;
-    parcels[7][9] = "Deep"+biome;
-    parcels[8][9] = "Deep"+biome;
-    parcels[9][9] = "Deep"+biome;
-    parcels[10][9] = "Deep"+biome;
-    parcels[6][10] = "Border"+biome;
-    parcels[7][10] = "Deep"+biome;
-    parcels[8][10] = "Deep"+biome;
-    parcels[9][10] = "Deep"+biome;
-    parcels[10][10] = "Deep"+biome;
+    parcels["Deep"+biome].push(
+                  [9,7],[10,7],
+            [0,8],[9,8],[10,8],
+      [0,9],[1,9],[9,9],[10,9],
+      [0,10],[1,10],[9,10],[10,10]
+    );
+    parcels["Border"+biome].push(
+            [9,6],[10,6],
+          [8,7],
+        [7,8],
+      [6,9],
+      [6,10]
+    );
     HTomb.Types[corners[0]].modify(1,1);
     HTomb.Types[corners[1]].modify(LEVELW-2,1);
     HTomb.Types[corners[2]].modify(LEVELW-2,LEVELH-2);
@@ -359,6 +309,16 @@ HTomb = (function(HTomb) {
     name: "parcel",
     biomes: [],
     deal: function() {
+      let parcels = [];
+      for (let biome in HTomb.World.generate.parcels) {
+        parcels = parcels.concat(HTomb.World.generate.parcels[biome]);
+      }
+      parcels = HTomb.Utils.shuffle(parcels);
+      let i = parcels[0][0];
+      let j = parcels[0][1];
+      this.someMethod(PADDING+i*PSIZE,PADDING+j*PSIZE,PSIZE,PSIZE);
+    },
+    someMethod: function(x0,y0,w,h) {
 
     }
   });
@@ -367,10 +327,38 @@ HTomb = (function(HTomb) {
     template: "PlayerParcel",
     name: "player parcel",
     biomes: ["CentralHills"],
-    deal: function() {
-      
+    someMethod: function(x0,y0,w,h) {
+      let n = 3;
+      let xyz;
+      for (let i=0; i<n; i++) {
+        let g = HTomb.Things.Graveyard.spawn();
+        xyz = g.findPlace(x0,y0,w,h);
+        if (xyz) {
+          g.place(xyz.x,xyz.y,xyz.z);
+        } else {
+          alert("failure!");
+        }
+      }
+      let p = HTomb.Necromancer.spawn();
+      let DIST = 3;
+      xyz = p.findPlace(xyz.x-DIST,xyz.y-DIST,2*DIST+1,2*DIST+1);
+      p.place(xyz.x,xyz.y,xyz.z);
     }
   });
+
+  let Prefab = HTomb.Things.Thing.extend({
+    template: "Prefab",
+    name: "prefab"
+  });
+
+  // could this be done as an encounter?
+  Prefab.extend({
+    template: "Graveyard",
+    name: "graveyard",
+    validPlace: function(x,y,z) {
+
+    }
+  })
 
   function dealParcels() {
     // place the player and several graveyards first
