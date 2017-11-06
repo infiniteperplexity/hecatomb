@@ -40,7 +40,10 @@ HTomb = (function(HTomb) {
         return true;
       }
     },
-    findPlace: function(x0,y0,w,h) {
+    findPlace: function(x0,y0,w,h, options) {
+      options = options || {};
+      let mask = options.mask || {};
+      let callback = options.validPlace || this.validPlace.bind(this);
       let valid = false;
       let x ;
       let y;
@@ -54,7 +57,10 @@ HTomb = (function(HTomb) {
         x = ROT.RNG.getUniformInt(x0,x0+w);
         y = ROT.RNG.getUniformInt(y0,y0+h);
         z = HTomb.Tiles.groundLevel(x,y);
-        valid = this.validPlace(x,y,z);
+        if (mask[coord(x,y,z)]) {
+          continue;
+        }
+        valid = callback(x,y,z);
         tries+=1;
       }
       return {x: x, y: y, z: z};

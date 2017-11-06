@@ -100,7 +100,7 @@ HTomb = (function(HTomb) {
         if (c && c.template==="Necromancer") {
           fill = "#FF0088";
         }
-        if (options.ruled===true && (x%SIZE===PAD+1 || y%SIZE===PAD+1) {
+        if (options.ruled===true && (x%SIZE===PAD+1 || y%SIZE===PAD+1)) {
           fill="red";
         }
 

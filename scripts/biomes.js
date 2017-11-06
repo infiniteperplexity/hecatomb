@@ -4,6 +4,8 @@ HTomb = (function(HTomb) {
   let LEVELW = HTomb.Constants.LEVELW;
   let LEVELH = HTomb.Constants.LEVELH;
 
+  let OCTAVES = [256,128,64,32,16,8,4,2];
+
   let Biome = HTomb.Types.Type.extend({
     template: "Biome",
     name: "biome",
@@ -12,12 +14,10 @@ HTomb = (function(HTomb) {
     modify: function(x,y) {
       let x0 = (x===1) ? x : this.width;
       let x1 = (x===1) ? this.width : LEVELW-1;
-      let dx = (x===1) ? +1 : -1;
       let y0 = (y===1) ? y : this.height;
       let y1 = (y===1) ? this.height : LEVELH-1;
-      let dy = (y===1) ? +1 : -1;
-      for (let i=x0; i<x1; i+=dx) {
-        for (let j=y0; j<y1; j+=dy) {
+      for (let i=x0; i<x1; i++) {
+        for (let j=y0; j<y1; j++) {
           this.modifyTerrain(i,j,x,y);
         }
       }
@@ -33,12 +33,12 @@ HTomb = (function(HTomb) {
       let r = Math.sqrt(Math.pow(i-x,2) + Math.pow(j-y,2));
       r = 2*(2*NLEVELS-r)/(NLEVELS/3);
       r = Math.max(r,0);
-      HTomb.World.generate.elevations[i][i]+=r;
-      let scales = [0,0,0,0.05,0.05,0.025,0.025];
+      HTomb.World.generate.elevation[i][j]+=r;
+      let scales = [0,0,0,0.05,0.05,0.025,0.025,0];
       for (let o=0; o<OCTAVES.length; o++) {
-        HTomb.World.generate.elevations[i][i] += 1.5*r*scales[o]*HTomb.World.generate.enoise.get(i/OCTAVES[o],j/OCTAVES[o]);
+        HTomb.World.generate.elevation[i][j] += 1.5*r*scales[o]*HTomb.World.generate.enoise.get(i/OCTAVES[o],j/OCTAVES[o]);
       }
-      HTomb.World.rockiness[i][i]+=1.25*r;
+      HTomb.World.generate.rockiness[i][j]+=1.25*r;
     }
   });
 
@@ -50,9 +50,9 @@ HTomb = (function(HTomb) {
       r = 5*(2*NLEVELS-r)/(NLEVELS/3);
       r = Math.max(r,0);
       HTomb.World.generate.rockiness[i][j]+=r;
-      let scales = [0,0,0,0.05,0.05,0.025,0.025];
+      let scales = [0,0,0,0.05,0.05,0.025,0.025,0];
       for (let o=0; o<OCTAVES.length; o++) {
-        HTomb.World.generate.elevations[i][j] += r*scales[o]*HTomb.World.generate.enoise.get(i/OCTAVES[o],j/OCTAVES[o]);
+        HTomb.World.generate.elevation[i][j] += r*scales[o]*HTomb.World.generate.enoise.get(i/OCTAVES[o],j/OCTAVES[o]);
       }
     }
   });
@@ -73,7 +73,7 @@ HTomb = (function(HTomb) {
     modifyTerrain: function(i,j,x,y) {
       let r = Math.sqrt(Math.pow(i-x,2) + Math.pow(j-y,2));
       r = 2*(2*NLEVELS-r)/(NLEVELS/3);
-      HTomb.World.generate.elevations[i][j]-=Math.max(0,r);
+      HTomb.World.generate.elevation[i][j]-=Math.max(0,r);
     }
   });
 

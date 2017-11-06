@@ -71,7 +71,7 @@ HTomb = (function(HTomb) {
   };
   HTomb.World.init = function() {
     this.reset();
-    HTomb.World.generators.revised();
+    HTomb.World.generate.revised();
     HTomb.World.validate.all();
     HTomb.Time.unlockTime();
   };
@@ -262,6 +262,9 @@ HTomb = (function(HTomb) {
   };
   HTomb.World.validate.liquids = function(x,y,z) {
     var t = HTomb.World.covers[z][x][y];
+    if (t===undefined) {
+      console.log(x,y,z);
+    }
     if (t.liquid) {
       t.liquid.flood(x,y,z);
     }

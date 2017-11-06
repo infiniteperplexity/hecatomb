@@ -330,10 +330,12 @@ HTomb = (function(HTomb) {
     someMethod: function(x0,y0,w,h) {
       let n = 3;
       let xyz;
+      let last;
       for (let i=0; i<n; i++) {
-        let g = HTomb.Things.Graveyard.spawn();
+        let g = HTomb.Things.SmallGraveyard.spawn();
         xyz = g.findPlace(x0,y0,w,h);
         if (xyz) {
+          last = xyz;
           g.place(xyz.x,xyz.y,xyz.z);
         } else {
           alert("failure!");
@@ -341,22 +343,62 @@ HTomb = (function(HTomb) {
       }
       let p = HTomb.Necromancer.spawn();
       let DIST = 3;
-      xyz = p.findPlace(xyz.x-DIST,xyz.y-DIST,2*DIST+1,2*DIST+1);
-      p.place(xyz.x,xyz.y,xyz.z);
+      xyz = p.findPlace(last.x-DIST,last.y-DIST,2*DIST+1,2*DIST+1);
+      if (xyz) {
+        p.place(xyz.x,xyz.y,xyz.z);
+      } else {
+        alert("failure!");
+      }
     }
   });
 
-  let Prefab = HTomb.Things.Thing.extend({
-    template: "Prefab",
-    name: "prefab"
+  let Footprint = HTomb.Things.Entity.extend({
+    template: "Footprint",
+    name: "footprint",
+    place: function(x,y,z) {
+      HTomb.Things.Entity.place.call(this,x,y,z);
+      this.despawn();
+    }
   });
 
   // could this be done as an encounter?
-  Prefab.extend({
-    template: "Graveyard",
-    name: "graveyard",
+  Footprint.extend({
+    template: "SmallGraveyard",
+    name: "small graveyard",
     validPlace: function(x,y,z) {
-
+      let nvalid = 0;
+      let dirs = ROT.DIRS[4];
+      for (let d of dirs) {
+        if (this.validSquare(x+dirs[0],y+dirs[1],z)) {
+          nvalid+=1;
+        }
+      }
+      if (nvalid>2) {
+        return true;
+      }
+    },
+    validSquare: function(x,y,z) {
+      if (  HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile
+            && HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile
+            && HTomb.Tiles.countNeighborsWhere(x,y,z, function(x1,y1,z1) {
+              return (HTomb.World.tiles[z1-1][x1][y1]!==HTomb.Tiles.WallTile);
+            })===0) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    onPlace: function(x,y,z) {
+      let dirs = ROT.DIRS[4];
+      for (let d of dirs) {
+        let x1 = x+dirs[0];
+        let y1 = y+dirs[1];
+        if (this.validSquare(x1,y1,z)) {
+          HTomb.Things.Tombstone.spawn().place(x1,y1,z);
+          HTomb.Things.Corpse.spawn().place(x1,y1,z-1);
+          HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.Soil;
+        }
+      }
     }
   })
 

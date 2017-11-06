@@ -104,11 +104,11 @@ HTomb = (function(HTomb) {
     name: "tombstone",
     symbol: "\u2670",
     fg: "#AAAAAA",
-    validTiles: ["FloorTile","UpSlopeTile"],
-    onPlace: function(x,y,z) {
-      // Bury a corpse beneath the tombstone
-      HTomb.Things.Corpse.spawn().place(x,y,z-1);
-    }
+    validTiles: ["FloorTile","UpSlopeTile"]
+    // onPlace: function(x,y,z) {
+    //   // Bury a corpse beneath the tombstone
+    //   HTomb.Things.Corpse.spawn().place(x,y,z-1);
+    // }
   });
 
   Feature.extend({
@@ -241,7 +241,7 @@ HTomb = (function(HTomb) {
     validTiles: ["FloorTile","UpSlopeTile"],
     Components: {
       Distinctive: {
-        symbols: ["\u2B24","\u25CF","\u25CF","\u2022","\u2022"],
+        symbols: ["\u25CF","\u2022"],
         fgRandomRed: 5,
         fgRandomGreen: 5,
         fgRandomBlue: 5

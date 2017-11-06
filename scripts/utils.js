@@ -290,7 +290,7 @@ HTomb = (function(HTomb) {
       s+=ingredients[key];
       s+=" ";
       s+=HTomb.Things[key].name;
-      if (i<keys.length-1) {
+      if (key!==keys[keys.length-1]) {
         s+=", ";
       } else {
         s+=")";
