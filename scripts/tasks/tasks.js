@@ -480,7 +480,7 @@ HTomb = (function(HTomb) {
           if (feat && feat.template==="Tombstone") {
             continue;
           }
-          if (Math.random()<0.25) {
+          if (ROT.RNG.getUniform()<0.35) {
             var rock = HTomb.Things.Rock.spawn();
             rock.n = 1;
             rock.place(x1,y1,z);

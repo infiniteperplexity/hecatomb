@@ -103,7 +103,7 @@ HTomb = (function(HTomb) {
       return this;
     },
     onTurnBegin: function() {
-      if (this.sanity<this.getMaxSanity() && Math.random()<(1/10)) {
+      if (this.sanity<this.getMaxSanity() && ROT.RNG.getUniform()<(1/10)) {
         this.sanity+=1;
       }
     },
@@ -282,7 +282,7 @@ HTomb = (function(HTomb) {
     onAdd: function() {
       let e = this.entity;
       if (this.fgs) {
-        e.fg = this.fgs[Math.floor(Math.random()*this.fgs.length)];
+        e.fg = this.fgs[Math.floor(ROT.RNG.getUniform()*this.fgs.length)];
         this.fg = e.fg;
       }
       if (this.fgRandomRed || this.fgRandomGreen || this.fgRandBlue) {
@@ -293,7 +293,7 @@ HTomb = (function(HTomb) {
         this.fg = e.fg;
       }
       if (this.bgs) {
-        e.bg = this.bgs[Math.floor(Math.random()*this.bgs.length)];
+        e.bg = this.bgs[Math.floor(ROT.RNG.getUniform()*this.bgs.length)];
         this.bg = e.bg;
       }
       if (this.bgRandomRed || this.bgRandomGreen || this.bgRandBlue) {
@@ -304,7 +304,7 @@ HTomb = (function(HTomb) {
         this.bg = e.bg;
       }
       if (this.symbols) {
-        e.symbol = this.symbols[Math.floor(Math.random()*this.symbols.length)];
+        e.symbol = this.symbols[Math.floor(ROT.RNG.getUniform()*this.symbols.length)];
         this.symbol = e.symbol;
       }
     }
@@ -339,7 +339,7 @@ HTomb = (function(HTomb) {
         let wounds = this.entity.defender.wounds;
         if (this.level>=this.breakpoints.critical) {
           wounds.level = 7;
-          if (HTomb.Utils.dice(1,100)===1) {
+          if (ROT.RNG.getUniformInt(1,100)===1) {
             wounds.level = 8;
           }
           wounds.type = "Decay";
@@ -355,7 +355,7 @@ HTomb = (function(HTomb) {
         }
         this.entity.defender.tallyWounds();
       } else if (this.level>=this.breakpoints.critical) {
-        if (HTomb.Utils.dice(1,100)===1) {
+        if (ROT.RNG.getUniformInt(1,100)===1) {
           this.entity.destroy();
         }
       }
@@ -383,6 +383,35 @@ HTomb = (function(HTomb) {
       let z = this.z;
     }
   });
+
+  Component.extend({
+    template: "Herb",
+    name: "herb",
+    nospawn: true,
+    symbol: "\u2698",
+    labor: 5,
+    // should it spawn a tracker or something?
+    onPrespawn: function(args) {
+      this.Template.symbol = this.Template.symbol || "\u273F";
+      let feat = {
+        template: this.Template.template + "Plant",
+        name: this.Template.name,
+        symbol: this.symbol,
+        fg: this.Template.fg || "green",
+        Components: {
+          Harvestable: {
+            labor: this.labor,
+            yields: {}
+          }
+        }
+      }
+      feat.Components.Harvestable.yields[this.Template.template] = 1;
+      HTomb.Things.Feature.extend(feat);
+    }
+  });
+ 
+
+
 
   return HTomb;
 })(HTomb);

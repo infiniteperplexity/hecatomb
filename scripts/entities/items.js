@@ -6,7 +6,8 @@ HTomb = (function(HTomb) {
   Item.extend({
     template: "Rock",
     name: "rock",
-    symbol: "\u2022",
+    //symbol: "\u2022",
+    symbol: "\u2981",
     fg: "#999999",
     tags: ["Minerals"]
   });
@@ -89,6 +90,34 @@ HTomb = (function(HTomb) {
       }
     }
   });
+
+  Item.extend({
+    template: "Wolfsbane",
+    name: "wolfsbane",
+    fg: "purple",
+    Components: {
+      Herb: {}
+    }
+  });
+
+  Item.extend({
+    template: "Mandrake",
+    name: "mandrake",
+    fg: "orange",
+    Components: {
+      Herb: {}
+    }
+  });
+
+  Item.extend({
+    template: "Bloodwort",
+    name: "bloodwort",
+    fg: "red",
+    Components: {
+      Herb: {}
+    }
+  });
+
 
 
   return HTomb;

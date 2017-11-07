@@ -5,26 +5,11 @@ HTomb = (function(HTomb) {
   var LEVELH = HTomb.Constants.LEVELH;
   var NLEVELS = HTomb.Constants.NLEVELS;
 
-  // let seed = 0;
-  // let nextSeed = seed;
-
-  // HTomb.Utils.reseed = function() {
-  //   seed = Math.floor(Math.random()*Math.pow(2,16));
-  // };
-
-  // HTomb.Utils.random = function(max, min) {
-  //   max = max || 1;
-  //   min = min || 0;
-  //   nextSeed = (nextSeed * 9301 + 49297) % 233280;
-  //   let rnd = seed / 233280;
-  //   return min + rnd * (max - min);
-  // };
-
+  // *********** String handling *******************
   HTomb.Utils.lineBreak = function(str,len) {
-    // this remembers where the tags are
-    let pat = /%c{\w*}|%b{\w*}/g;
+    let pat = /%c{[#\w]*}|%b{[#\w]*}/g;
     let match;
-    let formats = {};
+    let formats = [];
     while (match = pat.exec(str)) {
       formats[match.index] = match[0];
     }
@@ -41,23 +26,37 @@ HTomb = (function(HTomb) {
         lines[i] = lines[i] + " " + word;
       }
     }
-    // put the tags back in
     let fg = "";
     let bg = "";
-    let fgpat = /%c{\w*}/g;
-    let bgpat = /%b{\w*}/g;
+    let fgpat = /%c{[#\w]*}/g;
+    let bgpat = /%b{[#\w]*}/g;
+    // for each saved format...
+    let linef = [];
     for (let f in formats) {
       let format = formats[f];
+      // keep track of how many characters we have passed
       let tally = 0;
       let ind = f-tally;
+      // iterate through the lines
       for (let j=0; j<lines.length; j++) {
         if (tally+lines[j].length>f) {
+          // if the end of this line is after the format starts...
           let line;
+          let len;
           if (tally<=f) {
-            line = fg + bg + lines[j].substr(0,ind) + format + lines[j].substr(ind);
+            // ...but the format starts after the beginning of the line...
+            line = lines[j].substr(0,ind) + format + lines[j].substr(ind);
+            len = line.length;
+            // !!!the problem is that these accumulate
+            //line = fg + bg + line;
           } else {
-            line = fg + bg + lines[j];
+            // ...otherwise it affects the whole line.
+            len = lines[j].length;
+            // !!!the problem is that these accumulate
+            line = /*fg + bg + */lines[j];
           }
+          linef[j] = fg+bg;
+          // replace with the altered line
           lines[j] = line;
           if (format.match(fgpat)) {
             fg = format;
@@ -65,18 +64,71 @@ HTomb = (function(HTomb) {
             bg = format;
           }
         }
-        tally+=lines[j].length;
+        tally+=len;
         tally+=1;
       }
+    }
+    for (let i=0; i<lines.length; i++) {
+      lines[i] = linef[i] + lines[i];
     }
     return lines;
   };
   HTomb.Utils.cleanText = function(str) {
-    let fgpat = /%c{\w*}/g;
-    let bgpat = /%b{\w*}/g;
+    let fgpat = /%c{[#\w]*}/g;
+    let bgpat = /%b{[#\w]*}/g;
     return str.replace(fgpat,"").replace(bgpat,"");
   };
-  // a deep-ish merge utility, used mostly for constructor arguments
+  HTomb.Utils.splitPropCase = function(s) {
+    let caps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (let i=0; i<s.length; i++) {
+      if (caps.indexOf(s[i])!==-1) {
+        s = s.substr(0,i-1)+" "+s.substr(i);
+      }
+    }
+    return s;
+  }
+
+
+// ********************** Coordinates ******************
+  HTomb.Utils.coord = function(x,y,z) {
+    return z*LEVELH*LEVELW + x*LEVELH + y;
+  }
+
+  HTomb.Utils.decoord = function(c) {
+    var x=0, y=0, z=0;
+    while(c-LEVELH*LEVELW>=0) {
+      c-=LEVELH*LEVELW;
+      z+=1;
+    }
+    while(c-LEVELH>=0) {
+      c-=LEVELH;
+      x+=1;
+    }
+    y = parseInt(c);
+    return [x,y,z];
+  }
+
+  // **************** RGB Manipulation ************
+  HTomb.Utils.alphaHex = function(newc,oldc,alpha) {
+    var combined = [];
+    for (var i=0; i<3; i++) {
+      combined[i] = alpha*newc[i]+(1-alpha)*oldc[i];
+    }
+    return combined;
+  }
+
+  HTomb.Utils.alphaString = function(newc,oldc,alpha) {
+    var oldc = ROT.Color.fromString(oldc);
+    var newc = ROT.Color.fromString(newc);
+    var combined = [];
+    for (var i=0; i<3; i++) {
+      combined[i] = alpha*newc[i]+(1-alpha)*oldc[i];
+    }
+    combined = ROT.Color.toHex(combined);
+    return combined;
+  }
+
+  // *********** Merging and copying *******************
   HTomb.Utils.merge = function(obj, newer) {
     //if one or the other is undefined, return the other
     if (obj===undefined) {
@@ -86,8 +138,6 @@ HTomb = (function(HTomb) {
     } else if (newer===null) {
       return null;
     } else if (obj!==null && typeof(obj)!==typeof(newer)) {
-      console.log(obj);
-      console.log(newer);
       throw new Error("Malformed deep merge arguments.");
     } else if (obj===null) {
       return HTomb.Utils.copy(newer);
@@ -135,7 +185,6 @@ HTomb = (function(HTomb) {
       return HTomb.Utils.copy(newer);
     }
   };
-
   HTomb.Utils.coalesce = function() {
     let template = {};
     for (let i = 0; i<arguments.length; i++) {
@@ -145,129 +194,6 @@ HTomb = (function(HTomb) {
       }
     }
     return template;
-  };
-
-  HTomb.Utils.bind = function(obj, method) {
-    let newfunc = obj[method].bind(obj);
-    newfunc.getBoundThis = function() {
-      return obj;
-    }
-    return newfunc;
-  };
-
-  HTomb.Utils.perturb = function(n) {
-    if (n===0) {
-      return n;
-    }
-    let r = Math.random();
-    if (r<0.33) {
-      return Math.max(n-1,1);
-    } else if (r<0.67) {
-      return n;
-    } else {
-      return n+1;
-    }
-  };
-
-  HTomb.Utils.splitPropCase = function(s) {
-    let caps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (let i=0; i<s.length; i++) {
-      if (caps.indexOf(s[i])!==-1) {
-        s = s.substr(0,i-1)+" "+s.substr(i);
-      }
-    }
-    return s;
-  }
-
-  HTomb.Utils.grid3d = function(filling) {
-    var grid = [];
-    for (let z=0; z<NLEVELS; z++) {
-      grid.push([]);
-      for (let x=0; x<LEVELW; x++) {
-        grid[z].push([]);
-        if (filling!==undefined) {
-          for (let y=0; y<LEVELH; y++) {
-            grid[z][x].push(filling);
-          }
-        }
-      }
-    }
-    return grid;
-  };
-
-  HTomb.Utils.grid2d = function(filling) {
-    let grid = [];
-    for (let x=0; x<LEVELW; x++) {
-      grid.push([]);
-      if (filling!==undefined) {
-        for (let y=0; y<LEVELH; y++) {
-          grid[x].push(filling);
-        }
-      }
-    }
-    return grid;
-  };
-
-  HTomb.Utils.where = function(obj,callb) {
-    var result = [];
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key) && callb(obj[key],key,obj)) {
-        result.push(obj[key]);
-      }
-    }
-    return result;
-  };
-
-  HTomb.Utils.findItems = function(callb) {
-    var items = [];
-    let things = HTomb.World.things;
-    for (let i=0; i<things.length; i++) {
-      if (things[i].item) {
-        if (callb===undefined || callb(things[i])===true) {
-          items.push(things[i]);
-        }
-      }
-    }
-    return items;
-  };
-
-  HTomb.Utils.notEmpty = function(obj) {
-    if (!obj) {
-      return false;
-    } else if (Array.isArray(obj) && obj.length===0) {
-      return false;
-    } else if (Object.keys(obj).length===0) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  HTomb.Utils.ingredientArray = function(ingredients) {
-    let arr = [];
-    for (let ing in ingredients) {
-      arr.push([ing, ingredients[ing]]);
-    }
-    return arr;
-  };
-
-  HTomb.Utils.listIngredients = function(ingredients) {
-    let arr = HTomb.Utils.ingredientArray(ingredients);
-    if (arr.length===0) {
-      return "";
-    }
-    let s = "($: ";
-    for (let i=0; i<arr.length; i++) {
-      s+=arr[i][1];
-      s+=" ";
-      s+=HTomb.Things[arr[i][0]].name;
-      if (i<arr.length-1) {
-        s+=", ";
-      } else {
-        s+=")";
-      }
-    }
-    return s;
   };
 
   // like clone but don't keep the prototype
@@ -289,7 +215,7 @@ HTomb = (function(HTomb) {
       // pass complex objects by reference
       } else if (Object.getPrototypeOf(obj)!==Object.getPrototypeOf({})) {
         return obj;
-      }else {
+      } else {
         nobj = {};
         for (let key in obj) {
           // ignore functions
@@ -340,12 +266,28 @@ HTomb = (function(HTomb) {
     }
   };
 
+  
+  // ***************** Array handling *********
+
+  HTomb.Utils.multiarray = function() {
+    let arr = [];
+    let args = [...arguments];
+    if (args.length<=1) {
+      return arr;
+    }
+    let a = args.shift();
+    for (let i=0; i<a; i++) {
+      arr.push(HTomb.Utils.multiarray(...args));
+    }
+    return arr;
+  };
+
   HTomb.Utils.shuffle = function(arr) {
     //Fisher-Yates
     var i = arr.length;
     if ( i == 0 ) return arr;
     while ( --i ) {
-       var j = Math.floor( Math.random() * ( i + 1 ) );
+       var j = Math.floor( ROT.RNG.getUniform() * ( i + 1 ) );
        var tempi = arr[i];
        var tempj = arr[j];
        arr[i] = tempj;
@@ -354,91 +296,26 @@ HTomb = (function(HTomb) {
      return arr;
   };
 
-  HTomb.Utils.coord = function(x,y,z) {
-    return z*LEVELH*LEVELW + x*LEVELH + y;
-  }
-  //useful for parsing
-  HTomb.Utils.decoord = function(c) {
-    var x=0, y=0, z=0;
-    while(c-LEVELH*LEVELW>=0) {
-      c-=LEVELH*LEVELW;
-      z+=1;
+  // ******* Oddballs ************************
+  // this feels kind of misplaced but I'm not sure where it goes...
+  HTomb.Utils.listIngredients = function(ingredients) {
+    let keys = Object.keys(ingredients);
+    if (keys.length===0) {
+      return "";
     }
-    while(c-LEVELH>=0) {
-      c-=LEVELH;
-      x+=1;
-    }
-    y = parseInt(c);
-    return [x,y,z];
-  }
-
-  HTomb.Utils.dicePlusMinus = function(d) {
-    return Math.floor(Math.random()*d)-Math.floor(Math.random()*d);
-  };
-
-  HTomb.Utils.dice = function(n,d) {
-    var tally = 0;
-    for (var i=0; i<n; i++) {
-      tally+=Math.floor(Math.random()*d)+1;
-    }
-    return tally;
-  };
-
-  HTomb.Utils.diceUntil = function(d,n) {
-    if (n>d) {
-      return 0;
-    }
-    var tally = 0;
-    while (true) {
-      var roll=Math.floor(Math.random()*d)+1;
-      if (roll>=n) {
-        break;
+    let s = "($: ";
+    for (let key of keys) {
+      s+=ingredients[key];
+      s+=" ";
+      s+=HTomb.Things[key].name;
+      if (key!==keys[keys.length-1]) {
+        s+=", ";
       } else {
-        tally+=1;
+        s+=")";
       }
     }
-    return tally;
+    return s;
   };
-
-  HTomb.Utils.arrayInArray = function(c, a) {
-    for (var i=0; i<a.length; i++) {
-      for (var j=0; j<c.length; j++) {
-        if (c[j]!==a[i][j]) {
-          break;
-        } else if(j===c.length-1) {
-          return i;
-        }
-      }
-    }
-    return -1;
-  };
-
-  HTomb.Utils.maxIndex = function(arr) {
-    return arr.reduce(function(iMax,x,i,a) {return x>a[iMax] ? i : iMax;}, 0);
-  };
-
-  HTomb.Utils.alphaHex = function(newc,oldc,alpha) {
-    var combined = [];
-    for (var i=0; i<3; i++) {
-      combined[i] = alpha*newc[i]+(1-alpha)*oldc[i];
-    }
-    return combined;
-  }
-
-  HTomb.Utils.alphaString = function(newc,oldc,alpha) {
-    var oldc = ROT.Color.fromString(oldc);
-    var newc = ROT.Color.fromString(newc);
-    var combined = [];
-    for (var i=0; i<3; i++) {
-      combined[i] = alpha*newc[i]+(1-alpha)*oldc[i];
-    }
-    combined = ROT.Color.toHex(combined);
-    return combined;
-  }
-
 
   return HTomb;
 })(HTomb);
-
-
-  

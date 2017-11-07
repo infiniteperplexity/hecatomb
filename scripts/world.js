@@ -6,23 +6,23 @@ HTomb = (function(HTomb) {
   var coord = HTomb.Utils.coord;
 
   HTomb.World.things = [];
-  HTomb.World.tiles = HTomb.Utils.grid3d();
-  HTomb.World.explored = HTomb.Utils.grid3d();
+  HTomb.World.tiles = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
+  HTomb.World.explored = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
   HTomb.World.exposed = [];
   for (let x=0; x<LEVELW; x++) {
     HTomb.World.exposed.push([]);
   }
-  HTomb.World.lit = HTomb.Utils.grid3d();
+  HTomb.World.lit = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
   HTomb.World.lights = [];
-  HTomb.World.visible = {};
-  HTomb.World.creatures = {};
-  HTomb.World.items = {};
-  HTomb.World.features = {};
-  HTomb.World.tasks = {};
+  HTomb.World.visible = [];
+  HTomb.World.creatures = [];
+  HTomb.World.items = [];
+  HTomb.World.features = [];
+  HTomb.World.tasks = [];
   HTomb.World.encounters = [];
-  HTomb.World.blocks = {};
-  HTomb.World.covers = HTomb.Utils.grid3d();
-  HTomb.World.trackers = {};
+  HTomb.World.blocks = [];
+  HTomb.World.covers = HTomb.Utils.multiarray(NLEVELS,LEVELW,LEVELH);
+  HTomb.World.trackers = [];
 
   HTomb.World.reset = function() {
     HTomb.Things.Player.delegate = null;
@@ -42,6 +42,9 @@ HTomb = (function(HTomb) {
     for (let i=0; i<oldkeys.length; i++) {
       delete HTomb.World.creatures[oldkeys[i]];
     }
+    //for (let key in HTomb.World.creatures) {
+    //  delete HTomb.World.creatures[key];
+    //}
     oldkeys = Object.keys(HTomb.World.features);
     for (let i=0; i<oldkeys.length; i++) {
       delete HTomb.World.features[oldkeys[i]];
@@ -68,7 +71,7 @@ HTomb = (function(HTomb) {
   };
   HTomb.World.init = function() {
     this.reset();
-    HTomb.World.generators.revised();
+    HTomb.World.generate.revised();
     HTomb.World.validate.all();
     HTomb.Time.unlockTime();
   };
@@ -259,6 +262,9 @@ HTomb = (function(HTomb) {
   };
   HTomb.World.validate.liquids = function(x,y,z) {
     var t = HTomb.World.covers[z][x][y];
+    if (t===undefined) {
+      console.log(x,y,z);
+    }
     if (t.liquid) {
       t.liquid.flood(x,y,z);
     }

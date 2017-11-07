@@ -54,7 +54,7 @@ HTomb = (function(HTomb) {
       let modifiers = event.modifiers;
       let evade = (victim.defender) ? victim.defender.evasion - victim.defender.wounds.level : -10;
       evade += modifiers.evasion;
-      let roll = HTomb.Utils.dice(1,20);
+      let roll = ROT.RNG.getUniformInt(1,20);
       if (e.entity && e.entity.equipper
             && e.entity.equipper.slots.MainHand
             && e.entity.equipper.slots.MainHand.accuracy) {
@@ -189,7 +189,7 @@ HTomb = (function(HTomb) {
       this.tallyWounds();
     },
     defend: function(event) {
-      let roll = HTomb.Utils.dice(1,20);
+      let roll = ROT.RNG.getUniformInt(1,20);
       this.endure(roll, event);      
     },
     onDescribe: function(options) {

@@ -143,7 +143,8 @@ HTomb = (function(HTomb) {
       crd = coord(current[0],current[1],current[2]);
       // check if we have found the target square (or maybe distance==1?)
       if (  (current[0]===x1 && current[1]===y1 && current[2]===z1)
-            || (useLast===false && HTomb.Utils.arrayInArray([x1,y1,z1],HTomb.Tiles.touchableFrom(current[0],current[1],current[2]))>-1)
+            //|| (useLast===false && HTomb.Utils.arrayInArray([x1,y1,z1],HTomb.Tiles.touchableFrom(current[0],current[1],current[2]))>-1)
+              || (useLast===false && HTomb.Tiles.isTouchableFrom(x1,y1,z1,current[0],current[1],current[2]))
         ) {
       // if (current[6]===1) {
         // start with the goal square
@@ -164,7 +165,7 @@ HTomb = (function(HTomb) {
         if (searcher && searchee && cacheTimeout && cacheAfter!==undefined && path.length>cacheAfter) {
           let t = path[cacheAfter];
           t = HTomb.Tiles.getTileDummy(t[0],t[1],t[2]);
-          cacheTimeout = HTomb.Utils.perturb(cacheTimeout);
+          cacheTimeout += ROT.RNG.getUniformInt(-1,1);
           HTomb.Path.successes[searcher.spawnId+","+searchee.spawnId] = [cacheTimeout,t];
         }
         //if (path.length>0 && useLast===false) {
@@ -249,7 +250,7 @@ HTomb = (function(HTomb) {
     console.log("path failed after " + squaresTried);
     if (searcher && searchee && searchTimeout) {
       let combo = searcher.spawnId+","+searchee.spawnId;
-      searchTimeout = HTomb.Utils.perturb(searchTimeout);
+      searchTimeout += ROT.RNG.getUniformInt(-1,1);
       HTomb.Path.failures[combo] = [searchTimeout,squaresTried];
     }
     //for (let len in pathLength) {
@@ -332,8 +333,8 @@ HTomb = (function(HTomb) {
     let regions = [];
     let tries = 0;
     while (tries<500) {
-      let x = Math.floor(Math.random()*(LEVELW-2))+1;
-      let y = Math.floor(Math.random()*(LEVELH-2))+1;
+      let x = Math.floor(ROT.RNG.getUniform()*(LEVELW-2))+1;
+      let y = Math.floor(ROT.RNG.getUniform()*(LEVELH-2))+1;
       if (callb(x,y) && checked[x][y]!==true) {
         let squares = HTomb.Path.flood(x,y,callb);
         regions.push(squares);

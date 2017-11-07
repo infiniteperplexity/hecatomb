@@ -59,6 +59,27 @@ HTomb = (function(HTomb) {
       this.placed = true;
       return this;
     },
+    validPlace: function(x,y,z) {
+      let xs = [];
+      let yz = [];
+      for (let i=0; i<this.width; i++) {
+        xs.push(x+i-Math.floor(this.width));
+      }
+      for (let j=0; j<this.height; j++) {
+        ys.push(y+j-Math.floor(this.height));
+      }
+      for (let i of xs) {
+        for (let j of ys) {
+          if (HTomb.World.features[coord(i,j,z)]) {
+            return false;
+          } else if (HTomb.World.Tiles[z][i][j]!==HTomb.Tiles.FloorTile) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+    },
     isPlaced: function() {
       return this.placed;
     },

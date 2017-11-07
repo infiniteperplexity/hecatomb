@@ -258,9 +258,9 @@ HTomb = (function(HTomb) {
     listens: ["Complete"],
     onComplete: function(event) {
       if (event.task.template==="FurnishTask") {
-        let throne = HTomb.Utils.where(HTomb.World.features, function(e) {return (e.template==="Throne");});
-        let torch = HTomb.Utils.where(HTomb.World.features, function(e) {return (e.template==="Torch");});
-        let door = HTomb.Utils.where(HTomb.World.features, function(e) {return (e.template==="Door");});
+        let throne = HTomb.World.features.filter(function(e) {return (e.template==="Throne");});
+        let torch = HTomb.World.features.filter(function(e) {return (e.template==="Torch");});
+        let door = HTomb.World.features.filter(function(e) {return (e.template==="Door");});
         if (throne.length>0 && torch.length>0 && door.length>0) {
           this.achieve();
         }

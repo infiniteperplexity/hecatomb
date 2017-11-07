@@ -135,7 +135,7 @@ HTomb = (function(HTomb) {
       this.acted = this.walkRandom();
     },
     walkRandom: function() {
-      var r = Math.floor(Math.random()*26);
+      var r = Math.floor(ROT.RNG.getUniform()*26);
       var dx = HTomb.dirs[26][r][0];
       var dy = HTomb.dirs[26][r][1];
       var dz = HTomb.dirs[26][r][2];
@@ -152,7 +152,7 @@ HTomb = (function(HTomb) {
         options.useLast = false;
       }
       if (options.canMove===undefined) {
-        options.canPass = HTomb.Utils.bind(this.entity.movement,"canMove");
+        options.canPass = this.entity.movement.boundMove();
       }
       var path = HTomb.Path.aStar(x0,y0,z0,x,y,z,options);
       if (path!==false) {
@@ -221,7 +221,7 @@ HTomb = (function(HTomb) {
                 return false;
               }
             } else {
-              if (Math.random()<=0.5) {
+              if (ROT.RNG.getUniform()<=0.5) {
                 this.entity.movement.displaceCreature(cr);
                 return true;
               } else {

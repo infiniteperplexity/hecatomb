@@ -215,7 +215,7 @@ HTomb = (function(HTomb) {
       }
       for (let i=0; i<failed.length; i++) {
         let task = failed[i];
-        task.dormant = HTomb.Utils.perturb(task.dormancy);
+        task.dormant = task.dormancy + ROT.RNG.getUniformInt(-1,1);
       }
     },
     listTasks: function() {
@@ -247,7 +247,7 @@ HTomb = (function(HTomb) {
     },
     ownedItems: function() {
       // should this return an Items list?
-      return HTomb.Utils.where(HTomb.World.things, function(item) {return (item.parent==="Item" && item.owned);});
+      return HTomb.World.things.filter(function(item) {return (item.parent==="Item" && item.owned);});
     },
     ownsAllIngredients: function(ingredients) {
       if (HTomb.Debug.noingredients) {

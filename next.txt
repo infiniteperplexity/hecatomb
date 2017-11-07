@@ -1,3 +1,5 @@
+- Perlin worms for ore?
+
 My ideas for today were...
 - Improve decay
 

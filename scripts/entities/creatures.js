@@ -39,6 +39,18 @@ HTomb = (function(HTomb) {
       delete HTomb.World.creatures[coord(this.x, this.y, this.z)];
       Entity.remove.call(this);
     },
+    validPlace: function(x,y,z) {
+      if (HTomb.World.creatures[coord(x,y,z)]) {
+        return false;
+      // probably these should check for movement
+      } else if (HTomb.World.tiles[z][x][y].solid) {
+        return false;
+      } else if (HTomb.World.tiles[z][x][y].fallable) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     fall: function() {
       var g = HTomb.Tiles.groundLevel(this.x,this.y,this.z);
       if (HTomb.World.creatures[coord(this.x,this.y,g)]) {
@@ -204,8 +216,8 @@ HTomb = (function(HTomb) {
       if (HTomb.Time.dailyCycle.hour>=HTomb.Constants.DAWN || HTomb.Time.dailyCycle.hour<=HTomb.Constants.DUSK) {
         return;
       }
-      if (HTomb.Utils.dice(1,120)===1 && HTomb.Types.Team.teams.GhoulTeam.members.length<10) {
-        let graves = HTomb.Utils.where(HTomb.World.features,function(e) {
+      if (ROT.RNG.getUniformInt(1,120)===1 && HTomb.Types.Team.teams.GhoulTeam.members.length<10) {
+        let graves = HTomb.World.features.filter(function(e) {
           if (e.template==="Tombstone") {
             let x = e.x;
             let y = e.y;
@@ -293,32 +305,6 @@ HTomb = (function(HTomb) {
       },
       Defender: {}
     }
-    // onDefine: function() {
-    //   HTomb.Events.subscribe(this, "TurnBegin");
-    // },
-    // onTurnBegin: function() {
-    //   if (HTomb.Utils.dice(1,180)===1 && HTomb.Types.Team.teams.HungryPredatorTeam.members.length<10) {
-    //     let fishes = HTomb.Utils.where(HTomb.World.creatures, function(e) {
-    //       let x = e.x;
-    //       let y = e.y;
-    //       let z = e.z;
-    //       if (HTomb.World.visible[HTomb.Utils.coord(x,y,z)]) {
-    //         return false;
-    //       }
-    //       return (e.template==="Fish");
-    //     });
-    //     if (fishes.length>0) {
-    //       HTomb.Utils.shuffle(fishes);
-    //       let fish = fishes[0];
-    //       let x = fish.x;
-    //       let y = fish.y;
-    //       let z = fish.z;
-    //       fish.destroy();
-    //       HTomb.Things.DeathCarp().place(x,y,z);
-    //       HTomb.GUI.sensoryEvent("A peaceful-looking fish turns out to be a ravenous death carp!",x,y,z,"red");
-    //     }
-    //   }
-    // }
   });
 
   Creature.extend({

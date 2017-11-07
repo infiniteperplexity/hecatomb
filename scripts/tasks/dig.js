@@ -249,7 +249,7 @@ HTomb = (function(HTomb) {
       }
       // Eventually this might get folded into mining...
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
-      if (Math.random()<0.25) {
+      if (ROT.RNG.getUniform()<0.35) {
         var rock = HTomb.Things.Rock.spawn();
         rock.n = 1;
         if (tiles[z][x][y]===DownSlopeTile) {

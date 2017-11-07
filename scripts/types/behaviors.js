@@ -421,8 +421,8 @@ HTomb = (function(HTomb) {
     name: "long range roam",
     act: function(actor) {
       if (actor.target===null) {
-        let x = HTomb.Utils.dice(1,LEVELW-2);
-        let y = HTomb.Utils.dice(1,LEVELH-2);
+        let x = ROT.RNG.getUniformInt(1,LEVELW-2);
+        let y = ROT.RNG.getUniformInt(1,LEVELH-2);
         let z = HTomb.Tiles.groundLevel(x,y);
         let cr = actor.entity;
         let canMove = cr.movement.canMove.bind(cr);
@@ -501,7 +501,7 @@ HTomb = (function(HTomb) {
     act: function(actor) {
       // should this hunt in sight range first?
       if (actor.target===null) {
-        var zombies = HTomb.Utils.where(HTomb.World.creatures,function(v,k,o) {
+        var zombies = HTomb.World.creatures.filter(function(v,k,o) {
           return (v.template==="Zombie" && actor.isHostile(v) && HTomb.Tiles.isEnclosed(v.x,v.y,v.z)===false);
         });
         if (zombies.length>0) {

@@ -105,7 +105,7 @@ HTomb = (function(HTomb) {
       HTomb.Events.subscribe(this,"TurnBegin");
     },
     onTurnBegin: function() {
-      if (HTomb.Utils.dice(1,100)===1) {
+      if (ROT.RNG.getUniformInt(1,100)===1) {
         let MAXOFFERS = 4;
         this.trades = HTomb.Utils.shuffle(this.trades);
         this.offers.unshift(this.trades[0]);

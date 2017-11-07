@@ -128,7 +128,7 @@ HTomb = (function(HTomb) {
       }
     },
     randomChar: function() {
-      var s = Math.floor(Math.random()*this.chars.length);
+      var s = Math.floor(ROT.RNG.getUniform()*this.chars.length);
       return this.chars[s];
     },
     onEmit: function(p) {},

@@ -27,7 +27,7 @@ HTomb = (function(HTomb) {
     p = p || 0.5;
     for (var x=0; x<this.width; x++) {
       for (var y=0; y<this.height; y++) {
-        this.map[x][y] = (this.mask[x][y]===null) ? (Math.random()<p) : this.mask[x][y];
+        this.map[x][y] = (this.mask[x][y]===null) ? (ROT.RNG.getUniform()<p) : this.mask[x][y];
       }
     }
   };
@@ -66,9 +66,9 @@ HTomb = (function(HTomb) {
           if (this.mask[x][y]!==null) {
             next[x][y] = this.mask[x][y];
           } else if (this.map[x][y]===true) {
-            next[x][y] = (Math.random()<this.survive[tally]) ? true : false;
+            next[x][y] = (ROT.RNG.getUniform()<this.survive[tally]) ? true : false;
           } else {
-            next[x][y] = (Math.random()<this.born[tally]) ? true : false;
+            next[x][y] = (ROT.RNG.getUniform()<this.born[tally]) ? true : false;
           }
         }
       }
@@ -89,6 +89,11 @@ HTomb = (function(HTomb) {
     }
   };
 
+
+// Cave generation
+// B678/S345678
+// Cave smoothing
+// B5678/S5678
 
 return HTomb;
 })(HTomb);
