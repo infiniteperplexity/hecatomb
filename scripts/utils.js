@@ -26,10 +26,10 @@ HTomb = (function(HTomb) {
         lines[i] = lines[i] + " " + word;
       }
     }
-    let fg = "";
-    let bg = "";
     let fgpat = /%c{[#\w]*}/g;
     let bgpat = /%b{[#\w]*}/g;
+    let fg = "";
+    let bg = "";
     // for each saved format...
     let linef = [];
     for (let f in formats) {
@@ -39,23 +39,22 @@ HTomb = (function(HTomb) {
       let ind = f-tally;
       // iterate through the lines
       for (let j=0; j<lines.length; j++) {
+        let line = lines[j];
+        let len = lines[j].length;
         if (tally+lines[j].length>f) {
           // if the end of this line is after the format starts...
-          let line;
-          let len;
           if (tally<=f) {
             // ...but the format starts after the beginning of the line...
-            line = lines[j].substr(0,ind) + format + lines[j].substr(ind);
+            line = lines[j].substr(0,ind-tally) + format + lines[j].substr(ind-tally);
             len = line.length;
-            // !!!the problem is that these accumulate
-            //line = fg + bg + line;
           } else {
             // ...otherwise it affects the whole line.
             len = lines[j].length;
-            // !!!the problem is that these accumulate
-            line = /*fg + bg + */lines[j];
+            line = lines[j];
+            if (j===0) {
+              len+=format.length;
+            }
           }
-          linef[j] = fg+bg;
           // replace with the altered line
           lines[j] = line;
           if (format.match(fgpat)) {
@@ -63,12 +62,13 @@ HTomb = (function(HTomb) {
           } else if (format.match(bgpat)) {
             bg = format;
           }
-        }
+          linef[j+1] = fg+bg;
+        }  
         tally+=len;
         tally+=1;
       }
     }
-    for (let i=0; i<lines.length; i++) {
+    for (let i=1; i<lines.length; i++) {
       lines[i] = linef[i] + lines[i];
     }
     return lines;

@@ -262,7 +262,7 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}You scramble up and down the slopes for a better view of the area.",
       " ",
-      "- The \u02C4 and \u02C5 symbols are slopes.",
+      "- The %c{#CCCCCC}\u02C4 %c{lime}and %c{#CCCCCC}\u02C5 %c{lime}symbols are slopes.",
       " ",
       "- The game world is a 3D grid of tiles.  Slopes provide access to different elevation levels.",
       " ",
@@ -320,7 +320,7 @@ HTomb = (function(HTomb) {
     instructions: [
       "%c{white}Enough of this pointless wandering - it is time to summon an undead servant.",
       " ",
-      "Near where you started, there should be some symbols like this: \u2670. These are tombstones.  If you want to know what a symbol represents, hover over it with the mouse and look at the bottom half of the right panel.",
+      "Near where you started, there should be some symbols like this: %c{#BBBBBB}\u2670%c{lime}. These are tombstones.  If you want to know what a symbol represents, hover over it with the mouse and look at the bottom half of the right panel.",
       " ",
       "%c{cyan}%b{DarkRed}Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
     ],
@@ -846,7 +846,7 @@ HTomb = (function(HTomb) {
     contexts: ["DesignateDismantleTask"],
     controls: null,
     instructions: [
-      "The green \u2663 and \u2660 symbols on the map are trees.",
+      "The green %c{#99DD77}\u2663%c{lime} and %c{#99DD77}\u2660%c{lime} symbols on the map are trees.",
       " ",
       "%c{cyan}%b{DarkRed}Using the mouse or keyboard, select two corners of a rectangular area that includes some trees that are on your current elevation level.  Then wait for your zombies to harvest some wood."
     ],
@@ -927,7 +927,7 @@ HTomb = (function(HTomb) {
       let txt = [
         "%c{white}Your zombies chop down a tree.  You approach to examine their handiwork.",
         " ",
-        "Once you build some workshops, your zombies can use this wood to craft items.  Also, you can press G, D, or I to have your necromancer pick up, drop, and examine items.",
+        "The brown %c{#BB9922}=%c{lime} is a wood resource.  Once you build some workshops, your zombies can use this wood to craft items.  Also, you can press G, D, or I to have your necromancer pick up, drop, and examine items.",
         " "
       ];
       if (context==="Main") {
