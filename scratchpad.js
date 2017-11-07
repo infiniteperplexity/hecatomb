@@ -1,16 +1,5 @@
 
 
-// the initial seed
-Math.seed = 6;
- 
-// in order to work 'Math.seed' must NOT be undefined,
-// so in any case, you HAVE to provide a Math.seed
-Math.seededRandom = ;
-
-HTomb.Utils.seed = 6;
-
-
-
   let mineral = {
     mine: function(x,y,z,owner) {
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
@@ -126,197 +115,24 @@ HTomb.Utils.seed = 6;
 
    
 
+// Cave generation
+// B678/S345678
+// Cave smoothing
+// B5678/S5678
 
+var w = 100, h = 60;
+var display = new ROT.Display({width:w, height:h, fontSize:6});
+SHOW(display.getContainer());
 
-    let Biome = HTomb.Thing.Thing.extend({
-      template: "Biome",
-      name: "biome",
-      x0: null,
-      y0: null,
-      z0: null,
-      x1: null,
-      y1: null,
-      z1: null,
-      corner: [null,null],
-      modifyElevations: function() {
+/* custom born/survive rules */
+var map = new ROT.Map.Cellular(w, h, {
+    born: [4, 5, 6, 7, 8],
+    survive: [2, 3, 4, 5]
+});
 
-      }
-    });
+map.randomize(0.9);
 
-    Biome.extend({
-      template: "Mountains",
-      name: "mountains",
-      modifyElevations: function() {
-        let noise = new ROT.Noise.Simplex();
-        for (let x=x0; x<x1; x++) {
-          for (let y=y0; y<y1; y++) {
-            let z0 = HTomb.Tiles.groundLevel(x,y);
-            let r = Math.sqrt(Math.pow(x-this.corner[0],2) + Math.pow(y-this.corner[1]));
-            if (r<16) {
-              for (let z=z0; z<4; z++) {
-                HTomb.World.tiles[z] = HTomb.Tiles.WallTile;
-              }
-            } else if (r<32) {
-              for (let z=z0; z<3; z++) {
-                HTomb.World.tiles[z] = HTomb.Tiles.WallTile;
-              }
-            } else if (r<48) {
-              for (let z=z0; z<2; z++) {
-                HTomb.World.tiles[z] = HTomb.Tiles.WallTile;
-              }
-            } else if (r<64) {
-              for (let z=z0; z<1; z++) {
-                HTomb.World.tiles[z] = HTomb.Tiles.WallTile;
-              }
-            }
-          }
-        }
-      }
-    });
-
-    function generateBiomes() {
-      let corners = ["Mountain","Swamp","Forest","Ocean"];
-      corners = HTomb.Utils.shuffle(corners);
-      let b;
-      b = HTomb.Things[corners[0]].spawn({
-        x0: 1,
-        y0: 1,
-        z0: NLEVELS-1,
-        x1: LEVELW/4,
-        y1: LEVELH/4,
-        z1: 45,
-        corner: [1,1]
-      });
-      b.modifyElevations;
-    }
-
-
-    var hscale1 = 256;
-    var vscale1 = 3;
-    var hscale2 = 64;
-    //var hscale2 = 128;
-    var vscale2 = 2;
-    //var hscale3 = 32;
-    var hscale3 = 64;
-    var vscale3 = 1;
-    var noise = new ROT.Noise.Simplex();
-    var grid = [];
-    var mx = 0, mn = NLEVELS;
-    for (var x=0; x<LEVELW; x++) {
-      grid.push([]);
-      for (var y=0; y<LEVELH; y++) {
-        grid[x][y] = ground;
-        grid[x][y]+= noise.get(x/hscale1,y/hscale1)*vscale1;
-        grid[x][y]+= noise.get(x/hscale2,y/hscale2)*vscale2;
-        grid[x][y]+= noise.get(x/hscale3,y/hscale3)*vscale3;
-        grid[x][y] = parseInt(grid[x][y]);
-        mx = Math.max(mx,grid[x][y]);
-        mn = Math.min(mn,grid[x][y]);
-        if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
-          for (var z=grid[x][y]; z>=0; z--) {
-            HTomb.World.tiles[z][x][y] = HTomb.Tiles.WallTile;
-          }
-          z = grid[x][y]+1;
-          HTomb.World.tiles[z][x][y] = HTomb.Tiles.FloorTile;
-          HTomb.World.exposed[x][y] = z;
-          elevTrack[z] = elevTrack[z]+1 || 1;
-        }
-      }
-    }
-
-
-
-// How does world generation currently work?
-// - You set up stack/resolve.
-// - Simplex noise for elevation.
-// - Simplex noise for soil quality.
-// - Apply biomes to the four corners.
-// - Finalize elevations.
-// - Add lava to the bottom.
-// - Add water.
-// - Apply mineral layers.
-// - Add slopes.
-// - Add caverns and labyrinths.
-// - Add mineral clusters.
-// - Add trees and shrubs.
-// - Think about adding herbs and players.
-// - Add graveyards.
-// - Add vermin.
-// - Resolve stacks.
-// - Make all items unowned.
-// - Place the player.
-
-// So...one thi
-
-  HTomb.World.generators.parcelBased()
-
-  HTomb.World.generators.slabBased = function() {
-    timeIt("lava", function() {
-      //place lava
-    }); timeIt("biomes", function() {
-      // assign biomes...maybe keep a grid of the columns?
-      // are there underground biomes?
-        // undermountain
-        // underwastes
-        // underforests - more mushrooms?
-        // undersea
-        // would these correspond to the surface biomes?
-    }); timeit("elevation", function() {
-      // perlin noise for elevation.
-      // modified by biomes.
-      // add slopes
-    }); timeit("water", function() {
-        // add water
-        // should there be a river?  could do perlin worms off the ocean...
-        // add aquifers
-        // could some of it in wastelands be lava instead?
-    }); timeit("soilquality", function() {
-      // perlin noise for soil quality.
-      // deal with soil layers here too?
-      // the problem with no doing plants here is we need soil richness for plants.
-      // i mean it's fine to just save it...
-      // modified by biomes
-      // place trees now, or wait?
-    }); timeit("slabstuff", function() {
-      // go slab by slab, adding stuff.
-      // how do I know the list?
-    }); timeit("underground", function() {
-      // 3d or 2d?  'tis the question...
-      // 3d is kinda cool.
-      // 2d might fit better with the planned depth approach
-      // underground biomes...
-        //...ice caves, lava caves, flooded caves, fungus caves
-    });
-  };
-
-  // slab ideas...
-  // pure mountain
-  // border mountain
-  // ...etc...
-  // ...inner plains...
-  // ...outer plains...
-  // three or four different herb slabs
-  // big graveyard
-  // starting graveyard
-  // ghoul den
-  // ant lion
-
-  // This is how many of each thing there will be...
-  // 13 mountain
-  // 6 foothill
-  // 13 badlands
-  // 6 wastes
-  // 13 ocean
-  // 6 shore
-  // 13 forests
-  // 6 scrublands
-  // 1 player start
-  // 8 near plains
-  // 32 far plains
-  // 4 borderlands
-
-  // so let's ignore the borderlands and the player start for now...
-  // the near plains should be relatively safe...maybe put ruins, herbs, vermin, et cetera.
-  // the far plains are about a quarter of the map
-  // maybe four each of "deep" biomes?  deep forest, deep badlands, deep mountains, deep oceans
-  // 
+/* generate fifty iterations, show the last one */
+for (var i=49; i>=0; i--) {
+    map.create(i ? null : display.DEBUG);
+}

@@ -2426,8 +2426,8 @@ ROT.Map.Cellular.prototype._getNeighbors = function(cx, cy) {
 
 		if (x < 0 || x >= this._width || y < 0 || y >= this._height) { continue; }
 		result += (this._map[x][y] == 1 ? 1 : 0);
+		
 	}
-
 	return result;
 };
 

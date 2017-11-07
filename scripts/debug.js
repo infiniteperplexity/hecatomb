@@ -91,10 +91,9 @@ HTomb = (function(HTomb) {
             fill = "#008800";
           } else if (f.template==="Boulder") {
             fill = "#555544";
+          } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.Water) {
+            fill = f.fg;
           }
-        }
-        if (HTomb.World.covers[z][x][y]===HTomb.Covers.Muck) {
-          fill = HTomb.Covers.Muck.bg;
         }
         let c = HTomb.World.creatures[coord(x,y,z)];
         if (c && c.template==="Necromancer") {
