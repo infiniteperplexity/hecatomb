@@ -269,7 +269,7 @@ HTomb = (function(HTomb) {
     asIngredients(optional) {
       let ingredients = {};
       let ings = optional || this;
-      for (let item of optional) {
+      for (let item of ings) {
         ingredients[item.template] = item.n;
       }
       return ingredients;

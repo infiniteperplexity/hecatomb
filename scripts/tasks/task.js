@@ -185,6 +185,7 @@ HTomb = (function(HTomb) {
         return true;
       } else {
         return false;
+
       }
     },
     assignTo: function(cr) {

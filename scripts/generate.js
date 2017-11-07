@@ -325,7 +325,6 @@ HTomb = (function(HTomb) {
         parcels = parcels.concat(HTomb.World.generate.parcels[biome]);
       }
       parcels = HTomb.Utils.shuffle(parcels);
-      console.log(parcels);
       let i = parcels[0][0];
       let j = parcels[0][1];
       this.someMethod(PADDING+i*PSIZE,PADDING+j*PSIZE,PSIZE,PSIZE);
@@ -406,6 +405,7 @@ HTomb = (function(HTomb) {
       if (  HTomb.World.features[coord(x,y,z)]===undefined
             && HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile
             && HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile
+            && HTomb.World.covers[z][x][y].liquid!==true
             && HTomb.Tiles.countNeighborsWhere(x,y,z, function(x1,y1,z1) {
               return (HTomb.World.tiles[z1-1][x1][y1]!==HTomb.Tiles.WallTile);
             })===0) {
@@ -428,7 +428,7 @@ HTomb = (function(HTomb) {
         let y1 = y+d[1];
         if (this.validSquare(x1,y1,z)) {
           HTomb.Things.Tombstone.spawn().place(x1,y1,z);
-          HTomb.Things.Corpse.spawn().place(x1,y1,z-1);
+          HTomb.Things.Corpse.spawn({owned: false}).place(x1,y1,z-1);
           HTomb.World.covers[z-1][x1][y1] = HTomb.Covers.Soil;
           placed+=1;
         }

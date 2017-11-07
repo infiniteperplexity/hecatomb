@@ -183,7 +183,8 @@ HTomb = (function(HTomb) {
       }
       // more intuitive if ingredient-needing features are built first
       let ings = this.structure.neededIngredients();
-      if (Object.keys(ings).length>0 && Object.keys(this.ingredients).length>0) {
+      // what on earth???
+      if (Object.keys(ings).length>0 && Object.keys(this.ingredients).length===0) {
         return false;
       }
       return true;

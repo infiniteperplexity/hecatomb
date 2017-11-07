@@ -7,9 +7,9 @@ HTomb = (function(HTomb) {
 
   // *********** String handling *******************
   HTomb.Utils.lineBreak = function(str,len) {
-    let pat = /%c{\w*}|%b{\w*}/g;
+    let pat = /%c{[#\w]*}|%b{[#\w]*}/g;
     let match;
-    let formats = {};
+    let formats = [];
     while (match = pat.exec(str)) {
       formats[match.index] = match[0];
     }
@@ -28,20 +28,35 @@ HTomb = (function(HTomb) {
     }
     let fg = "";
     let bg = "";
-    let fgpat = /%c{\w*}/g;
-    let bgpat = /%b{\w*}/g;
+    let fgpat = /%c{[#\w]*}/g;
+    let bgpat = /%b{[#\w]*}/g;
+    // for each saved format...
+    let linef = [];
     for (let f in formats) {
       let format = formats[f];
+      // keep track of how many characters we have passed
       let tally = 0;
       let ind = f-tally;
+      // iterate through the lines
       for (let j=0; j<lines.length; j++) {
         if (tally+lines[j].length>f) {
+          // if the end of this line is after the format starts...
           let line;
+          let len;
           if (tally<=f) {
-            line = fg + bg + lines[j].substr(0,ind) + format + lines[j].substr(ind);
+            // ...but the format starts after the beginning of the line...
+            line = lines[j].substr(0,ind) + format + lines[j].substr(ind);
+            len = line.length;
+            // !!!the problem is that these accumulate
+            //line = fg + bg + line;
           } else {
-            line = fg + bg + lines[j];
+            // ...otherwise it affects the whole line.
+            len = lines[j].length;
+            // !!!the problem is that these accumulate
+            line = /*fg + bg + */lines[j];
           }
+          linef[j] = fg+bg;
+          // replace with the altered line
           lines[j] = line;
           if (format.match(fgpat)) {
             fg = format;
@@ -49,15 +64,18 @@ HTomb = (function(HTomb) {
             bg = format;
           }
         }
-        tally+=lines[j].length;
+        tally+=len;
         tally+=1;
       }
+    }
+    for (let i=0; i<lines.length; i++) {
+      lines[i] = linef[i] + lines[i];
     }
     return lines;
   };
   HTomb.Utils.cleanText = function(str) {
-    let fgpat = /%c{\w*}/g;
-    let bgpat = /%b{\w*}/g;
+    let fgpat = /%c{[#\w]*}/g;
+    let bgpat = /%b{[#\w]*}/g;
     return str.replace(fgpat,"").replace(bgpat,"");
   };
   HTomb.Utils.splitPropCase = function(s) {
