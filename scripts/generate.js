@@ -327,9 +327,9 @@ HTomb = (function(HTomb) {
     }
     // for now;
     deck = HTomb.Utils.shuffle(deck);
-    console.log(deck);
-    let nParcels = 6;
+    let nParcels = Math.min(100,deck.length);
     for (let i=0; i<nParcels; i++) {
+      console.log("dealing "+deck[i].describe());
       deck[i].deal();
     }
   }

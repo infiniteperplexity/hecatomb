@@ -8,3 +8,10 @@
 - Soil types break aquifers, currently.  Aquifers should be their own cover, I think.
 - I don't think ore currently has hardness.
 - I'm guessing that saved games are going to be hideously broken after all this refactoring.
+
+- I don't hate the shape of herb patches, but I don't love it either.  Perlin worms might be better.
+- Can I parameterize some of the randomized scattering?
+- It's a pain to have to adjust nParcels every time...
+- Should I be able to parameterize "SmallGraveyard", perhaps to make it not so small?  Right now it's a 3x3, 4 potential graves thing.
+- The graveyard parcel is just like the player parcel but without the player, thus duplicating some code.
+- It would be nice to have a unifying thing that kept stuff within bounds.

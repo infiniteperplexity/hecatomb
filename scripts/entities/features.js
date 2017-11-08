@@ -48,7 +48,7 @@ HTomb = (function(HTomb) {
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
       if (this.isPlaced()===false) {
-        return;
+        return this;
       }
       let c = coord(x,y,z);
       let f = HTomb.World.features[c];
@@ -61,6 +61,7 @@ HTomb = (function(HTomb) {
       if (this.solid) {
         HTomb.World.blocks[c] = this;
       }
+      return this;
     },
     remove: function(args) {
       let c = coord(this.x,this.y,this.z);
@@ -350,6 +351,12 @@ HTomb = (function(HTomb) {
         this.trap.spring(c.x,c.y,c.z);
       }
     }
+  });
+
+  Feature.extend({
+    template: "Ruins",
+    name: "ruined",
+    fg: HTomb.Constants.WALLFG
   });
 
   return HTomb;

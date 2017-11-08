@@ -15,9 +15,18 @@ HTomb = (function(HTomb) {
     deal: function() {
       let parcels = [];
       for (let biome of this.biomes) {
+        if (HTomb.World.generate.parcels[biome]===undefined) {
+          console.log("Something went wrong here...");
+          console.log(biome);
+        }
         parcels = parcels.concat(HTomb.World.generate.parcels[biome]);
       }
       parcels = HTomb.Utils.shuffle(parcels);
+      if (parcels[0]===undefined) {
+        console.log("Something went wrong with " + this.describe());
+        console.log(parcels);
+        console.log(this.biomes);
+      }
       let i = parcels[0][0];
       let j = parcels[0][1];
       this.someMethod(PADDING+i*PSIZE,PADDING+j*PSIZE,PSIZE,PSIZE);
@@ -63,8 +72,44 @@ HTomb = (function(HTomb) {
       if (xyz) {
         p.place(xyz.x,xyz.y,xyz.z);
         HTomb.Things.Player.spawn().addToEntity(p);
+        // claim nearby items on ground
+        for (let pile in HTomb.World.items) {
+          for (let item of HTomb.World.items[pile]) {
+            if (HTomb.Path.quickDistance(xyz.x,xyz.y,xyz.z,item.x,item.y,item.z)<=10) {
+              if (HTomb.World.tiles[coord(item.x,item.y,item.z)]!==HTomb.Tiles.WallTile) {
+                item.owned = true;
+              }
+            }
+          }
+        }
       } else {
         alert("failure!");
+      }
+    }
+  });
+
+
+  Parcel.extend({
+    template: "GraveyardParcel",
+    name: "graveyard parcel",
+    frequency: 12,
+    biomes: ["InnerHills","OuterHills","BorderForest","DeepForest","BorderWastes","DeepWastes","BorderMountains","BorderOcean"],
+    someMethod: function(x0,y0,w,h) {
+      let n = ROT.RNG.getUniformInt(2,4);
+      let xyz;
+      let mask = {};
+      for (let i=0; i<n; i++) {
+        let g = HTomb.Things.SmallGraveyard.spawn();
+        xyz = g.findPlace(x0,y0,w,h,{mask: mask});
+        if (xyz) {
+          g.place(xyz.x,xyz.y,xyz.z);
+          let addMask = HTomb.Tiles.squaresWithinSquare(xyz.x,xyz.y,xyz.z,3);
+          for (let s of addMask) {
+            mask[coord(s[0],s[1],s[2])] = true;
+          }
+        } else {
+          alert("failure!");
+        }
       }
     }
   });
@@ -179,8 +224,8 @@ HTomb = (function(HTomb) {
     },
     onPlace: function(x,y,z) {
       let SIZE = 10;
-      for (let i = x-SIZE; i<=x+SIZE; i++) {
-        for (let j = y-SIZE; j<=y+SIZE; j++) {
+      for (let i = Math.max(1,x-SIZE); i<=Math.min(LEVELW-2,x+SIZE); i++) {
+        for (let j = Math.max(1,y-SIZE); j<=Math.min(LEVELH-2,y+SIZE); j++) {
           let z = HTomb.Tiles.groundLevel(i,j);
           if (!HTomb.World.features[coord(i,j,z)] && HTomb.World.covers[z][x][y]===HTomb.Covers.Grass) {
             let closeness = SIZE - Math.sqrt(Math.pow(i-x,2)+Math.pow(j-y,2));
@@ -193,6 +238,73 @@ HTomb = (function(HTomb) {
               }
             }
           }
+        }
+      }
+    }
+  });
+
+
+  Parcel.extend({
+    template: "RuinsParcel",
+    name: "ruins parcel",
+    frequency: 6,
+    biomes: ["OuterHills","BorderForest","BorderWastes","DeepWastes","BorderMountains","BorderOcean"],
+    structures: ["Workshop","GuardPost","BlackMarket","Sanctum"],
+    someMethod: function(x0,y0,w,h) {
+      let n = ROT.RNG.getUniformInt(2,4);
+      let xyz;
+      let mask = {};
+      for (let i=0; i<n; i++) {
+        let structures = HTomb.Utils.shuffle(this.structures);
+        let g = HTomb.Things.RuinedStructure.spawn({structure: structures[0]});
+        xyz = g.findPlace(x0,y0,w,h,{mask: mask});
+        if (xyz) {
+          g.place(xyz.x,xyz.y,xyz.z);
+          let addMask = HTomb.Tiles.squaresWithinSquare(xyz.x,xyz.y,xyz.z,3);
+          for (let s of addMask) {
+            mask[coord(s[0],s[1],s[2])] = true;
+          }
+        } else {
+          alert("failure!");
+        }
+      }
+    }
+  });
+
+  Footprint.extend({
+    template: "RuinedStructure",
+    name: "ruined structure",
+    structure: "Workshop",
+    validPlace: function(x,y,z) {
+      let s = HTomb.Things[this.structure];
+      let dx = parseInt(s.width/2);
+      let dy = parseInt(s.height/2);
+      for (let i=x-dx; i<=x+dx; i++) {
+        for (let j=y-dy; j<=y+dy; j++) {
+          if (HTomb.World.tiles[z][i][j]!==HTomb.Tiles.FloorTile) {
+            return false;
+          } else if (HTomb.World.features[coord(i,j,z)]) {
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+    onPlace: function(x,y,z) {
+      let s = HTomb.Things[this.structure];
+      let dx = parseInt(s.width/2);
+      let dy = parseInt(s.height/2);
+      console.log("placing ruins at ",x,y,z);
+      let f = 0;
+      for (let j=y-dy; j<=y+dy; j++) {
+        for (let i=x-dx; i<=x+dx; i++) {
+          if (ROT.RNG.getUniformInt(1,2)===1) {
+            let ruins = HTomb.Things.Ruins.spawn();
+            ruins.place(i,j,z);
+            ruins.symbol = s.symbols[f];
+            ruins.name = "ruined " + s.name;
+          }
+          f+=1;
         }
       }
     }

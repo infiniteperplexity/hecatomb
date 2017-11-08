@@ -51,6 +51,9 @@ HTomb = (function(HTomb) {
       let tries = 0;
       let TRIES = 100;
       while (valid===false) {
+        if (tries>=5) {
+          console.log(tries + " tries for "+this.describe());
+        }
         if (tries>TRIES) {
           console.log(this.describe() + "placement failed.");
         }

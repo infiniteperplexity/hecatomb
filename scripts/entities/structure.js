@@ -55,13 +55,15 @@ HTomb = (function(HTomb) {
     },
     place: function(x,y,z,args) {
       Entity.place.call(this,x,y,z,args);
-      this.owner.owner.structures.push(this);
+      if (this.owner) {
+        this.owner.owner.structures.push(this);
+      }
       this.placed = true;
       return this;
     },
     validPlace: function(x,y,z) {
       let xs = [];
-      let yz = [];
+      let ys = [];
       for (let i=0; i<this.width; i++) {
         xs.push(x+i-Math.floor(this.width));
       }
@@ -72,7 +74,7 @@ HTomb = (function(HTomb) {
         for (let j of ys) {
           if (HTomb.World.features[coord(i,j,z)]) {
             return false;
-          } else if (HTomb.World.Tiles[z][i][j]!==HTomb.Tiles.FloorTile) {
+          } else if (HTomb.World.tiles[z][i][j]!==HTomb.Tiles.FloorTile) {
             return false;
           } else {
             return true;
@@ -84,7 +86,9 @@ HTomb = (function(HTomb) {
       return this.placed;
     },
     remove: function() {
-      this.owner.owner.structures.splice(this.owner.owner.structures.indexOf(this),1);
+      if (this.owner) {
+        this.owner.owner.structures.splice(this.owner.owner.structures.indexOf(this),1);
+      }
       HTomb.Events.unsubscribeAll(this);
       this.placed = false;
       Entity.remove.call(this);
