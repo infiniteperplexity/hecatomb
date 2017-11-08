@@ -76,6 +76,7 @@ HTomb = (function(HTomb) {
       console.log("coordinates:");
       console.log([x0,y0,z0,x1,y1,z1]);
       alert("bad path arguments! examine console log for details.");
+      console.trace();
     }
     options = options || {};
     var useFirst = options.useFirst || false;

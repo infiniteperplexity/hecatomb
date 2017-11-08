@@ -1,15 +1,17 @@
+
+
+
+
+
 - Perlin worms for ore?
 
 My ideas for today were...
 - Improve decay
 
-- figure out why flooding sometimes fails...is it caves?
+
 
 - push a new copy online
 - Fine-tune zombie emergence just a little bit more.
-- Add decay to corpses and zombies.
-
-Add in the ROT.RNG stuff.
 
 - some notification for unowned items
 
@@ -17,14 +19,10 @@ fix up aquifers and ore?
 
 
 - add dens
-- terrain boundaries maybe?
 
-
-Change how graveyards and player starting locations work.
 
 - Place more ores in mountains and wastes.
 
-- graveyards
 
 - wait do those coins exist in this font?
 
@@ -39,4 +37,7 @@ Change how graveyards and player starting locations work.
 - Proper graveyards.
 - Fountains (1 wish? or other random effect like in NetHack?)
 - Giant serpent's corpse.
+- Fireflies.
+
+
 

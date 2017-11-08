@@ -363,17 +363,5 @@ HTomb = (function(HTomb) {
     }
   });
 
-  // add this component to a structure to make it into a ruins
-  Component.extend({
-    template: "Ruins",
-    name: "ruins",
-    onDescribe: function(args) {
-
-    },
-    ruin: function() {
-
-    }
-  });
-
 return HTomb;
 })(HTomb);
