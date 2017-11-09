@@ -15,3 +15,16 @@
 - Should I be able to parameterize "SmallGraveyard", perhaps to make it not so small?  Right now it's a 3x3, 4 potential graves thing.
 - The graveyard parcel is just like the player parcel but without the player, thus duplicating some code.
 - It would be nice to have a unifying thing that kept stuff within bounds.
+- The traps need to be invisible to other teams.
+- The hunter probably needs missile weapons.
+- The hunter is "human", but that's not a concept that exists right now.
+- The hunter should sleep at night.
+
+- what's next? ghoul dens?  crows?
+
+- flocking
+	- avoid crowding
+	- go towards heading
+	- go towards position
+
+

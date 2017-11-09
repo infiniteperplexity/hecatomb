@@ -63,7 +63,11 @@ HTomb = (function(HTomb) {
       let playerPlace = function(x,y,z) {
         let DIST = 6;
         if (Math.abs(x-last.x)<DIST && Math.abs(y-last.y)<DIST && z===last.z) {
-          return true;
+          if (HTomb.World.covers[z][x][y].liquid) {
+            return false;
+          } else {
+            return true;
+          }
         } else {
           return false;
         }
@@ -143,7 +147,7 @@ HTomb = (function(HTomb) {
       if (  HTomb.World.features[coord(x,y,z)]===undefined
             && HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile
             && HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile
-            && HTomb.World.covers[z][x][y].liquid!==true
+            && !HTomb.World.covers[z][x][y].liquid
             && HTomb.Tiles.countNeighborsWhere(x,y,z, function(x1,y1,z1) {
               return (HTomb.World.tiles[z1-1][x1][y1]!==HTomb.Tiles.WallTile);
             })===0) {
@@ -309,6 +313,136 @@ HTomb = (function(HTomb) {
       }
     }
   });
+
+  Parcel.extend({
+    template: "HunterParcel",
+    name: "hunter parcel",
+    frequency: 2,
+    biomes: ["OuterHills","BorderWastes","BorderOcean","BorderMountains","BorderForest","DeepForest"],
+    someMethod: function(x0,y0,w,h) {
+      let foot = HTomb.Things.HunterShack.spawn();
+      let xyz = foot.findPlace(x0,y0,w,h);
+      if (xyz) {
+        foot.place(xyz.x,xyz.y,xyz.z);
+      }
+    }
+  });
+
+  Footprint.extend({
+    template: "HunterShack",
+    name: "hunter shack",
+    validPlace: function(x,y,z) {
+      if (HTomb.World.features[coord(x,y,z)]) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    onPlace: function(x,y,z) {
+      console.log("placing " + this.describe() + "at " + x + " " +y + " " + z);
+      HTomb.Things.Shack.spawn().place(x,y,z);
+      let hunter = HTomb.Things.Hunter.spawn().place(x,y,z);
+      let traps = ROT.RNG.getUniformInt(1,4);
+      let RADIUS = 10;
+      for (let i=0; i<traps; i++) {
+        let trap = HTomb.Things.SpearTrap.spawn({owner: hunter});
+        let xyz = trap.findPlace(x-RADIUS,y-RADIUS,2*RADIUS,2*RADIUS);
+        if (xyz) {
+          trap.place(xyz.x,xyz.y,xyz.z);
+        }
+      }
+    }
+  });
+
+  // could be two kinds, red and black, at odds
+  // normal ants are a, soldiers are 00E4, queen is 00E3
+  // Parcel.extend({
+  //   template: "AntParcel",
+  //   name: "ant parcel"
+
+  // });
+
+  Footprint.extend({
+    template: "AntColony",
+    name: "ant colony",
+    validPlace: function(x,y,z) {
+      //so
+    },
+    onPlace: function(x,y,z) {
+      //z shouldn't be on ground level
+      HTomb.Thing.Tombstone.spawn().place(x,y,z).explode();
+      let radius = 12;
+      let roomSize = 3;
+      let queen = HTomb.Things.AntQueen.spawn().place(x,y,z);
+      for (let i=x-roomSize; i<=x+roomSize; i++) {
+        for (let j=y-roomSize; j<=y+roomSize; j++) {
+          if (HTomb.Path.quickDistance(i,j,z,x,y,z)<=3) {
+            // should I "dig it out?"
+            HTomb.World.tiles[z][x][y] = HTomb.Tiles.FloorTile;
+            HTomb.World.covers[z][x][y] = HTomb.Tiles.EmptyTile;
+          }
+        }
+      }
+      let nants = ROT.RNG.getUniformInt(2,5);
+      let ants = [];
+      let a=0;
+      while(a<nants) {
+        let ant = HTomb.Things.WorkerAnt.spawn();
+
+        let xyz = ant.findPlace(x-roomSize, y-roomSize, 2*roomSize, 2*roomSize);
+        if (xyz) {
+          ant.place(xyz.x,xyz.y,xyz.z);
+        }
+        HTomb.Things.Minion.spawn().addToEntity(ant);
+        queen.master.addMinion(ant);
+        ants.push(ant);
+      }
+      let maze = new ROT.Map.EllerMaze(w, h);
+      maze.create(function(x1,y1,val) {
+        // wait, what's the x+1 y+1 thing for?
+        if (val===0 && HTomb.World.tiles[z][x1+x-radius][y1+y-radius]===HTomb.Tiles.WallTile) {
+          HTomb.Things.DigTask.spawn({assigner: queen}).place(x1+x-radius,y1+y-radius,z);
+        }
+      });
+      nassigned = 0;
+      let TASKS = 40;
+      while (queen.master.taskList.length>0) {
+        HTomb.Utils.shuffle(queen.master.taskList);
+        for (let ant of ants) {
+          if (ant.worker.task===null) {
+            for (let task of tasks) {
+              if (task.assignee===null && ant.worker.task===null && task.canAssign(ant)) {
+                task.assignTo(ant);
+                nassigned+=1;
+              }
+            }
+          }
+        }
+        ant.actor.acted = false;
+        ant.actor.act();
+        if (nassigned>TASKS) {
+          break;
+        }
+      }
+      while(queen.master.taskList.length>0) {
+        queen.master.taskList[0].cancel();
+      }
+      let f = [x,y];
+      for (let i=x-radius; i<=x+radius; i++) {
+        for (let j=y-radius; j<=y+radius; j++) {
+          if (HTomb.World.tiles[z][i][j]===HTomb.Tiles.FloorTile) {
+            if (HTomb.Path.quickDistance(x,y,z,i,j,z) > HTomb.Path.quickDistance(x,y,z,f[0],f[1],z)) {
+              f = [i,j];
+            }
+          }
+        }
+      }
+      HTomb.World.tiles[z][f[0]][f[1]] = HTomb.Tiles.UpSlopeTile;
+      HTomb.World.tiles[z+1][f[0]][f[1]] = HTomb.Tiles.DownSlopeTile;
+    }
+  });
+
+
 
   return HTomb;
 })(HTomb);

@@ -75,8 +75,8 @@ let Team = HTomb.Types.Type.extend({
     },
     onDefine: function(args) {
       this.members = [];
-      this.enemies = [];
-      this.allies = [];
+      this.enemies = args.enemies || [];
+      this.allies = args.allies || [];
       this.vendettas = [];
       HTomb.Events.subscribe(this,"Destroy");
       HTomb.Types.Team.teams[this.template] = this;

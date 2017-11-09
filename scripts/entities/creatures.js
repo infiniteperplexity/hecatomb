@@ -142,6 +142,71 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Creature.extend({
+    template: "Hunter",
+    name: "hunter",
+    symbol: "@",
+    fg: "brown",
+    Components: {
+      Actor: {
+        team: "HumanityTeam"
+      },
+      Movement: {},
+      Sight: {},
+      Attacker: {
+        damage: {
+          level: 1,
+          type: "Piercing"
+        }
+      },
+      Defender: {}
+    }
+  });
+
+  Creature.extend({
+    template: "AntQueen",
+    name: "ant queen",
+    symbol: "\u003e",
+    fg: "red",
+    Components: {
+      Master: {tasks: ["DigTask"]},
+      Actor: {
+        team: "AntTeam"
+      },
+      Movement: {},
+      Sight: {},
+      Attacker: {
+        damage: {
+          level: 1,
+          type: "Piercing"
+        }
+      },
+      Defender: {}
+    }
+  });
+
+  Creature.extend({
+    template: "WorkerAnt",
+    name: "worker ant",
+    symbol: "a",
+    fg: "red",
+    Components: {
+      Worker: {},
+      Actor: {
+        team: "AntTeam",
+        goals: ["ServeMaster"]
+      },
+      Movement: {},
+      Sight: {},
+      Attacker: {
+        damage: {
+          level: 1,
+          type: "Piercing"
+        }
+      },
+      Defender: {}
+    }
+  });
   
 
   Creature.extend({

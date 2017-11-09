@@ -254,6 +254,13 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Feature.extend({
+    template: "Shack",
+    name: "shack",
+    fg: "#BB9922",
+    symbol: "\u26FA"
+  });
+
 //2617 is the tombstone looking thing, 26AB, 25CF
   //https://unicode-table.com/en/#2042
 
