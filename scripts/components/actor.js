@@ -91,13 +91,13 @@ HTomb = (function(HTomb) {
       }
       if (this.acted===false) {
         if (this.actionPoints>0) {
-          console.log(this.entity.describe() + " failed to act!");
+          //console.log(this.entity.describe() + " failed to act!");
         }
          //throw new Error("Creature failed to act!");
       }
       // Reset activity for next turn
       if (this.acted===false) {
-        this.actionPoints-=16;
+        this.actionPoints = Math.max(this.actionPoints-16,0);
         this.acted = true;
       }
       //this.acted = false;

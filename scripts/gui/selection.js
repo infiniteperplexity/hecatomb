@@ -232,7 +232,13 @@ HTomb = (function(HTomb) {
       context.contextName = options.contextName;
     }
     GUI.bindKey(context, "VK_ESCAPE", GUI.reset);
-    for (var i=0; i<items.length; i++) {
+    for (var i=0; i<alpha.length; i++) {
+      if (i>=items.length) {
+        // overwrite other letter-based commands
+        GUI.bindKey(context, "VK_" + alpha[i].toUpperCase(), function() {});
+        continue;
+      }
+    //for (var i=0; i<items.length; i++) {
       var desc;
       if (format) {
         desc = format(items[i]);

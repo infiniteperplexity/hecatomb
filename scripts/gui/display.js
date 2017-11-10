@@ -328,7 +328,7 @@ HTomb = (function(HTomb) {
       for (let line of lines) {
         pushMessage(line, color);
       }
-      return;  
+      return; 
     }
     scroll.lastLines = 1;
     pushMessage(strng, color);

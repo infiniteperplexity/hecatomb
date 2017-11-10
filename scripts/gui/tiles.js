@@ -46,7 +46,7 @@ HTomb = (function(HTomb) {
     if (!explored[z][x][y] && HTomb.Debug.explored!==true) {
       // unexplored tiles with an explored floor tile above are rendered as non-visible wall tiles
       if (tiles[z+1][x][y]===Tiles.FloorTile && explored[z+1][x][y]) {
-        if (covers[z][x][y].earth && covers[z+1][x][y]===HTomb.Covers.NoCover) {
+        if (covers[z][x][y].mineral && covers[z+1][x][y]===HTomb.Covers.NoCover) {
           //!!!!Arguable.  Maybe only if you've stripped the grass?
           return (bg || covers[z][x][y].bg);
         } else {
@@ -89,7 +89,7 @@ HTomb = (function(HTomb) {
       if (vis && covers[z-1][x][y].liquid) {
         bg = bg || covers[z-1][x][y].liquid.shimmer();
       //!!!!!} else if (!covers[z-1][x][y].solid) {
-      } else if (!covers[z-1][x][y].earth) {
+      } else if (!covers[z-1][x][y].mineral) {
         bg = bg || covers[z-1][x][y].darken();
       }
     } else if (creatures[crd] && creatures[crd].bg) {
@@ -201,8 +201,9 @@ HTomb = (function(HTomb) {
       // maybe do show the waterlogged ground?
       } else if (covers[z-1][x][y]!==HTomb.Covers.NoCover && covers[z-1][x][y].liquid && (tile.solid!==true && tile.zview!==+1)) {
         fg = fg || covers[z-1][x][y].fg;
-      } else if (covers[z-1][x][y].earth && tile.solid!==true && tile.zview!==+1) {
+      } else if (covers[z-1][x][y].mineral && tile.solid!==true && tile.zview!==+1) {
         // Show the *background* color of the cover below as the foreground
+        // !!!Although maybe not for mineable mineral?
         fg = fg || covers[z-1][x][y].bg
       } else {
         fg = fg || tile.fg;
@@ -233,8 +234,7 @@ HTomb = (function(HTomb) {
             sym = tile.symbol;
           }
         }
-      //!!!!} else if (covers[z][x][y].solid && tile===Tiles.WallTile) {
-      } else if ((covers[z][x][y].mineral || covers[z][x][y].earth) && tile===Tiles.WallTile) {
+      } else if (covers[z][x][y].mineral && tile===Tiles.WallTile) {
         sym = covers[z][x][y].symbol || "#";
       } else if (zview===-1 && covers[z-1][x][y]!==HTomb.Covers.NoCover && covers[z-1][x][y].liquid) {
         // liquid surface

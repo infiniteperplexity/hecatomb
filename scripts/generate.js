@@ -44,6 +44,10 @@ HTomb = (function(HTomb) {
     waterTable();
     // add grass and snow
     groundCover();
+    // rock strata
+    rockStrata();
+    // place lava
+    placeLava();
     // randomly populate the map
     dealParcels();
     // fill in trees and boulders
@@ -312,6 +316,49 @@ HTomb = (function(HTomb) {
       }
     }
   }
+
+  function rockStrata() {
+    let SOIL = 1;
+    let LIMESTONE = 5;
+    let BASALT = 12;
+    let GRANITE = 12;
+    let BEDROCK = 64;
+    let layers = [];
+    for (let i=0; i<SOIL; i++) {
+      layers.push(HTomb.Covers.Soil);
+    }
+    for (let i=0; i<LIMESTONE; i++) {
+      layers.push(HTomb.Covers.Limestone);
+    }
+    for (let i=0; i<BASALT; i++) {
+      layers.push(HTomb.Covers.Basalt);
+    }
+    for (let i=0; i<GRANITE; i++) {
+      layers.push(HTomb.Covers.Granite);
+    }
+    for (let i=0; i<BEDROCK; i++) {
+      layers.push(HTomb.Covers.Bedrock);
+    }
+    for (let x=1; x<LEVELW-1; x++) {
+      for (let y=1; y<LEVELH-1; y++) {
+        let z = HTomb.Tiles.groundLevel(x,y)-1;
+        for (let i=0; z-i>0; i++) {
+          HTomb.World.covers[z-i][x][y] = layers[i];
+          // how do we place out-of-depth rock types?
+          if (ROT.RNG.getUniformInt(1,16)===1) {
+            if (i<SOIL) {
+              HTomb.World.covers[z-i][x][y] = HTomb.Covers.Limestone;
+            } else if (i<SOIL+LIMESTONE) {
+              HTomb.World.covers[z-i][x][y] = HTomb.Covers.Basalt;
+            } else {
+              HTomb.World.covers[z-i][x][y] = layers[i+BASALT];
+            }
+          }
+        }
+      }
+    }
+  }
+
 
   
   function dealParcels() {

@@ -390,13 +390,7 @@ HTomb = (function(HTomb) {
       let z;
       let tries = 0;
       let TRIES = 100;
-      while (valid===false) {
-        if (tries>=5) {
-          console.log(tries + " tries for "+this.describe());
-        }
-        if (tries>TRIES) {
-          console.log(this.describe() + "placement failed.");
-        }
+      while (valid===false && tries<TRIES) {
         x = ROT.RNG.getUniformInt(x0,x0+w);
         y = ROT.RNG.getUniformInt(y0,y0+h);
         z = HTomb.Tiles.groundLevel(x,y)-1;
@@ -405,6 +399,10 @@ HTomb = (function(HTomb) {
         }
         valid = callback(x,y,z);
         tries+=1;
+      }
+      if (!valid) {
+        console.log(this.describe() + "placement failed.");
+        return null;
       }
       return {x: x, y: y, z: z};
     },
@@ -586,6 +584,66 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Parcel.extend({
+    template: "HotSpringsParcel",
+    name: "hot springs parcel",
+    frequency: 1,
+    biomes: ["DeepMountains","DeepWastes"],
+    someMethod: function(x0,y0,w,h) {
+      let springs = ROT.RNG.getUniformInt(2,5);
+      // should these be clustered more?
+      for (let i=0; i<springs; i++) {
+        let xyz = HTomb.Things.HotSprings.findPlace(x0,y0,w,h);
+        if (xyz) {
+          HTomb.Things.HotSprings.spawn().place(xyz.x,xyz.y,xyz.z);
+        }
+      }
+    }
+  });
+
+  Parcel.extend({
+    template: "RadiantObeliskParcel",
+    name: "radiant obelisk parcel",
+    frequency: 1,
+    biomes: ["DeepMountains","DeepWastes","DeepForest","BorderOcean","BorderForest","BorderWastes","OuterHills"],
+    someMethod: function(x0,y0,w,h) {
+      let xyz = HTomb.Things.RadiantObelisk.findPlace(x0,y0,w,h);
+      if (xyz) {
+        HTomb.Things.RadiantObelisk.spawn().place(xyz.x,xyz.y,xyz.z);
+      }
+    }
+  });
+
+  Parcel.extend({
+    template: "OvergrownObeliskParcel",
+    name: "overgrown obelisk parcel",
+    frequency: 1,
+    biomes: ["DeepMountains","DeepWastes","DeepForest","BorderOcean","BorderForest","BorderWastes","OuterHills"],
+    someMethod: function(x0,y0,w,h) {
+      let xyz = HTomb.Things.RadiantObelisk.findPlace(x0,y0,w,h);
+      if (xyz) {
+        HTomb.Things.RadiantObelisk.spawn().place(xyz.x,xyz.y,xyz.z);
+      }
+    }
+  });
+
+
+  Parcel.extend({
+    template: "FirefliesParcel",
+    name: "fireflies parcel",
+    frequency: 4,
+    biomes: ["BorderOcean","InnerHills","OuterHills","BorderForest","DeepForest"],
+    someMethod: function(x0,y0,w,h) {
+      let ffs = ROT.RNG.getUniformInt(4,8);
+      // should these be clustered more?
+      for (let i=0; i<ffs; i++) {
+        let xyz = HTomb.Things.Firefly.findPlace(x0,y0,w,h);
+        if (xyz) {
+          HTomb.Things.Firefly.spawn().place(xyz.x,xyz.y,xyz.z);
+        }
+      }
+    }
+  });
 
   return HTomb;
 })(HTomb);

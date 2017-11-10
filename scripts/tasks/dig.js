@@ -21,16 +21,16 @@ HTomb = (function(HTomb) {
       if (tf===false) {
         return false;
       }
-      let soil = HTomb.World.covers[z][x][y];
+      let earth = HTomb.World.covers[z][x][y];
       let t = HTomb.World.tiles[z][x][y];
       if (t===HTomb.Tiles.FloorTile || t===HTomb.Tiles.DownSlopeTile) {
-        soil = HTomb.World.covers[z-1][x][y];
+        earth = HTomb.World.covers[z-1][x][y];
       }
       let hardness;
-      if (soil.hardness===undefined) {
-        hardness = 0;
+      if (earth.mineral) {
+        hardness = earth.mineral.hardness;
       } else {
-        hardness = soil.hardness;
+        hardness = 0;
       }
       let labor = 0;
       if (cr.worker) {
@@ -66,15 +66,15 @@ HTomb = (function(HTomb) {
       } else if (t===HTomb.Tiles.EmptyTile && (tb===HTomb.Tiles.EmptyTile || tb===HTomb.Tiles.FloorTile)) {
         return false;
       }
-      let soil = HTomb.World.covers[z][x][y];
+      let earth = HTomb.World.covers[z][x][y];
       if (t===HTomb.Tiles.FloorTile || t===HTomb.Tiles.DownSlopeTile) {
-        soil = HTomb.World.covers[z-1][x][y];
+        earth = HTomb.World.covers[z-1][x][y];
       }
       let hardness;
-      if (soil.hardness===undefined) {
-        hardness = 0;
+      if (earth.mineral) {
+        hardness = earth.mineral.hardness;
       } else {
-        hardness = soil.hardness;
+        hardness = 0;
       }
       let labor = 0;
       // no assigner yet at this point?
@@ -82,6 +82,9 @@ HTomb = (function(HTomb) {
         labor = Math.max(labor, minion.worker.getLabor());
       }
       if (labor-hardness<=0) {
+        if (this.isPlaced()) {
+          this.cancel();
+        }
         return false;
       }
       return true;
@@ -185,15 +188,15 @@ HTomb = (function(HTomb) {
       let y = this.y;
       let z = this.z;
       let f = HTomb.World.features[coord(x,y,z)];
-      let soil = HTomb.World.covers[z][x][y];
+      let earth = HTomb.World.covers[z][x][y];
       if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.DownSlopeTile || HTomb.World.Tiles===HTomb.Tiles.FloorTile) {
-        soil = HTomb.World.covers[z-1][x][y];
+        earth = HTomb.World.covers[z-1][x][y];
       }
-      if (soil.hardness===undefined) {
-        f.effort = 0;
+      if (earth.mineral) {
+        f.effort = earth.mineral.hardness;
       } else {
-        f.effort = soil.hardness;
-      } 
+        f.effort = 0;
+      }
     },
     finish: function() {
       let x = this.x;
@@ -212,11 +215,14 @@ HTomb = (function(HTomb) {
       // If there is a slope below, dig out the floor
       if (tiles[z-1][x][y]===UpSlopeTile && HTomb.World.explored[z-1][x][y] && (t===WallTile || t===FloorTile)) {
         tiles[z][x][y] = DownSlopeTile;
+        HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
       // If it's a wall, dig a tunnel
       } else if (t===WallTile) {
         tiles[z][x][y] = FloorTile;
-        if (c.mine) {
-          c.mine(x,y,z);
+        if (c.mineral) {
+          c.mineral.mine(x,y,z);
+        } else {
+          HTomb.Things.Mineral.mine(x,y,z);
         }
       } else if (t===FloorTile) {
         // If it's a floor with a wall underneath dig a trench
@@ -224,8 +230,10 @@ HTomb = (function(HTomb) {
           tiles[z][x][y] = DownSlopeTile;
           tiles[z-1][x][y] = UpSlopeTile;
           c = HTomb.World.covers[z-1][x][y];
-          if (c.mine) {
-            c.mine(x,y,z-1);
+          if (c.mineral) {
+            c.mineral.mine(x,y,z-1);
+          } else {
+            HTomb.Things.Mineral.mine(x,y,z-1);
           }
           downOne = true;
         // Otherwise just remove the floor
@@ -240,6 +248,7 @@ HTomb = (function(HTomb) {
       // if it's an upward slope, remove the slope
       } else if (t===UpSlopeTile) {
         tiles[z][x][y] = FloorTile;
+        HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
         if (tiles[z+1][x][y]===DownSlopeTile) {
           tiles[z+1][x][y] = EmptyTile;
           downOne = true;
@@ -247,19 +256,7 @@ HTomb = (function(HTomb) {
       } else if (t===EmptyTile) {
         // this shouldn't happen
       }
-      // Eventually this might get folded into mining...
-      HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
-      if (ROT.RNG.getUniform()<0.35) {
-        var rock = HTomb.Things.Rock.spawn();
-        rock.n = 1;
-        if (tiles[z][x][y]===DownSlopeTile) {
-          let item = rock.place(x,y,z-1);
-          item.owned = true;
-        } else {
-          let item = rock.place(x,y,z);
-          item.owned = true;
-        }
-      }
+      // This is buried stuff you dug up, I think? not the mined materials?
       let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
       if (downOne) {
         items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();

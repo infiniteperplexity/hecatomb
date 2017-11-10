@@ -377,6 +377,29 @@ HTomb = (function(HTomb) {
   });
 
   Creature.extend({
+    template: "Firefly",
+    vermin: true,
+    name: "firefly",
+    symbol: "a",
+    fg: "#44FF00",
+    Components: {
+      // let's make it a steady light for now
+      // PointLight: {},
+      Actor: {},
+      Movement: {flies: true, swims: false},
+      Sight: {},
+      Attacker: {
+        damage: {
+          level: -1
+        }
+      },
+      Defender: {
+        toughness: -1
+      }
+    }
+  });
+
+  Creature.extend({
     template: "Spider",
     name: "spider",
     vermin: true,

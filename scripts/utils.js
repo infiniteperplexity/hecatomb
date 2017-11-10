@@ -69,7 +69,9 @@ HTomb = (function(HTomb) {
       }
     }
     for (let i=1; i<lines.length; i++) {
-      lines[i] = linef[i] + lines[i];
+      if (linef[i]) {
+        lines[i] = linef[i] + lines[i];
+      }
     }
     return lines;
   };

@@ -51,12 +51,7 @@ HTomb = (function(HTomb) {
       let tries = 0;
       let TRIES = 50;
       while (valid===false && tries<TRIES) {
-        if (tries>=5) {
-          console.log(tries + " tries for "+this.describe());
-        }
-        if (tries>TRIES) {
-          console.log(this.describe() + "placement failed.");
-        }
+
         x = ROT.RNG.getUniformInt(x0,x0+w);
         y = ROT.RNG.getUniformInt(y0,y0+h);
         z = HTomb.Tiles.groundLevel(x,y);
@@ -67,6 +62,7 @@ HTomb = (function(HTomb) {
         tries+=1;
       }
       if (!x && !y && !z) {
+        console.log(this.describe() + "placement failed.");
         return null;
       }
       return {x: x, y: y, z: z};

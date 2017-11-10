@@ -409,5 +409,29 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Feature.extend({
+    template: "HotSprings",
+    name: "hot springs",
+    symbol: "\u2668",
+    fg: "#440088"
+  });
+
+  Feature.extend({
+    template: "RadiantObelisk",
+    name: "radiant obelisk",
+    symbol: "\u269B",
+    fg: "#77BB00"
+  });
+
+  Feature.extend({
+    template: "OvergrownObelisk",
+    name: "overgrown obelisk",
+    symbol: "\u26B5",
+    fg: "#00BB77"
+  });
+
+
+    
+
   return HTomb;
 })(HTomb);

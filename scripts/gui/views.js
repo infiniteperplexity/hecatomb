@@ -80,8 +80,8 @@ HTomb = (function(HTomb) {
     }
     text.push(" ");
     text.push("Structures:");
-    for (let k=0; k<HTomb.Player.master.structures.length; k++) {
-      let w = HTomb.Player.master.structures[k];
+    for (let k=0; k<HTomb.Player.owner.structures.length; k++) {
+      let w = HTomb.Player.owner.structures[k];
       s = "  "+w.describe({atCoordinates: true})+".";
       text.push(s);
     }

@@ -32,7 +32,12 @@
 - findPlace should handle Z differently
 - ants get placed on the ground level with findplace
 - ant colony entrance is usually in top left corner
-- ant colony entrance doesn't always reach the surface
 - ant colony can overlap with graveyards and stuff
 - ant queens are potentially a "master"...does that break any assumptions?
 - is the spawn probability for seaweed too high?
+
+- fireflies only come out at night?  and they should tend to fly low.
+
+- maybe "Yield" values of <1 are a drop rate?  Yeah, I like that!
+
+- starting locations and graveyards seem to break the rules sometimes
