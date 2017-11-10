@@ -27,4 +27,12 @@
 	- go towards heading
 	- go towards position
 
-
+- probably want some method for masking, and bounding boxes
+- red and black ants
+- findPlace should handle Z differently
+- ants get placed on the ground level with findplace
+- ant colony entrance is usually in top left corner
+- ant colony entrance doesn't always reach the surface
+- ant colony can overlap with graveyards and stuff
+- ant queens are potentially a "master"...does that break any assumptions?
+- is the spawn probability for seaweed too high?

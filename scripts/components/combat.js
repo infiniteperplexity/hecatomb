@@ -124,8 +124,8 @@ HTomb = (function(HTomb) {
           alevel = d.level + modifiers.damage.level;
         }
       }
-      let modifier = Damage.table[atype][this.material];
-      let penetrate = Damage.table[atype][armor.material];
+      let modifier = HTomb.Types.Damage.table[atype][this.material];
+      let penetrate = HTomb.Types.Damage.table[atype][armor.material];
       let total = roll;
       console.log("Roll: " + total);
       total += alevel;

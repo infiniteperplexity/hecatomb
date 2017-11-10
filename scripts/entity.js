@@ -45,12 +45,12 @@ HTomb = (function(HTomb) {
       let mask = options.mask || {};
       let callback = options.validPlace || this.validPlace.bind(this);
       let valid = false;
-      let x ;
+      let x;
       let y;
       let z;
       let tries = 0;
-      let TRIES = 100;
-      while (valid===false) {
+      let TRIES = 50;
+      while (valid===false && tries<TRIES) {
         if (tries>=5) {
           console.log(tries + " tries for "+this.describe());
         }
@@ -65,6 +65,9 @@ HTomb = (function(HTomb) {
         }
         valid = callback(x,y,z);
         tries+=1;
+      }
+      if (!x && !y && !z) {
+        return null;
       }
       return {x: x, y: y, z: z};
     },

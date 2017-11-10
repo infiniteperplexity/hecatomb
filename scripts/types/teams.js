@@ -153,5 +153,10 @@ let Team = HTomb.Types.Type.extend({
     enemies: ["PlayerTeam","GhoulTeam","AngryNatureTeam"]
   });
 
+  Team.extend({
+    template: "RedAntTeam",
+    name: "red ants"
+  });
+
   return HTomb;
 })(HTomb);

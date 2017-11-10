@@ -366,5 +366,48 @@ HTomb = (function(HTomb) {
     fg: HTomb.Constants.WALLFG
   });
 
+  Feature.extend({
+    template: "Temple",
+    name: "temple",
+    fg: "#DDDDDD"
+  });
+
+  Feature.extend({
+    template: "Fountain",
+    name: "fountain",
+    fg: "#BBBBFF",
+    symbol: "\u26F2"
+  });
+
+  Feature.extend({
+    template: "WarpedObelisk",
+    name: "warped obelisk",
+    fg: "magenta",
+    symbol: "\u260A",
+    linked: null,
+    ready: true,
+    onPlace: function() {
+      HTomb.Events.subscribe(this,"Step");
+      HTomb.Events.subscribe(this,"TurnBegin");
+    },
+    onTurnBegin: function() {
+      this.ready = true;
+    },
+    onStep: function(event) {
+      let linked = this.linked;
+      if (!linked || !this.ready) {
+        return;
+      }
+      if (HTomb.World.creatures[coord(linked.x,linked.y,linked.z)]) {
+        return;
+      }
+      let cr = event.creature;
+      if (cr.x===this.x && cr.y===this.y && cr.z===this.z) {
+         linked.ready = false;
+         cr.place(linked.x,linked.y,linked.z);
+      }
+    }
+  });
+
   return HTomb;
 })(HTomb);
