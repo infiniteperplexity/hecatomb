@@ -110,6 +110,93 @@ HTomb = (function(HTomb) {
     loopText = loopText.join(" ");
     w.eval(setupTxt + loopText);
   };
+
+
+  HTomb.Debug.minimap = function(options) {
+    options = options || {};
+    let coord = HTomb.Utils.coord;
+    let lookup = {
+      63: "#FFFFFF",
+      62: "#FFFFFF",
+      61: "#FFFFFF",
+      60: "#FFFFFF",
+      59: "#FFFFFF",
+      58: "#FFFFFF",
+      57: "#FFFFFF",
+      56: "#EEEEFF",
+      55: "#DDDDEE",
+      54: "#BBCCCC",
+      53: "#99AA99",
+      52: "#889988",
+      51: "#778877",
+      50: "#667766",
+      49: "#556655",
+      48: "#8888FF",
+      47: "#7777EE",
+      46: "#6666DD",
+      45: "#5555CC",
+      44: "#4444BB",
+      43: "#3333AA",
+      42: "#222299",
+      41: "#111188",
+      40: "#000077",
+      39: "#000055",
+      38: "#000044",
+      37: "#000033",
+      36: "#000022",
+      35: "#000011"
+    };
+    // so...you'd have the middle 25 columns showing 10 each, and the last two showing...basically nothing.
+    // so instead, the middle 23 showing 10 each, the next 2 out showing 12 each.  Fine.
+    let scale = 10;
+    let cells = 25;
+    let padding = 2;
+    for (let i=0; i<cells; i++) {
+      for (let j=0; j<cells; j++) {
+        let fills = [];
+        let player = false;
+        for (let m=0; m<scale; m++) {
+          for (let n=0; n<scale; n++) {
+            let x = padding+i*scale+m;
+            let y = padding+j*scale+n;
+            let z = HTomb.Tiles.groundLevel(x,y);
+            let fill = lookup[z];
+            let f = HTomb.World.features[coord(x,y,z)];
+            if (f) {
+              if (f.template==="Tree") {
+                fill = "#005500";
+              } else if (f.template==="Shrub") {
+                fill = "#008800";
+              } else if (f.template==="Boulder") {
+                fill = "#555544";
+              } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.Water) {
+                fill = f.fg;
+              }
+            }
+            let c = HTomb.World.creatures[coord(x,y,z)];
+            if (c===HTomb.Player) {
+              player = true;
+            }
+            fills.push(ROT.Color.fromString(fill));
+          }
+        }
+        let tally = [0,0,0];
+        if (player) {
+          tally = [255,0,0];
+        } else {
+          for (let fill of fills) {
+            for (let i=0; i<fill.length; i++) {
+              tally[i]+=fill[i];
+            }
+          }
+          for (let i=0; i<tally.length; i++) {
+            tally[i]/=fills.length;
+          }
+        }
+        HTomb.GUI.Panels.gameScreen.display.draw(i,j,"\u2981",ROT.Color.toHex(tally),"black");
+      }
+    }
+  };
   
   return HTomb;
 })(HTomb);
