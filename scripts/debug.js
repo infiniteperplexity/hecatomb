@@ -181,19 +181,20 @@ HTomb = (function(HTomb) {
           }
         }
         let tally = [0,0,0];
-        if (player) {
-          tally = [255,0,0];
-        } else {
-          for (let fill of fills) {
-            for (let i=0; i<fill.length; i++) {
-              tally[i]+=fill[i];
-            }
-          }
-          for (let i=0; i<tally.length; i++) {
-            tally[i]/=fills.length;
+        for (let fill of fills) {
+          for (let i=0; i<fill.length; i++) {
+            tally[i]+=fill[i];
           }
         }
-        HTomb.GUI.Panels.gameScreen.display.draw(i,j,"\u2981",ROT.Color.toHex(tally),"black");
+        for (let i=0; i<tally.length; i++) {
+          tally[i] = parseInt(tally[i]/fills.length);
+        }
+        let sym = [".","black",ROT.Color.toHex(tally)];
+        if (player) {
+          sym[0] = HTomb.Things.Necromancer.symbol;
+          sym[1] = HTomb.Things.Necromancer.fg;
+        }
+        HTomb.GUI.Panels.gameScreen.display.draw(i,j,sym[0],sym[1],sym[2]);
       }
     }
   };
