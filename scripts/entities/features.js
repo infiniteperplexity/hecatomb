@@ -365,7 +365,7 @@ HTomb = (function(HTomb) {
     name: "ruined",
     fg: HTomb.Constants.WALLFG
   });
-"\u26F2\uFE0E"
+
   Feature.extend({
     template: "Temple",
     name: "temple",
@@ -376,7 +376,7 @@ HTomb = (function(HTomb) {
     template: "Fountain",
     name: "fountain",
     fg: "#BBBBFF",
-    symbol: "\u26F2\uFE0E"
+    symbol: "\u26F2"
   });
 
   Feature.extend({
