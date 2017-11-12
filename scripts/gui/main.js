@@ -304,6 +304,9 @@ HTomb = (function(HTomb) {
     VK_E: Commands.equip,
     VK_J: Commands.showJobs,
     VK_Z: Commands.showSpells,
+    VK_P: function() {
+      HTomb.GUI.Views.minimapView();
+    },
     VK_SLASH: function() {
       if (HTomb.Tutorial.enabled) {
         if (HTomb.Tutorial.active >= HTomb.Tutorial.tutorials.length-2 || confirm("Really disable tutorials?")) {

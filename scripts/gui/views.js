@@ -467,5 +467,22 @@ HTomb = (function(HTomb) {
     this.displayCreatureInfo(p);
   };
 
+
+
+  Views.minimapView = function() {
+    HTomb.Time.stopTime();
+    HTomb.Debug.minimap();
+    GUI.Contexts.active = GUI.Contexts.minimap;
+  };
+
+  GUI.Contexts.minimap = GUI.Contexts.new({
+    VK_ESCAPE: function() {
+      HTomb.GUI.reset();
+    }
+  });
+  GUI.Contexts.minimap.mouseTile = function() {};
+
+
+
   return HTomb;
 })(HTomb);

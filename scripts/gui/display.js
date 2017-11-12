@@ -54,7 +54,7 @@ HTomb = (function(HTomb) {
     var yoffset = gameScreen.yoffset;
     // Draw every symbol in the right
     var sym = HTomb.Tiles.getSymbol(x,y,z);
-    gameScreen.display.draw(this.x0+x-xoffset,this.y0+y-yoffset, sym[0], sym[1], sym[2]);
+    gameScreen.display.draw(this.x0+x-xoffset,this.y0+y-yoffset, sym[0]+"\uFE0E", sym[1], sym[2]);
   };
   gameScreen.render = function() {
     var z = gameScreen.z;
@@ -67,7 +67,7 @@ HTomb = (function(HTomb) {
         }
         // Draw every symbol in the right
         var sym = HTomb.Tiles.getSymbol(x,y,z);
-        gameScreen.display.draw(this.x0+x-xoffset,this.y0+y-yoffset, sym[0], sym[1], sym[2]);
+        gameScreen.display.draw(this.x0+x-xoffset,this.y0+y-yoffset, sym[0]+"\uFE0E", sym[1], sym[2]);
       }
     }
     gameScreen.renderParticles();
@@ -380,7 +380,7 @@ HTomb = (function(HTomb) {
     gameScreen.display.draw(
       x-xoffset,
       y-yoffset,
-      sym[0],
+      sym[0]+"\uFE0E",
       sym[1],
       sym[2]
     );
@@ -394,7 +394,7 @@ HTomb = (function(HTomb) {
     gameScreen.display.draw(
       x-xoffset,
       y-yoffset,
-      ch,
+      ch+"\uFE0E",
       fg,
       bg
     );
@@ -409,7 +409,7 @@ HTomb = (function(HTomb) {
     gameScreen.display.draw(
       x-xoffset,
       y-yoffset,
-      ch,
+      ch+"\uFE0E",
       fg,
       bg
     );
@@ -425,7 +425,7 @@ HTomb = (function(HTomb) {
     gameScreen.display.draw(
       x-xoffset,
       y-yoffset,
-      sym[0],
+      sym[0]+"\uFE0E",
       sym[1],
       bg
     );
