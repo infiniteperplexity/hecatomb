@@ -96,6 +96,9 @@ HTomb = (function(HTomb) {
         this.wounds.type = null;
       }
       if (this.wounds.level>=8) {
+        if (this.player && HTomb.Debug.invincible) {
+          return;
+        }
         if (this.entity.die) {
           this.entity.die();
         } else {

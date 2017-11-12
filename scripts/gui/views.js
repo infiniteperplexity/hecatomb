@@ -471,17 +471,172 @@ HTomb = (function(HTomb) {
 
   Views.minimapView = function() {
     HTomb.Time.stopTime();
-    HTomb.Debug.minimap();
+    Views.Minimap.recenter();
+    Views.Minimap.show();
     GUI.Contexts.active = GUI.Contexts.minimap;
+  };
+  Views.Minimap = {
+    scale: 4,
+    xcenter: null,
+    ycenter: null,
+    scales: [4,5,6,7,8,9]
   };
 
   GUI.Contexts.minimap = GUI.Contexts.new({
     VK_ESCAPE: function() {
       HTomb.GUI.reset();
+    },
+    VK_EQUALS: function() {
+      Views.Minimap.zoomIn();
+    },
+    VK_HYPHEN_MINUS: function() {
+      Views.Minimap.zoomOut();
+    },
+    VK_LEFT: function() {
+      Views.Minimap.move(-1,0);
+    },
+    VK_RIGHT: function() {
+      Views.Minimap.move(+1,0);
+    },
+    VK_UP: function() {
+      Views.Minimap.move(0,-1);
+    },
+    VK_DOWN: function() {
+      Views.Minimap.move(0,+1);
+    },
+    VK_TAB: function() {
+      Views.Minimap.recenter();
     }
   });
   GUI.Contexts.minimap.mouseTile = function() {};
 
+  Views.Minimap.zoomIn = function() {
+    let i = this.scales.indexOf(this.scale);
+    if (i>0) {
+      this.scale = this.scales[i-1];
+      this.bound();
+      this.show();
+    }
+  };
+  Views.Minimap.zoomOut = function() {
+    let i = this.scales.indexOf(this.scale);
+    if (i<this.scales.length-1) {
+      this.scale = this.scales[i+1];
+      this.bound();
+      this.show();
+    }
+  };
+
+  Views.Minimap.bound = function() {
+    let HALF = parseInt(SCREENW/2);
+    this.xcenter = Math.max(this.xcenter,1+this.scale*HALF);
+    this.ycenter = Math.max(this.ycenter,1+this.scale*HALF);
+    this.xcenter = Math.min(this.xcenter,LEVELW-1-this.scale*(HALF+1));
+    this.ycenter = Math.min(this.ycenter,LEVELH-1-this.scale*(HALF+1));
+  };
+
+  Views.Minimap.move = function(dx,dy) {
+    this.xcenter+=dx*this.scale;
+    this.ycenter+=dy*this.scale;
+    this.bound();
+    this.show();
+  };
+  Views.Minimap.recenter = function(x,y) {
+    this.xcenter = x || HTomb.Player.x;
+    this.ycenter = y || HTomb.Player.y;
+    this.bound();
+  };
+  Views.Minimap.show = function(options) {
+    let HALF = parseInt(SCREENW/2);
+    options = options || {};
+    let lookup = {
+      63: "#FFFFFF",
+      62: "#FFFFFF",
+      61: "#FFFFFF",
+      60: "#FFFFFF",
+      59: "#FFFFFF",
+      58: "#FFFFFF",
+      57: "#FFFFFF",
+      56: "#DDDDFF",
+      55: "#CCCCEE",
+      54: "#AABBBB",
+      53: "#AABB99",
+      52: "#889977",
+      51: "#667755",
+      50: "#445533",
+      49: "#334422",
+      48: "#8888FF",
+      47: "#7777EE",
+      46: "#6666DD",
+      45: "#5555CC",
+      44: "#4444BB",
+      43: "#3333AA",
+      42: "#222299",
+      41: "#111188",
+      40: "#000077",
+      39: "#000055",
+      38: "#000044",
+      37: "#000033",
+      36: "#000022",
+      35: "#000011"
+    };
+    let scale = this.scale;
+    let xoffset = this.xcenter - HALF*scale;
+    let yoffset = this.ycenter - HALF*scale;
+    // maybe not true for the largest setting?
+    let cells = Math.min(SCREENW, parseInt(LEVELW/scale));
+    let border = (SCREENW-cells)/2;
+    console.log(scale,this.xcenter,this.ycenter,xoffset,yoffset);
+    console.log(cells, border);
+    for (let i=border; i<cells+border; i++) {
+      for (let j=border; j<cells+border; j++) {
+        let player = false;
+        let unexplored = 0;
+        let elevations = 0;
+        for (let m=0; m<scale; m++) {
+          for (let n=0; n<scale; n++) {
+            let x = xoffset+i*scale+m;
+            let y = yoffset+j*scale+n;
+            if (i===border && j===border && m===0 && n===0) {
+              console.log(x,y);
+            }
+            if (i===cells+border-1 && j===cells+border-1 && m===scale-1 && n===scale-1) {
+              console.log(x,y);
+            }
+            let z = HTomb.Tiles.groundLevel(x,y);
+            let c = HTomb.World.creatures[coord(x,y,z)];
+            if (HTomb.Player.x===x && HTomb.Player.y===y) {
+              player = true;
+            }
+            if (!HTomb.World.explored[z][x][y]) {
+              unexplored+=1;
+            }
+            elevations+=z;
+          }
+        }
+        let r = elevations/(scale*scale)-Math.round(elevations/(scale*scale));
+        elevations = Math.round(elevations/(scale*scale));
+        let sym = [".","black",lookup[elevations]];
+        unexplored = unexplored/(scale*scale);
+        if (unexplored>0.75 && HTomb.Debug.explored!==true) {
+          sym[2] = "black";
+        }
+        if (player) {
+          sym[0] = HTomb.Things.Necromancer.symbol;
+          sym[1] = HTomb.Things.Necromancer.fg;
+        }
+        HTomb.GUI.Panels.gameScreen.display.draw(i,j,sym[0]+"\uFE0E",sym[1],sym[2]);
+      }
+    }
+    for (let i=0; i<HTomb.Constants.SCREENW; i++) {
+      for (let j=0; j<HTomb.Constants.SCREENH; j++) {
+        if (i<border || j<border || i>SCREENW-1-border || j>SCREENH-1-border) {
+          HTomb.GUI.Panels.gameScreen.display.draw(i,j,".","black","black");
+        }
+      }
+    }
+  };
+  
 
 
   return HTomb;

@@ -10,6 +10,9 @@ HTomb = (function(HTomb) {
     // this will eventually create corpses with Material values
     leavesCorpse: true,
     die: function() {
+      if (this.player && HTomb.Debug.invincible) {
+        return;
+      }
       if (this.x!==null && this.y!==null && this.z!==null) {
         HTomb.Particles.addEmitter(this.x, this.y, this.z, HTomb.Particles.Blood, HTomb.Particles.Spray);
         HTomb.GUI.sensoryEvent(this.describe({capitalized: true, article: "indefinite"}) + " dies.",this.x,this.y,this.z,"red");
