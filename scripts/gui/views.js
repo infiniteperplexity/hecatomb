@@ -474,12 +474,22 @@ HTomb = (function(HTomb) {
     Views.Minimap.recenter();
     Views.Minimap.show();
     GUI.Contexts.active = GUI.Contexts.minimap;
+    GUI.Contexts.minimap.menuText = [
+      "%c{orange}**Esc: Done.",
+      "%c{yellow}Map view.",
+      "Move: NumPad/Arrows.",
+      "=/-: Zoom In/Out.",
+      "Tab: Recenter."
+    ];
+    menu.render();
   };
   Views.Minimap = {
     scale: 4,
     xcenter: null,
     ycenter: null,
-    scales: [4,5,6,7,8,9]
+    xzoom: null,
+    yzoom: null,
+    scales: [2,3,4,5,6,7,8,9,10]
   };
 
   GUI.Contexts.minimap = GUI.Contexts.new({
@@ -504,6 +514,30 @@ HTomb = (function(HTomb) {
     VK_DOWN: function() {
       Views.Minimap.move(0,+1);
     },
+    VK_NUMPAD4: function() {
+      Views.Minimap.move(-1,0);
+    },
+    VK_NUMPAD6: function() {
+      Views.Minimap.move(+1,0);
+    },
+    VK_NUMPAD8: function() {
+      Views.Minimap.move(0,-1);
+    },
+    VK_NUMPAD2: function() {
+      Views.Minimap.move(0,+1);
+    },
+    VK_NUMPAD1: function() {
+      Views.Minimap.move(-1,+1);
+    },
+    VK_NUMPAD3: function() {
+      Views.Minimap.move(+1,+1);
+    },
+    VK_NUMPAD7: function() {
+      Views.Minimap.move(-1,-1);
+    },
+    VK_NUMPAD9: function() {
+      Views.Minimap.move(-1,+1);
+    },
     VK_TAB: function() {
       Views.Minimap.recenter();
     }
@@ -514,6 +548,11 @@ HTomb = (function(HTomb) {
     let i = this.scales.indexOf(this.scale);
     if (i>0) {
       this.scale = this.scales[i-1];
+      // makes zooming out reversible
+      if (this.xzoom && this.yzoom) {
+        this.xcenter = this.xzoom;
+        this.ycenter = this.yzoom;
+      }
       this.bound();
       this.show();
     }
@@ -521,6 +560,8 @@ HTomb = (function(HTomb) {
   Views.Minimap.zoomOut = function() {
     let i = this.scales.indexOf(this.scale);
     if (i<this.scales.length-1) {
+      this.xzoom = this.xzoom || this.xcenter;
+      this.yzoom = this.yzoom || this.ycenter;
       this.scale = this.scales[i+1];
       this.bound();
       this.show();
@@ -538,10 +579,14 @@ HTomb = (function(HTomb) {
   Views.Minimap.move = function(dx,dy) {
     this.xcenter+=dx*this.scale;
     this.ycenter+=dy*this.scale;
+    this.xzoom = null;
+    this.yzoom = null;
     this.bound();
     this.show();
   };
   Views.Minimap.recenter = function(x,y) {
+    this.xzoom = null;
+    this.yzoom = null;
     this.xcenter = x || HTomb.Player.x;
     this.ycenter = y || HTomb.Player.y;
     this.bound();
@@ -581,15 +626,13 @@ HTomb = (function(HTomb) {
       35: "#000011"
     };
     let scale = this.scale;
-    let xoffset = this.xcenter - HALF*scale;
-    let yoffset = this.ycenter - HALF*scale;
+    let xoffset = Math.max(0,this.xcenter-HALF*scale);
+    let yoffset = Math.max(0,this.ycenter-HALF*scale);
     // maybe not true for the largest setting?
     let cells = Math.min(SCREENW, parseInt(LEVELW/scale));
     let border = (SCREENW-cells)/2;
-    console.log(scale,this.xcenter,this.ycenter,xoffset,yoffset);
-    console.log(cells, border);
-    for (let i=border; i<cells+border; i++) {
-      for (let j=border; j<cells+border; j++) {
+    for (let i=border; i<cells; i++) {
+      for (let j=border; j<cells; j++) {
         let player = false;
         let unexplored = 0;
         let elevations = 0;
@@ -597,12 +640,6 @@ HTomb = (function(HTomb) {
           for (let n=0; n<scale; n++) {
             let x = xoffset+i*scale+m;
             let y = yoffset+j*scale+n;
-            if (i===border && j===border && m===0 && n===0) {
-              console.log(x,y);
-            }
-            if (i===cells+border-1 && j===cells+border-1 && m===scale-1 && n===scale-1) {
-              console.log(x,y);
-            }
             let z = HTomb.Tiles.groundLevel(x,y);
             let c = HTomb.World.creatures[coord(x,y,z)];
             if (HTomb.Player.x===x && HTomb.Player.y===y) {
