@@ -52,6 +52,8 @@ HTomb = (function(HTomb) {
     dealParcels();
     // fill in trees and boulders
     finishRockiness();
+    // experimental
+    wormyOres();
   };
 
   function randomizeBiomes() {
@@ -391,6 +393,48 @@ HTomb = (function(HTomb) {
             HTomb.World.tiles[z][x][y] = HTomb.Tiles.EmptyTile;
           }
           HTomb.World.covers[z][x][y] = HTomb.Covers.Lava;
+        }
+      }
+    }
+  }
+
+  function wormyOres() {
+    let NWORMS = 512;
+    let SEGMAX = 6;
+    let SEGMIN = 3;
+    let SEGLEN = 2;
+    let CURVE = 1;
+    let noise = new ROT.Noise.Simplex();
+    let scales = [0,0,0,0,0,0,0,1];
+    for (let z=1; z<NLEVELS-1; z++) {
+      for (let i=0; i<NWORMS; i++) {
+        let x0 = ROT.RNG.getUniformInt(1,LEVELW-2);
+        let y0 = ROT.RNG.getUniformInt(1,LEVELH-2);
+        if (!HTomb.World.covers[z][x0][y0].mineral) {
+          continue;
+        }
+        let displace = ROT.RNG.getUniform()*256;
+        let angle = 2*Math.PI*ROT.RNG.getUniform();
+        let segs = ROT.RNG.getUniformInt(SEGMIN, SEGMAX);
+        let squares = [];
+        for (let j=0; j<segs; j++) {
+          angle += CURVE*noise.get(displace+x0,displace+y0);
+          let x1 = x0+Math.cos(angle)*SEGLEN;
+          let y1 = y0+Math.sin(angle)*SEGLEN;
+          squares = squares.concat(HTomb.Path.line(parseInt(x0),parseInt(y0),parseInt(x1),parseInt(y1)));
+          x0 = x1;
+          y0 = y1;
+        }
+        for (let square of squares) {
+          let x = square[0];
+          let y = square[1];
+          if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
+            if (HTomb.World.covers[z][x][y].mineral) {
+              if (ROT.RNG.getUniform()<0.5) {
+                HTomb.World.covers[z][x][y] = HTomb.Covers.GoldVein;
+              }
+            }
+          }
         }
       }
     }

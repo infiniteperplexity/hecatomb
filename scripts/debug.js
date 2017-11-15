@@ -5,8 +5,8 @@ HTomb = (function(HTomb) {
 
   //Debug.noingredients = true;
   Debug.nodecay = false;
-  //Debug.explored = true;
-  //Debug.visible = true;
+  Debug.explored = true;
+  Debug.visible = true;
   //Debug.mobility = true;
   //Debug.showpaths = true; //not yet implemented
   //Debug.messages = true;
