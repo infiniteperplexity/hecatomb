@@ -1,4 +1,3 @@
-// This module provides optional debugging functionality
 HTomb = (function(HTomb) {
   "use strict";
   var Debug = HTomb.Debug;
@@ -7,6 +6,7 @@ HTomb = (function(HTomb) {
   Debug.nodecay = false;
   Debug.explored = true;
   Debug.visible = true;
+  Debug.lit = 255;
   //Debug.mobility = true;
   //Debug.showpaths = true; //not yet implemented
   //Debug.messages = true;

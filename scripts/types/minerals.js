@@ -83,8 +83,8 @@ HTomb = (function(HTomb) {
     earth: true,
     hardness: 2,
     thickness: 12,
-    fg: "#9999BB",
-    bg: "#666688",
+    fg: "#7777DD",
+    bg: "#5555BB",
     Components: {
       Mineral: {
         hardness: 2
@@ -117,10 +117,57 @@ HTomb = (function(HTomb) {
   });
 
   Cover.extend({
+    template: "FlintCluster",
+    name: "flint cluster",
+    symbol: "\u2234",
+    fg: HTomb.Covers.Soil.fg,
+    bg: HTomb.Covers.Soil.bg,
+    Components: {
+      Mineral: {
+        hardness: 2,
+        plural: true,
+        yields: {Flint: 1}
+      }
+    }
+  });
+
+  Cover.extend({
+    template: "CopperVein",
+    name: "copper vein",
+    symbol: "\u2234",
+    fg: "#FF9900",
+    bg: HTomb.Covers.Limestone.bg,
+    Components: {
+      Mineral: {
+        hardness: 1,
+        plural: true,
+        yields: {CopperOre: 1}
+      }
+    }
+  });
+
+  Cover.extend({
+    template: "TinVein",
+    name: "tin vein",
+    symbol: "\u2234",
+    fg: "#99FF00",
+    bg: HTomb.Covers.Limestone.bg,
+    Components: {
+      Mineral: {
+        hardness: 1,
+        plural: true,
+        yields: {TinOre: 1}
+      }
+    }
+  });
+
+
+  Cover.extend({
     template: "IronVein",
     name: "iron vein",
     symbol: "\u2234",
-    fg: "#C0C0C0",
+    fg: "#FF3300",
+    bg: HTomb.Covers.Basalt.bg,
     Components: {
       Mineral: {
         hardness: 2,
@@ -134,7 +181,8 @@ HTomb = (function(HTomb) {
     template: "GoldVein",
     name: "gold vein",
     symbol: "\u2234",
-    fg: "yellow",
+    fg: "#FFCC00",
+    bg: HTomb.Covers.Granite.bg,
     Components: {
       Mineral: {
         hardness: 1,
@@ -144,9 +192,81 @@ HTomb = (function(HTomb) {
   });
 
   Cover.extend({
+    template: "SilverVein",
+    name: "silver vein",
+    symbol: "\u2234",
+    fg: "#6666FF",
+    bg: HTomb.Covers.Basalt.bg,
+    Components: {
+      Mineral: {
+        hardness: 1,
+        yields: {SilverOre: 1}
+      }
+    }
+  });
+
+  Cover.extend({
+    template: "TitaniumVein",
+    name: "titanium vein",
+    symbol: "\u2234",
+    fg: "#009999",
+    bg: HTomb.Covers.Granite.bg,
+    Components: {
+      Mineral: {
+        hardness: 1,
+        yields: {TitaniumOre: 1}
+      }
+    }
+  });
+
+  Cover.extend({
+    template: "CobaltVein",
+    name: "cobalt vein",
+    symbol: "\u2234",
+    fg: "#9966FF",
+    bg: HTomb.Covers.Granite.bg,
+    Components: {
+      Mineral: {
+        hardness: 1,
+        yields: {CobaltOre: 1}
+      }
+    }
+  });
+
+  Cover.extend({
+    template: "AdamantVein",
+    name: "adamant vein",
+    symbol: "\u2234",
+    fg: "#FF00FF",
+    bg: HTomb.Covers.Bedrock.bg,
+    Components: {
+      Mineral: {
+        hardness: 1,
+        yields: {AdamantOre: 1}
+      }
+    }
+  });
+
+  Cover.extend({
+    template: "PlatinumVein",
+    name: "platinum vein",
+    symbol: "\u2234",
+    fg: "#DDFFBB",
+    bg: HTomb.Covers.Bedrock.bg,
+    Components: {
+      Mineral: {
+        hardness: 1,
+        yields: {PlatinumOre: 1}
+      }
+    }
+  });
+
+
+  Cover.extend({
     template: "CoalSeam",
     name: "coal seam",
-    fg: "#C0C0C0",
+    fg: "#444444",
+    bg: HTomb.Covers.Soil.bg,
     symbol: "\u2234",
     Components: {
       Mineral: {

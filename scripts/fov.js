@@ -167,7 +167,7 @@ HTomb = (function(HTomb) {
   };
 
   HTomb.FOV.shade = function(color,x,y,z) {
-    var light = HTomb.World.lit[z][x][y];
+    var light = (HTomb.Debug.lit) ? 255 : HTomb.World.lit[z][x][y];
     // We could check whether the critter is on the player's team here instead...
     // that would give more flexibility for shading
     var c = ROT.Color.fromString(color);

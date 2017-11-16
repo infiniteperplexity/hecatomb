@@ -21,18 +21,13 @@ canv.height = 256;
 canv.width = 256;
 
 function wormItUp() {
-	let NWORMS = 100;
-	let SEGMAX = 10;
-	let SEGMIN = 5;
-	let SEGLEN = 1;
+	let NWORMS = 25;
+	let SEGMAX = 20;
+	let SEGMIN = 10;
+	let SEGLEN = 15;
 	let CURVE = 1;
 	let scales = [0,0,0,0,0,0,0,1];
-	let ores = {
-		Soil: ["Flint","Coal"],
-		Limestone: ["Copper","Tin","Coal"],
-		Basalt: ["Iron","Silver","Lead"],
-		Granite: ["Titanium","Gold"]
-	};
+
 	for (let z = 1; z>0; z--) {
 	  for (let i=0; i<NWORMS; i++) {
 	    let x = ROT.RNG.getUniformInt(0,255);
