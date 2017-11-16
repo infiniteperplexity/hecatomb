@@ -46,14 +46,17 @@ HTomb = (function(HTomb) {
     groundCover();
     // rock strata
     rockStrata();
+    // place ores
+    placeOres();
     // place lava
     placeLava();
     // randomly populate the map
     dealParcels();
+    // place caverns
+    generateCaverns();
     // fill in trees and boulders
     finishRockiness();
-    // experimental
-    wormyOres();
+
   };
 
   function randomizeBiomes() {
@@ -398,8 +401,8 @@ HTomb = (function(HTomb) {
     }
   }
 
-  function wormyOres() {
-    let NWORMS = 512;
+  function placeOres() {
+    let NVEINS = 512;
     let SEGMAX = 6;
     let SEGMIN = 3;
     let SEGLEN = 2;
@@ -413,7 +416,7 @@ HTomb = (function(HTomb) {
       Bedrock: {AdamantVein: 1, UraniumVein: 1, TitaniumVein: 1, CobaltVein: 1}
     };
     for (let z=1; z<NLEVELS-1; z++) {
-      for (let i=0; i<NWORMS; i++) {
+      for (let i=0; i<NVEINS; i++) {
         let x0 = ROT.RNG.getUniformInt(1,LEVELW-2);
         let y0 = ROT.RNG.getUniformInt(1,LEVELH-2);
         let cover = HTomb.World.covers[z][x0][y0];
@@ -423,7 +426,7 @@ HTomb = (function(HTomb) {
         let ratios = ores[cover.template];
         let choices = [];
         for (let ore in ratios) {
-          for (let i=0; i<ratios[ore]; i++) {
+          for (let j=0; j<ratios[ore]; j++) {
             choices.push(ore);
           }
         }
@@ -448,6 +451,15 @@ HTomb = (function(HTomb) {
           y0 = y1;
         }
       }
+    }
+  }
+
+  function generateCaverns() {
+    let levels = [46, 41, 35, 29, 23, 16];
+    // this is kind of sloppy
+    for (let level of levels) {
+      let cavern = HTomb.Things.Cavern.spawn({level: level});
+      cavern.generate();
     }
   }
 

@@ -571,9 +571,6 @@ HTomb = (function(HTomb) {
           }
         });
         if (two) {
-          console.log("placing obelisks");
-          console.log(one);
-          console.log(two);
           let o1 = HTomb.Things.WarpedObelisk.spawn().place(one.x,one.y,one.z);
           let o2 = HTomb.Things.WarpedObelisk.spawn().place(two.x,two.y,two.z);
           o1.linked = o2;

@@ -124,7 +124,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Covers.Soil.bg,
     Components: {
       Mineral: {
-        hardness: 2,
+        hardness: 0,
         plural: true,
         yields: {Flint: 1}
       }
@@ -200,7 +200,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Covers.Granite.bg,
     Components: {
       Mineral: {
-        hardness: 1,
+        hardness: 3,
         yields: {GoldOre: 1}
       }
     }
@@ -214,7 +214,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Covers.Basalt.bg,
     Components: {
       Mineral: {
-        hardness: 1,
+        hardness: 2,
         yields: {SilverOre: 1}
       }
     }
@@ -228,7 +228,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Covers.Granite.bg,
     Components: {
       Mineral: {
-        hardness: 1,
+        hardness: 3,
         yields: {TitaniumOre: 1}
       }
     }
@@ -242,7 +242,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Covers.Granite.bg,
     Components: {
       Mineral: {
-        hardness: 1,
+        hardness: 3,
         yields: {CobaltOre: 1}
       }
     }
@@ -256,7 +256,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Covers.Bedrock.bg,
     Components: {
       Mineral: {
-        hardness: 1,
+        hardness: 4,
         yields: {AdamantOre: 1}
       }
     }
@@ -270,7 +270,7 @@ HTomb = (function(HTomb) {
     bg: HTomb.Covers.Bedrock.bg,
     Components: {
       Mineral: {
-        hardness: 1,
+        hardness: 4,
         yields: {UraniumOre: 1}
       }
     }

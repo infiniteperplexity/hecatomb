@@ -82,9 +82,12 @@ HTomb = (function(HTomb) {
   };
   HTomb.Utils.splitPropCase = function(s) {
     let caps = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (let i=0; i<s.length; i++) {
+    let i = 0;
+    while (i<s.length) {
+      i+=1;
       if (caps.indexOf(s[i])!==-1) {
-        s = s.substr(0,i-1)+" "+s.substr(i);
+        s = s.substr(0,i)+" "+s.substr(i);
+        i+=1;
       }
     }
     return s;
