@@ -83,8 +83,8 @@ HTomb = (function(HTomb) {
     earth: true,
     hardness: 2,
     thickness: 12,
-    fg: "#7777DD",
-    bg: "#5555BB",
+    fg: "#8888CC",
+    bg: "#666699",
     Components: {
       Mineral: {
         hardness: 2
@@ -127,6 +127,21 @@ HTomb = (function(HTomb) {
         hardness: 2,
         plural: true,
         yields: {Flint: 1}
+      }
+    }
+  });
+
+  Cover.extend({
+    template: "CoalSeam",
+    name: "coal seam",
+    fg: "#222222",
+    bg: HTomb.Covers.Soil.bg,
+    symbol: "\u2234",
+    Components: {
+      Mineral: {
+        hardness: 0,
+        plural: true,
+        yields: {Coal: 1}
       }
     }
   });
@@ -181,7 +196,7 @@ HTomb = (function(HTomb) {
     template: "GoldVein",
     name: "gold vein",
     symbol: "\u2234",
-    fg: "#FFCC00",
+    fg: "#EEDD00",
     bg: HTomb.Covers.Granite.bg,
     Components: {
       Mineral: {
@@ -195,7 +210,7 @@ HTomb = (function(HTomb) {
     template: "SilverVein",
     name: "silver vein",
     symbol: "\u2234",
-    fg: "#6666FF",
+    fg: "#99BBFF",
     bg: HTomb.Covers.Basalt.bg,
     Components: {
       Mineral: {
@@ -209,7 +224,7 @@ HTomb = (function(HTomb) {
     template: "TitaniumVein",
     name: "titanium vein",
     symbol: "\u2234",
-    fg: "#009999",
+    fg: "#00BB66",
     bg: HTomb.Covers.Granite.bg,
     Components: {
       Mineral: {
@@ -223,7 +238,7 @@ HTomb = (function(HTomb) {
     template: "CobaltVein",
     name: "cobalt vein",
     symbol: "\u2234",
-    fg: "#9966FF",
+    fg: "#4444FF",
     bg: HTomb.Covers.Granite.bg,
     Components: {
       Mineral: {
@@ -248,31 +263,15 @@ HTomb = (function(HTomb) {
   });
 
   Cover.extend({
-    template: "PlatinumVein",
-    name: "platinum vein",
+    template: "UraniumVein",
+    name: "uranium vein",
     symbol: "\u2234",
-    fg: "#DDFFBB",
+    fg: "#FFFFFF",
     bg: HTomb.Covers.Bedrock.bg,
     Components: {
       Mineral: {
         hardness: 1,
-        yields: {PlatinumOre: 1}
-      }
-    }
-  });
-
-
-  Cover.extend({
-    template: "CoalSeam",
-    name: "coal seam",
-    fg: "#444444",
-    bg: HTomb.Covers.Soil.bg,
-    symbol: "\u2234",
-    Components: {
-      Mineral: {
-        hardness: 0,
-        plural: true,
-        yields: {Coal: 1}
+        yields: {UraniumOre: 1}
       }
     }
   });

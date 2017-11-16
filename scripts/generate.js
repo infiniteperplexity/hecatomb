@@ -406,21 +406,28 @@ HTomb = (function(HTomb) {
     let CURVE = 1;
     let noise = new ROT.Noise.Simplex();
     let ores = {
-      Soil: ["FlintCluster","CoalSeam"],
-      Limestone: ["CopperVein","TinVein","CoalSeam"],
-      Basalt: ["IronVein","SilverVein"],
-      Granite: ["TitaniumVein","CobaltVein","GoldVein"],
-      Bedrock: ["AdamantVein","PlatinumVein"]
+      Soil: {FlintCluster: 3, CoalSeam: 2},
+      Limestone: {CopperVein: 3, TinVein: 1, CoalSeam: 2},
+      Basalt: {IronVein: 3, SilverVein: 1},
+      Granite: {TitaniumVein: 1, CobaltVein: 1, GoldVein: 1, IronVein: 1, SilverVein: 1},
+      Bedrock: {AdamantVein: 1, UraniumVein: 1, TitaniumVein: 1, CobaltVein: 1}
     };
-    let scales = [0,0,0,0,0,0,0,1];
-    let squares = [];
     for (let z=1; z<NLEVELS-1; z++) {
       for (let i=0; i<NWORMS; i++) {
         let x0 = ROT.RNG.getUniformInt(1,LEVELW-2);
         let y0 = ROT.RNG.getUniformInt(1,LEVELH-2);
-        if (!HTomb.World.covers[z][x0][y0].mineral) {
+        let cover = HTomb.World.covers[z][x0][y0];
+        if (!(cover.template in ores)) {
           continue;
         }
+        let ratios = ores[cover.template];
+        let choices = [];
+        for (let ore in ratios) {
+          for (let i=0; i<ratios[ore]; i++) {
+            choices.push(ore);
+          }
+        }
+        choices = HTomb.Utils.shuffle(choices);
         let displace = ROT.RNG.getUniform()*256;
         let angle = 2*Math.PI*ROT.RNG.getUniform();
         let segs = ROT.RNG.getUniformInt(SEGMIN, SEGMAX);
@@ -432,23 +439,13 @@ HTomb = (function(HTomb) {
           for (let square of line) {
             let [x,y] = square;
             if (x>0 && x<LEVELW-1 && y>0 && y<LEVELH-1) {
-              squares[coord(x,y,z)] = true;
+              if (ROT.RNG.getUniform()<0.75 && HTomb.World.covers[z][x][y].mineral) {
+                HTomb.World.covers[z][x][y] = HTomb.Covers[choices[0]];
+              }
             }
           }
           x0 = x1;
           y0 = y1;
-        }
-      }
-    }
-    for (let s in squares) {
-      let square = HTomb.Utils.decoord(s);
-      let [x,y,z] = square;
-      if (HTomb.World.covers[z][x][y].mineral) {
-        if (ROT.RNG.getUniform()<0.75) {
-          let choices = ores[HTomb.World.covers[z][x][y].template];
-          console.log(HTomb.World.covers[z][x][y].template);
-          let r = ROT.RNG.getUniformInt(0,choices.length-1);
-          HTomb.World.covers[z][x][y] = HTomb.Covers[choices[r]];
         }
       }
     }
