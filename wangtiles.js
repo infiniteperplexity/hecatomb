@@ -1,3 +1,5 @@
+// HTomb = (function(HTomb) {
+//   "use strict";
 
 let wangtiles = {
      t00000000: {
@@ -63,20 +65,30 @@ let wangtiles = {
                00111100
                00011100
                00011100
+               `,
+               `
+               00000000
+               00000000
+               10000000
+               11000000
+               11000000
+               10000000
+               00011000
+               00111100
                `
           ]
      },
      t00000111: {
           tiles: [
                `
-               11100000
+               00000000
+               00000000
+               10000000
                11100000
                11110000
                11110000
-               11110000
-               11110000
-               11100000
-               11100000
+               11111000
+               11111100
                `
           ]
      },
@@ -174,20 +186,20 @@ let wangtiles = {
                10000001
                11000011
                11000011
-               10000111
-               00000111
-               00000111
+               10000001
+               10000000
+               11000000
                `,
                `
                00000000
                00000000
-               11100111
+               11000011
                11111111
                11111111
-               10011111
-               00000111
-               00000111
-               `
+               11100011
+               11000000
+               11000000
+               `,
           ]
      },
      t00010101: {
@@ -547,7 +559,18 @@ let wangtiles = {
           ]
      },
      t00111011: {
-          tiles: []
+          tiles: [
+          `
+               00000011
+               00000001
+               10000001
+               11000011
+               11000011
+               10000001
+               10000001
+               11000011
+               `
+          ]
      },
      t00101010: {
           tiles: [
@@ -596,12 +619,12 @@ let wangtiles = {
                `
                00000000
                00000000
-               10000000
-               11000000
-               11000000
-               10000000
-               00011000
-               00111100
+               00000000
+               00000000
+               00000000
+               00000000
+               10000001
+               11000011
                `
           ]
      },
@@ -624,12 +647,12 @@ let wangtiles = {
                `
                00000011
                00000001
-               10000000
-               11000000
-               11000000
-               10000000
                00000000
                00000000
+               00000000
+               00000000
+               10000000
+               11000000
                `
           ]
      },
@@ -638,12 +661,12 @@ let wangtiles = {
                `
                00000011
                00000001
-               10000001
-               11000011
-               11000011
-               10000001
                00000001
                00000011
+               00000011
+               00000001
+               10000001
+               11000111
                `
           ]
      },
@@ -652,12 +675,12 @@ let wangtiles = {
                `
                00000011
                00000111
-               10000111
-               11000111
-               11000011
-               10000001
-               00000000
-               00000000
+               00000111
+               00000111
+               00000011
+               00000001
+               10000000
+               11000000
                `
           ]
      },
@@ -1125,7 +1148,7 @@ function template2array(tile) {
      for (let i=0; i<8; i++) {
           grid.push([]);
           for (let j=0; j<8; j++) {
-               grid[i][j] = parseInt(tile[i][j]);
+               grid[i][j] = parseInt(tile[j][i]);
           }
      }
      return grid;
@@ -1160,7 +1183,7 @@ function rotateGrid(grid) {
      for (let i=0; i<8; i++) {
           sq.push([]);
           for (let j=0; j<8; j++) {
-               sq[i][j] = grid[j][7-i];
+               sq[i][j] = grid[7-j][i];
           }
      }
      return sq;
@@ -1215,20 +1238,18 @@ for (let key of keys) {
           let grid = template2array(tile);
           wangtiles[key].squares.push(grid);
      }
+     let original = key;
      for (let i=0; i<4; i++) {
           let revkey = reverseKey(key);
-          if (revkey.length!==9) {
-               console.log(revkey);
-          }
           if (wangtiles[revkey]===undefined) {
-               wangtiles[revkey] = {squares: []};
+               wangtiles[revkey] = {squares: [], mirrored: key, original: original};
                for (square of wangtiles[key].squares) {
                     wangtiles[revkey].squares.push(reverseGrid(square));
                }
           }
           rotkey = rotateKey(key);
           if (wangtiles[rotkey]===undefined) {
-               wangtiles[rotkey] = {squares: []};
+               wangtiles[rotkey] = {squares: [], rotated: key, original: original};
                for (square of wangtiles[key].squares) {
                     wangtiles[rotkey].squares.push(rotateGrid(square));
                }
@@ -1236,3 +1257,7 @@ for (let key of keys) {
           key = rotkey;
      }    
 }
+
+//      HTomb.wangtiles = wangtiles;
+//      return HTomb;
+// })(HTomb);
