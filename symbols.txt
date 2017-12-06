@@ -1,0 +1,34 @@
+
+
+aA : angel / archangel || ant / ant queen
+bB : bat, bird / roc
+cC : cat / big cat 
+dD : baby dragon / large dragon
+eE : small elemental / large elemental
+fF : cat / big cat || fish / big fish
+gG : goblin, gargoyle / giant
+hH
+iI : insect / giant insect || imp / demon
+jJ
+kK
+lL : lichling / lich
+mM
+nN
+oO :
+pP : fish / big fish
+qQ :
+rR : rat / rat king
+sS : spider / snake || snake / dragon || 
+tT
+uU
+vV
+wW : wolf / big wolf || worm / big worm || werecreature
+xX
+yY
+zZ : zombie / giant zombie
+
+monocular O / : one-eyed seraphim / seraphim / many-eyed seraphim
+018A - D with a hook - dragon?
+216E - roman numeral 500
+010E - D with caron
+1E10 - D with cedilla
