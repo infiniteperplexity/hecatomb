@@ -217,13 +217,20 @@ HTomb = (function(HTomb) {
     // 4) Deal with actors
     queue = [];
     deck = [];
-    for (let c in HTomb.World.creatures) {
-      let cr = HTomb.World.creatures[c];
-      if (cr.actor) {
+    // this shouldn't be just creatures...
+    for (let cr of HTomb.World.things) {
+      if (cr.actor && cr.unstaged===null) {
         cr.actor.regainPoints();
         queue.push(cr);
       }
     }
+    // for (let c in HTomb.World.creatures) {
+    //   let cr = HTomb.World.creatures[c];
+    //   if (cr.actor) {
+    //     cr.actor.regainPoints();
+    //     queue.push(cr);
+    //   }
+    // }
     // Sort according to priority
     queue.sort(function(a,b) {
       if (a.actor.actionPoints < b.actor.actionPoints) {

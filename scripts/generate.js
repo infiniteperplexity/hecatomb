@@ -455,10 +455,12 @@ HTomb = (function(HTomb) {
   }
 
   function generateCaverns() {
-    let levels = [46, 41, 35, 29, 23, 16];
+    //let levels = [46, 41, 35, 29, 23, 16];
+    let levels = [35, 29, 23, 16];
     // this is kind of sloppy
     for (let level of levels) {
-      let cavern = HTomb.Things.Cavern.spawn({level: level});
+      //let cavern = HTomb.Things.Cavern.spawn({level: level});
+      let cavern = HTomb.Things.HerringboneCavern.spawn({level: level});
       cavern.generate();
     }
   }

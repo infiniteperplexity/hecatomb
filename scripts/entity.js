@@ -10,6 +10,7 @@ HTomb = (function(HTomb) {
     x: null,
     y: null,
     z: null,
+    unstaged: null,
     Components: {},
     place: function(x,y,z,args) {
       HTomb.Debug.logEvent("place",this);
@@ -86,6 +87,22 @@ HTomb = (function(HTomb) {
       this.x = null;
       this.y = null;
       this.z = null;
+    },
+    unstage: function() {
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
+      this.remove();
+      this.unstaged = {
+        x: x,
+        y: y,
+        z: z
+      };
+    },
+    stage: function() {
+      let {x, y, z} = this.unstaged;
+      this.unstaged = null;
+      this.place(x,y,z);
     },
     destroy: function() {
       HTomb.Debug.logEvent("getDestroyed",this);
