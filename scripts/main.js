@@ -22,6 +22,7 @@ var HTomb = (function() {
   var init = function() {
     // Initialize the DOM
     GUI.domInit();
+    // this is where we would put asynchronous file loading...
     GUI.Views.startup();
   };
   // Set up the various submodules that will be used

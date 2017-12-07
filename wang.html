@@ -33,7 +33,8 @@ for (let i=0; i<WIDTH/TILE; i++) {
 	}
 }
 let flooded = {};
-let P = 0.65;
+let P2 = 0.55;
+let P1 = 0.85;
 function flood(i,j) {
 	flooded[i+":"+j] = true;
 	if (i>0 && flooded[(i-1)+":"+j]) {
@@ -58,6 +59,7 @@ function flood(i,j) {
 	}
 	for (let k=0; k<8; k++) {
 		if (grid[i][j][k]===undefined) {
+			let P = (k===1 || k===3 || k===5 || k===7) ? P1 : P2;
 			grid[i][j][k] = (ROT.RNG.getUniform()<P) ? 1 : 0;
 		}
 	}
