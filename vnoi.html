@@ -31,6 +31,7 @@ for (let i=0; i<canv.width; i++) {
 	}
 }
 let v = new Voronoi();
+ctx.lineWidth = 5;
 let result = v.compute(points, {xl: 0, xr: canv.width-1, yt: 0, yb: canv.height-1});
 for (let edge of result.edges) {
   ctx.beginPath();
