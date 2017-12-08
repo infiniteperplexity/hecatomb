@@ -232,7 +232,11 @@ HTomb = (function(HTomb) {
           _flood(i,j,true);
         }
       }
-      let z = this.level;
+      let z0 = this.level;
+      let OCTAVES = [256,128,64,32,16,8,4,2];
+      let scales = [1,0.5,0.5,0,0,0,0,0];;
+      let noise = HTomb.World.generate.enoise;
+      let tiles = HTomb.World.tiles;
       for (let x=1; x<LEVELW-1; x++) {
         for (let y=1; y<LEVELH-1; y++) {
           if (grid[x][y]===0) {
@@ -240,19 +244,51 @@ HTomb = (function(HTomb) {
             if (zoneList[zn].length<100) {
               continue;
             }
-            if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile) {
-              HTomb.World.tiles[z][x][y] = HTomb.Tiles.FloorTile;
+            let z = z0;  
+            for (let o=0; o<OCTAVES.length; o++) {
+              z+=noise.get(x/OCTAVES[o],y/OCTAVES[o])*scales[o];
+            }
+            z = parseInt(z);
+            if (tiles[z][x][y]===HTomb.Tiles.WallTile) {
+              tiles[z][x][y] = HTomb.Tiles.FloorTile;
               let cover = HTomb.World.covers[z][x][y];
               if (cover.mineral) {
                 cover.mineral.mine(x,y,z);
               }
             }
+            //ugly, ad hoc way of saving this for the next step
+            grid[x][y] = z;
+          } else {
+            grid[x][y] = z0;
           }
         }
       }
-      for (let zn of zoneList) {
-        console.log("zone size was "+zn.length);
+      for (let x=1; x<LEVELW-1; x++) {
+        for (let y=1; y<LEVELH-1; y++) {
+          let z = grid[x][y];
+          if (tiles[z][x][y]===HTomb.Tiles.FloorTile) {
+            let squares = HTomb.Tiles.neighboringColumns(x,y);
+            let slope = false;
+            for (let s of squares) {
+              if (tiles[z+1][s[0]][s[1]]===HTomb.Tiles.FloorTile) {
+                slope = true;
+                break;
+              }
+            }
+            if (slope===true) {
+              tiles[z][x][y] = HTomb.Tiles.UpSlopeTile;
+              let cover = HTomb.World.covers[z+1][x][y];
+              if (cover.mineral) {
+                cover.mineral.mine(x,y,z+1);
+              }
+              tiles[z+1][x][y] = HTomb.Tiles.DownSlopeTile;
+            }
+          }
+        }
       }
+      // for (let zn of zoneList) {
+      //   console.log("zone size was "+zn.length);
+      // }
     }
   });
 
