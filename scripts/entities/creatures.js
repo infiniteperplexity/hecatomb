@@ -78,6 +78,7 @@ HTomb = (function(HTomb) {
       template: "Necromancer",
       name: "necromancer",
       symbol: "@",
+      //symbol: "\u00d1",
       fg: "#DD66FF",
       Components: {
         Movement: {swims: true},

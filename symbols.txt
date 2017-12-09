@@ -1,3 +1,25 @@
+Must haves:
+- angels (Angstrom sign+a with ring above?)
+- bats, birds
+- cats
+- dragons
+- elementals
+- fish
+- goblins, giants
+- insects
+- liches
+- nymphs, nature spirits
+- oozes
+- ghosts
+- rodents
+- spiders and snakes
+- troglodytes and trolls
+- demons
+- vampires
+- werewolves and wolves
+- yetis
+- zombies
+
 
 
 aA : angel / archangel || ant / ant queen
@@ -7,28 +29,32 @@ dD : baby dragon / large dragon
 eE : small elemental / large elemental
 fF : cat / big cat || fish / big fish
 gG : goblin, gargoyle / giant
-hH
+hH : hybrid monster?
 iI : insect / giant insect || imp / demon
-jJ
-kK
+jJ : jelly / jelly?
+kK :
 lL : lichling / lich
-mM
-nN
-oO :
-pP : fish / big fish
-qQ :
+mM :
+nN : nymph / Naga / Nature spirit
+oO : ooze / ooze
+pP : fish / big fish || poltergeist / phantom
+qQ : 
 rR : rat / rat king
 sS : spider / snake || snake / dragon || 
-tT
-uU
-vV
-wW : wolf / big wolf || worm / big worm || werecreature
-xX
-yY
+tT : troglodye / Troll
+uU : unholy / unholy?
+vV : vampire / vampire lord
+wW : wolf / werewolf || wraith / wraith lord || wisp / wraith
+xX : outsider / outsider
+yY : yeti / giant yeti
 zZ : zombie / giant zombie
+~n/~N: apprentice / other necromancer
 
 monocular O / : one-eyed seraphim / seraphim / many-eyed seraphim
 018A - D with a hook - dragon?
 216E - roman numeral 500
 010E - D with caron
 1E10 - D with cedilla
+
+ae/ AE: hybrid monster
+
