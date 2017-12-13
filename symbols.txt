@@ -21,32 +21,57 @@ Must haves:
 - zombies
 
 
+A is angels.
+B is bats and birds.
+C is cats and werecats.
+D is dragons.
+E is elementals.
+F is fish.
+G is goblins and giants.
+H ?could be humans?  herd animals?
+J ?
+K ?could be canines but that's a little sidelong.
+L ?could be wolves and werewolves.
+M is mold and mushrooms.
+N is nymphs and nature spirits.
+O is oozes.
+P ?
+Q is quadrupeds.
+R is rodents and wererodents.
+S is spiders and snakes.
+T is troglodytes and trolls.
+U might be unholy monsters.
+V are ghosts and vampires.
+Y are monkeys and yetis; it might be ghosts, because it's right next to Z.
+Z are zombies.
+
+& might be demons; there is a small ampersand as well.
 
 aA : angel / archangel || ant / ant queen
-bB : bat, bird / roc
-cC : cat / big cat 
+bB : bat, bird / roc, werebat
+cC : cat / big cat, werecat
 dD : baby dragon / large dragon
 eE : small elemental / large elemental
-fF : cat / big cat || fish / big fish
+fF : fish / big fish
 gG : goblin, gargoyle / giant
-hH : hybrid monster?
-iI : insect / giant insect || imp / demon
+hH : human / Hero?
+iI : insect / giant insect
 jJ : jelly / jelly?
-kK :
+kK : 
 lL : lichling / lich
-mM :
+mM : mold / mushroom
 nN : nymph / Naga / Nature spirit
 oO : ooze / ooze
-pP : fish / big fish || poltergeist / phantom
-qQ : 
-rR : rat / rat king
+pP : ?? poltergeist / phantom
+qQ : quadruped || elephant
+rR : rat / rat king, wererat
 sS : spider / snake || snake / dragon || 
 tT : troglodye / Troll
-uU : unholy / unholy?
-vV : vampire / vampire lord
-wW : wolf / werewolf || wraith / wraith lord || wisp / wraith
+uU : imp / demon (with ring?)
+vV : vampire / vampire lord || ghost / vampire?
+wW : wolf / werewolf 
 xX : outsider / outsider
-yY : yeti / giant yeti
+yY : monkey / yeti
 zZ : zombie / giant zombie
 ~n/~N: apprentice / other necromancer
 
