@@ -476,6 +476,19 @@ HTomb = (function(HTomb) {
     }
   });
 
+    Creature.extend({
+    template: "Troll",
+    name: "troll",
+    symbol: "T",
+    fg: "brown",
+    Components: {
+      Actor: {},
+      Movement: {},
+      Attacker: {},
+      Defender: {}
+    }
+  });
+
   Creature.extend({
     template: "CaveSquid",
     name: "cave squid",

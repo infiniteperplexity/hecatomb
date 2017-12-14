@@ -11,131 +11,20 @@ HTomb = (function(HTomb) {
     name: "cavern",
     breached: false,
     level: null,
+    groundLevels: null,
     generate: function() {
-      let caves = new ROT.Map.Cellular(LEVELW-2,LEVELH-2,{connected: true});
-      caves.randomize(0.5);
-      for (let i=0; i<6; i++) {
-        caves.create();
-      }
-      let noise = new ROT.Noise.Simplex();
-      let scales = [2,1,1,0.5,0,0,0,0];
-      let grid = HTomb.Utils.multiarray(LEVELW-2,LEVELH-2);
-      let level = this.level;
-      caves.create(function(x,y,val) {  
-        let z = level;
-        for (let o=0; o<OCTAVES.length; o++) {
-          z+= noise.get(x/OCTAVES[o],y/OCTAVES[o])*scales[o];
-        }
-        z = parseInt(z);
-        grid[x][y] = z;
-        if (val) {
-          HTomb.World.tiles[z][x+1][y+1] = HTomb.Tiles.FloorTile;
-          let cover = HTomb.World.covers[z][x+1][y+1];
-          if (cover.mineral) {
-            cover.mineral.mine(x+1,y+1,z);
-          }
-          HTomb.World.validate.dirtify(x+1,y+1,z);
-        }
-      });
-      let tiles = HTomb.World.tiles;
-      for (let x=1; x<LEVELW-1; x++) {
-        for (let y=1; y<LEVELH-1; y++) {
-          let z = grid[x-1][y-1];
-          if (tiles[z][x][y]===HTomb.Tiles.FloorTile) {
-            let squares = HTomb.Tiles.neighboringColumns(x,y);
-            let slope = false;
-            for (let s of squares) {
-              if (tiles[z+1][s[0]][s[1]]===HTomb.Tiles.FloorTile) {
-                slope = true;
-                break;
-              }
-            }
-            if (slope===true) {
-              tiles[z][x][y] = HTomb.Tiles.UpSlopeTile;
-              let cover = HTomb.World.covers[z+1][x][y];
-              if (cover.mineral) {
-                cover.mineral.mine(x,y,z+1);
-              }
-              tiles[z+1][x][y] = HTomb.Tiles.DownSlopeTile;
-            }
+      HTomb.World.caverns.push(this);
+      this.groundLevels = HTomb.Utils.multiarray(LEVELW,LEVELH);
+      for (let x=0; x<LEVELW; x++) {
+        for (let y=0; y<LEVELH; y++) {
+          if (x===0 || y===0 || x===LEVELW-1 || y===LEVELH-1) {
+            this.groundLevels[x][y] = null;
           }
         }
       }
-    }
-  });
-
-  Cavern.extend({
-    template: "HerringboneCavern",
-    name: "herringbone cavern",
-    tiling: ["N","E","W","S"],
-    tiles: {
-      N: [1, 1, 1, 1, 1, 1, 1, 1,
-          1, 1, 1, 1, 1, 1, 1, 1,
-          1, 1, 1, 1, 1, 1, 1, 1,
-          0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1],
-      S: [1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0,
-          1, 1, 1, 1, 1, 1, 1, 1,
-          1, 1, 1, 1, 1, 1, 1, 1,
-          1, 1, 1, 1, 1, 1, 1, 1],
-      E: [1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          0, 0, 0, 0, 0, 1, 1, 1,
-          0, 0, 0, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1],
-      W: [1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 0, 0, 0,
-          1, 1, 1, 0, 0, 0, 0, 0,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1,
-          1, 1, 1, 0, 0, 1, 1, 1]
+      this.algorithm();
     },
-    generate: function() {
-      let grid = HTomb.Utils.multiarray(LEVELW,LEVELH);
-      let tileSize = Math.sqrt(this.tiles.N.length);
-      let nTiles = LEVELW/tileSize;
-      for (let i=0; i<nTiles; i++) {
-        let whichTile = i%this.tiling.length;
-        for (let j=0; j<nTiles; j++) {
-          let thisTile = this.tiling[whichTile];
-          if (ROT.RNG.getUniformInt(1,4)===1) {
-            thisTile = this.tiling[ROT.RNG.getUniformInt(0,3)];
-          }
-          for (let m=0; m<tileSize; m++) {
-            for (let n=0; n<tileSize; n++) {
-              let ind = m+n*tileSize;
-              grid[i*tileSize+m][j*tileSize+n] = this.tiles[thisTile][ind];
-            }
-          }
-          whichTile = (whichTile+1)%4;
-        }
-      }
-      let noise = new ROT.Noise.Simplex();
-      let scales = [2,1,1,0.5,0,0,0,0];
-      let z = this.level;
-      for (let x=1; x<LEVELW-2; x++) {
-        for (let y=1; y<LEVELH-2; y++) {
-          if (grid[x][y]===0) {
-            HTomb.World.tiles[z][x][y] = HTomb.Tiles.FloorTile;
-            let cover = HTomb.World.covers[z][x][y];
-            if (cover.mineral) {
-              cover.mineral.mine(x,y,z);
-            }
-          }
-        }
-      }
+    algorithm: function() { 
     }
   });
 
@@ -191,10 +80,10 @@ HTomb = (function(HTomb) {
         this.floodTiles(i,j+1);
       }
     },
-    generate: function() {
+    algorithm: function() {
       let TILE = 8;
       this.floodTiles(0,0);
-      let grid = HTomb.Utils.multiarray(256,256);
+      let grid = HTomb.Utils.multiarray(LEVELW,LEVELH);
       for (let i=0; i<LEVELW/TILE; i++) {
         for (let j=0; j<LEVELH/TILE; j++) {
           let key = "t"+this.grid[i][j].join("");
@@ -202,7 +91,11 @@ HTomb = (function(HTomb) {
           let square = squares[ROT.RNG.getUniformInt(1,squares.length)-1];
           for (let m=0; m<TILE; m++) {
             for (let n=0; n<TILE; n++) {
-              grid[i*TILE+m][j*TILE+n] = square[m][n];
+              let x = i*TILE+m;
+              let y = j*TILE+n;
+              if (x>0 || y>0 || x<LEVELW-1 || y<LEVELH-1) {
+                grid[x][y] = square[m][n];
+              }
             }
           }
         }
@@ -210,7 +103,7 @@ HTomb = (function(HTomb) {
       let zoneKeys = {};
       let zoneList = [[]];
       let zone = 0; 
-      let _flood = function(i,j,topLevel) {
+      let _flood = function(i,j,depth) {
         if (i<=0 || i>=LEVELW-1 || j<=0 || j>=LEVELH-1) {
           return;
         }
@@ -219,9 +112,9 @@ HTomb = (function(HTomb) {
           zoneList[zone].push([i,j]);
           for (let dir of ROT.DIRS[8]) {
             let [x,y] = dir;
-            _flood(i+x,j+y,false);
+            _flood(i+x,j+y,depth+1);
           }
-          if (topLevel) {
+          if (depth===0) {
             zone+=1;
             zoneList.push([]);
           }
@@ -229,7 +122,7 @@ HTomb = (function(HTomb) {
       };
       for (let i=1; i<LEVELW-1; i++) {
         for (let j=1; j<LEVELW-1; j++) {
-          _flood(i,j,true);
+          _flood(i,j,0);
         }
       }
       let z0 = this.level;
@@ -242,6 +135,8 @@ HTomb = (function(HTomb) {
           if (grid[x][y]===0) {
             let zn = zoneKeys[x+":"+y];
             if (zoneList[zn].length<100) {
+              //again, weird
+              this.groundLevels[x][y] = z0;
               continue;
             }
             let z = z0;  
@@ -256,16 +151,16 @@ HTomb = (function(HTomb) {
                 cover.mineral.mine(x,y,z);
               }
             }
-            //ugly, ad hoc way of saving this for the next step
-            grid[x][y] = z;
+            this.groundLevels[x][y] = z;
           } else {
-            grid[x][y] = z0;
+            // this is weird...
+            this.groundLevels[x][y] = z0;
           }
         }
       }
       for (let x=1; x<LEVELW-1; x++) {
         for (let y=1; y<LEVELH-1; y++) {
-          let z = grid[x][y];
+          let z = this.groundLevels[x][y];
           if (tiles[z][x][y]===HTomb.Tiles.FloorTile) {
             let squares = HTomb.Tiles.neighboringColumns(x,y);
             let slope = false;
@@ -286,9 +181,6 @@ HTomb = (function(HTomb) {
           }
         }
       }
-      // for (let zn of zoneList) {
-      //   console.log("zone size was "+zn.length);
-      // }
     }
   });
 

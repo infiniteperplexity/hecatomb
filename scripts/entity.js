@@ -45,6 +45,11 @@ HTomb = (function(HTomb) {
       options = options || {};
       let mask = options.mask || {};
       let callback = options.validPlace || this.validPlace.bind(this);
+      let level = options.cavern || null;
+      if (level===undefined) {
+        console.trace();
+        console.log("what's going on here?");
+      }
       let valid = false;
       let x;
       let y;
@@ -52,10 +57,17 @@ HTomb = (function(HTomb) {
       let tries = 0;
       let TRIES = 50;
       while (valid===false && tries<TRIES) {
-
         x = ROT.RNG.getUniformInt(x0,x0+w);
         y = ROT.RNG.getUniformInt(y0,y0+h);
-        z = HTomb.Tiles.groundLevel(x,y);
+        try {
+          z = (level===null) ? HTomb.Tiles.groundLevel(x,y) : level.groundLevels[x][y];
+        } catch(e) {
+          console.log(level);
+          console.log(x);
+          console.log(y);
+          HTomb.Debug.level = level;
+          throw e;
+        }
         if (mask[coord(x,y,z)]) {
           continue;
         }

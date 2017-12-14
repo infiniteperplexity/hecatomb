@@ -10,10 +10,19 @@ HTomb = (function(HTomb) {
   let Parcel = HTomb.Types.Type.extend({
     template: "Parcel",
     name: "parcel",
+    cavernMin: null,
+    cavernMax: null,
     frequency: 1,
     biomes: [],
     logme: false,
     deal: function() {
+      if (this.cavernMin===null && this.cavernMax===null) {
+        this.dealSurface();
+      } else {
+        this.dealCavern();
+      }
+    },
+    dealSurface: function() {
       let parcels = [];
       for (let biome of this.biomes) {
         if (HTomb.World.generate.parcels[biome]===undefined) {
@@ -22,6 +31,7 @@ HTomb = (function(HTomb) {
         }
         parcels = parcels.concat(HTomb.World.generate.parcels[biome]);
       }
+      // this built a list of parcels that have the right biome
       if (parcels.length===0) {
         for (let biome of HTomb.World.generate.parcels) {
           parcels = parcels.concat(HTomb.World.generate.parcels[biome]);
@@ -35,18 +45,39 @@ HTomb = (function(HTomb) {
       }
       let i = parcels[0][0];
       let j = parcels[0][1];
-      this.someMethod(PADDING+i*PSIZE,PADDING+j*PSIZE,PSIZE,PSIZE);
+      this.populate(PADDING+i*PSIZE,PADDING+j*PSIZE,PSIZE,PSIZE);
     },
-    someMethod: function(x0,y0,w,h) {
+    dealCavern: function() {
+      let levels = [];
+      for (let key in HTomb.World.caverns) {
+        let cavern = HTomb.World.caverns[key];
+        if (cavern.level<=this.cavernMax && cavern.level>=this.cavernMin) {
+          levels.push(cavern);
+        }
+      }
+      if (levels.length===0) {
+        console.log("no valid cavern levels");
+        return;
+      }
+      levels = HTomb.Utils.shuffle(levels);
+      let nParcels = 11;
+      let i = ROT.RNG.getUniformInt(1,nParcels)-1;
+      let j = ROT.RNG.getUniformInt(1,nParcels)-1;
+      this.populate(PADDING+i*PSIZE,PADDING+j*PSIZE,PSIZE,PSIZE,levels[0]);
+    },
+    populate: function(x0,y0,w,h,optionalLevel) {
 
     }
   });
+
+
 
   Parcel.extend({
     template: "PlayerParcel",
     name: "player parcel",
     biomes: ["CentralHills"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
+      console.log("populating player parcel");
       let n = 3;
       let xyz;
       let last;
@@ -98,13 +129,42 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Parcel.extend({
+    template: "TroglodyteLair",
+    name: "troglodyte lair",
+    cavernMin: 30,
+    cavernMax: 50,
+    frequency: 10,
+    populate: function(x0,y0,w,h,level) {
+      console.log("placing troglodyte lair at ",x0,y0,level.level);
+      let trogs = 5;
+      let trolls = 1;
+      let xyz;
+      for (let i=0; i<trogs; i++) {
+        let t = HTomb.Things.Troglodyte.spawn();
+        // need to pass the cavern level somehow
+        xyz = t.findPlace(x0,y0,w,h,{cavern: level});
+        if (xyz) {
+          t.place(xyz.x,xyz.y,xyz.z);
+        }
+      }
+      for (let i=0; i<trolls; i++) {
+        let t = HTomb.Things.Troll.spawn();
+        // need to pass the cavern level somehow
+        xyz = t.findPlace(x0,y0,w,h,{cavern: level});
+        if (xyz) {
+          t.place(xyz.x,xyz.y,xyz.z);
+        }
+      }
+    }
+  });
 
   Parcel.extend({
     template: "GraveyardParcel",
     name: "graveyard parcel",
     frequency: 12,
     biomes: ["InnerHills","OuterHills","BorderForest","DeepForest","BorderWastes","DeepWastes","BorderMountains","BorderOcean"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let n = ROT.RNG.getUniformInt(2,4);
       let xyz;
       let mask = {};
@@ -190,7 +250,7 @@ HTomb = (function(HTomb) {
     name: "herby parcel",
     biomes: ["InnerHills","OuterHills","BorderForest","DeepForest","BorderMountains","BorderWastes","BorderOcean"],
     frequency: 6,
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let herbs = HTomb.Utils.shuffle(["Wolfsbane","Bloodwort","Mandrake"]);
       let n = ROT.RNG.getUniformInt(2,3);
       let xyz;
@@ -198,6 +258,35 @@ HTomb = (function(HTomb) {
       for (let i=0; i<n; i++) {
         let g = HTomb.Things.HerbPatch.spawn({herb: herbs[0]});
         xyz = g.findPlace(x0,y0,w,h,{mask: mask});
+        if (xyz) {
+          g.place(xyz.x,xyz.y,xyz.z);
+          let addMask = HTomb.Tiles.squaresWithinSquare(xyz.x,xyz.y,xyz.z,3);
+          for (let s of addMask) {
+            mask[coord(s[0],s[1],s[2])] = true;
+          }
+        } else {
+          alert("failure!");
+        }
+      }
+    }
+  });
+
+
+  Parcel.extend({
+    template: "HerbyCavern",
+    name: "herby cavern",
+    frequency: 18,
+    cavernMin: 20,
+    cavernMax: 50,
+    populate: function(x0,y0,w,h, level) {
+      console.log("placing mushroom cavern at ",x0,y0,level.level);
+      let herbs = HTomb.Utils.shuffle(["Skullcap","Lichen","Agaric"]);
+      let n = ROT.RNG.getUniformInt(2,3);
+      let xyz;
+      let mask = {};
+      for (let i=0; i<n; i++) {
+        let g = HTomb.Things.MushroomPatch.spawn({herb: herbs[0]});
+        xyz = g.findPlace(x0,y0,w,h,{mask: mask, cavern: level});
         if (xyz) {
           g.place(xyz.x,xyz.y,xyz.z);
           let addMask = HTomb.Tiles.squaresWithinSquare(xyz.x,xyz.y,xyz.z,3);
@@ -236,6 +325,7 @@ HTomb = (function(HTomb) {
       let SIZE = 10;
       for (let i = Math.max(1,x-SIZE); i<=Math.min(LEVELW-2,x+SIZE); i++) {
         for (let j = Math.max(1,y-SIZE); j<=Math.min(LEVELH-2,y+SIZE); j++) {
+          // this is totally wrong
           let z = HTomb.Tiles.groundLevel(i,j);
           if (!HTomb.World.features[coord(i,j,z)] && HTomb.World.covers[z][x][y]===HTomb.Covers.Grass) {
             let closeness = SIZE - Math.sqrt(Math.pow(i-x,2)+Math.pow(j-y,2));
@@ -253,6 +343,38 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Footprint.extend({
+    template: "MushroomPatch",
+    name: "mushroom patch",
+    herb: "Skullcap",
+    validPlace: function(x,y,z) {
+      if (HTomb.World.features[coord(x,y,z)]) {
+        return false;
+      } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.Water) {
+        return true;
+      }
+      return false;
+    },
+    validSquare: function(x,y,z) {
+      if (HTomb.World.features[coord(x,y,z)]) {
+        return false;
+      } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.Water) {
+        return true;
+      }
+      return false;
+    },
+    onPlace: function(x,y,z,options) {
+      options = options || {};
+      let level = options.cavern || {};
+      let SIZE = 10;
+      for (let i = Math.max(1,x-SIZE); i<=Math.min(LEVELW-2,x+SIZE); i++) {
+        for (let j = Math.max(1,y-SIZE); j<=Math.min(LEVELH-2,y+SIZE); j++) {
+          let z = level.groundLevels[i][j];
+          // I think here I'd rather do a "scattering" approach rather than Simplex
+        }
+      }
+    }
+  });
 
   Parcel.extend({
     template: "RuinsParcel",
@@ -260,7 +382,7 @@ HTomb = (function(HTomb) {
     frequency: 6,
     biomes: ["OuterHills","BorderForest","BorderWastes","DeepWastes","BorderMountains","BorderOcean"],
     structures: ["Workshop","GuardPost","BlackMarket","Sanctum"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let n = ROT.RNG.getUniformInt(2,4);
       let xyz;
       let mask = {};
@@ -324,7 +446,7 @@ HTomb = (function(HTomb) {
     name: "hunter parcel",
     frequency: 2,
     biomes: ["OuterHills","BorderWastes","BorderOcean","BorderMountains","BorderForest","DeepForest"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let foot = HTomb.Things.HunterShack.spawn();
       let xyz = foot.findPlace(x0,y0,w,h);
       if (xyz) {
@@ -366,7 +488,7 @@ HTomb = (function(HTomb) {
     biomes: ["OuterHills","BorderWastes","DeepWastes","BorderForest","BorderOcean"],
     frequency: 2,
     logme: true,
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let xyz = HTomb.Things.AntColony.findPlace(x0,y0,w,h);
       if (xyz) {
         HTomb.Things.AntColony.spawn().place(xyz.x,xyz.y,xyz.z);
@@ -485,7 +607,7 @@ HTomb = (function(HTomb) {
     name: "temple parcel",
     biomes: ["OuterHills","BorderMountains","BorderWastes","BorderForest","BorderOcean"],
     frequency: 2,
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let mask = {};
       let xyz = HTomb.Things.TempleFootprint.findPlace(x0,y0,w,h);
       if (xyz) {
@@ -553,7 +675,7 @@ HTomb = (function(HTomb) {
     name: "warped obelisks parcel",
     frequency: 1,
     biomes: ["DeepMountains","DeepForest","DeepWastes"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let valid = HTomb.Things.WarpedObelisk.validPlace.bind(HTomb.Things.WarpedObelisk);
       let one = HTomb.Things.WarpedObelisk.findPlace(x0,y0,w,h);
       let p = HTomb.Player;
@@ -586,7 +708,7 @@ HTomb = (function(HTomb) {
     name: "hot springs parcel",
     frequency: 1,
     biomes: ["DeepMountains","DeepWastes"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let springs = ROT.RNG.getUniformInt(2,5);
       // should these be clustered more?
       for (let i=0; i<springs; i++) {
@@ -603,7 +725,7 @@ HTomb = (function(HTomb) {
     name: "radiant obelisk parcel",
     frequency: 1,
     biomes: ["DeepMountains","DeepWastes","DeepForest","BorderOcean","BorderForest","BorderWastes","OuterHills"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let xyz = HTomb.Things.RadiantObelisk.findPlace(x0,y0,w,h);
       if (xyz) {
         HTomb.Things.RadiantObelisk.spawn().place(xyz.x,xyz.y,xyz.z);
@@ -616,7 +738,7 @@ HTomb = (function(HTomb) {
     name: "overgrown obelisk parcel",
     frequency: 1,
     biomes: ["DeepMountains","DeepWastes","DeepForest","BorderOcean","BorderForest","BorderWastes","OuterHills"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let xyz = HTomb.Things.RadiantObelisk.findPlace(x0,y0,w,h);
       if (xyz) {
         HTomb.Things.RadiantObelisk.spawn().place(xyz.x,xyz.y,xyz.z);
@@ -630,7 +752,7 @@ HTomb = (function(HTomb) {
     name: "fireflies parcel",
     frequency: 4,
     biomes: ["BorderOcean","InnerHills","OuterHills","BorderForest","DeepForest"],
-    someMethod: function(x0,y0,w,h) {
+    populate: function(x0,y0,w,h) {
       let ffs = ROT.RNG.getUniformInt(4,8);
       // should these be clustered more?
       for (let i=0; i<ffs; i++) {

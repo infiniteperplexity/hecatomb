@@ -50,10 +50,10 @@ HTomb = (function(HTomb) {
     placeOres();
     // place lava
     placeLava();
-    // randomly populate the map
-    dealParcels();
     // place caverns
     generateCaverns();
+    // randomly populate the map
+    dealParcels();
     // fill in trees and boulders
     finishRockiness();
 
@@ -371,7 +371,7 @@ HTomb = (function(HTomb) {
     HTomb.Types.PlayerParcel.deal();
     let deck = [];
     for (let type of HTomb.Types.Parcel.types) {
-      if (type.template!=="PlayerParcel") {
+      if (type.template!=="PlayerParcel" && type.cavernMin===null && type.cavernMax===null) {
         for (let i=0; i<type.frequency; i++) {
           deck.push(type);
         }
@@ -385,6 +385,22 @@ HTomb = (function(HTomb) {
         console.log("dealing "+deck[i].describe());
       }
       deck[i].deal();
+    }
+    let caverns = [];
+    for (let type of HTomb.Types.Parcel.types) {
+      if (type.cavernMin!==null && type.cavernMax!==null) {
+        for (let i=0; i<type.frequency; i++) {
+          caverns.push(type);
+        }
+      }
+    }
+    caverns = HTomb.Utils.shuffle(caverns);
+    let cParcels = Math.min(100,caverns.length);
+    for (let i=0; i<cParcels; i++) {
+      if (caverns[i].logme) {
+        console.log("dealing "+caverns[i].describe());
+      }
+      caverns[i].deal();
     }
   }
 
@@ -454,6 +470,7 @@ HTomb = (function(HTomb) {
     }
   }
 
+  HTomb.World.caverns = [];
   function generateCaverns() {
     let levels = [46, 41, 35, 29, 23, 16];
     // this is kind of sloppy
