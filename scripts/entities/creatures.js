@@ -170,7 +170,7 @@ HTomb = (function(HTomb) {
   Creature.extend({
     template: "AntQueen",
     name: "ant queen",
-    symbol: "\u00e3",
+    symbol: "I",
     fg: "red",
     Components: {
       Master: {tasks: ["DigTask"]},
@@ -192,7 +192,7 @@ HTomb = (function(HTomb) {
   Creature.extend({
     template: "SoldierAnt",
     name: "soldier ant",
-    symbol: "\u00e4",
+    symbol: "i\u030A",
     fg: "red",
     Components: {
       Master: {tasks: ["DigTask"]},
@@ -214,7 +214,7 @@ HTomb = (function(HTomb) {
   Creature.extend({
     template: "WorkerAnt",
     name: "worker ant",
-    symbol: "a",
+    symbol: "i",
     fg: "red",
     Components: {
       Worker: {},
@@ -384,7 +384,7 @@ HTomb = (function(HTomb) {
     template: "Firefly",
     vermin: true,
     name: "firefly",
-    symbol: "a",
+    symbol: "i\u030A",
     fg: "#44FF00",
     Components: {
       // let's make it a steady light for now
@@ -426,7 +426,7 @@ HTomb = (function(HTomb) {
   Creature.extend({
     template: "DeathCarp",
     name: "death carp",
-    symbol: "p",
+    symbol: "f",
     fg: "red",
     Components: {
       Actor: {
@@ -447,7 +447,7 @@ HTomb = (function(HTomb) {
     template: "Fish",
     vermin: true,
     name: "fish",
-    symbol: "p",
+    symbol: "f",
     fg: "#FF8888",
     Components: {
       Actor: {},
@@ -460,6 +460,32 @@ HTomb = (function(HTomb) {
       Defender: {
         toughness: -1
       }
+    }
+  });
+
+  Creature.extend({
+    template: "Troglodyte",
+    name: "troglodyte",
+    symbol: "t",
+    fg: "brown",
+    Components: {
+      Actor: {},
+      Movement: {},
+      Attacker: {},
+      Defender: {}
+    }
+  });
+
+  Creature.extend({
+    template: "CaveSquid",
+    name: "cave squid",
+    symbol: "K",
+    fg: "pink",
+    Components: {
+      Actor: {},
+      Movement: {swims: true},
+      Attacker: {},
+      Defender: {}
     }
   });
 

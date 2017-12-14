@@ -1,24 +1,4 @@
-Must haves:
-- angels (Angstrom sign+a with ring above?)
-- bats, birds
-- cats
-- dragons
-- elementals
-- fish
-- goblins, giants
-- insects
-- liches
-- nymphs, nature spirits
-- oozes
-- ghosts
-- rodents
-- spiders and snakes
-- troglodytes and trolls
-- demons
-- vampires
-- werewolves and wolves
-- yetis
-- zombies
+
 
 
 A is angels.
@@ -28,24 +8,33 @@ D is dragons.
 E is elementals.
 F is fish.
 G is goblins and giants.
-H ?could be humans?  herd animals?
+H is horses and herd animals.
 J ?
-K ?could be canines but that's a little sidelong.
-L ?could be wolves and werewolves.
+K is either sea monsters or Eastern monsters
+L could be lizards and dinosaurs.
 M is mold and mushrooms.
 N is nymphs and nature spirits.
 O is oozes.
 P ?
-Q is quadrupeds.
+Q ?
 R is rodents and wererodents.
 S is spiders and snakes.
 T is troglodytes and trolls.
 U might be unholy monsters.
-V are ghosts and vampires.
-Y are monkeys and yetis; it might be ghosts, because it's right next to Z.
+V is wights, wraiths, and vampires
+W are wolves and werewolves.
+X is extradimensional horrors.
+Y are monkeys, apes, and yetis.
 Z are zombies.
+& might be apprentices, or ghosts.
 
-& might be demons; there is a small ampersand as well.
+
+some other good ones...
+- that oe thing.
+- 0 with a stroke.
+- c with a cedilla.
+- lambda
+
 
 aA : angel / archangel || ant / ant queen
 bB : bat, bird / roc, werebat

@@ -118,6 +118,36 @@ HTomb = (function(HTomb) {
     }
   });
 
+  Item.extend({
+    template: "Skullcap",
+    name: "skullcap",
+    fg: "red",
+    symbol: "\u25CF",
+    Components: {
+      Herb: {symbol: "\u2762"}
+    }
+  });
+
+  Item.extend({
+    template: "Lichen",
+    name: "lichen",
+    fg: "orange",
+    symbol: "\u25CF",
+    Components: {
+      Herb: {symbol: "\u2762"}
+    }
+  });
+
+  Item.extend({
+    template: "Agaric",
+    name: "agaric",
+    fg: "magenta",
+    symbol: "\u25CF",
+    Components: {
+      Herb: {symbol: "\u2762"}
+    }
+  });
+
 
 
   return HTomb;
