@@ -123,8 +123,12 @@ HTomb = (function(HTomb) {
     name: "skullcap",
     fg: "red",
     symbol: "\u25CF",
+    needsGrass: false,
     Components: {
-      Herb: {symbol: "\u2762"}
+      Herb: {
+        needsGrass: false,
+        symbol: "\u2762"
+      }
     }
   });
 
@@ -132,9 +136,13 @@ HTomb = (function(HTomb) {
     template: "Lichen",
     name: "lichen",
     fg: "orange",
+    needsGrass: false,
     symbol: "\u25CF",
     Components: {
-      Herb: {symbol: "\u2762"}
+      Herb: {
+        needsGrass: false,
+        symbol: "\u2762"
+      }
     }
   });
 
@@ -144,7 +152,10 @@ HTomb = (function(HTomb) {
     fg: "magenta",
     symbol: "\u25CF",
     Components: {
-      Herb: {symbol: "\u2762"}
+      Herb: {
+        needsGrass: false,
+        symbol: "\u2762"
+      }
     }
   });
 

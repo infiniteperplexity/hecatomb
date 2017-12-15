@@ -390,6 +390,8 @@ HTomb = (function(HTomb) {
     nospawn: true,
     symbol: "\u2698",
     labor: 5,
+    needsGrass: true,
+    aquatic: false,
     // should it spawn a tracker or something?
     onPrespawn: function(args) {
       this.Template.symbol = this.Template.symbol || "\u273F";
@@ -398,10 +400,27 @@ HTomb = (function(HTomb) {
         name: this.Template.name,
         symbol: this.symbol,
         fg: this.Template.fg || "green",
+        needsGrass: (args.needsGrass===false) ? false : (args.needsGrass || this.needsGrass),
+        aquatic: (args.aquatic===false) ? false : (args.aquatic || this.aquatic),
         Components: {
           Harvestable: {
             labor: this.labor,
             yields: {}
+          }
+        },
+        validPlace: function(x,y,z) {
+          if (HTomb.World.features[coord(x,y,z)]) {
+            return false;
+          } else if (HTomb.World.tiles[z][x][y]!==HTomb.Tiles.FloorTile && HTomb.World.tiles[z][x][y]!==HTomb.Tiles.UpSlopeTile) {
+            return false;
+          } else if (this.needsGrass && HTomb.World.covers[z][x][y]!==HTomb.Covers.Grass) {
+            return false;
+          } else if (this.aquatic && HTomb.World.covers[z][x][y]!==HTomb.Covers.Water) {
+            return false;
+          } else if (!this.aquatic && HTomb.World.covers[z][x][y]===HTomb.Covers.Water) {
+            return false;
+          } else {
+            return true;
           }
         }
       }

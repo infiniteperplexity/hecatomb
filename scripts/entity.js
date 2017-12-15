@@ -1,5 +1,7 @@
 HTomb = (function(HTomb) {
   "use strict";
+  let LEVELW = HTomb.Constants.LEVELW;
+  let LEVELH = HTomb.Constants.LEVELH;
   var coord = HTomb.Utils.coord;
   
   let Thing = HTomb.Things.Thing;
@@ -30,7 +32,7 @@ HTomb = (function(HTomb) {
       }
       // should this indeed go after the components?
       if (this.onPlace) {
-        this.onPlace(x,y,z);
+        this.onPlace(x,y,z,args);
       }
       return this;
     },
@@ -192,6 +194,47 @@ HTomb = (function(HTomb) {
         template[comp.name] = comp;
       }
       return template;
+    },
+    chainPlace: function(x,y,z,options) {
+      options = options || {};
+      let N = options.n || 12;
+      let MIN = options.min || 2;
+      let MAX = options.max || 4;
+      let TRIES = options.tries || 1000;
+      let cavern = options.cavern || null;
+      let tries = 0;
+      let thing = this.spawn();
+      if (thing.validPlace(x,y,z)) {
+        thing.place(x,y,z);
+      }
+      let things = [thing];
+      while(tries<TRIES) {
+        if (!thing) {
+          console.log("wtf???");
+          console.log(things);
+        }
+        tries+=1;
+        things = HTomb.Utils.shuffle(things);
+        x = things[0].x;
+        y = things[0].y;
+        let r = ROT.RNG.getUniform()*2*Math.PI;
+        let d = ROT.RNG.getUniform()*(MAX-MIN)+MIN;
+        x += Math.round(d*Math.cos(r));
+        y += Math.round(d*Math.sin(r));
+        if (x<1 || y<1 || x>LEVELW-2 || y>LEVELW-2) {
+          continue;
+        }
+        z = (cavern===null) ? HTomb.Tiles.groundLevel(x,y) : cavern.groundLevels[x][y];
+        if (this.validPlace(x,y,z)) {
+          thing = this.spawn().place(x,y,z);
+          things.push(thing);
+        }
+        if (things.length>=N) {
+          break;
+        }
+      }
+      // returns the last thing placed
+      return thing;
     }
   });
 

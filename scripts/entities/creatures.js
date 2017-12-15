@@ -37,6 +37,7 @@ HTomb = (function(HTomb) {
         cr.despawn();
       }
       HTomb.World.creatures[c] = this;
+      return this;
     },
     remove: function() {
       delete HTomb.World.creatures[coord(this.x, this.y, this.z)];

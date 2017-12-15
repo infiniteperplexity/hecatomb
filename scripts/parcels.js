@@ -136,24 +136,14 @@ HTomb = (function(HTomb) {
     cavernMax: 50,
     frequency: 10,
     populate: function(x0,y0,w,h,level) {
-      console.log("placing troglodyte lair at ",x0,y0,level.level);
       let trogs = 5;
-      let trolls = 1;
-      let xyz;
-      for (let i=0; i<trogs; i++) {
-        let t = HTomb.Things.Troglodyte.spawn();
-        // need to pass the cavern level somehow
-        xyz = t.findPlace(x0,y0,w,h,{cavern: level});
+      let trolls = 2;
+      let xyz = HTomb.Things.Troglodyte.findPlace(x0,y0,w,h,{cavern: level});
+      if (xyz) {
+        let last = HTomb.Things.Troglodyte.chainPlace(xyz.x,xyz.y,xyz.z,{n: trogs, cavern: level});
+        xyz = HTomb.Things.Troll.findPlace(last.x-3,last.y-3,6,6,{cavern: level});
         if (xyz) {
-          t.place(xyz.x,xyz.y,xyz.z);
-        }
-      }
-      for (let i=0; i<trolls; i++) {
-        let t = HTomb.Things.Troll.spawn();
-        // need to pass the cavern level somehow
-        xyz = t.findPlace(x0,y0,w,h,{cavern: level});
-        if (xyz) {
-          t.place(xyz.x,xyz.y,xyz.z);
+          HTomb.Things.Troll.chainPlace(xyz.x,xyz.y,xyz.z,{n: trolls, cavern: level});
         }
       }
     }
@@ -187,8 +177,8 @@ HTomb = (function(HTomb) {
   let Footprint = HTomb.Things.Entity.extend({
     template: "Footprint",
     name: "footprint",
-    place: function(x,y,z) {
-      HTomb.Things.Entity.place.call(this,x,y,z);
+    place: function(x,y,z,args) {
+      HTomb.Things.Entity.place.call(this,x,y,z,args);
       this.despawn();
     }
   });
@@ -278,8 +268,7 @@ HTomb = (function(HTomb) {
     frequency: 18,
     cavernMin: 20,
     cavernMax: 50,
-    populate: function(x0,y0,w,h, level) {
-      console.log("placing mushroom cavern at ",x0,y0,level.level);
+    populate: function(x0,y0,w,h,level) {
       let herbs = HTomb.Utils.shuffle(["Skullcap","Lichen","Agaric"]);
       let n = ROT.RNG.getUniformInt(2,3);
       let xyz;
@@ -288,7 +277,7 @@ HTomb = (function(HTomb) {
         let g = HTomb.Things.MushroomPatch.spawn({herb: herbs[0]});
         xyz = g.findPlace(x0,y0,w,h,{mask: mask, cavern: level});
         if (xyz) {
-          g.place(xyz.x,xyz.y,xyz.z);
+          g.place(xyz.x,xyz.y,xyz.z,{cavern: level});
           let addMask = HTomb.Tiles.squaresWithinSquare(xyz.x,xyz.y,xyz.z,3);
           for (let s of addMask) {
             mask[coord(s[0],s[1],s[2])] = true;
@@ -322,24 +311,11 @@ HTomb = (function(HTomb) {
       return false;
     },
     onPlace: function(x,y,z) {
-      let SIZE = 10;
-      for (let i = Math.max(1,x-SIZE); i<=Math.min(LEVELW-2,x+SIZE); i++) {
-        for (let j = Math.max(1,y-SIZE); j<=Math.min(LEVELH-2,y+SIZE); j++) {
-          // this is totally wrong
-          let z = HTomb.Tiles.groundLevel(i,j);
-          if (!HTomb.World.features[coord(i,j,z)] && HTomb.World.covers[z][x][y]===HTomb.Covers.Grass) {
-            let closeness = SIZE - Math.sqrt(Math.pow(i-x,2)+Math.pow(j-y,2));
-            let r = ROT.RNG.getUniformInt(0,99);
-            let rockiness = HTomb.World.generate.rockiness[i][j];
-            let FREQ = -60;
-            if (r>rockiness-FREQ-10*closeness) {
-              if (ROT.RNG.getUniformInt(1,3)===1) {
-                HTomb.Things[this.herb + "Plant"].spawn().place(i,j,z);
-              }
-            }
-          }
-        }
-      }
+      HTomb.Things[this.herb + "Plant"].chainPlace(x,y,z, {
+        min: 1,
+        max: 4,
+        n: 12
+      });
     }
   });
 
@@ -350,6 +326,8 @@ HTomb = (function(HTomb) {
     validPlace: function(x,y,z) {
       if (HTomb.World.features[coord(x,y,z)]) {
         return false;
+      } else if (HTomb.World.tiles[z][x][y]!==HTomb.Tiles.FloorTile && HTomb.World.tiles[z][x][y]!==HTomb.Tiles.UpSlopeTile) {
+        return false;
       } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.Water) {
         return true;
       }
@@ -358,6 +336,8 @@ HTomb = (function(HTomb) {
     validSquare: function(x,y,z) {
       if (HTomb.World.features[coord(x,y,z)]) {
         return false;
+      } else if (HTomb.World.tiles[z][x][y]!==HTomb.Tiles.FloorTile && HTomb.World.tiles[z][x][y]!==HTomb.Tile.UpSlopeTile) {
+        return false;
       } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.Water) {
         return true;
       }
@@ -365,14 +345,13 @@ HTomb = (function(HTomb) {
     },
     onPlace: function(x,y,z,options) {
       options = options || {};
-      let level = options.cavern || {};
-      let SIZE = 10;
-      for (let i = Math.max(1,x-SIZE); i<=Math.min(LEVELW-2,x+SIZE); i++) {
-        for (let j = Math.max(1,y-SIZE); j<=Math.min(LEVELH-2,y+SIZE); j++) {
-          let z = level.groundLevels[i][j];
-          // I think here I'd rather do a "scattering" approach rather than Simplex
-        }
-      }
+      let level = options.cavern || null;
+      HTomb.Things[this.herb + "Plant"].chainPlace(x,y,z, {
+        min: 1,
+        max: 4,
+        n: 12,
+        cavern: level
+      });
     }
   });
 
