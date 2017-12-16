@@ -64,10 +64,10 @@ HTomb = (function(HTomb) {
         try {
           z = (level===null) ? HTomb.Tiles.groundLevel(x,y) : level.groundLevels[x][y];
         } catch(e) {
-          console.log(level);
           console.log(x);
           console.log(y);
-          HTomb.Debug.level = level;
+          console.log(options);
+          console.log(level);
           throw e;
         }
         if (mask[coord(x,y,z)]) {

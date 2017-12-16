@@ -141,6 +141,9 @@ HTomb = (function(HTomb) {
       let xyz = HTomb.Things.Troglodyte.findPlace(x0,y0,w,h,{cavern: level});
       if (xyz) {
         let last = HTomb.Things.Troglodyte.chainPlace(xyz.x,xyz.y,xyz.z,{n: trogs, cavern: level});
+        if (!last) {
+          console.log("failed to place last troglodyte!");
+        }
         xyz = HTomb.Things.Troll.findPlace(last.x-3,last.y-3,6,6,{cavern: level});
         if (xyz) {
           HTomb.Things.Troll.chainPlace(xyz.x,xyz.y,xyz.z,{n: trolls, cavern: level});

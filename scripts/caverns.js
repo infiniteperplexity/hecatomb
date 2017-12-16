@@ -105,6 +105,7 @@ HTomb = (function(HTomb) {
       let zone = 0; 
       let _flood = function(i,j,depth) {
         if (i<=0 || i>=LEVELW-1 || j<=0 || j>=LEVELH-1) {
+          console.log("bailed out from ",i,j,depth);
           return;
         }
         if (grid[i][j]===0 && zoneKeys[i+":"+j]===undefined) {
@@ -112,6 +113,9 @@ HTomb = (function(HTomb) {
           zoneList[zone].push([i,j]);
           for (let dir of ROT.DIRS[8]) {
             let [x,y] = dir;
+            // the recursion error comes in the midst of this stuff, not bailing out
+            // the depth is extremely high
+            console.log("recursing at ",i+x,j+y,depth+1);
             _flood(i+x,j+y,depth+1);
           }
           if (depth===0) {
