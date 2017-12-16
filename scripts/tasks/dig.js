@@ -210,7 +210,6 @@ HTomb = (function(HTomb) {
       var DownSlopeTile = HTomb.Tiles.DownSlopeTile;
       var t = tiles[z][x][y];
       let c = HTomb.World.covers[z][x][y];
-      let downOne = false;
       // this should unforbid items...
       // If there is a slope below, dig out the floor
       if (tiles[z-1][x][y]===UpSlopeTile && HTomb.World.explored[z-1][x][y] && (t===WallTile || t===FloorTile)) {
@@ -235,7 +234,7 @@ HTomb = (function(HTomb) {
           } else {
             HTomb.Things.Mineral.mine(x,y,z-1);
           }
-          downOne = true;
+          z-=1;
         // Otherwise just remove the floor
         } else {
           tiles[z][x][y] = EmptyTile;
@@ -251,20 +250,18 @@ HTomb = (function(HTomb) {
         HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
         if (tiles[z+1][x][y]===DownSlopeTile) {
           tiles[z+1][x][y] = EmptyTile;
-          downOne = true;
+          z-=1;
         }
       } else if (t===EmptyTile) {
         // this shouldn't happen
       }
       // This is buried stuff you dug up, I think? not the mined materials?
       let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
-      if (downOne) {
-        items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();
-      }
       for (let item of items) {
         item.owned = true;
       }
       HTomb.World.validate.cleanNeighbors(x,y,z);
+      HTomb.World.validate.breach(x,y,z);
       let f = HTomb.World.features[coord(x,y,z)];
       f.remove();
       f.despawn();

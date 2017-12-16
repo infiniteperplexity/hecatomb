@@ -269,6 +269,25 @@ HTomb = (function(HTomb) {
       t.liquid.flood(x,y,z);
     }
   };
+  HTomb.World.validate.breach = function(x,y,z) {
+    let check = [coord(x,y,z)];
+    var dirs = HTomb.dirs[26];
+    for (let dir of dirs) {
+      let [dx, dy, dz] = dir;
+      check.push(coord(x+dx, y+dy, z+dy));
+    }
+    for (let square of check) {
+      for (let key in HTomb.World.caverns) {
+        let cavern = HTomb.World.caverns[key];
+        if (cavern.breached===false && square in cavern.squares) {
+          cavern.breach();
+          // there are some weird things that could happen here...
+          // but let's keep the simple approach for now
+          return;
+        }
+      }
+    }
+  };
 
 
   //callback is optional

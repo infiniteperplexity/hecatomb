@@ -12,7 +12,9 @@ HTomb = (function(HTomb) {
     breached: false,
     level: null,
     groundLevels: null,
+    squares: null,
     generate: function() {
+      this.squares = {};
       HTomb.World.caverns.push(this);
       this.groundLevels = HTomb.Utils.multiarray(LEVELW,LEVELH);
       for (let x=0; x<LEVELW; x++) {
@@ -25,6 +27,16 @@ HTomb = (function(HTomb) {
       this.algorithm();
     },
     algorithm: function() { 
+    },
+    breach: function() {
+      this.breached = true;
+      for (let square in this.squares) {
+        let [x,y,z] = HTomb.Utils.decoord(square);
+        let cr = HTomb.World.creatures[square]
+        if (cr && cr.actor && cr.actor.dormant) {
+          cr.actor.dormant = false;
+        }
+      }
     }
   });
 
@@ -161,6 +173,7 @@ HTomb = (function(HTomb) {
               if (cover.mineral) {
                 cover.mineral.mine(x,y,z);
               }
+              this.squares[coord(x,y,z)] = true;
             }
             this.groundLevels[x][y] = z;
           } else {
@@ -188,6 +201,8 @@ HTomb = (function(HTomb) {
                 cover.mineral.mine(x,y,z+1);
               }
               tiles[z+1][x][y] = HTomb.Tiles.DownSlopeTile;
+              this.squares[coord(x,y,z)] = true;
+              this.squares[coord(x,y,z+1)] = true;
             }
           }
         }

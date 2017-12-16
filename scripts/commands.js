@@ -92,6 +92,13 @@ HTomb = (function(HTomb) {
         return;
       }
     }
+    if (HTomb.Debug.digger) {
+      if (dir==='D') {
+        Commands.digDown(x,y,z);
+      } else if (dir!=='U') {
+        Commands.digSide(newx, newy, newz);
+      }
+    } 
     HTomb.GUI.pushMessage("Can't go that way.");
   };
 
@@ -458,6 +465,76 @@ HTomb = (function(HTomb) {
     } else {
       let keyCursor = GUI.getKeyCursor();
       GUI.Contexts.active.hoverTile(keyCursor[0], keyCursor[1]);
+    }
+  };
+
+  Commands.digDown = function(x,y,z) {
+    let t = HTomb.World.tiles[z][x][y];
+    if (t===HTomb.Tiles.UpSlopeTile) {
+      HTomb.World.tiles[z][x][y] = HTomb.Tiles.FloorTile;
+      HTomb.GUI.pushMessage("You dig away the slope.");
+      HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
+      if (HTomb.World.tiles[z+1][x][y] = HTomb.Tiles.DownSlopeTile) {
+        HTomb.World.tiles[z+1][x][y] = HTomb.Tiles.EmptyTile;
+      }
+      HTomb.Time.resumeActors(HTomb.Player);
+    } else if (t===HTomb.Tiles.FloorTile) {
+      t = HTomb.World.tiles[z-1][x][y];
+      if (t===HTomb.Tiles.WallTile) {
+        HTomb.World.tiles[z-1][x][y] = HTomb.Tiles.UpSlopeTile;
+        HTomb.World.tiles[z][x][y] = HTomb.Tiles.DownSlopeTile;
+        let c = HTomb.World.covers[z-1][x][y];
+        if (c && c.mineral) {
+          c.mineral.mine(x,y,z-1);
+        }
+        let items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();
+        for (let item of items) {
+          item.owned = true;
+        }
+        HTomb.World.validate.cleanNeighbors(x,y,z-1);
+        HTomb.World.validate.breach(x,y,z-1);
+        let f = HTomb.World.features[coord(x,y,z-1)];
+        if (f) {
+          f.remove();
+          f.despawn();
+        }
+        HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
+        HTomb.GUI.pushMessage("You dig a hole in the floor.");
+        HTomb.Time.resumeActors(HTomb.Player);
+      } else if (t===HTomb.Tiles.UpSlopeTile) {
+        HTomb.World.tiles[z][x][y] = HTomb.Tiles.DownSlopeTile;
+        HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
+        HTomb.GUI.pushMessage("You dig a hole in the floor.");
+        HTomb.Time.resumeActors(HTomb.Player);
+      } else if (t===HTomb.Tiles.FloorTile || t===HTomb.Tiles.EmptyTile) {
+        HTomb.World.tiles[z][x][y] = HTomb.Tiles.EmptyTile;
+        HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
+        HTomb.GUI.pushMessage("You dig a hole in the floor.");
+        HTomb.Time.resumeActors(HTomb.Player);
+      }
+
+    }
+  };
+  Commands.digSide = function(x,y,z) {
+    if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.WallTile) {
+      HTomb.World.tiles[z][x][y] = HTomb.Tiles.FloorTile;
+      let c = HTomb.World.covers[z][x][y];
+      if (c && c.mineral) {
+        c.mineral.mine(x,y,z);
+      }
+      let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
+      for (let item of items) {
+        item.owned = true;
+      }
+      HTomb.World.validate.cleanNeighbors(x,y,z);
+      HTomb.World.validate.breach(x,y,z);
+      let f = HTomb.World.features[coord(x,y,z)];
+      if (f) {
+        f.remove();
+        f.despawn();
+      }
+      HTomb.GUI.pushMessage("You dig a tunnel into the wall.");
+      HTomb.Time.resumeActors(HTomb.Player);
     }
   };
   return HTomb;

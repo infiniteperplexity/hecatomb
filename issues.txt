@@ -41,3 +41,5 @@
 - maybe "Yield" values of <1 are a drop rate?  Yeah, I like that!
 
 - starting locations and graveyards seem to break the rules sometimes
+- Sometimes ant colonies end up underwater.
+- map should maybe show cave levels.

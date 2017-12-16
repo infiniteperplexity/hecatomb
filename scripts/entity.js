@@ -61,6 +61,12 @@ HTomb = (function(HTomb) {
       while (valid===false && tries<TRIES) {
         x = ROT.RNG.getUniformInt(x0,x0+w);
         y = ROT.RNG.getUniformInt(y0,y0+h);
+        if (x>LEVELW-2) {
+          x = LEVELW-2;
+        }
+        if (y>LEVELH-2) {
+          y = LEVELH-2;
+        }
         try {
           z = (level===null) ? HTomb.Tiles.groundLevel(x,y) : level.groundLevels[x][y];
         } catch(e) {
