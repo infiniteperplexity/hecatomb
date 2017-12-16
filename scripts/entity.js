@@ -202,12 +202,15 @@ HTomb = (function(HTomb) {
       let MAX = options.max || 4;
       let TRIES = options.tries || 1000;
       let cavern = options.cavern || null;
+      let callback = options.callback || function() {};
       let tries = 0;
       let thing = this.spawn();
       if (thing.validPlace(x,y,z)) {
         thing.place(x,y,z);
       }
+      callback(thing);
       let things = [thing];
+      let ordered = [thing];
       while(tries<TRIES) {
         if (!thing) {
           console.log("wtf???");
@@ -228,13 +231,15 @@ HTomb = (function(HTomb) {
         if (this.validPlace(x,y,z)) {
           thing = this.spawn().place(x,y,z);
           things.push(thing);
+          ordered.unshift(thing);
+          callback(thing);
         }
         if (things.length>=N) {
           break;
         }
       }
       // returns the last thing placed
-      return thing;
+      return ordered;
     }
   });
 

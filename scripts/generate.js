@@ -403,7 +403,7 @@ HTomb = (function(HTomb) {
       if (caverns[i].logme) {
         console.log("dealing "+caverns[i].describe());
       }
-      //caverns[i].deal();
+      caverns[i].deal();
     }
   }
 

@@ -15,6 +15,7 @@ HTomb = (function(HTomb) {
     // unimplemented
     team: "AnimalTeam",
     //allegiance: null,
+    dormant: false,
     angered: false,
     acted: false,
     actionPoints: 16,
@@ -78,6 +79,10 @@ HTomb = (function(HTomb) {
       //}
       // If the creature has already acted, bail out
       HTomb.Events.publish({type: "Act", actor: this});
+      if (this.dormant) {
+        this.actionPoints = Math.max(this.actionPoints-16,0);
+        this.acted = true;
+      }
       if (this.acted===false) {
         this.alert.act(this);
       }

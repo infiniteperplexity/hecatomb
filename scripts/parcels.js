@@ -140,13 +140,19 @@ HTomb = (function(HTomb) {
       let trolls = 2;
       let xyz = HTomb.Things.Troglodyte.findPlace(x0,y0,w,h,{cavern: level});
       if (xyz) {
-        let last = HTomb.Things.Troglodyte.chainPlace(xyz.x,xyz.y,xyz.z,{n: trogs, cavern: level});
-        if (!last) {
-          console.log("failed to place last troglodyte!");
-        }
+        let placed = HTomb.Things.Troglodyte.chainPlace(xyz.x,xyz.y,xyz.z,
+          { n: trogs,
+            cavern: level,
+            callback: function(cr) {cr.actor.dormant=true;}
+          });
+        let last = placed[0];
         xyz = HTomb.Things.Troll.findPlace(last.x-3,last.y-3,6,6,{cavern: level});
         if (xyz) {
-          HTomb.Things.Troll.chainPlace(xyz.x,xyz.y,xyz.z,{n: trolls, cavern: level});
+          HTomb.Things.Troll.chainPlace(xyz.x,xyz.y,xyz.z,{
+            n: trolls,
+            cavern: level,
+            callback: function(cr) {cr.actor.dormant=true;}
+          });
         }
       }
     }
@@ -314,11 +320,11 @@ HTomb = (function(HTomb) {
       return false;
     },
     onPlace: function(x,y,z) {
-      //HTomb.Things[this.herb + "Plant"].chainPlace(x,y,z, {
-      //  min: 1,
-      //  max: 4,
-      //  n: 12
-      //});
+      HTomb.Things[this.herb + "Plant"].chainPlace(x,y,z, {
+        min: 1,
+        max: 4,
+        n: 12
+      });
     }
   });
 
