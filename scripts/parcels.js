@@ -314,11 +314,11 @@ HTomb = (function(HTomb) {
       return false;
     },
     onPlace: function(x,y,z) {
-      HTomb.Things[this.herb + "Plant"].chainPlace(x,y,z, {
-        min: 1,
-        max: 4,
-        n: 12
-      });
+      //HTomb.Things[this.herb + "Plant"].chainPlace(x,y,z, {
+      //  min: 1,
+      //  max: 4,
+      //  n: 12
+      //});
     }
   });
 

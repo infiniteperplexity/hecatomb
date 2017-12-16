@@ -31,7 +31,8 @@ HTomb = (function(HTomb) {
 
   HTomb.World.generate.revised = function() {
     // assign random noise for elevation
-    randomizeElevation();
+    timeIt("elevation",randomizeElevation);
+    //randomizeElevation();
     // assign random noise for rockiness
     randomizeRockiness();
     // assign random biomes to corners and modify elevation and rockiness
@@ -51,9 +52,11 @@ HTomb = (function(HTomb) {
     // place lava
     placeLava();
     // place caverns
-    generateCaverns();
+    timeIt("cavesn",generateCaverns);
+    //generateCaverns();
     // randomly populate the map
-    dealParcels();
+    timeIt("parcels",dealParcels);
+    //dealParcels();
     // fill in trees and boulders
     finishRockiness();
 
@@ -400,7 +403,7 @@ HTomb = (function(HTomb) {
       if (caverns[i].logme) {
         console.log("dealing "+caverns[i].describe());
       }
-      caverns[i].deal();
+      //caverns[i].deal();
     }
   }
 

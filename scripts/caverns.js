@@ -103,19 +103,26 @@ HTomb = (function(HTomb) {
       let zoneKeys = {};
       let zoneList = [[]];
       let zone = 0; 
+      HTomb.Debug.grid = grid;
+      HTomb.Debug.zoneKeys = zoneKeys;
       let _flood = function(i,j,depth) {
         if (i<=0 || i>=LEVELW-1 || j<=0 || j>=LEVELH-1) {
-          console.log("bailed out from ",i,j,depth);
           return;
         }
-        if (grid[i][j]===0 && zoneKeys[i+":"+j]===undefined) {
-          zoneKeys[i+":"+j] = zone;
+        if (grid[i][j]===0 && zoneKeys[coord(i,j,0)]===undefined) {
+          zoneKeys[coord(i,j,0)] = zone;
           zoneList[zone].push([i,j]);
-          for (let dir of ROT.DIRS[8]) {
+          for (let dir of ROT.DIRS[4]) {
             let [x,y] = dir;
             // the recursion error comes in the midst of this stuff, not bailing out
-            // the depth is extremely high
-            console.log("recursing at ",i+x,j+y,depth+1);
+            //  depth is extremely high
+            // and when it happens, zone is zero all the way untiul the end
+            // if (depth>250) {
+            //   console.log("went deep...");
+            //   console.log(i,x,j,y);
+            //   console.log(depth);
+            //   console.log(zone);
+            // }
             _flood(i+x,j+y,depth+1);
           }
           if (depth===0) {
@@ -125,7 +132,7 @@ HTomb = (function(HTomb) {
         }
       };
       for (let i=1; i<LEVELW-1; i++) {
-        for (let j=1; j<LEVELW-1; j++) {
+        for (let j=1; j<LEVELH-1; j++) {
           _flood(i,j,0);
         }
       }
@@ -137,7 +144,7 @@ HTomb = (function(HTomb) {
       for (let x=1; x<LEVELW-1; x++) {
         for (let y=1; y<LEVELH-1; y++) {
           if (grid[x][y]===0) {
-            let zn = zoneKeys[x+":"+y];
+            let zn = zoneKeys[coord(x,y,0)];
             if (zoneList[zn].length<100) {
               //again, weird
               this.groundLevels[x][y] = z0;
