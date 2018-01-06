@@ -502,7 +502,7 @@ HTomb = (function(HTomb) {
       // should this hunt in sight range first?
       if (actor.target===null) {
         var zombies = HTomb.World.creatures.filter(function(v,k,o) {
-          return (v.template==="Zombie" && actor.isHostile(v) && HTomb.Tiles.isEnclosed(v.x,v.y,v.z)===false);
+          return (v.isA("Zombie") && actor.isHostile(v) && HTomb.Tiles.isEnclosed(v.x,v.y,v.z)===false);
         });
         if (zombies.length>0) {
           var e = actor.entity;

@@ -108,7 +108,7 @@ HTomb = (function(HTomb) {
       let that = this;
       function castBolt(x,y,z) {
         let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
-        if (cr && cr.template==="Zombie") {
+        if (cr && cr.isA("Zombie")) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
           that.spend();
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
@@ -157,7 +157,7 @@ HTomb = (function(HTomb) {
           return;
         }
         let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
-        if (cr && cr.template==="Zombie") {
+        if (cr && cr.isA("Zombie")) {
           HTomb.GUI.Panels.menu.middle = ["%c{lime}Sacrifice your flesh to heal " + cr.describe({article: "indefinite"})+"."];
         } else if (cr) {
           HTomb.GUI.Panels.menu.middle = ["%c{lime}Siphon flesh from this creature to heal your wounds."];

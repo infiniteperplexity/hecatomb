@@ -43,3 +43,25 @@
 - starting locations and graveyards seem to break the rules sometimes
 - Sometimes ant colonies end up underwater.
 - map should maybe show cave levels.
+
+
+So...I've been blocked on this monster variant issue for quite a while.  And I'm realizing that maybe that's in part because I'm mistaking several different problems for one unified thing.
+
+So the basic issue is that we could have these sorts of things:
+- Humans.
+- Zombies.
+- Zombie humans.
+- Archers.
+- Human archers.
+- Zombie archer humans.
+- Zombie archer human champions.
+...and so on.
+
+And I think there are actually three problems here:
+1) One is how to structure these things, and I honestly think it's pretty straightforward:
+- Everything has one and only one species, so that's the base template.
+- "Zombie", "Archer", and "Champion" are a bit more complicated.
+	- "Zombie" could be its own behavior, or it could be a modifier that adds behaviors such as "Decaying".  Likewise with "Archer" and "Champion"...some of those things definitely need to do more modifying attributes than adding behaviors.
+	- So, "Zombie" could be a standardized "applicator" that attaches to whatever...or, "Elf Zombie" and "Goblin Zombie" could be prefab things; zombification could affect them differently.
+2) In addition to that structure, we need a convenient way to make those things.  Arguably, you could do it with just "spawn()" arguments.
+3) Finally, we need some way of flagging these things...how do we check whether a certain Elf is a Zombie?

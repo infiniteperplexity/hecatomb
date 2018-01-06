@@ -8,6 +8,7 @@ HTomb = (function(HTomb) {
     spawnIds: {},
     spawnId: -1,
     components: [],
+    tags: [],
     resetSpawnIds: function() {
       this.spawnIds = {};
       this.maxSpawnId = -1;
@@ -192,6 +193,38 @@ HTomb = (function(HTomb) {
         child.onDefine(args);
       }
       return child;
+    },
+    isA: function(arg) {
+      let that = this;
+      do {
+        if (that.template===arg) {
+          return true;
+        }
+        that = that.__proto__;
+      } while (that.template);
+      for (let tag of this.tags) {
+        if (tag===arg) {
+          return true;
+        }
+      }
+      return false;
+    },
+    isAny: function(args) {
+      for (let arg of args) {
+        if (this.isA(arg)) {
+          return true;
+        }
+      }
+      return false;
+    },
+    tagAs: function(tag) {
+      if (this.hasOwnProperty("tags")===false) {
+        this.tags = [];
+      }
+      this.tags.push(tag);
+    },
+    // ambiguous how or if this show work...
+    removeTag: function(tag) {
     }
   };
   // The global list of known templates

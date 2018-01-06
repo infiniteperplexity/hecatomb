@@ -258,43 +258,60 @@ HTomb = (function(HTomb) {
   
   
 
+  // Creature.extend({
+  //   template: "Zombie",
+  //   name: "zombie",
+  //   leavesCorpse: false,
+  //   symbol: "z",
+  //   fg: "#99FF66",
+  //   onSpawn: function(args) {
+  //     args = args || {};
+  //     if (args.sourceCreature) {
+  //       let creature = HTomb.Things[args.sourceCreature];
+  //       this.name = creature.name + " " + this.name;
+  //     }
+  //     return this;
+  //   },
+  //   Components: {
+  //     Actor: {
+  //       goals: ["ServeMaster"]
+  //     },
+  //     Movement: {swims: true},
+  //     Equipper: {},
+  //     Sight: {},
+  //     Worker: {},
+  //     Inventory: {capacity: 2},
+  //     Attacker: {},
+  //     Defender: {
+  //       toughness: 1
+  //     },
+  //     Distinctive: {
+  //       fgRandomRed: 15,
+  //       fgRandomGreen: 15,
+  //       fgRandomBlue: 15
+  //   //         symbol: ["z","\u01B6","\u017A","\u017E",
+  //   // "\u1E91","\u0291","\u017C","\u1E93","\u0225",
+  //   // "\u1E95","\u0290","\u0240","\u1D22","\u0179"],
+  //   // FF5A, A641 A643 1DBB 1DBD 1DBC 1D76 1BA6 1BA7 0291  007A
+  //     },
+  //     Decaying: {}
+  //   }
+  // });
+
   Creature.extend({
-    template: "Zombie",
-    name: "zombie",
-    leavesCorpse: false,
-    symbol: "z",
-    fg: "#99FF66",
-    onSpawn: function(args) {
-      args = args || {};
-      if (args.sourceCreature) {
-        let creature = HTomb.Things[args.sourceCreature];
-        this.name = creature.name + " " + this.name;
-      }
-      return this;
-    },
+    template: "Human",
+    name: "human",
+    symbol: "@",
+    fg: "white",
     Components: {
-      Actor: {
-        goals: ["ServeMaster"]
-      },
+      Actor: {},
       Movement: {swims: true},
       Equipper: {},
       Sight: {},
       Worker: {},
       Inventory: {capacity: 2},
       Attacker: {},
-      Defender: {
-        toughness: 1
-      },
-      Distinctive: {
-        fgRandomRed: 15,
-        fgRandomGreen: 15,
-        fgRandomBlue: 15
-    //         symbol: ["z","\u01B6","\u017A","\u017E",
-    // "\u1E91","\u0291","\u017C","\u1E93","\u0225",
-    // "\u1E95","\u0290","\u0240","\u1D22","\u0179"],
-    // FF5A, A641 A643 1DBB 1DBD 1DBC 1D76 1BA6 1BA7 0291  007A
-      },
-      Decaying: {}
+      Defender: {}
     }
   });
 

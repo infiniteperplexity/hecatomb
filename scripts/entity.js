@@ -179,6 +179,8 @@ HTomb = (function(HTomb) {
       }
     },
     extend: function(args) {
+      // this logic makes it so the Zombie template has behavior directly attached
+      // I think this is only needed in edge cases
       let template = HTomb.Things.Thing.extend.call(this, args);
       template.components = [];
       for (let b in template.Components) {
