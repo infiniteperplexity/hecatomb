@@ -57,6 +57,9 @@ HTomb = (function(HTomb) {
         fgRandomRed: 15,
         fgRandomGreen: 15,
         fgRandomBlue: 15
+        // ,
+        // symbols: ["z","\u01B6","\u017A","\u017E",
+        //   "\u1E91","\u0291","\u017C","\u1E93","\u0225",
       },
       Decaying: {}
     },
@@ -72,5 +75,65 @@ HTomb = (function(HTomb) {
     }
   });
   
+
+
+  Blueprint.extend({
+    template: "Priest",
+    name: "priest",
+    fg: "#FFFFDD",
+    Components: {
+      Actor: {
+        // is this always the case?
+        team: "HumanityTeam"
+      },
+      Attacker: {
+        damage: {
+          level: 1,
+          type: "Piercing"
+        }
+      }
+    },
+    spawn: function (args) {
+      args = this.addComponents(args);
+      args.fg = this.fg;
+      args.name = "human priest";
+      args.tags = args.tags || [];
+      args.tags.push(this.template);
+      return HTomb.Things.Human.spawn(args);
+    }
+  });
+
+  Blueprint.extend({
+      template: "Necromancer",
+      name: "necromancer",
+      fg: "#DD66FF",
+      Components: {
+        Actor: {
+          team: "PlayerTeam"
+        },
+        Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask","RepairTask"]},
+        Owner: {},
+        SpellCaster: {spells: ["RaiseZombie"]},
+        Attacker: {
+          damage: {
+            level: 1
+          },
+          accuracy: 1
+        },
+        Defender: {
+          evasion: 1,
+          toughness: 1,
+        }
+      },
+      spawn: function (args) {
+        args = this.addComponents(args);
+        args.fg = this.fg;
+        args.name = this.name;
+        args.tags = args.tags || [];
+        args.tags.push(this.template);
+        return HTomb.Things.Human.spawn(args);
+      }
+  });
+
   return HTomb;
 })(HTomb);

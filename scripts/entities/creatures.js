@@ -75,35 +75,7 @@ HTomb = (function(HTomb) {
 
   var b = HTomb.Things;
 
-  Creature.extend({
-      template: "Necromancer",
-      name: "necromancer",
-      symbol: "@",
-      //symbol: "\u00d1",
-      fg: "#DD66FF",
-      Components: {
-        Movement: {swims: true},
-        Inventory: {},
-        Sight: {},
-        Actor: {
-          team: "PlayerTeam"
-        },
-        Equipper: {},
-        Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask","RepairTask"]},
-        Owner: {},
-        SpellCaster: {spells: ["RaiseZombie"]},
-        Attacker: {
-          damage: {
-            level: 1
-          },
-          accuracy: 1
-        },
-        Defender: {
-          evasion: 1,
-          toughness: 1,
-        }
-      }
-  });
+  
 
   Creature.extend({
     template: "Dryad",
@@ -222,27 +194,6 @@ HTomb = (function(HTomb) {
       Actor: {
         team: "RedAntTeam",
         goals: ["ServeMaster"]
-      },
-      Movement: {},
-      Sight: {},
-      Attacker: {
-        damage: {
-          level: 1,
-          type: "Piercing"
-        }
-      },
-      Defender: {}
-    }
-  });
-
-  Creature.extend({
-    template: "Priest",
-    name: "priest",
-    symbol: "@",
-    fg: "#FFFFDD",
-    Components: {
-      Actor: {
-        team: "HumanityTeam"
       },
       Movement: {},
       Sight: {},
