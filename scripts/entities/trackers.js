@@ -129,5 +129,17 @@ HTomb = (function(HTomb) {
     // this one will probably get a special, direct reference, not an event
   });
 
+  Tracker.extend({
+    template: "HumanityTracker",
+    name: "humanitytracker",
+    listens: ["TurnBegin"],
+    onTurnBegin: function() {
+      let cycle = HTomb.Time.dailyCycle;
+      if (cycle.day===1 && cycle.hour===HTomb.Constants.DAWN && cycle.minute===0) {
+        HTomb.Things.PeasantMob.muster();
+      }
+    }
+  });
+
 return HTomb;
 })(HTomb);

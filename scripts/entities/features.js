@@ -307,7 +307,7 @@ HTomb = (function(HTomb) {
       },
       Craftable: {
         labor: 20,
-        ingredients: {WoodPlank: 1}
+        ingredients: {WoodPlank: 3}
       },
       Fixture: {
         tooltip: "(A door blocks your enemies but not you or your minions.)",

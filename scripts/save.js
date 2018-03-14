@@ -115,7 +115,11 @@ HTomb = (function(HTomb) {
           return null;
         } else if (key==="components") {
           return undefined;
+        } else if (key==="Components") {
+          return undefined;
         } else if (key==="onlist") {
+          return undefined;
+        } else if (key==="Template") {
           return undefined;
         }
         // if it has special instructions, use those to stringify
@@ -148,6 +152,7 @@ HTomb = (function(HTomb) {
       });
       return json;
     } catch(e) {
+      console.log(e);
       console.log("messed up stringifying");
       console.log(obj);
       throw e;

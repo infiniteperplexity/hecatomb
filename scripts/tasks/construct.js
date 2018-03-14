@@ -10,6 +10,7 @@ HTomb = (function(HTomb) {
     description: "create a structure",
     bg: "#553300",
     makes: null,
+    labor: null,
     structures: ["GuardPost","Workshop","Stockpile","BlackMarket","Sanctum"],
     validTile: function(x,y,z) {
       if (HTomb.World.explored[z][x][y]!==true) {
@@ -80,6 +81,7 @@ HTomb = (function(HTomb) {
             if (task) {
               //Bugs have occurred here...I may have fixed them...
               task.structure = w;
+              task.labor = w.labor;
               task.makes = w.template+"Feature";
               if (w.height!==null && w.width!==null) {
                 if (HTomb.Debug.noingredients) {

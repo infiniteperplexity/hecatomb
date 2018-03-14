@@ -16,6 +16,7 @@ HTomb = (function(HTomb) {
     y: null,
     z: null,
     placed: false,
+    labor: 10,
     squares: [],
     features: [],
     symbols: [],

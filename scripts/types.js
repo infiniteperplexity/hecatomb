@@ -28,7 +28,7 @@ HTomb = (function(HTomb) {
       let child = Object.create(this);
       // I think this is safe because we never modify Types after creation
       child = Object.assign(child, args);
-      child.parent = this;
+      child.parent = this.template;
       HTomb.Types[child.template] = child;
       // ready the pluralized name
       if (args.plural) {

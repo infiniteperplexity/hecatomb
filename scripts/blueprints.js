@@ -51,7 +51,6 @@ HTomb = (function(HTomb) {
         goals: ["ServeMaster"]
       },
       Defender: {
-        toughness: 1
       },
       Distinctive: {
         fgRandomRed: 15,
@@ -103,6 +102,34 @@ HTomb = (function(HTomb) {
     }
   });
 
+
+  Blueprint.extend({
+    template: "Peasant",
+    name: "peasant",
+    fg: "brown",
+    Components: {
+      Actor: {
+        goals: ["HuntPlayer"],
+        // is this always the case?
+        team: "HumanityTeam"
+      },
+      Attacker: {
+        damage: {
+          level: 1,
+          type: "Crushing"
+        }
+      }
+    },
+    spawn: function (args) {
+      args = this.addComponents(args);
+      args.fg = this.fg;
+      args.name = "human peasant";
+      args.tags = args.tags || [];
+      args.tags.push(this.template);
+      return HTomb.Things.Human.spawn(args);
+    }
+  });
+
   Blueprint.extend({
       template: "Necromancer",
       name: "necromancer",
@@ -118,10 +145,10 @@ HTomb = (function(HTomb) {
           damage: {
             level: 1
           },
-          accuracy: 1
+          accuracy: 0
         },
         Defender: {
-          evasion: 1,
+          evasion: 0,
           toughness: 1,
         }
       },

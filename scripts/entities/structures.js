@@ -18,7 +18,7 @@ HTomb = (function(HTomb) {
        {},
        {WoodPlank: 1},
        {},
-       {Rock: 2},
+       {Rock: 1, Flint: 1},
        {},
        {WoodPlank: 1},
        {},
@@ -250,7 +250,7 @@ HTomb = (function(HTomb) {
       let v = event.target;
       let m = event.modifiers;
       if (v.minion && v.minion.master && v.minion.master===this.owner) {
-        if (HTomb.Path.quickDistance(this.x, this.y, this.z, v.x, v.y, v.z)<s.defenseRange) {
+        if (HTomb.Path.quickDistance(this.x, this.y, this.z, v.x, v.y, v.z)<this.defenseRange) {
           m.evasion = Math.max(m.evasion, this.defenseBonus);
         }
       }
@@ -321,9 +321,9 @@ HTomb = (function(HTomb) {
     },
     tooltip: "(The guard post warns of incoming attacks and provides a rallying point for defenders.)",
     ingredients: [
-      {},{},{},
-      {},{Rock:1,WoodPlank:1},{},
-      {},{},{}
+      {},{Rock: 1},{},
+      {Rock: 1},{WoodPlank: 2},{Rock: 1},
+      {},{Rock: 1},{}
     ],
     symbols: ["\u2694",".","\u2658",".",".",".","\u2658",".","\u2694"],
     fgs: ["#BBBBBB",HTomb.Constants.FLOORFG,"#BBBBBB",HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,HTomb.Constants.FLOORFG,"#BBBBBB",HTomb.Constants.FLOORFG,"#BBBBBB"],

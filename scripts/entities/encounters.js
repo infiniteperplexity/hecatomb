@@ -16,7 +16,7 @@ HTomb = (function(HTomb) {
     observed: true,
     blurb: "There is some kind of encounter going on!",
     alert: function() {
-      let structures = HTomb.Player.master.structures;
+      let structures = HTomb.Player.owner.structures;
       for (let s of structures) {
         if (s.template==="GuardPost") {
           HTomb.GUI.alert(this.blurb);
@@ -115,12 +115,12 @@ HTomb = (function(HTomb) {
             coords.push([s,y]);
           }
         } else if (edge===3) {
-          x = LEVELW-1;
+          x = LEVELW-2;
           for (let s of line) {
             coords.push([x,s]);
           }
         } else if (edge===4) {
-          y = LEVELH-1;
+          y = LEVELH-2;
           for (let s of line) {
             coords.push([s,y]);
           }
@@ -144,17 +144,19 @@ HTomb = (function(HTomb) {
     template: "PeasantMob",
     name: "angry peasant mob",
     listens: ["TurnBegin"],
-    blurb: "A mob of angry peasants approaches, determined to end your foul research!",
+    blurb: "A mob of angry peasants approaches the borders of your domain, determined to end your foul research!",
     onTurnBegin: function(event) {
-      if (HTomb.Time.dailyCycle.turn===1800) {
-        this.muster();
-      }
+      // if (HTomb.Time.dailyCycle.turn===200) {
+      //   this.muster();
+      // }
     },
     onSpawn: function(args) {
-      let r = ROT.RNG.getUniformInt(3,6);
+      //let r = ROT.RNG.getUniformInt(3,6);
+      let r = 2;
       for (let i=0; i<r; i++) {
         this.addCreature(HTomb.Things.Peasant.spawn());
       }
+      this.addCreature(HTomb.Things.Wolfhound.spawn());
       HTomb.Debug.peasants = this.creatures;
     },
     onPlace: function(x,y,z,args) {

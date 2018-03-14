@@ -97,27 +97,26 @@ HTomb = (function(HTomb) {
     }
   });
 
-
   Creature.extend({
-    template: "Peasant",
-    name: "peasant",
-    symbol: "@",
+    template: "Wolfhound",
+    name: "wolfhound",
+    symbol: "w",
     fg: "brown",
     Components: {
       Actor: {
         goals: ["HuntPlayer"],
         team: "HumanityTeam"
       },
-      Movement: {},
-      Sight: {},
       Attacker: {
         damage: {
-          type: "Crushing"
+          level: 1,
+          type: "Piercing"
         }
       },
       Defender: {}
     }
   });
+
 
   Creature.extend({
     template: "Hunter",

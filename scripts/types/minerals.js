@@ -15,14 +15,20 @@ HTomb = (function(HTomb) {
     hardness: 0,
     mine: function(x,y,z,owner) {
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
-      owner = owner || HTomb.Player;
+      if (owner===undefined) {
+        owner = HTomb.Player;
+      }
       for (let i in this.yields) {
         // may not drop if n<1
         if (ROT.RNG.getUniform()<this.yields[i]) {
           let item = HTomb.Things[i].spawn({n: (this.yields[i]<1) ? 1 : this.yields[i]});
           item.place(x,y,z);
           // is this always true?
-          item.owned = true;
+          if (owner) {
+            item.owned = true;
+          } else {
+            item.owned = false;
+          }
         }
       }
     },

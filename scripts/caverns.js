@@ -171,7 +171,7 @@ HTomb = (function(HTomb) {
               tiles[z][x][y] = HTomb.Tiles.FloorTile;
               let cover = HTomb.World.covers[z][x][y];
               if (cover.mineral) {
-                cover.mineral.mine(x,y,z);
+                cover.mineral.mine(x,y,z,false);
               }
               this.squares[coord(x,y,z)] = true;
             }
@@ -198,7 +198,7 @@ HTomb = (function(HTomb) {
               tiles[z][x][y] = HTomb.Tiles.UpSlopeTile;
               let cover = HTomb.World.covers[z+1][x][y];
               if (cover.mineral) {
-                cover.mineral.mine(x,y,z+1);
+                cover.mineral.mine(x,y,z+1,false);
               }
               tiles[z+1][x][y] = HTomb.Tiles.DownSlopeTile;
               this.squares[coord(x,y,z)] = true;

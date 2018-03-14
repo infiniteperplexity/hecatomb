@@ -86,7 +86,7 @@ HTomb = (function(HTomb) {
         }
       },
       Craftable: {
-        ingredients: {"WoodPlank": 1, "Rock": 1}
+        ingredients: {"WoodPlank": 1, "Flint": 1}
       }
     }
   });

@@ -116,7 +116,7 @@ HTomb = (function(HTomb) {
         // claim nearby items on ground
         for (let pile in HTomb.World.items) {
           for (let item of HTomb.World.items[pile]) {
-            if (HTomb.Path.quickDistance(xyz.x,xyz.y,xyz.z,item.x,item.y,item.z)<=10) {
+            if (HTomb.Path.quickDistance(xyz.x,xyz.y,xyz.z,item.x,item.y,item.z)<=10 && Math.abs(xyz.z-item.z<=3)) {
               if (HTomb.World.tiles[coord(item.x,item.y,item.z)]!==HTomb.Tiles.WallTile) {
                 item.owned = true;
               }
@@ -403,6 +403,7 @@ HTomb = (function(HTomb) {
         for (let j=y-dy; j<=y+dy; j++) {
           if (HTomb.World.tiles[z][i][j]!==HTomb.Tiles.FloorTile) {
             return false;
+          // this check appears to fail at its purpose sometimes
           } else if (HTomb.World.features[coord(i,j,z)]) {
             return false;
           }

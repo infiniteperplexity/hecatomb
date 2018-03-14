@@ -196,8 +196,9 @@ HTomb = (function(HTomb) {
     work: function() {
       let f = HTomb.World.features[coord(this.x, this.y, this.z)];
       let toughness = (f && f.defender) ? f.defender.toughness : 5;
-      if (this.labor<=0 || this.labor===null) {
-        this.labor = Math.ceil(2*toughness/3);
+      //if (this.labor<=0 || this.labor===null) {
+      if (this.labor===null) {
+        this.labor = (f && f.harvestable) ? f.harvestable.labor : Math.ceil(2*toughness/3);
       }
       this.labor-=this.assignee.worker.getLabor();
       if (this.labor<=0) {
@@ -210,8 +211,10 @@ HTomb = (function(HTomb) {
           f.defender.tallyWounds();
         } else {
           this.wounds-=1;
-          if (this.wounds<=0 && f.harvestable) {
-            f.harvestable.harvest();
+          if (this.wounds<=0) {
+            if (f.harvestable) {
+              f.harvestable.harvest();
+            }
             f.destroy();
           }
         }

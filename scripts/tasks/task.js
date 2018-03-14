@@ -345,6 +345,9 @@ HTomb = (function(HTomb) {
     },
     begin: function() {
       let f = HTomb.Things.IncompleteFeature.spawn({makes: this.makes});
+      if (this.labor) {
+        f.labor = this.labor;
+      }
       f.place(this.x,this.y,this.z);
     },
     work: function() {
@@ -411,7 +414,7 @@ HTomb = (function(HTomb) {
       if (args.makes) {
         let makes = HTomb.Things[args.makes];
         this.makes = args.makes;
-        this.labor = makes.fixture.labor || this.labor;
+        this.labor = args.labor || makes.fixture.labor || this.labor;
         this.effort = makes.fixture.effort || this.effort;
         this.symbol = makes.fixture.incompleteSymbol || this.symbol;
         this.fg = makes.fixture.incompleteFg || makes.fg || this.fg;

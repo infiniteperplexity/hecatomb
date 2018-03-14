@@ -123,7 +123,7 @@ HTomb = (function(HTomb) {
     }
     HTomb.Events.unsubscribe(Views.Creature,"PlayerActive");
     HTomb.Events.subscribe(Views.Structures, "PlayerActive");
-    w = w || HTomb.Player.master.structures[0] || null;
+    w = w || HTomb.Player.owner.structures[0] || null;
     Views.Structures.selectedStructure = w;
     if (w===null) {
       GUI.Contexts.active = GUI.Contexts.structures;
@@ -220,20 +220,20 @@ HTomb = (function(HTomb) {
       Views.Structures.selectedStructure.unhighlight();
     }
     var p = HTomb.Player;
-    if (Views.Structures.selectedStructure===null && p.master.structures.length>0) {
-      p = p.master.structures[0];
-    } else if (p.master.structures.indexOf(Views.Structures.selectedStructure)===-1) {
+    if (Views.Structures.selectedStructure===null && p.owner.structures.length>0) {
+      p = p.owner.structures[0];
+    } else if (p.owner.structures.indexOf(Views.Structures.selectedStructure)===-1) {
       Views.Structures.selectedStructure = null;
       HTomb.GUI.reset();
       return;
     } else {
-      let i = p.master.structures.indexOf(Views.Structures.selectedStructure);
-      if (i===p.master.structures.length-1) {
+      let i = p.owner.structures.indexOf(Views.Structures.selectedStructure);
+      if (i===p.owner.structures.length-1) {
         i = 0;
       } else {
         i+=1;
       }
-      p = p.master.structures[i];
+      p = p.owner.structures[i];
     }
     Views.Structures.selectedStructure = p;
     Views.Structures.displayStructureInfo(p);
@@ -249,20 +249,20 @@ HTomb = (function(HTomb) {
       Views.Structures.selectedStructure.unhighlight();
     }
     var p = HTomb.Player;
-    if (Views.Structures.selectedStructure===null && p.master.structures.length>0) {
-      let w = p.master.structures[p.master.structures.length-1];
-    } else if (p.master.structures.indexOf(Views.Structures.selectedStructure)===-1) {
+    if (Views.Structures.selectedStructure===null && p.owner.structures.length>0) {
+      let w = p.owner.structures[p.owner.structures.length-1];
+    } else if (p.owner.structures.indexOf(Views.Structures.selectedStructure)===-1) {
       Views.Structures.selectedStructure = null;
       HTomb.GUI.reset();
       return;
     } else {
-      var i = p.master.structures.indexOf(Views.Structures.selectedStructure);
+      var i = p.owner.structures.indexOf(Views.Structures.selectedStructure);
       if (i===0) {
-        i = p.master.structures.length-1;;
+        i = p.owner.structures.length-1;;
       } else {
         i-=1;
       }
-      let w = p.master.structures[i];
+      let w = p.owner.structures[i];
     }
     Views.Structures.selectedStructure = w;
     Views.Structures.displayStructureInfo(w);

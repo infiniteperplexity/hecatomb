@@ -65,3 +65,46 @@ And I think there are actually three problems here:
 	- So, "Zombie" could be a standardized "applicator" that attaches to whatever...or, "Elf Zombie" and "Goblin Zombie" could be prefab things; zombification could affect them differently.
 2) In addition to that structure, we need a convenient way to make those things.  Arguably, you could do it with just "spawn()" arguments.
 3) Finally, we need some way of flagging these things...how do we check whether a certain Elf is a Zombie?
+
+
+
+Footprint.extend({
+    template: "RuinedStructure",
+    name: "ruined structure",
+    structure: "Workshop",
+    validPlace: function(x,y,z) {
+      let s = HTomb.Things[this.structure];
+      let dx = parseInt(s.width/2);
+      let dy = parseInt(s.height/2);
+      for (let i=x-dx; i<=x+dx; i++) {
+        for (let j=y-dy; j<=y+dy; j++) {
+          if (HTomb.World.tiles[z][i][j]!==HTomb.Tiles.FloorTile) {
+            return false;
+          // this check appears to fail at its purpose sometimes
+          } else if (HTomb.World.features[coord(i,j,z)]) {
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+
+
+
+
+          let items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
+      for (let item of items) {
+        item.owned = true;
+      }
+      HTomb.World.validate.cleanNeighbors(x,y,z);
+      HTomb.World.validate.breach(x,y,z);
+      let f = HTomb.World.features[coord(x,y,z)];
+      // this fails sometimes?
+      if (f) {
+        f.remove();
+        f.despawn();
+      }
+
+      Corpses stack wrong...2 peasant corpses on top of a human zombie corpse become "3 human zombie corpses".
+
+      auto-claiming nearby rocks on start-up doesn't really accomplish what it should

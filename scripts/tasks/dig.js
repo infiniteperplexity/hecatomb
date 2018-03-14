@@ -262,9 +262,12 @@ HTomb = (function(HTomb) {
       }
       HTomb.World.validate.cleanNeighbors(x,y,z);
       HTomb.World.validate.breach(x,y,z);
-      let f = HTomb.World.features[coord(x,y,z)];
-      f.remove();
-      f.despawn();
+      let f = HTomb.World.features[coord(x,y,this.z)];
+      // this fails sometimes?
+      if (f) {
+        f.remove();
+        f.despawn();
+      }
       //!!!Experimental...hope this doesn't slow things down
       HTomb.Path.reset();
     }
