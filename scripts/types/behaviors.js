@@ -457,13 +457,16 @@ HTomb = (function(HTomb) {
       // we want to it be able to acquire other targets
       if (actor.target===null) {
         let p = HTomb.Player;
-        if (HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,p.x,p.y,p.z,{canPass: canMove})) {
+        if (HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,p.x,p.y,p.z,{
+            searcher: c,
+            searchee: p,
+            canPass: canMove})) {
           actor.target = p;
         } else {
           let minions = HTomb.Player.master.minions;
           if (minions.length>0) {
             for (let m of minions) {
-              if (HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,m.x,m.y,m.z,{canPass: canMove})) {
+              if (HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,m.x,m.y,m.z,{searcher: c, searchee: m, canPass: canMove})) {
                 actor.target = m;
                 break;
               }
@@ -473,7 +476,7 @@ HTomb = (function(HTomb) {
         if (actor.target===null) {
           for (let block in HTomb.World.blocks) {
             let b = HTomb.World.blocks[block];
-            if (b.owner===HTomb.Player && HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,b.x,b.y,b.z,{canPass: canMove})) {
+            if (b.owner===HTomb.Player && HTomb.Tiles.isReachableFrom(c.x,c.y,c.z,b.x,b.y,b.z,{searcher: c, searchee: b, canPass: canMove})) {
               actor.target = b;
               break;
             }

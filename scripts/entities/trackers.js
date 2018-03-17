@@ -136,7 +136,7 @@ HTomb = (function(HTomb) {
     onTurnBegin: function() {
       let cycle = HTomb.Time.dailyCycle;
       if (cycle.day===1 && cycle.hour===HTomb.Constants.DAWN && cycle.minute===0) {
-        HTomb.Things.PeasantMob.muster();
+        HTomb.Things.PeasantMob.muster(null,null,null,{n: 0});
       }
     }
   });

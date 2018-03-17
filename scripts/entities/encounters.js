@@ -57,7 +57,7 @@ HTomb = (function(HTomb) {
     },
     // this "spawns" the encounter, since the name "spawn" is already taken
     muster: function(x,y,z,args) {
-      let encounter = HTomb.Things[this.template].spawn();
+      let encounter = HTomb.Things[this.template].spawn(args);
       encounter.place(x,y,z,args);
     },
     place: function(x,y,z,args) {
@@ -152,11 +152,14 @@ HTomb = (function(HTomb) {
     },
     onSpawn: function(args) {
       //let r = ROT.RNG.getUniformInt(3,6);
+      let n = args.n || 0;
+      if (n===0) {
       let r = 2;
-      for (let i=0; i<r; i++) {
-        this.addCreature(HTomb.Things.Peasant.spawn());
+        for (let i=0; i<r; i++) {
+          this.addCreature(HTomb.Things.Peasant.spawn());
+        }
+        this.addCreature(HTomb.Things.Wolfhound.spawn());
       }
-      this.addCreature(HTomb.Things.Wolfhound.spawn());
       HTomb.Debug.peasants = this.creatures;
     },
     onPlace: function(x,y,z,args) {

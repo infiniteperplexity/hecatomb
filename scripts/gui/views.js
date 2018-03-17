@@ -199,6 +199,7 @@ HTomb = (function(HTomb) {
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };
   Views.Structures.structureRight = function() {
+    // this can be null sometimes, somehow...
     Views.Structures.selectedStructure.rightCommand();
     Views.Structures.displayStructureInfo(Views.Structures.selectedStructure);
   };

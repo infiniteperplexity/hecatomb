@@ -108,3 +108,5 @@ Footprint.extend({
       Corpses stack wrong...2 peasant corpses on top of a human zombie corpse become "3 human zombie corpses".
 
       auto-claiming nearby rocks on start-up doesn't really accomplish what it should
+
+      - some wood planks not getting moved to stockpile

@@ -107,6 +107,7 @@ HTomb = (function(HTomb) {
         goals: ["HuntPlayer"],
         team: "HumanityTeam"
       },
+      Movement: {},
       Attacker: {
         damage: {
           level: 1,
