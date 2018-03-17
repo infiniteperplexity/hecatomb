@@ -18,7 +18,11 @@ HTomb = (function(HTomb) {
     },
     // "key" is necessary just because this is a JavaScript parser
     parse: function(key, value) {
-      return HTomb.Types[this.template][value];
+      if (typeof(value)==="number") {
+        return HTomb.Types[this.template].types[value];
+      } else {
+        return value;
+      }
     },
     extend: function(args) {
       if (args===undefined || args.template===undefined) {
