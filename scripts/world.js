@@ -34,7 +34,7 @@ HTomb = (function(HTomb) {
     HTomb.Types.Team.hostilityMatrix.reset();
     HTomb.World.validate.reset();
     while(HTomb.World.things.length>0) {
-      HTomb.World.things.pop().despawn();  
+      HTomb.World.things.pop().quickDespawn();  
     }
     HTomb.Things.Tracker.resetAll();
     var oldkeys;
@@ -64,9 +64,12 @@ HTomb = (function(HTomb) {
     for (let i=0; i<HTomb.World.encounters.length; i++) {
       delete HTomb.World.encounters[i];
     }
+    HTomb.World.encounters.length = 0;
     for (let i=0; i<HTomb.World.lights.length; i++) {
       delete HTomb.World.lights[i];
     }
+    HTomb.World.lights.length = 0;
+    HTomb.Time.resetActors();
     HTomb.World.fillTiles();
   };
   HTomb.World.init = function() {

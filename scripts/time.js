@@ -82,6 +82,7 @@ HTomb = (function(HTomb) {
   HTomb.Time.autoWait = function() {
     HTomb.Player.player.delegate.actor.acted = true;
     HTomb.Player.player.delegate.actor.actionPoints-=16;
+    // Okay, this seemingly can drop you back in the middle of an obsolete actor list.
     HTomb.Time.resumeActors(null, true);
     if (HTomb.GUI.mouseMovedLast || HTomb.GUI.Contexts.active===HTomb.GUI.Contexts.main) {
       let gameScreen = HTomb.GUI.Panels.gameScreen;
@@ -270,6 +271,11 @@ HTomb = (function(HTomb) {
     }
     nextActor();
   };
+
+  HTomb.Time.resetActors = function() {
+    queue.length = 0;
+    deck.length = 0;
+  }
 
   return HTomb;
 })(HTomb);

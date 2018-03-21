@@ -347,6 +347,7 @@ HTomb = (function(HTomb) {
       let c = HTomb.World.creatures[coord(x,y,z)];
       this.attacker.attack(c);
     },
+    // we seem to have gotten an overflowing stack here somehow...
     onStep: function(event) {
       if (this.trap.sprung) {
         return;
