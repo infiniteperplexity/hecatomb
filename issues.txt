@@ -111,7 +111,6 @@ Footprint.extend({
 
       - some wood planks not getting moved to stockpile
 
-      I probably should make it so a creature with one hostile target, that gets attacked by another creature, switches targets.
 
 
-    Saving and restoring probably messes up the turn actor queue.
+    Thing, or Entity, somehow gets owners/masters as components

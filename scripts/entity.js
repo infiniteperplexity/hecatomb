@@ -93,7 +93,7 @@ HTomb = (function(HTomb) {
     },
     remove: function() {
       HTomb.Debug.logEvent("remove",this);
-      if (this.components) {
+      if (this.hasOwnProperty("components")) {
         var comp = this.components;
         for (var i=0; i<comp.length; i++) {
           if (comp[i].onRemove) {
@@ -133,7 +133,7 @@ HTomb = (function(HTomb) {
       if (this.isPlaced()) {
         this.remove();
       }
-      if (this.components) {
+      if (this.hasOwnProperty("components")) {
       var comp = this.components;
         for (var i=0; i<comp.length; i++) {
           comp[i].despawn();

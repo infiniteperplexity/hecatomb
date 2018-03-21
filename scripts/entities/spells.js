@@ -96,9 +96,11 @@ HTomb = (function(HTomb) {
   Spell.extend({
     template: "PoundOfFlesh",
     name: "pound of flesh",
+    cost: 10,
     Components: {
       Researchable: {
-        ingredients: {Ectoplasm: 1}
+        ingredients: {Ectoplasm: 1},
+        turns: 48
         //ingredients: {Flesh: 1, Bone: 1}
       }
     },
@@ -178,7 +180,9 @@ HTomb = (function(HTomb) {
     name: "condense ectoplasm",
     cost: 20,
     Components: {
-      Researchable: {}
+      Researchable: {
+        turns: 48
+      }
     },
     cast: function() {
       let caster = this.caster;

@@ -66,8 +66,8 @@ HTomb = (function(HTomb) {
           this.assigner.caster.spells.push(HTomb.Things[template.template].spawn({caster: this.assigner.caster}));
         }
       }
-      if (this.assigner.master.researched.indexOf(template.template)===-1) {
-        this.assigner.master.researched.push(template.template);
+      if (this.assigner.owner.researched.indexOf(template.template)===-1) {
+        this.assigner.owner.researched.push(template.template);
       }
     },
     onDespawn: function() {

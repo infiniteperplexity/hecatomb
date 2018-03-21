@@ -272,10 +272,35 @@ HTomb = (function(HTomb) {
     nextActor();
   };
 
+  // Can be used when restoring a saved game
   HTomb.Time.resetActors = function() {
     queue.length = 0;
     deck.length = 0;
+    for (let cr of HTomb.World.things) {
+      if (cr.actor && cr.unstaged===null) {
+        queue.push(cr);
+      }
+    }
+    queue.sort(function(a,b) {
+      if (a.actor.actionPoints < b.actor.actionPoints) {
+        return -1;
+      } else if (a.actor.actionPoints > b.actor.actionPoints) {
+        return 1;
+      } else if (a===HTomb.Player) {
+        return -1;
+      } else if (b===HTomb.Player) {
+        return 1;
+      } else if (a.spawnId < b.spawnId) {
+        return -1;
+      } else if (a.spawnId > b.spawnId) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   }
+
+
 
   return HTomb;
 })(HTomb);

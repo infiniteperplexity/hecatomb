@@ -69,13 +69,13 @@ HTomb = (function(HTomb) {
       delete HTomb.World.lights[i];
     }
     HTomb.World.lights.length = 0;
-    HTomb.Time.resetActors();
     HTomb.World.fillTiles();
   };
   HTomb.World.init = function() {
     this.reset();
     HTomb.World.generate.revised();
     HTomb.World.validate.all();
+    HTomb.Time.resetActors();
     HTomb.Time.unlockTime();
   };
   // Add void tiles to the boundaries of the level
