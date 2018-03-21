@@ -56,6 +56,12 @@ HTomb = (function(HTomb) {
         return true;
       }
     },
+    quickDespawn: function() {
+      HTomb.Events.unsubscribeAll(this);
+      if (this.onDespawn) {
+        this.onDespawn();
+      }
+    },
     despawn: function() {
       HTomb.Debug.logEvent("despawn",this);
     // remove from the global things table

@@ -314,7 +314,7 @@ HTomb = (function(HTomb) {
       if (actor.target && actor.target.isPlaced()===false) {
         actor.target = null;
       }
-      if (actor.target===null || actor.target.parent!=="Creature" || actor.isHostile(actor.target)!==true || actor.target.isPlaced()===false || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,actor.target.x,actor.target.y,actor.target.z)>10) {
+      if (actor.target==null || actor.target.parent!=="Creature" || actor.isHostile(actor.target)!==true || actor.target.isPlaced()===false || HTomb.Path.quickDistance(cr.x,cr.y,cr.z,actor.target.x,actor.target.y,actor.target.z)>10) {
         if (actor.team===undefined) {
           console.log("what in the world???");
         }

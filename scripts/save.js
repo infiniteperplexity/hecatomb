@@ -225,13 +225,15 @@ HTomb = (function(HTomb) {
     return things;
   };
 
+
   function restoreThings(json) {
     //length of crashed save was >43 million characters.
     console.log("length of things is " +json.length);
     console.log(json.substr(0,500));
     for (let thing of HTomb.World.things) {
-      thing.despawn();
+      thing.quickDespawn();
     }
+    HTomb.World.things.length = 0;
     let tids = [];
     let player = null;
     let itemLists = {};

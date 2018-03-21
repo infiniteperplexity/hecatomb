@@ -62,7 +62,14 @@ HTomb = (function(HTomb) {
       }
       roll = this.checkTerrain(victim, roll);
       if (roll+this.accuracy + modifiers.evasion >= 11 + evade) {
-        (victim.defender) ? victim.defender.defend(event) : {};       
+        (victim.defender) ? victim.defender.defend(event) : {};
+        // if the victim is chasing something else that's more than a space away, switch target to attacker
+        if (victim.actor) {
+          let t = victim.actor.target;
+          if (t && HTomb.Path.quickDistance(victim.x, victim.y, victim.z, t.x, t.y, t.z)>=2) {
+            victim.actor.target = event.attacker.entity;
+          }
+        }
       } else {
         HTomb.GUI.sensoryEvent(this.entity.describe({capitalized: true, article: "indefinite"}) + " misses " + victim.describe({article: "indefinite"})+".",this.entity.x,this.entity.y,this.entity.z,"yellow");
       }

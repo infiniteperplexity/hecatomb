@@ -110,3 +110,5 @@ Footprint.extend({
       auto-claiming nearby rocks on start-up doesn't really accomplish what it should
 
       - some wood planks not getting moved to stockpile
+
+      I probably should make it so a creature with one hostile target, that gets attacked by another creature, switches targets.
