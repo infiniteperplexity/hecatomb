@@ -489,7 +489,8 @@ HTomb = (function(HTomb) {
     if (HTomb.Player.sight) {
       HTomb.FOV.findVisible(HTomb.Player.x, HTomb.Player.y, HTomb.Player.z, HTomb.Player.sight.range);
     }
-    HTomb.GUI.Panels.gameScreen.center(HTomb.Player.x,HTomb.Player.y);
+    HTomb.GUI.Panels.gameScreen.center(HTomb.Player.x,HTomb.Player.y)
+    HTomb.Time.resetActors();
     HTomb.Time.unlockTime();
     HTomb.Time.stopTime();
     HTomb.GUI.autopause = true;
