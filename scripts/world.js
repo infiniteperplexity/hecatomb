@@ -26,6 +26,13 @@ HTomb = (function(HTomb) {
 
   HTomb.World.reset = function() {
     HTomb.Things.Player.delegate = null;
+    for (let i=0; i<HTomb.World.explored.length; i++) {
+      for (let j=0; j<HTomb.World.explored[i].length; j++) {
+        for (let k=0; k<HTomb.World.explored[i][j].length; k++) {
+          HTomb.World.explored[i][j][k] = false;
+        }
+      }
+    }
     HTomb.Time.dailyCycle.reset();
     HTomb.Events.reset();
     HTomb.Achievements.reset();

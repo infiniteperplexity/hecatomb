@@ -47,11 +47,11 @@ HTomb = (function(HTomb) {
     ingredients: [
       {Rock: 1},
       {},
-      {Rock: 1},
+      {Rock: 0},
       {},
-      {WoodPlank: 2},
+      {WoodPlank: 1},
       {},
-      {Rock: 1},
+      {Rock: 0},
       {},
       {Rock: 1}
     ],
@@ -228,6 +228,11 @@ HTomb = (function(HTomb) {
     fgs: ["magenta",HTomb.Constants.FLOORFG,"cyan",HTomb.Constants.FLOORFG,"green",HTomb.Constants.FLOORFG,"yellow","red","orange"],
     bg: "#222244",
     // do we want some sort of mana activation thing?,
+    ingredients: [
+      {Rock: 1}, {}, {Rock: 1},
+      {WoodPlank: 1}, {Coal: 2}, {WoodPlank: 1},
+      {Rock: 1}, {}, {Rock: 1}
+    ],
     Components: {
       Research: {
         choices: ["CondenseEctoplasm","PoundOfFlesh","StepIntoShadow"]

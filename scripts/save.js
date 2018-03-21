@@ -349,7 +349,6 @@ HTomb = (function(HTomb) {
       }
 
     }
-    // this messes up and adds the Necromancer and AntQueen to Thing.Components, multiple times, I think
     let components = HTomb.Things.Component.children.map(function(e,i,a) {return e.name;});
     for (let i=0; i<HTomb.World.things.length; i++) {
       let thing = HTomb.World.things[i];
