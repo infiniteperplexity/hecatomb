@@ -117,13 +117,13 @@ HTomb = (function(HTomb) {
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh to " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
           if (c.defender) {
-            c.defender.wounds.level+=1;
+            c.defender.wounds.level+=2;
             if (c.defender.wounds.type===null) {
               c.defender.wounds.type = "Decay";
             }
             c.defender.tallyWounds();
             if (cr.defender) {
-              cr.defender.wounds.level-=1;
+              cr.defender.wounds.level-=2;
               cr.defender.tallyWounds();
             }
           }
@@ -137,13 +137,13 @@ HTomb = (function(HTomb) {
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh from " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
           // should this be an attack or not?  just a direct drain?
           if (cr.defender) {
-           cr.defender.wounds.level+=1;
+           cr.defender.wounds.level+=2;
             if (cr.defender.wounds.type===null) {
               cr.defender.wounds.type = "Decay";
             }
             cr.defender.tallyWounds();
             if (c.defender) {
-              c.defender.wounds.level-=1;
+              c.defender.wounds.level-=2;
               c.defender.tallyWounds();
             }
           }
