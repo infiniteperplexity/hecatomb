@@ -5,6 +5,8 @@ HTomb = (function(HTomb) {
   // break out constants
   var SCREENW = HTomb.Constants.SCREENW;
   var SCREENH = HTomb.Constants.SCREENH;
+  var MENUH = HTomb.Constants.MENUH;
+  var MENUW = HTomb.Constants.MENUW;
   var LEVELW = HTomb.Constants.LEVELW;
   var LEVELH = HTomb.Constants.LEVELH;
   var NLEVELS = HTomb.Constants.NLEVELS;

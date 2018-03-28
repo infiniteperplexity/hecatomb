@@ -156,7 +156,13 @@ HTomb = (function(HTomb) {
       let y = this.entity.y;
       let z = this.entity.z;
       for (let ing in this.yields) {
-        HTomb.Things[ing].spawn({owned: true, n: this.yields[ing]}).place(x,y,z);
+        if (ing<1) {
+          if (ROT.RNG.getUniform()<ing) {
+            HTomb.Things[ing].spawn({owned: true, n: 1}).place(x,y,z);
+          }
+        } else {
+          HTomb.Things[ing].spawn({owned: true, n: this.yields[ing]}).place(x,y,z);
+        }
       }
     }
   });

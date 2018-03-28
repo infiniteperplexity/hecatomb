@@ -244,7 +244,7 @@ HTomb = (function(HTomb) {
   Structure.extend({
     template: "GuardPost",
     name: "guard post",
-    defenseRange: 3,
+    defenseRange: 10,
     defenseBonus: 1,
     rallying: false,
     onPlace: function() {
@@ -285,9 +285,9 @@ HTomb = (function(HTomb) {
     highlight: function(bg) {
       Structure.highlight.call(this,bg);
       let z = this.z;
-      for (let x=-3; x<=3; x++) {
-        for (let y=-3; y<=3; y++) {
-          if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) <= 3) {
+      for (let x=-this.defenseRange; x<=this.defenseRange; x++) {
+        for (let y=-this.defenseRange; y<=this.defenseRange; y++) {
+          if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) < this.defenseRange) {
             HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)] = "#779944";
           }
         }
@@ -313,9 +313,9 @@ HTomb = (function(HTomb) {
     },
     unhighlight: function() {
       let z = this.z;
-      for (let x=-3; x<=3; x++) {
-        for (let y=-3; y<=3; y++) {
-          if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) <= 3) {
+      for (let x=-this.defenseRange; x<=this.defenseRange; x++) {
+        for (let y=-this.defenseRange; y<=this.defenseRange; y++) {
+          if (HTomb.Path.quickDistance(this.x, this.y, z, this.x+x, this.y+y, z) < this.defenseRange) {
             if (HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)]) {
               delete HTomb.GUI.Panels.gameScreen.highlitTiles[coord(this.x+x,this.y+y,z)]; 
             }

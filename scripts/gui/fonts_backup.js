@@ -12,7 +12,7 @@ HTomb = (function(HTomb) {
   var YSKEW = Constants.YSKEW = 10;
 
   // Dimensions of the display panels
-  var GAMEW = 640;
+  var GAMEW = 500;
   var GAMEH = 500;
   var SCREENW = Constants.SCREENW = Math.floor(GAMEW/CHARWIDTH);
   var SCREENH = Constants.SCREENH = Math.floor(GAMEH/CHARHEIGHT);
@@ -26,12 +26,12 @@ HTomb = (function(HTomb) {
   var TEXTSPACING = Constants.TEXTSPACING = 1;
 
   var TOTALH = Constants.TOTALH = GAMEH+8*TEXTSIZE;
-  var TOTALW = Constants.TOTALW = 1240;
+  var TOTALW = Constants.TOTALW = 900;
   var MENUW = Constants.MENUW = Math.floor((TOTALW-GAMEW)/TEXTWIDTH);
   var MENUH = Constants.MENUH = parseInt(TOTALH/TEXTSIZE);
   var STATUSH = Constants.STATUSH = 2;
   var SCROLLH = Constants.SCROLLH = 6;
-  var SCROLLW = Constants.SCROLLW = 64;
+  var SCROLLW = Constants.SCROLLW = 50;
 
   var ALERTHEIGHT = Constants.ALERTHEIGHT = 12;
   var ALERTWIDTH = Constants.ALERTWIDTH = 30;
