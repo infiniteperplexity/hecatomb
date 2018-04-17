@@ -1,3 +1,9 @@
+// @flow
+
+// var str/*: number*/ = 'hello world!';
+// console.log(str);
+
+
 HTomb = (function(HTomb) {
   "use strict";
 

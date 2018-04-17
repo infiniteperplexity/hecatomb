@@ -25,9 +25,12 @@ HTomb = (function(HTomb) {
        {WoodPlank: 1}
     ],
     Components: {
-      Research: {
-        choices: [
-          "FlintTools","WoodenDoor","Torch","SpearTrap"
+      Producer: {
+        makes: [
+          "WorkAxe",
+          "UnplacedDoor",
+          "UnplacedTorch",
+          "UnplacedSpearTrap"
         ]
       },
       StructureLight: {}

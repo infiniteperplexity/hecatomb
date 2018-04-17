@@ -177,7 +177,28 @@ HTomb = (function(HTomb) {
     unplacedSymbol: null,
     unplacedFg: null,
     incompleteSymbol: null,
-    incompleteFg: null
+    incompleteFg: null,
+    onPrespawn(args) {
+      // Craftable Fixtures work much differently than non-Craftable Fixtures
+      if (this.Template.Components.Craftable) {
+        let iargs = {
+          template: "Unplaced" + this.Template.template,
+          name: "unplaced " + this.Template.name,
+          symbol: this.unplacedSymbol || this.Template.symbol,
+          fg: this.unplacedFg || this.Template.fg,
+          makes: this.Template.template,
+          Components: {
+            Craftable: {
+              ingredients: this.Template.Components.Craftable.ingredients || HTomb.Things.Craftable.ingredients
+            }
+          }
+        };
+        HTomb.Things.Item.extend(iargs);
+        this.ingredients = {};
+        this.ingredients["Unplaced" + this.Template.template] = 1;
+      }
+    }
+    // ,dismantle() // should it be easier to dismantle?  into the item version?
   });
 
   Component.extend({

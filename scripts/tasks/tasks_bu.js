@@ -324,7 +324,7 @@ HTomb = (function(HTomb) {
               if (HTomb.Debug.noingredients) {
                 task.ingredients = {};
               } else {
-                task.ingredients = feature.craftable.ingredients;
+                task.ingredients = feature.fixture.ingredients;
               }
               task.name = task.name + " " + HTomb.Things[feature.template].name;
             }
@@ -346,8 +346,8 @@ HTomb = (function(HTomb) {
         format: function(feature) {
           let g = feature.describe();
           let ings = [];
-          for (let ing in feature.craftable.ingredients) {
-            ings.push([ing, feature.craftable.ingredients[ing]]);
+          for (let ing in feature.fixture.ingredients) {
+            ings.push([ing, feature.fixture.ingredients[ing]]);
           }
           if (ings.length>0) {
             g+=" ($: ";
@@ -362,7 +362,7 @@ HTomb = (function(HTomb) {
               }
             }
           }
-          if (assigner && assigner.master && assigner.owner.ownsAllIngredients(feature.craftable.ingredients)!==true) {
+          if (assigner && assigner.master && assigner.owner.ownsAllIngredients(feature.fixture.ingredients)!==true) {
             g = "%c{gray}"+g;
           }
           return g;

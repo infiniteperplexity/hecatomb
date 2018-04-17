@@ -219,7 +219,7 @@ HTomb = (function(HTomb) {
     Components: {
       PointLight: {},
       Craftable: {
-        ingredients: {WoodPlank: 1, Coal: 1}
+        ingredients: {WoodPlank: 1}
       },
       Fixture: {
         tooltip: "(A furnished torch provides stationary light.)"
