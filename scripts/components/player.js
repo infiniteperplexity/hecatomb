@@ -104,12 +104,23 @@ HTomb = (function(HTomb) {
       HTomb.Debug.pushMessage(this.entity.describe({capitalized: true, article: "indefinite"}) + " was unassigned from " + this.task.describe());
       this.task = null;
     },
+    // getLabor: function() {
+    //   let e = this.entity.equipper;
+    //   if (e && e.slots.MainHand && e.slots.MainHand.equipment.labor>this.labor) {
+    //     return e.slots.MainHand.equipment.labor;
+    //   }
+    //   return this.labor;
+    // }
     getLabor: function() {
-      let e = this.entity.equipper;
-      if (e && e.slots.MainHand && e.slots.MainHand.equipment.labor>this.labor) {
-        return e.slots.MainHand.equipment.labor;
+      let labor = this.labor;
+      let master = this.entity.minion.master;
+      let lore = master.researcher.researched;
+      for (let l of lore) {
+        if (HTomb.Things[l].tools) {
+          labor = Math.max(labor,HTomb.Things[l].tools.labor)
+        }
       }
-      return this.labor;
+      return labor;
     }
   });
 
@@ -232,7 +243,6 @@ HTomb = (function(HTomb) {
     template: "Owner",
     name: "owner",
     structures: null,
-    researched: null,
     onSpawn: function(options) {
       options = options || {};
       this.structures = [];
@@ -270,6 +280,15 @@ HTomb = (function(HTomb) {
         }
       }
       return true;
+    }
+  });
+
+  Component.extend({
+    template: "Researcher",
+    name: "researcher",
+    researched: [],
+    onSpawn: function() {
+      this.researched = [];
     }
   });
 

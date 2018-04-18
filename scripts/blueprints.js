@@ -140,6 +140,7 @@ HTomb = (function(HTomb) {
         },
         Master: {tasks: ["DigTask","BuildTask","ConstructTask","DismantleTask","PatrolTask","FurnishTask","Undesignate","HostileTask","RepairTask"]},
         Owner: {},
+        Researcher: {},
         SpellCaster: {spells: ["RaiseZombie"]},
         Attacker: {
           damage: {

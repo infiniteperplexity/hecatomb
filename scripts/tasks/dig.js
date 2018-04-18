@@ -33,6 +33,7 @@ HTomb = (function(HTomb) {
         hardness = 0;
       }
       let labor = 0;
+      // actually now we could change how this works...
       if (cr.worker) {
         labor = cr.worker.getLabor();
       }

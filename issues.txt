@@ -55,3 +55,7 @@ infinite range on zombie raising is weird
 if you don't find coal you're kind of screwed.
 - tombstone deconstructed over zombie stops zombie from digging out.
 - you can assign dismantle on walls for some reason and it causes all kinds of chaos
+
+- refactor researchTask so it calls .finish on the research...haven't decided the structure exactly yet
+- get rid of the tool fetching code once tools are removed
+- make sure "useable" actually gets used, for research buildings

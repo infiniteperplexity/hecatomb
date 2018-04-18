@@ -16,8 +16,43 @@ HTomb = (function(HTomb) {
     complete: function() {
 
     },
-    activate: function(args) {
+    use: function(args) {
+    },
+    researchable: function() {
+      let researched = this.researcher.researcher.researched;
+      for (let p of prequisites) {
+        if (!researched.includes(p)) {
+          return false;
+        }
+      }
+      return true;
+    },
+    useable: function() {
+      let structures = this.researcher.owner.structures;
+      for (let s of structures) {
+        if (s.template===this.structure) {
+          return true;
+        }
+      }
+      return false;
+    }
+  });
 
+  let Tools = Component.extend({
+    template: "Tools",
+    name: "tools",
+    // I could do this as a bonus or a flat number
+    labor: 0
+  });
+
+  Lore.extend({
+    template: "FlintTools",
+    name: "flint tools",
+    turns: 48,
+    ingredients: {Flint: 3, WoodPlank: 3},
+    structure: "Workshop",
+    Components: {
+      Tools: {labor: 2}
     }
   });
 
@@ -37,7 +72,7 @@ HTomb = (function(HTomb) {
       this.caster.sanity-=this.getCost();
     },
     cast: function(args) {
-      this.entity.activate(args);
+      this.entity.use(args);
     }
   });
 
@@ -60,7 +95,7 @@ HTomb = (function(HTomb) {
         return cost[cost.length-1];
       }
     },
-    activate: function() {
+    use: function() {
       let caster = this.spell.caster;
       var c = caster.entity;
       var that = this;
@@ -160,7 +195,7 @@ HTomb = (function(HTomb) {
     Components: {
       Spell: {cost: 10}
     },
-    activate: function() {
+    use: function() {
       let caster = this.spell.caster;
       var c = caster.entity;
       let that = this;
@@ -239,7 +274,7 @@ HTomb = (function(HTomb) {
     Components: {
       Spell: {cost: 20}
     },
-    activate: function() {
+    use: function() {
       let caster = this.spell.caster;
       var c = caster.entity;
       let that = this;  

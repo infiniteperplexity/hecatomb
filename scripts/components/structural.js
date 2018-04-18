@@ -294,7 +294,7 @@ HTomb = (function(HTomb) {
     },
     choiceCommand: function(i) {
       let choices = this.choices;
-      choices = choices.filter(e => this.entity.owner.owner.researched.indexOf(e)===-1);
+      choices = choices.filter(e => this.entity.owner.researcher.researched.indexOf(e)===-1);
       if (i<choices.length) {
         if (this.current) {
           if (confirm("Really cancel current research?")) {
@@ -309,9 +309,9 @@ HTomb = (function(HTomb) {
           name: "research " + choice.name,
           structure: this.entity,
           researching: choices[i],
-          turns: choice.researchable.turns,
-          ingredients: choice.researchable.ingredients,
-          fulfilled: (HTomb.Debug.noingredients || Object.keys(choice.researchable.ingredients).length===0) ? true : false
+          turns: choice.turns,
+          ingredients: choice.ingredients,
+          fulfilled: (HTomb.Debug.noingredients || Object.keys(choice.ingredients).length===0) ? true : false
         });
         this.current.place(this.entity.x, this.entity.y, this.entity.z);
       }
@@ -342,11 +342,11 @@ HTomb = (function(HTomb) {
       let txt = ["Research choices:"];
       let alphabet = "abcdefghijklmnopqrstuvwxyz";
       let choices = this.choices;
-      choices = choices.filter(e => this.entity.owner.owner.researched.indexOf(e)===-1);
+      choices = choices.filter(e => this.entity.owner.researcher.researched.indexOf(e)===-1);
       for (let i=0; i<choices.length; i++) {
         let choice = HTomb.Things[choices[i]];
-        let msg = choice.name + " " + HTomb.Utils.listIngredients(choice.researchable.ingredients);
-        if (this.entity.owner.owner.ownsAllIngredients(choice.researchable.ingredients)!==true) {
+        let msg = choice.name + " " + HTomb.Utils.listIngredients(choice.ingredients);
+        if (this.entity.owner.owner.ownsAllIngredients(choice.ingredients)!==true) {
           msg = "%c{gray}" + msg;
         }
         msg = alphabet[i] + ") " + msg;

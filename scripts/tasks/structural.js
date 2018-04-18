@@ -59,6 +59,8 @@ HTomb = (function(HTomb) {
     finish: function() {
       //!!!odd place to put this logic
       let template = HTomb.Things[this.researching];
+      //template.finish(this.owner); // let's not implement this yet
+      // this sucker should change
       if (template.parent==="Spell") {
         HTomb.GUI.alert("You have completed research on the spell '" + template.describe()+".'");
         let spells = this.assigner.caster.spells.map(function(s) {return s.template;});
@@ -66,8 +68,8 @@ HTomb = (function(HTomb) {
           this.assigner.caster.spells.push(HTomb.Things[template.template].spawn({caster: this.assigner.caster}));
         }
       }
-      if (this.assigner.owner.researched.indexOf(template.template)===-1) {
-        this.assigner.owner.researched.push(template.template);
+      if (this.assigner.researcher.researched.indexOf(template.template)===-1) {
+        this.assigner.researcher.researched.push(template.template);
       }
     },
     onDespawn: function() {

@@ -218,11 +218,15 @@ HTomb = (function(HTomb) {
     fg: "yellow",
     Components: {
       PointLight: {},
-      Craftable: {
-        ingredients: {WoodPlank: 1, Coal: 1}
-      },
       Fixture: {
+        labor: 5,
+        ingredients: {WoodPlank: 1, Coal: 1},
         tooltip: "(A furnished torch provides stationary light.)"
+      },
+      Researchable: {
+        turns: 36,
+        ingredients: {WoodPlank: 1, Coal: 1},
+        structure: "Workshop"
       }
     }
   });
@@ -305,13 +309,19 @@ HTomb = (function(HTomb) {
         toughness: 9,
         evasion: -10
       },
-      Craftable: {
-        labor: 20,
-        ingredients: {WoodPlank: 3}
-      },
+      // Craftable: {
+      //   labor: 20,
+      //   ingredients: {WoodPlank: 3}
+      // },
       Fixture: {
-        tooltip: "(A door blocks your enemies but not you or your minions.)",
-        unplacedSymbol: "\u25A4"
+        labor: 20,
+        ingredients: {WoodPlank: 2},
+        tooltip: "(A door blocks your enemies but not you or your minions.)"
+      },
+      Researchable: {
+        turns: 36,
+        ingredients: {WoodPlank: 3},
+        structure: "Workshop"
       }
     }
   });
@@ -334,13 +344,20 @@ HTomb = (function(HTomb) {
         sprungSymbol: "\u2964",
         rearmCost: {WoodPlank: 1}
       },
-      Craftable: {
-        labor: 10,
-        ingredients: {WoodPlank: 2}
-      },
+      // Craftable: {
+      //   labor: 10,
+      //   ingredients: {WoodPlank: 2}
+      // },
       Fixture: {
         unplacedSymbol: "\u2964",
+        labor: 10,
+        ingredients: {WoodPlank: 2},
         tooltip: "(A spring-loaded, spiked stick that attacks your enemies.)"
+      },
+      Researchable: {
+        turns: 48,
+        ingredients: {WoodPlank: 2, Flint: 2},
+        structure: "Workshop"
       }
     },
     onSpring: function(x,y,z) {

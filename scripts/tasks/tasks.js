@@ -311,8 +311,22 @@ HTomb = (function(HTomb) {
     features: ["Ramp","Door","Torch","SpearTrap"],
     designate: function(assigner) {
       var arr = [];
-      for (var i=0; i<this.features.length; i++) {
-        arr.push(HTomb.Things[this.features[i]]);
+      let features = this.features.filter((e)=>{
+        let feature = HTomb.Things[e];
+        if (feature.researchable) {
+          let lore = e+"Lore";
+          if (assigner.researcher.researched.includes(lore)) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
+      });
+      console.log(features);
+      for (var i=0; i<features.length; i++) {
+        arr.push(HTomb.Things[features[i]]);
       }
       var that = this;
       HTomb.GUI.choosingMenu("Choose a fixture:", arr, function(feature) {
@@ -324,7 +338,7 @@ HTomb = (function(HTomb) {
               if (HTomb.Debug.noingredients) {
                 task.ingredients = {};
               } else {
-                task.ingredients = feature.craftable.ingredients;
+                task.ingredients = feature.fixture.ingredients;
               }
               task.name = task.name + " " + HTomb.Things[feature.template].name;
             }
@@ -346,8 +360,8 @@ HTomb = (function(HTomb) {
         format: function(feature) {
           let g = feature.describe();
           let ings = [];
-          for (let ing in feature.craftable.ingredients) {
-            ings.push([ing, feature.craftable.ingredients[ing]]);
+          for (let ing in feature.fixture.ingredients) {
+            ings.push([ing, feature.fixture.ingredients[ing]]);
           }
           if (ings.length>0) {
             g+=" ($: ";
@@ -362,7 +376,7 @@ HTomb = (function(HTomb) {
               }
             }
           }
-          if (assigner && assigner.master && assigner.owner.ownsAllIngredients(feature.craftable.ingredients)!==true) {
+          if (assigner && assigner.master && assigner.owner.ownsAllIngredients(feature.fixture.ingredients)!==true) {
             g = "%c{gray}"+g;
           }
           return g;

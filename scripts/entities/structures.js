@@ -27,7 +27,11 @@ HTomb = (function(HTomb) {
     Components: {
       Research: {
         choices: [
-          "FlintTools","WoodenDoor","Torch","SpearTrap"
+          // "FlintTools","WoodenDoor","Torch","SpearTrap"
+          "FlintTools",
+          "TorchLore",
+          "DoorLore",
+          "SpearTrapLore"
         ]
       },
       StructureLight: {}

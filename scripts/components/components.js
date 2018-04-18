@@ -121,7 +121,7 @@ HTomb = (function(HTomb) {
     cast: function(sp) {
       let cost = sp.getCost();
       if (this.sanity>=cost) {
-        sp.activate();
+        sp.use();
       }
     }
   });
@@ -129,11 +129,21 @@ HTomb = (function(HTomb) {
   Component.extend({
     template: "Researchable",
     name: "researchable",
-    turns: 48,
-    nospawn: true,
+    turns: 36,
     ingredients: {},
-    finish: function() {
-      //!!!odd that we have no logic here
+    structure: null,
+    prerequisites: [],
+    nospawn: true,
+    onPrespawn: function(args) {
+      let Template = this.Template;
+      HTomb.Things.Lore.extend({
+        template: Template.template+"Lore",
+        name: Template.name,
+        ingredients: this.ingredients,
+        structure: this.structure,
+        turns: this.turns,
+        prerequisites: this.prerequisites
+      });
     }
   });
 
@@ -143,7 +153,7 @@ HTomb = (function(HTomb) {
     name: "craftable",
     nospawn: true,
     labor: 15,
-    ingredients: {WoodPlank: 1}
+    ingredients: {}
   });
 
   Component.extend({
