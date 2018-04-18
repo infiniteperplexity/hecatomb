@@ -410,7 +410,7 @@ HTomb = (function(HTomb) {
       {
         format: function(spell) {
           let descrip = spell.describe()+" ("+spell.getCost()+")";
-          if (spell.getCost()>spell.caster.sanity) {
+          if (spell.getCost()>spell.spell.caster.sanity) {
             descrip = "%c{gray}"+descrip;
           }
           return descrip;

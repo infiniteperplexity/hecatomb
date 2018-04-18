@@ -96,8 +96,8 @@ HTomb = (function(HTomb) {
       options.spells = options.spells || [];
       this.spells = [];
       for (let i=0; i<options.spells.length; i++) {
-        this.spells.push(HTomb.Things[options.spells[i]].spawn({caster: this}));
-        this.spells[i].caster = this;
+        this.spells.push(HTomb.Things[options.spells[i]].spawn({researcher: this.entity}));
+        this.spells[i].spell.caster = this;
       }
       HTomb.Events.subscribe(this,"TurnBegin");
       return this;
@@ -121,7 +121,7 @@ HTomb = (function(HTomb) {
     cast: function(sp) {
       let cost = sp.getCost();
       if (this.sanity>=cost) {
-        sp.cast();
+        sp.activate();
       }
     }
   });

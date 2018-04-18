@@ -9,6 +9,7 @@ HTomb = (function(HTomb) {
     template: "Lore",
     name: "lore",
     turns: 48,
+    researcher: null,
     ingredients: {},
     structure: null,
     prerequisites: [],
@@ -25,14 +26,129 @@ HTomb = (function(HTomb) {
     template: "Spell",
     name: "spell",
     cost: 10,
+    caster: null,
     getCost: function() {
+      if (this.entity.getCost) {
+        return this.entity.getCost();
+      }
       return this.cost;
     },
     spend: function() {
-      this.entity.researcher.sanity-=this.getCost();
-    }
+      this.caster.sanity-=this.getCost();
+    },
     cast: function(args) {
       this.entity.activate(args);
+    }
+  });
+
+  Lore.extend({
+    template: "RaiseZombie",
+    name: "raise zombie",
+    Components: {
+      Spell: {}
+    },
+    getCost: function() {
+      let cost = [10,15,20,25,30,35,40];
+      let c = this.spell.caster.entity;
+      if (c.master===undefined) {
+        return cost[0];
+      }
+      else if (c.master.minions.length<cost.length-1) {
+        return cost[c.master.minions.length];
+      }
+      else {
+        return cost[cost.length-1];
+      }
+    },
+    activate: function() {
+      let caster = this.spell.caster;
+      var c = caster.entity;
+      var that = this;
+      var items, zombie, i;
+      function raiseZombie(x,y,z) {
+        if (that.validTile(x,y,z)) {
+          HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
+          HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
+          // cast directly on a corpse
+          items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
+          if (items.count("Corpse")) {
+            HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
+            let corpse = items.take("Corpse");
+            let sourceCreature = corpse.sourceCreature;
+            that.spell.spend();
+            corpse.despawn();
+            if (sourceCreature) {
+              zombie = HTomb.Things.Zombie.spawn({sourceCreature: sourceCreature});
+            } else {
+              zombie = HTomb.Things.Zombie.spawn();
+            }
+            zombie.place(x,y,z);
+            HTomb.Things.Minion.spawn().addToEntity(zombie);
+            caster.entity.master.addMinion(zombie);
+            zombie.actor.acted = true;
+            zombie.actor.actionPoints-=16;
+            HTomb.GUI.sensoryEvent("The corpse stirs and rises...",x,y,z);
+            HTomb.Time.resumeActors();
+            return;
+          }
+          // if it's a tombstone
+          items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Thigns.Items();
+          if (items.count("Corpse")) {
+            HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z-1});
+            let corpse = items.take("Corpse");
+            let sourceCreature = corpse.sourceCreature;
+            that.spell.spend();
+            corpse.despawn();
+            if (HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile) {
+              HTomb.World.tiles[z-1][x][y]=HTomb.Tiles.UpSlopeTile;
+            }
+            if (sourceCreature) {
+              zombie = HTomb.Things.Zombie.spawn({sourceCreature: sourceCreature});
+            } else {
+              zombie = HTomb.Things.Zombie.spawn();
+            }
+            zombie.place(x,y,z-1);
+            HTomb.Things.Minion.spawn().addToEntity(zombie);
+            caster.entity.master.addMinion(zombie);
+            let task = HTomb.Things.ZombieEmergeTask.spawn({assigner: caster.entity}).place(x,y,z);
+            task.assignTo(zombie);
+            zombie.actor.acted = true;
+            zombie.actor.actionPoints-=16;
+            HTomb.GUI.sensoryEvent("You hear an ominous stirring below the earth...",x,y,z);
+            HTomb.Time.resumeActors();
+            return;
+          }
+        } else {
+          HTomb.GUI.pushMessage("Can't cast the spell there.");
+        }
+      }
+      function myHover(x, y, z) {
+        if (HTomb.World.explored[z][x][y]!==true) {
+          HTomb.GUI.Panels.menu.middle = ["%c{orange}Unexplored tile."];
+          return;
+        }
+        if (that.validTile(x,y,z)) {
+          HTomb.GUI.Panels.menu.middle = ["%c{lime}Raise a zombie here."];
+        } else {
+          HTomb.GUI.Panels.menu.middle = ["%c{orange}Select a tile with a tombstone or corpse."];
+        }
+      }
+      HTomb.GUI.selectSquare(c.z,raiseZombie,{
+        hover: myHover,
+        contextName: "CastRaiseZombie"
+      });
+    },
+    validTile: function(x,y,z) {
+      if (HTomb.World.explored[z][x][y]!==true) {
+        return false;
+      }
+      if (HTomb.World.features[coord(x,y,z)] && HTomb.World.features[coord(x,y,z)].template==="Tombstone" && HTomb.World.items[coord(x,y,z-1)] && HTomb.World.items[coord(x,y,z-1)].count("Corpse")) {
+        return true;
+      }
+      if (HTomb.World.items[coord(x,y,z)] && HTomb.World.items[coord(x,y,z)].count("Corpse")) {
+        return true;
+      }
+      return false;
     }
   });
 
@@ -195,114 +311,6 @@ HTomb = (function(HTomb) {
     }
   });
 
-
-  Spell.extend({
-    template: "RaiseZombie",
-    name: "raise zombie",
-    getCost: function() {
-      let cost = [10,15,20,25,30,35,40];
-      let c = this.caster.entity;
-      if (c.master===undefined) {
-        return cost[0];
-      }
-      else if (c.master.minions.length<cost.length-1) {
-        return cost[c.master.minions.length];
-      }
-      else {
-        return cost[cost.length-1];
-      }
-    },
-    cast: function() {
-      let caster = this.caster;
-      var c = caster.entity;
-      var that = this;
-      var items, zombie, i;
-      function raiseZombie(x,y,z) {
-        if (that.validTile(x,y,z)) {
-          HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
-          HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
-          // cast directly on a corpse
-          items = HTomb.World.items[coord(x,y,z)] || HTomb.Things.Items();
-          if (items.count("Corpse")) {
-            HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-            let corpse = items.take("Corpse");
-            let sourceCreature = corpse.sourceCreature;
-            that.spend();
-            corpse.despawn();
-            if (sourceCreature) {
-              zombie = HTomb.Things.Zombie.spawn({sourceCreature: sourceCreature});
-            } else {
-              zombie = HTomb.Things.Zombie.spawn();
-            }
-            zombie.place(x,y,z);
-            HTomb.Things.Minion.spawn().addToEntity(zombie);
-            caster.entity.master.addMinion(zombie);
-            zombie.actor.acted = true;
-            zombie.actor.actionPoints-=16;
-            HTomb.GUI.sensoryEvent("The corpse stirs and rises...",x,y,z);
-            HTomb.Time.resumeActors();
-            return;
-          }
-          // if it's a tombstone
-          items = HTomb.World.items[coord(x,y,z-1)] || HTomb.Thigns.Items();
-          if (items.count("Corpse")) {
-            HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z-1});
-            let corpse = items.take("Corpse");
-            let sourceCreature = corpse.sourceCreature;
-            that.spend();
-            corpse.despawn();
-            if (HTomb.World.tiles[z-1][x][y]===HTomb.Tiles.WallTile) {
-              HTomb.World.tiles[z-1][x][y]=HTomb.Tiles.UpSlopeTile;
-            }
-            if (sourceCreature) {
-              zombie = HTomb.Things.Zombie.spawn({sourceCreature: sourceCreature});
-            } else {
-              zombie = HTomb.Things.Zombie.spawn();
-            }
-            zombie.place(x,y,z-1);
-            HTomb.Things.Minion.spawn().addToEntity(zombie);
-            caster.entity.master.addMinion(zombie);
-            let task = HTomb.Things.ZombieEmergeTask.spawn({assigner: caster.entity}).place(x,y,z);
-            task.assignTo(zombie);
-            zombie.actor.acted = true;
-            zombie.actor.actionPoints-=16;
-            HTomb.GUI.sensoryEvent("You hear an ominous stirring below the earth...",x,y,z);
-            HTomb.Time.resumeActors();
-            return;
-          }
-        } else {
-          HTomb.GUI.pushMessage("Can't cast the spell there.");
-        }
-      }
-      function myHover(x, y, z) {
-        if (HTomb.World.explored[z][x][y]!==true) {
-          HTomb.GUI.Panels.menu.middle = ["%c{orange}Unexplored tile."];
-          return;
-        }
-        if (that.validTile(x,y,z)) {
-          HTomb.GUI.Panels.menu.middle = ["%c{lime}Raise a zombie here."];
-        } else {
-          HTomb.GUI.Panels.menu.middle = ["%c{orange}Select a tile with a tombstone or corpse."];
-        }
-      }
-      HTomb.GUI.selectSquare(c.z,raiseZombie,{
-        hover: myHover,
-        contextName: "CastRaiseZombie"
-      });
-    },
-    validTile: function(x,y,z) {
-      if (HTomb.World.explored[z][x][y]!==true) {
-        return false;
-      }
-      if (HTomb.World.features[coord(x,y,z)] && HTomb.World.features[coord(x,y,z)].template==="Tombstone" && HTomb.World.items[coord(x,y,z-1)] && HTomb.World.items[coord(x,y,z-1)].count("Corpse")) {
-        return true;
-      }
-      if (HTomb.World.items[coord(x,y,z)] && HTomb.World.items[coord(x,y,z)].count("Corpse")) {
-        return true;
-      }
-      return false;
-    }
-  });
 
   return HTomb;
 })(HTomb);
