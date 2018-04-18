@@ -63,8 +63,6 @@ HTomb = (function(HTomb) {
           // everything except for instances Things
           if (l.template===undefined || l.hasOwnProperty("template")) {
             saveListeners.push([l,type]);
-          } else {
-            console.log("removed a thing");
           }
         }
       }

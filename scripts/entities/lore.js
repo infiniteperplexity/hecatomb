@@ -152,26 +152,23 @@ HTomb = (function(HTomb) {
     }
   });
 
-  Spell.extend({
+  Lore.extend({
     template: "PoundOfFlesh",
     name: "pound of flesh",
-    cost: 10,
+    ingredients: {Ectoplasm: 1},         //ingredients: {Flesh: 1, Bone: 1}
+    turns: 48,
     Components: {
-      Researchable: {
-        ingredients: {Ectoplasm: 1},
-        turns: 48
-        //ingredients: {Flesh: 1, Bone: 1}
-      }
+      Spell: {cost: 10}
     },
-    cast: function() {
-      let caster = this.caster;
+    activate: function() {
+      let caster = this.spell.caster;
       var c = caster.entity;
       let that = this;
       function castBolt(x,y,z) {
         let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
         if (cr && cr.isA("Zombie")) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-          that.spend();
+          that.spell.spend();
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh to " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
@@ -190,7 +187,7 @@ HTomb = (function(HTomb) {
           c.actor.actionPoints-=16;
         } else if (cr) {
           HTomb.Events.publish({type: "Cast", spell: that, x: x, y: y, z: z});
-          that.spend();
+          that.spell.spend();
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellTarget,{alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});
           HTomb.GUI.sensoryEvent(c.describe({capitalized: true, article: "indefinite"}) + " siphons flesh from " + cr.describe({article: "indefinite"})+".",c.x,c.y,c.z,"orange");
@@ -234,24 +231,23 @@ HTomb = (function(HTomb) {
     }
   });
 
-  Spell.extend({
+  Lore.extend({
     template: "CondenseEctoplasm",
     name: "condense ectoplasm",
     cost: 20,
+    turns: 48,
     Components: {
-      Researchable: {
-        turns: 48
-      }
+      Spell: {cost: 20}
     },
-    cast: function() {
-      let caster = this.caster;
+    activate: function() {
+      let caster = this.spell.caster;
       var c = caster.entity;
       let that = this;  
       function castBolt(x,y,z) {
         if (HTomb.World.tiles[z][x][y]===true || (HTomb.Debug.explored===false && HTomb.World.explored[z][x][y]!==true)) { 
           HTomb.GUI.pushMessage("Can't cast the spell there.");
         } else {
-          that.spend();
+          that.spell.spend();
           HTomb.Particles.addEmitter(c.x,c.y,c.z,HTomb.Particles.SpellCast,{fg: "cyan", alwaysVisible: true});
           HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellTarget,{fg: "cyan", alwaysVisible: true});
           HTomb.Things.Ectoplasm.spawn().place(x,y,z); 
@@ -277,27 +273,24 @@ HTomb = (function(HTomb) {
   });
 
   // castable only at night? or can only teleport from darkness to darkness?
-  Spell.extend({
+  Lore.extend({
     template: "StepIntoShadow",
     name: "step into shadow",
-    cost: 6,
-    range: 6,
+    ingredients: {
+      Ectoplasm: 1
+    },
     Components: {
-      Researchable: {
-        ingredients: {
-          Ectoplasm: 1
-        }
-      }
+      Spell: {cost: 6}
     },
     cast: function() {
-      let caster = this.caster;
+      let caster = this.spell.caster;
       let c = caster.entity;
       let x = c.x;
       let y = c.y;
       let z = c.z;
       let s = HTomb.Tiles.getRandomWithinRange(c.x,c.y,c.z,this.range);
       HTomb.Particles.addEmitter(x,y,z,HTomb.Particles.SpellCast,{alwaysVisible: true});
-      this.spend();
+      this.spell.spend();
       if (!s) {
         HTomb.GUI.sensoryEvent("Spell fizzled!",c.x,c.y,c.z);
         HTomb.GUI.reset();
