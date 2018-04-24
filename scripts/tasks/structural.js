@@ -68,9 +68,8 @@ HTomb = (function(HTomb) {
         if (spells.indexOf(template.template)===-1) {
           this.assigner.caster.spells.push(HTomb.Things[template.template].spawn({caster: this.assigner.caster}));
         }
-      } else if (template.fixture) {
-        // this doesn't happen because it doesn't know it's a fixture
-        HTomb.GUI.alert("You have completed research on the fixture '" + template.describe()+".'");
+      } else {
+        HTomb.GUI.alert("You have completed research on '" + template.describe()+".'");
       }
       if (this.assigner.researcher.researched.indexOf(template.template)===-1) {
         this.assigner.researcher.researched.push(template.template);

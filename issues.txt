@@ -31,9 +31,7 @@
 
 - fireflies only come out at night?  and they should tend to fly low.
 
-- maybe "Yield" values of <1 are a drop rate?  Yeah, I like that!
 
-- starting locations and graveyards seem to break the rules sometimes
 - Sometimes ant colonies end up underwater.
 - map should maybe show cave levels.
 
@@ -54,8 +52,9 @@ soil color is kind of ugly.
 infinite range on zombie raising is weird
 if you don't find coal you're kind of screwed.
 - tombstone deconstructed over zombie stops zombie from digging out.
-- you can assign dismantle on walls for some reason and it causes all kinds of chaos
 
 - refactor researchTask so it calls .finish on the research...haven't decided the structure exactly yet
-- get rid of the tool fetching code once tools are removed
 - make sure "useable" actually gets used, for research buildings
+- difficult to track incomplete resource availability
+- how do I want research to actually work...do you really need to stand on it?
+- lack of cave-ins is unrealistic

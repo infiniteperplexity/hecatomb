@@ -86,7 +86,8 @@ HTomb = (function(HTomb) {
         valid = callback(x,y,z);
         tries+=1;
       }
-      if (!x && !y && !z) {
+      if (valid===false) {
+      // if (!x && !y && !z) {
         console.log(this.describe() + "placement failed.");
         return null;
       }

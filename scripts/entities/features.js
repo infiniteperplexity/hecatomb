@@ -318,6 +318,9 @@ HTomb = (function(HTomb) {
         ingredients: {WoodPlank: 2},
         tooltip: "(A door blocks your enemies but not you or your minions.)"
       },
+      Harvestable: {
+        yields: {WoodPlank: 2}
+      },
       Researchable: {
         turns: 36,
         ingredients: {WoodPlank: 3},
@@ -353,6 +356,9 @@ HTomb = (function(HTomb) {
         labor: 10,
         ingredients: {WoodPlank: 2},
         tooltip: "(A spring-loaded, spiked stick that attacks your enemies.)"
+      },
+      Harvestable: {
+        yields: {WoodPlank: 1}
       },
       Researchable: {
         turns: 48,

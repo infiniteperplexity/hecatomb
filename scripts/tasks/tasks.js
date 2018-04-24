@@ -110,7 +110,7 @@ HTomb = (function(HTomb) {
       if (HTomb.World.explored[z][x][y]!==true) {
         return false;
       }
-      if (HTomb.World.features[coord(x,y,z)] || (!HTomb.World.covers[z][x][y].liquid && HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover)) {
+      if (HTomb.World.features[coord(x,y,z)] || (!HTomb.World.covers[z][x][y].liquid && HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover && !HTomb.World.covers[z][x][y].mineral)) {
         return true;
       } else {
         return false;
@@ -140,7 +140,7 @@ HTomb = (function(HTomb) {
           let cover = HTomb.World.covers[z][x][y];
           if (feature) {
             menu.middle = ["%c{lime}Harvest or dismantle "+feature.describe({article: "indefinite"})+"."];
-          } else if (cover!==HTomb.Covers.NoCover) {
+          } else if (cover!==HTomb.Covers.NoCover && !cover.liquid && !cover.mineral) {
             menu.middle = ["%c{lime}Remove "+cover.describe()+"."];
           } else {
             menu.middle = ["%c{orange}Nothing to remove here."];
@@ -170,11 +170,14 @@ HTomb = (function(HTomb) {
       });
     },
     begin: function() {
-      let f = HTomb.World.features[coord(this.x, this.y, this.z)];
+      let x = this.x;
+      let y = this.y;
+      let z = this.z;
+      let f = HTomb.World.features[coord(x, y, z)];
       if (f) {
         this.work();
       } else if (HTomb.World.covers[z][x][y]!==HTomb.Covers.NoCover) {
-        HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " removes " + f.name
+        HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " removes " + HTomb.World.covers[z][x][y].name
           + " at " + x + ", " + y + ", " + z + ".");
         HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
         this.assignee.actor.acted = true;

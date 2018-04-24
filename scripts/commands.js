@@ -395,7 +395,7 @@ HTomb = (function(HTomb) {
     GUI.choosingMenu("Choose a spell (sanity cost):", p.caster.spells,
       function(sp) {
         return function() {
-          if (p.caster.sanity>=sp.getCost()) {
+          if (p.caster.sanity>=sp.spell.getCost()) {
             HTomb.GUI.Panels.menu.middle = [];
             HTomb.GUI.Panels.menu.refresh();
             HTomb.Events.publish({type: "Command", command: "ChooseSpell", spell: sp});

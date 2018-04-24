@@ -101,6 +101,7 @@ HTomb = (function(HTomb) {
         let DIST = 6;
         if (Math.abs(x-last.x)<DIST && Math.abs(y-last.y)<DIST && z===last.z) {
           if (HTomb.World.covers[z][x][y].liquid) {
+            console.log("tried to place player in liquid");
             return false;
           } else {
             return true;
@@ -177,7 +178,7 @@ HTomb = (function(HTomb) {
             mask[coord(s[0],s[1],s[2])] = true;
           }
         } else {
-          alert("failure!");
+          //alert("failure!");
         }
       }
     }
@@ -264,7 +265,7 @@ HTomb = (function(HTomb) {
             mask[coord(s[0],s[1],s[2])] = true;
           }
         } else {
-          alert("failure!");
+          //alert("failure!");
         }
       }
     }
@@ -292,7 +293,7 @@ HTomb = (function(HTomb) {
             mask[coord(s[0],s[1],s[2])] = true;
           }
         } else {
-          alert("failure!");
+          //alert("failure!");
         }
       }
     }
@@ -385,7 +386,7 @@ HTomb = (function(HTomb) {
             mask[coord(s[0],s[1],s[2])] = true;
           }
         } else {
-          alert("failure!");
+          //alert("failure!");
         }
       }
     }

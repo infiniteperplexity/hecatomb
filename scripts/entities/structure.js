@@ -44,7 +44,8 @@ HTomb = (function(HTomb) {
         name: args.name,
         bg: args.bg,
         Components: {
-          Fixture: {}
+          Fixture: {},
+          Harvestable: {}
         }
       });
     },
@@ -60,6 +61,16 @@ HTomb = (function(HTomb) {
         this.owner.owner.structures.push(this);
       }
       this.placed = true;
+      // make it possible to tear down buildings for ingredients
+      for (let i=0; i<this.ingredients.length; i++) {
+        let ings = this.ingredients[i];
+        if (this.features.length>i) {
+          let f = this.features[i];
+          if (f.harvestable) {
+            f.harvestable.yields = HTomb.Utils.copy(ings);
+          }
+        }
+      }
       return this;
     },
     validPlace: function(x,y,z) {

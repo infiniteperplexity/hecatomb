@@ -170,58 +170,6 @@ HTomb = (function(HTomb) {
           continue;
         } else if (minion.worker.task!==null) {
           continue;
-        } else {
-          // !!!! this is dependent on owner?
-          // look for labor tools
-          let labor = minion.worker.getLabor();
-          let invenTools = this.entity.owner.ownedItems().filter(function(e,i,a) {
-            return (e.equipment && e.claimed < e.n && e.equipment.labor>labor && minion.inventory && minion.inventory.items.indexOf(e)!==-1);
-          });
-          let groundTools = this.entity.owner.ownedItems().filter(function(e,i,a) {
-            return (e.equipment && e.claimed < e.n && e.equipment.labor>labor && e.isOnGround());
-          });
-          // sort by labor value
-          let comp = function(a,b) {
-            if (a.equipment.labor>b.equipment.labor) {
-              return 1;
-            } else if (a.equipment.labor<b.equipment.labor) {
-              return -1;
-            } else {
-              return 0;
-            }
-          };
-          invenTools.sort(comp);
-          groundTools.sort(comp);
-          // equip best ones
-          if (invenTools.length>0) {
-            minion.equipper.equipItem(invenTools[0]);
-            continue;
-          } else if (groundTools.length>0) {
-            let task = HTomb.Things.EquipTask.spawn({
-              assigner: this.entity,
-              item: groundTools[0],
-              name: "equip " + groundTools[0].describe()
-            });
-            task.assignTo(minion);
-            continue;
-          }
-          let MAXPRIORITY = 3;
-          for (let j=0; j<=MAXPRIORITY; j++) {
-            let tasks = this.taskList.filter(function(task,i,a) {return (task.priority===j && !(task.dormant>0) && task.assignee===null)});
-            // for hauling tasks, this gives misleading results...but I could fix that
-            tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
-            for (let k=0; k<tasks.length; k++) {
-              let task = tasks[k];
-              if (minion.worker.task===null && minion.worker.allowedTasks.indexOf(task.template)!==-1 && task.canAssign(minion)) {
-                task.assignTo(minion);
-                //very ad hoc
-                j = MAXPRIORITY+1;
-                break;
-              } else if (failed.indexOf(task)===-1) {
-                failed.push(task);
-              }
-            }
-          }
         }
       }
       for (let i=0; i<failed.length; i++) {
