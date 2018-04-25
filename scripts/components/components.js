@@ -95,12 +95,16 @@ HTomb = (function(HTomb) {
       options = options || {};
       options.spells = options.spells || [];
       this.spells = [];
-      for (let i=0; i<options.spells.length; i++) {
-        this.spells.push(HTomb.Things[options.spells[i]].spawn({researcher: this.entity}));
-        this.spells[i].spell.caster = this;
+      for (let s of options.spells) {
+        let spell = HTomb.Things[s].spawn({researcher: this.entity});
+        this.addSpell(spell);
       }
       HTomb.Events.subscribe(this,"TurnBegin");
       return this;
+    },
+    addSpell: function(spell) {
+      spell.spell.caster = this;
+      this.spells.push(spell);
     },
     onTurnBegin: function() {
       if (this.sanity<this.getMaxSanity() && ROT.RNG.getUniform()<(1/10)) {

@@ -61,6 +61,7 @@ HTomb = (function(HTomb) {
     template: "Spell",
     name: "spell",
     cost: 10,
+    caster: null,
     getCost: function() {
       if (this.entity.getCost) {
         return this.entity.getCost();
@@ -68,7 +69,7 @@ HTomb = (function(HTomb) {
       return this.cost;
     },
     spend: function() {
-      this.entity.researcher.caster.sanity-=this.getCost();
+      this.caster.sanity-=this.getCost();
     },
     cast: function(args) {
       this.entity.use(args);
@@ -83,7 +84,7 @@ HTomb = (function(HTomb) {
     },
     getCost: function() {
       let cost = [10,15,20,25,30,35,40];
-      let c = this.researcher;
+      let c = this.spell.caster.entity;
       if (c.master===undefined) {
         return cost[0];
       }
@@ -95,7 +96,7 @@ HTomb = (function(HTomb) {
       }
     },
     use: function() {
-      var c = this.entity.researcher;
+      var c = this.spell.caster.entity;
       var that = this;
       var items, zombie, i;
       function raiseZombie(x,y,z) {
@@ -143,7 +144,7 @@ HTomb = (function(HTomb) {
             zombie.place(x,y,z-1);
             HTomb.Things.Minion.spawn().addToEntity(zombie);
             c.master.addMinion(zombie);
-            let task = HTomb.Things.ZombieEmergeTask.spawn({assigner: caster.entity}).place(x,y,z);
+            let task = HTomb.Things.ZombieEmergeTask.spawn({assigner: c}).place(x,y,z);
             task.assignTo(zombie);
             zombie.actor.acted = true;
             zombie.actor.actionPoints-=16;
@@ -194,8 +195,7 @@ HTomb = (function(HTomb) {
       Spell: {cost: 10}
     },
     use: function() {
-      let caster = this.caster;
-      var c = caster.entity;
+      let c = this.spell.caster.entity;
       let that = this;
       function castBolt(x,y,z) {
         let cr = HTomb.World.creatures[HTomb.Utils.coord(x,y,z)]
@@ -273,8 +273,7 @@ HTomb = (function(HTomb) {
       Spell: {cost: 20}
     },
     use: function() {
-      let caster = this.spell.caster;
-      var c = caster.entity;
+      let c = this.spell.caster.entity;
       let that = this;  
       function castBolt(x,y,z) {
         if (HTomb.World.tiles[z][x][y]===true || (HTomb.Debug.explored===false && HTomb.World.explored[z][x][y]!==true)) { 
@@ -316,8 +315,7 @@ HTomb = (function(HTomb) {
       Spell: {cost: 6}
     },
     cast: function() {
-      let caster = this.spell.caster;
-      let c = caster.entity;
+      let c = this.spell.caster.entity;
       let x = c.x;
       let y = c.y;
       let z = c.z;

@@ -66,7 +66,8 @@ HTomb = (function(HTomb) {
         HTomb.GUI.alert("You have completed research on the spell '" + template.describe()+".'");
         let spells = this.assigner.caster.spells.map(function(s) {return s.template;});
         if (spells.indexOf(template.template)===-1) {
-          this.assigner.caster.spells.push(HTomb.Things[template.template].spawn({caster: this.assigner.caster}));
+          let spell = HTomb.Things[template.template].spawn({caster: this.assigner.caster});
+          this.assigner.caster.addSpell(spell);
         }
       } else {
         HTomb.GUI.alert("You have completed research on '" + template.describe()+".'");
