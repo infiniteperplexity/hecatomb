@@ -89,6 +89,10 @@ HTomb = (function(HTomb) {
       if (valid===false) {
       // if (!x && !y && !z) {
         console.log(this.describe() + "placement failed.");
+        if (this===HTomb.Player) {
+          alert("Player placement failed!");
+          return {x: x, y: y, z: z};
+        }
         return null;
       }
       return {x: x, y: y, z: z};

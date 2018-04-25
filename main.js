@@ -6,7 +6,7 @@ const fs = require('fs');
 let win
 
 function createWindow() {
-   win = new BrowserWindow({width: 900, height: 720})
+   win = new BrowserWindow({width: 1240, height: 720})
    win.loadURL(url.format({
       pathname: path.join(__dirname, 'index.html'),
       protocol: 'file:',

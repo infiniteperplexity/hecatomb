@@ -58,3 +58,5 @@ if you don't find coal you're kind of screwed.
 - difficult to track incomplete resource availability
 - how do I want research to actually work...do you really need to stand on it?
 - lack of cave-ins is unrealistic
+- player misplacement fails loudly; should re-try
+- why does every frickin' resource light up at first, instead of just the right amount?
