@@ -123,7 +123,7 @@ HTomb = (function(HTomb) {
       return ent;
     },
     cast: function(sp) {
-      let cost = sp.getCost();
+      let cost = sp.spell.getCost();
       if (this.sanity>=cost) {
         sp.use();
       }

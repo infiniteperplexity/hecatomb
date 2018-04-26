@@ -172,22 +172,27 @@ HTomb = (function(HTomb) {
           continue;
         }
         let MAXPRIORITY = 3;
-            for (let j=0; j<=MAXPRIORITY; j++) {
-              let tasks = this.taskList.filter(function(task,i,a) {return (task.priority===j && !(task.dormant>0) && task.assignee===null)});
-              // for hauling tasks, this gives misleading results...but I could fix that
-              tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
-              for (let k=0; k<tasks.length; k++) {
-                let task = tasks[k];
-                if (minion.worker.task===null && minion.worker.allowedTasks.indexOf(task.template)!==-1 && task.canAssign(minion)) {
-                  task.assignTo(minion);
-                  //very ad hoc
-                  j = MAXPRIORITY+1;
-                  break;
-                } else if (failed.indexOf(task)===-1) {
-                  failed.push(task);
-                }
-              }
-          }       
+        for (let j=0; j<=MAXPRIORITY; j++) {
+          let tasks = this.taskList.filter(function(task,i,a) {return (task.priority===j && !(task.dormant>0) && task.assignee===null)});
+          // for hauling tasks, this gives misleading results...but I could fix that
+          tasks = HTomb.Path.closest(minion.x, minion.y, minion.z,tasks);
+          for (let k=0; k<tasks.length; k++) {
+            let task = tasks[k];
+            if (minion.worker.task===null && minion.worker.allowedTasks.indexOf(task.template)!==-1 && task.canAssign(minion)) {
+              task.assignTo(minion);
+              //very ad hoc
+              j = MAXPRIORITY+1;
+              break;
+            } else if (failed.indexOf(task)===-1) {
+              failed.push(task);
+            }
+          }
+        }
+        // super-special case: buried zombie whose emerge task got dismissed
+        if (minion.worker.task===null && HTomb.Tiles.isEnclosed(minion.x, minion.y, minion.z) && HTomb.World.tiles[minion.z+1][minion.x][minion.y]===HTomb.Tiles.FloorTile) {
+          let task = HTomb.Things.ZombieEmergeTask.spawn({assigner: this.entity}).place(minion.x,minion.y,minion.z+1);
+          task.assignTo(minion);
+        }       
       }
       for (let i=0; i<failed.length; i++) {
         let task = failed[i];

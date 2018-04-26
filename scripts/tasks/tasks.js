@@ -474,68 +474,73 @@ HTomb = (function(HTomb) {
     template: "ZombieEmergeTask",
     name: "emerge",
     bg: "#884400",
-    //beginDescription: function() {
-    //  return "digging up from its grave";
-    //},
-    validTile: function() {
-      // this thing is going to be special...it should keep respawning if thwarted
-      return true;
+    labor: 10,
+    makes: "Excavation",
+    blurb: function() {
+      return (this.assignee.describe({capitalized: true, article: "indefinite"}) + " begins digging toward the surface.");
     },
-    burstForth: function(f) {
-      var x = f.x;
-      var y = f.y;
-      var z = f.z;
-      f.destroy();
+    validTile: function(x,y,z) {
+      if (HTomb.World.tiles[z][x][y]===HTomb.Tiles.FloorTile) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    workOnTask: function(x,y,z) {
+      let f = HTomb.World.features[HTomb.Utils.coord(x,y,z)];
+      let assignee = this.assignee;
+      if (!f) {
+        // if there is no feature, place an incomplete excavation
+        this.begin();
+      }
+      if (this.labor===HTomb.Things[this.template].labor) {
+        HTomb.GUI.pushMessage(this.blurb());
+      }
+      // assume the zombie can't get tools from underground
+      this.labor-=1;
+      this.assignee.actor.acted = true;
+      this.assignee.actor.actionPoints-=16;
+      if (this.labor<=0) {
+        this.finish();
+        this.complete();
+      }
+    },
+    finish: function() {
+      var x = this.x;
+      var y = this.y;
+      var z = this.z;
+      let f = HTomb.World.features[HTomb.Utils.coord(x,y,z)];
+      if (f) {
+        // tombstones explode into a shower of rocks
+        if (f.template==="Tombstone") {
+          for (let i=0; i<ROT.DIRS[8].length; i++) {
+            var x1 = ROT.DIRS[8][i][0]+x;
+            var y1 = ROT.DIRS[8][i][1]+y;
+            if (HTomb.World.tiles[z][x1][y1].solid!==true) {
+            // don't drop rocks on tombstones, it could confuse new players
+              let feat = HTomb.World.features[coord(x1,y1,z)];
+              if (feat && feat.template==="Tombstone") {
+                continue;
+              }
+              if (ROT.RNG.getUniform()<0.35) {
+                var rock = HTomb.Things.Rock.spawn();
+                rock.n = 1;
+                rock.place(x1,y1,z);
+                rock.owned = true; 
+              }
+            }
+          }
+        }
+        // destroy the feature even if it isn't a tombstone...maybe only if the player owns it?
+        f.destroy();  
+      }
+      HTomb.World.tiles[z][x][y] = HTomb.Tiles.DownSlopeTile;
       let buriedItems = HTomb.World.items[coord(x,y,z-1)] || HTomb.Things.Items();
       for (let item of buriedItems) {
         item.owned = true;
       }
       HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
-      for (let i=0; i<ROT.DIRS[8].length; i++) {
-        var x1 = ROT.DIRS[8][i][0]+x;
-        var y1 = ROT.DIRS[8][i][1]+y;
-        if (HTomb.World.tiles[z][x1][y1].solid!==true) {
-          // don't drop rocks on tombstones, it could confuse new players
-          let feat = HTomb.World.features[coord(x1,y1,z)];
-          if (feat && feat.template==="Tombstone") {
-            continue;
-          }
-          if (ROT.RNG.getUniform()<0.35) {
-            var rock = HTomb.Things.Rock.spawn();
-            rock.n = 1;
-            rock.place(x1,y1,z);
-            rock.owned = true; 
-          }
-        }
-      }
-    },
-    workOnTask: function(x,y,z) {
-      let f = HTomb.World.features[HTomb.Utils.coord(x,y,z)];
-      // There is a special case of digging upward under a tombstone...
-      if (f && f.template==="Tombstone") {
-        if (f.integrity===null || f.integrity===undefined) {
-          f.integrity=10;
-        }
-        if (f.integrity===10) {
-          HTomb.GUI.pushMessage(this.assignee.describe({capitalized: true, article: "indefinite"}) + " begins digging toward the surface.");
-        }
-        f.integrity-=1;
-        this.assignee.actor.acted = true;
-        this.assignee.actor.actionPoints-=16;
-        // shouldn't depend on the feature being there
-        if (f.integrity<=0) {
-          this.burstForth(f);
-          var cr = this.assignee;
-          HTomb.GUI.sensoryEvent(cr.describe({capitalized: true, article: "indefinite"}) + " bursts forth from the ground!",x,y,z);
-          HTomb.World.tiles[z][x][y] = HTomb.Tiles.DownSlopeTile;
-          let c = HTomb.World.covers[z][x][y];
-          if (c.mine) {
-            c.mine(x,y,z,this.assigner);
-          }
-          this.complete();
-          HTomb.World.validate.cleanNeighbors(x,y,z);
-        }
-      }
+      HTomb.GUI.sensoryEvent(this.assignee.describe({capitalized: true, article: "indefinite"}) + " bursts forth from the ground!",x,y,z);   
     }
   });
 

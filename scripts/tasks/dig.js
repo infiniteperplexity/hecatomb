@@ -229,6 +229,7 @@ HTomb = (function(HTomb) {
         if (tiles[z-1][x][y]===WallTile) {
           tiles[z][x][y] = DownSlopeTile;
           tiles[z-1][x][y] = UpSlopeTile;
+          HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
           c = HTomb.World.covers[z-1][x][y];
           if (c.mineral) {
             c.mineral.mine(x,y,z-1);
@@ -239,12 +240,13 @@ HTomb = (function(HTomb) {
         // Otherwise just remove the floor
         } else {
           tiles[z][x][y] = EmptyTile;
+          HTomb.World.covers[z][x][y] = HTomb.Covers.NoCover;
         }
       // If it's a down slope tile, remove the slopes
       } else if (t===DownSlopeTile) {
         tiles[z][x][y] = EmptyTile;
         tiles[z-1][x][y] = FloorTile;
-        downOne = true;
+        HTomb.World.covers[z-1][x][y] = HTomb.Covers.NoCover;
       // if it's an upward slope, remove the slope
       } else if (t===UpSlopeTile) {
         tiles[z][x][y] = FloorTile;
