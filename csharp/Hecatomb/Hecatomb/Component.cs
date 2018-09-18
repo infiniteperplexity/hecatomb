@@ -8,7 +8,7 @@
  */
 using System;
 
-namespace Hecatomb.Components
+namespace Hecatomb
 {
 	/// <summary>
 	/// Description of Component.
@@ -18,5 +18,12 @@ namespace Hecatomb.Components
 		public Component()
 		{
 		}
+	}
+	
+	public class PositionComponent : Component
+	{
+		public int x;
+		public int y;
+		public int z;
 	}
 }
