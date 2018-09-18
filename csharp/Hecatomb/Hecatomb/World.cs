@@ -16,7 +16,7 @@ namespace Hecatomb
 	/// </summary>
 	public class World
 	{
-		public int[,] tiles {get; set;}
+		public Terrain[,] tiles {get; set;}
 		public World()
 		{
 			Simplex.Noise.Seed = 209323094; // Optional
@@ -26,13 +26,13 @@ namespace Hecatomb
 			
 			int WIDTH = Constants.WIDTH;
 			int HEIGHT = Constants.HEIGHT;
-			tiles = new int[WIDTH, HEIGHT];
+			tiles = new Terrain[WIDTH, HEIGHT];
 			for (int i=0; i<WIDTH; i++) {
 				for (int j=0; j<HEIGHT; j++) {
 					if (i==0 || i==WIDTH-1 || j==0 || j==HEIGHT-1) {
-						tiles[i,j] = 1;
+						tiles[i,j] = Terrains.WallTile;
 					} else {
-						tiles[i,j] = 0;
+						tiles[i,j] = Terrains.FloorTile;
 					}
 				}
 			}

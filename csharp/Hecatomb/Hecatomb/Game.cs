@@ -31,17 +31,15 @@ namespace Hecatomb
 		{
 			int WIDTH = Constants.WIDTH;
 			int HEIGHT = Constants.HEIGHT;
-			int [,] grid = world.tiles;
+			Terrain [,] grid = world.tiles;
 			RLKeyPress keyPress = display.Keyboard.GetKeyPress();
 			HandleCommand(keyPress);
 			for (int i=0; i<WIDTH; i++) {
 	    		for (int j=0; j<HEIGHT; j++) {
 	    			if (player.x==i && player.y==j) {
 						display.Print(i, j, player.sym.ToString(), RLColor.White);
-	    			} else if (grid[i,j]==0) {
-	    				display.Print(i, j, ".", RLColor.White);
-	    			} else {
-	    				display.Print(i, j, "#", RLColor.White);
+					} else {
+						display.Print(i, j, grid[i,j].Symbol.ToString(), RLColor.White);
 	    			}
 	    		}
 			}
