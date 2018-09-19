@@ -17,13 +17,9 @@ namespace Hecatomb
 	
 	public class Component
 	{
-		public Entity Entity;
-		public Component()
-		{
-			Entity = Entity.NullEntity;
-		}
+		public TypedEntity Entity;
 		
-		public void addToEntity(Entity e)
+		public void addToEntity(TypedEntity e)
 		{
 			e.Components[this.GetType()] = this;
 			Entity = e;
@@ -42,6 +38,8 @@ namespace Hecatomb
 		{
 			
 		}
+		
+		protected string GetThisClassName() { return this.GetType().Name; }
 	}
 	
 	public class Position : Component

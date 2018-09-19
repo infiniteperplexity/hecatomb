@@ -58,13 +58,13 @@
     <Compile Include="Colors.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Entity.cs" />
+    <Compile Include="TypedEntity.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Noise.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Terrain.cs" />
-    <Compile Include="TypeObject.cs" />
+    <Compile Include="EntityType.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

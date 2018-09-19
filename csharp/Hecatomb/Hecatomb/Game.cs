@@ -14,18 +14,19 @@ namespace Hecatomb
 	class Game
 	{
 		public static World world;
-		public static Entity player;
+		public static TypedEntity player;
 		public static RLRootConsole display;
 		public static Colors myColors;
 		public static void Main(string[] args)
 		{
+			EntityType Player = new EntityType("Player");
+			Player.Components = new Type[] {typeof(Position)};
 			myColors = new Colors();
 			world = new World();
-			player = new Entity();
-			Position p = new Position();
-			p.addToEntity(player);
-			player.x = 1;
-			player.y = 1;
+			player = new TypedEntity(Player);
+			player.x = 12;
+			player.y = 12;
+			
 			// this little f*cker totally messes with how I wanted to structure the program, but I'll live...for now...
 			display = new RLRootConsole("terminal8x8.png", Constants.WIDTH, Constants.HEIGHT, 8, 8, 1.6f, "Hecatomb");
       		display.Update += OnRootConsoleUpdate;

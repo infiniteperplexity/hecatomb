@@ -12,16 +12,16 @@ using System.Collections.Generic;
 namespace Hecatomb
 {
 	/// <summary>
-	/// Description of Entity.
+	/// Description of TypedEntity.
 	/// </summary>
-	public class Entity
+	public class TypedEntity
 	{
-		public static Entity NullEntity = new Entity();
-		public string Type;
+		public EntityType EntityType;
 		public string Name;
 		// might remove this...but for testing...
 		public char Symbol;
 		public string FG;
+		public string BG;
 		public static int MaxEID = -1;
 		public int EID;
 		public Dictionary<Type, Component> Components;
@@ -68,13 +68,17 @@ namespace Hecatomb
 		}
 
 		
-		public Entity(/*string t*/)
+		public TypedEntity(EntityType t)
 		{
-			EID = Entity.MaxEID + 1;
+			EID = TypedEntity.MaxEID + 1;
 			Symbol = '@';
 			FG = "white";
-			//Type = t;
+			EntityType = t;
 			Components = new Dictionary<Type, Component>();
+//			System.Diagnostics.Debug.WriteLine(t.GetType());
+			if (EntityType!=null) {
+				EntityType.apply(this);
+			}
 			// look up our TypeObject to find out what all we're supposed to include
 			
 		}
