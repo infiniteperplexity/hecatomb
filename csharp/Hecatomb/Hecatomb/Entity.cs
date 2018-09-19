@@ -78,5 +78,15 @@ namespace Hecatomb
 			
 		}
 		
+//		    public T GetComponent<T>() where T : Component
+//    {
+        // It gets the type of T and calls the 
+        // non-generic variant, for convenience.
+        // Then it cast the result to T.
+//        return (T)GetComponent(typeof(T)); 
+//    }
+
+		
+		
 	}
 }
