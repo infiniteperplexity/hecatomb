@@ -8,3 +8,13 @@ C:\Users\M543015\Desktop\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\RLNE
 C:\Users\M543015\Desktop\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\OpenTK.xml
 C:\Users\M543015\Desktop\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\obj\Debug\Hecatomb.exe
 C:\Users\M543015\Desktop\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\obj\Debug\Hecatomb.pdb
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\obj\Debug\Hecatomb.csprojResolveAssemblyReference.cache
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\obj\Debug\Hecatomb.exe
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\terminal8x8.png
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\Hecatomb.exe.config
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\Hecatomb.exe
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\Hecatomb.pdb
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\OpenTK.dll
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\RLNET.dll
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\OpenTK.xml
+C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\obj\Debug\Hecatomb.pdb

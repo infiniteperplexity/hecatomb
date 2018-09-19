@@ -8,8 +8,9 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Hecatomb</RootNamespace>
     <AssemblyName>Hecatomb</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -54,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Colors.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Entity.cs" />

@@ -14,12 +14,18 @@ namespace Hecatomb
 	class Game
 	{
 		public static World world;
-		public static Player player;
+		public static Entity player;
 		public static RLRootConsole display;
+		public static Colors myColors;
 		public static void Main(string[] args)
 		{
+			myColors = new Colors();
 			world = new World();
-			player = new Player();
+			player = new Entity();
+			Position p = new Position();
+			p.addToEntity(player);
+			player.x = 1;
+			player.y = 1;
 			// this little f*cker totally messes with how I wanted to structure the program, but I'll live...for now...
 			display = new RLRootConsole("terminal8x8.png", Constants.WIDTH, Constants.HEIGHT, 8, 8, 1.6f, "Hecatomb");
       		display.Update += OnRootConsoleUpdate;
@@ -37,9 +43,9 @@ namespace Hecatomb
 			for (int i=0; i<WIDTH; i++) {
 	    		for (int j=0; j<HEIGHT; j++) {
 	    			if (player.x==i && player.y==j) {
-						display.Print(i, j, player.sym.ToString(), RLColor.White);
+						display.Print(i, j, player.Symbol.ToString(), myColors[player.FG]);
 					} else {
-						display.Print(i, j, grid[i,j].Symbol.ToString(), RLColor.White);
+						display.Print(i, j, grid[i,j].Symbol.ToString(), myColors[player.FG]);
 	    			}
 	    		}
 			}
@@ -57,22 +63,22 @@ namespace Hecatomb
 		  	{
 		    	if ( keyPress.Key == RLKey.Up )
 		    	{
-		    		player.y = Math.Max(1, player.y-1);
+		    		player.y = Math.Max(1, player.y-1 ?? 1);
 		    		return true;
 			    }
 			    else if ( keyPress.Key == RLKey.Down )
 			    {
-			    	player.y = Math.Min(HEIGHT-2, player.y+1);
+			    	player.y = Math.Min(HEIGHT-2, player.y+1 ?? HEIGHT-2);
 			    	return true;
 			    }
 			    else if ( keyPress.Key == RLKey.Left )
 			    {
-			    	player.x = Math.Max(1, player.x-1);
+			    	player.x = Math.Max(1, player.x-1 ?? 1);
 			    	return true;
 			    }
 			    else if ( keyPress.Key == RLKey.Right )
 			    {
-			    	player.x = Math.Min(WIDTH-2, player.x+1);
+			    	player.x = Math.Min(WIDTH-2, player.x+1 ?? WIDTH-2);
 			    	return true;
 			    }
 			}

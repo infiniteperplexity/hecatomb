@@ -16,77 +16,78 @@ namespace Hecatomb
 	/// </summary>
 	public class Entity
 	{
+		public static Entity NullEntity = new Entity();
 		public string Type;
 		public string Name;
+		// might remove this...but for testing...
+		public char Symbol;
+		public string FG;
 		public static int MaxEID = -1;
 		public int EID;
-		public Dictionary<string, Component> Components;
-
-		// shortcuts for common components
-		public int? x
-		{
-			get {
-				if (Components.ContainsKey("Position")) {
-					return ((PositionComponent) Components["Position"]).x;
-				} else {
-					return null;
-				}
-			}
-			set {
-				if (Components.ContainsKey("Position")) {
-					Components["Position"].x = value;
-				}
-			}
-		}
-		public int? y
-		{
-			get {
-				if (Components.ContainsKey("Position")) {
-					return Components["Position"].y;
-				} else {
-					return null;
-				}
-			}
-			set {
-				if (Components.ContainsKey("Position")) {
-					Components["Position"].y = value;
-				}
-			}
-		}
-		public int? z
-		{
-			get {
-				if (Components.ContainsKey("Position")) {
-					return Components["Position"].z;
-				} else {
-					return null;
-				}
-			}
-			set {
-				if (Components.ContainsKey("Position")) {
-					Components["Position"].z = value;
-				}
-			}
-		}
+		public Dictionary<Type, Component> Components;
 		
-		public Entity(string t)
+		// Position shortcuts
+		public int? x {
+			get {
+				if (Components.ContainsKey(typeof(Position))) {
+					return GetComponent<Position>().x;
+				}
+				return null;
+			}
+			set {
+				if (Components.ContainsKey(typeof(Position))) {
+					GetComponent<Position>().x = value;
+				}
+			}
+		}
+		public int? y {
+			get {
+				if (Components.ContainsKey(typeof(Position))) {
+					return GetComponent<Position>().y;
+				}
+				return null;
+			}
+			set {
+				if (Components.ContainsKey(typeof(Position))) {
+					GetComponent<Position>().y = value;
+				}
+			}
+		}
+		public int? z {
+			get {
+				if (Components.ContainsKey(typeof(Position))) {
+					return GetComponent<Position>().z;
+				}
+				return null;
+			}
+			set {
+				if (Components.ContainsKey(typeof(Position))) {
+					GetComponent<Position>().z = value;
+				}
+			}
+		}
+
+		
+		public Entity(/*string t*/)
 		{
 			EID = Entity.MaxEID + 1;
-			Type = t;
-			Components = new Dictionary<string, Component>();
+			Symbol = '@';
+			FG = "white";
+			//Type = t;
+			Components = new Dictionary<Type, Component>();
 			// look up our TypeObject to find out what all we're supposed to include
 			
 		}
 		
-//		    public T GetComponent<T>() where T : Component
-//    {
-        // It gets the type of T and calls the 
-        // non-generic variant, for convenience.
-        // Then it cast the result to T.
-//        return (T)GetComponent(typeof(T)); 
-//    }
-
-		
+		public T GetComponent<T>() where T : Component
+		{
+			Type t = typeof(T);
+			if (Components.ContainsKey(t)) {
+				return (T) Components[t];
+			} else {
+				return default(T);
+			}
+		}
 		
 	}
 }
