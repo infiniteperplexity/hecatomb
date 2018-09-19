@@ -18,3 +18,5 @@ C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Deb
 C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\RLNET.dll
 C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\OpenTK.xml
 C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\obj\Debug\Hecatomb.pdb
+C:\Users\M543015\Desktop\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\Player.json
+C:\Users\M543015\Desktop\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\Newtonsoft.Json.dll

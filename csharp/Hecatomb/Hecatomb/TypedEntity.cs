@@ -16,7 +16,7 @@ namespace Hecatomb
 	/// </summary>
 	public class TypedEntity
 	{
-		public EntityType EntityType;
+		public string EType;
 		public string Name;
 		// might remove this...but for testing...
 		public char Symbol;
@@ -68,19 +68,17 @@ namespace Hecatomb
 		}
 
 		
-		public TypedEntity(EntityType t)
+		public TypedEntity(string t)
 		{
 			EID = TypedEntity.MaxEID + 1;
 			Symbol = '@';
 			FG = "white";
-			EntityType = t;
+			EType = t;
 			Components = new Dictionary<Type, Component>();
-//			System.Diagnostics.Debug.WriteLine(t.GetType());
-			if (EntityType!=null) {
-				EntityType.apply(this);
-			}
-			// look up our TypeObject to find out what all we're supposed to include
-			
+			EntityType et = EntityType.Types[t];
+			if (et!=null) {
+				et.apply(this);
+			}		
 		}
 		
 		public T GetComponent<T>() where T : Component

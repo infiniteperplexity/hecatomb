@@ -1,0 +1,9 @@
+﻿{
+	"Name": "Player",
+	"Components" : {
+		"Position": {
+			"x": 12,
+			"y": 12
+		}
+	}
+}

@@ -8,6 +8,9 @@
  */
 using RLNET;
 using System;
+using System.Diagnostics;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -19,11 +22,35 @@ namespace Hecatomb
 		public static Colors myColors;
 		public static void Main(string[] args)
 		{
+			string json = @"{
+				'Name': 'Player',
+				'Components' : {
+					'Position': {
+						'x': 12,
+						'y': 12
+					}
+				}
+			}";
+
+			JsonTextReader reader = new JsonTextReader(new StringReader(json));
+			while (reader.Read())
+			{
+			    if (reader.Value != null)
+			    {
+			        Debug.WriteLine("Token: {0}, Value: {1}", reader.TokenType, reader.Value);
+			    }
+			    else
+			    {
+			        Debug.WriteLine("Token: {0}", reader.TokenType);
+			    }
+			}
 			EntityType Player = new EntityType("Player");
-			Player.Components = new Type[] {typeof(Position)};
+//			Player.Components = new Type[] {typeof(Position)};
+			Player.Components = new Type[] {Type.GetType("Hecatomb.Position")};
+			
 			myColors = new Colors();
 			world = new World();
-			player = new TypedEntity(Player);
+			player = new TypedEntity("Player");
 			player.x = 12;
 			player.y = 12;
 			
