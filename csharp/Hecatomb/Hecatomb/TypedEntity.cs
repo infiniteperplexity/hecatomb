@@ -27,42 +27,48 @@ namespace Hecatomb
 		public Dictionary<Type, Component> Components;
 		
 		// Position shortcuts
-		public int? x {
+		public int x {
 			get {
 				if (Components.ContainsKey(typeof(Position))) {
 					return GetComponent<Position>().x;
 				}
-				return null;
+				throw new NullReferenceException();
 			}
 			set {
 				if (Components.ContainsKey(typeof(Position))) {
 					GetComponent<Position>().x = value;
+				} else {
+					throw new NullReferenceException();
 				}
 			}
 		}
-		public int? y {
+		public int y {
 			get {
 				if (Components.ContainsKey(typeof(Position))) {
 					return GetComponent<Position>().y;
 				}
-				return null;
+				throw new NullReferenceException();
 			}
 			set {
 				if (Components.ContainsKey(typeof(Position))) {
 					GetComponent<Position>().y = value;
+				} else {
+					throw new NullReferenceException();
 				}
 			}
 		}
-		public int? z {
+		public int z {
 			get {
 				if (Components.ContainsKey(typeof(Position))) {
 					return GetComponent<Position>().z;
 				}
-				return null;
+				throw new NullReferenceException();
 			}
 			set {
 				if (Components.ContainsKey(typeof(Position))) {
 					GetComponent<Position>().z = value;
+				} else {
+					throw new NullReferenceException();
 				}
 			}
 		}

@@ -7,8 +7,10 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -20,9 +22,22 @@ namespace Hecatomb
 		/// <summary>
 		/// Description of EntityType.
 		/// </summary>
+//		public EntityType(string s)
+//		{
+//			Name = s;
+//			Types[s] = this;
+//		}
+		
 		public EntityType(string s)
 		{
+//			string f = s + ".json";
+//			string json = File.ReadAllText(f);
+//			var jobj = JObject.Parse(json);
 			Name = s;
+//			var comps = jobj["Components"].Children();
+			
+//			List<string> l = comps.Select(c=>(string)c).ToList();
+			
 			Types[s] = this;
 		}
 			
@@ -32,6 +47,16 @@ namespace Hecatomb
 			{
 				e.Components[t] = (Component) Activator.CreateInstance(t);
 			}
+		}
+		
+		
+		public static void LoadEntities()
+		{
+			// Player
+			EntityType Player = new EntityType("Player");
+			Player.Components = new Type[] {
+				Type.GetType("Hecatomb.Position")
+			};
 		}
 	}
 }

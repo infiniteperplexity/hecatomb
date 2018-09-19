@@ -11,6 +11,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -20,60 +21,43 @@ namespace Hecatomb
 		public static TypedEntity player;
 		public static RLRootConsole display;
 		public static Colors myColors;
+		public static Camera camera;
 		public static void Main(string[] args)
 		{
-			string json = @"{
-				'Name': 'Player',
-				'Components' : {
-					'Position': {
-						'x': 12,
-						'y': 12
-					}
-				}
-			}";
-
-			JsonTextReader reader = new JsonTextReader(new StringReader(json));
-			while (reader.Read())
-			{
-			    if (reader.Value != null)
-			    {
-			        Debug.WriteLine("Token: {0}, Value: {1}", reader.TokenType, reader.Value);
-			    }
-			    else
-			    {
-			        Debug.WriteLine("Token: {0}", reader.TokenType);
-			    }
-			}
-			EntityType Player = new EntityType("Player");
-//			Player.Components = new Type[] {typeof(Position)};
-			Player.Components = new Type[] {Type.GetType("Hecatomb.Position")};
-			
+			EntityType.LoadEntities();
 			myColors = new Colors();
-			world = new World();
-			player = new TypedEntity("Player");
-			player.x = 12;
-			player.y = 12;
-			
+			world = new World();	
+			player = new TypedEntity("Player") {x=Constants.WIDTH/2, y=Constants.HEIGHT/2};
+			camera = new Camera();
+			camera.Center(player.x, player.y);
+			Debug.WriteLine(camera.XOffset);
+			Debug.WriteLine(camera.YOffset);
 			// this little f*cker totally messes with how I wanted to structure the program, but I'll live...for now...
-			display = new RLRootConsole("terminal8x8.png", Constants.WIDTH, Constants.HEIGHT, 8, 8, 1.6f, "Hecatomb");
+			display = new RLRootConsole("terminal8x8.png", camera.Width, camera.Height, 8, 8, 1.6f, "Hecatomb");
       		display.Update += OnRootConsoleUpdate;
       		display.Render += OnRootConsoleRender;
+      		
+//      		
       		display.Run();
+      		
 		}
 		
 		private static void OnRootConsoleUpdate(object sender, UpdateEventArgs e)
 		{
-			int WIDTH = Constants.WIDTH;
-			int HEIGHT = Constants.HEIGHT;
+			int WIDTH = camera.Width;
+			int HEIGHT = camera.Height;
 			Terrain [,] grid = world.tiles;
 			RLKeyPress keyPress = display.Keyboard.GetKeyPress();
 			HandleCommand(keyPress);
+			camera.Center(player.x, player.y);
 			for (int i=0; i<WIDTH; i++) {
 	    		for (int j=0; j<HEIGHT; j++) {
-	    			if (player.x==i && player.y==j) {
+					int x = i + camera.XOffset;
+					int y = j + camera.YOffset;
+	    			if (player.x==x && player.y==y) {
 						display.Print(i, j, player.Symbol.ToString(), myColors[player.FG]);
 					} else {
-						display.Print(i, j, grid[i,j].Symbol.ToString(), myColors[player.FG]);
+						display.Print(i, j, grid[x,y].Symbol.ToString(), myColors[player.FG]);
 	    			}
 	    		}
 			}
@@ -91,22 +75,22 @@ namespace Hecatomb
 		  	{
 		    	if ( keyPress.Key == RLKey.Up )
 		    	{
-		    		player.y = Math.Max(1, player.y-1 ?? 1);
+		    		player.y = Math.Max(1, player.y-1);
 		    		return true;
 			    }
 			    else if ( keyPress.Key == RLKey.Down )
 			    {
-			    	player.y = Math.Min(HEIGHT-2, player.y+1 ?? HEIGHT-2);
+			    	player.y = Math.Min(HEIGHT-2, player.y+1);
 			    	return true;
 			    }
 			    else if ( keyPress.Key == RLKey.Left )
 			    {
-			    	player.x = Math.Max(1, player.x-1 ?? 1);
+			    	player.x = Math.Max(1, player.x-1);
 			    	return true;
 			    }
 			    else if ( keyPress.Key == RLKey.Right )
 			    {
-			    	player.x = Math.Min(WIDTH-2, player.x+1 ?? WIDTH-2);
+			    	player.x = Math.Min(WIDTH-2, player.x+1);
 			    	return true;
 			    }
 			}
