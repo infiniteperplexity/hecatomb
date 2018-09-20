@@ -22,16 +22,19 @@ namespace Hecatomb
 		public static RLRootConsole display;
 		public static Colors myColors;
 		public static Camera camera;
+		
 		public static void Main(string[] args)
 		{
 			EntityType.LoadEntities();
 			myColors = new Colors();
-			world = new World();	
-			player = new TypedEntity("Player") {x=Constants.WIDTH/2, y=Constants.HEIGHT/2};
+			world = new World();
+			player = new TypedEntity("Player") {
+				x = Constants.WIDTH/2,
+				y = Constants.HEIGHT/2,
+				z = world.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
+			};
 			camera = new Camera();
-			camera.Center(player.x, player.y);
-			Debug.WriteLine(camera.XOffset);
-			Debug.WriteLine(camera.YOffset);
+			camera.Center(player.x, player.y, player.z);
 			// this little f*cker totally messes with how I wanted to structure the program, but I'll live...for now...
 			display = new RLRootConsole("terminal8x8.png", camera.Width, camera.Height, 8, 8, 1.6f, "Hecatomb");
       		display.Update += OnRootConsoleUpdate;
@@ -46,18 +49,18 @@ namespace Hecatomb
 		{
 			int WIDTH = camera.Width;
 			int HEIGHT = camera.Height;
-			Terrain [,] grid = world.tiles;
+			Terrain [,,] grid = world.tiles;
 			RLKeyPress keyPress = display.Keyboard.GetKeyPress();
 			HandleCommand(keyPress);
-			camera.Center(player.x, player.y);
+			camera.Center(player.x, player.y, player.z);
 			for (int i=0; i<WIDTH; i++) {
 	    		for (int j=0; j<HEIGHT; j++) {
 					int x = i + camera.XOffset;
 					int y = j + camera.YOffset;
-	    			if (player.x==x && player.y==y) {
+	    			if (player.x==x && player.y==y && player.z==camera.z) {
 						display.Print(i, j, player.Symbol.ToString(), myColors[player.FG]);
 					} else {
-						display.Print(i, j, grid[x,y].Symbol.ToString(), myColors[player.FG]);
+						display.Print(i, j, grid[x,y,camera.z].Symbol.ToString(), myColors[player.FG]);
 	    			}
 	    		}
 			}
@@ -71,6 +74,7 @@ namespace Hecatomb
 		private static bool HandleCommand(RLKeyPress keyPress) {
 			int WIDTH = Constants.WIDTH;
 			int HEIGHT = Constants.HEIGHT;
+			int DEPTH = Constants.DEPTH;
 			if ( keyPress != null )
 		  	{
 		    	if ( keyPress.Key == RLKey.Up )
@@ -92,6 +96,14 @@ namespace Hecatomb
 			    {
 			    	player.x = Math.Min(WIDTH-2, player.x+1);
 			    	return true;
+			    }
+			    else if ( keyPress.Key == RLKey.Period )
+			    {
+			    	player.z = Math.Max(1, player.z-1);
+			    }
+			    else if ( keyPress.Key == RLKey.Comma )
+			    {
+			    	player.z = Math.Min(DEPTH-2, player.z+1);
 			    }
 			}
 			return false;

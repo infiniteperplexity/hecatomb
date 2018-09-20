@@ -15,8 +15,8 @@ namespace Hecatomb
 	/// </summary>
 	public class Camera
 	{
-		public int Height = 25;
-		public int Width = 25;
+		public int Height = 49;
+		public int Width = 49;
 		public int XOffset = 0;
 		public int YOffset = 0;
 		public int z = 0;
@@ -26,12 +26,13 @@ namespace Hecatomb
 			
 		}
 		
-		public void Center(int x, int y)
+		public void Center(int x, int y, int _z)
 		{
 			int xhalf = Width/2;
 			int yhalf = Height/2;
 			XOffset = Math.Min(Math.Max(0, x-xhalf), Constants.WIDTH-Width);
 			YOffset = Math.Min(Math.Max(0, y-yhalf), Constants.HEIGHT-Height);
+			z = _z;
 		}
 	}
 }

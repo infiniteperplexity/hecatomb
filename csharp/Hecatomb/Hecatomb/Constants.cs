@@ -17,5 +17,7 @@ namespace Hecatomb
 	{
 		public static readonly int WIDTH = 256;
 		public static readonly int HEIGHT = 256;
+		public static readonly int DEPTH = 64;
+		public static readonly int GROUNDLEVEL = 50;
 	}
 }
