@@ -35,13 +35,7 @@ namespace Hecatomb
 				}
 				throw new NullReferenceException();
 			}
-			set {
-				if (Components.ContainsKey(typeof(Position))) {
-					GetComponent<Position>().x = value;
-				} else {
-					throw new NullReferenceException();
-				}
-			}
+			private set {}
 		}
 		public int y {
 			get {
@@ -50,13 +44,7 @@ namespace Hecatomb
 				}
 				throw new NullReferenceException();
 			}
-			set {
-				if (Components.ContainsKey(typeof(Position))) {
-					GetComponent<Position>().y = value;
-				} else {
-					throw new NullReferenceException();
-				}
-			}
+			private set {}
 		}
 		public int z {
 			get {
@@ -65,13 +53,7 @@ namespace Hecatomb
 				}
 				throw new NullReferenceException();
 			}
-			set {
-				if (Components.ContainsKey(typeof(Position))) {
-					GetComponent<Position>().z = value;
-				} else {
-					throw new NullReferenceException();
-				}
-			}
+			private set {}
 		}
 
 		

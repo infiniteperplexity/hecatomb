@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Hecatomb
@@ -14,7 +15,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Sparse3DArray.
 	/// </summary>
-	public class Sparse3DArray<T>
+	public class Sparse3DArray<T> : IEnumerable<T>
 	{
 		private Dictionary<Tuple<int, int, int>, T> dict;
 		public readonly int X;
@@ -52,10 +53,27 @@ namespace Hecatomb
 					throw new IndexOutOfRangeException();
 				} else {
 					Tuple<int, int, int> t = new Tuple<int, int, int>(x, y, z);
-					dict[t] = value;
+					if (value==null) {
+						if (dict[t]!=null)
+						{
+							dict.Remove(t);
+						}
+					} else {
+						dict[t] = value;
+					}
 				}
 			}
 	   	}
 		
+		
+		public IEnumerator<T> GetEnumerator()
+	    {
+	        return dict.Values.GetEnumerator();
+	    }
+		 
+		IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
 	}
 }

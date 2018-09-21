@@ -30,7 +30,7 @@ namespace Hecatomb
 			int GROUNDLEVEL = Constants.GROUNDLEVEL;
 			float hscale = 2f;
 			float vscale = 5f;
-			Noise = new FastNoise();	
+			Noise = new FastNoise(seed: Game.Random.Next(1024));
 			Tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
 			Creatures = new Sparse3DArray<TypedEntity>(WIDTH, HEIGHT, DEPTH);
 			for (int i=0; i<WIDTH; i++) {
@@ -49,14 +49,14 @@ namespace Hecatomb
 			}
 		}
 		
-		public Terrain GetTile(int x, int y, int z)
-		{
-			if (x<0 || x>=Constants.WIDTH || y<0 || y>=Constants.HEIGHT || z<0 || z>=Constants.DEPTH) {
-				return null;
-			} else {
-				return Tiles[x,y,z];
-			}
-		}
+//		public Terrain GetTile(int x, int y, int z)
+//		{
+//			if (x<0 || x>=Constants.WIDTH || y<0 || y>=Constants.HEIGHT || z<0 || z>=Constants.DEPTH) {
+//				return null;
+//			} else {
+//				return Tiles[x,y,z];
+//			}
+//		}
 		public int GroundLevel(int x, int y)
 		{
 			int elev = Constants.DEPTH-1;

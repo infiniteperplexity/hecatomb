@@ -16,6 +16,10 @@ namespace Hecatomb
 	/// </summary>
 	public class GameCommands
 	{
+		public bool Wait()
+		{
+			return true;
+		}
 		public bool MoveNorthCommand()
 		{
 			return moveHorizontalCommand(+0, -1);
@@ -50,11 +54,11 @@ namespace Hecatomb
 			if (m==null) {
 				return false;
 			}
-			if (!m.CanMove(x1, y1, z1)) {
-				if (m.Climbs && z1+1<Constants.DEPTH && m.CanMove(x1, y1, z1+1)){
+			if (!m.CanPass(x1, y1, z1)) {
+				if (m.Climbs && z1+1<Constants.DEPTH && m.CanPass(x1, y1, z1+1)){
 					m.StepTo(x1, y1, z1+1);
 					return true;
-				} else if (m.Climbs && z1-1>=0 && m.CanMove(x1, y1, z1-1)){
+				} else if (m.Climbs && z1-1>=0 && m.CanPass(x1, y1, z1-1)){
 					m.StepTo(x1, y1, z1-1);
 					return true;
 				}
@@ -75,7 +79,7 @@ namespace Hecatomb
 			if (m==null) {
 				return false;
 			}
-			if (!m.CanMove(x1, y1, z1)) {
+			if (!m.CanPass(x1, y1, z1)) {
 			    return false;
 			} else {
 			    m.StepTo(x1, y1, z1);

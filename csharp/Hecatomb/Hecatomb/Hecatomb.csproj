@@ -74,12 +74,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Components\Actor.cs" />
     <Compile Include="EntityType.cs" />
     <Compile Include="Colors.cs" />
     <Compile Include="Components\Movement.cs" />
     <Compile Include="Components\Position.cs" />
     <Compile Include="Components\Senses.cs" />
-    <Compile Include="EntityTypes.cs" />
     <Compile Include="GameCommands.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Constants.cs" />

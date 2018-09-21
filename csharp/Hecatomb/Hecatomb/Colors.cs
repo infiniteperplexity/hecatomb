@@ -23,6 +23,8 @@ namespace Hecatomb
 			colorMap = new Dictionary<string, RLColor>();
 			colorMap["white"] = RLColor.White;
 			colorMap["black"] = RLColor.Black;
+			colorMap["magenta"] = RLColor.Magenta;
+			colorMap["green"] = RLColor.LightGreen;
 		}
 		
 		

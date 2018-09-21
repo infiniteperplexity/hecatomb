@@ -19,34 +19,31 @@ namespace Hecatomb
 		public static Dictionary<string, EntityType> Types = new Dictionary<string, EntityType>();
 		public string Name;
 		public string[] Components;
+		public string FG;
+		public char Symbol;
 		/// <summary>
 		/// Description of EntityType.
 		/// </summary>
-//		public EntityType(string s)
-//		{
-//			Name = s;
-//			Types[s] = this;
-//		}
-		
 		public EntityType(string s)
 		{
 //			string f = s + ".json";
 //			string json = File.ReadAllText(f);
 //			var jobj = JObject.Parse(json);
 			Name = s;
-//			var comps = jobj["Components"].Children();
-			
-//			List<string> l = comps.Select(c=>(string)c).ToList();
-			
 			Types[s] = this;
+			Symbol = '@';
+			FG = "White";
 		}
 			
 		public void Typify(TypedEntity e)
 		{
 			foreach (string t in Components)
 			{
+				e.FG = FG;
+				e.Symbol = Symbol;
 				Component c = (Component) Activator.CreateInstance(Type.GetType("Hecatomb." + t));
 				c.AddToEntity(e);
+				
 			}
 		}
 		
@@ -55,17 +52,22 @@ namespace Hecatomb
 		{
 			// Player
 			EntityType Player = new EntityType("Player");
+			Player.FG = "magenta";
+			Player.Symbol = '@';
 			Player.Components = new string[] {
 				"Position",
 				"Senses",
 				"Movement"
 			};
-			
+			// Zombie
 			EntityType Zombie = new EntityType("Zombie");
+			Zombie.FG = "green";
+			Zombie.Symbol = 'z';
 			Zombie.Components = new string[] {
 				"Position",
 				"Senses",
-				"Movement"
+				"Movement",
+				"Actor"
 			};
 		}
 	}
