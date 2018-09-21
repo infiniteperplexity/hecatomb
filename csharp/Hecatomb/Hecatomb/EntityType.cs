@@ -18,7 +18,7 @@ namespace Hecatomb
 	{
 		public static Dictionary<string, EntityType> Types = new Dictionary<string, EntityType>();
 		public string Name;
-		public Type[] Components;
+		public string[] Components;
 		/// <summary>
 		/// Description of EntityType.
 		/// </summary>
@@ -41,11 +41,11 @@ namespace Hecatomb
 			Types[s] = this;
 		}
 			
-		public void apply(TypedEntity e)
+		public void Typify(TypedEntity e)
 		{
-			foreach (Type t in Components)
+			foreach (string t in Components)
 			{
-				Component c = (Component) Activator.CreateInstance(t);
+				Component c = (Component) Activator.CreateInstance(Type.GetType("Hecatomb." + t));
 				c.AddToEntity(e);
 			}
 		}
@@ -55,10 +55,17 @@ namespace Hecatomb
 		{
 			// Player
 			EntityType Player = new EntityType("Player");
-			Player.Components = new Type[] {
-				Type.GetType("Hecatomb.Position"),
-				Type.GetType("Hecatomb.Senses"),
-				Type.GetType("Hecatomb.Movement")
+			Player.Components = new string[] {
+				"Position",
+				"Senses",
+				"Movement"
+			};
+			
+			EntityType Zombie = new EntityType("Zombie");
+			Zombie.Components = new string[] {
+				"Position",
+				"Senses",
+				"Movement"
 			};
 		}
 	}

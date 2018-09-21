@@ -39,6 +39,7 @@ namespace Hecatomb
 			};
 			camera = new Camera();
 			camera.Center(Player.x, Player.y, Player.z);
+			
 			// this little f*cker totally messes with how I wanted to structure the program, but I'll live...for now...
 			display = new RLRootConsole("terminal8x8.png", camera.Width, camera.Height, 8, 8, 1.6f, "Hecatomb");
       		display.Update += OnRootConsoleUpdate;
@@ -53,7 +54,7 @@ namespace Hecatomb
 		{
 			int WIDTH = camera.Width;
 			int HEIGHT = camera.Height;
-			Terrain [,,] grid = World.tiles;
+			Terrain [,,] grid = World.Tiles;
 			RLKeyPress keyPress = display.Keyboard.GetKeyPress();
 			HandleKeyPress(keyPress);
 			camera.Center(Player.x, Player.y, Player.z);

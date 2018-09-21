@@ -46,11 +46,18 @@ namespace Hecatomb
 			int x1 = p.x + dx;
 			int y1 = p.y + dy;
 			int z1 = p.z;
-			Movement m = p.GetComponent<Movement>();
+			var m = p.GetComponent<Movement>();
 			if (m==null) {
 				return false;
 			}
 			if (!m.CanMove(x1, y1, z1)) {
+				if (m.Climbs && z1+1<Constants.DEPTH && m.CanMove(x1, y1, z1+1)){
+					m.StepTo(x1, y1, z1+1);
+					return true;
+				} else if (m.Climbs && z1-1>=0 && m.CanMove(x1, y1, z1-1)){
+					m.StepTo(x1, y1, z1-1);
+					return true;
+				}
 			    return false;
 			} else {
 			    m.StepTo(x1, y1, z1);
@@ -64,7 +71,7 @@ namespace Hecatomb
 			int x1 = p.x;
 			int y1 = p.y;
 			int z1 = p.z + dz;
-			Movement m = p.GetComponent<Movement>();
+			var m = p.GetComponent<Movement>();
 			if (m==null) {
 				return false;
 			}

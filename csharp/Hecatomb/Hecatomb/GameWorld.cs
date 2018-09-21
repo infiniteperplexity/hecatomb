@@ -17,13 +17,13 @@ namespace Hecatomb
 	/// </summary>
 	public class GameWorld
 	{
-		public Terrain[,,] tiles {get; set;}
+		public Terrain[,,] Tiles {get; set;}
+		public Sparse3DArray<TypedEntity> Creatures;
+		
 		public FastNoise Noise;
 		
 		public GameWorld()
 		{
-//			noise = Simplex.Noise.Calc2D(Constants.WIDTH, Constants.HEIGHT, 1/32);
-			
 			int WIDTH = Constants.WIDTH;
 			int HEIGHT = Constants.HEIGHT;
 			int DEPTH = Constants.DEPTH;
@@ -31,28 +31,37 @@ namespace Hecatomb
 			float hscale = 2f;
 			float vscale = 5f;
 			Noise = new FastNoise();	
-			tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
+			Tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
+			Creatures = new Sparse3DArray<TypedEntity>(WIDTH, HEIGHT, DEPTH);
 			for (int i=0; i<WIDTH; i++) {
 				for (int j=0; j<HEIGHT; j++) {
 					for (int k=0; k<DEPTH; k++) {
 						int elev = GROUNDLEVEL + (int) (vscale*Noise.GetSimplexFractal(hscale*i,hscale*j));
 						if (i==0 || i==WIDTH-1 || j==0 || j==HEIGHT-1 || k<elev) {
-							tiles[i,j,k] = Terrain.WallTile;
+							Tiles[i,j,k] = Terrain.WallTile;
 						} else if (k==elev) {
-							tiles[i,j,k] = Terrain.FloorTile;
+							Tiles[i,j,k] = Terrain.FloorTile;
 						} else {
-							tiles[i,j,k] = Terrain.EmptyTile;
+							Tiles[i,j,k] = Terrain.EmptyTile;
 						}
 					}
 				}
 			}
 		}
 		
+		public Terrain GetTile(int x, int y, int z)
+		{
+			if (x<0 || x>=Constants.WIDTH || y<0 || y>=Constants.HEIGHT || z<0 || z>=Constants.DEPTH) {
+				return null;
+			} else {
+				return Tiles[x,y,z];
+			}
+		}
 		public int GroundLevel(int x, int y)
 		{
 			int elev = Constants.DEPTH-1;
 			for (int i=Constants.DEPTH-1; i>0; i--) {
-				if (tiles[x,y,i].Solid)
+				if (Tiles[x,y,i].Solid)
 				{
 					return i+1;
 				}
@@ -61,13 +70,3 @@ namespace Hecatomb
 		}
 	}
 }
-
-
-//for (var x=1; x<LEVELW-1; x++) {
-//      for (var y=1; y<LEVELH-1; y++) {
-//        grid[x][y] = base;
-//        for (let o=0; o<OCTAVES.length; o++) {
-//          grid[x][y]+= noise.get(x/OCTAVES[o],y/OCTAVES[o])*scales[o];
-//        }
-//      }
-//    }

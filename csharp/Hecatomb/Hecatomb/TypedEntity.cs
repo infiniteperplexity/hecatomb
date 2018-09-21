@@ -84,7 +84,7 @@ namespace Hecatomb
 			Components = new Dictionary<Type, Component>();
 			EntityType et = EntityType.Types[t];
 			if (et!=null) {
-				et.apply(this);
+				et.Typify(this);
 			}		
 		}
 		

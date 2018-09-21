@@ -1,0 +1,61 @@
+﻿/*
+ * Created by SharpDevelop.
+ * User: m543015
+ * Date: 9/21/2018
+ * Time: 12:07 PM
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
+using System;
+using System.Collections.Generic;
+
+namespace Hecatomb
+{
+	/// <summary>
+	/// Description of Sparse3DArray.
+	/// </summary>
+	public class Sparse3DArray<T>
+	{
+		private Dictionary<Tuple<int, int, int>, T> dict;
+		public readonly int X;
+		public readonly int Y;
+		public readonly int Z;
+		
+		public Sparse3DArray(int x, int y, int z)
+		{
+			X = x;
+			Y = y;
+			Z = z;
+			dict = new Dictionary<Tuple<int, int, int>, T>();
+		}
+		
+		public T this[int x, int y, int z]
+	   	{
+			get
+			{	
+				if (x<0 || x>=X || y<0 || y>=Y || z<0 || z>=Z) {
+					throw new IndexOutOfRangeException();
+					
+				} else {
+					Tuple<int, int, int> t = new Tuple<int, int, int>(x, y, z);
+					T value;
+					if (dict.TryGetValue(t, out value)) {
+						return value;
+					} else {
+						return default(T);
+					}
+				}
+			}
+			set
+			{
+				if (x<0 || x>=X || y<0 || y>=Y || z<0 || z>=Z) {
+					throw new IndexOutOfRangeException();
+				} else {
+					Tuple<int, int, int> t = new Tuple<int, int, int>(x, y, z);
+					dict[t] = value;
+				}
+			}
+	   	}
+		
+	}
+}
