@@ -51,10 +51,7 @@ namespace Hecatomb
 			ZView = zview;
 			ZWalk = zwalk;
 		}
-	}
-	
-	public static class Terrains
-	{
+		
 		public static readonly Terrain VoidTile = new Terrain(
 			name: "boundary",
 			opaque: true,
@@ -90,7 +87,7 @@ namespace Hecatomb
 		);
 		
 		public static readonly Terrain DownSlopeTile = new Terrain(
-			name: "upward slope",
+			name: "downward slope",
 			symbol: 'v',
 			zview: -1,
 			zwalk: -1

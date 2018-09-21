@@ -9,6 +9,7 @@
 using RLNET;
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,21 +18,22 @@ namespace Hecatomb
 {
 	class Game
 	{
-		public static World world;
+		public static GameWorld World;
 		public static TypedEntity player;
 		public static RLRootConsole display;
 		public static Colors myColors;
 		public static Camera camera;
+		public static HashSet<Tuple<int, int, int>> Visible;
 		
 		public static void Main(string[] args)
 		{
 			EntityType.LoadEntities();
 			myColors = new Colors();
-			world = new World();
+			World = new GameWorld();
 			player = new TypedEntity("Player") {
 				x = Constants.WIDTH/2,
 				y = Constants.HEIGHT/2,
-				z = world.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
+				z = World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
 			};
 			camera = new Camera();
 			camera.Center(player.x, player.y, player.z);
@@ -49,16 +51,21 @@ namespace Hecatomb
 		{
 			int WIDTH = camera.Width;
 			int HEIGHT = camera.Height;
-			Terrain [,,] grid = world.tiles;
+			Terrain [,,] grid = World.tiles;
 			RLKeyPress keyPress = display.Keyboard.GetKeyPress();
 			HandleCommand(keyPress);
 			camera.Center(player.x, player.y, player.z);
+			Visible = player.GetComponent<Senses>().GetFOV();
+			Tuple<int, int, int> c;
 			for (int i=0; i<WIDTH; i++) {
 	    		for (int j=0; j<HEIGHT; j++) {
 					int x = i + camera.XOffset;
 					int y = j + camera.YOffset;
+					c = new Tuple<int, int, int>(x, y, camera.z);
 	    			if (player.x==x && player.y==y && player.z==camera.z) {
 						display.Print(i, j, player.Symbol.ToString(), myColors[player.FG]);
+					} else if (!Visible.Contains(c)) {
+						display.Print(i, j, " ", RLColor.Black);
 					} else {
 						display.Print(i, j, grid[x,y,camera.z].Symbol.ToString(), myColors[player.FG]);
 	    			}

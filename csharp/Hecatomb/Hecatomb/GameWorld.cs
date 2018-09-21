@@ -15,12 +15,12 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of World.
 	/// </summary>
-	public class World
+	public class GameWorld
 	{
 		public Terrain[,,] tiles {get; set;}
 		public FastNoise Noise;
 		
-		public World()
+		public GameWorld()
 		{
 //			noise = Simplex.Noise.Calc2D(Constants.WIDTH, Constants.HEIGHT, 1/32);
 			
@@ -37,11 +37,11 @@ namespace Hecatomb
 					for (int k=0; k<DEPTH; k++) {
 						int elev = GROUNDLEVEL + (int) (vscale*Noise.GetSimplexFractal(hscale*i,hscale*j));
 						if (i==0 || i==WIDTH-1 || j==0 || j==HEIGHT-1 || k<elev) {
-							tiles[i,j,k] = Terrains.WallTile;
+							tiles[i,j,k] = Terrain.WallTile;
 						} else if (k==elev) {
-							tiles[i,j,k] = Terrains.FloorTile;
+							tiles[i,j,k] = Terrain.FloorTile;
 						} else {
-							tiles[i,j,k] = Terrains.EmptyTile;
+							tiles[i,j,k] = Terrain.EmptyTile;
 						}
 					}
 				}

@@ -45,7 +45,8 @@ namespace Hecatomb
 		{
 			foreach (Type t in Components)
 			{
-				e.Components[t] = (Component) Activator.CreateInstance(t);
+				Component c = (Component) Activator.CreateInstance(t);
+				c.AddToEntity(e);
 			}
 		}
 		
@@ -55,7 +56,8 @@ namespace Hecatomb
 			// Player
 			EntityType Player = new EntityType("Player");
 			Player.Components = new Type[] {
-				Type.GetType("Hecatomb.Position")
+				Type.GetType("Hecatomb.Position"),
+				Type.GetType("Hecatomb.Senses")
 			};
 		}
 	}

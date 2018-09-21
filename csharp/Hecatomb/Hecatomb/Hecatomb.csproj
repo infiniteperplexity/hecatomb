@@ -17,6 +17,7 @@
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <WarningLevel>4</WarningLevel>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -55,6 +56,9 @@
     <Reference Include="RLNET">
       <HintPath>..\packages\RLNET.1.0.6\lib\RLNET.dll</HintPath>
     </Reference>
+    <Reference Include="ShadowCaster">
+      <HintPath>..\packages\ShadowCaster.1.0.2\lib\ShadowCaster.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -70,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
-    <Compile Include="OpenSimplexNoise.cs" />
     <Compile Include="Colors.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Constants.cs" />
@@ -81,7 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Terrain.cs" />
     <Compile Include="EntityType.cs" />
-    <Compile Include="World.cs" />
+    <Compile Include="GameWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
