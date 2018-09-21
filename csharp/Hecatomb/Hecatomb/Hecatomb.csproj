@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AStar.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="EntityType.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Components\Movement.cs" />
     <Compile Include="Components\Position.cs" />
     <Compile Include="Components\Senses.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="GameCommands.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Constants.cs" />

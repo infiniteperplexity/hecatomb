@@ -38,7 +38,7 @@ namespace Hecatomb
 				return;
 			}
 			int r = Game.Random.Next(4);
-			Direction d = Movement.Directions4[r];
+			Coord d = Movement.Directions4[r];
 			int x1 = Entity.x + d.x;
 			int y1 = Entity.y + d.y;
 			int z1 = Entity.z + d.z;

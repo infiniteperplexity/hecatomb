@@ -14,12 +14,12 @@ namespace Hecatomb
 	/// Description of Movement.
 	/// </summary>
 	/// 
-	public struct Direction {
+	public struct Coord {
 		public int x;
 		public int y;
 		public int z;
 		
-		public Direction(int _x, int _y, int _z)
+		public Coord(int _x, int _y, int _z)
 		{
 			x = _x;
 			y = _y;
@@ -34,18 +34,78 @@ namespace Hecatomb
 		public bool Flies;
 		public bool Swims;
 		
-		public readonly static Direction North = new Direction(+0,-1,+0);
-		public readonly static Direction South = new Direction(+0,-1,+0);
-		public readonly static Direction East = new Direction(+1,+0,+0);
-		public readonly static Direction West = new Direction(-1,+0,+0);
-		public readonly static Direction Up = new Direction(+0,+0,+1);
-		public readonly static Direction Down = new Direction(+0,+0,+1);
+		public readonly static Coord North = new Coord(+0,-1,+0);
+		public readonly static Coord South = new Coord(+0,-1,+0);
+		public readonly static Coord East = new Coord(+1,+0,+0);
+		public readonly static Coord West = new Coord(-1,+0,+0);
+		public readonly static Coord NorthEast = new Coord(+1,-1,+0);
+		public readonly static Coord SouthEast = new Coord(+1,-1,+0);
+		public readonly static Coord NorthWest = new Coord(-1,-1,+0);
+		public readonly static Coord SouthWest = new Coord(-1,+1,+0);
+		public readonly static Coord UpNorth = new Coord(+0,-1,+1);
+		public readonly static Coord UpSouth = new Coord(+0,-1,+1);
+		public readonly static Coord UpEast = new Coord(+1,+0,+1);
+		public readonly static Coord UpWest = new Coord(-1,+0,+1);
+		public readonly static Coord UpNorthEast = new Coord(+1,-1,+1);
+		public readonly static Coord UpSouthEast = new Coord(+1,-1,+1);
+		public readonly static Coord UpNorthWest = new Coord(-1,-1,+1);
+		public readonly static Coord UpSouthWest = new Coord(-1,+1,+1);
+		public readonly static Coord DownNorth = new Coord(+0,-1,-1);
+		public readonly static Coord DownSouth = new Coord(+0,-1,-1);
+		public readonly static Coord DownEast = new Coord(+1,+0,-1);
+		public readonly static Coord DownWest = new Coord(-1,+0,-1);
+		public readonly static Coord DownNorthEast = new Coord(+1,-1,-1);
+		public readonly static Coord DownSouthEast = new Coord(+1,-1,-1);
+		public readonly static Coord DownNorthWest = new Coord(-1,-1,-1);
+		public readonly static Coord DownSouthWest = new Coord(-1,+1,-1);
+		public readonly static Coord Up = new Coord(+0,+0,+1);
+		public readonly static Coord Down = new Coord(+0,+0,-1);
 		
-		public static Direction[] Directions4 = new Direction[] {
+		public static Coord[] Directions4 = new Coord[] {
 			North,
 			South,
 			East,
 			West			
+		};
+		
+		public static Coord[] Directions8 = new Coord[] {
+			North,
+			South,
+			East,
+			West,
+			NorthEast,
+			SouthEast,
+			NorthWest,
+			SouthWest			
+		};
+		
+		public static Coord[] Directions26 = new Coord[] {
+			North,
+			South,
+			East,
+			West,
+			NorthEast,
+			SouthEast,
+			NorthWest,
+			SouthWest,
+			UpNorth,
+			UpSouth,
+			UpEast,
+			UpWest,
+			UpNorthEast,
+			UpSouthEast,
+			UpNorthWest,
+			UpSouthWest,
+			DownNorth,
+			DownSouth,
+			DownEast,
+			DownWest,
+			DownNorthEast,
+			DownSouthEast,
+			DownNorthWest,
+			DownSouthWest,
+			Up,
+			Down
 		};
 		
 		public Movement()
