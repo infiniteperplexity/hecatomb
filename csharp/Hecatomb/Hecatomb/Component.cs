@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using ShadowCaster;
 
@@ -20,11 +21,11 @@ namespace Hecatomb
 	public class Component
 	{
 		public TypedEntity Entity;
-		protected Type[] required;
+		public string[] Required;
 		
 		public Component()
 		{
-			required = new Type[0];
+			Required = new string[0];
 		}
 		
 		public void AddToEntity(TypedEntity e)
@@ -65,7 +66,7 @@ namespace Hecatomb
 		
 		public Senses()
 		{
-			required = new Type[] {typeof(Position)};
+			Required = new string[] {"Position"};
 			Range = 10;
 		}
 		
@@ -94,6 +95,46 @@ namespace Hecatomb
 		private void addToVisible(int x, int y)
 		{
 			Visible.Add(new Tuple<int, int, int>(x, y, storedZ));
+		}
+	}
+	
+	public class Movement : Component
+	{
+		public bool Walks;
+		public bool Climbs;
+		public bool Flies;
+		public bool Swims;
+		
+		public Movement()
+		{
+			Required = new string[] {"Position"};
+			Walks = true;
+			Climbs = true;
+			Flies = false;
+			Swims = true;
+		}
+		
+		public bool CanMove(int x1, int y1, int z1)
+		{
+			if (x1<0 || x1>=Constants.WIDTH || y1<0 || y1>=Constants.HEIGHT || z1<0 || z1>=Constants.DEPTH) {
+				return false;
+			}
+			Terrain tile = Game.World.tiles[x1, y1, z1];
+			
+			if (tile.Solid) {
+				return false;
+			}
+			if (tile.Fallable && Flies==false) {
+				return false;
+			}
+			return true;
+		}
+		
+		public void StepTo(int x1, int y1, int z1)
+		{
+			Entity.x = x1;
+			Entity.y = y1;
+			Entity.z = z1;
 		}
 	}
 }

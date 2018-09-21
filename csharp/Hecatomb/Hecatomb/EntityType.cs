@@ -57,7 +57,8 @@ namespace Hecatomb
 			EntityType Player = new EntityType("Player");
 			Player.Components = new Type[] {
 				Type.GetType("Hecatomb.Position"),
-				Type.GetType("Hecatomb.Senses")
+				Type.GetType("Hecatomb.Senses"),
+				Type.GetType("Hecatomb.Movement")
 			};
 		}
 	}

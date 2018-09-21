@@ -19,8 +19,9 @@ namespace Hecatomb
 	class Game
 	{
 		public static GameWorld World;
-		public static TypedEntity player;
+		public static TypedEntity Player;
 		public static RLRootConsole display;
+		public static GameCommands Commands;
 		public static Colors myColors;
 		public static Camera camera;
 		public static HashSet<Tuple<int, int, int>> Visible;
@@ -30,13 +31,14 @@ namespace Hecatomb
 			EntityType.LoadEntities();
 			myColors = new Colors();
 			World = new GameWorld();
-			player = new TypedEntity("Player") {
+			Commands = new GameCommands();
+			Player = new TypedEntity("Player") {
 				x = Constants.WIDTH/2,
 				y = Constants.HEIGHT/2,
 				z = World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
 			};
 			camera = new Camera();
-			camera.Center(player.x, player.y, player.z);
+			camera.Center(Player.x, Player.y, Player.z);
 			// this little f*cker totally messes with how I wanted to structure the program, but I'll live...for now...
 			display = new RLRootConsole("terminal8x8.png", camera.Width, camera.Height, 8, 8, 1.6f, "Hecatomb");
       		display.Update += OnRootConsoleUpdate;
@@ -53,21 +55,23 @@ namespace Hecatomb
 			int HEIGHT = camera.Height;
 			Terrain [,,] grid = World.tiles;
 			RLKeyPress keyPress = display.Keyboard.GetKeyPress();
-			HandleCommand(keyPress);
-			camera.Center(player.x, player.y, player.z);
-			Visible = player.GetComponent<Senses>().GetFOV();
+			HandleKeyPress(keyPress);
+			camera.Center(Player.x, Player.y, Player.z);
+			Visible = Player.GetComponent<Senses>().GetFOV();
 			Tuple<int, int, int> c;
+			Terrain tile;
 			for (int i=0; i<WIDTH; i++) {
 	    		for (int j=0; j<HEIGHT; j++) {
 					int x = i + camera.XOffset;
 					int y = j + camera.YOffset;
 					c = new Tuple<int, int, int>(x, y, camera.z);
-	    			if (player.x==x && player.y==y && player.z==camera.z) {
-						display.Print(i, j, player.Symbol.ToString(), myColors[player.FG]);
+					if (Player.x==x && Player.y==y && Player.z==camera.z) {
+						display.Print(i, j, Player.Symbol.ToString(), myColors[Player.FG]);
 					} else if (!Visible.Contains(c)) {
 						display.Print(i, j, " ", RLColor.Black);
 					} else {
-						display.Print(i, j, grid[x,y,camera.z].Symbol.ToString(), myColors[player.FG]);
+						tile = grid[x,y,camera.z];
+						display.Print(i, j, tile.Symbol.ToString(), myColors[tile.FG]);
 	    			}
 	    		}
 			}
@@ -78,39 +82,32 @@ namespace Hecatomb
       		display.Draw();
     	}
 		
-		private static bool HandleCommand(RLKeyPress keyPress) {
-			int WIDTH = Constants.WIDTH;
-			int HEIGHT = Constants.HEIGHT;
-			int DEPTH = Constants.DEPTH;
+		private static bool HandleKeyPress(RLKeyPress keyPress) {
 			if ( keyPress != null )
 		  	{
 		    	if ( keyPress.Key == RLKey.Up )
 		    	{
-		    		player.y = Math.Max(1, player.y-1);
-		    		return true;
+		    		return Commands.MoveNorthCommand();
 			    }
 			    else if ( keyPress.Key == RLKey.Down )
 			    {
-			    	player.y = Math.Min(HEIGHT-2, player.y+1);
-			    	return true;
+			    	return Commands.MoveSouthCommand();
 			    }
 			    else if ( keyPress.Key == RLKey.Left )
 			    {
-			    	player.x = Math.Max(1, player.x-1);
-			    	return true;
+			    	return Commands.MoveWestCommand();
 			    }
 			    else if ( keyPress.Key == RLKey.Right )
 			    {
-			    	player.x = Math.Min(WIDTH-2, player.x+1);
-			    	return true;
+			    	return Commands.MoveEastCommand();
 			    }
 			    else if ( keyPress.Key == RLKey.Period )
 			    {
-			    	player.z = Math.Max(1, player.z-1);
+			    	return Commands.MoveDownCommand();
 			    }
 			    else if ( keyPress.Key == RLKey.Comma )
 			    {
-			    	player.z = Math.Min(DEPTH-2, player.z+1);
+			    	return Commands.MoveUpCommand();
 			    }
 			}
 			return false;

@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Colors.cs" />
+    <Compile Include="GameCommands.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="FastNoise.cs" />
