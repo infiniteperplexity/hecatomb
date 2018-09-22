@@ -15,14 +15,14 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Sparse3DArray.
 	/// </summary>
-	public class Sparse3DArray<T> : IEnumerable<T>
+	public class SparseArray3D<T> : IEnumerable<T>
 	{
 		private Dictionary<Tuple<int, int, int>, T> dict;
 		public readonly int X;
 		public readonly int Y;
 		public readonly int Z;
 		
-		public Sparse3DArray(int x, int y, int z)
+		public SparseArray3D(int x, int y, int z)
 		{
 			X = x;
 			Y = y;

@@ -18,7 +18,7 @@ namespace Hecatomb
 	public class GameWorld
 	{
 		public Terrain[,,] Tiles {get; set;}
-		public Sparse3DArray<TypedEntity> Creatures;
+		public SparseArray3D<TypedEntity> Creatures;
 		
 		public FastNoise Noise;
 		
@@ -32,7 +32,7 @@ namespace Hecatomb
 			float vscale = 5f;
 			Noise = new FastNoise(seed: Game.Random.Next(1024));
 			Tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
-			Creatures = new Sparse3DArray<TypedEntity>(WIDTH, HEIGHT, DEPTH);
+			Creatures = new SparseArray3D<TypedEntity>(WIDTH, HEIGHT, DEPTH);
 			for (int i=0; i<WIDTH; i++) {
 				for (int j=0; j<HEIGHT; j++) {
 					for (int k=0; k<DEPTH; k++) {

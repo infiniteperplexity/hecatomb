@@ -86,7 +86,7 @@
     <Compile Include="Component.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="FastNoise.cs" />
-    <Compile Include="Sparse3DArray.cs" />
+    <Compile Include="SparseArray3D.cs" />
     <Compile Include="TypedEntity.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -27,14 +27,14 @@ namespace Hecatomb
 	        }
 		}
 	    
-	    public static T[] Shuffled<T> (this.Random rng, T[] array) {
-			int n = array.Length;
-			T[] narray = new T[n];
-			for (int i=0; i<n; i++) {
-				narray[i] = array[i];
-			}
-			Random.Shuffle(narray);
-			return narray;
-		}
+//	    public static T[] Shuffled<T> (this Random rng, T[] array) {
+//			int n = array.Length;
+//			T[] narray = new T[n];
+//			for (int i=0; i<n; i++) {
+//				narray[i] = array[i];
+//			}
+//			Random.Shuffle(narray);
+//			return narray;
+//		}
 	}
 }
