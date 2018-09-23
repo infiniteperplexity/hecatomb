@@ -29,31 +29,20 @@ namespace Hecatomb
 		
 		// Position shortcuts
 		public int x {
-			get {
-				if (Components.ContainsKey(typeof(Position))) {
-					return GetComponent<Position>().x;
-				}
-				throw new NullReferenceException();
-			}
+			get { return GetComponent<Position>().x; }
 			private set {}
 		}
 		public int y {
-			get {
-				if (Components.ContainsKey(typeof(Position))) {
-					return GetComponent<Position>().y;
-				}
-				throw new NullReferenceException();
-			}
+			get { return GetComponent<Position>().y; }
 			private set {}
 		}
 		public int z {
-			get {
-				if (Components.ContainsKey(typeof(Position))) {
-					return GetComponent<Position>().z;
-				}
-				throw new NullReferenceException();
-			}
+			get { return GetComponent<Position>().z; }
 			private set {}
+		}
+		
+		public void Place(int x, int y, int z) {
+			GetComponent<Position>().Place(x,y,z);
 		}
 
 		
@@ -71,6 +60,17 @@ namespace Hecatomb
 		}
 		
 		public T GetComponent<T>() where T : Component
+		{
+			Type t = typeof(T);
+			if (Components.ContainsKey(t)) {
+				return (T) Components[t];
+			} else {
+				throw new InvalidOperationException();
+			}
+		}
+		
+		
+		public T TryComponent<T>() where T : Component
 		{
 			Type t = typeof(T);
 			if (Components.ContainsKey(t)) {

@@ -23,13 +23,49 @@ namespace Hecatomb
 		
 		public void Act()
 		{
-			WalkRandom();	
+			TypedEntity p = Game.Player;
+			Patrol(p.x, p.y, p.z);
 		}
 		
+		public void Patrol(int x1, int y1, int z1)
+		{
+			int x = Entity.x;
+			int y = Entity.y;
+			int z = Entity.z;
+			int d = Tiles.QuickDistance(x, y, z, x1, y1, z1);
+			if (d>=5)
+			{	
+				WalkToward(x1, y1, z1);
+			} else if (d<=1) 
+			{
+				WalkRandom();
+			} else {
+				WalkRandom();
+			}
+		}
+		
+		public void Wander() {
+			WalkRandom();
+		}
 //		public override void OnAddToEntity() {
 //			base.OnAddToEntity();
 //			// nothing for now
 //		}
+		public void WalkToward(int x1, int y1, int z1)
+		{
+			int x = Entity.x;
+			int y = Entity.y;
+			int z = Entity.z;
+			Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1);
+			if (target==null)
+			{
+				WalkRandom();
+			} else {
+				Coord t = (Coord) target;
+				Movement m = Entity.GetComponent<Movement>();
+				m.StepTo(t.x, t.y, t.z);
+			}
+		}
 		public void WalkRandom()
 		{
 			Movement m = Entity.GetComponent<Movement>();

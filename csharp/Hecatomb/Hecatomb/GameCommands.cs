@@ -50,7 +50,7 @@ namespace Hecatomb
 			int x1 = p.x + dx;
 			int y1 = p.y + dy;
 			int z1 = p.z;
-			var m = p.GetComponent<Movement>();
+			var m = p.TryComponent<Movement>();
 			if (m==null) {
 				return false;
 			}
@@ -75,7 +75,7 @@ namespace Hecatomb
 			int x1 = p.x;
 			int y1 = p.y;
 			int z1 = p.z + dz;
-			var m = p.GetComponent<Movement>();
+			var m = p.TryComponent<Movement>();
 			if (m==null) {
 				return false;
 			}

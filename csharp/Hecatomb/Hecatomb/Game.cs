@@ -36,7 +36,7 @@ namespace Hecatomb
 			World = new GameWorld();
 			Commands = new GameCommands();
 			Player = new TypedEntity("Player");
-			Player.GetComponent<Position>().Place(
+			Player.Place(
 				Constants.WIDTH/2,
 				Constants.HEIGHT/2,
 				World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
@@ -44,7 +44,7 @@ namespace Hecatomb
 			camera = new Camera();
 			camera.Center(Player.x, Player.y, Player.z);
 			TypedEntity zombie = new TypedEntity("Zombie");
-			zombie.GetComponent<Position>().Place(
+			zombie.Place(
 				Player.x+3,
 				Player.y+3,
 				World.GroundLevel(Player.x+3, Player.y+3)			
@@ -71,7 +71,7 @@ namespace Hecatomb
 				TypedEntity[] actors = creatures.ToArray();
 				foreach (TypedEntity cr in actors)
 				{
-					Actor actor = cr.GetComponent<Actor>();
+					Actor actor = cr.TryComponent<Actor>();
 					if (actor!=null)
 					{
 						actor.Act();
