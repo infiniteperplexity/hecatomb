@@ -11,6 +11,9 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -28,7 +31,8 @@ namespace Hecatomb
 		public static Random Random;
 		public static HashSet<Tuple<int, int, int>> Visible;
 		
-		public static void Main(string[] args)
+		
+		public static void Go()
 		{
 			EntityType.LoadEntities();
 			Random = new Random();
@@ -53,10 +57,16 @@ namespace Hecatomb
 			display = new RLRootConsole("terminal8x8.png", camera.Width, camera.Height, 8, 8, 1.6f, "Hecatomb");
       		display.Update += OnRootConsoleUpdate;
       		display.Render += OnRootConsoleRender;
-      		
-//      		
       		display.Run();
-      		
+		}
+		
+		public static void Sandbox()
+		{
+			
+		}
+		public static void Main(string[] args)
+		{
+			Go();
 		}
 		
 		private static void OnRootConsoleUpdate(object sender, UpdateEventArgs e)
