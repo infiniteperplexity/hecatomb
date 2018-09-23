@@ -32,7 +32,7 @@ namespace Hecatomb
 			int x = Entity.x;
 			int y = Entity.y;
 			int z = Entity.z;
-			int d = Tiles.QuickDistance(x, y, z, x1, y1, z1);
+			int d = (int) Tiles.QuickDistance(x, y, z, x1, y1, z1);
 			if (d>=5)
 			{	
 				WalkToward(x1, y1, z1);

@@ -38,11 +38,11 @@ namespace Hecatomb
 		}
 		
 		public static Coord? FindPath(int x0, int y0, int z0, int x1, int y1, int z1,
-			Func<int, int, int, int, int, int, int> heuristic = null,
+			Func<int, int, int, int, int, int, double> heuristic = null,
 			Func<int, int, int, int, int, int, bool> movable = null,
 			Func<int, int, int, bool> passable = null
 		) {
-			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
+//			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
 			// default value for the cost estimation heuristic
 			heuristic = heuristic ?? QuickDistance;
 			// default value for allowable movement
@@ -66,34 +66,20 @@ namespace Hecatomb
 			queue.AddFirst(current);
 			// next coordinate to check
 			int newScore, cost, fscore;
-			int tries = 0;
-			int maxTries = 100;
 			while (queue.Count>0) {
-				tries+=1;
-				if (tries>maxTries){
-					Debug.WriteLine("Well this is a mess...");
-					return null;
-				}
 				current = queue.First.Value;
 				queue.RemoveFirst();
 				// ***** if we found the goal, retrace our steps ****
 				if (current.x==x1 && current.y==y1 && current.z==z1) {
-					Debug.WriteLine("retracing path");
 					// ***trace backwards
 					Coord previous = current;
-					int j = 0;
 					while (retrace.ContainsKey(current))
 					{		
-						j+=1;
-						if (j>=10) {
-							return null;
-						}
 						previous = retrace[current];
 					    if (retrace.ContainsKey(previous)) {
 					       	current = previous;
 						} else {
-//							if (useFirst
-							Debug.Print("Should step to {0} {1} {2}", current.x, current.y, current.z);
+//							if (useFirst) return previous
 							return current;
 						}
 					}
@@ -116,12 +102,15 @@ namespace Hecatomb
 							newScore = gscores[current] + cost;
 							// if this is the best known path to the cell...
 							if (!gscores.ContainsKey(neighbor) || gscores[neighbor] > newScore) {
-								fscore = newScore + heuristic(neighbor.x, neighbor.y, neighbor.z, x1, y1, z1);
+								fscore = newScore + (int) Math.Ceiling(heuristic(neighbor.x, neighbor.y, neighbor.z, x1, y1, z1));
 								fscores[neighbor] = fscore;
 								// loop through the queue to insert in sorted order
 								node = queue.First;
+								
+								// somehow in here it's possible to add the node without setting the gscore?
 								if (node==null) {
 									queue.AddFirst(neighbor);
+									
 								} else while (node!=null)
 								{
 									if (fscores[node.Value]>fscore)
@@ -136,9 +125,10 @@ namespace Hecatomb
 											queue.AddLast(neighbor);
 										}
 									}
-									retrace[neighbor] = current;
-									gscores[neighbor] = newScore;
+
 								}
+								retrace[neighbor] = current;
+								gscores[neighbor] = newScore;
 							}
 						} else if (!passable(x1,y1,z1))
 						{
@@ -150,12 +140,13 @@ namespace Hecatomb
 				// ***************************************************
 			}
 			// ***** failed to find a path ***************************
+			Debug.WriteLine("failed to find a path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
 			return null;
 		}
 		
-		public static int QuickDistance(int x0, int y0, int z0, int x1, int y1, int z1)
+		public static double QuickDistance(int x0, int y0, int z0, int x1, int y1, int z1)
 		{
-			return Math.Abs(x0-x1) + Math.Abs(y0-y1) + Math.Abs(z0-z1);
+			return Math.Sqrt((x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
 		}
 	}	
 }
