@@ -11,6 +11,8 @@ namespace Hecatomb
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteFont tileFont;
+        SpriteFont textFont;
 
         public XnaGame()
         {
@@ -39,6 +41,8 @@ namespace Hecatomb
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            tileFont = this.Content.Load<SpriteFont>("NotoSans");
+            textFont = this.Content.Load<SpriteFont>("PTMono");
 
             // TODO: use this.Content to load your game content here
         }
@@ -74,10 +78,71 @@ namespace Hecatomb
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            const int SIZE = 18;
+            const int DIM = 25;
+            for (int i=0; i<DIM; i++)
+            {
+            	for (int j=0; j<DIM; j++)
+            	{
+            		spriteBatch.DrawString(tileFont, ".", new Vector2(i*SIZE, j*SIZE), Color.Black);
+            	}
+            }
+			spriteBatch.End();
             base.Draw(gameTime);
         }
     }
 }
+
+//
+//        protected override void Update(GameTime gameTime)
+//        {
+//            KeyboardState state = Keyboard.GetState();
+//            
+//            // If they hit esc, exit
+//            if (state.IsKeyDown(Keys.Escape))
+//                Exit();
+//
+//            // Move our sprite based on arrow keys being pressed:
+//            if (state.IsKeyDown(Keys.Right) & !previousState.IsKeyDown(
+//                Keys.Right))
+//                position.X += 10;
+//            if (state.IsKeyDown(Keys.Left) & !previousState.IsKeyDown(
+//                Keys.Left))
+//                position.X -= 10;
+//            if (state.IsKeyDown(Keys.Up))
+//                position.Y -= 10;
+//            if (state.IsKeyDown(Keys.Down))
+//                position.Y += 10;
+//
+//            base.Update(gameTime);
+//
+//            previousState = state;
+//        }
+
+
+
+//public void Draw(
+//    Texture2D texture,
+//    Nullable<Vector2> position,
+//    Nullable<Rectangle> destinationRectangle,
+//    Nullable<Rectangle> sourceRectangle,
+//    Nullable<Vector2> origin,
+//    float rotation,
+//    Nullable<Vector2> scale,
+//    Nullable<Color> color,
+//    SpriteEffects effects,
+//    float layerDepth
+//)
+
+
+//<CharacterRegions>
+//  <CharacterRegion><!-- Normal letters -->
+//    <Start>&#32;</Start>
+//    <End>&#126;</End>
+//  </CharacterRegion>
+//  <CharacterRegion><!-- Greek letters -->
+//    <Start>&#913;</Start>
+//    <End>&#969;</End>
+//  </CharacterRegion>
+//</CharacterRegions>
