@@ -41,10 +41,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AStar.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="Colors.cs" />
+    <Compile Include="Tiles.cs" />
+    <Compile Include="GameCamera.cs" />
+    <Compile Include="GameColors.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Components\Movement.cs" />
@@ -59,7 +58,7 @@
     <Compile Include="SparseArray3D.cs" />
     <Compile Include="Terrain.cs" />
     <Compile Include="TypedEntity.cs" />
-    <Compile Include="XnaGame.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
