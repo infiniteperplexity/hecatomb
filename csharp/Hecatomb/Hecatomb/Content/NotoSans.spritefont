@@ -11,7 +11,7 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>NotoSans-Black.ttf</FontName>
+    <FontName>NotoSansMono-Black.ttf</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
@@ -52,8 +52,12 @@ with.
     -->
     <CharacterRegions>
       <CharacterRegion>
-        <Start>&#32;</Start>
+        <Start>&#32;</Start><!-- Normal letters -->
         <End>&#126;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#913;</Start><!-- Greek letters -->
+        <End>&#969;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>
