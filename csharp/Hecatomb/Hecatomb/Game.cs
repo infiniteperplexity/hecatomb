@@ -11,9 +11,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -30,7 +28,8 @@ namespace Hecatomb
 		public static Camera camera;
 		public static Random Random;
 		public static HashSet<Tuple<int, int, int>> Visible;
-		
+//		GraphicsDeviceManager graphics;
+//      SpriteBatch spriteBatch;
 		
 		public static void Go()
 		{
@@ -62,11 +61,13 @@ namespace Hecatomb
 		
 		public static void Sandbox()
 		{
-			
+			XnaGame x = new XnaGame();
+			x.Run();
 		}
 		public static void Main(string[] args)
 		{
-			Go();
+			Sandbox();
+			//Go();
 		}
 		
 		private static void OnRootConsoleUpdate(object sender, UpdateEventArgs e)
@@ -151,3 +152,30 @@ namespace Hecatomb
 		}
 	}
 }
+//
+//#region Using Statements
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//#endregion
+//
+//namespace ExampleGame
+//{
+//#if WINDOWS || LINUX
+//    /// <summary>
+//    /// The main class.
+//    /// </summary>
+//    public static class Program
+//    {
+//        /// <summary>
+//        /// The main entry point for the application.
+//        /// </summary>
+//        [STAThread]
+//        static void Main()
+//        {
+//            using (var game = new Game1())
+//                game.Run();
+//        }
+//    }
+//#endif
+//}

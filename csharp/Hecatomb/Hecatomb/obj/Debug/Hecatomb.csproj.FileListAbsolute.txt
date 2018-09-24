@@ -27,4 +27,3 @@ C:\Users\M543015\Desktop\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\Shad
 C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\ShadowCaster.dll
 C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\ShadowCaster.pdb
 C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\MonoGame.Framework.dll
-C:\Users\Glenn Wright\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\bin\Debug\MonoGame.Framework.xml
