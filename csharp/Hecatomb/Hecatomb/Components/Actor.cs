@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Hecatomb
@@ -16,15 +17,27 @@ namespace Hecatomb
 	/// </summary>
 	public class Actor : Component
 	{
-		public Actor()
+		Entity Target;
+		public Actor() : base()
 		{
 			
 		}
-		
 		public void Act()
 		{
-			TypedEntity p = Game.Player;
-			Patrol(p.x, p.y, p.z);
+			Minion m = Entity.TryComponent<Minion>();
+			if (m!=null && m.Master!=null)
+			{
+				if (m.Task!=null)
+				{
+					Target = m.Task;
+				} else {
+					Target = m.Master;
+				}
+				Patrol(Target.x, Target.y, Target.z);
+			} else {
+				Wander();
+			}
+			
 		}
 		
 		public void Patrol(int x1, int y1, int z1)
@@ -36,9 +49,9 @@ namespace Hecatomb
 			if (d>=5)
 			{	
 				WalkToward(x1, y1, z1);
-			} else if (d<=1) 
+			} else if (d<=2) 
 			{
-				WalkRandom();
+				WalkAway(x1, y1, z1);
 			} else {
 				WalkRandom();
 			}
@@ -64,6 +77,29 @@ namespace Hecatomb
 				Coord t = (Coord) target;
 				Movement m = Entity.GetComponent<Movement>();
 				m.StepTo(t.x, t.y, t.z);
+			}
+		}
+		public void WalkAway(int x1, int y1, int z1)
+		{
+			int x0 = Entity.x;
+			int y0 = Entity.y;
+			int z0 = Entity.z;
+			List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
+			if (line.Count<=1)
+			{
+				WalkRandom();
+			} else
+			{
+				Movement m = Entity.GetComponent<Movement>();
+				int x = line[0].x-x0;
+				int y = line[0].y-y0;
+				int z = z0;
+				if (m.CanPass(x, y, z))
+				{
+					m.StepTo(x, y, z);
+				} else {
+					WalkRandom();
+				}
 			}
 		}
 		public void WalkRandom()

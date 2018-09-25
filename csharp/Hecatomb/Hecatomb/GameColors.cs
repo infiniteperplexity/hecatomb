@@ -29,6 +29,7 @@ namespace Hecatomb
 				{"black", Color.Black},
 				{"magenta", Color.Magenta},
 				{"green", Color.LightGreen},
+				{"orange", Color.Orange},
 				{"GRASSFG", new Color(0x66, 0x88, 0x44)},
 				{"GRASSBG", new Color(0x33, 0x44, 0x22)},
 				{"WALLFG", new Color(0xAA, 0xAA, 0xAA)},

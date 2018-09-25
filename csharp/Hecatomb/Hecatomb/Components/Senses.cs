@@ -20,7 +20,7 @@ namespace Hecatomb
 		public HashSet<Tuple<int,int,int>> Visible;
 		private int storedZ;
 		
-		public Senses()
+		public Senses() : base()
 		{
 			Required = new string[] {"Position"};
 			Range = 16;

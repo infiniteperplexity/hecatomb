@@ -20,7 +20,7 @@ namespace Hecatomb
 		Features, // always foreground, sometimes background
 		Items, // foreground
 		Creatures, // foreground
-		Zones, // background
+		Tasks, // background
 		Particles, // usually foreground, sometimes background
 		Interface // usually background, sometimes foreground
 	}
@@ -33,7 +33,7 @@ namespace Hecatomb
 		public int z {get; private set;}
 		public bool Placed {get; private set;}
 		
-		public Position()
+		public Position() : base()
 		{
 			Layer = WorldLayer.Creatures;
 			Placed = false;
@@ -55,6 +55,20 @@ namespace Hecatomb
 				} else {
 					throw new InvalidOperationException();
 				}
+			} else if (Layer==WorldLayer.Tasks){
+				if (Placed) {
+					Remove();
+				}
+				if (Game.World.Tasks[x1,y1,z1]==null)
+				{
+					Placed = true;
+					Game.World.Tasks[x1,y1,z1] = Entity;
+					x = x1;
+					y = y1;
+					z = z1;
+				} else {
+					throw new InvalidOperationException();
+				}
 			}
 		}
 		public void Remove()
@@ -62,6 +76,8 @@ namespace Hecatomb
 			Placed = false;
 			if (Layer==WorldLayer.Creatures) {
 				Game.World.Creatures[x,y,z] = null;
+			} else if (Layer==WorldLayer.Tasks) {
+				Game.World.Tasks[x,y,z] = null;
 			}
 		}
 	}

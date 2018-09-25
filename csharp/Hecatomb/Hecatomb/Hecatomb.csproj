@@ -9,11 +9,12 @@
     <ProjectGuid>{F2602397-F701-46BE-8F94-96480ED7D3A8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Game1</RootNamespace>
+    <RootNamespace>Hecatomb</RootNamespace>
     <AssemblyName>Hecatomb</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NoWin32Manifest>False</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -41,6 +42,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\Minion.cs" />
+    <Compile Include="Components\Task.cs" />
+    <Compile Include="Master.cs" />
     <Compile Include="Tiles.cs" />
     <Compile Include="GameCamera.cs" />
     <Compile Include="GameColors.cs" />
@@ -57,13 +61,16 @@
     <Compile Include="GameWorld.cs" />
     <Compile Include="SparseArray3D.cs" />
     <Compile Include="Terrain.cs" />
-    <Compile Include="TypedEntity.cs" />
+    <Compile Include="Entity.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Json.NET\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="ShadowCaster">
       <HintPath>..\packages\ShadowCaster.1.0.2\lib\ShadowCaster.dll</HintPath>
@@ -77,6 +84,9 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="Creatures.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

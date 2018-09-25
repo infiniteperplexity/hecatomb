@@ -148,5 +148,38 @@ namespace Hecatomb
 		{
 			return Math.Sqrt((x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
 		}
+		
+		
+		public static List<Coord> GetLine(int x0, int y0, int x1, int y1)
+		{
+			return GetLine2D(x0, y0, x1, y1);
+		}
+		// Bresenham's 2D line algorithm
+		public static List<Coord> GetLine2D(int x0, int y0, int x1, int y1)
+		{
+			List<Coord> line = new List<Coord>();
+			int z = -1;
+			int dx = Math.Abs(x1-x0);
+			int dy = Math.Abs(y1-y0);
+			int sx = (x1 > x0) ? 1 : -1;
+			int sy = (y1 > y0) ? 1 : -1;
+			int err = dx-dy;
+			do
+			{
+				line.Add(new Coord(x0, y0, z));
+				int e2 = err*2;
+				if (e2>-dy)
+				{
+					err-=dy;
+					x0+=sx;
+				}
+				if (e2<dx)
+				{
+					err+=dx;
+					y0+=sy;
+				}
+			} while (x0!=x1 || y0!=y1);
+		    return line;
+		}
 	}	
 }

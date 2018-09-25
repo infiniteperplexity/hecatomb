@@ -1,0 +1,28 @@
+{
+	"Types":
+		[	
+			{
+				"Type" : "Player",
+				"FG" : "magenta",
+				"Symbol" : "@",
+				"Components" : {
+					"Position": {},
+					"Senses": {},
+					"Movement": {},
+					"Master": {}
+				}
+			},
+			{
+				"Type" : "Zombie",
+				"FG" : "green",
+				"Symbol" : "z",
+				"Components" : {
+					"Actor": {},
+					"Position": {},
+					"Senses": {},
+					"Movement": {},
+					"Minion": {}
+				}
+			}
+		]
+}

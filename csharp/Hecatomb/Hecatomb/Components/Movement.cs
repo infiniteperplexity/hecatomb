@@ -108,7 +108,7 @@ namespace Hecatomb
 			Down
 		};
 		
-		public Movement()
+		public Movement(): base()
 		{
 			Required = new string[] {"Position"};
 			Walks = true;

@@ -6,6 +6,9 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -15,7 +18,7 @@ namespace Hecatomb
     public class Game : Microsoft.Xna.Framework.Game
     {
     	public static GameWorld World;
-		public static TypedEntity Player;
+		public static Entity Player;
 		public static GameCommands Commands;
 		public static GameColors Colors;
 		public static GameCamera Camera;
@@ -29,6 +32,7 @@ namespace Hecatomb
         SpriteFont symbolFont;
         SpriteFont textFont;
         static KeyboardState kstate;
+        static MouseState mstate;
         Texture2D bgTexture;
         
         
@@ -57,13 +61,14 @@ namespace Hecatomb
         /// </summary>
         protected override void Initialize()
         {
+        	IsMouseVisible = true;
             EntityType.LoadEntities();
 			Random = new Random();
 			Colors = new GameColors();
 			
 			World = new GameWorld();
 			Commands = new GameCommands();
-			Player = new TypedEntity("Player");
+			Player = new Entity("Player");
 			Player.Place(
 				Constants.WIDTH/2,
 				Constants.HEIGHT/2,
@@ -81,12 +86,13 @@ namespace Hecatomb
 			}
 			bgTexture.SetData(bgdata);
 			Camera.Center(Player.x, Player.y, Player.z);
-			TypedEntity zombie = new TypedEntity("Zombie");
+			Entity zombie = new Entity("Zombie");
 			zombie.Place(
 				Player.x+3,
 				Player.y+3,
 				World.GroundLevel(Player.x+3, Player.y+3)			
 			);
+			zombie.GetComponent<Minion>().Master = Player;
             base.Initialize();
         }
 
@@ -114,16 +120,10 @@ namespace Hecatomb
             spriteBatch = new SpriteBatch(GraphicsDevice);
             tileFont = this.Content.Load<SpriteFont>("NotoSans");
             symbolFont = this.Content.Load<SpriteFont>("NotoSansSymbol");
-//            tileFont = this.Content.Load<SpriteFont>("EversonMono");
-//            symbolFont = this.Content.Load<SpriteFont>("EversonMono");
-//            tileFont = this.Content.Load<SpriteFont>("DejaVuSansMono");
-//            symbolFont = this.Content.Load<SpriteFont>("DejaVuSansMono");
             textFont = this.Content.Load<SpriteFont>("PTMono");
             kstate = Keyboard.GetState();
-            Debug.WriteLine(tileFont.MeasureString("@"));
-            Debug.WriteLine(tileFont.MeasureString("z"));
-            Debug.WriteLine(tileFont.MeasureString("."));
-            Debug.WriteLine(tileFont.MeasureString("#"));
+            
+            
 
             // TODO: use this.Content to load your game content here
         }
@@ -149,11 +149,11 @@ namespace Hecatomb
             int WIDTH = Camera.Width;
 			int HEIGHT = Camera.Height;
 			Terrain [,,] grid = World.Tiles;
-			bool acted = HandleKeyPress();
+			bool acted = HandleInput(gameTime);
 			if (acted) {
-				IEnumerable<TypedEntity> creatures = World.Creatures;
-				TypedEntity[] actors = creatures.ToArray();
-				foreach (TypedEntity cr in actors)
+				IEnumerable<Entity> creatures = World.Creatures;
+				Entity[] actors = creatures.ToArray();
+				foreach (Entity cr in actors)
 				{
 					Actor actor = cr.TryComponent<Actor>();
 					if (actor!=null)
@@ -192,7 +192,8 @@ namespace Hecatomb
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
 					c = new Tuple<int, int, int>(x, y, Camera.z);
-					TypedEntity cr = Game.World.Creatures[x,y,Camera.z];
+					Entity cr = Game.World.Creatures[x,y,Camera.z];
+					Entity task = Game.World.Tasks[x,y,Camera.z];
 					tile = grid[x,y,Camera.z];
 					if (cr!=null) {
 						bg = Colors[tile.BG];
@@ -207,6 +208,10 @@ namespace Hecatomb
 						fg = Colors[tile.FG];
 						sym = tile.Symbol.ToString();
 	    			}
+					if (task!=null)
+					{
+						bg = Colors["orange"];
+					}
 					var measure = tileFont.MeasureString(sym);
 					xOffset = 11-(int) measure.X/2;
 					yOffset = -7;
@@ -221,58 +226,74 @@ namespace Hecatomb
         }
         
         
-        private static bool HandleKeyPress() {
-        	
+        private static bool HandleInput(GameTime gameTime) {
+        	var m = Mouse.GetState();
         	var k = Keyboard.GetState();
-        	if (k.Equals(kstate)) {
+        	if (k.Equals(kstate) && m.Equals(mstate)) {
         		return false;
         	}
         	kstate = k;
+        	mstate = m;
+        	bool acted = false;
 		    if (k.IsKeyDown(Keys.Up))
 		    {
-		    	return Commands.MoveNorthCommand();
+		    	acted = Commands.MoveNorthCommand();
 			}
 			else if (k.IsKeyDown(Keys.Down))
 			{
-				return Commands.MoveSouthCommand();
+				acted = Commands.MoveSouthCommand();
 			}
 			else if (k.IsKeyDown(Keys.Left))
 			{
-			 	return Commands.MoveWestCommand();
+			 	acted = Commands.MoveWestCommand();
 			}
 			else if (k.IsKeyDown(Keys.Right))
 			{
-			   	return Commands.MoveEastCommand();
+			   	acted = Commands.MoveEastCommand();
 			}
 			else if (k.IsKeyDown(Keys.OemPeriod))
 			{
-			    return Commands.MoveDownCommand();
+			    acted = Commands.MoveDownCommand();
 			}
 			else if (k.IsKeyDown(Keys.OemComma))
 			{
-			    return Commands.MoveUpCommand();
+			    acted =  Commands.MoveUpCommand();
 			}
 			else if (k.IsKeyDown(Keys.Space))
 			{
-			    return Commands.Wait();
+			    acted = Commands.Wait();
 			}
-			return false;
+			if(m.LeftButton == ButtonState.Pressed)
+			{
+				Coord c = GetCellAt(m.X, m.Y);
+				if (Game.World.Tasks[c.x, c.y, c.z]==null) 
+				{
+					Entity task = new Entity("DigTask");
+					task.GetComponent<Position>().Layer = WorldLayer.Tasks;
+					task.GetComponent<Task>().Assigner = Player;
+					task.GetComponent<Task>().Assignee = Player.GetComponent<Master>().Minions[0];
+					task.Place(c.x, c.y, c.z);
+				}
+			}
+			
+			return acted;
 		}
+        
+        public static Coord GetCellAt(int x, int y)
+        {
+        	Coord c = new Coord(x/(SIZE+PADDING)+Camera.XOffset,y/(SIZE+PADDING)+Camera.YOffset,Camera.z);
+        	return c;
+        }
     }
 }
-
-/*
- * 
- * So...options...
- * 1) Coalesce spriteFonts
-* 		- is there a performance hit?  does it matter?  require
- * 		- requires manually coding character ranges fairly carefully.
- * 		- already did it.
- * 
- * 2) Find a combined Noto Sans or other ttf file.
- * 		- may not exist.
- * 		- may not have everything I need.
- * 
- * 	
- * 
- * */
+//
+//
+//private object getProperty(object containingObject, string propertyName)
+//{
+//    return containingObject.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, containingObject, null);
+//}
+// 
+//private void setProperty(object containingObject, string propertyName, object newValue)
+//{
+//    containingObject.GetType().InvokeMember(propertyName, BindingFlags.SetProperty, null, containingObject, new object[] { newValue });
+//}

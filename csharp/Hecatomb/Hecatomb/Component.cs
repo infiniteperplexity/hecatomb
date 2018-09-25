@@ -17,7 +17,7 @@ namespace Hecatomb
 	
 	public class Component
 	{
-		public TypedEntity Entity;
+		public Entity Entity;
 		public string[] Required;
 		
 		public Component()
@@ -25,9 +25,17 @@ namespace Hecatomb
 			Required = new string[0];
 		}
 		
-		public void AddToEntity(TypedEntity e)
+		public void AddToEntity(Entity e)
 		{
-			e.Components[this.GetType()] = this;
+			// if it's a plain old Component subclass, use its own type as the key
+			if (this.GetType().BaseType==typeof(Component))
+			{
+				e.Components[this.GetType()] = this;
+			} else {
+				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
+				e.Components[this.GetType().BaseType] = this;
+			}
+			
 			Entity = e;
 			this.OnAddToEntity();
 		}
@@ -37,14 +45,19 @@ namespace Hecatomb
 		public void RemoveFromEntity()
 		{
 			this.OnRemoveFromEntity();
-			Entity.Components.Remove(this.GetType());
+			// if it's a plain old Component subclass, use its own type as the key
+			if (this.GetType().BaseType==typeof(Component))
+			{
+				Entity.Components.Remove(this.GetType());
+			} else {
+				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
+				Entity.Components.Remove(this.GetType().BaseType);
+			}
 			Entity = null;
 		}
 		public void OnRemoveFromEntity()
 		{
 			
 		}
-		
-		protected string GetThisClassName() { return this.GetType().Name; }
 	}
 }

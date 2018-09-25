@@ -1,0 +1,40 @@
+﻿/*
+ * Created by SharpDevelop.
+ * User: m543015
+ * Date: 9/25/2018
+ * Time: 10:51 AM
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
+using System;
+
+namespace Hecatomb
+{
+	public abstract class Task : Component
+	{
+		public Entity Assigner;
+		public Entity Assignee;
+		public int Range;
+		public string Makes;
+		public Task() : base()
+		{
+			
+		}
+	}
+	
+	public class DigTask : Task
+	{
+		public DigTask() : base()
+		{
+			
+		}
+	}
+	
+	public class BuildTask : Task
+	{
+		public BuildTask() : base()
+		{
+			
+		}
+	}
+}

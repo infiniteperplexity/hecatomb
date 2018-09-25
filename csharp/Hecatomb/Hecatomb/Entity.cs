@@ -13,9 +13,9 @@ using System.Collections.Generic;
 namespace Hecatomb
 {
 	/// <summary>
-	/// Description of TypedEntity.
+	/// Description of Entity.
 	/// </summary>
-	public class TypedEntity
+	public class Entity
 	{
 		public string EType;
 		public string Name;
@@ -46,9 +46,9 @@ namespace Hecatomb
 		}
 
 		
-		public TypedEntity(string t)
+		public Entity(string t)
 		{
-			EID = TypedEntity.MaxEID + 1;
+			EID = Entity.MaxEID + 1;
 			Symbol = '@';
 			FG = "white";
 			EType = t;

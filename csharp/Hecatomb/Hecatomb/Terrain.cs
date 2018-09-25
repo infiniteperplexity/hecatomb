@@ -72,7 +72,7 @@ namespace Hecatomb
 		
 		public static readonly Terrain FloorTile = new Terrain(
 			name: "floor",
-			symbol: '.',
+			symbol: '"',
 			fg: "GRASSFG",
 			bg: "GRASSBG"
 		);
