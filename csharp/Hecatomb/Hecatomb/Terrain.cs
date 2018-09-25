@@ -54,6 +54,8 @@ namespace Hecatomb
 		
 		public static readonly Terrain VoidTile = new Terrain(
 			name: "boundary",
+			fg: "black",
+			bg: "black",
 			opaque: true,
 			solid: true,
 			mutable: false
@@ -62,19 +64,24 @@ namespace Hecatomb
 		public static readonly Terrain EmptyTile = new Terrain(
 			name: "empty",
 			symbol: '.',
-			fg: "dark gray",
+			fg: "BELOWFG",
+		    bg: "black", 
 			fallable: true,
 			zview: -1
 		);
 		
 		public static readonly Terrain FloorTile = new Terrain(
 			name: "floor",
-			symbol: '.'
+			symbol: '.',
+			fg: "GRASSFG",
+			bg: "GRASSBG"
 		);
 		
 		public static readonly Terrain WallTile = new Terrain(
 			name: "wall",
 			symbol: '#',
+			fg: "WALLFG",
+			bg: "WALLBG",
 			opaque: true,
 			solid: true
 		);
@@ -82,13 +89,17 @@ namespace Hecatomb
 		public static readonly Terrain UpSlopeTile = new Terrain(
 			name: "upward slope",
 			symbol: '\u02C4',
+			fg: "FLOORFG",
+			bg: "GRASSBG",
 			zview: +1,
-			zwalk: +1
+			zwalk: +1	
 		);
 		
 		public static readonly Terrain DownSlopeTile = new Terrain(
 			name: "downward slope",
 			symbol: '\u02C5',
+			fg: "FLOORFG",
+			bg: "GRASSBG",
 			zview: -1,
 			zwalk: -1
 		);	

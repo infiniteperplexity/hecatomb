@@ -23,7 +23,7 @@ namespace Hecatomb
 		public Senses()
 		{
 			Required = new string[] {"Position"};
-			Range = 10;
+			Range = 16;
 		}
 		
 		public HashSet<Tuple<int,int,int>> GetFOV()

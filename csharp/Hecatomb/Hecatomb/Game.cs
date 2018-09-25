@@ -29,6 +29,7 @@ namespace Hecatomb
         SpriteFont symbolFont;
         SpriteFont textFont;
         static KeyboardState kstate;
+        Texture2D bgTexture;
         
         
         [STAThread]
@@ -59,6 +60,7 @@ namespace Hecatomb
             EntityType.LoadEntities();
 			Random = new Random();
 			Colors = new GameColors();
+			
 			World = new GameWorld();
 			Commands = new GameCommands();
 			Player = new TypedEntity("Player");
@@ -71,6 +73,13 @@ namespace Hecatomb
 			graphics.PreferredBackBufferWidth = PADDING+Camera.Width*(SIZE+PADDING);  // set this value to the desired width of your window
 			graphics.PreferredBackBufferHeight = PADDING+Camera.Height*(SIZE+PADDING);   // set this value to the desired height of your window
 			graphics.ApplyChanges();
+			bgTexture = new Texture2D(graphics.GraphicsDevice, SIZE+PADDING, SIZE+PADDING);
+			Color[] bgdata = new Color[(SIZE+PADDING)*(SIZE+PADDING)];
+			for(int i=0; i<bgdata.Length; ++i)
+			{
+				bgdata[i] = Color.White;
+			}
+			bgTexture.SetData(bgdata);
 			Camera.Center(Player.x, Player.y, Player.z);
 			TypedEntity zombie = new TypedEntity("Zombie");
 			zombie.Place(
@@ -111,6 +120,10 @@ namespace Hecatomb
 //            symbolFont = this.Content.Load<SpriteFont>("DejaVuSansMono");
             textFont = this.Content.Load<SpriteFont>("PTMono");
             kstate = Keyboard.GetState();
+            Debug.WriteLine(tileFont.MeasureString("@"));
+            Debug.WriteLine(tileFont.MeasureString("z"));
+            Debug.WriteLine(tileFont.MeasureString("."));
+            Debug.WriteLine(tileFont.MeasureString("#"));
 
             // TODO: use this.Content to load your game content here
         }
@@ -169,21 +182,38 @@ namespace Hecatomb
 			Tuple<int, int, int> c;
 			Terrain tile;
 			var grid = World.Tiles;
+			int xOffset;
+			int yOffset;
+			string sym;
+			Color fg;
+			Color bg;
 			for (int i=0; i<Camera.Width; i++) {
 	    		for (int j=0; j<Camera.Height; j++) {
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
 					c = new Tuple<int, int, int>(x, y, Camera.z);
 					TypedEntity cr = Game.World.Creatures[x,y,Camera.z];
-					var v = new Vector2(PADDING+i*(SIZE+PADDING),PADDING+j*(SIZE+PADDING));
+					tile = grid[x,y,Camera.z];
 					if (cr!=null) {
-						spriteBatch.DrawString(GetFont(cr.Symbol), cr.Symbol.ToString(), v, Colors[cr.FG]);
+						bg = Colors[tile.BG];
+						fg = Colors[cr.FG];
+						sym = cr.Symbol.ToString();
 					} else if (!Visible.Contains(c)) {
-						spriteBatch.DrawString(tileFont, " ", v, Colors["black"]);
+						bg = Colors["black"];
+						fg = Colors["SHADOWFG"];
+						sym = tile.Symbol.ToString();
 					} else {
-						tile = grid[x,y,Camera.z];
-						spriteBatch.DrawString(tileFont, tile.Symbol.ToString(), v, Colors[tile.FG]);
+						bg = Colors[tile.BG];
+						fg = Colors[tile.FG];
+						sym = tile.Symbol.ToString();
 	    			}
+					var measure = tileFont.MeasureString(sym);
+					xOffset = 11-(int) measure.X/2;
+					yOffset = -7;
+					var vbg = new Vector2(PADDING+i*(SIZE+PADDING),PADDING+j*(SIZE+PADDING));
+					var vfg = new Vector2(xOffset+PADDING+i*(SIZE+PADDING), yOffset+PADDING+j*(SIZE+PADDING));
+					spriteBatch.Draw(bgTexture, vbg, bg);
+					spriteBatch.DrawString(tileFont, sym, vfg, fg);
 	    		}
 			}
 			spriteBatch.End();

@@ -28,10 +28,18 @@ namespace Hecatomb
 				{"dark gray", new Color(0x55, 0x55, 0x55)},
 				{"black", Color.Black},
 				{"magenta", Color.Magenta},
-				{"green", Color.LightGreen}
+				{"green", Color.LightGreen},
+				{"GRASSFG", new Color(0x66, 0x88, 0x44)},
+				{"GRASSBG", new Color(0x33, 0x44, 0x22)},
+				{"WALLFG", new Color(0xAA, 0xAA, 0xAA)},
+				{"FLOORFG", new Color(0x77, 0x77, 0x88)},
+				{"BELOWFG", new Color(0x55, 0x33, 0x55)},
+				{"SHADOWFG", new Color(0x33, 0x33, 0x55)},
+				{"WALLBG", new Color(0x77, 0x77, 0x88)},
+				{"FLOORBG", new Color(0x44, 0x55, 0x66)},
+				{"TWOBELOWFG", new Color(0x22, 0x11, 0x22)}
 			};
 		}
-
 
 	   	public Color this[string s]
 	   	{
