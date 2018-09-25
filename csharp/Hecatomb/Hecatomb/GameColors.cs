@@ -24,6 +24,8 @@ namespace Hecatomb
 		{
 			colors = new Dictionary<string, Color>() {
 				{"white", Color.White},
+				{"gray", Color.Gray},
+				{"dark gray", new Color(0x55, 0x55, 0x55)},
 				{"black", Color.Black},
 				{"magenta", Color.Magenta},
 				{"green", Color.LightGreen}

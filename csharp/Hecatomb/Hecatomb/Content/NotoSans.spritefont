@@ -11,7 +11,7 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>NotoSansMono-Black.ttf</FontName>
+    <FontName>NotoSans-Regular.ttf</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
@@ -52,12 +52,24 @@ with.
     -->
     <CharacterRegions>
       <CharacterRegion>
-        <Start>&#32;</Start><!-- Normal letters -->
-        <End>&#126;</End>
+        <Start>&#32;</Start><!-- Basic Latin -->
+        <End>&#x007F;</End>
       </CharacterRegion>
       <CharacterRegion>
-        <Start>&#913;</Start><!-- Greek letters -->
-        <End>&#969;</End>
+        <Start>&#x0080;</Start><!-- Latin-1 Supplement -->
+        <End>&#x00FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0100;</Start><!-- Latin Extended A -->
+        <End>&#x017F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0180;</Start><!-- Latin Extended B -->
+        <End>&#x024F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x02B0;</Start><!-- Spacing Modifiers -->
+        <End>&#x02FF;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

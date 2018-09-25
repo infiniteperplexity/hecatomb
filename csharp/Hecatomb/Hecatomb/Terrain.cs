@@ -61,8 +61,8 @@ namespace Hecatomb
 		
 		public static readonly Terrain EmptyTile = new Terrain(
 			name: "empty",
-			symbol: 'o',
-			fg: "white",
+			symbol: '.',
+			fg: "dark gray",
 			fallable: true,
 			zview: -1
 		);
@@ -81,14 +81,14 @@ namespace Hecatomb
 		
 		public static readonly Terrain UpSlopeTile = new Terrain(
 			name: "upward slope",
-			symbol: '^',
+			symbol: '\u02C4',
 			zview: +1,
 			zwalk: +1
 		);
 		
 		public static readonly Terrain DownSlopeTile = new Terrain(
 			name: "downward slope",
-			symbol: 'v',
+			symbol: '\u02C5',
 			zview: -1,
 			zwalk: -1
 		);	

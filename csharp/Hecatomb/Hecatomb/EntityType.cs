@@ -9,8 +9,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -53,6 +51,7 @@ namespace Hecatomb
 			// Player
 			EntityType Player = new EntityType("Player");
 			Player.FG = "magenta";
+//			Player.Symbol = '\u2692';
 			Player.Symbol = '@';
 			Player.Components = new string[] {
 				"Position",

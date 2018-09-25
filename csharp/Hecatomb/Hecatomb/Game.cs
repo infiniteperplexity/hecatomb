@@ -21,11 +21,12 @@ namespace Hecatomb
 		public static GameCamera Camera;
 		public static Random Random;
 		const int SIZE = 18;
-		const int PADDING = 2;
+		const int PADDING = 3;
 		public static HashSet<Tuple<int, int, int>> Visible;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont tileFont;
+        SpriteFont symbolFont;
         SpriteFont textFont;
         static KeyboardState kstate;
         
@@ -84,11 +85,30 @@ namespace Hecatomb
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
+        /// 
+        
+        public SpriteFont GetFont(char c)
+        {
+        	if (tileFont.GetGlyphs().ContainsKey(c))
+        	{
+        		return tileFont;
+        	}
+        	else if (symbolFont.GetGlyphs().ContainsKey(c))
+        	{
+        		return symbolFont;
+        	}
+        	return tileFont;
+        }
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             tileFont = this.Content.Load<SpriteFont>("NotoSans");
+            symbolFont = this.Content.Load<SpriteFont>("NotoSansSymbol");
+//            tileFont = this.Content.Load<SpriteFont>("EversonMono");
+//            symbolFont = this.Content.Load<SpriteFont>("EversonMono");
+//            tileFont = this.Content.Load<SpriteFont>("DejaVuSansMono");
+//            symbolFont = this.Content.Load<SpriteFont>("DejaVuSansMono");
             textFont = this.Content.Load<SpriteFont>("PTMono");
             kstate = Keyboard.GetState();
 
@@ -157,7 +177,7 @@ namespace Hecatomb
 					TypedEntity cr = Game.World.Creatures[x,y,Camera.z];
 					var v = new Vector2(PADDING+i*(SIZE+PADDING),PADDING+j*(SIZE+PADDING));
 					if (cr!=null) {
-						spriteBatch.DrawString(tileFont, cr.Symbol.ToString(), v, Colors[cr.FG]);
+						spriteBatch.DrawString(GetFont(cr.Symbol), cr.Symbol.ToString(), v, Colors[cr.FG]);
 					} else if (!Visible.Contains(c)) {
 						spriteBatch.DrawString(tileFont, " ", v, Colors["black"]);
 					} else {
@@ -210,3 +230,19 @@ namespace Hecatomb
 		}
     }
 }
+
+/*
+ * 
+ * So...options...
+ * 1) Coalesce spriteFonts
+* 		- is there a performance hit?  does it matter?  require
+ * 		- requires manually coding character ranges fairly carefully.
+ * 		- already did it.
+ * 
+ * 2) Find a combined Noto Sans or other ttf file.
+ * 		- may not exist.
+ * 		- may not have everything I need.
+ * 
+ * 	
+ * 
+ * */
