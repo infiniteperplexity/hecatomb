@@ -52,16 +52,48 @@ with.
     -->
     <CharacterRegions>
       <CharacterRegion>
-        <Start>&#32;</Start><!-- Basic Latin -->
-        <End>&#x007F;</End>
+        <Start>&#x20A0;</Start><!-- Currency Symbols -->
+        <End>&#x20CF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2100;</Start><!-- Letterlike Symbols -->
+        <End>&#x214F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2190;</Start><!-- Arrows -->
+        <End>&#x21FF;</End>
       </CharacterRegion>
       <CharacterRegion>
         <Start>&#x2200;</Start><!-- Mathematical Operators-->
         <End>&#x22FF;</End>
       </CharacterRegion>
       <CharacterRegion>
+        <Start>&#x2300;</Start><!-- Miscellaneous Technical-->
+        <End>&#x23FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2460;</Start><!-- Enclosed Alphanumerics -->
+        <End>&#x24FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2500;</Start><!-- Box Drawing -->
+        <End>&#x257F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2580;</Start><!-- Block Elements -->
+        <End>&#x259F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x25A0;</Start><!-- Geometric Shapes -->
+        <End>&#x25FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
         <Start>&#x2600;</Start><!-- Miscellaneous Symbols -->
         <End>&#x26FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2700;</Start><!-- Dingbats -->
+        <End>&#x27BF;</End>
       </CharacterRegion>
 
     </CharacterRegions>

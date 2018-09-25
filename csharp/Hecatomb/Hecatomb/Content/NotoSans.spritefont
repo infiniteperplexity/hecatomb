@@ -71,6 +71,10 @@ with.
         <Start>&#x02B0;</Start><!-- Spacing Modifiers -->
         <End>&#x02FF;</End>
       </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0370;</Start><!-- Greek and Coptic -->
+        <End>&#x03FF;</End>
+      </CharacterRegion>
     </CharacterRegions>
   </Asset>
 </XnaContent>

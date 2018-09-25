@@ -34,17 +34,3 @@
 /processorParam:TextureFormat=Compressed
 /build:NotoSansSymbol.spritefont
 
-#begin EversonMono.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:EversonMono.spritefont
-
-#begin DejaVuSansMono.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:DejaVuSansMono.spritefont
-
