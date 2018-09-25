@@ -29,7 +29,6 @@ namespace Hecatomb
 		/// </summary>
 		public EntityType(string s)
 		{
-
 			Name = s;
 			Types[s] = this;
 			Symbol = '@';
