@@ -18,11 +18,12 @@ namespace Hecatomb
     public class Game : Microsoft.Xna.Framework.Game
     {
     	public static GameWorld World;
-		public static Entity Player;
+		public static Player Player;
 		public static GameCommands Commands;
 		public static GameColors Colors;
 		public static GameCamera Camera;
 		public static Random Random;
+//		public static GameEventHandler Events;
 		const int SIZE = 18;
 		const int PADDING = 3;
 		public static HashSet<Tuple<int, int, int>> Visible;
@@ -65,10 +66,10 @@ namespace Hecatomb
             EntityType.LoadEntities();
 			Random = new Random();
 			Colors = new GameColors();
-			
+//			Events = new GameEventHandler();
 			World = new GameWorld();
 			Commands = new GameCommands();
-			Player = new Entity("Player");
+			Player = new Player("Necromancer");
 			Player.Place(
 				Constants.WIDTH/2,
 				Constants.HEIGHT/2,
@@ -86,13 +87,12 @@ namespace Hecatomb
 			}
 			bgTexture.SetData(bgdata);
 			Camera.Center(Player.x, Player.y, Player.z);
-			Entity zombie = new Entity("Zombie");
+			Creature zombie = new Creature("Zombie");
 			zombie.Place(
 				Player.x+3,
 				Player.y+3,
 				World.GroundLevel(Player.x+3, Player.y+3)			
 			);
-			zombie.GetComponent<Minion>().Master = Player;
             base.Initialize();
         }
 
@@ -151,9 +151,9 @@ namespace Hecatomb
 			Terrain [,,] grid = World.Tiles;
 			bool acted = HandleInput(gameTime);
 			if (acted) {
-				IEnumerable<Entity> creatures = World.Creatures;
-				Entity[] actors = creatures.ToArray();
-				foreach (Entity cr in actors)
+				IEnumerable<Creature> creatures = World.Creatures;
+				Creature[] actors = creatures.ToArray();
+				foreach (Creature cr in actors)
 				{
 					Actor actor = cr.TryComponent<Actor>();
 					if (actor!=null)
@@ -192,8 +192,8 @@ namespace Hecatomb
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
 					c = new Tuple<int, int, int>(x, y, Camera.z);
-					Entity cr = Game.World.Creatures[x,y,Camera.z];
-					Entity task = Game.World.Tasks[x,y,Camera.z];
+					Creature cr = Game.World.Creatures[x,y,Camera.z];
+					TaskEntity task = Game.World.Tasks[x,y,Camera.z];
 					tile = grid[x,y,Camera.z];
 					if (cr!=null) {
 						bg = Colors[tile.BG];
@@ -268,10 +268,7 @@ namespace Hecatomb
 				Coord c = GetCellAt(m.X, m.Y);
 				if (Game.World.Tasks[c.x, c.y, c.z]==null) 
 				{
-					Entity task = new Entity("DigTask");
-					task.GetComponent<Position>().Layer = WorldLayer.Tasks;
-					task.GetComponent<Task>().Assigner = Player;
-					task.GetComponent<Task>().Assignee = Player.GetComponent<Master>().Minions[0];
+					TaskEntity task = new TaskEntity("DigTask");
 					task.Place(c.x, c.y, c.z);
 				}
 			}

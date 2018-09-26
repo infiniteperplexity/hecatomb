@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: m543015
+ * User: Glenn Wright
  * Date: 9/25/2018
  * Time: 10:51 AM
  * 
@@ -12,10 +12,9 @@ namespace Hecatomb
 {
 	public abstract class Task : Component
 	{
-		public Entity Assigner;
-		public Entity Assignee;
+		public Creature Worker;
 		public int Range;
-		public string Makes;
+		//public string Makes;
 		public Task() : base()
 		{
 			

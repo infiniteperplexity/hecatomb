@@ -1,0 +1,220 @@
+﻿/*
+ * Created by SharpDevelop.
+ * User: Glenn Wright
+ * Date: 9/18/2018
+ * Time: 11:35 AM
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
+using System;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Globalization;
+
+namespace Hecatomb
+{
+	/// <summary>
+	/// Description of Entity.
+	/// </summary>
+	/// 
+	
+	public abstract partial class GameEntity {}
+	public abstract partial class TypedEntity : GameEntity
+	{
+		public string EType;
+		public string Name;
+		// might remove this...but for testing...
+		public char Symbol;
+		public string FG;
+		public string BG;
+		public int x {get; private set;}
+		public int y {get; private set;}
+		public int z {get; private set;}
+		public bool Placed {get; private set;}
+		public static int MaxEID = -1;
+		public int EID;
+		public Dictionary<Type, Component> Components;
+		
+
+		public TypedEntity(string t) : base()
+		{
+			EID = TypedEntity.MaxEID + 1;
+			Symbol = '@';
+			FG = "white";
+			EType = t;
+			x = -1;
+			y = -1;
+			z = -1;
+			Placed = false;
+			Components = new Dictionary<Type, Component>();
+			EntityType et = EntityType.Types[t];
+			if (et!=null) {
+				et.Typify(this);
+			}		
+		}
+		
+		public T GetComponent<T>() where T : Component
+		{
+			Type t = typeof(T);
+			if (Components.ContainsKey(t)) {
+				return (T) Components[t];
+			} else {
+				throw new InvalidOperationException();
+			}
+		}
+		
+		
+		public T TryComponent<T>() where T : Component
+		{
+			Type t = typeof(T);
+			if (Components.ContainsKey(t)) {
+				return (T) Components[t];
+			} else {
+				return default(T);
+			}
+		}
+		
+//		public override GameEvent Publish(GameEvent ge)
+//		{
+//			ge.Entity = this;
+//			return base.Publish(ge);
+//		}
+		
+		public virtual void Place(int x1, int y1, int z1)
+		{
+			if (Placed)
+			{
+				this.Remove();
+			}
+			x = x1;
+			y = y1;
+			z = z1;
+			Placed = true;
+			PlaceEvent.Publish(new PlaceEvent() {Entity=this, x=x1, y=y1, z=z1});
+		}
+		public virtual void Remove()
+		{
+			x = -1;
+			y = -1;
+			z = -1;
+			Placed = false;
+		}
+	}
+	
+	public class Creature : TypedEntity {
+		public Creature(string t) : base(t)
+		{
+			
+		}
+		public override void Place(int x1, int y1, int z1)
+		{
+			Creature e = Game.World.Creatures[x1,y1,z1];
+			if (e==null)
+			{
+				Game.World.Creatures[x1,y1,z1] = this;
+				base.Place(x1, y1, z1);
+			}
+			else 
+			{
+				throw new InvalidOperationException(String.Format(
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+				));
+			}
+		}
+		public override void Remove()
+		{
+			int x0 = x;
+			int y0 = y;
+			int z0 = z;
+			base.Remove();
+			Game.World.Creatures[x0,y0,z0] = null;
+		}
+	}
+	public class Feature : TypedEntity {
+		public Feature(string t) : base(t)
+		{
+			
+		}
+		public override void Place(int x1, int y1, int z1)
+		{
+			Feature e = Game.World.Features[x1,y1,z1];
+			if (e==null)
+			{
+				Game.World.Features[x1,y1,z1] = this;
+				base.Place(x1, y1, z1);
+			}
+			else 
+			{
+				throw new InvalidOperationException(String.Format(
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+				));
+			}
+		}
+		public override void Remove()
+		{
+			int x0 = x;
+			int y0 = y;
+			int z0 = z;
+			base.Remove();
+			Game.World.Features[x0,y0,z0] = null;
+		}
+	}
+	public class Item : TypedEntity {
+		public Item(string t) : base(t)
+		{
+			
+		}
+		public override void Place(int x1, int y1, int z1)
+		{
+			Item e = Game.World.Items[x1,y1,z1];
+			if (e==null)
+			{
+				Game.World.Items[x1,y1,z1] = this;
+				base.Place(x1, y1, z1);
+			}
+			else 
+			{
+				throw new InvalidOperationException(String.Format(
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+				));
+			}
+		}
+		public override void Remove()
+		{
+			int x0 = x;
+			int y0 = y;
+			int z0 = z;
+			base.Remove();
+			Game.World.Items[x0,y0,z0] = null;
+		}
+	}
+	public class TaskEntity : TypedEntity {
+		public TaskEntity(string t) : base(t)
+		{
+			
+		}
+		public override void Place(int x1, int y1, int z1)
+		{
+			TaskEntity e = Game.World.Tasks[x1,y1,z1];
+			if (e==null)
+			{
+				Game.World.Tasks[x1,y1,z1] = this;
+				base.Place(x1, y1, z1);
+			}
+			else 
+			{
+				throw new InvalidOperationException(String.Format(
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+				));
+			}
+		}
+		public override void Remove()
+		{
+			int x0 = x;
+			int y0 = y;
+			int z0 = z;
+			base.Remove();
+			Game.World.Tasks[x0,y0,z0] = null;
+		}
+	}
+}

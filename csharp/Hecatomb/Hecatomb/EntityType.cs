@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: m543015
+ * User: Glenn Wright
  * Date: 9/18/2018
  * Time: 12:41 PM
  * 
@@ -35,7 +35,7 @@ namespace Hecatomb
 			FG = "White";
 		}
 			
-		public void Typify(Entity e)
+		public void Typify(TypedEntity e)
 		{
 			foreach (string t in Components)
 			{
@@ -76,7 +76,6 @@ namespace Hecatomb
 			{
 				EntityType t = new EntityType(task.Name);
 				t.Components = new string[] {
-					"Position",
 					task.Name
 				};
 			}

@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: m543015
+ * User: Glenn Wright
  * Date: 9/21/2018
  * Time: 1:21 PM
  * 
@@ -17,21 +17,25 @@ namespace Hecatomb
 	/// </summary>
 	public class Actor : Component
 	{
-		Entity Target;
+		TypedEntity Target;
 		public Actor() : base()
 		{
 			
 		}
 		public void Act()
 		{
+			if (Entity is Player)
+			{
+				return;
+			}
 			Minion m = Entity.TryComponent<Minion>();
-			if (m!=null && m.Master!=null)
+			if (m!=null)
 			{
 				if (m.Task!=null)
 				{
 					Target = m.Task;
 				} else {
-					Target = m.Master;
+					Target = Game.Player;
 				}
 				Patrol(Target.x, Target.y, Target.z);
 			} else {

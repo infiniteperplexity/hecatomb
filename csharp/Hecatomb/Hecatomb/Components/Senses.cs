@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: m543015
+ * User: Glenn Wright
  * Date: 9/21/2018
  * Time: 11:35 AM
  * 
@@ -22,7 +22,6 @@ namespace Hecatomb
 		
 		public Senses() : base()
 		{
-			Required = new string[] {"Position"};
 			Range = 16;
 		}
 		

@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: m543015
+ * User: Glenn Wright
  * Date: 9/21/2018
  * Time: 11:33 AM
  * 
@@ -110,7 +110,6 @@ namespace Hecatomb
 		
 		public Movement(): base()
 		{
-			Required = new string[] {"Position"};
 			Walks = true;
 			Climbs = true;
 			Flies = false;
@@ -149,7 +148,7 @@ namespace Hecatomb
 		
 		public void StepTo(int x1, int y1, int z1)
 		{
-			Entity.GetComponent<Position>().Place(x1, y1, z1);
+			Entity.Place(x1, y1, z1);
 		}
 	}
 }

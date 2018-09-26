@@ -42,16 +42,17 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AltEvents.cs" />
     <Compile Include="Components\Minion.cs" />
     <Compile Include="Components\Task.cs" />
-    <Compile Include="Master.cs" />
+    <Compile Include="GameEvent.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Tiles.cs" />
     <Compile Include="GameCamera.cs" />
     <Compile Include="GameColors.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Components\Movement.cs" />
-    <Compile Include="Components\Position.cs" />
     <Compile Include="Components\Senses.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EntityType.cs" />
@@ -61,7 +62,7 @@
     <Compile Include="GameWorld.cs" />
     <Compile Include="SparseArray3D.cs" />
     <Compile Include="Terrain.cs" />
-    <Compile Include="Entity.cs" />
+    <Compile Include="TypedEntity.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

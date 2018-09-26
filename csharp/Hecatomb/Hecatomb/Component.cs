@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: m543015
+ * User: Glenn Wright
  * Date: 9/18/2018
  * Time: 11:39 AM
  * 
@@ -15,9 +15,9 @@ namespace Hecatomb
 	/// </summary>
 	/// 
 	
-	public class Component
+	public abstract partial class Component : GameEntity
 	{
-		public Entity Entity;
+		public TypedEntity Entity;
 		public string[] Required;
 		
 		public Component()
@@ -25,7 +25,7 @@ namespace Hecatomb
 			Required = new string[0];
 		}
 		
-		public void AddToEntity(Entity e)
+		public void AddToEntity(TypedEntity e)
 		{
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))
@@ -37,14 +37,18 @@ namespace Hecatomb
 			}
 			
 			Entity = e;
-			this.OnAddToEntity();
 		}
+		
+//		public virtual GameEvent OnEntityEvent(GameEvent ge)
+//		{
+//			return ge;
+//		}
+				
 		public void OnAddToEntity()
 		{
 		}
 		public void RemoveFromEntity()
 		{
-			this.OnRemoveFromEntity();
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))
 			{
@@ -54,10 +58,6 @@ namespace Hecatomb
 				Entity.Components.Remove(this.GetType().BaseType);
 			}
 			Entity = null;
-		}
-		public void OnRemoveFromEntity()
-		{
-			
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: m543015
+ * User: Glenn Wright
  * Date: 9/25/2018
  * Time: 12:06 PM
  * 
@@ -16,44 +16,10 @@ namespace Hecatomb
 	/// </summary>
 	public class Minion : Component
 	{
-		private Entity _master;
-		public Entity Master {
-			get
-			{
-				return _master;
-			}
-			set
-			{
-				Master master;
-				if (_master!=null)
-				{
-					master = _master.GetComponent<Hecatomb.Master>();
-					master.Minions.Remove(Entity);
-				}
-				master = value.GetComponent<Hecatomb.Master>();
-				_master = value;
-				if (!master.Minions.Contains(Entity)) 
-				{
-					master.Minions.Add(Entity);
-				}
-			}
-		}
+	
 		
-		private Entity _task;
-		public Entity Task {
-			get {
-				return _task;
-			}
-			set
-			{
-				if (value.TryComponent<Task>()==null)
-				{
-					throw new InvalidOperationException();
-				} else {
-					_task = value;
-				}
-			}
-		}
+		public TaskEntity Task;
+		
 		public Minion(): base()
 		{
 			Required = new string[] {"Actor"};

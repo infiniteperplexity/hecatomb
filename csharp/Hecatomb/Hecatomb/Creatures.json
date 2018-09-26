@@ -2,14 +2,13 @@
 	"Types":
 		[	
 			{
-				"Type" : "Player",
+				"Type" : "Necromancer",
 				"FG" : "magenta",
 				"Symbol" : "@",
 				"Components" : {
-					"Position": {},
+					"Actor" : {},
 					"Senses": {},
-					"Movement": {},
-					"Master": {}
+					"Movement": {}
 				}
 			},
 			{
@@ -18,7 +17,6 @@
 				"Symbol" : "z",
 				"Components" : {
 					"Actor": {},
-					"Position": {},
 					"Senses": {},
 					"Movement": {},
 					"Minion": {}
