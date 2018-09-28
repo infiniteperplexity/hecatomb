@@ -15,7 +15,7 @@ namespace Hecatomb
 	/// </summary>
 	/// 
 	
-	public abstract partial class Component : GameEntity
+	public abstract class Component : GameEntity
 	{
 		public TypedEntity Entity;
 		public string[] Required;

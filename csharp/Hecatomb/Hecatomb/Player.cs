@@ -17,14 +17,11 @@ namespace Hecatomb
 	/// </summary>
 	public class Player : Creature
 	{
-		List<Creature> Minions;
+		public List<Creature> Minions;
 		public Player(string t) : base(t)
 		{
 			Minions = new List<Creature>();
-		}
-		public override void OnSelfEvent(PlaceEvent e)
-		{
-			Debug.Print("The player was placed at {0} {1} {2}", e.x, e.y, e.z);
+			
 		}
 	}
 }

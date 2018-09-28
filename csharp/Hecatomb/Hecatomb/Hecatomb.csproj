@@ -42,7 +42,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AltEvents.cs" />
     <Compile Include="Components\Minion.cs" />
     <Compile Include="Components\Task.cs" />
     <Compile Include="GameEvent.cs" />

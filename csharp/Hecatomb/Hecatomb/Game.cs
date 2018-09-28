@@ -19,6 +19,7 @@ namespace Hecatomb
     {
     	public static GameWorld World;
 		public static Player Player;
+		public static GameEventHandler Events;
 		public static GameCommands Commands;
 		public static GameColors Colors;
 		public static GameCamera Camera;
@@ -66,7 +67,7 @@ namespace Hecatomb
             EntityType.LoadEntities();
 			Random = new Random();
 			Colors = new GameColors();
-//			Events = new GameEventHandler();
+			Events = new GameEventHandler();
 			World = new GameWorld();
 			Commands = new GameCommands();
 			Player = new Player("Necromancer");
@@ -93,6 +94,7 @@ namespace Hecatomb
 				Player.y+3,
 				World.GroundLevel(Player.x+3, Player.y+3)			
 			);
+			Player.Minions.Add(zombie);
             base.Initialize();
         }
 

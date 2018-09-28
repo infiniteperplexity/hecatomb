@@ -9,7 +9,6 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace Hecatomb
 {
@@ -18,8 +17,13 @@ namespace Hecatomb
 	/// </summary>
 	/// 
 	
-	public abstract partial class GameEntity {}
-	public abstract partial class TypedEntity : GameEntity
+	public abstract class GameEntity {
+		public void Publish(GameEvent g)
+		{
+			
+		}
+	}
+	public abstract class TypedEntity : GameEntity
 	{
 		public string EType;
 		public string Name;
@@ -74,12 +78,6 @@ namespace Hecatomb
 			}
 		}
 		
-//		public override GameEvent Publish(GameEvent ge)
-//		{
-//			ge.Entity = this;
-//			return base.Publish(ge);
-//		}
-		
 		public virtual void Place(int x1, int y1, int z1)
 		{
 			if (Placed)
@@ -90,10 +88,11 @@ namespace Hecatomb
 			y = y1;
 			z = z1;
 			Placed = true;
-			PlaceEvent.Publish(new PlaceEvent() {Entity=this, x=x1, y=y1, z=z1});
+			Game.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
 		}
 		public virtual void Remove()
 		{
+			Game.Events.Publish(new RemoveEvent() {Entity = this, X = x, Y = y, Z = z});
 			x = -1;
 			y = -1;
 			z = -1;
