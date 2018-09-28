@@ -2,9 +2,9 @@
 	"Types":
 		[	
 			{
-				"Type" : "IncompleteFeature",
+				"Type" : "IncompleteExcavation",
 				"FG" : "brown",
-				"Symbol" : "\u25AB",
+				"Symbol" : "\u2693",
 				"Components" : {}
 			}
 		]

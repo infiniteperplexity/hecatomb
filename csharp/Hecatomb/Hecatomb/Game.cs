@@ -155,6 +155,22 @@ namespace Hecatomb
 			if (acted) {
 				IEnumerable<Creature> creatures = World.Creatures;
 				Creature[] actors = creatures.ToArray();
+				foreach (Creature m in Player.Minions)
+				{
+					Minion minion = m.GetComponent<Minion>();
+					if (minion.Task==null)
+					{
+						foreach (TaskEntity t in World.Tasks)
+						{
+							if (t.GetComponent<Task>().Worker==null)
+							{
+								t.GetComponent<Task>().Worker = m;
+								minion.Task = t;
+								break;
+							}
+						}
+					}
+				}
 				foreach (Creature cr in actors)
 				{
 					Actor actor = cr.TryComponent<Actor>();
@@ -164,9 +180,6 @@ namespace Hecatomb
 					}
 				}
 			} 
-//			else {
-//				this.SuppressDraw();
-//			}
 			var p = Player;
 			Camera.Center(p.x, p.y, p.z);
 			Visible = p.GetComponent<Senses>().GetFOV();

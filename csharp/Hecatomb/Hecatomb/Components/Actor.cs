@@ -34,10 +34,12 @@ namespace Hecatomb
 				if (m.Task!=null)
 				{
 					Target = m.Task;
+					m.Task.GetComponent<Task>().Act();
 				} else {
 					Target = Game.Player;
+					Patrol(Target.x, Target.y, Target.z);
 				}
-				Patrol(Target.x, Target.y, Target.z);
+				
 			} else {
 				Wander();
 			}
