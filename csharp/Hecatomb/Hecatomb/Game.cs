@@ -27,6 +27,8 @@ namespace Hecatomb
 //		public static GameEventHandler Events;
 		const int SIZE = 18;
 		const int PADDING = 3;
+		const int MENUWIDTH = 400;
+		const int STATUSHEIGHT = 100;
 		public static HashSet<Tuple<int, int, int>> Visible;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -77,8 +79,8 @@ namespace Hecatomb
 				World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
 			);
 			Camera = new GameCamera();
-			graphics.PreferredBackBufferWidth = PADDING+Camera.Width*(SIZE+PADDING);  // set this value to the desired width of your window
-			graphics.PreferredBackBufferHeight = PADDING+Camera.Height*(SIZE+PADDING);   // set this value to the desired height of your window
+			graphics.PreferredBackBufferWidth = PADDING+(2+Camera.Width)*(SIZE+PADDING)+MENUWIDTH;  // set this value to the desired width of your window
+			graphics.PreferredBackBufferHeight = PADDING+(2+Camera.Height)*(SIZE+PADDING)+STATUSHEIGHT;   // set this value to the desired height of your window
 			graphics.ApplyChanges();
 			bgTexture = new Texture2D(graphics.GraphicsDevice, SIZE+PADDING, SIZE+PADDING);
 			Color[] bgdata = new Color[(SIZE+PADDING)*(SIZE+PADDING)];
@@ -122,7 +124,8 @@ namespace Hecatomb
             spriteBatch = new SpriteBatch(GraphicsDevice);
             tileFont = this.Content.Load<SpriteFont>("NotoSans");
             symbolFont = this.Content.Load<SpriteFont>("NotoSansSymbol");
-            textFont = this.Content.Load<SpriteFont>("PTMono");
+//            textFont = this.Content.Load<SpriteFont>("PTMono");
+			textFont = this.Content.Load<SpriteFont>("NotoSans12");
             kstate = Keyboard.GetState();
             
             
@@ -230,15 +233,35 @@ namespace Hecatomb
 					var measure = tileFont.MeasureString(sym);
 					xOffset = 11-(int) measure.X/2;
 					yOffset = -7;
-					var vbg = new Vector2(PADDING+i*(SIZE+PADDING),PADDING+j*(SIZE+PADDING));
-					var vfg = new Vector2(xOffset+PADDING+i*(SIZE+PADDING), yOffset+PADDING+j*(SIZE+PADDING));
+					var vbg = new Vector2(PADDING+(1+i)*(SIZE+PADDING),PADDING+(1+j)*(SIZE+PADDING));
+					var vfg = new Vector2(xOffset+PADDING+(1+i)*(SIZE+PADDING), yOffset+PADDING+(1+j)*(SIZE+PADDING));
 					spriteBatch.Draw(bgTexture, vbg, bg);
 					spriteBatch.DrawString(tileFont, sym, vfg, fg);
 	    		}
 			}
+			DrawMenu(spriteBatch);
+			DrawStatus(spriteBatch);
 			spriteBatch.End();
             base.Draw(gameTime);
         }
+        
+        public void DrawMenu(SpriteBatch s)
+        {
+        	int xOffset = PADDING+(2+Camera.Width)*(SIZE+PADDING);
+        	int yOffset = PADDING+(SIZE+PADDING);
+        	var vfg = new Vector2(xOffset, yOffset);
+        	string txt = "Hello world!";
+        	s.DrawString(textFont, "Esc: System view.", vfg, Color.White);
+        }
+        public void DrawStatus(SpriteBatch s)
+        {
+        	int xOffset = PADDING+(SIZE+PADDING);
+        	int yOffset = PADDING+(2+Camera.Width)*(SIZE+PADDING);
+        	var vfg = new Vector2(xOffset, yOffset);
+        	string txt = String.Format("X: {0} Y:{1} Z:{2}",Player.x, Player.y, Player.z);
+        	s.DrawString(textFont, txt, vfg, Color.White);
+        }
+        
         
         
         private static bool HandleInput(GameTime gameTime) {
