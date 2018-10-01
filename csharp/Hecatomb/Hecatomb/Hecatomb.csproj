@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Components\Minion.cs" />
     <Compile Include="Components\Task.cs" />
+    <Compile Include="FontHandler.cs" />
     <Compile Include="GameEvent.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Tiles.cs" />
@@ -70,7 +71,7 @@
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Json.NET\lib\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="ShadowCaster">
       <HintPath>..\packages\ShadowCaster.1.0.2\lib\ShadowCaster.dll</HintPath>

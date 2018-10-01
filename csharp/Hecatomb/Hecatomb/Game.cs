@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,6 +25,7 @@ namespace Hecatomb
 		public static GameColors Colors;
 		public static GameCamera Camera;
 		public static Random Random;
+		public static ContentManager MyContentManager;
 //		public static GameEventHandler Events;
 		const int SIZE = 18;
 		const int PADDING = 3;
@@ -32,9 +34,9 @@ namespace Hecatomb
 		public static HashSet<Tuple<int, int, int>> Visible;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        SpriteFont tileFont;
-        SpriteFont symbolFont;
-        SpriteFont textFont;
+        FontHandler tileFont;
+//        FontHandler textFont;
+		SpriteFont textFont;
         static KeyboardState kstate;
         static MouseState mstate;
         Texture2D bgTexture;
@@ -67,6 +69,7 @@ namespace Hecatomb
         {
         	IsMouseVisible = true;
             EntityType.LoadEntities();
+            MyContentManager = Content;
 			Random = new Random();
 			Colors = new GameColors();
 			Events = new GameEventHandler();
@@ -105,27 +108,13 @@ namespace Hecatomb
         /// all of your content.
         /// </summary>
         /// 
-        
-        public SpriteFont GetFont(char c)
-        {
-        	if (tileFont.GetGlyphs().ContainsKey(c))
-        	{
-        		return tileFont;
-        	}
-        	else if (symbolFont.GetGlyphs().ContainsKey(c))
-        	{
-        		return symbolFont;
-        	}
-        	return tileFont;
-        }
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            tileFont = this.Content.Load<SpriteFont>("NotoSans");
-            symbolFont = this.Content.Load<SpriteFont>("NotoSansSymbol");
-//            textFont = this.Content.Load<SpriteFont>("PTMono");
-			textFont = this.Content.Load<SpriteFont>("NotoSans12");
+            tileFont = new FontHandler("NotoSans", "NotoSansSymbol");
+//            textFont = new FontHandler("PTMono", "NotoSans", "NotoSansSymbol");
+			textFont = this.Content.Load<SpriteFont>("PTMono");
             kstate = Keyboard.GetState();
             
             
@@ -202,7 +191,7 @@ namespace Hecatomb
 			var grid = World.Tiles;
 			int xOffset;
 			int yOffset;
-			string sym;
+			char sym;
 			Color fg;
 			Color bg;
 			for (int i=0; i<Camera.Width; i++) {
@@ -216,27 +205,28 @@ namespace Hecatomb
 					if (cr!=null) {
 						bg = Colors[tile.BG];
 						fg = Colors[cr.FG];
-						sym = cr.Symbol.ToString();
+						sym = cr.Symbol;
 					} else if (!Visible.Contains(c)) {
 						bg = Colors["black"];
 						fg = Colors["SHADOWFG"];
-						sym = tile.Symbol.ToString();
+						sym = tile.Symbol;
 					} else {
 						bg = Colors[tile.BG];
 						fg = Colors[tile.FG];
-						sym = tile.Symbol.ToString();
+						sym = tile.Symbol;
 	    			}
 					if (task!=null)
 					{
 						bg = Colors["orange"];
 					}
-					var measure = tileFont.MeasureString(sym);
+					string s = sym.ToString();
+					Vector2 measure = tileFont.MeasureString(s);
 					xOffset = 11-(int) measure.X/2;
 					yOffset = -7;
 					var vbg = new Vector2(PADDING+(1+i)*(SIZE+PADDING),PADDING+(1+j)*(SIZE+PADDING));
 					var vfg = new Vector2(xOffset+PADDING+(1+i)*(SIZE+PADDING), yOffset+PADDING+(1+j)*(SIZE+PADDING));
 					spriteBatch.Draw(bgTexture, vbg, bg);
-					spriteBatch.DrawString(tileFont, sym, vfg, fg);
+					spriteBatch.DrawString(tileFont.GetFont(sym), s, vfg, fg);
 	    		}
 			}
 			DrawMenu(spriteBatch);
@@ -250,7 +240,6 @@ namespace Hecatomb
         	int xOffset = PADDING+(2+Camera.Width)*(SIZE+PADDING);
         	int yOffset = PADDING+(SIZE+PADDING);
         	var vfg = new Vector2(xOffset, yOffset);
-        	string txt = "Hello world!";
         	s.DrawString(textFont, "Esc: System view.", vfg, Color.White);
         }
         public void DrawStatus(SpriteBatch s)
