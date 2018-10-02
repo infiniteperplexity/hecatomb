@@ -26,6 +26,7 @@ namespace Hecatomb
 		public static GameCamera Camera;
 		public static Random Random;
 		public static ContentManager MyContentManager;
+		public static Dictionary<string, object> Caches;
 //		public static GameEventHandler Events;
 		const int SIZE = 18;
 		const int PADDING = 3;
@@ -40,6 +41,7 @@ namespace Hecatomb
         static KeyboardState kstate;
         static MouseState mstate;
         Texture2D bgTexture;
+        public static Hecatomb.Game game;
         
         
         [STAThread]
@@ -49,8 +51,10 @@ namespace Hecatomb
         }
 		public static void Go()
 		{
-			using (var game = new Game())
-                game.Run();
+			game = new Game();
+			game.Run();
+//			using (game = new Game())
+//                game.Run();
 		}
 
         public Game()
@@ -74,6 +78,7 @@ namespace Hecatomb
 			Colors = new GameColors();
 			Events = new GameEventHandler();
 			World = new GameWorld();
+			World.Initialize();
 			Commands = new GameCommands();
 			Player = new Player("Necromancer");
 			Player.Place(
@@ -102,6 +107,14 @@ namespace Hecatomb
 			Player.Minions.Add(zombie);
             base.Initialize();
         }
+//        
+//        private void SetCaches()
+//        {
+//        	var bgcache = new {
+//        		vectors: new Vector2[WIDTH, HEIGHT]();
+//        	}
+//        	Cache["BackgroundTiles"] = 
+//        }
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -112,9 +125,10 @@ namespace Hecatomb
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            tileFont = new FontHandler("NotoSans", "NotoSansSymbol");
+            tileFont = new FontHandler("NotoSans", "NotoSansSymbol", "NotoSansSymbol2");
 //            textFont = new FontHandler("PTMono", "NotoSans", "NotoSansSymbol");
 			textFont = this.Content.Load<SpriteFont>("PTMono");
+			                
             kstate = Keyboard.GetState();
             
             
@@ -175,6 +189,10 @@ namespace Hecatomb
 			var p = Player;
 			Camera.Center(p.x, p.y, p.z);
 			Visible = p.GetComponent<Senses>().GetFOV();
+			foreach (var t in Visible)
+			{
+				World.Explored.Add(t);
+			}
             base.Update(gameTime);
         }
 
@@ -186,11 +204,10 @@ namespace Hecatomb
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-			Tuple<int, int, int> c;
-			Terrain tile;
 			var grid = World.Tiles;
 			int xOffset;
 			int yOffset;
+			Tuple<char, string, string> glyph;
 			char sym;
 			Color fg;
 			Color bg;
@@ -198,31 +215,14 @@ namespace Hecatomb
 	    		for (int j=0; j<Camera.Height; j++) {
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
-					c = new Tuple<int, int, int>(x, y, Camera.z);
-					Creature cr = Game.World.Creatures[x,y,Camera.z];
-					TaskEntity task = Game.World.Tasks[x,y,Camera.z];
-					tile = grid[x,y,Camera.z];
-					if (cr!=null) {
-						bg = Colors[tile.BG];
-						fg = Colors[cr.FG];
-						sym = cr.Symbol;
-					} else if (!Visible.Contains(c)) {
-						bg = Colors["black"];
-						fg = Colors["SHADOWFG"];
-						sym = tile.Symbol;
-					} else {
-						bg = Colors[tile.BG];
-						fg = Colors[tile.FG];
-						sym = tile.Symbol;
-	    			}
-					if (task!=null)
-					{
-						bg = Colors["orange"];
-					}
+					glyph = Tiles.GetGlyph(x, y, Camera.z);
+					sym = glyph.Item1;
+					fg = Colors[glyph.Item2];
+					bg = Colors[glyph.Item3];
 					string s = sym.ToString();
-					Vector2 measure = tileFont.MeasureString(s);
+					Vector2 measure = tileFont.MeasureChar(sym);
 					xOffset = 11-(int) measure.X/2;
-					yOffset = -7;
+					yOffset = 10-(int) measure.Y/2;
 					var vbg = new Vector2(PADDING+(1+i)*(SIZE+PADDING),PADDING+(1+j)*(SIZE+PADDING));
 					var vfg = new Vector2(xOffset+PADDING+(1+i)*(SIZE+PADDING), yOffset+PADDING+(1+j)*(SIZE+PADDING));
 					spriteBatch.Draw(bgTexture, vbg, bg);
@@ -254,6 +254,10 @@ namespace Hecatomb
         
         
         private static bool HandleInput(GameTime gameTime) {
+        	if (!game.IsActive)
+        	{
+        		return false;
+        	}
         	var m = Mouse.GetState();
         	var k = Keyboard.GetState();
         	if (k.Equals(kstate) && m.Equals(mstate)) {
@@ -305,19 +309,8 @@ namespace Hecatomb
         
         public static Coord GetCellAt(int x, int y)
         {
-        	Coord c = new Coord(x/(SIZE+PADDING)+Camera.XOffset,y/(SIZE+PADDING)+Camera.YOffset,Camera.z);
+        	Coord c = new Coord(x/(SIZE+PADDING)-1+Camera.XOffset,y/(SIZE+PADDING)-1+Camera.YOffset,Camera.z);
         	return c;
         }
     }
 }
-//
-//
-//private object getProperty(object containingObject, string propertyName)
-//{
-//    return containingObject.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, containingObject, null);
-//}
-// 
-//private void setProperty(object containingObject, string propertyName, object newValue)
-//{
-//    containingObject.GetType().InvokeMember(propertyName, BindingFlags.SetProperty, null, containingObject, new object[] { newValue });
-//}

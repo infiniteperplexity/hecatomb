@@ -2,9 +2,21 @@
 	"Types":
 		[	
 			{
-				"Type" : "IncompleteExcavation",
+				"Type" : "IncompleteFeature",
 				"FG" : "brown",
 				"Symbol" : "\u2693",
+				"Components" : {}
+			},
+			{
+				"Type" : "Tree",
+				"FG" : "green",
+				"Symbol" : "\u2698",
+				"Components" : {}
+			},
+			{
+				"Type" : "Shrub",
+				"FG" : "green",
+				"Symbol" : "\u2698",
 				"Components" : {}
 			}
 		]

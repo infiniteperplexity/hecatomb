@@ -50,7 +50,7 @@ namespace Hecatomb
 			passable = passable ?? defaultPassable;
 			// !should check enclosed right up front
 			// !this doesn't have to be shuffled but it would be nice if it were
-			Coord[] dirs = Movement.Directions26;
+			Coord[] dirs = Movement.Directions10;
 			//Coord[] dirs = Game.Random.Shuffled(Movement.Directions26);
 			Coord current = new Coord(x0, y0, z0);
 			// cost for the best known path to each cell
@@ -180,6 +180,131 @@ namespace Hecatomb
 				}
 			} while (x0!=x1 || y0!=y1);
 		    return line;
+		}
+		
+		private static List<Coord> getNeighbors(int x, int y, int z, Coord[] c)
+		{
+			List<Coord> l = new List<Coord>();
+			foreach (Coord d in c)
+			{
+				l.Add(new Coord(d.x+x, d.y+y, d.z+z));
+			}
+			return l;
+		}
+		
+		public static List<Coord> GetNeighbors4(int x, int y, int z)
+		{
+			return getNeighbors(x, y, z, Movement.Directions4);
+		}
+		
+		public static List<Coord> GetNeighbors8(int x, int y, int z)
+		{
+			return getNeighbors(x, y, z, Movement.Directions8);
+		}
+		
+		public static List<Coord> GetNeighbors10(int x, int y, int z)
+		{
+			return getNeighbors(x, y, z, Movement.Directions10);
+		}
+		
+		public static List<Coord> GetNeighbors26(int x, int y, int z)
+		{
+			return getNeighbors(x, y, z, Movement.Directions26);
+		}
+		
+		
+		public static char GetSymbol(int x, int y, int z)
+		{
+			Creature cr = Game.World.Creatures[x,y,z];
+			Feature fr = Game.World.Features[x,y,z];
+			Terrain t = Game.World.Tiles[x,y,z];
+			var c = new Tuple<int, int, int> (x, y, z);
+			if (!Game.World.Explored.Contains(c))
+			{
+				return ' ';
+			}
+			else if (!Game.Visible.Contains(c))
+			{
+				if (fr!=null)
+				{
+					return fr.Symbol;
+				}
+				else
+				{
+					return t.Symbol;
+				}
+			}
+			else
+			{
+				if (cr!=null)
+				{
+					return cr.Symbol;
+				}
+				else if (fr!=null)
+				{
+					return fr.Symbol;
+				}
+				else
+				{
+					return t.Symbol;
+				}
+			}
+		}
+
+		public static string GetFG(int x, int y, int z)
+		{
+			Creature cr = Game.World.Creatures[x,y,z];
+			Feature fr = Game.World.Features[x,y,z];
+			Terrain t = Game.World.Tiles[x,y,z];
+			var c = new Tuple<int, int, int> (x, y, z);
+			if (!Game.World.Explored.Contains(c))
+			{
+				return "black";
+			}
+			else if (!Game.Visible.Contains(c))
+			{
+				return "SHADOWFG";
+			}
+			else if (cr!=null)
+			{
+				return cr.FG;
+			}
+			else if (fr!=null)
+			{
+				return fr.FG;
+			}
+			else
+			{
+				return t.FG;
+			}
+		}
+
+		public static string GetBG(int x, int y, int z)
+		{
+			Terrain t = Game.World.Tiles[x,y,z];
+			var c = new Tuple<int, int, int> (x, y, z);
+			TaskEntity task = Game.World.Tasks[x, y, z];
+			if (!Game.World.Explored.Contains(c))
+			{
+				return "black";
+			}
+			else if (task!=null)
+			{
+				return "orange";
+			}
+			else if (!Game.Visible.Contains(c))
+			{
+				return "black";
+			}
+			else
+			{
+				return t.BG;
+			}
+		}
+		
+		public static Tuple<char, string, string> GetGlyph(int x, int y, int z)
+		{
+			return new Tuple<char, string, string>(GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
 		}
 	}	
 }

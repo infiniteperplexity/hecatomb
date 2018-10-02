@@ -82,7 +82,14 @@ namespace Hecatomb
 			} else {
 				Coord t = (Coord) target;
 				Movement m = Entity.GetComponent<Movement>();
-				m.StepTo(t.x, t.y, t.z);
+				if (m.CanPass(t.x, t.y, t.z))
+				{
+					m.StepTo(t.x, t.y, t.z);
+				}
+				else
+				{
+					WalkRandom();
+				}
 			}
 		}
 		public void WalkAway(int x1, int y1, int z1)

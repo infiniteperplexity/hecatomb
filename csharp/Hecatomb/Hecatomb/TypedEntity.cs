@@ -51,10 +51,13 @@ namespace Hecatomb
 			z = -1;
 			Placed = false;
 			Components = new Dictionary<Type, Component>();
-			EntityType et = EntityType.Types[t];
-			if (et!=null) {
+			if (EntityType.Types.ContainsKey(t))
+			{
+				EntityType et = EntityType.Types[t];
 				et.Typify(this);
-			}		
+			} else {
+				throw new InvalidOperationException(String.Format("EntityType {0} does not exist.",t));
+			}
 		}
 		
 		public T GetComponent<T>() where T : Component
@@ -101,10 +104,7 @@ namespace Hecatomb
 	}
 	
 	public class Creature : TypedEntity {
-		public Creature(string t) : base(t)
-		{
-			
-		}
+		public Creature(string t) : base(t) {}
 		public override void Place(int x1, int y1, int z1)
 		{
 			Creature e = Game.World.Creatures[x1,y1,z1];
@@ -130,10 +130,7 @@ namespace Hecatomb
 		}
 	}
 	public class Feature : TypedEntity {
-		public Feature(string t) : base(t)
-		{
-			
-		}
+		public Feature(string t) : base(t) {}
 		public override void Place(int x1, int y1, int z1)
 		{
 			Feature e = Game.World.Features[x1,y1,z1];

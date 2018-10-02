@@ -33,6 +33,7 @@ namespace Hecatomb
 		public bool Climbs;
 		public bool Flies;
 		public bool Swims;
+		public bool Phases;
 		
 		public readonly static Coord North = new Coord(+0,-1,+0);
 		public readonly static Coord South = new Coord(+0,-1,+0);
@@ -79,6 +80,19 @@ namespace Hecatomb
 			SouthWest			
 		};
 		
+		public static Coord[] Directions10 = new Coord[] {
+			North,
+			South,
+			East,
+			West,
+			NorthEast,
+			SouthEast,
+			NorthWest,
+			SouthWest,
+			Up,
+			Down			
+		};
+		
 		public static Coord[] Directions26 = new Coord[] {
 			North,
 			South,
@@ -114,6 +128,7 @@ namespace Hecatomb
 			Climbs = true;
 			Flies = false;
 			Swims = true;
+			Phases = false;
 		}
 		
 		public bool CanPass(int x1, int y1, int z1)
@@ -131,19 +146,63 @@ namespace Hecatomb
 		
 		public bool CanMove(int x1, int y1, int z1)
 		{
-			// there are situations where diagonal movement should be blocked...
 			if (x1<0 || x1>=Constants.WIDTH || y1<0 || y1>=Constants.HEIGHT || z1<0 || z1>=Constants.DEPTH) {
 				return false;
 			}
 			Terrain tile = Game.World.Tiles[x1,y1,z1];
-			
-			if (tile.Solid) {
+			// non-phasers can't go through a solid wall
+			if (!Phases && tile.Solid) {
 				return false;
 			}
+			// non-flyers can't cross a pit
 			if (tile.Fallable && Flies==false) {
 				return false;
 			}
-			return true;
+			int dx = x1-Entity.x;
+			int dy = y1-Entity.y;
+			int dz = z1-Entity.z;
+			// rare: check whether the square itself is allowed
+			if (dx==0 && dy==0 && dz==0)
+			{
+				return true;
+			}
+			// non-flyers can't climb diagonally
+			if (!Flies && dz!=0 && (dx!=0 || dy!=0))
+			{
+				return false;
+			}	
+			// non-flyers need a slope in order to go up
+			Terrain t0 = Game.World.Tiles[Entity.x, Entity.y, Entity.z];
+			if (dz==+1 && !Flies && t0.ZWalk!=+1)
+			{
+				return false;
+      		}
+			// non-phasers can't go through a ceiling
+			if (!Phases)
+			{
+				if (dz==+1 && !tile.Fallable && tile.ZWalk!=-1)
+				{
+					return false;
+				}
+				else if (dz==-1 && t0.ZWalk!=-1 && !t0.Fallable)
+				{
+					return false;
+				}
+			}
+			if (Walks)
+			{
+				return true;
+			}
+			if (Flies)
+			{
+				return true;
+			}
+			// needs changed once we add water
+			if (Swims)
+			{
+				return true;
+			}
+			return false;
 		}
 		
 		public void StepTo(int x1, int y1, int z1)

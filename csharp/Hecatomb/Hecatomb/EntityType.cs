@@ -37,10 +37,12 @@ namespace Hecatomb
 			
 		public void Typify(TypedEntity e)
 		{
+			e.Name = Name;
+			e.FG = FG;
+			e.Symbol = Symbol;
 			foreach (string t in Components)
 			{
-				e.FG = FG;
-				e.Symbol = Symbol;
+				
 				Component c = (Component) Activator.CreateInstance(Type.GetType("Hecatomb." + t));
 				c.AddToEntity(e);
 				
@@ -51,9 +53,11 @@ namespace Hecatomb
 		public static void LoadEntities()
 		{
 			// dynamically load creature types from JSON
-			string f = "Creatures.json";
-			string json = File.ReadAllText(f);
-			var obj = JObject.Parse(json);
+			string f, json;
+			JObject obj;
+			f = "Creatures.json";
+			json = File.ReadAllText(f);
+			obj = JObject.Parse(json);
 			foreach (var t in obj["Types"])
 			{
 				EntityType et = new EntityType((string) t["Type"]);
@@ -69,7 +73,24 @@ namespace Hecatomb
 				}
 				et.Components = Components.ToArray<string>();
 			}
-		
+			f = "Features.json";
+			json = File.ReadAllText(f);
+			obj = JObject.Parse(json);
+			foreach (var t in obj["Types"])
+			{
+				EntityType et = new EntityType((string) t["Type"]);
+				et.FG = (string) t["FG"];
+				et.Symbol = (char) t["Symbol"];
+				var Components = new List<string>();
+				foreach (JProperty comp in (JToken) t["Components"])
+				{
+					string name = (string) comp.Name;
+					Components.Add(name);
+					// need to do something more with this, eventually
+					Debug.WriteLine((JToken) comp.Value);
+				}
+				et.Components = Components.ToArray<string>();
+			}
 			// dynamically create a typed entity for each subclass of Task
 			var tasks = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Task))).ToList();
 			foreach (var task in tasks)

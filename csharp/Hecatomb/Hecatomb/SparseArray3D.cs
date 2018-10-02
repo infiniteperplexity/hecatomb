@@ -35,8 +35,7 @@ namespace Hecatomb
 			get
 			{	
 				if (x<0 || x>=X || y<0 || y>=Y || z<0 || z>=Z) {
-					throw new IndexOutOfRangeException();
-					
+					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 				} else {
 					Tuple<int, int, int> t = new Tuple<int, int, int>(x, y, z);
 					T value;
@@ -50,7 +49,7 @@ namespace Hecatomb
 			set
 			{
 				if (x<0 || x>=X || y<0 || y>=Y || z<0 || z>=Z) {
-					throw new IndexOutOfRangeException();
+					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 				} else {
 					Tuple<int, int, int> t = new Tuple<int, int, int>(x, y, z);
 					if (value==null) {

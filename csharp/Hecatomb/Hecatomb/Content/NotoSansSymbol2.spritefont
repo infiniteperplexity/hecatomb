@@ -11,7 +11,7 @@ with.
     <!--
     Modify this string to change the font that will be imported.
     -->
-    <FontName>NotoSansSymbols-Regular.ttf</FontName>
+    <FontName>NotoSansSymbols2-Regular.ttf</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
@@ -52,46 +52,9 @@ with.
     -->
     <CharacterRegions>
       <CharacterRegion>
-        <Start>&#x20A0;</Start><!-- Currency Symbols -->
-        <End>&#x20CF;</End>
+        <Start>&#x25A0;</Start><!-- Geometric Shapes -->
+        <End>&#x25FF;</End>
       </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2100;</Start><!-- Letterlike Symbols -->
-        <End>&#x214F;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2190;</Start><!-- Arrows -->
-        <End>&#x21FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2200;</Start><!-- Mathematical Operators-->
-        <End>&#x22FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2300;</Start><!-- Miscellaneous Technical-->
-        <End>&#x23FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2460;</Start><!-- Enclosed Alphanumerics -->
-        <End>&#x24FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2500;</Start><!-- Box Drawing -->
-        <End>&#x257F;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2580;</Start><!-- Block Elements -->
-        <End>&#x259F;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2600;</Start><!-- Miscellaneous Symbols -->
-        <End>&#x26FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2700;</Start><!-- Dingbats -->
-        <End>&#x27BF;</End>
-      </CharacterRegion>
-
     </CharacterRegions>
   </Asset>
 </XnaContent>

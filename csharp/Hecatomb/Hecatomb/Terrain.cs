@@ -65,7 +65,7 @@ namespace Hecatomb
 			name: "empty",
 			symbol: '.',
 			fg: "BELOWFG",
-		    bg: "black", 
+		    bg: "BELOWBG", 
 			fallable: true,
 			zview: -1
 		);
@@ -89,7 +89,9 @@ namespace Hecatomb
 		public static readonly Terrain UpSlopeTile = new Terrain(
 			name: "upward slope",
 			symbol: '\u02C4',
+//			symbol: '\u25B3',
 			fg: "FLOORFG",
+//			fg: "GRASSFG",
 			bg: "GRASSBG",
 			zview: +1,
 			zwalk: +1	
@@ -98,10 +100,23 @@ namespace Hecatomb
 		public static readonly Terrain DownSlopeTile = new Terrain(
 			name: "downward slope",
 			symbol: '\u02C5',
+//			symbol: '\u25BD',
 			fg: "FLOORFG",
-			bg: "GRASSBG",
+//			fg: "GRASSFG",
+			bg: "BELOWBG",
 			zview: -1,
 			zwalk: -1
 		);	
+		
+		public static readonly Terrain OutOfBoundsTile = new Terrain(
+			name: "out of bounds",
+			symbol: ' ',
+			fg: "black",
+			bg: "black",
+			zview: 0,
+			zwalk: 0,
+			mutable: false
+		);	
+		
 	}
 }

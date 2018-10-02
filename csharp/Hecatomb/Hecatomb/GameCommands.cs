@@ -55,11 +55,11 @@ namespace Hecatomb
 				return false;
 			}
 			if (!m.CanPass(x1, y1, z1)) {
-				if (m.Climbs && z1+1<Constants.DEPTH && m.CanPass(x1, y1, z1+1)){
-					m.StepTo(x1, y1, z1+1);
+				if (m.CanPass(p.x, p.y, z1+1)){
+					m.StepTo(p.x, p.y, z1+1);
 					return true;
-				} else if (m.Climbs && z1-1>=0 && m.CanPass(x1, y1, z1-1)){
-					m.StepTo(x1, y1, z1-1);
+				} else if (m.CanPass(p.x, p.y, z1-1)){
+					m.StepTo(p.x, p.y, z1-1);
 					return true;
 				}
 			    return false;

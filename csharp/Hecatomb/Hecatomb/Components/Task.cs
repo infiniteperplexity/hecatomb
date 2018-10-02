@@ -13,10 +13,11 @@ namespace Hecatomb
 	public abstract class Task : Component
 	{
 		public Creature Worker;
+		public static int LaborCost = 10;
 		public int Labor;
 		public Task() : base()
 		{
-			
+			Labor = LaborCost;
 		}
 		
 		public virtual void Act()
@@ -37,11 +38,21 @@ namespace Hecatomb
 		
 		public virtual void Work()
 		{
+			if (Labor==LaborCost)
+			{
+				Start();
+			}
 			Labor-=1;
 			if (Labor<=0)
 			{
 				Finish();
 			}
+		}
+		
+		public virtual void Start()
+		{
+			Feature f = new Feature("IncompleteFeature");
+			f.Place(Entity.x, Entity.y, Entity.z);
 		}
 		
 		public virtual void Finish()
@@ -58,22 +69,56 @@ namespace Hecatomb
 	
 	public class DigTask : Task
 	{
-		public DigTask() : base()
+		public override void Start()
 		{
-			Labor = 10;
+			base.Start();
+			Feature f = Game.World.Features[Entity.x, Entity.y, Entity.z];
+			f.Symbol = 'X';
+			f.FG = "white";
 		}
-		
 		public override void Finish()
 		{
 			int x = Entity.x;
 			int y = Entity.y;
 			int z = Entity.z;
+			Game.World.Features[x, y, z].Remove();
 			var tiles = Game.World.Tiles;
-			Terrain t = tiles[x, y, z];
-			if (t==Terrain.WallTile)
+			Terrain t = tiles[x, y, z];	
+			Terrain floor = Terrain.FloorTile;
+			Terrain wall = Terrain.WallTile;
+			Terrain up = Terrain.UpSlopeTile;
+			Terrain down = Terrain.DownSlopeTile;
+			Terrain empty = Terrain.EmptyTile;
+			if (t==floor)
 			{
-				tiles[x, y, z] = Terrain.FloorTile;
+				Terrain tb = Game.World.GetTile(x, y, z-1);
+				if (tb==wall)
+				{
+					tiles[x, y, z] = down;
+					tiles[x, y, z-1] = up;
+				} else if (tb==up)
+				{
+					tiles[x, y, z] = down;
+				}
+				else if (tb==empty || tb==down || tb==floor)
+				{
+					tiles[x, y, z] = empty;
+				}
 			}
+			else if (t==up)
+			{
+				tiles[x, y, z] = floor;
+			}
+			else if (t==down)
+			{
+				tiles[x, y, z] = empty;
+				tiles[x, y, z-1] = floor;
+			}
+			else if (t==wall)
+			{
+				tiles[x, y, z] = down;
+				tiles[x, y, z-1] = up;
+			}		
 			Complete();
 		}
 	}
