@@ -19,14 +19,13 @@ namespace Hecatomb
     public class Game : Microsoft.Xna.Framework.Game
     {
     	public static GameWorld World;
-		public static Player Player;
-		public static GameEventHandler Events;
 		public static GameCommands Commands;
 		public static GameColors Colors;
 		public static GameCamera Camera;
 		public static Random Random;
 		public static ContentManager MyContentManager;
 		public static Dictionary<string, object> Caches;
+		
 //		public static GameEventHandler Events;
 		const int SIZE = 18;
 		const int PADDING = 3;
@@ -42,6 +41,8 @@ namespace Hecatomb
         static MouseState mstate;
         Texture2D bgTexture;
         public static Hecatomb.Game game;
+        const int THROTTLE = 250;
+        static DateTime inputBegan;
         
         
         [STAThread]
@@ -71,17 +72,18 @@ namespace Hecatomb
         /// </summary>
         protected override void Initialize()
         {
+        	inputBegan = DateTime.Now;
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
 			Random = new Random();
 			Colors = new GameColors();
-			Events = new GameEventHandler();
 			World = new GameWorld();
 			World.Initialize();
 			Commands = new GameCommands();
-			Player = new Player("Necromancer");
-			Player.Place(
+			Player p = new Player("Necromancer");
+			World.Player = p;
+			p.Place(
 				Constants.WIDTH/2,
 				Constants.HEIGHT/2,
 				World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
@@ -97,14 +99,15 @@ namespace Hecatomb
 				bgdata[i] = Color.White;
 			}
 			bgTexture.SetData(bgdata);
-			Camera.Center(Player.x, Player.y, Player.z);
+			Camera.Center(p.x, p.y, p.z);
 			Creature zombie = new Creature("Zombie");
 			zombie.Place(
-				Player.x+3,
-				Player.y+3,
-				World.GroundLevel(Player.x+3, Player.y+3)			
+				p.x+3,
+				p.y+3,
+				World.GroundLevel(p.x+3, p.y+3)			
 			);
-			Player.Minions.Add(zombie);
+			p.Minions.Add(zombie);
+			zombie.GetComponent<Movement>().Stringify();
             base.Initialize();
         }
 //        
@@ -126,6 +129,8 @@ namespace Hecatomb
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             tileFont = new FontHandler("NotoSans", "NotoSansSymbol", "NotoSansSymbol2");
+//			tileFont = new FontHandler("ArialUnicode");
+//			tileFont = new FontHandler("LastResort");
 //            textFont = new FontHandler("PTMono", "NotoSans", "NotoSansSymbol");
 			textFont = this.Content.Load<SpriteFont>("PTMono");
 			                
@@ -158,10 +163,11 @@ namespace Hecatomb
 			int HEIGHT = Camera.Height;
 			Terrain [,,] grid = World.Tiles;
 			bool acted = HandleInput(gameTime);
+			Player p = World.Player;
 			if (acted) {
 				IEnumerable<Creature> creatures = World.Creatures;
 				Creature[] actors = creatures.ToArray();
-				foreach (Creature m in Player.Minions)
+				foreach (Creature m in p.Minions)
 				{
 					Minion minion = m.GetComponent<Minion>();
 					if (minion.Task==null)
@@ -186,7 +192,7 @@ namespace Hecatomb
 					}
 				}
 			} 
-			var p = Player;
+			
 			Camera.Center(p.x, p.y, p.z);
 			Visible = p.GetComponent<Senses>().GetFOV();
 			foreach (var t in Visible)
@@ -247,22 +253,26 @@ namespace Hecatomb
         	int xOffset = PADDING+(SIZE+PADDING);
         	int yOffset = PADDING+(2+Camera.Width)*(SIZE+PADDING);
         	var vfg = new Vector2(xOffset, yOffset);
-        	string txt = String.Format("X: {0} Y:{1} Z:{2}",Player.x, Player.y, Player.z);
+        	Player p = Game.World.Player;
+        	string txt = String.Format("X: {0} Y:{1} Z:{2}", p.x, p.y, p.z);
         	s.DrawString(textFont, txt, vfg, Color.White);
         }
         
         
         
         private static bool HandleInput(GameTime gameTime) {
+        	DateTime now = DateTime.Now;
+        	var m = Mouse.GetState();
+        	var k = Keyboard.GetState();
+        	double sinceInputBegan = now.Subtract(inputBegan).TotalMilliseconds;
+        	if (k.Equals(kstate) && m.Equals(mstate) && sinceInputBegan<THROTTLE) {
+        		return false;
+        	}
         	if (!game.IsActive)
         	{
         		return false;
         	}
-        	var m = Mouse.GetState();
-        	var k = Keyboard.GetState();
-        	if (k.Equals(kstate) && m.Equals(mstate)) {
-        		return false;
-        	}
+        	inputBegan = now;
         	kstate = k;
         	mstate = m;
         	bool acted = false;

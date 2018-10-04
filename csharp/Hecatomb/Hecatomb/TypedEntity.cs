@@ -18,9 +18,27 @@ namespace Hecatomb
 	/// 
 	
 	public abstract class GameEntity {
+		public static int MaxEID = -1;
+		public int EID;
+		public GameEntity()
+		{
+			EID = GameEntity.MaxEID + 1;
+			GameEntity.MaxEID = EID;
+		}
+		
 		public void Publish(GameEvent g)
 		{
 			
+		}
+		
+		public virtual string Stringify()
+		{
+			return "huh?";
+		}
+		
+		public string StringifyReference()
+		{
+			return "{\"EID\":" + EID +"}";
 		}
 	}
 	public abstract class TypedEntity : GameEntity
@@ -35,14 +53,12 @@ namespace Hecatomb
 		public int y {get; private set;}
 		public int z {get; private set;}
 		public bool Placed {get; private set;}
-		public static int MaxEID = -1;
-		public int EID;
+
 		public Dictionary<Type, Component> Components;
 		
 
 		public TypedEntity(string t) : base()
 		{
-			EID = TypedEntity.MaxEID + 1;
 			Symbol = '@';
 			FG = "white";
 			EType = t;
@@ -91,15 +107,27 @@ namespace Hecatomb
 			y = y1;
 			z = z1;
 			Placed = true;
-			Game.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
+			Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
 		}
 		public virtual void Remove()
 		{
-			Game.Events.Publish(new RemoveEvent() {Entity = this, X = x, Y = y, Z = z});
+			Game.World.Events.Publish(new RemoveEvent() {Entity = this, X = x, Y = y, Z = z});
 			x = -1;
 			y = -1;
 			z = -1;
 			Placed = false;
+		}
+		
+		public override string Stringify()
+		{
+			return
+				"{"
+					+ "\"Type\": " + EType + ", "
+					+ "\"x\": " + x + ", "
+					+ "\"y\": " + y + ", "
+					+ "\"z\": " + z + ", "
+					+ "\"Components\": " + "[]" +
+				"}";
 		}
 	}
 	

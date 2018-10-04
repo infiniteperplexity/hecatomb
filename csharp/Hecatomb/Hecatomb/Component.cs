@@ -7,9 +7,15 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace Hecatomb
 {
+	class NoSaveAttribute : Attribute
+	{
+		
+	}
 	/// <summary>
 	/// Description of Component.
 	/// </summary>
@@ -18,9 +24,9 @@ namespace Hecatomb
 	public abstract class Component : GameEntity
 	{
 		public TypedEntity Entity;
-		public string[] Required;
+		[NonSerialized] public string[] Required;
 		
-		public Component()
+		public Component() : base()
 		{
 			Required = new string[0];
 		}
@@ -58,6 +64,43 @@ namespace Hecatomb
 				Entity.Components.Remove(this.GetType().BaseType);
 			}
 			Entity = null;
+		}
+		
+		public override string Stringify()
+		{
+			string s = "{";
+			string f, v;
+			foreach(var field in this.GetType().GetFields())
+			{
+				if (field.MemberType==MemberTypes.Field && !field.IsStatic && !field.IsNotSerialized)
+				{
+					if (field.FieldType==typeof(System.Boolean))
+					{
+						v = ((bool) field.GetValue(this)==true) ? "true" : "false";
+					}
+					else if(field.FieldType==typeof(System.String))
+					{
+						v = "\"" + (string) field.GetValue(this) + "\"";
+					}
+					else if (field.FieldType==typeof(System.Int32))
+					{
+						v = ((int) field.GetValue(this)).ToString();;
+					}
+					else if (field.FieldType.IsSubclassOf(typeof(Hecatomb.GameEntity)))
+					{
+						GameEntity ge = (GameEntity) field.GetValue(this);
+						v = ge.StringifyReference();
+					}
+					else
+					{
+						v = default(string);
+					}
+					f = "\"" + field.Name + "\": ";
+					Debug.WriteLine(f+v);
+				}
+			}
+			s+="}";
+			return s;
 		}
 	}
 }

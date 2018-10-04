@@ -15,9 +15,11 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Actor.
 	/// </summary>
+	/// 
+	
 	public class Actor : Component
 	{
-		TypedEntity Target;
+		[NonSerialized] TypedEntity Target;
 		public Actor() : base()
 		{
 			
@@ -36,7 +38,7 @@ namespace Hecatomb
 					Target = m.Task;
 					m.Task.GetComponent<Task>().Act();
 				} else {
-					Target = Game.Player;
+					Target = Game.World.Player;
 					Patrol(Target.x, Target.y, Target.z);
 				}
 				
@@ -70,12 +72,12 @@ namespace Hecatomb
 //			base.OnAddToEntity();
 //			// nothing for now
 //		}
-		public void WalkToward(int x1, int y1, int z1)
+		public void WalkToward(int x1, int y1, int z1, bool useLast=false)
 		{
 			int x = Entity.x;
 			int y = Entity.y;
 			int z = Entity.z;
-			Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1);
+			Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
 			if (target==null)
 			{
 				WalkRandom();

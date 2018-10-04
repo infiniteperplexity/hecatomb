@@ -46,7 +46,7 @@ namespace Hecatomb
 		}
 		private bool moveHorizontalCommand(int dx, int dy)
 		{
-			Player p = Game.Player;
+			Player p = Game.World.Player;
 			int x1 = p.x + dx;
 			int y1 = p.y + dy;
 			int z1 = p.z;
@@ -71,7 +71,7 @@ namespace Hecatomb
 			
 		private bool moveVerticalCommand(int dz)
 		{
-			Player p = Game.Player;
+			Player p = Game.World.Player;
 			int x1 = p.x;
 			int y1 = p.y;
 			int z1 = p.z + dz;

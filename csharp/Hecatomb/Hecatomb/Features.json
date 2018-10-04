@@ -18,6 +18,12 @@
 				"FG" : "green",
 				"Symbol" : "\u2698",
 				"Components" : {}
+			},
+			{
+				"Type" : "Grave",
+				"FG" : "light gray",
+				"Symbol" : "\u271D",
+				"Components" : {}
 			}
 		]
 }

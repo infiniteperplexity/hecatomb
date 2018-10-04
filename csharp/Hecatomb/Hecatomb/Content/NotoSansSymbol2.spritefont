@@ -55,6 +55,10 @@ with.
         <Start>&#x25A0;</Start><!-- Geometric Shapes -->
         <End>&#x25FF;</End>
       </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2700;</Start><!-- Dingbats -->
+        <End>&#x27BF;</End>
+      </CharacterRegion>
     </CharacterRegions>
   </Asset>
 </XnaContent>

@@ -55,3 +55,17 @@
 /processorParam:TextureFormat=Compressed
 /build:NotoSansSymbol2.spritefont
 
+#begin ArialUnicode.spriteFont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ArialUnicode.spriteFont
+
+#begin LastResort.spriteFont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:LastResort.spriteFont
+

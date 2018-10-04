@@ -88,8 +88,8 @@ with.
         <End>&#x26FF;</End>
       </CharacterRegion>
       <CharacterRegion>
-        <Start>&#x2700;</Start><!-- Dingbats -->
-        <End>&#x27BF;</End>
+        <Start>&#x271D;</Start><!-- Dingbats -->
+        <End>&#x271D;</End>
       </CharacterRegion>
 
     </CharacterRegions>

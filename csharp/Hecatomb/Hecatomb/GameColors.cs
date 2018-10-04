@@ -8,6 +8,8 @@
  */
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Diagnostics;
 using System;
 
 namespace Hecatomb
@@ -26,6 +28,7 @@ namespace Hecatomb
 				{"white", Color.White},
 				{"gray", Color.Gray},
 				{"dark gray", new Color(0x55, 0x55, 0x55)},
+				{"light gray", Color.LightGray},
 				{"black", Color.Black},
 				{"magenta", Color.Magenta},
 				{"green", Color.LightGreen},
@@ -41,6 +44,20 @@ namespace Hecatomb
 				{"BELOWBG", new Color(0x11, 0x11, 0x22)},
 				{"TWOBELOWFG", new Color(0x22, 0x11, 0x22)}
 			};
+			
+//			PropertyInfo[] properties = typeof(Color).GetProperties();
+//			foreach(PropertyInfo property in properties)
+//			{
+//				if (property.DeclaringType.Equals(typeof(Color)))
+//				{
+//				    string Name = property.Name;
+//					string name = Name.ToLower();
+//					Debug.WriteLine(property.GetValue(typeof(Color)));
+////					Color c = (Color) property.GetValue(typeof(Color));
+////					colors[Name] = c;
+////					colors[name] = c;	
+//				}
+//			}
 		}
 
 	   	public Color this[string s]

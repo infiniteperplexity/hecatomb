@@ -10,11 +10,12 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
 	/// <summary>
-	/// Description of World.
+	/// GameWorld should contain *all* the truly persistent state for the game - state that's not derived, or part of the GUI.
 	/// </summary>
 	public class GameWorld
 	{
@@ -24,6 +25,8 @@ namespace Hecatomb
 		public SparseArray3D<Item> Items;
 		public SparseArray3D<TaskEntity> Tasks;
 		public HashSet<Tuple<int, int, int>> Explored;
+		public GameEventHandler Events;
+		public Player Player;
 		
 		public FastNoise ElevationNoise;
 		public FastNoise VegetationNoise;
@@ -38,6 +41,7 @@ namespace Hecatomb
 			int GROUNDLEVEL = Constants.GROUNDLEVEL;
 			float hscale = 2f;
 			float vscale = 5f;
+			Events = new GameEventHandler();
 			ElevationNoise = new FastNoise(seed: Game.Random.Next(1024));
 			VegetationNoise = new FastNoise(seed: Game.Random.Next(1024));
 			Tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
@@ -85,10 +89,18 @@ namespace Hecatomb
 						float plants = vscale*VegetationNoise.GetSimplexFractal(hscale*i,hscale*j);
 						if (plants>1.0f)
 						{
-							Feature tree = new Feature("Tree");
 							if (Game.Random.Next(2)==1)
 							{
+								Feature tree = new Feature("Tree");
 								tree.Place(i, j, k);
+							}
+						}
+						else
+						{
+							if (Game.Random.Next(50)==0)
+							{
+								Feature grave = new Feature("Grave");
+								grave.Place(i, j, k);
 							}
 						}
 					}
@@ -119,5 +131,10 @@ namespace Hecatomb
 			}
 			return 1;
 		}
+//		
+//		public string Stringify()
+//		{
+//			
+//		}
 	}
 }

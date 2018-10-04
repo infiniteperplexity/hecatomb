@@ -13,10 +13,14 @@ namespace Hecatomb
 	public abstract class Task : Component
 	{
 		public Creature Worker;
-		public static int LaborCost = 10;
+		[NonSerialized] public int WorkRange;
+		[NonSerialized] public int LaborCost;
 		public int Labor;
+		
 		public Task() : base()
 		{
+			WorkRange = 1;
+			LaborCost = 10;
 			Labor = LaborCost;
 		}
 		
@@ -26,13 +30,14 @@ namespace Hecatomb
 			{
 				return; // this can sometimes get unassigned in the midst of things
 			}
-			if (Tiles.QuickDistance(Worker.x, Worker.y, Worker.z, Entity.x, Entity.y, Entity.z)<=1)
+			if (Tiles.QuickDistance(Worker.x, Worker.y, Worker.z, Entity.x, Entity.y, Entity.z)<=WorkRange)
 			{
 				Work();
 			}
 			else
 			{
-				Worker.GetComponent<Actor>().WalkToward(Entity.x, Entity.y, Entity.z);
+				bool useLast = (WorkRange == 0) ? true : false;
+				Worker.GetComponent<Actor>().WalkToward(Entity.x, Entity.y, Entity.z, useLast: useLast);
 			}
 		}
 		
@@ -73,7 +78,7 @@ namespace Hecatomb
 		{
 			base.Start();
 			Feature f = Game.World.Features[Entity.x, Entity.y, Entity.z];
-			f.Symbol = 'X';
+			f.Symbol = '\u2717';
 			f.FG = "white";
 		}
 		public override void Finish()

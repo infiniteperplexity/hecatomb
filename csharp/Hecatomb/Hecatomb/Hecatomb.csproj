@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Components\Minion.cs" />
     <Compile Include="Components\Task.cs" />
+    <Compile Include="FlyWeight.cs" />
     <Compile Include="FontHandler.cs" />
     <Compile Include="GameEvent.cs" />
     <Compile Include="Player.cs" />

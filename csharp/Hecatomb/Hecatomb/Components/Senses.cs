@@ -17,8 +17,8 @@ namespace Hecatomb
 	public class Senses : Component
 	{
 		public int Range;
-		public HashSet<Tuple<int,int,int>> Visible;
-		private int storedZ;
+		[NonSerialized] public HashSet<Tuple<int,int,int>> Visible;
+		[NonSerialized] private int storedZ;
 		
 		public Senses() : base()
 		{

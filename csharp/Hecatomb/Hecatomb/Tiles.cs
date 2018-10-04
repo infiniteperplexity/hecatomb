@@ -38,6 +38,8 @@ namespace Hecatomb
 		}
 		
 		public static Coord? FindPath(int x0, int y0, int z0, int x1, int y1, int z1,
+		    bool useLast = true,
+		    bool useFirst = false,
 			Func<int, int, int, int, int, int, double> heuristic = null,
 			Func<int, int, int, int, int, int, bool> movable = null,
 			Func<int, int, int, bool> passable = null
@@ -66,11 +68,21 @@ namespace Hecatomb
 			queue.AddFirst(current);
 			// next coordinate to check
 			int newScore, cost, fscore;
+			bool success = false;
 			while (queue.Count>0) {
 				current = queue.First.Value;
 				queue.RemoveFirst();
 				// ***** if we found the goal, retrace our steps ****
-				if (current.x==x1 && current.y==y1 && current.z==z1) {
+				if (current.x==x1 && current.y==y1 && current.z==z1)
+				{
+					success = true;
+				}
+				else if (!useLast && QuickDistance(current.x, current.y, current.z, x1, y1, z1)<=1)
+				{
+					success = true;
+				}
+				if (success)
+				{
 					// ***trace backwards
 					Coord previous = current;
 					while (retrace.ContainsKey(current))
