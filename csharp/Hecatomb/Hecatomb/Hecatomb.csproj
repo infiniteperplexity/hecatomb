@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GamePanels.cs" />
     <Compile Include="Components\Minion.cs" />
     <Compile Include="Components\Task.cs" />
     <Compile Include="FlyWeight.cs" />

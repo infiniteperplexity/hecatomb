@@ -25,21 +25,19 @@ namespace Hecatomb
 		public static Random Random;
 		public static ContentManager MyContentManager;
 		public static Dictionary<string, object> Caches;
+		public static MainGamePanel MainPanel;
+		public static MenuGamePanel MenuPanel;
+		public static StatusGamePanel StatusPanel;
 		
 //		public static GameEventHandler Events;
-		const int SIZE = 18;
-		const int PADDING = 3;
-		const int MENUWIDTH = 400;
-		const int STATUSHEIGHT = 100;
 		public static HashSet<Tuple<int, int, int>> Visible;
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        FontHandler tileFont;
+        SpriteBatch sprites;
+        
 //        FontHandler textFont;
-		SpriteFont textFont;
         static KeyboardState kstate;
         static MouseState mstate;
-        Texture2D bgTexture;
+        
         public static Hecatomb.Game game;
         const int THROTTLE = 250;
         static DateTime inputBegan;
@@ -89,16 +87,6 @@ namespace Hecatomb
 				World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
 			);
 			Camera = new GameCamera();
-			graphics.PreferredBackBufferWidth = PADDING+(2+Camera.Width)*(SIZE+PADDING)+MENUWIDTH;  // set this value to the desired width of your window
-			graphics.PreferredBackBufferHeight = PADDING+(2+Camera.Height)*(SIZE+PADDING)+STATUSHEIGHT;   // set this value to the desired height of your window
-			graphics.ApplyChanges();
-			bgTexture = new Texture2D(graphics.GraphicsDevice, SIZE+PADDING, SIZE+PADDING);
-			Color[] bgdata = new Color[(SIZE+PADDING)*(SIZE+PADDING)];
-			for(int i=0; i<bgdata.Length; ++i)
-			{
-				bgdata[i] = Color.White;
-			}
-			bgTexture.SetData(bgdata);
 			Camera.Center(p.x, p.y, p.z);
 			Creature zombie = new Creature("Zombie");
 			zombie.Place(
@@ -107,7 +95,6 @@ namespace Hecatomb
 				World.GroundLevel(p.x+3, p.y+3)			
 			);
 			p.Minions.Add(zombie);
-			zombie.GetComponent<Movement>().Stringify();
             base.Initialize();
         }
 //        
@@ -127,16 +114,17 @@ namespace Hecatomb
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            tileFont = new FontHandler("NotoSans", "NotoSansSymbol", "NotoSansSymbol2");
-//			tileFont = new FontHandler("ArialUnicode");
-//			tileFont = new FontHandler("LastResort");
-//            textFont = new FontHandler("PTMono", "NotoSans", "NotoSansSymbol");
-			textFont = this.Content.Load<SpriteFont>("PTMono");
-			                
+            sprites = new SpriteBatch(GraphicsDevice);
             kstate = Keyboard.GetState();
-            
-            
+            MainPanel = new MainGamePanel(graphics, sprites);
+            MenuPanel = new MenuGamePanel(graphics, sprites);
+            StatusPanel = new StatusGamePanel(graphics, sprites);
+            int Size = MainPanel.Size;
+            int Padding = MainPanel.Padding;
+            graphics.PreferredBackBufferWidth = Padding+(2+Camera.Width)*(Size+Padding)+MenuPanel.Width;  // set this value to the desired width of your window
+			graphics.PreferredBackBufferHeight = Padding+(2+Camera.Height)*(Size+Padding)+StatusPanel.Height;   // set this value to the desired height of your window
+			graphics.ApplyChanges();
+    
 
             // TODO: use this.Content to load your game content here
         }
@@ -209,57 +197,22 @@ namespace Hecatomb
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin();
+            sprites.Begin();
 			var grid = World.Tiles;
-			int xOffset;
-			int yOffset;
 			Tuple<char, string, string> glyph;
-			char sym;
-			Color fg;
-			Color bg;
 			for (int i=0; i<Camera.Width; i++) {
 	    		for (int j=0; j<Camera.Height; j++) {
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
 					glyph = Tiles.GetGlyph(x, y, Camera.z);
-					sym = glyph.Item1;
-					fg = Colors[glyph.Item2];
-					bg = Colors[glyph.Item3];
-					string s = sym.ToString();
-					Vector2 measure = tileFont.MeasureChar(sym);
-					xOffset = 11-(int) measure.X/2;
-					yOffset = 10-(int) measure.Y/2;
-					var vbg = new Vector2(PADDING+(1+i)*(SIZE+PADDING),PADDING+(1+j)*(SIZE+PADDING));
-					var vfg = new Vector2(xOffset+PADDING+(1+i)*(SIZE+PADDING), yOffset+PADDING+(1+j)*(SIZE+PADDING));
-					spriteBatch.Draw(bgTexture, vbg, bg);
-					spriteBatch.DrawString(tileFont.GetFont(sym), s, vfg, fg);
+					MainPanel.DrawGlyph(i, j, glyph.Item1, glyph.Item2, glyph.Item3);
 	    		}
 			}
-			DrawMenu(spriteBatch);
-			DrawStatus(spriteBatch);
-			spriteBatch.End();
+			MenuPanel.Draw();
+			sprites.End();
             base.Draw(gameTime);
         }
-        
-        public void DrawMenu(SpriteBatch s)
-        {
-        	int xOffset = PADDING+(2+Camera.Width)*(SIZE+PADDING);
-        	int yOffset = PADDING+(SIZE+PADDING);
-        	var vfg = new Vector2(xOffset, yOffset);
-        	s.DrawString(textFont, "Esc: System view.", vfg, Color.White);
-        }
-        public void DrawStatus(SpriteBatch s)
-        {
-        	int xOffset = PADDING+(SIZE+PADDING);
-        	int yOffset = PADDING+(2+Camera.Width)*(SIZE+PADDING);
-        	var vfg = new Vector2(xOffset, yOffset);
-        	Player p = Game.World.Player;
-        	string txt = String.Format("X: {0} Y:{1} Z:{2}", p.x, p.y, p.z);
-        	s.DrawString(textFont, txt, vfg, Color.White);
-        }
-        
-        
-        
+ 
         private static bool HandleInput(GameTime gameTime) {
         	DateTime now = DateTime.Now;
         	var m = Mouse.GetState();
@@ -319,7 +272,9 @@ namespace Hecatomb
         
         public static Coord GetCellAt(int x, int y)
         {
-        	Coord c = new Coord(x/(SIZE+PADDING)-1+Camera.XOffset,y/(SIZE+PADDING)-1+Camera.YOffset,Camera.z);
+        	int Size = MainPanel.Size;
+        	int Padding = MainPanel.Padding;
+        	Coord c = new Coord(x/(Size+Padding)-1+Camera.XOffset,y/(Size+Padding)-1+Camera.YOffset,Camera.z);
         	return c;
         }
     }
