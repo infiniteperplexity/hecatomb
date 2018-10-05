@@ -18,8 +18,8 @@ namespace Hecatomb
 	{
 		protected GraphicsDeviceManager Graphics;
 		protected SpriteBatch Sprites;
-		protected int X0;
-		protected int Y0;
+		public int X0;
+		public int Y0;
 		
 		public GamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites)
 		{
@@ -34,6 +34,7 @@ namespace Hecatomb
 		public int Size;
 		public int Padding;
 		Texture2D BG;
+		
 		public MainGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
 			X0 = 0;
@@ -101,60 +102,45 @@ namespace Hecatomb
 		}
 	}
 	
-	
-	public class MenuGamePanel : GamePanel
+	public abstract class TextPanel : GamePanel
 	{
 		public SpriteFont Font;
 		public int Width;
 		public int Height;
 		public int Size;
 		public int Spacing;
-		// each line of text
-		public List<string> Lines;
-		// color formatting, by line number and token number
-		public Dictionary<Tuple<int, int>, Color> FG;
-		public Dictionary<Tuple<int, int>, Color> BG;
-		
-		public MenuGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
+		public Dictionary<Tuple<int, int>, string> nocolors;
+		public TextPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
-			Width = 400;
-			Size = 18;
-			Spacing = 8;
-			int size = Game.MainPanel.Size;
-			int padding = Game.MainPanel.Padding;
-			X0 = padding+(2+Game.Camera.Width)*(size+padding);
-			Y0 = padding+(size+padding);
 			Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
-			Lines = new List<string>();
-			Lines.Add("Hello world.");
-			Lines.Add("0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p q r");
-			FG = new Dictionary<Tuple<int, int>, Color>();
-			FG[new Tuple<int, int>(1,5)] = Color.Red;
-			BG = new Dictionary<Tuple<int, int>, Color>();
+			nocolors = new Dictionary<Tuple<int, int>, string>();
 		}
-		
-		public void Draw()
+		public void DrawLines(List<string> lines)
+		{
+			DrawLines(lines, nocolors);
+		}
+		public void DrawLines(List<string> lines, Dictionary<Tuple<int, int>, string> fgs)
 		{
 			Vector2 v;
 			string[] tokens;
 			int p = 0;
 			int m;
-			for (int i=0; i<Lines.Count; i++)
+			for (int i=0; i<lines.Count; i++)
 			{
 				int totalWidth = 0;
 				Color fg = Color.White;
 				Color bg = Color.White;
 				v = new Vector2(X0, Y0 + p*Size);
-				tokens = Lines[i].Split();
+				tokens = lines[i].Split();
 				for (int j=0; j<tokens.Length; j++)
 				{
 					var ij = new Tuple<int, int>(i, j);
-					if (FG.ContainsKey(ij))
+					if (fgs.ContainsKey(ij))
 					{
-						fg = FG[ij];
+						fg = Game.Colors[fgs[ij]];
 					}
 					m = Spacing + (int) Font.MeasureString(tokens[j]).X;
-					if (totalWidth + m >= Width - Size)
+					if (j>0 && totalWidth+m >= Width-Size)
 					{
 						p+=1;
 						totalWidth = 0;
@@ -166,36 +152,53 @@ namespace Hecatomb
 				p+=1;
 			}
 		}
-		
-		
 	}
 	
-	public class StatusGamePanel : GamePanel
+	public class MenuGamePanel : TextPanel
 	{
-		public SpriteFont Font;
-		public int Width;
-		public int Height;
+		public List<string> middleLines;
+		
+		public MenuGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
+		{
+			Width = 400;
+			Size = 16;
+			Spacing = 8;
+			int size = Game.MainPanel.Size;
+			int padding = Game.MainPanel.Padding;
+			X0 = padding+(2+Game.Camera.Width)*(size+padding);
+			Y0 = padding+(size+padding);
+			middleLines = new List<string>() {
+				" ",
+				"--------------------------------------"
+			};
+		}
+		
+		public void DrawContent()
+		{
+			DrawLines(Game.Controls.MenuText.Concat(middleLines).ToList(), Game.Controls.TextColors);
+		}
+	}
+	
+	
+	public class StatusGamePanel : TextPanel
+	{
 		public StatusGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
 			Height = 100;
-			int Size = Game.MainPanel.Size;
-			int Padding = Game.MainPanel.Padding;
-			X0 = Padding+(Size+Padding);
-			Y0 = Padding+(2+Game.Camera.Width)*(Size+Padding);
-			Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
+			Size = 16;
+			Spacing = 8;
+			Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;
+			int size = Game.MainPanel.Size;
+			int padding = Game.MainPanel.Padding;
+			X0 = padding+(size+padding);
+			Y0 = padding+(2+Game.Camera.Width)*(size+padding);
+		}
+		
+		public void DrawContent()
+		{
+			Player p = Game.World.Player;
+        	string txt = String.Format("X:{0} Y:{1} Z:{2}", p.x, p.y, p.z);
+        	DrawLines(new List<string>() {txt});
 		}
 	}
 }
-
-
-
-//        	int xOffset = Padding+(2+Camera.Width)*(Size+Padding);
-//        	int yOffset = ;
-//        	var vfg = new Vector2(xOffset, yOffset);
-//        	s.DrawString(textFont, "Esc: System view.", vfg, Color.White);
-//        	int xOffset = Padding+(Size+Padding);
-//        	int yOffset = Padding+(2+Camera.Width)*(Size+Padding);
-//        	var vfg = new Vector2(xOffset, yOffset);
-//        	Player p = Game.World.Player;
-//        	string txt = String.Format("X: {0} Y:{1} Z:{2}", p.x, p.y, p.z);
-//        	s.DrawString(textFont, txt, vfg, Color.White);

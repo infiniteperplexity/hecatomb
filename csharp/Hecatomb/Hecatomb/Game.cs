@@ -29,18 +29,15 @@ namespace Hecatomb
 		public static MenuGamePanel MenuPanel;
 		public static StatusGamePanel StatusPanel;
 		
+		public static ControlContext Controls;
+		public static ControlContext DefaultControls;
+		
 //		public static GameEventHandler Events;
 		public static HashSet<Tuple<int, int, int>> Visible;
         GraphicsDeviceManager graphics;
         SpriteBatch sprites;
         
-//        FontHandler textFont;
-        static KeyboardState kstate;
-        static MouseState mstate;
-        
         public static Hecatomb.Game game;
-        const int THROTTLE = 250;
-        static DateTime inputBegan;
         
         
         [STAThread]
@@ -70,7 +67,6 @@ namespace Hecatomb
         /// </summary>
         protected override void Initialize()
         {
-        	inputBegan = DateTime.Now;
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
@@ -79,6 +75,8 @@ namespace Hecatomb
 			World = new GameWorld();
 			World.Initialize();
 			Commands = new GameCommands();
+			DefaultControls = new DefaultControlContext();
+			Controls = DefaultControls;
 			Player p = new Player("Necromancer");
 			World.Player = p;
 			p.Place(
@@ -115,7 +113,6 @@ namespace Hecatomb
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             sprites = new SpriteBatch(GraphicsDevice);
-            kstate = Keyboard.GetState();
             MainPanel = new MainGamePanel(graphics, sprites);
             MenuPanel = new MenuGamePanel(graphics, sprites);
             StatusPanel = new StatusGamePanel(graphics, sprites);
@@ -150,9 +147,10 @@ namespace Hecatomb
             int WIDTH = Camera.Width;
 			int HEIGHT = Camera.Height;
 			Terrain [,,] grid = World.Tiles;
-			bool acted = HandleInput(gameTime);
+			Controls.HandleInput();
 			Player p = World.Player;
-			if (acted) {
+			if (p.Acted) {
+				p.Acted = false;
 				IEnumerable<Creature> creatures = World.Creatures;
 				Creature[] actors = creatures.ToArray();
 				foreach (Creature m in p.Minions)
@@ -208,74 +206,10 @@ namespace Hecatomb
 					MainPanel.DrawGlyph(i, j, glyph.Item1, glyph.Item2, glyph.Item3);
 	    		}
 			}
-			MenuPanel.Draw();
+			MenuPanel.DrawContent();
+			StatusPanel.DrawContent();
 			sprites.End();
             base.Draw(gameTime);
-        }
- 
-        private static bool HandleInput(GameTime gameTime) {
-        	DateTime now = DateTime.Now;
-        	var m = Mouse.GetState();
-        	var k = Keyboard.GetState();
-        	double sinceInputBegan = now.Subtract(inputBegan).TotalMilliseconds;
-        	if (k.Equals(kstate) && m.Equals(mstate) && sinceInputBegan<THROTTLE) {
-        		return false;
-        	}
-        	if (!game.IsActive)
-        	{
-        		return false;
-        	}
-        	inputBegan = now;
-        	kstate = k;
-        	mstate = m;
-        	bool acted = false;
-		    if (k.IsKeyDown(Keys.Up))
-		    {
-		    	acted = Commands.MoveNorthCommand();
-			}
-			else if (k.IsKeyDown(Keys.Down))
-			{
-				acted = Commands.MoveSouthCommand();
-			}
-			else if (k.IsKeyDown(Keys.Left))
-			{
-			 	acted = Commands.MoveWestCommand();
-			}
-			else if (k.IsKeyDown(Keys.Right))
-			{
-			   	acted = Commands.MoveEastCommand();
-			}
-			else if (k.IsKeyDown(Keys.OemPeriod))
-			{
-			    acted = Commands.MoveDownCommand();
-			}
-			else if (k.IsKeyDown(Keys.OemComma))
-			{
-			    acted =  Commands.MoveUpCommand();
-			}
-			else if (k.IsKeyDown(Keys.Space))
-			{
-			    acted = Commands.Wait();
-			}
-			if(m.LeftButton == ButtonState.Pressed)
-			{
-				Coord c = GetCellAt(m.X, m.Y);
-				if (Game.World.Tasks[c.x, c.y, c.z]==null) 
-				{
-					TaskEntity task = new TaskEntity("DigTask");
-					task.Place(c.x, c.y, c.z);
-				}
-			}
-			
-			return acted;
-		}
-        
-        public static Coord GetCellAt(int x, int y)
-        {
-        	int Size = MainPanel.Size;
-        	int Padding = MainPanel.Padding;
-        	Coord c = new Coord(x/(Size+Padding)-1+Camera.XOffset,y/(Size+Padding)-1+Camera.YOffset,Camera.z);
-        	return c;
         }
     }
 }

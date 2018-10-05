@@ -16,35 +16,35 @@ namespace Hecatomb
 	/// </summary>
 	public class GameCommands
 	{
-		public bool Wait()
+		public void Wait()
 		{
-			return true;
+			Game.World.Player.Acted = true;
 		}
-		public bool MoveNorthCommand()
+		public void MoveNorthCommand()
 		{
-			return moveHorizontalCommand(+0, -1);
+			moveHorizontalCommand(+0, -1);
 		}
-		public bool MoveSouthCommand()
+		public void MoveSouthCommand()
 		{
-			return moveHorizontalCommand(+0, +1);
+			moveHorizontalCommand(+0, +1);
 		}
-		public bool MoveEastCommand()
+		public void MoveEastCommand()
 		{
-			return moveHorizontalCommand(+1, +0);
+			moveHorizontalCommand(+1, +0);
 		}
-		public bool MoveWestCommand()
+		public void MoveWestCommand()
 		{
-			return moveHorizontalCommand(-1, +0);
+			moveHorizontalCommand(-1, +0);
 		}
-		public bool MoveUpCommand()
+		public void MoveUpCommand()
 		{
-			return moveVerticalCommand(+1);
+			moveVerticalCommand(+1);
 		}
-		public bool MoveDownCommand()
+		public void MoveDownCommand()
 		{
-			return moveVerticalCommand(-1);
+			moveVerticalCommand(-1);
 		}
-		private bool moveHorizontalCommand(int dx, int dy)
+		private void moveHorizontalCommand(int dx, int dy)
 		{
 			Player p = Game.World.Player;
 			int x1 = p.x + dx;
@@ -52,24 +52,27 @@ namespace Hecatomb
 			int z1 = p.z;
 			var m = p.TryComponent<Movement>();
 			if (m==null) {
-				return false;
+				return;
 			}
 			if (!m.CanPass(x1, y1, z1)) {
 				if (m.CanPass(p.x, p.y, z1+1)){
 					m.StepTo(p.x, p.y, z1+1);
-					return true;
+					p.Acted = true;
+					return;
 				} else if (m.CanPass(p.x, p.y, z1-1)){
 					m.StepTo(p.x, p.y, z1-1);
-					return true;
+					p.Acted = true;
+					return;
 				}
-			    return false;
+			    return;
 			} else {
 			    m.StepTo(x1, y1, z1);
-				return true;
+			    p.Acted = true;
+			    return;
 			}
 		}
 			
-		private bool moveVerticalCommand(int dz)
+		private void moveVerticalCommand(int dz)
 		{
 			Player p = Game.World.Player;
 			int x1 = p.x;
@@ -77,13 +80,14 @@ namespace Hecatomb
 			int z1 = p.z + dz;
 			var m = p.TryComponent<Movement>();
 			if (m==null) {
-				return false;
+				return;
 			}
 			if (!m.CanPass(x1, y1, z1)) {
-			    return false;
+			    return;
 			} else {
 			    m.StepTo(x1, y1, z1);
-				return true;
+				p.Acted = true;
+				return;
 			}
 		}
 	}

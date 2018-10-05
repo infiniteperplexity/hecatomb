@@ -18,8 +18,10 @@ namespace Hecatomb
 	public class Player : Creature
 	{
 		public List<Creature> Minions;
+		public bool Acted;
 		public Player(string t) : base(t)
 		{
+			Acted = false;
 			Minions = new List<Creature>();
 			
 		}
