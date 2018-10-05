@@ -31,6 +31,8 @@ namespace Hecatomb
 		public FastNoise ElevationNoise;
 		public FastNoise VegetationNoise;
 		
+		public TurnHandler Turns;
+		
 		public GameWorld() {}
 		
 		public void Initialize()
@@ -106,6 +108,7 @@ namespace Hecatomb
 					}
 				}
 			}
+			Turns = new TurnHandler();
 		}
 		
 		public Terrain GetTile(int x, int y, int z)

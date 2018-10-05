@@ -65,6 +65,7 @@
     <Compile Include="GameWorld.cs" />
     <Compile Include="SparseArray3D.cs" />
     <Compile Include="Terrain.cs" />
+    <Compile Include="TurnHandler.cs" />
     <Compile Include="TypedEntity.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

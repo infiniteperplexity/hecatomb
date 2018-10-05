@@ -9,7 +9,7 @@
 			},
 			{
 				"Type" : "Tree",
-				"FG" : "green",
+				"FG" : "olive",
 				"Symbol" : "\u2698",
 				"Components" : {}
 			},
@@ -21,7 +21,7 @@
 			},
 			{
 				"Type" : "Grave",
-				"FG" : "light gray",
+				"FG" : "WALLFG",
 				"Symbol" : "\u271D",
 				"Components" : {}
 			}

@@ -13,7 +13,7 @@
 			},
 			{
 				"Type" : "Zombie",
-				"FG" : "green",
+				"FG" : "lime green",
 				"Symbol" : "z",
 				"Components" : {
 					"Actor": {},

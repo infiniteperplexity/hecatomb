@@ -26,6 +26,8 @@ namespace Hecatomb
 			Graphics = graphics;
 			Sprites = sprites;
 		}
+		
+		public virtual void DrawContent() {}
 	}
 	public class MainGamePanel : GamePanel
 	{
@@ -34,6 +36,7 @@ namespace Hecatomb
 		public int Size;
 		public int Padding;
 		Texture2D BG;
+		SparseArray3D<Tuple<char, string, string>> ForegroundGlyphs;
 		
 		public MainGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
@@ -56,6 +59,37 @@ namespace Hecatomb
 				Fonts.Add(font);
 			}
 			measureCache = new Dictionary<char, Vector2>();
+			ForegroundGlyphs = new SparseArray3D<Tuple<char, string, string>>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
+		}
+		
+		public void DumpForegroundGlyphs()
+		{
+			ForegroundGlyphs = new SparseArray3D<Tuple<char, string, string>>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
+		}
+	
+		public void HighlightTile(Coord c, string color)
+		{
+			DumpForegroundGlyphs();
+			var glyph = Tiles.GetGlyph(c.x, c.y, c.z);
+			ForegroundGlyphs[c.x, c.y, c.z] = new Tuple<char, string, string>(glyph.Item1, glyph.Item2, color);
+			Game.GraphicsDirty = true;
+		}
+		
+		public override void DrawContent()
+		{
+			var grid = Game.World.Tiles;
+			var Camera = Game.Camera;
+			int z = Camera.z;
+			Tuple<char, string, string> glyph;
+			for (int i=0; i<Camera.Width; i++) {
+		    	for (int j=0; j<Camera.Height; j++) {
+					int x = i + Camera.XOffset;
+					int y = j + Camera.YOffset;
+					glyph = ForegroundGlyphs[x, y, z];
+					glyph = (glyph==null) ? Tiles.GetGlyph(x, y, z) : glyph;
+					DrawGlyph(i, j, glyph.Item1, glyph.Item2, glyph.Item3);
+		    	}
+			}
 		}
 		public void DrawGlyph(int i, int j, char c, string fg, string bg)
 		{
@@ -173,7 +207,7 @@ namespace Hecatomb
 			};
 		}
 		
-		public void DrawContent()
+		public override void DrawContent()
 		{
 			DrawLines(Game.Controls.MenuText.Concat(middleLines).ToList(), Game.Controls.TextColors);
 		}
@@ -194,7 +228,7 @@ namespace Hecatomb
 			Y0 = padding+(2+Game.Camera.Width)*(size+padding);
 		}
 		
-		public void DrawContent()
+		public override void DrawContent()
 		{
 			Player p = Game.World.Player;
         	string txt = String.Format("X:{0} Y:{1} Z:{2}", p.x, p.y, p.z);

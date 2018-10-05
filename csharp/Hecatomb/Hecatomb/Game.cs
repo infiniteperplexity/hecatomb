@@ -31,6 +31,7 @@ namespace Hecatomb
 		
 		public static ControlContext Controls;
 		public static ControlContext DefaultControls;
+		public static bool GraphicsDirty;
 		
 //		public static GameEventHandler Events;
 		public static HashSet<Tuple<int, int, int>> Visible;
@@ -93,16 +94,11 @@ namespace Hecatomb
 				World.GroundLevel(p.x+3, p.y+3)			
 			);
 			p.Minions.Add(zombie);
+			p.HandleVisibility();
+			GraphicsDirty = true;
             base.Initialize();
         }
-//        
-//        private void SetCaches()
-//        {
-//        	var bgcache = new {
-//        		vectors: new Vector2[WIDTH, HEIGHT]();
-//        	}
-//        	Cache["BackgroundTiles"] = 
-//        }
+
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -111,7 +107,6 @@ namespace Hecatomb
         /// 
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             sprites = new SpriteBatch(GraphicsDevice);
             MainPanel = new MainGamePanel(graphics, sprites);
             MenuPanel = new MenuGamePanel(graphics, sprites);
@@ -144,47 +139,9 @@ namespace Hecatomb
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            int WIDTH = Camera.Width;
-			int HEIGHT = Camera.Height;
-			Terrain [,,] grid = World.Tiles;
+
 			Controls.HandleInput();
-			Player p = World.Player;
-			if (p.Acted) {
-				p.Acted = false;
-				IEnumerable<Creature> creatures = World.Creatures;
-				Creature[] actors = creatures.ToArray();
-				foreach (Creature m in p.Minions)
-				{
-					Minion minion = m.GetComponent<Minion>();
-					if (minion.Task==null)
-					{
-						foreach (TaskEntity t in World.Tasks)
-						{
-							if (t.GetComponent<Task>().Worker==null)
-							{
-								t.GetComponent<Task>().Worker = m;
-								minion.Task = t;
-								break;
-							}
-						}
-					}
-				}
-				foreach (Creature cr in actors)
-				{
-					Actor actor = cr.TryComponent<Actor>();
-					if (actor!=null)
-					{
-						actor.Act();
-					}
-				}
-			} 
-			
-			Camera.Center(p.x, p.y, p.z);
-			Visible = p.GetComponent<Senses>().GetFOV();
-			foreach (var t in Visible)
-			{
-				World.Explored.Add(t);
-			}
+			World.Turns.Try();
             base.Update(gameTime);
         }
 
@@ -194,21 +151,17 @@ namespace Hecatomb
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
-            sprites.Begin();
-			var grid = World.Tiles;
-			Tuple<char, string, string> glyph;
-			for (int i=0; i<Camera.Width; i++) {
-	    		for (int j=0; j<Camera.Height; j++) {
-					int x = i + Camera.XOffset;
-					int y = j + Camera.YOffset;
-					glyph = Tiles.GetGlyph(x, y, Camera.z);
-					MainPanel.DrawGlyph(i, j, glyph.Item1, glyph.Item2, glyph.Item3);
-	    		}
-			}
-			MenuPanel.DrawContent();
-			StatusPanel.DrawContent();
-			sprites.End();
+        	if (GraphicsDirty)
+        	{
+            	GraphicsDevice.Clear(Color.Black);
+            	sprites.Begin();
+            	MainPanel.DrawContent();
+				MenuPanel.DrawContent();
+				StatusPanel.DrawContent();
+				sprites.End();
+				GraphicsDirty = false;
+        	}
+			
             base.Draw(gameTime);
         }
     }

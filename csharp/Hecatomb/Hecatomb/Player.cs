@@ -25,5 +25,15 @@ namespace Hecatomb
 			Minions = new List<Creature>();
 			
 		}
+		
+		public void HandleVisibility()
+		{
+			Game.Camera.Center(x, y, z);
+			Game.Visible = GetComponent<Senses>().GetFOV();
+			foreach (var t in Game.Visible)
+			{
+				Game.World.Explored.Add(t);
+			}
+		}
 	}
 }

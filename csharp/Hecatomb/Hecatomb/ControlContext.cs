@@ -20,7 +20,7 @@ namespace Hecatomb
 		static KeyboardState OldKeyboard;
         static MouseState OldMouse;
         static DateTime InputBegan;
-        public const int Throttle = 250;
+        public const int Throttle = 125;
         public Dictionary <Keys, Action> KeyMap;
         public List<string> MenuText;
         public Dictionary<Tuple<int, int>, string> TextColors;
@@ -34,7 +34,7 @@ namespace Hecatomb
          		int Size = Game.MainPanel.Size;
 	        	int Padding = Game.MainPanel.Padding;
 	        	GameCamera Camera = Game.Camera;
-	        	Coord tile = new Coord(x/(Size+Padding)-1+Camera.XOffset,y/(Size+Padding)-1+Camera.YOffset,Camera.z);
+	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.z);
 	        	ClickTile(tile);
         	}
         	else if (x>=Game.MenuPanel.X0) 
@@ -51,10 +51,39 @@ namespace Hecatomb
         	}
         }
         
+        public void HandleHover(int x, int y)
+        {
+        	if (x>Game.MainPanel.Size && y>Game.MainPanel.Size && x<Game.MenuPanel.X0-Game.MainPanel.Size && y<Game.StatusPanel.Y0-Game.MainPanel.Size)
+        	{
+         		int Size = Game.MainPanel.Size;
+	        	int Padding = Game.MainPanel.Padding;
+	        	GameCamera Camera = Game.Camera;
+	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.z);
+	        	HoverTile(tile);
+        	}
+        	else if (x>=Game.MenuPanel.X0) 
+        	{
+        		MenuHover(x, y);
+        	}
+        	else if (y>=Game.StatusPanel.Y0)
+        	{
+        		StatusHover(x, y);
+        	}
+        	else
+        	{
+        		Nothing(x, y);
+        	}
+        }
+        
         public virtual void ClickTile(Coord c)
         {
         	Debug.Print("Clicked on tile at {0} {1}", c.x, c.y);
         	Nothing(c.x, c.y);
+        }
+        
+        public virtual void HoverTile(Coord c)
+        {
+        	Game.MainPanel.HighlightTile(c, "cyan");
         }
         
         public virtual void MenuClick(int x, int y)
@@ -66,6 +95,17 @@ namespace Hecatomb
         {
         	Debug.Print("Clicked on the status bar at {0} {1}", x, y);
         }
+        
+        public virtual void MenuHover(int x, int y)
+        {
+        	Nothing(x, y);
+        }
+        
+        public virtual void StatusHover(int x, int y)
+        {
+        	Nothing(x, y);
+        }
+        
         
         static ControlContext()
         {
@@ -90,6 +130,10 @@ namespace Hecatomb
         	var k = Keyboard.GetState();
         	DateTime now = DateTime.Now;
         	double sinceInputBegan = now.Subtract(InputBegan).TotalMilliseconds;
+        	if (!m.Equals(OldMouse))
+        	{
+        		HandleHover(m.X, m.Y);
+        	}
         	if (k.Equals(OldKeyboard) && m.Equals(OldMouse) && sinceInputBegan<Throttle) {
         		return;
         	}
@@ -104,6 +148,7 @@ namespace Hecatomb
         			return;
         		}
         	}
+        	
         	if(m.LeftButton == ButtonState.Pressed)
         	{
         		HandleClick(m.X, m.Y);
@@ -155,6 +200,7 @@ namespace Hecatomb
 			{
 				TaskEntity task = new TaskEntity("DigTask");
 				task.Place(c.x, c.y, c.z);
+				Game.GraphicsDirty = true;
 			}
 		}
 	}
