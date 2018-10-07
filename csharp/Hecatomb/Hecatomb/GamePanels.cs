@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb
 {
@@ -20,6 +21,7 @@ namespace Hecatomb
 		protected SpriteBatch Sprites;
 		public int X0;
 		public int Y0;
+
 		
 		public GamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites)
 		{
@@ -35,8 +37,9 @@ namespace Hecatomb
 		Dictionary<char, Vector2> measureCache;
 		public int Size;
 		public int Padding;
-		Texture2D BG;
+		public Texture2D BG;
 		SparseArray3D<Tuple<char, string, string>> ForegroundGlyphs;
+		public HashSet<Tuple<int, int>> DirtyCells;
 		
 		public MainGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
@@ -60,6 +63,12 @@ namespace Hecatomb
 			}
 			measureCache = new Dictionary<char, Vector2>();
 			ForegroundGlyphs = new SparseArray3D<Tuple<char, string, string>>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
+			DirtyCells = new HashSet<Tuple<int, int>>();
+		}
+		
+		public void Dirtify(int x, int y)
+		{
+			DirtyCells.Add(new Tuple<int, int>(x, y));
 		}
 		
 		public void DumpForegroundGlyphs()
@@ -67,26 +76,30 @@ namespace Hecatomb
 			ForegroundGlyphs = new SparseArray3D<Tuple<char, string, string>>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
 		}
 	
+		public void UnhighlightTile(Coord c)
+		{
+			ForegroundGlyphs[c.x, c.y, c.z] = null;
+		}
 		public void HighlightTile(Coord c, string color)
 		{
-			DumpForegroundGlyphs();
+//			DumpForegroundGlyphs();
 			var glyph = Tiles.GetGlyph(c.x, c.y, c.z);
 			ForegroundGlyphs[c.x, c.y, c.z] = new Tuple<char, string, string>(glyph.Item1, glyph.Item2, color);
-			Game.GraphicsDirty = true;
 		}
 		
 		public override void DrawContent()
 		{
+			GameCamera Camera = Game.Camera;
 			var grid = Game.World.Tiles;
-			var Camera = Game.Camera;
 			int z = Camera.z;
 			Tuple<char, string, string> glyph;
 			for (int i=0; i<Camera.Width; i++) {
 		    	for (int j=0; j<Camera.Height; j++) {
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
-					glyph = ForegroundGlyphs[x, y, z];
-					glyph = (glyph==null) ? Tiles.GetGlyph(x, y, z) : glyph;
+//					glyph = ForegroundGlyphs[x, y, z];
+//					glyph = (glyph==null) ? Tiles.GetGlyph(x, y, z) : glyph;
+					glyph = Tiles.GetGlyph(x, y, z);
 					DrawGlyph(i, j, glyph.Item1, glyph.Item2, glyph.Item3);
 		    	}
 			}

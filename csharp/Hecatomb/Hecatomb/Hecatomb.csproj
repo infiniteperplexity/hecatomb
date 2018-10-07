@@ -85,6 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <Content Include="ProfilingSessions\Session20181006_200621.sdps" />
+    <Content Include="ProfilingSessions\Session20181006_201045.sdps" />
+    <Content Include="ProfilingSessions\Session20181006_205650.sdps" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />

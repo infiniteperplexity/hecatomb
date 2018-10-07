@@ -20,6 +20,7 @@ namespace Hecatomb
 		static KeyboardState OldKeyboard;
         static MouseState OldMouse;
         static DateTime InputBegan;
+        static Coord OldTile;
         public const int Throttle = 125;
         public Dictionary <Keys, Action> KeyMap;
         public List<string> MenuText;
@@ -60,8 +61,7 @@ namespace Hecatomb
 	        	GameCamera Camera = Game.Camera;
 	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.z);
 	        	HoverTile(tile);
-        	}
-        	else if (x>=Game.MenuPanel.X0) 
+        	} else if (x>=Game.MenuPanel.X0)
         	{
         		MenuHover(x, y);
         	}
@@ -83,7 +83,11 @@ namespace Hecatomb
         
         public virtual void HoverTile(Coord c)
         {
-        	Game.MainPanel.HighlightTile(c, "cyan");
+        	Game.MainPanel.DirtyCells.Clear();
+        	Game.MainPanel.Dirtify(OldTile.x, OldTile.y);
+        	Game.MainPanel.Dirtify(c.x, c.y);
+        	OldTile = c;
+//        	Game.MainPanel.HighlightTile(c, "cyan");
         }
         
         public virtual void MenuClick(int x, int y)
