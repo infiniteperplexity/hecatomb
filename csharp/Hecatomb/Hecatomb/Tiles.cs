@@ -230,7 +230,12 @@ namespace Hecatomb
 			Creature cr = Game.World.Creatures[x,y,z];
 			Feature fr = Game.World.Features[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
+			Particle p = Game.MainPanel.Particles[x,y,z];
 			var c = new Tuple<int, int, int> (x, y, z);
+			if (p!=null && p.Symbol!=default(char))
+			{
+				return p.Symbol;
+			}
 			if (!Game.World.Explored.Contains(c))
 			{
 				return ' ';
@@ -268,7 +273,12 @@ namespace Hecatomb
 			Creature cr = Game.World.Creatures[x,y,z];
 			Feature fr = Game.World.Features[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
+			Particle p = Game.MainPanel.Particles[x,y,z];
 			var c = new Tuple<int, int, int> (x, y, z);
+			if (p!=null && p.FG!=null)
+			{
+				return p.FG;
+			}
 			if (!Game.World.Explored.Contains(c))
 			{
 				return "black";
@@ -293,9 +303,14 @@ namespace Hecatomb
 
 		public static string GetBG(int x, int y, int z)
 		{
+			Particle p = Game.MainPanel.Particles[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
 			var c = new Tuple<int, int, int> (x, y, z);
 			TaskEntity task = Game.World.Tasks[x, y, z];
+			if (p!=null)
+			{
+				return p.BG;
+			}
 			if (!Game.World.Explored.Contains(c))
 			{
 				return "black";
@@ -317,6 +332,27 @@ namespace Hecatomb
 		public static Tuple<char, string, string> GetGlyph(int x, int y, int z)
 		{
 			return new Tuple<char, string, string>(GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
+		}
+		
+		public static Coord ToCamera(int x, int y)
+		{
+			GameCamera Camera = Game.Camera;
+			return new Coord(x-Camera.XOffset, y-Camera.YOffset, Camera.z);
+		}
+		public static Coord ToCamera(Coord c)
+		{
+			GameCamera Camera = Game.Camera;
+			return new Coord(c.x-Camera.XOffset, c.y-Camera.YOffset, Camera.z);
+		}
+		public static Coord ToAbsolute(int x, int y)
+		{
+			GameCamera Camera = Game.Camera;
+			return new Coord(x+Camera.XOffset, y+Camera.YOffset, Camera.z);
+		}
+		public static Coord ToAbsolute(Coord c)
+		{
+			GameCamera Camera = Game.Camera;
+			return new Coord(c.x+Camera.XOffset, c.y+Camera.YOffset, Camera.z);
 		}
 	}	
 }

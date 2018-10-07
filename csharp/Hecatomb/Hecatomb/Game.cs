@@ -140,6 +140,10 @@ namespace Hecatomb
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+           	foreach (Particle p in MainPanel.Particles.ToList())
+			{
+				p.Update();
+			}
 			Controls.HandleInput();
 			World.Turns.Try();
             base.Update(gameTime);
@@ -162,22 +166,7 @@ namespace Hecatomb
 				GraphicsDirty = false;
         	} else {
         		sprites.Begin();
-        		foreach (var t in MainPanel.DirtyCells)
-        		{
-        			int x = t.Item1;
-        			int y = t.Item2;
-        			int i = x - Camera.XOffset;
-        			int j = y - Camera.YOffset;
-					int z = Camera.z;
-					var glyph = Tiles.GetGlyph(x, y, z);
-					int mx = Mouse.GetState().X;
-					int my = Mouse.GetState().Y;
-//					Debug.Print("{0} {1} {2} {3}",x,y,mx,my);
-					int Padding = MainPanel.Padding;
-					int Size = MainPanel.Size;
-					Coord m = new Coord((mx-Padding)/(Size+Padding)-1+Camera.XOffset,(my-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.z);
-					MainPanel.DrawGlyph(i, j, glyph.Item1, glyph.Item2, (x==m.x && y==m.y) ? "cyan" : glyph.Item3);
-        		}
+        		MainPanel.DrawDirty();
         		sprites.End();
         	}
            	base.Draw(gameTime);

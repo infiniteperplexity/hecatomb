@@ -90,5 +90,53 @@ namespace Hecatomb
 				return;
 			}
 		}
+		
+		public void MoveCameraNorth()
+		{
+			moveCameraHorizontal(+0,-1);
+		}
+		public void MoveCameraSouth()
+		{
+			moveCameraHorizontal(+0,+1);
+		}
+		public void MoveCameraEast()
+		{
+			moveCameraHorizontal(+1,+0);
+		}
+		public void MoveCameraWest()
+		{
+			moveCameraHorizontal(-1,+0);
+		}
+		public void MoveCameraUp()
+		{
+			moveCameraVertical(+1);
+		}
+		public void MoveCameraDown()
+		{
+			moveCameraVertical(-1);
+		}
+		
+		private void moveCameraVertical(int dz)
+		{
+			Game.Camera.z = Math.Max(Math.Min(Game.Camera.z+dz,Constants.DEPTH-2),1);
+		}
+		private void moveCameraHorizontal(int dx, int dy)
+		{
+			GameCamera c = Game.Camera;
+			int xhalf = c.Width/2;
+			int yhalf = c.Height/2;
+			c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Constants.WIDTH-c.Width);
+			c.YOffset = Math.Min(Math.Max(0, c.YOffset+dy), Constants.HEIGHT-c.Height);
+		}
+		
+		public void ChooseTask()
+		{
+			
+		}
+		
+		public void ChooseSpell()
+		{
+			
+		}
 	}
 }

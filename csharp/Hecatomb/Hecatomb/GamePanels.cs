@@ -38,8 +38,9 @@ namespace Hecatomb
 		public int Size;
 		public int Padding;
 		public Texture2D BG;
-		SparseArray3D<Tuple<char, string, string>> ForegroundGlyphs;
-		public HashSet<Tuple<int, int>> DirtyCells;
+		public SparseArray3D<Particle> Particles;
+		public HashSet<Coord> OldDirtyTiles;
+		public HashSet<Coord> NextDirtyTiles;
 		
 		public MainGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
@@ -62,31 +63,40 @@ namespace Hecatomb
 				Fonts.Add(font);
 			}
 			measureCache = new Dictionary<char, Vector2>();
-			ForegroundGlyphs = new SparseArray3D<Tuple<char, string, string>>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
-			DirtyCells = new HashSet<Tuple<int, int>>();
+			Particles = new SparseArray3D<Particle>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
+			OldDirtyTiles = new HashSet<Coord>();
+			NextDirtyTiles = new HashSet<Coord>();
 		}
 		
-		public void Dirtify(int x, int y)
+//		public static Coord MouseToTile(int x, int y)
+//		{
+//			
+//		}
+		
+		public void DirtifyTile(int x, int y, int z)
 		{
-			DirtyCells.Add(new Tuple<int, int>(x, y));
+			NextDirtyTiles.Add(new Coord(x, y, z));
+		}
+		public void DirtifyTile(Coord c)
+		{
+			NextDirtyTiles.Add(c);
 		}
 		
-		public void DumpForegroundGlyphs()
+		public void DrawDirty()
 		{
-			ForegroundGlyphs = new SparseArray3D<Tuple<char, string, string>>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
+			OldDirtyTiles.UnionWith(NextDirtyTiles);
+			foreach (Coord c in OldDirtyTiles)
+        	{
+				var glyph = Tiles.GetGlyph(c.x, c.y, c.z);
+				Coord cc = Tiles.ToCamera(c);
+				DrawGlyph(cc.x, cc.y, glyph.Item1, glyph.Item2, glyph.Item3);
+        	}
+			var swap = OldDirtyTiles;
+			OldDirtyTiles = NextDirtyTiles;
+			NextDirtyTiles = swap;
+			NextDirtyTiles.Clear();
 		}
-	
-		public void UnhighlightTile(Coord c)
-		{
-			ForegroundGlyphs[c.x, c.y, c.z] = null;
-		}
-		public void HighlightTile(Coord c, string color)
-		{
-//			DumpForegroundGlyphs();
-			var glyph = Tiles.GetGlyph(c.x, c.y, c.z);
-			ForegroundGlyphs[c.x, c.y, c.z] = new Tuple<char, string, string>(glyph.Item1, glyph.Item2, color);
-		}
-		
+
 		public override void DrawContent()
 		{
 			GameCamera Camera = Game.Camera;
@@ -97,8 +107,6 @@ namespace Hecatomb
 		    	for (int j=0; j<Camera.Height; j++) {
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
-//					glyph = ForegroundGlyphs[x, y, z];
-//					glyph = (glyph==null) ? Tiles.GetGlyph(x, y, z) : glyph;
 					glyph = Tiles.GetGlyph(x, y, z);
 					DrawGlyph(i, j, glyph.Item1, glyph.Item2, glyph.Item3);
 		    	}
@@ -110,16 +118,23 @@ namespace Hecatomb
 			Vector2 measure = measureChar(c);
 			int xOffset = 11-(int) measure.X/2;
 			int yOffset = 10-(int) measure.Y/2;
-			Color cfg = Game.Colors[fg];
-			Color cbg = Game.Colors[bg];
+			Color cfg = (fg==null) ? Color.Red : Game.Colors[fg];
+			Color cbg = (bg==null) ? Color.Red : Game.Colors[bg];
 			var vbg = new Vector2(Padding+(1+i)*(Size+Padding),Padding+(1+j)*(Size+Padding));
 			var vfg = new Vector2(xOffset+Padding+(1+i)*(Size+Padding), yOffset+Padding+(1+j)*(Size+Padding));
 			Sprites.Draw(BG, vbg, cbg);
-			Sprites.DrawString(getFont(c), s, vfg, cfg);
+			if (c!=default(char))
+			{
+				Sprites.DrawString(getFont(c), s, vfg, cfg);
+			}
 		}
 		
 		protected Vector2 measureChar(char c)
 		{	
+			if (c==default(char))
+			{
+				return new Vector2(0,0);
+			}
 			if (measureCache.ContainsKey(c))
 			{
 				return measureCache[c];
