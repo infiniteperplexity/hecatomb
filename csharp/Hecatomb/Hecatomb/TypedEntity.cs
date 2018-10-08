@@ -18,12 +18,11 @@ namespace Hecatomb
 	/// 
 	
 	public abstract class GameEntity {
-		public static int MaxEID = -1;
 		public int EID;
+
 		public GameEntity()
 		{
-			EID = GameEntity.MaxEID + 1;
-			GameEntity.MaxEID = EID;
+
 		}
 		
 		public void Publish(GameEvent g)
@@ -39,6 +38,11 @@ namespace Hecatomb
 		public string StringifyReference()
 		{
 			return "{\"EID\":" + EID +"}";
+		}
+		
+		public void Despawn()
+		{
+			Game.World.Entities.Spawned.Remove(this);
 		}
 	}
 	public abstract class TypedEntity : GameEntity
@@ -56,26 +60,13 @@ namespace Hecatomb
 
 		public Dictionary<Type, Component> Components;
 		
-
-		public TypedEntity(string t) : base()
+		public TypedEntity() : base()
 		{
-			Symbol = '@';
-			FG = "white";
-			EType = t;
 			x = -1;
 			y = -1;
 			z = -1;
 			Placed = false;
-			Components = new Dictionary<Type, Component>();
-			if (EntityType.Types.ContainsKey(t))
-			{
-				EntityType et = EntityType.Types[t];
-				et.Typify(this);
-			} else {
-				throw new InvalidOperationException(String.Format("EntityType {0} does not exist.",t));
-			}
 		}
-		
 		public T GetComponent<T>() where T : Component
 		{
 			Type t = typeof(T);
@@ -132,7 +123,7 @@ namespace Hecatomb
 	}
 	
 	public class Creature : TypedEntity {
-		public Creature(string t) : base(t) {}
+		
 		public override void Place(int x1, int y1, int z1)
 		{
 			Creature e = Game.World.Creatures[x1,y1,z1];
@@ -158,7 +149,7 @@ namespace Hecatomb
 		}
 	}
 	public class Feature : TypedEntity {
-		public Feature(string t) : base(t) {}
+
 		public override void Place(int x1, int y1, int z1)
 		{
 			Feature e = Game.World.Features[x1,y1,z1];
@@ -184,10 +175,7 @@ namespace Hecatomb
 		}
 	}
 	public class Item : TypedEntity {
-		public Item(string t) : base(t)
-		{
-			
-		}
+
 		public override void Place(int x1, int y1, int z1)
 		{
 			Item e = Game.World.Items[x1,y1,z1];
@@ -213,10 +201,7 @@ namespace Hecatomb
 		}
 	}
 	public class TaskEntity : TypedEntity {
-		public TaskEntity(string t) : base(t)
-		{
-			
-		}
+
 		public override void Place(int x1, int y1, int z1)
 		{
 			TaskEntity e = Game.World.Tasks[x1,y1,z1];

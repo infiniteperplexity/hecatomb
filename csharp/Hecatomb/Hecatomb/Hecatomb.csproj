@@ -42,8 +42,16 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\DigTask.cs" />
     <Compile Include="Components\SpellCaster.cs" />
-    <Compile Include="ControlContext.cs" />
+    <Compile Include="Controls\ControlContext.cs" />
+    <Compile Include="Controls\DefaultControls.cs" />
+    <Compile Include="Controls\MenuChoiceControls.cs" />
+    <Compile Include="Controls\NavigatorControls.cs" />
+    <Compile Include="Controls\SelectBoxControls.cs" />
+    <Compile Include="Controls\SelectZoneControls.cs" />
+    <Compile Include="Controls\SelectTileControls.cs" />
+    <Compile Include="EntityHandler.cs" />
     <Compile Include="GamePanels.cs" />
     <Compile Include="Components\Minion.cs" />
     <Compile Include="Components\Task.cs" />
@@ -60,9 +68,7 @@
     <Compile Include="GameColors.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Components\Actor.cs" />
-    <Compile Include="Components\Movement.cs">
-      <DependentUpon>Senses.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Components\Movement.cs" />
     <Compile Include="Components\Senses.cs" />
     <Compile Include="Constants.cs">
       <DependentUpon>Creatures.json</DependentUpon>
@@ -111,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components" />
+    <Folder Include="Controls" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

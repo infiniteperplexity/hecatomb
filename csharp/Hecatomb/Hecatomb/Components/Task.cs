@@ -7,14 +7,17 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Hecatomb
 {
-	public abstract class Task : Component
+	public abstract class Task : Component, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
 	{
 		public Creature Worker;
 		[NonSerialized] public int WorkRange;
 		[NonSerialized] public int LaborCost;
+		[NonSerialized] public string MenuName;
 		public int Labor;
 		
 		public Task() : base()
@@ -23,7 +26,7 @@ namespace Hecatomb
 			LaborCost = 10;
 			Labor = LaborCost;
 		}
-		
+
 		public virtual void Act()
 		{
 			if (Worker==null)	
@@ -56,7 +59,7 @@ namespace Hecatomb
 		
 		public virtual void Start()
 		{
-			Feature f = new Feature("IncompleteFeature");
+			Feature f = Game.World.Entities.Spawn<Feature>("IncompleteFeature");
 			f.Place(Entity.x, Entity.y, Entity.z);
 		}
 		
@@ -70,61 +73,41 @@ namespace Hecatomb
 			Worker.GetComponent<Minion>().Task = null;
 			Entity.Remove();
 		}
+		
+		public virtual void ChooseFromMenu()
+		{
+			Game.Controls.Set(new SelectZoneControls(this));
+		}
+		
+		public virtual void Designate()
+		{
+
+		}
+		
+		public virtual string ListOnMenu()
+		{
+			return MenuName;
+		}
+		
+		public virtual void SelectBox(List<Coord> squares)
+		{
+			
+		}
+		
+		public virtual void SelectZone(List<Coord> squares)
+		{
+			
+		}
+		
+		public virtual void SelectTile(Coord c)
+		{
+			
+		}
+		
+		public virtual void TileHover(Coord c)
+		{
+			
+		}
 	}
 	
-	public class DigTask : Task
-	{
-		public override void Start()
-		{
-			base.Start();
-			Feature f = Game.World.Features[Entity.x, Entity.y, Entity.z];
-			f.Symbol = '\u2717';
-			f.FG = "white";
-		}
-		public override void Finish()
-		{
-			int x = Entity.x;
-			int y = Entity.y;
-			int z = Entity.z;
-			Game.World.Features[x, y, z].Remove();
-			var tiles = Game.World.Tiles;
-			Terrain t = tiles[x, y, z];	
-			Terrain floor = Terrain.FloorTile;
-			Terrain wall = Terrain.WallTile;
-			Terrain up = Terrain.UpSlopeTile;
-			Terrain down = Terrain.DownSlopeTile;
-			Terrain empty = Terrain.EmptyTile;
-			if (t==floor)
-			{
-				Terrain tb = Game.World.GetTile(x, y, z-1);
-				if (tb==wall)
-				{
-					tiles[x, y, z] = down;
-					tiles[x, y, z-1] = up;
-				} else if (tb==up)
-				{
-					tiles[x, y, z] = down;
-				}
-				else if (tb==empty || tb==down || tb==floor)
-				{
-					tiles[x, y, z] = empty;
-				}
-			}
-			else if (t==up)
-			{
-				tiles[x, y, z] = floor;
-			}
-			else if (t==down)
-			{
-				tiles[x, y, z] = empty;
-				tiles[x, y, z-1] = floor;
-			}
-			else if (t==wall)
-			{
-				tiles[x, y, z] = down;
-				tiles[x, y, z-1] = up;
-			}		
-			Complete();
-		}
-	}
 }

@@ -8,7 +8,7 @@
  */
 using System;
 using System.Diagnostics;
-
+using System.Collections.Generic;
 namespace Hecatomb
 {
 	/// <summary>
@@ -131,7 +131,11 @@ namespace Hecatomb
 		
 		public void ChooseTask()
 		{
-			
+			var choices = new List<IMenuListable>() {
+				Game.World.Entities.Mock<DigTask>()
+			};
+			Game.Controls = new MenuChoiceControls("Choose a task:", choices);
+			Game.GraphicsDirty = true;
 		}
 		
 		public void ChooseSpell()

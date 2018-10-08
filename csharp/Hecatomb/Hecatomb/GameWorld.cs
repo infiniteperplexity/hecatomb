@@ -26,6 +26,7 @@ namespace Hecatomb
 		public SparseArray3D<TaskEntity> Tasks;
 		public HashSet<Tuple<int, int, int>> Explored;
 		public GameEventHandler Events;
+		public EntityHandler Entities;
 		public Player Player;
 		
 		public FastNoise ElevationNoise;
@@ -37,6 +38,7 @@ namespace Hecatomb
 		
 		public void Initialize()
 		{
+			Entities = new EntityHandler();
 			int WIDTH = Constants.WIDTH;
 			int HEIGHT = Constants.HEIGHT;
 			int DEPTH = Constants.DEPTH;
@@ -93,7 +95,7 @@ namespace Hecatomb
 						{
 							if (Game.Random.Next(2)==1)
 							{
-								Feature tree = new Feature("Tree");
+								Feature tree = Entities.Spawn<Feature>("Tree");
 								tree.Place(i, j, k);
 							}
 						}
@@ -101,7 +103,7 @@ namespace Hecatomb
 						{
 							if (Game.Random.Next(50)==0)
 							{
-								Feature grave = new Feature("Grave");
+								Feature grave = Entities.Spawn<Feature>("Grave");
 								grave.Place(i, j, k);
 							}
 						}

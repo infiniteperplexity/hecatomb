@@ -19,7 +19,7 @@ namespace Hecatomb
 	{
 		public List<Creature> Minions;
 		public bool Acted;
-		public Player(string t) : base(t)
+		public Player() : base()
 		{
 			Acted = false;
 			Minions = new List<Creature>();

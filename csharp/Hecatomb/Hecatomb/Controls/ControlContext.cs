@@ -32,7 +32,25 @@ namespace Hecatomb
         public Action<int, int> OnStatusClick;
         public Action<int, int> OnStatusHover;
            
+        
+        public void Set(ControlContext c)
+        {
+        	Game.LastControls = Game.Controls;
+        	Game.Controls = c;
+        	Game.GraphicsDirty = true;
+        }
+        
+        public void Reset()
+        {
+        	Game.LastControls = Game.DefaultControls;
+        	Game.Controls = Game.DefaultControls;
+        	Game.GraphicsDirty = true;
+        }
+        
+        
         public void Nothing(int x, int y) {}
+        
+        public void Nothing(Coord c) {}
         
         public void HandleClick(int x, int y)
         {
@@ -177,170 +195,5 @@ namespace Hecatomb
         		return;
         	}
 		}
-		
-		public void SelectSquareZone()
-		{
-			
-		}
-		
-		public void SelectBox()
-		{
-			
-		}
-		
-		public void SelectSquare()
-		{
-			
-		}
-	}
-	
-	class DefaultControlContext : ControlContext
-	{
-		public DefaultControlContext() : base()
-		{
-			var Commands = Game.Commands;
-			KeyMap[Keys.Up] = Commands.MoveNorthCommand;
-			KeyMap[Keys.Down] = Commands.MoveSouthCommand;
-			KeyMap[Keys.Left] = Commands.MoveWestCommand;
-			KeyMap[Keys.Right] = Commands.MoveEastCommand;
-			KeyMap[Keys.OemComma] = Commands.MoveUpCommand;
-			KeyMap[Keys.OemPeriod] = Commands.MoveDownCommand;
-			KeyMap[Keys.Space] = Commands.Wait;
-			
-			MenuText = new List<string>() {
-				"Esc: System view.",
-				"Avatar mode (Tab: Navigation mode)",
-				" ",
-			    "Move: NumPad/Arrows, ,/.: Up/Down.",
-			    "(Control+Arrows for diagonal.)",
-			    "Wait: NumPad 5 / Space.",
-			    " ",
-			    "Enter: Enable auto-pause.",
-			    "+/-: Change speed.",
-			    " ",
-			    "Z: Cast spell, J: Assign job.",
-			    "M: Minions, S: Structures, U: Summary.",
-			    "G: Pick Up, D: Drop.",
-			    "I: Inventory, E: Equip/Unequip.",
-			    " ",
-			    "PageUp/Down: Scroll messages.",
-			    "A: Achievements, /: Toggle tutorial."
-			};
-			TextColors = new Dictionary<Tuple<int, int>, string>() {
-				{new Tuple<int, int>(1,0), "yellow"}
-			};
-		}
-		
-		public override void ClickTile(Coord c)
-		{
-			if (Game.World.Tasks[c.x, c.y, c.z]==null) 
-			{
-				TaskEntity task = new TaskEntity("DigTask");
-				task.Place(c.x, c.y, c.z);
-				Game.GraphicsDirty = true;
-			}
-		}
-	}
-	
-	public class NavigatorContext : ControlContext
-	{
-		static int Z;
-		static int XOffset;
-		static int YOffset;
-		
-		public override void HandleKeyDown(Keys key)
-		{
-			base.HandleKeyDown(key);
-			GameCamera c = Game.Camera;
-			Z = c.z;
-			XOffset = c.XOffset;
-			YOffset = c.YOffset;
-		}
-		
-		
-		public NavigatorContext() : base()
-		{
-			var Commands = Game.Commands;
-			KeyMap[Keys.Up] = Commands.MoveCameraNorth;
-			KeyMap[Keys.Down] = Commands.MoveCameraSouth;
-			KeyMap[Keys.Left] = Commands.MoveCameraWest;
-			KeyMap[Keys.Right] = Commands.MoveCameraEast;
-			KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
-			KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
-			KeyMap[Keys.Space] = Commands.Wait;
-			
-			MenuText = new List<string>() {
-				"Esc: System view.",
-				"Avatar mode (Tab: Navigation mode)",
-				" ",
-			    "Move: NumPad/Arrows, ,/.: Up/Down.",
-			    "(Control+Arrows for diagonal.)",
-			    "Wait: NumPad 5 / Space.",
-			    " ",
-			    "Enter: Enable auto-pause.",
-			    "+/-: Change speed.",
-			    " ",
-			    "Z: Cast spell, J: Assign job.",
-			    "M: Minions, S: Structures, U: Summary.",
-			    "G: Pick Up, D: Drop.",
-			    "I: Inventory, E: Equip/Unequip.",
-			    " ",
-			    "PageUp/Down: Scroll messages.",
-			    "A: Achievements, /: Toggle tutorial."
-			};
-			TextColors = new Dictionary<Tuple<int, int>, string>() {
-				{new Tuple<int, int>(1,0), "yellow"}
-			};
-		}
-	}
-	
-	public class MenuChoiceContext : ControlContext
-	{
-		public static List<Keys> Alphabet = new List<Keys> {
-			Keys.A,
-			Keys.B,
-			Keys.C,
-			Keys.D,
-			Keys.E,
-			Keys.F,
-			Keys.G,
-			Keys.H,
-			Keys.I,
-			Keys.J,
-			Keys.K,
-			Keys.L,
-			Keys.M,
-			Keys.N,
-			Keys.O,
-			Keys.P,
-			Keys.Q,
-			Keys.R,
-			Keys.S,
-			Keys.T,
-			Keys.U,
-			Keys.V,
-			Keys.W,
-			Keys.X,
-			Keys.Y,
-			Keys.Z
-		};
-		
-		static string alphabet = "abcdefghijklmnopqrstuvwxyz";
-		public List<string> Choices;
-		
-		public MenuChoiceContext(List<Action> choices): base()
-		{
-			var Commands = Game.Commands;
-			KeyMap[Keys.Space] = Commands.Wait;
-			MenuText = new List<string>() {
-				"Esc: System view.",
-				"Choose a thing:"
-		    };
-			for (int i=0; i<choices.Count; i++)
-			{
-				KeyMap[Alphabet[i]] = choices[i];
-				MenuText.Add(alphabet[i] + ") how do we figure this out?");
-			}
-		}
-	}
+	}	
 }

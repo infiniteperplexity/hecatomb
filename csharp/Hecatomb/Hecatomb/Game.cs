@@ -29,6 +29,7 @@ namespace Hecatomb
 		public static MenuGamePanel MenuPanel;
 		public static StatusGamePanel StatusPanel;
 		
+		public static ControlContext LastControls;
 		public static ControlContext Controls;
 		public static ControlContext DefaultControls;
 		public static bool GraphicsDirty;
@@ -76,9 +77,9 @@ namespace Hecatomb
 			World = new GameWorld();
 			World.Initialize();
 			Commands = new GameCommands();
-			DefaultControls = new DefaultControlContext();
+			DefaultControls = new DefaultControls();
 			Controls = DefaultControls;
-			Player p = new Player("Necromancer");
+			Player p = Game.World.Entities.Spawn<Player>("Necromancer");
 			World.Player = p;
 			p.Place(
 				Constants.WIDTH/2,
@@ -87,7 +88,7 @@ namespace Hecatomb
 			);
 			Camera = new GameCamera();
 			Camera.Center(p.x, p.y, p.z);
-			Creature zombie = new Creature("Zombie");
+			Creature zombie = Game.World.Entities.Spawn<Creature>("Zombie");
 			zombie.Place(
 				p.x+3,
 				p.y+3,
