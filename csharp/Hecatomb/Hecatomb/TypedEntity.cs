@@ -17,7 +17,8 @@ namespace Hecatomb
 	/// </summary>
 	/// 
 	
-	public abstract class GameEntity {
+	public abstract class GameEntity : ISaveable
+	{
 		public int EID;
 
 		public GameEntity()

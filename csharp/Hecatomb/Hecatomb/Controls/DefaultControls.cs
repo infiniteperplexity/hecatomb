@@ -28,6 +28,7 @@ namespace Hecatomb
 			KeyMap[Keys.OemPeriod] = Commands.MoveDownCommand;
 			KeyMap[Keys.Space] = Commands.Wait;
 			KeyMap[Keys.T] = Commands.ChooseTask;
+			KeyMap[Keys.S] = Commands.SaveGameCommand;
 			
 			MenuText = new List<string>() {
 				"Esc: System view.",

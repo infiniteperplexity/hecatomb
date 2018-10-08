@@ -142,5 +142,10 @@ namespace Hecatomb
 		{
 			
 		}
+		
+		public void SaveGameCommand()
+		{
+			GameSaver.Save();
+		}
 	}
 }

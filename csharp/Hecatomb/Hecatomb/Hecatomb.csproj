@@ -60,6 +60,7 @@
     <Compile Include="GameEvent.cs">
       <DependentUpon>GamePanels.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameSaver.cs" />
     <Compile Include="Particles.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Spell.cs" />
