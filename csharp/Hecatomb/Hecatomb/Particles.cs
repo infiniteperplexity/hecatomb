@@ -58,11 +58,11 @@ namespace Hecatomb
 		}
 	}
 	
-	public class CursorParticle : Particle
+	public class Highlight : Particle
 	{
-		public CursorParticle() : base()
+		public Highlight(string s) : base()
 		{
-			BG = "cyan";
+			BG = s;
 		}
 	}
 }

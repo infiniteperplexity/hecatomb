@@ -55,12 +55,6 @@ namespace Hecatomb
 		
 		public override void ClickTile(Coord c)
 		{
-			if (Game.World.Tasks[c.x, c.y, c.z]==null) 
-			{
-				TaskEntity task = Game.World.Entities.Spawn<TaskEntity>("DigTask");
-				task.Place(c.x, c.y, c.z);
-				Game.GraphicsDirty = true;
-			}
 		}
 	}
 }

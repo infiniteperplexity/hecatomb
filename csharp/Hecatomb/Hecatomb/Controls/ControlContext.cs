@@ -20,7 +20,7 @@ namespace Hecatomb
 		static KeyboardState OldKeyboard;
         static MouseState OldMouse;
         static DateTime InputBegan;
-        static Particle Cursor = new CursorParticle();
+        static Highlight Cursor = new Highlight("cyan");
         public const int Throttle = 125;
         public Dictionary <Keys, Action> KeyMap;
         public List<string> MenuText;
@@ -44,6 +44,13 @@ namespace Hecatomb
         {
         	Game.LastControls = Game.DefaultControls;
         	Game.Controls = Game.DefaultControls;
+        	Game.GraphicsDirty = true;
+        }
+        
+        public virtual void Back()
+        {
+        	Game.Controls = Game.LastControls;
+        	Game.LastControls = Game.DefaultControls;
         	Game.GraphicsDirty = true;
         }
         
@@ -175,24 +182,29 @@ namespace Hecatomb
         		HandleHover(m.X, m.Y);
         	}
         	if (k.Equals(OldKeyboard) && m.Equals(OldMouse) && sinceInputBegan<Throttle) {
+        		if (!m.Equals(OldMouse))
+	        	{
+	        		HandleHover(m.X, m.Y);
+	        	}
         		return;
         	}
         	OldMouse = m;
         	OldKeyboard = k;
         	InputBegan = now;
-        	foreach (Keys key in KeyMap.Keys)
+        	Keys[] keys = k.GetPressedKeys();
+        	bool gotKey = false;
+        	foreach (Keys key in keys)
         	{
-        		if (k.IsKeyDown(key))
+        		if (KeyMap.ContainsKey(key))
         		{
         			HandleKeyDown(key);
-        			return;
+        			gotKey = true;
+        			break;
         		}
         	}
-        	
-        	if(m.LeftButton == ButtonState.Pressed)
+        	if(!gotKey && m.LeftButton == ButtonState.Pressed)
         	{
         		HandleClick(m.X, m.Y);
-        		return;
         	}
 		}
 	}	

@@ -5,6 +5,8 @@
  * Time: 12:50 PM
  */
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -66,6 +68,21 @@ namespace Hecatomb
 				tiles[x, y, z-1] = up;
 			}		
 			Complete();
+		}
+		
+		public override void ChooseFromMenu()
+		{
+//			Game.Controls.Set(new SelectTileControls(this));
+			Game.Controls.Set(new SelectZoneControls(this));
+		}
+		
+		public override void TileHover(Coord c)
+		{
+			Debug.Print("Dig out tiles starting at {0} {1} {2}", c.x, c.y, c.z);
+		}
+		public override void TileHover(Coord c, List<Coord> squares)
+		{
+			Debug.Print("Dig out tiles finishing at {0} {1} {2}", c.x, c.y, c.z);
 		}
 	}
 

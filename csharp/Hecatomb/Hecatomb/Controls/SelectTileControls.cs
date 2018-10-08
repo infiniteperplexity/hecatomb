@@ -24,8 +24,39 @@ namespace Hecatomb
 		
 	public class SelectTileControls : NavigatorControls
 	{
+		ISelectsTile Selector;
+		
 		public SelectTileControls(ISelectsTile i) : base()
 		{
+			Selector = i;
+			KeyMap[Keys.Escape] = Back;
+			MenuText = new List<string>() {
+     			"**Esc: Cancel.**",
+      			"Select a tile with keys or mouse.",
+      			" ",
+     			"Move: NumPad/Arrows, ,/.: Up/Down.",
+      			"(Control+Arrows for diagonal.)",
+      			"Wait: NumPad 5 / Control+Space.",
+      			" ",
+      			"Click / Space: Select.",
+      			"Enter: Toggle Pause."
+			};
+			TextColors = new Dictionary<Tuple<int, int>, string>() {
+				{new Tuple<int, int>(0,0), "orange"},
+				{new Tuple<int, int>(1,0), "yellow"}
+			};
+		}
+		
+		public override void HoverTile(Coord c)
+		{
+			base.HoverTile(c);
+			Selector.TileHover(c);
+		}
+		
+		public override void ClickTile(Coord c)
+		{
+			Selector.SelectTile(c);
+			Reset();
 		}
 	}
 }

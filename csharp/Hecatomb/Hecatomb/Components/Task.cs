@@ -96,15 +96,31 @@ namespace Hecatomb
 		
 		public virtual void SelectZone(List<Coord> squares)
 		{
-			
+			foreach (Coord c in squares)
+			{
+				if (Game.World.Tasks[c.x, c.y, c.z]==null) 
+				{
+					TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+					task.Place(c.x, c.y, c.z);
+				}
+			}
 		}
 		
 		public virtual void SelectTile(Coord c)
 		{
-			
+			if (Game.World.Tasks[c.x, c.y, c.z]==null) 
+			{
+				TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+				task.Place(c.x, c.y, c.z);
+			}
 		}
 		
 		public virtual void TileHover(Coord c)
+		{
+			
+		}
+		
+		public virtual void TileHover(Coord c, List<Coord> squares)
 		{
 			
 		}
