@@ -25,7 +25,21 @@ namespace Hecatomb
 		{
 			Acted = false;
 			MinionEIDs = new List<int>();
-			
+		}
+		
+		public override GameEvent OnSelfSpawn(GameEvent g)
+		{
+			Game.World.Events.Subscribe<PlaceEvent>(this, OnPlace);
+			return g;
+		}
+		public GameEvent OnPlace(GameEvent g)
+		{
+			PlaceEvent p = (PlaceEvent) g;
+			if (p.Entity.Equals(this))
+			{
+				Debug.WriteLine(String.Format("{0} placed at {1} {2} {3}", this.Name, p.X, p.Y, p.Z));
+			}
+			return p;
 		}
 		public List<Creature> GetMinions()
 		{

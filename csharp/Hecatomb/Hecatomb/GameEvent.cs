@@ -18,31 +18,37 @@ namespace Hecatomb
 	/// 
 	public class GameEventHandler
 	{
-		public Dictionary<Type, Dictionary<GameEntity, Func<GameEvent, GameEvent>>> ListenerTypes;
+		public Dictionary<string, Dictionary<int, Func<GameEvent, GameEvent>>> ListenerTypes;
+		
 		public GameEventHandler()
 		{
-			ListenerTypes = new Dictionary<Type, Dictionary<GameEntity, Func<GameEvent, GameEvent>>>();
+			ListenerTypes = new Dictionary<string, Dictionary<int, Func<GameEvent, GameEvent>>>();
 			var events = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameEvent))).ToList();
 			foreach (var e in events)
 			{
-				ListenerTypes[e] = new Dictionary<GameEntity, Func<GameEvent, GameEvent>>();
+				ListenerTypes[e.Name] = new Dictionary<int, Func<GameEvent, GameEvent>>();
 			}
 		}
 		public void Subscribe<T>(GameEntity g, Func<GameEvent, GameEvent> f, float priority=0)
 		{
-			var listeners = ListenerTypes[typeof(T)];
-			if (!listeners.ContainsKey(g))
+			if (!g.Spawned)
 			{
-				listeners[g] = f;
+				throw new InvalidOperationException(String.Format("Unspawned {0} cannot listen to events"));
+			}
+			var listeners = ListenerTypes[typeof(T).Name];
+			if (!listeners.ContainsKey(g.EID))
+			{
+				Debug.WriteLine(f.GetType());
+				listeners[g.EID] = f;
 			}
 		}
 		
 		public void Unsubscribe<T>(GameEntity g)
 		{
-			var listeners = ListenerTypes[typeof(T)];
-			if (listeners.ContainsKey(g))
+			var listeners = ListenerTypes[typeof(T).Name];
+			if (listeners.ContainsKey(g.EID))
 			{
-				listeners.Remove(g);
+				listeners.Remove(g.EID);
 			}
 		}
 		
@@ -50,9 +56,9 @@ namespace Hecatomb
 		{
 			foreach (var listeners in ListenerTypes.Values)
 			{
-				if (listeners.ContainsKey(g))
+				if (listeners.ContainsKey(g.EID))
 				{
-					listeners.Remove(g);
+					listeners.Remove(g.EID);
 				}
 			}
 		}
@@ -60,11 +66,25 @@ namespace Hecatomb
 		public void Publish(GameEvent g)
 		{
 			// !we probably have to clone this stuff in order to avoid enumeration problems.
-			var listeners = ListenerTypes[g.GetType()];
+			var listeners = ListenerTypes[g.GetType().Name];
 			foreach (var listener in listeners.Values)
 			{
 				g = listener(g);
 			}
+		}
+		
+		public Dictionary<string, Dictionary<int, string>> StringifyListeners()
+		{
+			var jsonready = new Dictionary<string, Dictionary<int, string>>();
+			foreach (var type in ListenerTypes.Keys)
+			{
+				jsonready[type] = new Dictionary<int, string>();
+				foreach (var eid in ListenerTypes[type].Keys)
+				{
+					jsonready[type][eid] = ListenerTypes[type][eid].Method.Name;
+				}
+			}
+			return jsonready;
 		}
 	}
 	
@@ -85,4 +105,22 @@ namespace Hecatomb
 		public int Y;
 		public int Z;
 	}
+	
+	public class SpawnEvent : GameEvent
+	{
+		public GameEntity Entity;
+	}
 }
+
+
+/// Get the Type for the class
+//    Type calledType = Type.GetType(typeName);
+//
+//    // Invoke the method itself. The string returned by the method winds up in s
+//    String s = (String)calledType.InvokeMember(
+//                    methodName,
+//                    BindingFlags.InvokeMethod | BindingFlags.Public | 
+//                        BindingFlags.Static,
+//                    null,
+//                    null,
+//                    null);

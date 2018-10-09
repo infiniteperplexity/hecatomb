@@ -30,6 +30,7 @@ namespace Hecatomb
 			KeyMap[Keys.T] = Commands.ChooseTask;
 			KeyMap[Keys.Z] = Commands.ChooseSpell;
 			KeyMap[Keys.S] = Commands.SaveGameCommand;
+			KeyMap[Keys.R] = Commands.RestoreGameCommand;
 			
 			MenuText = new List<string>() {
 				"Esc: System view.",

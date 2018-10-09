@@ -8,14 +8,15 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
 	public class TurnHandler
 	{
 		public int Turn;
-		public List<Actor> Acted;
-		public List<Actor> Queue;
+		[JsonIgnore] public List<Actor> Acted;
+		[JsonIgnore] public List<Actor> Queue;
 		
 		public TurnHandler()
 		{

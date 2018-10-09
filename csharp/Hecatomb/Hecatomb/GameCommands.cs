@@ -153,7 +153,12 @@ namespace Hecatomb
 		
 		public void SaveGameCommand()
 		{
-			GameSaver.Save();
+			Game.World.Stringify();
+		}
+		
+		public void RestoreGameCommand()
+		{
+			GameWorld parsed = GameWorld.Parse("json");
 		}
 	}
 }

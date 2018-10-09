@@ -33,6 +33,7 @@ namespace Hecatomb
 			MaxEID = ge.EID;
 			Spawned[ge.EID] = ge;
 			ge.Spawned = true;
+			ge.OnSelfSpawn(new SpawnEvent() {Entity = ge});
 			return ge;
 		}
 		public T Spawn<T>() where T : GameEntity, new()
@@ -42,6 +43,7 @@ namespace Hecatomb
 			MaxEID = t.EID;
 			Spawned[t.EID] = t;
 			t.Spawned = true;
+			t.OnSelfSpawn(new SpawnEvent() {Entity = t});
 			return t;
 		}
 			

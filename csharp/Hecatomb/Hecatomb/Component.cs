@@ -9,6 +9,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -24,7 +25,7 @@ namespace Hecatomb
 	public abstract class Component : GameEntity
 	{
 		private int EntityEID;
-		public TypedEntity Entity
+		[JsonIgnore] public TypedEntity Entity
 		{
 			get
 			{
@@ -35,7 +36,7 @@ namespace Hecatomb
 				EntityEID = value.EID;
 			}
 		}
-		[NonSerialized] public string[] Required;
+		[JsonIgnore] public string[] Required;
 		
 		public Component() : base()
 		{

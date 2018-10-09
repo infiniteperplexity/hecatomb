@@ -90,6 +90,10 @@ namespace Hecatomb
 			Camera.Center(p.x, p.y, p.z);
 			p.HandleVisibility();
 			GraphicsDirty = true;
+			// proved it's possible to deserialize from method names
+//			Debug.WriteLine("check this out...");
+//			var f = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), World.Player, "OnPlace");
+//			f(new PlaceEvent() {Entity = World.Player, X = 6, Y = 6, Z = 6});
             base.Initialize();
         }
 

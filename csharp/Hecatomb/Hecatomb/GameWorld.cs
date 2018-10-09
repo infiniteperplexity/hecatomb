@@ -17,7 +17,7 @@ namespace Hecatomb
 	/// <summary>
 	/// GameWorld should contain *all* the truly persistent state for the game - state that's not derived, or part of the GUI.
 	/// </summary>
-	public class GameWorld
+	public partial class GameWorld
 	{
 		public Terrain[,,] Tiles {get; set;}
 		public SparseArray3D<Creature> Creatures;
@@ -136,10 +136,6 @@ namespace Hecatomb
 			}
 			return 1;
 		}
-//		
-//		public string Stringify()
-//		{
-//			
-//		}
+
 	}
 }

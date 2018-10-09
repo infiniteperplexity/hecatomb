@@ -8,6 +8,7 @@
  */
 using System;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -17,8 +18,18 @@ namespace Hecatomb
 	public class Minion : Component
 	{
 	
-		
-		public TaskEntity Task;
+		public int TaskEID;
+		[JsonIgnore] public TaskEntity Task
+		{
+			get
+			{
+				return (TaskEntity) Game.World.Entities.Spawned[TaskEID];
+			}
+			set
+			{
+				TaskEID = value.EID;
+			}
+		}
 		
 		public Minion(): base()
 		{

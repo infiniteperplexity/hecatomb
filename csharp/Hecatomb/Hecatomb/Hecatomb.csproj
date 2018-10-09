@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GameWorldSaveParse.cs" />
     <Compile Include="Components\DigTask.cs" />
     <Compile Include="Components\SpellCaster.cs" />
     <Compile Include="Controls\ControlContext.cs" />
@@ -57,10 +58,7 @@
     <Compile Include="Components\Task.cs" />
     <Compile Include="FlyWeight.cs" />
     <Compile Include="FontHandler.cs" />
-    <Compile Include="GameEvent.cs">
-      <DependentUpon>GamePanels.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GameSaver.cs" />
+    <Compile Include="GameEvent.cs" />
     <Compile Include="Particles.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Spell.cs" />
@@ -71,9 +69,7 @@
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Components\Movement.cs" />
     <Compile Include="Components\Senses.cs" />
-    <Compile Include="Constants.cs">
-      <DependentUpon>Creatures.json</DependentUpon>
-    </Compile>
+    <Compile Include="Constants.cs" />
     <Compile Include="EntityType.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FastNoise.cs" />

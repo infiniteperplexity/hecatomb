@@ -9,6 +9,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -20,11 +21,17 @@ namespace Hecatomb
 	public abstract class GameEntity
 	{
 		public int EID;
-		public bool Spawned;
+		[JsonIgnore] public bool Spawned;
 
 		public GameEntity()
 		{
+			EID = -1;
 			Spawned = false;
+		}
+		
+		public virtual GameEvent OnSelfSpawn(GameEvent g)
+		{
+			return g;
 		}
 		
 		public void Publish(GameEvent g)
@@ -40,15 +47,15 @@ namespace Hecatomb
 	public abstract class TypedEntity : GameEntity
 	{
 		public string EType;
-		public string Name;
+		[JsonIgnore] public string Name;
 		// might remove this...but for testing...
-		public char Symbol;
-		public string FG;
-		public string BG;
+		[JsonIgnore] public char Symbol;
+		[JsonIgnore] public string FG;
+		[JsonIgnore] public string BG;
 		public int x {get; private set;}
 		public int y {get; private set;}
 		public int z {get; private set;}
-		public bool Placed {get; private set;}
+		[JsonIgnore] public bool Placed {get; private set;}
 
 		public Dictionary<string, int> Components;
 		

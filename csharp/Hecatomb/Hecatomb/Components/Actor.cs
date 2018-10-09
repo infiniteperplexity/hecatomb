@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -19,7 +20,17 @@ namespace Hecatomb
 	
 	public class Actor : Component
 	{
-		[NonSerialized] TypedEntity Target;
+		public int TargetEID;
+		[JsonIgnore] TypedEntity Target {
+			get
+			{
+				return (TypedEntity) Game.World.Entities.Spawned[TargetEID];
+			}
+			set
+			{
+				TargetEID = value.EID;
+			}
+		}
 		public Actor() : base()
 		{
 			
