@@ -24,7 +24,7 @@ namespace Hecatomb
 		public SparseArray3D<Feature> Features;
 		public SparseArray3D<Item> Items;
 		public SparseArray3D<TaskEntity> Tasks;
-		public HashSet<Tuple<int, int, int>> Explored;
+		public HashSet<Coord> Explored;
 		public GameEventHandler Events;
 		public EntityHandler Entities;
 		public Player Player;
@@ -53,7 +53,7 @@ namespace Hecatomb
 			Features = new SparseArray3D<Feature>(WIDTH, HEIGHT, DEPTH);
 			Items = new SparseArray3D<Item>(WIDTH, HEIGHT, DEPTH);
 			Tasks = new SparseArray3D<TaskEntity>(WIDTH, HEIGHT, DEPTH);
-			Explored = new HashSet<Tuple<int, int, int>>();
+			Explored = new HashSet<Coord>();
 			for (int i=0; i<WIDTH; i++) {
 				for (int j=0; j<HEIGHT; j++) {
 					for (int k=0; k<DEPTH; k++) {

@@ -231,7 +231,7 @@ namespace Hecatomb
 			Feature fr = Game.World.Features[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
 			Particle p = Game.MainPanel.Particles[x,y,z];
-			var c = new Tuple<int, int, int> (x, y, z);
+			var c = new Coord(x, y, z);
 			if (p!=null && p.Symbol!=default(char))
 			{
 				return p.Symbol;
@@ -274,7 +274,7 @@ namespace Hecatomb
 			Feature fr = Game.World.Features[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
 			Particle p = Game.MainPanel.Particles[x,y,z];
-			var c = new Tuple<int, int, int> (x, y, z);
+			var c = new Coord(x, y, z);
 			if (p!=null && p.FG!=null)
 			{
 				return p.FG;
@@ -305,7 +305,7 @@ namespace Hecatomb
 		{
 			Particle p = Game.MainPanel.Particles[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
-			var c = new Tuple<int, int, int> (x, y, z);
+			var c = new Coord(x, y, z);
 			TaskEntity task = Game.World.Tasks[x, y, z];
 			if (p!=null)
 			{

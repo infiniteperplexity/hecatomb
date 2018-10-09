@@ -17,33 +17,24 @@ namespace Hecatomb
 	/// </summary>
 	/// 
 	
-	public abstract class GameEntity : ISaveable
+	public abstract class GameEntity
 	{
 		public int EID;
+		public bool Spawned;
 
 		public GameEntity()
 		{
-
+			Spawned = false;
 		}
 		
 		public void Publish(GameEvent g)
 		{
 			
 		}
-		
-		public virtual string Stringify()
-		{
-			return "huh?";
-		}
-		
-		public string StringifyReference()
-		{
-			return "{\"EID\":" + EID +"}";
-		}
-		
+
 		public void Despawn()
 		{
-			Game.World.Entities.Spawned.Remove(this);
+			//Game.World.Entities.Spawned.Remove(this);
 		}
 	}
 	public abstract class TypedEntity : GameEntity
@@ -59,7 +50,7 @@ namespace Hecatomb
 		public int z {get; private set;}
 		public bool Placed {get; private set;}
 
-		public Dictionary<Type, Component> Components;
+		public Dictionary<string, int> Components;
 		
 		public TypedEntity() : base()
 		{
@@ -70,20 +61,22 @@ namespace Hecatomb
 		}
 		public T GetComponent<T>() where T : Component
 		{
-			Type t = typeof(T);
+			string t = typeof(T).Name;
 			if (Components.ContainsKey(t)) {
-				return (T) Components[t];
+				int eid = Components[t];
+				return (T) Game.World.Entities.Spawned[eid];
 			} else {
-				throw new InvalidOperationException();
+				throw new InvalidOperationException(String.Format("{0} has no component of type {1}", this, t));
 			}
 		}
 		
 		
 		public T TryComponent<T>() where T : Component
 		{
-			Type t = typeof(T);
+			string t = typeof(T).Name;
 			if (Components.ContainsKey(t)) {
-				return (T) Components[t];
+				int eid = Components[t];
+				return (T) Game.World.Entities.Spawned[eid];
 			} else {
 				return default(T);
 			}
@@ -91,6 +84,10 @@ namespace Hecatomb
 		
 		public virtual void Place(int x1, int y1, int z1)
 		{
+			if (!Spawned)
+			{
+				throw new InvalidOperationException(String.Format("Cannot place {0} that hasn't been spawned yet.",this));
+			}
 			if (Placed)
 			{
 				this.Remove();
@@ -108,18 +105,6 @@ namespace Hecatomb
 			y = -1;
 			z = -1;
 			Placed = false;
-		}
-		
-		public override string Stringify()
-		{
-			return
-				"{"
-					+ "\"Type\": " + EType + ", "
-					+ "\"x\": " + x + ", "
-					+ "\"y\": " + y + ", "
-					+ "\"z\": " + z + ", "
-					+ "\"Components\": " + "[]" +
-				"}";
 		}
 	}
 	

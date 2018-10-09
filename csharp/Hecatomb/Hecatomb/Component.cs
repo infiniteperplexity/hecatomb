@@ -23,26 +23,41 @@ namespace Hecatomb
 	
 	public abstract class Component : GameEntity
 	{
-		public TypedEntity Entity;
+		private int EntityEID;
+		public TypedEntity Entity
+		{
+			get
+			{
+				return (TypedEntity) Game.World.Entities.Spawned[EntityEID];
+			}
+			set
+			{
+				EntityEID = value.EID;
+			}
+		}
 		[NonSerialized] public string[] Required;
 		
 		public Component() : base()
 		{
+			EntityEID = -1;
 			Required = new string[0];
 		}
 		
 		public void AddToEntity(TypedEntity e)
 		{
+			if (!Spawned)
+			{
+				throw new InvalidOperationException(String.Format("Cannot add {0} that has not been spawned.",this));
+			}
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))
 			{
-				e.Components[this.GetType()] = this;
+				e.Components[this.GetType().Name] = this.EID;
 			} else {
 				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
-				e.Components[this.GetType().BaseType] = this;
+				e.Components[this.GetType().BaseType.Name] = this.EID;
 			}
-			
-			Entity = e;
+			EntityEID = e.EID;
 		}
 		
 //		public virtual GameEvent OnEntityEvent(GameEvent ge)
@@ -58,49 +73,12 @@ namespace Hecatomb
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))
 			{
-				Entity.Components.Remove(this.GetType());
+				Entity.Components.Remove(this.GetType().Name);
 			} else {
 				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
-				Entity.Components.Remove(this.GetType().BaseType);
+				Entity.Components.Remove(this.GetType().BaseType.Name);
 			}
-			Entity = null;
-		}
-		
-		public override string Stringify()
-		{
-			string s = "{";
-			string f, v;
-			foreach(var field in this.GetType().GetFields())
-			{
-				if (field.MemberType==MemberTypes.Field && !field.IsStatic && !field.IsNotSerialized)
-				{
-					if (field.FieldType==typeof(System.Boolean))
-					{
-						v = ((bool) field.GetValue(this)==true) ? "true" : "false";
-					}
-					else if(field.FieldType==typeof(System.String))
-					{
-						v = "\"" + (string) field.GetValue(this) + "\"";
-					}
-					else if (field.FieldType==typeof(System.Int32))
-					{
-						v = ((int) field.GetValue(this)).ToString();;
-					}
-					else if (field.FieldType.IsSubclassOf(typeof(Hecatomb.GameEntity)))
-					{
-						GameEntity ge = (GameEntity) field.GetValue(this);
-						v = ge.StringifyReference();
-					}
-					else
-					{
-						v = default(string);
-					}
-					f = "\"" + field.Name + "\": ";
-					Debug.WriteLine(f+v);
-				}
-			}
-			s+="}";
-			return s;
+			EntityEID = -1;
 		}
 	}
 }

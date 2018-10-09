@@ -141,6 +141,14 @@ namespace Hecatomb
 		public void ChooseSpell()
 		{
 			
+			var choices = new List<IMenuListable>() {};
+			SpellCaster caster = Game.World.Player.GetComponent<SpellCaster>();
+			foreach (Spell s in caster.GetSpells())
+			{
+				choices.Add(s);
+			}
+			Game.Controls = new MenuChoiceControls("Choose a task:", choices);
+			Game.GraphicsDirty = true;
 		}
 		
 		public void SaveGameCommand()

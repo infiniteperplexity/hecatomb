@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Hecatomb
 {
@@ -16,10 +17,38 @@ namespace Hecatomb
 	/// </summary>
 	public class SpellCaster : Component
 	{
-		List<Spell> Spells;
+		List<string> Spells;
 		public SpellCaster() : base()
 		{
-			Spells = new List<Spell>();
+			Spells = new List<string>() {"RaiseZombieSpell"};
+		}
+		
+		public Spell GetSpell(Type t)
+		{
+			return (Spell) Activator.CreateInstance(t);
+		}
+		
+		public Spell GetSpell(String s)
+		{
+			Type t = Type.GetType("Hecatomb."+s);
+			return (Spell) Activator.CreateInstance(t);
+		}
+		
+		public List<Spell> GetSpells()
+		{
+			List<Spell> spells = new List<Spell>();
+			foreach (string s in Spells)
+			{
+				spells.Add(GetSpell(s));
+			}
+			return spells;
+		}
+		public T GetSpell<T>() where T : Spell, new()
+		{
+			T s = new T();
+			s.Component = this;
+			s.Caster = (Creature) this.Entity;
+			return s;
 		}
 	}
 }

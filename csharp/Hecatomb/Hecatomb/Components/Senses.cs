@@ -17,15 +17,15 @@ namespace Hecatomb
 	public class Senses : Component
 	{
 		public int Range;
-		[NonSerialized] public HashSet<Tuple<int,int,int>> Visible;
+		[NonSerialized] public HashSet<Coord> Visible;
 		[NonSerialized] private int storedZ;
 		
 		public Senses() : base()
 		{
-			Range = 16;
+			Range = 10;
 		}
 		
-		public HashSet<Tuple<int,int,int>> GetFOV()
+		public HashSet<Coord> GetFOV()
 		{
 			resetVisible();
 			int x = Entity.x;
@@ -44,12 +44,12 @@ namespace Hecatomb
 		}
 		private void resetVisible()
 		{
-			Visible = new HashSet<Tuple<int, int, int>>();
+			Visible = new HashSet<Coord>();
 		}
 		
 		private void addToVisible(int x, int y)
 		{
-			Visible.Add(new Tuple<int, int, int>(x, y, storedZ));
+			Visible.Add(new Coord(x, y, storedZ));
 		}
 	}
 }

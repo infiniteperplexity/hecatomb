@@ -42,8 +42,8 @@ namespace Hecatomb
 			e.Symbol = Symbol;
 			foreach (string t in Components)
 			{
-				
-				Component c = (Component) Activator.CreateInstance(Type.GetType("Hecatomb." + t));
+				Type T = Type.GetType("Hecatomb." + t);
+				Component c = (Component) Game.World.Entities.Spawn(Type.GetType("Hecatomb." + t));
 				c.AddToEntity(e);
 				
 			}

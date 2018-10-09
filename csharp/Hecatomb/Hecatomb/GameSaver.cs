@@ -7,22 +7,10 @@
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
-	public interface ISaveable
-	{
-		string Stringify();
-	}
-		
-	public class GameJsonWriter : JsonWriter
-	{
-	
-	    public override void WriteValue(ISaveable value)
-	    {
-	    	base.WriteValue(value.Stringify());
-	    }
-	}
 
 	/// <summary>
 	/// Description of GameSaver.
@@ -31,9 +19,12 @@ namespace Hecatomb
 	{
 		public static void Save()
 		{
-			
-			string tiles = JsonConvert.SerializeObject(Game.World.Tiles, new GameJsonWriter);
-			System.IO.File.WriteAllText(@"..\WriteText.txt", json);
+//			string tiles = JsonConvert.SerializeObject(Game.World.Tiles, new GameJsonWriter);
+//			string test = JsonConvert.SerializeObject(Game.World.Player);
+//			Debug.WriteLine(test);
+//			Player p = JsonConvert.DeserializeObject<Player>(test);
+//			Debug.WriteLine(p.Placed);
+//			System.IO.File.WriteAllText(@"..\WriteText.txt", json);
 		}
 		static void Restore()
 		{

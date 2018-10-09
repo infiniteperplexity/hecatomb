@@ -35,7 +35,7 @@ namespace Hecatomb
 		public static bool GraphicsDirty;
 		
 //		public static GameEventHandler Events;
-		public static HashSet<Tuple<int, int, int>> Visible;
+		public static HashSet<Coord> Visible;
         GraphicsDeviceManager graphics;
         SpriteBatch sprites;
         
@@ -88,13 +88,6 @@ namespace Hecatomb
 			);
 			Camera = new GameCamera();
 			Camera.Center(p.x, p.y, p.z);
-			Creature zombie = Game.World.Entities.Spawn<Creature>("Zombie");
-			zombie.Place(
-				p.x+3,
-				p.y+3,
-				World.GroundLevel(p.x+3, p.y+3)			
-			);
-			p.Minions.Add(zombie);
 			p.HandleVisibility();
 			GraphicsDirty = true;
             base.Initialize();

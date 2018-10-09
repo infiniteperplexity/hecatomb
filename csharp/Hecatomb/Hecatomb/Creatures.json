@@ -8,7 +8,8 @@
 				"Components" : {
 					"Actor" : {},
 					"Senses": {},
-					"Movement": {}
+					"Movement": {},
+					"SpellCaster": {}
 				}
 			},
 			{
