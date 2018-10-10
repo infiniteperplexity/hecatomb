@@ -74,5 +74,10 @@ namespace Hecatomb
         {
             return this.GetEnumerator();
         }
+		
+		public void Clear()
+		{
+			dict.Clear();
+		}
 	}
 }
