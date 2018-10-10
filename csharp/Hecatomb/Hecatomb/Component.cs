@@ -24,12 +24,19 @@ namespace Hecatomb
 	
 	public abstract class Component : GameEntity
 	{
-		private int EntityEID;
+		[JsonProperty] private int EntityEID;
 		[JsonIgnore] public TypedEntity Entity
 		{
 			get
 			{
-				return (TypedEntity) Game.World.Entities.Spawned[EntityEID];
+				if (EntityEID==-1)
+				{
+					return null;
+				}
+				else
+				{
+					return (TypedEntity) Game.World.Entities.Spawned[EntityEID];
+				}
 			}
 			set
 			{

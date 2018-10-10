@@ -21,10 +21,12 @@ namespace Hecatomb
 	public abstract class GameEntity
 	{
 		public int EID;
+		public string ClassName;
 		[JsonIgnore] public bool Spawned;
 
 		public GameEntity()
 		{
+			ClassName = this.GetType().Name;
 			EID = -1;
 			Spawned = false;
 		}
@@ -47,11 +49,11 @@ namespace Hecatomb
 	public abstract class TypedEntity : GameEntity
 	{
 		public string EType;
-		[JsonIgnore] public string Name;
+		public string Name;
 		// might remove this...but for testing...
-		[JsonIgnore] public char Symbol;
-		[JsonIgnore] public string FG;
-		[JsonIgnore] public string BG;
+		public char Symbol;
+		public string FG;
+		public string BG;
 		public int x {get; private set;}
 		public int y {get; private set;}
 		public int z {get; private set;}
@@ -89,7 +91,7 @@ namespace Hecatomb
 			}
 		}
 		
-		public virtual void Place(int x1, int y1, int z1)
+		public virtual void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			if (!Spawned)
 			{
@@ -103,8 +105,12 @@ namespace Hecatomb
 			y = y1;
 			z = z1;
 			Placed = true;
-			Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
+			if (fireEvent)
+			{
+				Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
+			}
 		}
+		
 		public virtual void Remove()
 		{
 			Game.World.Events.Publish(new RemoveEvent() {Entity = this, X = x, Y = y, Z = z});
@@ -117,13 +123,18 @@ namespace Hecatomb
 	
 	public class Creature : TypedEntity {
 		
-		public override void Place(int x1, int y1, int z1)
+		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			Creature e = Game.World.Creatures[x1,y1,z1];
+			
 			if (e==null)
 			{
+				if (!fireEvent)
+				{
+					Debug.Print("about to try placing {0} at {1} {2} {3} without firing an event", this, x1, y1, z1);
+				}
 				Game.World.Creatures[x1,y1,z1] = this;
-				base.Place(x1, y1, z1);
+				base.Place(x1, y1, z1, fireEvent);
 			}
 			else 
 			{
@@ -143,13 +154,13 @@ namespace Hecatomb
 	}
 	public class Feature : TypedEntity {
 
-		public override void Place(int x1, int y1, int z1)
+		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			Feature e = Game.World.Features[x1,y1,z1];
 			if (e==null)
 			{
 				Game.World.Features[x1,y1,z1] = this;
-				base.Place(x1, y1, z1);
+				base.Place(x1, y1, z1, fireEvent);
 			}
 			else 
 			{
@@ -169,13 +180,13 @@ namespace Hecatomb
 	}
 	public class Item : TypedEntity {
 
-		public override void Place(int x1, int y1, int z1)
+		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			Item e = Game.World.Items[x1,y1,z1];
 			if (e==null)
 			{
 				Game.World.Items[x1,y1,z1] = this;
-				base.Place(x1, y1, z1);
+				base.Place(x1, y1, z1, fireEvent);
 			}
 			else 
 			{
@@ -195,13 +206,13 @@ namespace Hecatomb
 	}
 	public class TaskEntity : TypedEntity {
 
-		public override void Place(int x1, int y1, int z1)
+		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			TaskEntity e = Game.World.Tasks[x1,y1,z1];
 			if (e==null)
 			{
 				Game.World.Tasks[x1,y1,z1] = this;
-				base.Place(x1, y1, z1);
+				base.Place(x1, y1, z1, fireEvent);
 			}
 			else 
 			{

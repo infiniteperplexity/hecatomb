@@ -23,7 +23,14 @@ namespace Hecatomb
 		{
 			get
 			{
-				return (TaskEntity) Game.World.Entities.Spawned[TaskEID];
+				if (TaskEID==-1)
+				{
+					return null;
+				}
+				else
+				{
+					return (TaskEntity) Game.World.Entities.Spawned[TaskEID];
+				}
 			}
 			set
 			{
@@ -33,6 +40,7 @@ namespace Hecatomb
 		
 		public Minion(): base()
 		{
+			TaskEID = -1;
 			Required = new string[] {"Actor"};
 		}
 	}

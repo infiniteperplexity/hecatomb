@@ -24,7 +24,14 @@ namespace Hecatomb
 		[JsonIgnore] TypedEntity Target {
 			get
 			{
-				return (TypedEntity) Game.World.Entities.Spawned[TargetEID];
+				if (TargetEID==-1)
+				{
+					return null;
+				}
+				else 
+				{
+					return (TypedEntity) Game.World.Entities.Spawned[TargetEID];
+				}
 			}
 			set
 			{
@@ -33,7 +40,7 @@ namespace Hecatomb
 		}
 		public Actor() : base()
 		{
-			
+			TargetEID = -1;
 		}
 		public void Act()
 		{

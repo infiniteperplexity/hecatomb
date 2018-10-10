@@ -7,7 +7,9 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -17,8 +19,8 @@ namespace Hecatomb
 	public class Senses : Component
 	{
 		public int Range;
-		[NonSerialized] public HashSet<Coord> Visible;
-		[NonSerialized] private int storedZ;
+		[JsonIgnore] public HashSet<Coord> Visible;
+		[JsonIgnore] private int storedZ;
 		
 		public Senses() : base()
 		{

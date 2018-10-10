@@ -158,7 +158,8 @@ namespace Hecatomb
 		
 		public void RestoreGameCommand()
 		{
-			Game.World.Parse("json");
+			string json = System.IO.File.ReadAllText(@"..\GameWorld.json");
+			Game.World.Parse(json);
 		}
 	}
 }

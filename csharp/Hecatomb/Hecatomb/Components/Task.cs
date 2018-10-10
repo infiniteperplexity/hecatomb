@@ -9,15 +9,16 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
 	public abstract class Task : Component, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
 	{
 		public Creature Worker;
-		[NonSerialized] public int WorkRange;
-		[NonSerialized] public int LaborCost;
-		[NonSerialized] public string MenuName;
+		[JsonIgnore] public int WorkRange;
+		[JsonIgnore] public int LaborCost;
+		[JsonIgnore] public string MenuName;
 		public int Labor;
 		
 		public Task() : base()

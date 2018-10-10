@@ -37,15 +37,14 @@ namespace Hecatomb
 				
 				player = Player.EID,
 				turns = Turns,
-				entities = Entities,
+				entities = Entities.Spawned,
 				explored = Explored,
 				events = Events.StringifyListeners(),
 				tiles = terrainFIDs
 				
 			};
 			var json = JsonConvert.SerializeObject(jsonready, Formatting.Indented);
-			Parse(json);
-			//System.IO.File.WriteAllText(@"..\GameWorld.json", json);
+			System.IO.File.WriteAllText(@"..\GameWorld.json", json);
 			return json;
 		}
 		
@@ -54,15 +53,15 @@ namespace Hecatomb
 		{
 			JObject parsed = (JObject) JsonConvert.DeserializeObject(json);
 			// *** Terrains and Covers ***
-			int[,,] tiles = parsed.GetValue("tiles").ToObject<int[,,]>();
+			int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
 			for (int i=0; i<Constants.WIDTH; i++)
 			{
 				for (int j=0; j<Constants.HEIGHT; j++)
 				{
 					for (int k=0; k<Constants.DEPTH; k++)
 					{
-						// piggyback covers in here too
-//						Tiles[i,j,k] = (Terrain) FlyWeight.FlyWeightTypes[typeof(Terrain)][tiles[i,j,k]];
+//						 piggyback covers in here too
+						Tiles[i,j,k] = (Terrain) FlyWeight.FlyWeightTypes[typeof(Terrain)][tiles[i,j,k]];
 					}
 				}
 			}
@@ -78,34 +77,23 @@ namespace Hecatomb
 			Features.Clear();
 			Items.Clear();
 			Tasks.Clear();
-			int pid = parsed.GetValue("player").Value<int>();
-			foreach (var child in parsed.GetValue("entities").Children())
+			int pid = (int) parsed["player"];
+			Entities.MaxEID = -1;
+			foreach (var child in parsed["entities"].Values())
 			{
 				// will this handle Player?  It's such a terrible way I do that...
-				string t = child.Value<string>("SomeKindaType");
+				string t = (string) child["ClassName"];
 				Type T = Type.GetType("Hecatomb." + t);
 				GameEntity ge = (GameEntity) child.ToObject(T);
 				Entities.Spawned[ge.EID] = ge;
-				if (T==typeof(Creature) || ge.EID==pid)
+				Entities.MaxEID = Math.Max(Entities.MaxEID, ge.EID);
+				ge.Spawned = true;
+				if (ge is TypedEntity)
 				{
-					Creature cr = (Creature) ge;
-					Creatures[cr.x, cr.y, cr.z] = cr;
+					Coord c = child.ToObject<Coord>();
+					TypedEntity te = (TypedEntity) ge;
+					te.Place(c.x, c.y, c.z, fireEvent: false);
 				}
-				else if (T==typeof(Feature))
-				{
-					Feature fr = (Feature) ge;
-					Features[fr.x, fr.y, fr.z] = fr;
-				}
-				else if (T==typeof(Item))
-				{
-					Item it = (Item) ge;
-					Items[it.x, it.y, it.z] = it;
-				}
-				else if (T==typeof(TaskEntity))
-				{
-					TaskEntity te = (TaskEntity) ge;
-					Tasks[te.x, te.y, te.z] = te;
-				}			
 			}
 			// *** Player ***
 			
