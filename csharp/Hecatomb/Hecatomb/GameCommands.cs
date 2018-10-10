@@ -119,6 +119,9 @@ namespace Hecatomb
 		private void moveCameraVertical(int dz)
 		{
 			Game.Camera.z = Math.Max(Math.Min(Game.Camera.z+dz,Constants.DEPTH-2),1);
+			Game.MainPanel.Dirty = true;
+			Game.MenuPanel.Dirty = true;
+			Game.StatusPanel.Dirty = true;
 		}
 		private void moveCameraHorizontal(int dx, int dy)
 		{
@@ -127,6 +130,9 @@ namespace Hecatomb
 			int yhalf = c.Height/2;
 			c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Constants.WIDTH-c.Width);
 			c.YOffset = Math.Min(Math.Max(0, c.YOffset+dy), Constants.HEIGHT-c.Height);
+			Game.MainPanel.Dirty = true;
+			Game.MenuPanel.Dirty = true;
+			Game.StatusPanel.Dirty = true;
 		}
 		
 		public void ChooseTask()
@@ -135,7 +141,7 @@ namespace Hecatomb
 				Game.World.Entities.Mock<DigTask>()
 			};
 			Game.Controls = new MenuChoiceControls("Choose a task:", choices);
-			Game.GraphicsDirty = true;
+			Game.MenuPanel.Dirty = true;
 		}
 		
 		public void ChooseSpell()
@@ -148,7 +154,7 @@ namespace Hecatomb
 				choices.Add(s);
 			}
 			Game.Controls = new MenuChoiceControls("Choose a task:", choices);
-			Game.GraphicsDirty = true;
+			Game.MenuPanel.Dirty = true;
 		}
 		
 		public void SaveGameCommand()

@@ -31,7 +31,9 @@ namespace Hecatomb
 		public SelectZoneControls(ISelectsZone i)
 		{
 			Selector = i;
-			MenuText = new List<string>() {
+			KeyMap[Keys.Escape] = Back;
+			Squares = new List<Coord>();
+			MenuTop = new List<string>() {
      			"**Esc: Cancel.**",
       			"Select first corner with keys or mouse.",
       			" ",
@@ -42,11 +44,10 @@ namespace Hecatomb
       			"Click / Space: Select.",
       			"Enter: Toggle Pause."
 			};
-			TextColors = new Dictionary<Tuple<int, int>, string>() {
+			TopColors = new Dictionary<Tuple<int, int>, string>() {
 				{new Tuple<int, int>(0,0), "orange"},
 				{new Tuple<int, int>(1,0), "yellow"}
 			};
-			Squares = new List<Coord>();
 		}
 		
 		public override void HoverTile(Coord c)
@@ -55,12 +56,14 @@ namespace Hecatomb
 			{
 				base.HoverTile(c);
 				Selector.TileHover(c);
+				Game.World.ShowTileDetails(c);
 			}
 			else
 			{
 				base.HoverTile(c);
 				DrawSquareZone(c);
 				Selector.TileHover(c, Squares);
+				Game.World.ShowTileDetails(c);
 			}
 		}
 		
@@ -95,7 +98,6 @@ namespace Hecatomb
 					h.Place(s.x, s.y, s.z);
 				}
 			}
-			Selector.TileHover(c);
 		}
 		
 		public override void ClickTile(Coord c)
@@ -111,14 +113,27 @@ namespace Hecatomb
 		}
 		public void SelectFirstCorner(Coord c)
 		{
-			Debug.WriteLine("flag 1");
 			FirstCorner = c;
-			MenuText[1] = "Select second corner with keys or mouse.";
-			KeyMap[Keys.Escape] = () => {
-				FirstCorner = default(Coord);
-				MenuText[1] = "Select first corner with keys or mouse.";
-			};
-			Game.GraphicsDirty = true;
+			MenuTop[1] = "Select second corner with keys or mouse.";
+			KeyMap[Keys.Escape] = BackToFirstSquare;
+			Game.MenuPanel.Dirty = true;
+		}
+		
+		private void BackToFirstSquare()
+		{
+			FirstCorner = default(Coord);
+			MenuTop[1] = "Select first corner with keys or mouse.";
+			foreach (Coord s in Squares)
+			{
+				Particle p = Game.MainPanel.Particles[s.x, s.y, s.z];
+				if (p!=null && p is Highlight)
+				{
+					p.Remove();
+				}
+			}
+			Game.MenuPanel.Dirty = true;
+			Game.MainPanel.Dirty = true;
+			KeyMap[Keys.Escape] = Back;
 		}
 		
 		public void SelectSecondCorner(Coord c)

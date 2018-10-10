@@ -60,18 +60,19 @@ namespace Hecatomb
 		{
 			var Commands = Game.Commands;
 			KeyMap[Keys.Space] = Commands.Wait;
-			MenuText = new List<string>() {
+			KeyMap[Keys.Escape] = Reset;
+			MenuTop = new List<string>() {
 				"**Esc: Cancel**.",
 				header
 		    };
-			TextColors = new Dictionary<Tuple<int, int>, string>() {
+			TopColors = new Dictionary<Tuple<int, int>, string>() {
 				{new Tuple<int, int>(0, 0), "orange"},
 				{new Tuple<int, int>(1, 0), "yellow"}
 			};
 			for (int i=0; i<choices.Count; i++)
 			{
 				KeyMap[Alphabet[i]] = choices[i].ChooseFromMenu;
-				MenuText.Add(alphabet[i] + ") "+choices[i].ListOnMenu());
+				MenuTop.Add(alphabet[i] + ") "+choices[i].ListOnMenu());
 			}
 		}
 	}

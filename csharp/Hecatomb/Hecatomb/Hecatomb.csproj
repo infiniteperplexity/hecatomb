@@ -65,6 +65,8 @@
     <Compile Include="GUI\GameCamera.cs" />
     <Compile Include="GUI\GameColors.cs" />
     <Compile Include="GUI\GamePanels.cs" />
+    <Compile Include="GUI\MainPanel.cs" />
+    <Compile Include="GUI\MenuPanel.cs" />
     <Compile Include="GUI\Particles.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Spell.cs" />

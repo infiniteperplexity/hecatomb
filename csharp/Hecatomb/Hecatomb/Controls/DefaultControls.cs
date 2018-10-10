@@ -32,7 +32,7 @@ namespace Hecatomb
 			KeyMap[Keys.S] = Commands.SaveGameCommand;
 			KeyMap[Keys.R] = Commands.RestoreGameCommand;
 			
-			MenuText = new List<string>() {
+			MenuTop = new List<string>() {
 				"Esc: System view.",
 				"Avatar mode (Tab: Navigation mode)",
 				" ",
@@ -51,13 +51,19 @@ namespace Hecatomb
 			    "PageUp/Down: Scroll messages.",
 			    "A: Achievements, /: Toggle tutorial."
 			};
-			TextColors = new Dictionary<Tuple<int, int>, string>() {
+			TopColors = new Dictionary<Tuple<int, int>, string>() {
 				{new Tuple<int, int>(1,0), "yellow"}
 			};
 		}
 		
 		public override void ClickTile(Coord c)
 		{
+		}
+		
+		public override void HoverTile(Coord c)
+		{
+			base.HoverTile(c);
+			Game.World.ShowTileDetails(c);
 		}
 	}
 }

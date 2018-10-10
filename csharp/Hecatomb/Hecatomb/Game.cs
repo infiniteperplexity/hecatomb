@@ -31,7 +31,6 @@ namespace Hecatomb
 		public static ControlContext LastControls;
 		public static ControlContext Controls;
 		public static ControlContext DefaultControls;
-		public static bool GraphicsDirty;
 		
 //		public static GameEventHandler Events;
 		public static HashSet<Coord> Visible;
@@ -87,7 +86,6 @@ namespace Hecatomb
 			Camera = new GameCamera();
 			Camera.Center(p.x, p.y, p.z);
 			p.HandleVisibility();
-			GraphicsDirty = true;
 			// proved it's possible to deserialize from method names
 //			Debug.WriteLine("check this out...");
 //			var f = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), World.Player, "OnPlace");
@@ -107,6 +105,8 @@ namespace Hecatomb
             MainPanel = new MainGamePanel(graphics, sprites);
             MenuPanel = new MenuGamePanel(graphics, sprites);
             StatusPanel = new StatusGamePanel(graphics, sprites);
+            MenuPanel.Initialize();
+            StatusPanel.Initialize();
             int Size = MainPanel.Size;
             int Padding = MainPanel.Padding;
             graphics.PreferredBackBufferWidth = Padding+(2+Camera.Width)*(Size+Padding)+MenuPanel.Width;  // set this value to the desired width of your window
@@ -151,20 +151,27 @@ namespace Hecatomb
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-        	if (GraphicsDirty)
+        	sprites.Begin();
+        	if (MainPanel.Dirty)
         	{
-            	GraphicsDevice.Clear(Color.Black);
-            	sprites.Begin();
-            	MainPanel.DrawContent();
-				MenuPanel.DrawContent();
-				StatusPanel.DrawContent();
-				sprites.End();
-				GraphicsDirty = false;
-        	} else {
-        		sprites.Begin();
-        		MainPanel.DrawDirty();
-        		sprites.End();
+        		MainPanel.DrawContent();
+        		MainPanel.Dirty = false;
         	}
+        	else
+        	{
+        		MainPanel.DrawDirty();
+        	}
+        	if (MenuPanel.Dirty)
+        	{
+        		MenuPanel.DrawContent();
+        		MenuPanel.Dirty = false;
+        	}
+        	if (StatusPanel.Dirty)
+        	{
+        		StatusPanel.DrawContent();
+        		StatusPanel.Dirty = false;
+        	}
+        	sprites.End();
            	base.Draw(gameTime);
         }
     }

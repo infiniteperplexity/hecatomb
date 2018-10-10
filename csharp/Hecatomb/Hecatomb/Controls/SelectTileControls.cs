@@ -30,7 +30,7 @@ namespace Hecatomb
 		{
 			Selector = i;
 			KeyMap[Keys.Escape] = Back;
-			MenuText = new List<string>() {
+			MenuTop = new List<string>() {
      			"**Esc: Cancel.**",
       			"Select a tile with keys or mouse.",
       			" ",
@@ -41,7 +41,7 @@ namespace Hecatomb
       			"Click / Space: Select.",
       			"Enter: Toggle Pause."
 			};
-			TextColors = new Dictionary<Tuple<int, int>, string>() {
+			TopColors = new Dictionary<Tuple<int, int>, string>() {
 				{new Tuple<int, int>(0,0), "orange"},
 				{new Tuple<int, int>(1,0), "yellow"}
 			};

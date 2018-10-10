@@ -139,5 +139,18 @@ namespace Hecatomb
 			return 1;
 		}
 
+		public void ShowTileDetails(Coord c)
+		{
+			Game.Controls.MenuBottom = new List<string>()
+			{
+				"This here is some detail text.",
+				String.Format("It should tell us something about the tile at {0} {1} {2}", c.x, c.y, c.z)
+			};
+			Game.Controls.BottomColors = new Dictionary<Tuple<int, int>, string>()
+			{
+				{new Tuple<int, int>(1,0), "cyan"}
+			};
+			Game.MenuPanel.Dirty = true;
+		}
 	}
 }

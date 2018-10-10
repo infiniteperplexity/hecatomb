@@ -110,7 +110,9 @@ namespace Hecatomb
 			Player = (Player) Entities.Spawned[pid];
 			Explored = parsed.GetValue("explored").ToObject<HashSet<Coord>>();
 			Player.HandleVisibility();
-			Game.GraphicsDirty = true;
+			Game.MainPanel.Dirty = true;
+			Game.MenuPanel.Dirty = true;
+			Game.StatusPanel.Dirty = true;
 			// *** Turns ***
 			Turns = parsed.GetValue("turns").ToObject<TurnHandler>();
 			// *** Event Listeners ***

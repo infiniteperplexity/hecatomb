@@ -34,7 +34,9 @@ namespace Hecatomb
 		{
 			Player p = Game.World.Player;
 			p.Acted = false;
-			Game.GraphicsDirty = true;
+			Game.MainPanel.Dirty = true;
+			Game.MenuPanel.Dirty = true;
+			Game.StatusPanel.Dirty = true;
 			Turn+=1;
 			Creature[] actors = Game.World.Creatures.ToArray();
 			foreach (Creature m in p.GetMinions())

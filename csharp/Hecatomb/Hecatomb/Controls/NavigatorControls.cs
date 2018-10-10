@@ -42,7 +42,7 @@ namespace Hecatomb
 			KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
 			KeyMap[Keys.Space] = Commands.Wait;
 			
-			MenuText = new List<string>() {
+			MenuTop = new List<string>() {
 				"Esc: System view.",
 				"Avatar mode (Tab: Navigation mode)",
 				" ",
@@ -61,7 +61,7 @@ namespace Hecatomb
 			    "PageUp/Down: Scroll messages.",
 			    "A: Achievements, /: Toggle tutorial."
 			};
-			TextColors = new Dictionary<Tuple<int, int>, string>() {
+			TopColors = new Dictionary<Tuple<int, int>, string>() {
 				{new Tuple<int, int>(1,0), "yellow"}
 			};
 		}

@@ -23,8 +23,12 @@ namespace Hecatomb
         static Highlight Cursor = new Highlight("cyan");
         public const int Throttle = 125;
         public Dictionary <Keys, Action> KeyMap;
-        public List<string> MenuText;
-        public Dictionary<Tuple<int, int>, string> TextColors;
+        public List<string> MenuTop;
+        public Dictionary<Tuple<int, int>, string> TopColors;
+        public List<string> MenuMiddle;
+        public Dictionary<Tuple<int, int>, string> MiddleColors;
+        public List<string> MenuBottom;
+        public Dictionary<Tuple<int, int>, string> BottomColors;
         public Action<Coord> OnTileClick;
         public Action<Coord> OnTileHover;
         public Action<int, int> OnMenuHover;
@@ -37,21 +41,24 @@ namespace Hecatomb
         {
         	Game.LastControls = Game.Controls;
         	Game.Controls = c;
-        	Game.GraphicsDirty = true;
+        	Game.MenuPanel.Dirty = true;
+        	Game.MainPanel.Dirty = true;
         }
         
         public void Reset()
         {
         	Game.LastControls = Game.DefaultControls;
         	Game.Controls = Game.DefaultControls;
-        	Game.GraphicsDirty = true;
+        	Game.MenuPanel.Dirty = true;
+        	Game.MainPanel.Dirty = true;
         }
         
         public virtual void Back()
         {
         	Game.Controls = Game.LastControls;
         	Game.LastControls = Game.DefaultControls;
-        	Game.GraphicsDirty = true;
+        	Game.MenuPanel.Dirty = true;
+        	Game.MainPanel.Dirty = true;
         }
         
         
@@ -153,8 +160,12 @@ namespace Hecatomb
 		public ControlContext()
 		{
 			KeyMap = new Dictionary<Keys, Action>();
-			MenuText = new List<string>();
-			TextColors = new Dictionary<Tuple<int, int>, string>();
+			MenuTop = new List<string>();
+			TopColors = new Dictionary<Tuple<int, int>, string>();
+			MenuMiddle = new List<string>();
+			MiddleColors = new Dictionary<Tuple<int, int>, string>();
+			MenuBottom = new List<string>();
+			BottomColors = new Dictionary<Tuple<int, int>, string>();
 			OnTileClick = ClickTile;
 			OnTileHover = HoverTile;
 			OnMenuClick = MenuClick;
