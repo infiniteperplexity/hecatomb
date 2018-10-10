@@ -15,7 +15,32 @@ namespace Hecatomb
 {
 	public abstract class Task : Component, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
 	{
-		public Creature Worker;
+		public int WorkerEID;
+		[JsonIgnore] public Creature Worker
+		{
+			get
+			{
+				if (WorkerEID==-1)
+				{
+					return null;
+				}
+				else
+				{
+					return (Creature) Game.World.Entities.Spawned[WorkerEID];
+				}
+			}
+			set
+			{
+				if (value==null)
+				{
+					WorkerEID = -1;
+				}
+				else
+				{
+					WorkerEID = value.EID;
+				}
+			}
+		}
 		[JsonIgnore] public int WorkRange;
 		[JsonIgnore] public int LaborCost;
 		[JsonIgnore] public string MenuName;
@@ -23,9 +48,19 @@ namespace Hecatomb
 		
 		public Task() : base()
 		{
+			WorkerEID = -1;
 			WorkRange = 1;
 			LaborCost = 10;
 			Labor = LaborCost;
+		}
+		
+		public virtual void Standardize()
+		{
+			Type taskType = this.GetType();
+			Task task = (Task) Activator.CreateInstance(taskType);
+			WorkRange = task.WorkRange;
+			LaborCost = task.LaborCost;
+			MenuName = task.MenuName;
 		}
 
 		public virtual void Act()

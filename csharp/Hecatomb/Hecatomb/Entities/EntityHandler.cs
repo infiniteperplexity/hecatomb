@@ -52,7 +52,7 @@ namespace Hecatomb
 			T t = Spawn<T>();
 			t.Symbol = default(char);
 			t.FG = "white";
-			t.EType = s;
+			t.TypeName = s;
 			t.Components = new Dictionary<string, int>();
 			if (EntityType.Types.ContainsKey(s))
 			{

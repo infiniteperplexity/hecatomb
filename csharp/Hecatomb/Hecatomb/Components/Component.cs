@@ -40,7 +40,14 @@ namespace Hecatomb
 			}
 			set
 			{
-				EntityEID = value.EID;
+				if (value==null)
+				{
+					EntityEID = -1;
+				}
+				else
+				{
+					EntityEID = value.EID;
+				}
 			}
 		}
 		[JsonIgnore] public string[] Required;

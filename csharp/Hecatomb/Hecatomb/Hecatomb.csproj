@@ -42,6 +42,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\Component.cs" />
+    <Compile Include="Entities\EntityHandler.cs" />
+    <Compile Include="Entities\EntityType.cs" />
+    <Compile Include="Entities\TypedEntity.cs" />
+    <Compile Include="GameRandom.cs" />
     <Compile Include="GameWorldSaveParse.cs" />
     <Compile Include="Components\DigTask.cs" />
     <Compile Include="Components\SpellCaster.cs" />
@@ -52,25 +57,22 @@
     <Compile Include="Controls\SelectBoxControls.cs" />
     <Compile Include="Controls\SelectZoneControls.cs" />
     <Compile Include="Controls\SelectTileControls.cs" />
-    <Compile Include="EntityHandler.cs" />
-    <Compile Include="GamePanels.cs" />
     <Compile Include="Components\Minion.cs" />
     <Compile Include="Components\Task.cs" />
     <Compile Include="FlyWeight.cs" />
-    <Compile Include="FontHandler.cs" />
     <Compile Include="GameEvent.cs" />
-    <Compile Include="Particles.cs" />
+    <Compile Include="GUI\FontHandler.cs" />
+    <Compile Include="GUI\GameCamera.cs" />
+    <Compile Include="GUI\GameColors.cs" />
+    <Compile Include="GUI\GamePanels.cs" />
+    <Compile Include="GUI\Particles.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Spell.cs" />
     <Compile Include="Tiles.cs" />
-    <Compile Include="GameCamera.cs" />
-    <Compile Include="GameColors.cs" />
-    <Compile Include="Component.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Components\Movement.cs" />
     <Compile Include="Components\Senses.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="EntityType.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FastNoise.cs" />
     <Compile Include="GameCommands.cs" />
@@ -78,7 +80,6 @@
     <Compile Include="SparseArray3D.cs" />
     <Compile Include="Terrain.cs" />
     <Compile Include="TurnHandler.cs" />
-    <Compile Include="TypedEntity.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -104,17 +105,19 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
-    <None Include="Creatures.json">
+    <None Include="Content\Creatures.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Features.json">
+    <None Include="Content\Features.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
+    <None Include="Entities\packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components" />
     <Folder Include="Controls" />
+    <Folder Include="Entities" />
+    <Folder Include="GUI" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

@@ -34,7 +34,14 @@ namespace Hecatomb
 			}
 			set
 			{
-				TaskEID = value.EID;
+				if (value==null)
+				{
+					TaskEID = -1;
+				}
+				else
+				{
+					TaskEID = value.EID;
+				}
 			}
 		}
 		

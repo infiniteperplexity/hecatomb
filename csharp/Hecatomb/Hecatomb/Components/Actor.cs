@@ -35,7 +35,14 @@ namespace Hecatomb
 			}
 			set
 			{
-				TargetEID = value.EID;
+				if (value==null)
+				{
+					TargetEID = -1;
+				}
+				else
+				{
+					TargetEID = value.EID;
+				}
 			}
 		}
 		public Actor() : base()
@@ -142,7 +149,7 @@ namespace Hecatomb
 			{
 				return;
 			}
-			int r = Game.Random.Next(4);
+			int r = Game.World.Random.Next(4);
 			Coord d = Movement.Directions4[r];
 			int x1 = Entity.x + d.x;
 			int y1 = Entity.y + d.y;

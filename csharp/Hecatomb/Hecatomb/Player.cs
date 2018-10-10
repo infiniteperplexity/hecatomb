@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -18,7 +19,7 @@ namespace Hecatomb
 	/// </summary>
 	public class Player : Creature
 	{
-		private List<int> MinionEIDs;
+		[JsonProperty] private List<int> MinionEIDs;
 		
 		public bool Acted;
 		public Player() : base()

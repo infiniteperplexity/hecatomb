@@ -48,12 +48,12 @@ namespace Hecatomb
 	}
 	public abstract class TypedEntity : GameEntity
 	{
-		public string EType;
-		public string Name;
+		public string TypeName;
+		[JsonIgnore] public string Name;
 		// might remove this...but for testing...
-		public char Symbol;
-		public string FG;
-		public string BG;
+		[JsonIgnore] public char Symbol;
+		[JsonIgnore] public string FG;
+		[JsonIgnore] public string BG;
 		public int x {get; private set;}
 		public int y {get; private set;}
 		public int z {get; private set;}
@@ -139,7 +139,7 @@ namespace Hecatomb
 			else 
 			{
 				throw new InvalidOperationException(String.Format(
-					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
 				));
 			}
 		}
@@ -165,7 +165,7 @@ namespace Hecatomb
 			else 
 			{
 				throw new InvalidOperationException(String.Format(
-					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
 				));
 			}
 		}
@@ -191,7 +191,7 @@ namespace Hecatomb
 			else 
 			{
 				throw new InvalidOperationException(String.Format(
-					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
 				));
 			}
 		}
@@ -217,7 +217,7 @@ namespace Hecatomb
 			else 
 			{
 				throw new InvalidOperationException(String.Format(
-					"Cannot place {0} at {1} {2} {3} because {4} is already there.", EType, x1, y1, z1, e.EType
+					"Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
 				));
 			}
 		}

@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-//https://codereview.stackexchange.com/questions/1002/mapping-expandoobject-to-another-object-type
 
 namespace Hecatomb
 {
@@ -23,6 +22,7 @@ namespace Hecatomb
 		public string Name;
 		public string[] Components;
 		public string FG;
+		public string BG;
 		public char Symbol;
 		/// <summary>
 		/// Description of EntityType.
@@ -35,10 +35,18 @@ namespace Hecatomb
 			FG = "White";
 		}
 			
+		public void Standardize(TypedEntity e)
+		{
+			e.Name = Name;
+			e.FG = FG;
+			e.Symbol = Symbol;
+			e.BG = BG;
+		}
 		public void Typify(TypedEntity e)
 		{
 			e.Name = Name;
 			e.FG = FG;
+			e.BG = BG;
 			e.Symbol = Symbol;
 			foreach (string t in Components)
 			{
@@ -55,7 +63,7 @@ namespace Hecatomb
 			// dynamically load creature types from JSON
 			string f, json;
 			JObject obj;
-			f = "Creatures.json";
+			f = @"Content/Creatures.json";
 			json = File.ReadAllText(f);
 			obj = JObject.Parse(json);
 			foreach (var t in obj["Types"])
@@ -73,7 +81,7 @@ namespace Hecatomb
 				}
 				et.Components = Components.ToArray<string>();
 			}
-			f = "Features.json";
+			f = @"Content/Features.json";
 			json = File.ReadAllText(f);
 			obj = JObject.Parse(json);
 			foreach (var t in obj["Types"])

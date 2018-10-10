@@ -27,7 +27,7 @@ namespace Hecatomb
 			KeyMap[Keys.OemComma] = Commands.MoveUpCommand;
 			KeyMap[Keys.OemPeriod] = Commands.MoveDownCommand;
 			KeyMap[Keys.Space] = Commands.Wait;
-			KeyMap[Keys.T] = Commands.ChooseTask;
+			KeyMap[Keys.J] = Commands.ChooseTask;
 			KeyMap[Keys.Z] = Commands.ChooseSpell;
 			KeyMap[Keys.S] = Commands.SaveGameCommand;
 			KeyMap[Keys.R] = Commands.RestoreGameCommand;

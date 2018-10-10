@@ -28,6 +28,7 @@ namespace Hecatomb
 		public GameEventHandler Events;
 		public EntityHandler Entities;
 		public Player Player;
+		public GameRandom Random;
 		
 		public FastNoise ElevationNoise;
 		public FastNoise VegetationNoise;
@@ -36,8 +37,9 @@ namespace Hecatomb
 		
 		public GameWorld() {}
 		
-		public void Initialize()
+		public void Initialize(int seed)
 		{
+			Random = new GameRandom(seed);
 			Entities = new EntityHandler();
 			int WIDTH = Constants.WIDTH;
 			int HEIGHT = Constants.HEIGHT;
@@ -46,8 +48,8 @@ namespace Hecatomb
 			float hscale = 2f;
 			float vscale = 5f;
 			Events = new GameEventHandler();
-			ElevationNoise = new FastNoise(seed: Game.Random.Next(1024));
-			VegetationNoise = new FastNoise(seed: Game.Random.Next(1024));
+			ElevationNoise = new FastNoise(seed: Random.Next(1024));
+			VegetationNoise = new FastNoise(seed: Random.Next(1024));
 			Tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
 			Creatures = new SparseArray3D<Creature>(WIDTH, HEIGHT, DEPTH);
 			Features = new SparseArray3D<Feature>(WIDTH, HEIGHT, DEPTH);
@@ -93,7 +95,7 @@ namespace Hecatomb
 						float plants = vscale*VegetationNoise.GetSimplexFractal(hscale*i,hscale*j);
 						if (plants>1.0f)
 						{
-							if (Game.Random.Next(2)==1)
+							if (Random.Next(2)==1)
 							{
 								Feature tree = Entities.Spawn<Feature>("Tree");
 								tree.Place(i, j, k);
@@ -101,7 +103,7 @@ namespace Hecatomb
 						}
 						else
 						{
-							if (Game.Random.Next(50)==0)
+							if (Random.Next(50)==0)
 							{
 								Feature grave = Entities.Spawn<Feature>("Grave");
 								grave.Place(i, j, k);

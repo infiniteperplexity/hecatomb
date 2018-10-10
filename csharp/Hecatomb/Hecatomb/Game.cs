@@ -22,7 +22,6 @@ namespace Hecatomb
 		public static GameCommands Commands;
 		public static GameColors Colors;
 		public static GameCamera Camera;
-		public static Random Random;
 		public static ContentManager MyContentManager;
 		public static Dictionary<string, object> Caches;
 		public static MainGamePanel MainPanel;
@@ -72,10 +71,9 @@ namespace Hecatomb
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
-			Random = new Random();
 			Colors = new GameColors();
 			World = new GameWorld();
-			World.Initialize();
+			World.Initialize(System.DateTime.Now.Millisecond);
 			Commands = new GameCommands();
 			DefaultControls = new DefaultControls();
 			Controls = DefaultControls;

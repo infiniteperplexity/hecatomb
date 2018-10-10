@@ -34,7 +34,7 @@ namespace Hecatomb
 			}
 			var jsonready = new
 			{
-				
+				random = Random,
 				player = Player.EID,
 				turns = Turns,
 				entities = Entities.Spawned,
@@ -45,6 +45,7 @@ namespace Hecatomb
 			};
 			var json = JsonConvert.SerializeObject(jsonready, Formatting.Indented);
 			System.IO.File.WriteAllText(@"..\GameWorld.json", json);
+			Random.Verify();
 			return json;
 		}
 		
@@ -52,6 +53,9 @@ namespace Hecatomb
 			
 		{
 			JObject parsed = (JObject) JsonConvert.DeserializeObject(json);
+			// *** Random Seed ***
+			Random = parsed["random"].ToObject<GameRandom>();
+			Random.Initialize();
 			// *** Terrains and Covers ***
 			int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
 			for (int i=0; i<Constants.WIDTH; i++)
@@ -92,7 +96,13 @@ namespace Hecatomb
 				{
 					Coord c = child.ToObject<Coord>();
 					TypedEntity te = (TypedEntity) ge;
+					EntityType.Types[te.TypeName].Standardize(te);
 					te.Place(c.x, c.y, c.z, fireEvent: false);
+				}
+				else if (ge is Task)
+				{
+					Task task = (Task) ge;
+					task.Standardize();
 				}
 			}
 			// *** Player ***
@@ -115,12 +125,7 @@ namespace Hecatomb
 					Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(T, Entities.Spawned[eid], listeners[eid]);
 				}
 			}
-			Debug.WriteLine("What hath we wrought?");
-//			string j = System.IO.File.ReadAllText(@"..\GameWorld.json");
-//			var jobj = JsonConvert.DeserializeObject(j);
-			
-//			GameWorld parsed = new GameWorld();
-			//return this;
+			Random.Verify();
 		}
 	}
 }
