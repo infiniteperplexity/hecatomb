@@ -65,10 +65,7 @@ namespace Hecatomb
 				"**Esc: Cancel**.",
 				header
 		    };
-			TopColors = new Dictionary<Tuple<int, int>, string>() {
-				{new Tuple<int, int>(0, 0), "orange"},
-				{new Tuple<int, int>(1, 0), "yellow"}
-			};
+			TopColors = new TextColors(0, "orange", 1, "yellow");
 			for (int i=0; i<choices.Count; i++)
 			{
 				KeyMap[Alphabet[i]] = choices[i].ChooseFromMenu;

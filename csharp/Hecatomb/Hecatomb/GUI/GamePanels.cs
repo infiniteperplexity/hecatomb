@@ -43,17 +43,17 @@ namespace Hecatomb
 		public int Height;
 		public int Size;
 		public int Spacing;
-		public Dictionary<Tuple<int, int>, string> nocolors;
+		public TextColors nocolors;
 		public TextPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
 			Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
-			nocolors = new Dictionary<Tuple<int, int>, string>();
+			nocolors = new TextColors();
 		}
 		public void DrawLines(List<string> lines)
 		{
 			DrawLines(lines, nocolors);
 		}
-		public void DrawLines(List<string> lines, Dictionary<Tuple<int, int>, string> fgs)
+		public void DrawLines(List<string> lines, TextColors fgs)
 		{
 			Vector2 v;
 			string[] tokens;
@@ -62,17 +62,13 @@ namespace Hecatomb
 			for (int i=0; i<lines.Count; i++)
 			{
 				int totalWidth = 0;
-				Color fg = Color.White;
-				Color bg = Color.White;
+				string fg = "white";
+//				string bg = "white";
 				v = new Vector2(X0, Y0 + p*Size);
 				tokens = lines[i].Split();
 				for (int j=0; j<tokens.Length; j++)
 				{
-					var ij = new Tuple<int, int>(i, j);
-					if (fgs.ContainsKey(ij))
-					{
-						fg = Game.Colors[fgs[ij]];
-					}
+					fg = fgs[i, j] ?? fg;
 					m = Spacing + (int) Font.MeasureString(tokens[j]).X;
 					if (j>0 && totalWidth+m >= Width-Size)
 					{
@@ -80,7 +76,7 @@ namespace Hecatomb
 						totalWidth = 0;
 					}
 					v = new Vector2(X0 + totalWidth, Y0 + p*Size);
-					Sprites.DrawString(Font, tokens[j], v, fg);
+					Sprites.DrawString(Font, tokens[j], v, Game.Colors[fg]);
 					totalWidth = totalWidth + m;
 				}
 				p+=1;

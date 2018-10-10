@@ -78,11 +78,17 @@ namespace Hecatomb
 		
 		public override void TileHover(Coord c)
 		{
-			Debug.Print("Dig out tiles starting at {0} {1} {2}", c.x, c.y, c.z);
+			var co = Game.Controls;
+			co.MenuMiddle.Clear();
+			co.MenuMiddle = new List<string>() {String.Format("Dig from {0} {1} {2}", c.x, c.y, c.z)};
+			co.MiddleColors[0,0] = "green";
 		}
 		public override void TileHover(Coord c, List<Coord> squares)
 		{
-			Debug.Print("Dig out tiles finishing at {0} {1} {2}", c.x, c.y, c.z);
+			var co = Game.Controls;
+			co.MenuMiddle.Clear();
+			co.MenuMiddle = new List<string>() {String.Format("Dig to {0} {1} {2}", c.x, c.y, c.z)};
+			co.MiddleColors[0,0] = "red";
 		}
 	}
 

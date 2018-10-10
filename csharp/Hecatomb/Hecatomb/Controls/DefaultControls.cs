@@ -51,9 +51,7 @@ namespace Hecatomb
 			    "PageUp/Down: Scroll messages.",
 			    "A: Achievements, /: Toggle tutorial."
 			};
-			TopColors = new Dictionary<Tuple<int, int>, string>() {
-				{new Tuple<int, int>(1,0), "yellow"}
-			};
+			TopColors = new TextColors(1,"yellow");
 		}
 		
 		public override void ClickTile(Coord c)

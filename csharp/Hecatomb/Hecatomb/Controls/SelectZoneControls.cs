@@ -44,10 +44,7 @@ namespace Hecatomb
       			"Click / Space: Select.",
       			"Enter: Toggle Pause."
 			};
-			TopColors = new Dictionary<Tuple<int, int>, string>() {
-				{new Tuple<int, int>(0,0), "orange"},
-				{new Tuple<int, int>(1,0), "yellow"}
-			};
+			TopColors = new TextColors(0, "orange", 1, "yellow");
 		}
 		
 		public override void HoverTile(Coord c)

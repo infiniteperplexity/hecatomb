@@ -24,11 +24,11 @@ namespace Hecatomb
         public const int Throttle = 125;
         public Dictionary <Keys, Action> KeyMap;
         public List<string> MenuTop;
-        public Dictionary<Tuple<int, int>, string> TopColors;
+        public TextColors TopColors;
         public List<string> MenuMiddle;
-        public Dictionary<Tuple<int, int>, string> MiddleColors;
+        public TextColors MiddleColors;
         public List<string> MenuBottom;
-        public Dictionary<Tuple<int, int>, string> BottomColors;
+        public TextColors BottomColors;
         public Action<Coord> OnTileClick;
         public Action<Coord> OnTileHover;
         public Action<int, int> OnMenuHover;
@@ -161,11 +161,11 @@ namespace Hecatomb
 		{
 			KeyMap = new Dictionary<Keys, Action>();
 			MenuTop = new List<string>();
-			TopColors = new Dictionary<Tuple<int, int>, string>();
+			TopColors = new TextColors();
 			MenuMiddle = new List<string>();
-			MiddleColors = new Dictionary<Tuple<int, int>, string>();
+			MiddleColors = new TextColors();
 			MenuBottom = new List<string>();
-			BottomColors = new Dictionary<Tuple<int, int>, string>();
+			BottomColors = new TextColors();
 			OnTileClick = ClickTile;
 			OnTileHover = HoverTile;
 			OnMenuClick = MenuClick;

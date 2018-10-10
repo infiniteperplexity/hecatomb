@@ -16,7 +16,7 @@ namespace Hecatomb
 	{
 		public static Dictionary<Type, List<FlyWeight>> FlyWeightTypes = new Dictionary<Type, List<FlyWeight>>();
 		public int FID;
-		public readonly string Name;
+		public string Name;
 		public FlyWeight()
 		{
 			Type t = this.GetType();

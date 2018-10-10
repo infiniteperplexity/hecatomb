@@ -141,15 +141,90 @@ namespace Hecatomb
 
 		public void ShowTileDetails(Coord c)
 		{
-			Game.Controls.MenuBottom = new List<string>()
-			{
-				"This here is some detail text.",
-				String.Format("It should tell us something about the tile at {0} {1} {2}", c.x, c.y, c.z)
+			int x = c.x;
+			int y = c.y;
+			int z = c.z;
+			int za = z+1;
+			int zb = z-1;
+			Coord above = new Coord(x, y, za);
+			Coord below = new Coord(x, y, zb);
+			string main = "light cyan";
+			string other = "gainsboro";
+			int change = 0;
+			List<string> text = new List<string>() {
+				"Coord: " + x + "," + y + ", " + z
 			};
-			Game.Controls.BottomColors = new Dictionary<Tuple<int, int>, string>()
+			TypedEntity t;
+			if (Explored.Contains(c))
 			{
-				{new Tuple<int, int>(1,0), "cyan"}
-			};
+				text.Add("Terrain: " + Tiles[x, y, z].Name);
+				t = Creatures[x, y, z];
+				if (t!=null)
+				{
+					Debug.WriteLine("flag 1");
+					text.Add("Creature: " + t.Name);
+				}
+				t = Features[x, y, z];
+				if (t!=null)
+				{
+					Debug.WriteLine("flag 2");
+					text.Add("Feature: " + t.Name);
+				}
+				t = Tasks[x, y, z];
+				if (t!=null)
+				{
+					text.Add("Task: " + t.Name);
+				}
+				text.Add(" ");
+			}
+			change = text.Count;
+			if (Explored.Contains(above))
+			{
+				text.Add("Above: " + Tiles[x, y, za].Name);
+				t = Creatures[x, y, za];
+				if (t!=null)
+				{
+					text.Add("Creature: " + t.Name);
+				}
+				t = Features[x, y, za];
+				if (t!=null)
+				{
+					text.Add("Feature: " + t.Name);
+				}
+				t = Tasks[x, y, za];
+				if (t!=null)
+				{
+					text.Add("Task: " + t.Name);
+				}
+				text.Add(" ");
+			}
+			if (Explored.Contains(below))
+			{
+				text.Add("Below: " + Tiles[x, y, zb].Name);
+				t = Creatures[x, y, zb];
+				if (t!=null)
+				{
+					text.Add("Creature: " + t.Name);
+				}
+				t = Features[x, y, zb];
+				if (t!=null)
+				{
+					text.Add("Feature: " + t.Name);
+				}
+				t = Tasks[x, y, zb];
+				if (t!=null)
+				{
+					text.Add("Task: " + t.Name);
+				}
+				text.Add(" ");
+			}
+			Game.Controls.MenuBottom = text;
+			var colors = Game.Controls.BottomColors;
+			colors.Clear();
+			for (int i=0; i<text.Count; i++)
+			{
+				colors[i,0] = (i<change) ? main : other;
+			}
 			Game.MenuPanel.Dirty = true;
 		}
 	}

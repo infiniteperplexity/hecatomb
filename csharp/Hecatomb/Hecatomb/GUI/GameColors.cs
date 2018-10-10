@@ -31,6 +31,8 @@ namespace Hecatomb
 				{"lime green", Color.LimeGreen},
 				{"olive", Color.Olive},
 				{"light gray", Color.LightGray},
+				{"light cyan", Color.LightCyan},
+				{"gainsboro", Color.Gainsboro},
 				{"black", Color.Black},
 				{"magenta", Color.Magenta},
 				{"green", Color.LightGreen},

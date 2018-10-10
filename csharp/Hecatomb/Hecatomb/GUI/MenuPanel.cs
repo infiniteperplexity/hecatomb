@@ -16,7 +16,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of MenuPanel.
 	/// </summary>
-public class MenuGamePanel : TextPanel
+	public class MenuGamePanel : TextPanel
 	{
 		public List<string> middleLines;
 		
@@ -64,18 +64,18 @@ public class MenuGamePanel : TextPanel
 			}
 			int i1 = text.Count;
 			text = text.Concat(c.MenuBottom).ToList();
-			var colors = new Dictionary<Tuple<int, int>, string>();
+			var colors = new TextColors();
 			foreach (var key in c.TopColors.Keys)
 			{
-				colors[key] = c.TopColors[key];
+				colors[key.Item1, key.Item2] = c.TopColors[key.Item1, key.Item2];
 			}
 			foreach (var key in c.MiddleColors.Keys)
 			{
-				colors[new Tuple<int, int>(key.Item1+i0, key.Item2)] = c.MiddleColors[key];
+				colors[key.Item1+i0, key.Item2] = c.MiddleColors[key.Item1, key.Item2];
 			}
-			foreach (var key in c.TopColors.Keys)
+			foreach (var key in c.BottomColors.Keys)
 			{
-				colors[new Tuple<int, int>(key.Item1+i1, key.Item2)] = c.TopColors[key];
+				colors[key.Item1+i1, key.Item2] = c.BottomColors[key.Item1, key.Item2];
 			}
 			DrawLines(text, colors);
 		}

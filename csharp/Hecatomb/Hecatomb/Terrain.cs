@@ -39,7 +39,7 @@ namespace Hecatomb
 			int zwalk = 0
 		) : base()
 		{
-			
+			Name = name;
 			FG = fg;
 			BG = bg;
 			Symbol = symbol;
