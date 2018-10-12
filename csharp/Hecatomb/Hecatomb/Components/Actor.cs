@@ -21,6 +21,9 @@ namespace Hecatomb
 	public class Actor : Component
 	{
 		public int TargetEID;
+		public int ActionPoints;
+		public int CurrentPoints;
+		
 		[JsonIgnore] TypedEntity Target {
 			get
 			{
@@ -48,6 +51,17 @@ namespace Hecatomb
 		public Actor() : base()
 		{
 			TargetEID = -1;
+			ActionPoints = 16;
+			CurrentPoints = 16;
+		}
+		
+		public void Regain()
+		{
+			CurrentPoints+=16;
+		}
+		public void Spend()
+		{
+			CurrentPoints-=16;
 		}
 		public void Act()
 		{

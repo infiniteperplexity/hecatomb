@@ -7,6 +7,8 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -24,6 +26,29 @@ namespace Hecatomb
 			x = _x;
 			y = _y;
 			z = _z;
+		}
+		
+		public Coord Rotate(int n)
+		{
+			if (n==0)
+			{
+				return this;
+			}
+			else
+			{
+				Coord c = new Coord(-y, x, z);
+				return c.Rotate(n-1);
+			}
+		}
+		
+		public Coord Rotate()
+		{
+			return this.Rotate(1);
+		}
+		
+		public Coord Flip()
+		{
+			return new Coord(x, y, -z);
 		}
 	}
 	
@@ -95,32 +120,169 @@ namespace Hecatomb
 		
 		public static Coord[] Directions26 = new Coord[] {
 			North,
-			South,
 			East,
+			South,
 			West,
 			NorthEast,
 			SouthEast,
-			NorthWest,
 			SouthWest,
+			NorthWest,
 			UpNorth,
-			UpSouth,
 			UpEast,
+			UpSouth,
 			UpWest,
+			DownNorth,
+			DownEast,
+			DownSouth,
+			DownWest,
+			Up,
+			Down,
 			UpNorthEast,
 			UpSouthEast,
-			UpNorthWest,
 			UpSouthWest,
-			DownNorth,
-			DownSouth,
-			DownEast,
-			DownWest,
+			UpNorthWest,
 			DownNorthEast,
 			DownSouthEast,
-			DownNorthWest,
 			DownSouthWest,
-			Up,
-			Down
+			DownNorthWest
 		};
+		
+		public static Dictionary<Coord, Coord[][]> Fallbacks = new Dictionary<Coord, Coord[][]> {
+			{North, new Coord[][]
+			{
+				new [] {North},
+				new [] {UpNorth, DownNorth},
+				new [] {NorthEast, NorthWest},
+				new [] {UpNorthEast, UpNorthWest, DownNorthEast, DownNorthWest},
+				new [] {Up, Down},
+				new [] {East, West, UpEast, UpWest, DownEast, DownWest},
+				new [] {SouthEast, SouthWest, UpSouthEast, UpSouthWest, DownSouthEast, DownSouthWest},
+				new [] {UpSouth , DownSouth},
+				new [] {South}
+			}},
+			{NorthEast, new Coord[][]
+			{
+				new [] {NorthEast},
+				new [] {UpNorthEast, DownNorthEast},
+				new [] {Up, Down},
+				new [] {North, East, UpNorth, UpEast, DownNorth, DownEast},
+				new [] {UpNorthWest, DownNorthWest, UpSouthEast, UpSouthWest, NorthWest, SouthEast},
+				new [] {West, South, UpWest, DownWest, UpSouth, DownSouth},
+				new [] {UpSouthWest, DownSouthWest},
+				new [] {SouthWest}
+			}},
+			{UpNorth, new Coord[][]
+			{
+				new [] {UpNorth},
+				new [] {UpNorthWest, UpNorthEast},
+				new [] {NorthWest, NorthEast, Up, UpEast, UpWest},
+				new [] {East, West},
+				new [] {DownNorth, DownNorthWest, DownNorthEast, UpSouthWest, UpSouthEast},
+				new [] {DownEast, DownWest, SouthEast, SouthWest, UpSouth, Down, South},
+				new [] {DownSouthEast, DownSouthWest},
+				new [] {DownSouth}
+			}},
+			{Up, new Coord[][]
+			{
+				new [] {Up},
+				new [] {UpNorth, UpSouth, UpEast, UpWest, UpNorthEast, UpNorthWest, UpSouthWest, UpSouthEast},
+				new [] {East, West, North, South, NorthEast, SouthWest, NorthWest, SouthEast},
+				new [] {DownNorth, DownSouth, DownEast, DownWest, DownSouthEast, DownSouthWest, DownNorthEast, DownNorthWest},
+				new [] {Down}
+			}},
+			{UpNorthEast, new Coord[][]
+			{
+				new [] {UpNorthEast},
+				new [] {UpNorth, UpEast, NorthEast},
+				new [] {UpSouthEast, UpNorthWest, Up, North, East},
+				new [] {SouthEast, NorthWest, DownNorthEast},
+				new [] {DownNorth, DownEast, UpSouth, UpWest},
+				new [] {DownSouthEast, DownNorthWest, Down, South, West, UpSouthWest},
+				new [] {DownSouth, DownWest, SouthWest},
+				new [] {DownSouthWest}
+			}}
+		};
+		static Movement()
+		{
+			// Use the pattern templates in Fallback to populate fallbacks for all directions
+			foreach (Coord dir in Directions26)
+			{
+				if (Fallbacks.ContainsKey(dir))
+				{
+					continue;
+				}
+				else
+				{
+					Coord c = dir;;
+					int rotate = 0;
+					bool flip = false;
+					bool z = (c.z!=0);
+					bool diag = (Math.Abs(c.x)+Math.Abs(c.y)==2);
+					if (!z && !diag)
+					{
+						while (!c.Equals(North))
+						{
+							rotate+=1;
+							c = c.Rotate();
+						}
+						rotate = 4-rotate;
+					}
+					else if (!z && diag)
+					{
+						while (!c.Equals(NorthEast))
+						{
+							rotate+=1;
+							c = c.Rotate();
+						}
+						rotate = 4-rotate;
+					}
+					else if (dir.Equals(Down))
+					{
+						flip = true;
+						c = Up;
+					}
+					else if (z && !diag)
+					{
+						if (c.z!=UpNorth.z)
+						{
+							c.z = UpNorth.z;
+							flip = true;
+						}
+						while (!c.Equals(UpNorth))
+						{
+							rotate+=1;
+							c = c.Rotate();
+						}
+						rotate = 4-rotate;
+					}
+					else if (z && diag)
+					{
+						if (c.z!=UpNorthEast.z)
+						{
+							c.z = UpNorthEast.z;
+							flip = true;
+						}
+						while (!c.Equals(UpNorthEast))
+						{
+							rotate+=1;
+							c = c.Rotate();
+						}
+						rotate = 4-rotate;
+					}
+					var f = Fallbacks[c];
+					var g = new Coord[f.Length][];
+					for (int i=0; i<f.Length; i++)
+					{
+						g[i] = new Coord[f[i].Length];
+						for (int j=0; j<f[i].Length; j++)
+						{
+							g[i][j] = (flip) ? f[i][j].Rotate(rotate).Flip() : f[i][j].Rotate(rotate);
+						}
+					}
+					Fallbacks[dir] = g;
+				}	
+			}
+		}
 		
 		public Movement(): base()
 		{

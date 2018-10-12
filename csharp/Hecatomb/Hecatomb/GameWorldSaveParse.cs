@@ -32,11 +32,16 @@ namespace Hecatomb
 					}
 				}
 			}
+			var turns = new {
+				Turn = Turns.Turn,
+				Queue = Turns.QueueAsIDs(Turns.Queue),
+				Deck = Turns.QueueAsIDs(Turns.Deck)
+			};
 			var jsonready = new
 			{
 				random = Random,
 				player = Player.EID,
-				turns = Turns,
+				turns = turns,
 				entities = Entities.Spawned,
 				explored = Explored,
 				events = Events.StringifyListeners(),
@@ -45,7 +50,6 @@ namespace Hecatomb
 			};
 			var json = JsonConvert.SerializeObject(jsonready, Formatting.Indented);
 			System.IO.File.WriteAllText(@"..\GameWorld.json", json);
-			Random.Verify();
 			return json;
 		}
 		
@@ -115,6 +119,9 @@ namespace Hecatomb
 			Game.StatusPanel.Dirty = true;
 			// *** Turns ***
 			Turns = parsed.GetValue("turns").ToObject<TurnHandler>();
+			Turns.Queue = Turns.QueueAsActors(parsed["turns"]["Queue"].ToObject<Queue<int>>());
+			Turns.Deck = Turns.QueueAsActors(parsed["turns"]["Deck"].ToObject<Queue<int>>());
+//			
 			// *** Event Listeners ***
 			var	events = parsed.GetValue("events").ToObject<Dictionary<string,Dictionary<int, string>>>();
 			foreach (string type in events.Keys)
@@ -127,7 +134,6 @@ namespace Hecatomb
 					Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(T, Entities.Spawned[eid], listeners[eid]);
 				}
 			}
-			Random.Verify();
 		}
 	}
 }

@@ -36,17 +36,8 @@ namespace Hecatomb
 		
 		public int Next(int i)
 		{
+			Calls+=1;
 			return random.Next(i);
 		}
-		
-		public void Verify()
-		{
-			for (int i=0; i<10; i++)
-			{
-				Debug.WriteLine("Next random value is " + Next(100));
-			}
-		}
-		
-		
 	}
 }

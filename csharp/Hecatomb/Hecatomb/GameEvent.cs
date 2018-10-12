@@ -110,6 +110,16 @@ namespace Hecatomb
 	{
 		public GameEntity Entity;
 	}
+	
+	public class TurnBeginEvent : GameEvent
+	{
+		public int Turn;
+	}
+	
+	public class TurnEndEvent : GameEvent
+	{
+		public int Turn;
+	}
 }
 
 

@@ -15,12 +15,16 @@ namespace Hecatomb
 	public class TurnHandler
 	{
 		public int Turn;
-		[JsonIgnore] public List<Actor> Acted;
-		[JsonIgnore] public List<Actor> Queue;
+		// already acted, but still have points to act again
+		[JsonIgnore] public Queue<Actor> Deck;
+		// have not yet acted and have points remaining
+		[JsonIgnore] public Queue<Actor> Queue;
 		
 		public TurnHandler()
 		{
 			Turn = 0;
+			Deck = new Queue<Actor>();
+			Queue = new Queue<Actor>();
 		}
 		
 		public void Try()
@@ -34,10 +38,11 @@ namespace Hecatomb
 		{
 			Player p = Game.World.Player;
 			p.Acted = false;
+			Turn+=1;
+			Game.World.Events.Publish(new TurnBeginEvent() {Turn=Turn});
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
-			Turn+=1;
 			Creature[] actors = Game.World.Creatures.ToArray();
 			foreach (Creature m in p.GetMinions())
 			{
@@ -55,45 +60,102 @@ namespace Hecatomb
 					}
 				}
 			}
-			foreach (Creature cr in actors)
+			// ***
+			Queue.Clear();
+			Deck.Clear();
+			foreach (GameEntity e in Game.World.Entities.Spawned.Values)
 			{
-				Actor actor = cr.TryComponent<Actor>();
-				if (actor!=null)
+				if (e is Actor)
 				{
-					actor.Act();
+					Actor actor = (Actor) e;
+					actor.Regain();
+					Queue.Enqueue(actor);
 				}
 			}
-			p.HandleVisibility();
+			Queue.OrderBy(a=>a.CurrentPoints).ThenBy(a=>a.EID);
+			NextActor();
 		}
-			// check in on the daily cycle
-			// publish a turn begin event
-			// assign tasks as necessary
-//			queue = [];
-//		    deck = [];
-//		    for (let cr of HTomb.World.things) {
-//		      if (cr.actor && cr.unstaged===null) {
-//		        cr.actor.regainPoints();
-//		        queue.push(cr);
-//		      }
-//    		}
-//		  	queue.sort(function(a,b) {
-//		      if (a.actor.actionPoints < b.actor.actionPoints) {
-//		        return -1;
-//		      } else if (a.actor.actionPoints > b.actor.actionPoints) {
-//		        return 1;
-//		      } else if (a===HTomb.Player) {
-//		        return -1;
-//		      } else if (b===HTomb.Player) {
-//		        return 1;
-//		      } else if (a.spawnId < b.spawnId) {
-//		        return -1;
-//		      } else if (a.spawnId > b.spawnId) {
-//		        return 1;
-//		      } else {
-//		        return 0;
-//		      }
-//		    });
-// Begin recursive traversal of the queue
-//    nextActor();
+		
+		public void NextActor()
+		{	
+			// maybe not a real method
+			Actor actor = Queue.Dequeue();
+			if (actor.Entity is Player)
+			{
+				// do visibility
+				// recenter screen
+				Game.MainPanel.Dirty = true;
+				Game.MenuPanel.Dirty = true;
+				Game.StatusPanel.Dirty = true;
+				// set player acted to false
+			}
+			else
+			{
+				int checkPoints = actor.CurrentPoints;
+				actor.Act();
+				if (actor.CurrentPoints==checkPoints)
+				{
+					throw new InvalidOperationException(String.Format("{0} somehow avoided using action poionts.", actor.Entity));
+				}
+				if (actor.CurrentPoints>0)
+				{
+					Deck.Enqueue(actor);
+				}
+			}
+			// in english...if queue and deck are both 0, next turn
+			// if queue is zero but deck is not, flip and next
+			// otherwise just next
+			if (Queue.Count==0)
+			{
+				if (Deck.Count==0)
+				{
+					Game.World.Events.Publish(new TurnEndEvent() {Turn=Turn});
+					// publish turn end event
+					Next(); // should call it NextTurn
+				}
+				else
+				{
+					while (Deck.Count>0)
+					{
+						Queue.Enqueue(Deck.Dequeue());
+					}
+					Queue.OrderBy(a=>a.CurrentPoints).ThenBy(a=>a.EID);
+					NextActor();
+				}
+			}
+			else
+			{
+				NextActor();
+			}
+		}
+		
+		public void PlayerActed()
+		{
+			Deck.Enqueue(Game.World.Player.GetComponent<Actor>());
+			// bunch of time and interface-handling stuff
+			NextActor();
+		}
+		
+		public Queue<int> QueueAsIDs(Queue<Actor> q)
+		{
+			List<Actor> list = q.ToList();
+			Queue<int> qi = new Queue<int>();
+			for (int i=0; i<list.Count; i++)
+			{
+				qi.Enqueue(list[i].EID);
+			}
+			return qi;
+		}
+		
+		public Queue<Actor> QueueAsActors(Queue<int> q)
+		{
+			List<int> list = q.ToList();
+			Queue<Actor> qa = new Queue<Actor>();
+			for (int i=0; i<list.Count; i++)
+			{
+				qa.Enqueue((Actor) Game.World.Entities.Spawned[list[i]]);
+			}
+			return qa;
+		}
 	}
 }
