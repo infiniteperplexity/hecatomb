@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -19,7 +20,7 @@ namespace Hecatomb
 		int SpeedIndex = 3;
 		bool PausedAfterLoad;
 		bool AutoPausing;
-		TimeStamp LastUpdate;
+		DateTime LastUpdate;
 		
 		public TimeHandler()
 		{
@@ -52,7 +53,7 @@ namespace Hecatomb
 				return;
 			}
 			DateTime now = DateTime.Now;
-			int millis = now.Subtract(LastUpdate);
+			int millis = (int) now.Subtract(LastUpdate).TotalMilliseconds;
 			if (millis > 1000*Speeds[SpeedIndex])
 			{
 				Game.Commands.AutoWait();

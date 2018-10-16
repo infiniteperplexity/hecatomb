@@ -161,13 +161,11 @@ namespace Hecatomb
 				t = Creatures[x, y, z];
 				if (t!=null)
 				{
-					Debug.WriteLine("flag 1");
 					text.Add("Creature: " + t.Name);
 				}
 				t = Features[x, y, z];
 				if (t!=null)
 				{
-					Debug.WriteLine("flag 2");
 					text.Add("Feature: " + t.Name);
 				}
 				t = Tasks[x, y, z];

@@ -27,7 +27,7 @@ namespace Hecatomb
 		List<string> CurrentText;
 		TextColors CurrentColors;
 		
-		public ForegroundPanel(): base()
+		public ForegroundPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
 			X0 = 0;
 			Y0 = 0;
@@ -35,7 +35,7 @@ namespace Hecatomb
 			notext = new List<String>();
 		}
 		
-		public override void Initialize()
+		public void Initialize()
 		{
 			Height = Game.StatusPanel.Y0 + Game.StatusPanel.Height;
 			Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;

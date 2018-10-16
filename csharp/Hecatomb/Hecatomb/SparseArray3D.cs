@@ -84,19 +84,13 @@ namespace Hecatomb
 	public class SparseJaggedArray3D<T>: SparseArray3D<T>
 	{
 		private Dictionary<Tuple<int, int, int>, List<T>> dict;
-		public readonly int X;
-		public readonly int Y;
-		public readonly int Z;
 		
-		public SparseJaggedArray3D(int x, int y, int z)
+		public SparseJaggedArray3D(int x, int y, int z) : base(x, y, z)
 		{
-			X = x;
-			Y = y;
-			Z = z;
 			dict = new Dictionary<Tuple<int, int, int>, List<T>>();
 		}
 		
-		public List<T> this[int x, int y, int z]
+		public new List<T> this[int x, int y, int z]
 	   	{
 			get
 			{	
@@ -104,7 +98,7 @@ namespace Hecatomb
 					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 				} else {
 					Tuple<int, int, int> t = new Tuple<int, int, int>(x, y, z);
-					T value;
+					List<T> value;
 					if (dict.TryGetValue(t, out value)) {
 						return value;
 					} else {

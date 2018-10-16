@@ -142,7 +142,12 @@ namespace Hecatomb
 			{
 				p.Update();
 			}
+           	
 			Controls.HandleInput();
+			if (World.Player.Acted)
+           	{
+           		World.Turns.PlayerActed();
+           	}
 			World.Turns.Try();
             base.Update(gameTime);
         }

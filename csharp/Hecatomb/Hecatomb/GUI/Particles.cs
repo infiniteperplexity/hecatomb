@@ -8,6 +8,7 @@
  */
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -17,13 +18,13 @@ namespace Hecatomb
 	/// 
 	public class ParticleEmitter
 	{
-		int X;
-		int Y;
-		int Z;
+		public int X;
+		public int Y;
+		public int Z;
 		char[] Symbols;
 		string[] FGs;
 		string[] BGs;
-		TimeStamp T0;
+		DateTime T0;
 		int LifeSpan;
 		
 		public ParticleEmitter()
@@ -43,7 +44,9 @@ namespace Hecatomb
 	}
 	public class Particle
 	{
-		public ParticleEmitter Emitter;
+		public int X0;
+		public int Y0;
+		public int Z0;
 		public int V0;
 		public int A;
 		public int Angle;
@@ -54,41 +57,48 @@ namespace Hecatomb
 		public char Symbol;
 		public string FG;
 		public string BG;
-		public int T0;
+		public bool Placed;
+		public DateTime T0;
 
-		public Particle(ParticleEmitter e)
+		public Particle()
 		{
-			Emitter = e;
 			A = 0;
 			Incline = 0;
 			X = -1;
 			Y = -1;
 			Z = -1;
 			T0 = DateTime.Now;
+			Placed = false;
 		}
 		
 		public void Place(int _x, int _y, int _z)
 		{
+			if (Placed)
+			{
+				Remove();
+			}
+			Placed = true;
 			X = _x;
 			Y = _y;
 			Z = _z;
-			Game.MainPanel.Particles[x,y,z] = Game.MainPanel.Particles[x,y,z].Concat(this);
+			Game.MainPanel.Particles[_x, _y, _z] = Game.MainPanel.Particles[_x,_y,_z].Concat(new Particle[] {this}).ToList();
 		}
 		
 		public void Remove()
 		{
-			Game.MainPanel.Particles[X, Y, Z] = Game.MainPanel.Particles[X, Y, Z].filter(p=>p!=this);
+			Game.MainPanel.Particles[X, Y, Z] = Game.MainPanel.Particles[X, Y, Z].Where(p=>p!=this).ToList();
 			X = -1;
 			Y = -1;
 			Z = -1;
+			Placed = false;
 		}
 		
 		public virtual void Update()
 		{
-			int T = DateTime.Now.Subtract(T0).TotalMilliseconds;
-			int x = (int) (Emitter.X + Math.Cos(Angle)*(V0*T + 0.5*A*T*T));
-			int y = (int) (Emitter.Y + Math.Sin(Angle)*(V0*T + 0.5*A*T*T));
-			int z = (int) (Emitter.Z + Math.Sin(Incline)*(V0*T + 0.5*A*T*T));
+			int T = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
+			int x = (int) (X0 + Math.Cos(Angle)*(V0*T + 0.5*A*T*T));
+			int y = (int) (Y0 + Math.Sin(Angle)*(V0*T + 0.5*A*T*T));
+			int z = (int) (Z0 + Math.Sin(Incline)*(V0*T + 0.5*A*T*T));
 			Place(x, y, z);
 		}
 	}
@@ -96,22 +106,22 @@ namespace Hecatomb
 	// is there a good way to handle emitting with random symbols?  well...we need emitters...
 	public class Highlight : Particle
 	{
-		public Highlight(string s) : base()
+		public Highlight(string s)
 		{
 			BG = s;
 		}
 	}
 }
-
-- There's true or false for being in the initial paused state.
-- timePassing sort of doubles as a flag and a reference for disabling recursion.
-- Speeds go from 1/4 to 8/1, using kind of a silly fractional scale.
-- This is multiplied by 1000 milliseconds.
-- ToggleTime is a command.
-- PassTime is I think what happens if you just wait, and it calls a command called Autowait.
-	- Autowait calls the cursor and tells it to hover.
-- ParticleTime is completely independent, but will generally update alternately asynchronously.
-- StartParticles and StopParticles are things...what calls them?  They demand their own updates, although we might blend that in a bit.
-- An alert stops the particles...the only thing that starts them is adding an emitter, so I think we're gonna refactor that.
-- lockTime is a special state; it prevents unpausing.
-- The whole closure space is essentially a "timehandler".
+//
+//- There's true or false for being in the initial paused state.
+//- timePassing sort of doubles as a flag and a reference for disabling recursion.
+//- Speeds go from 1/4 to 8/1, using kind of a silly fractional scale.
+//- This is multiplied by 1000 milliseconds.
+//- ToggleTime is a command.
+//- PassTime is I think what happens if you just wait, and it calls a command called Autowait.
+//	- Autowait calls the cursor and tells it to hover.
+//- ParticleTime is completely independent, but will generally update alternately asynchronously.
+//- StartParticles and StopParticles are things...what calls them?  They demand their own updates, although we might blend that in a bit.
+//- An alert stops the particles...the only thing that starts them is adding an emitter, so I think we're gonna refactor that.
+//- lockTime is a special state; it prevents unpausing.
+//- The whole closure space is essentially a "timehandler".

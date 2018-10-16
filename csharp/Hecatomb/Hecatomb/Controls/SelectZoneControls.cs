@@ -27,12 +27,14 @@ namespace Hecatomb
 		ISelectsZone Selector;
 		Coord FirstCorner;
 		List<Coord> Squares;
+		List<Particle> Highlights;
 		
 		public SelectZoneControls(ISelectsZone i)
 		{
 			Selector = i;
 			KeyMap[Keys.Escape] = Back;
 			Squares = new List<Coord>();
+			Highlights = new List<Particle>();
 			MenuTop = new List<string>() {
      			"**Esc: Cancel.**",
       			"Select first corner with keys or mouse.",
@@ -66,15 +68,14 @@ namespace Hecatomb
 		
 		public void DrawSquareZone(Coord c)
 		{
-			foreach(Coord s in Squares)
+			foreach(Particle p in Highlights)
 			{
+				Coord s = new Coord(p.X, p.Y, p.Z);
 				Game.MainPanel.DirtifyTile(s);
-				Particle p = Game.MainPanel.Particles[s.x, s.y, s.z];
-				if (p!=null && p is Highlight)
-				{
-					p.Remove();
-				}
+				p.Remove();
+				
 			}
+			Highlights.Clear();
 			Squares.Clear();
 			int x0 = FirstCorner.x;
 			int y0 = FirstCorner.y;
@@ -93,6 +94,7 @@ namespace Hecatomb
 					Game.MainPanel.DirtifyTile(s);
 					Highlight h = new Highlight("orange");
 					h.Place(s.x, s.y, s.z);
+					Highlights.Add(h);
 				}
 			}
 		}
@@ -120,14 +122,11 @@ namespace Hecatomb
 		{
 			FirstCorner = default(Coord);
 			MenuTop[1] = "Select first corner with keys or mouse.";
-			foreach (Coord s in Squares)
+			foreach (Particle p in Highlights)
 			{
-				Particle p = Game.MainPanel.Particles[s.x, s.y, s.z];
-				if (p!=null && p is Highlight)
-				{
-					p.Remove();
-				}
+				p.Remove();
 			}
+			Highlights.Clear();
 			Game.MenuPanel.Dirty = true;
 			Game.MainPanel.Dirty = true;
 			KeyMap[Keys.Escape] = Back;
@@ -136,14 +135,11 @@ namespace Hecatomb
 		public void SelectSecondCorner(Coord c)
 		{
 			Selector.SelectZone(Squares);
-			foreach(Coord s in Squares)
+			foreach (Particle p in Highlights)
 			{
-				Particle p = Game.MainPanel.Particles[s.x, s.y, s.z];
-				if (p!=null && p is Highlight)
-				{
-					p.Remove();
-				}
+				p.Remove();
 			}
+			Highlights.Clear();
 			Squares.Clear();
 			Game.Controls.Reset();
 		}

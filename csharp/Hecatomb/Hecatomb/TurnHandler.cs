@@ -79,32 +79,6 @@ namespace Hecatomb
 		public void NextActor()
 		{	
 			// maybe not a real method
-			Actor actor = Queue.Dequeue();
-			if (actor.Entity is Player)
-			{
-				// do visibility
-				// recenter screen
-				Game.MainPanel.Dirty = true;
-				Game.MenuPanel.Dirty = true;
-				Game.StatusPanel.Dirty = true;
-				// set player acted to false
-			}
-			else
-			{
-				int checkPoints = actor.CurrentPoints;
-				actor.Act();
-				if (actor.CurrentPoints==checkPoints)
-				{
-					throw new InvalidOperationException(String.Format("{0} somehow avoided using action poionts.", actor.Entity));
-				}
-				if (actor.CurrentPoints>0)
-				{
-					Deck.Enqueue(actor);
-				}
-			}
-			// in english...if queue and deck are both 0, next turn
-			// if queue is zero but deck is not, flip and next
-			// otherwise just next
 			if (Queue.Count==0)
 			{
 				if (Deck.Count==0)
@@ -112,6 +86,7 @@ namespace Hecatomb
 					Game.World.Events.Publish(new TurnEndEvent() {Turn=Turn});
 					// publish turn end event
 					Next(); // should call it NextTurn
+					return;
 				}
 				else
 				{
@@ -120,19 +95,54 @@ namespace Hecatomb
 						Queue.Enqueue(Deck.Dequeue());
 					}
 					Queue.OrderBy(a=>a.CurrentPoints).ThenBy(a=>a.EID);
-					NextActor();
 				}
+			}
+			Actor actor = Queue.Dequeue();
+			if (actor.Entity is Player)
+			{
+				// do visibility
+				Game.World.Player.HandleVisibility();
+				// recenter screen
+				
+				Game.MainPanel.Dirty = true;
+				Game.MenuPanel.Dirty = true;
+				Game.StatusPanel.Dirty = true;
+				Game.World.Player.Acted = false;
+				// set player acted to false
+				return;
 			}
 			else
 			{
+				int checkPoints = actor.CurrentPoints;
+				Debug.WriteLine(checkPoints);
+				if (checkPoints>0)
+				{
+					actor.Act();
+					if (actor.CurrentPoints==checkPoints)
+					{
+						throw new InvalidOperationException(String.Format("{0} somehow avoided using action poionts.", actor.Entity));
+					}
+				}
+				if (actor.CurrentPoints>0)
+				{
+					Deck.Enqueue(actor);
+				}
 				NextActor();
 			}
+			// in english...if queue and deck are both 0, next turn
+			// if queue is zero but deck is not, flip and next
+			// otherwise just next
+			
 		}
 		
 		public void PlayerActed()
 		{
-			Game.Time.Acted();
-			Deck.Enqueue(Game.World.Player.GetComponent<Actor>());
+			//Game.Time.Acted();
+			Actor actor = Game.World.Player.GetComponent<Actor>();
+			if (actor.CurrentPoints>0)
+			{
+				Deck.Enqueue(actor);
+			}
 			// bunch of time and interface-handling stuff
 			NextActor();
 		}

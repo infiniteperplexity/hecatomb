@@ -45,7 +45,7 @@ public class MainGamePanel : GamePanel
 				Fonts.Add(font);
 			}
 			measureCache = new Dictionary<char, Vector2>();
-			Particles = new SparseArray3D<Particle>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
+			Particles = new SparseJaggedArray3D<Particle>(Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH);
 			OldDirtyTiles = new HashSet<Coord>();
 			NextDirtyTiles = new HashSet<Coord>();
 		}

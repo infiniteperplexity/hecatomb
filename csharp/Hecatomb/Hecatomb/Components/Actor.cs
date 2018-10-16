@@ -52,12 +52,19 @@ namespace Hecatomb
 		{
 			TargetEID = -1;
 			ActionPoints = 16;
-			CurrentPoints = 16;
+			CurrentPoints = (Game.World.Turns.Turn==0) ? ActionPoints : 0;
 		}
 		
 		public void Regain()
 		{
-			CurrentPoints+=16;
+			while (CurrentPoints<=0)
+			{
+				CurrentPoints+=16;
+			}
+		}
+		public void Spend(int i)
+		{
+			CurrentPoints-=i;
 		}
 		public void Spend()
 		{
@@ -173,10 +180,17 @@ namespace Hecatomb
 					m.StepTo(x1, y1, z1+1);
 				} else if (m.Climbs && z1-1>=0 && m.CanPass(x1, y1, z1-1)){
 					m.StepTo(x1, y1, z1-1);
+				} else {
+					Wait();
 				}
 			} else {
 			    m.StepTo(x1, y1, z1);
 			}
+		}
+		
+		public void Wait()
+		{
+			Spend(ActionPoints);
 		}
 	}
 }

@@ -291,6 +291,7 @@ namespace Hecatomb
 			Flies = false;
 			Swims = true;
 			Phases = false;
+			Required = new string[] {"Actor"};
 		}
 		
 		public bool CanPass(int x1, int y1, int z1)
@@ -370,6 +371,8 @@ namespace Hecatomb
 		public void StepTo(int x1, int y1, int z1)
 		{
 			Entity.Place(x1, y1, z1);
+			Actor a = Entity.GetComponent<Actor>();
+			a.Spend(16);
 		}
 	}
 }

@@ -18,6 +18,7 @@ namespace Hecatomb
 	{
 		public void Wait()
 		{
+			Game.World.Player.GetComponent<Actor>().Wait();
 			Game.World.Player.Acted = true;
 		}
 		public void MoveNorthCommand()
@@ -159,7 +160,8 @@ namespace Hecatomb
 		
 		public void AutoWait()
 		{
-			p.Acted = true;
+			Game.World.Player.GetComponent<Actor>().Wait();
+			Game.World.Player.Acted = true;
 		}
 		
 		public void SaveGameCommand()
