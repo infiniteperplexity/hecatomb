@@ -20,7 +20,7 @@ public class MainGamePanel : GamePanel
 		Dictionary<char, Vector2> measureCache;
 		public int Size;
 		public int Padding;
-		public SparseArray3D<Particle> Particles;
+		public SparseJaggedArray3D<Particle> Particles;
 		public HashSet<Coord> OldDirtyTiles;
 		public HashSet<Coord> NextDirtyTiles;
 		

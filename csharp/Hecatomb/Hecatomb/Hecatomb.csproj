@@ -82,6 +82,7 @@
     <Compile Include="GameWorld.cs" />
     <Compile Include="SparseArray3D.cs" />
     <Compile Include="Terrain.cs" />
+    <Compile Include="TimeHandler.cs" />
     <Compile Include="TurnHandler.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

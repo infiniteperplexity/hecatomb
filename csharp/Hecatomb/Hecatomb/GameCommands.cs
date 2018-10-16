@@ -157,6 +157,11 @@ namespace Hecatomb
 			Game.MenuPanel.Dirty = true;
 		}
 		
+		public void AutoWait()
+		{
+			p.Acted = true;
+		}
+		
 		public void SaveGameCommand()
 		{
 			Game.World.Stringify();

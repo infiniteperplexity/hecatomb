@@ -92,9 +92,9 @@ namespace Hecatomb
         
         public void HandleHover(int x, int y)
         {
-        	if (Cursor.x>-1)
+        	if (Cursor.X>-1)
         	{
-        		Game.MainPanel.DirtifyTile(Cursor.x, Cursor.y, Cursor.z);
+        		Game.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
         		Cursor.Remove();
         	}
         	if (x>Game.MainPanel.Size && y>Game.MainPanel.Size && x<Game.MenuPanel.X0-Game.MainPanel.Size && y<Game.StatusPanel.Y0-Game.MainPanel.Size)

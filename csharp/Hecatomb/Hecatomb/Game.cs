@@ -31,6 +31,7 @@ namespace Hecatomb
 		public static ControlContext LastControls;
 		public static ControlContext Controls;
 		public static ControlContext DefaultControls;
+		public static TimeHandler Time;
 		
 //		public static GameEventHandler Events;
 		public static HashSet<Coord> Visible;
@@ -71,6 +72,7 @@ namespace Hecatomb
             EntityType.LoadEntities();
             MyContentManager = Content;
 			Colors = new GameColors();
+			Time = new TimeHandler();
 			World = new GameWorld();
 			World.Initialize(System.DateTime.Now.Millisecond);
 			Commands = new GameCommands();

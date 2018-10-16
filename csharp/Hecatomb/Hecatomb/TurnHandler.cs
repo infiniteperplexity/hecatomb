@@ -131,6 +131,7 @@ namespace Hecatomb
 		
 		public void PlayerActed()
 		{
+			Game.Time.Acted();
 			Deck.Enqueue(Game.World.Player.GetComponent<Actor>());
 			// bunch of time and interface-handling stuff
 			NextActor();
