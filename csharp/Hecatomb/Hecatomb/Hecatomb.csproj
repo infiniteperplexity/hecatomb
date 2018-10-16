@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GUI\ForegroundPanel.cs" />
     <Compile Include="TextColors.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityHandler.cs" />
