@@ -17,7 +17,6 @@ namespace Hecatomb
 	/// </summary>
 	public class Spell : IMenuListable
 	{
-
 		public string MenuName;
 		private int cost;
 		public SpellCaster Component;
@@ -67,7 +66,7 @@ namespace Hecatomb
 		public override int GetCost()
 		{
 			Player master = (Player) Caster;
-			List<Creature> minions = master.GetMinions();
+			var minions = master.GetComponent<Minions>();
 			if (minions.Count==0)
 			{
 				return 10;
@@ -93,17 +92,43 @@ namespace Hecatomb
 		
 		public void SelectTile(Coord c)
 		{
-			if (Game.World.Creatures[c.x, c.y, c.z]==null) 
+			Feature f = Game.World.Features[c.x, c.y, c.z];
+			if (Game.World.Explored.Contains(c) && f!=null && f.TypeName=="Grave")
 			{
+				ParticleEmitter emitter = new ParticleEmitter();
+				emitter.Place(c.x, c.y, c.z);
+				f.Destroy();
 				Creature zombie = Game.World.Entities.Spawn<Creature>("Zombie");
 				zombie.Place(c.x, c.y, c.z);
-				Game.World.Player.AddMinion(zombie);
+				Game.World.Player.GetComponent<Minions>().Add(zombie);
+			}
+			else
+			{
+				// not sure what to do, if there's no message scroll
 			}
 		}
 		
 		public void TileHover(Coord c)
 		{
-			Debug.Print("Raise a zombie at {0} {1} {2}", c.x, c.y, c.z);
+			int x = c.x;
+			int y = c.y;
+			int z = c.z;
+			Feature f = Game.World.Features[x, y, z];
+			if (!Game.World.Explored.Contains(c))
+			{
+				Game.Controls.MenuMiddle = new List<string>() {"Unexplored tile."};
+				Game.Controls.MiddleColors = ControlContext.InvalidColor;
+			}
+			else if (f!=null && f.TypeName=="Grave")
+			{
+				Game.Controls.MenuMiddle = new List<string>() {String.Format("Raise a zombie at {0} {1} {2}", x, y, z)};
+				Game.Controls.MiddleColors = ControlContext.ValidColor;
+			}
+			else
+			{
+				Game.Controls.MenuMiddle = new List<string>() {"Select a tile with a tombstone or corpse."};
+				Game.Controls.MiddleColors = ControlContext.InvalidColor;;
+			}
 		}
 	}
 	

@@ -8,6 +8,8 @@
  */
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -18,8 +20,8 @@ namespace Hecatomb
 	{
 		decimal[] Speeds;
 		int SpeedIndex = 3;
-		bool PausedAfterLoad;
-		bool AutoPausing;
+		public bool PausedAfterLoad;
+		public bool AutoPausing;
 		DateTime LastUpdate;
 		
 		public TimeHandler()
@@ -43,11 +45,20 @@ namespace Hecatomb
 		public void Acted()
 		{
 			LastUpdate = DateTime.Now;
+			PausedAfterLoad = false;
 		}
 		
 		public void Update()
 		{
 			// this will happen almost continually
+			foreach (ParticleEmitter e in Game.MainPanel.Emitters.ToList())
+			{
+				e.Update();
+			}
+			foreach (Particle p in Game.MainPanel.Particles.ToList())
+			{	
+				p.Update();
+			}
 			if (PausedAfterLoad || AutoPausing)
 			{
 				return;

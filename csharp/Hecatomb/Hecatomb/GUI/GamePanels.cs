@@ -17,6 +17,7 @@ namespace Hecatomb
 
 	public abstract class GamePanel
 	{
+		public List<ParticleEmitter> Emitters;
 		protected GraphicsDeviceManager Graphics;
 		protected SpriteBatch Sprites;
 		public Texture2D BG;
@@ -30,6 +31,7 @@ namespace Hecatomb
 			Graphics = graphics;
 			Sprites = sprites;
 			Dirty = true;
+			Emitters = new List<ParticleEmitter>();
 		}
 		
 		public virtual void DrawContent() {}
@@ -81,43 +83,6 @@ namespace Hecatomb
 				}
 				p+=1;
 			}
-		}
-	}
-	
-	
-	
-	
-	public class StatusGamePanel : TextPanel
-	{
-		public StatusGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
-		{
-			Height = 100;
-			Size = 16;
-			Spacing = 8;
-			Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;
-			int size = Game.MainPanel.Size;
-			int padding = Game.MainPanel.Padding;
-			X0 = padding+(size+padding);
-			Y0 = padding+(2+Game.Camera.Width)*(size+padding);
-		}
-		
-		public void Initialize()
-		{
-			BG = new Texture2D(Graphics.GraphicsDevice, Width, Height);
-			Color[] bgdata = new Color[Width*Height];
-			for(int i=0; i<bgdata.Length; ++i)
-			{
-				bgdata[i] = Color.White;
-			}
-			BG.SetData(bgdata);
-		}
-		
-		public override void DrawContent()
-		{
-			Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-			Player p = Game.World.Player;
-        	string txt = String.Format("X:{0} Y:{1} Z:{2}", p.x, p.y, p.z);
-        	DrawLines(new List<string>() {txt});
 		}
 	}
 }

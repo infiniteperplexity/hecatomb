@@ -26,22 +26,53 @@ namespace Hecatomb
 		string[] BGs;
 		DateTime T0;
 		int LifeSpan;
+		public int Rate;
+		DateTime LastEmit;
 		
 		public ParticleEmitter()
 		{
 			T0 = DateTime.Now;
+			Rate = 10;
+			LifeSpan = 1000;
+			Game.MainPanel.Emitters.Add(this);
+			Emit();
 		}
 		
-		public void Update()
+		public virtual void Update()
 		{
-			
+			int millis;
+			millis = (int) DateTime.Now.Subtract(LastEmit).TotalMilliseconds;
+			if (millis>Rate)
+			{
+				Emit();
+			}
+			millis = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
+			if (millis>LifeSpan)
+			{
+				Debug.WriteLine("removing emitter");
+				Game.MainPanel.Emitters.Remove(this);
+			}
 		}
 		
-		public void Emit()
+		public virtual void Place(int x, int y, int z)
 		{
+			X = x;
+			Y = y;
+			Z = z;
+		}
+		public virtual void Emit()
+		{
+			LastEmit = DateTime.Now;
 			
+			Particle p = new Particle()
+			{
+				Symbol = '@',
+				FG = "yellow"
+			};
+			p.Place(X, Y, Z);
 		}
 	}
+	
 	public class Particle
 	{
 		public int X0;
@@ -59,6 +90,7 @@ namespace Hecatomb
 		public string BG;
 		public bool Placed;
 		public DateTime T0;
+		public int LifeSpan;
 
 		public Particle()
 		{
@@ -69,6 +101,7 @@ namespace Hecatomb
 			Z = -1;
 			T0 = DateTime.Now;
 			Placed = false;
+			LifeSpan = 1000;
 		}
 		
 		public void Place(int _x, int _y, int _z)
@@ -91,15 +124,24 @@ namespace Hecatomb
 			Y = -1;
 			Z = -1;
 			Placed = false;
+			
 		}
 		
 		public virtual void Update()
 		{
 			int T = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
+			Debug.WriteLine(T);
+//			if (T>LifeSpan)
+//			{
+//				Debug.WriteLine("removing particle");
+//				Remove();
+//			}
+			Game.MainPanel.DirtifyTile(X, Y, Z);
 			int x = (int) (X0 + Math.Cos(Angle)*(V0*T + 0.5*A*T*T));
 			int y = (int) (Y0 + Math.Sin(Angle)*(V0*T + 0.5*A*T*T));
 			int z = (int) (Z0 + Math.Sin(Incline)*(V0*T + 0.5*A*T*T));
 			Place(x, y, z);
+			Game.MainPanel.DirtifyTile(x, y, z);
 		}
 	}
 	

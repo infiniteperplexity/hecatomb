@@ -19,9 +19,10 @@ namespace Hecatomb
 	{
 		static KeyboardState OldKeyboard;
         static MouseState OldMouse;
+        static Coord OldCamera;
         static DateTime InputBegan;
         static Highlight Cursor = new Highlight("cyan");
-        public const int Throttle = 125;
+        public const int Throttle = 250;
         public Dictionary <Keys, Action> KeyMap;
         public List<string> MenuTop;
         public TextColors TopColors;
@@ -35,6 +36,8 @@ namespace Hecatomb
         public Action<int, int> OnMenuClick;
         public Action<int, int> OnStatusClick;
         public Action<int, int> OnStatusHover;
+        public static TextColors ValidColor = new TextColors(0,"lime green");
+        public static TextColors InvalidColor = new TextColors(0,"orange");
            
         
         public void Set(ControlContext c)
@@ -73,7 +76,7 @@ namespace Hecatomb
          		int Size = Game.MainPanel.Size;
 	        	int Padding = Game.MainPanel.Padding;
 	        	GameCamera Camera = Game.Camera;
-	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.z);
+	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.Z);
 	        	OnTileClick(tile);
         	}
         	else if (x>=Game.MenuPanel.X0) 
@@ -102,7 +105,7 @@ namespace Hecatomb
          		int Size = Game.MainPanel.Size;
 	        	int Padding = Game.MainPanel.Padding;
 	        	GameCamera Camera = Game.Camera;
-	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.z);
+	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.Z);
 	        	OnTileHover(tile);
         	} else if (x>=Game.MenuPanel.X0)
         	{
@@ -155,6 +158,7 @@ namespace Hecatomb
         {
         	OldKeyboard = Keyboard.GetState();
         	OldMouse = Mouse.GetState();
+        	OldCamera = new Coord(-1, -1, -1);
         	InputBegan = DateTime.Now;
         }
 		public ControlContext()
@@ -188,10 +192,12 @@ namespace Hecatomb
         	var k = Keyboard.GetState();
         	DateTime now = DateTime.Now;
         	double sinceInputBegan = now.Subtract(InputBegan).TotalMilliseconds;
-        	if (!m.Equals(OldMouse))
+        	Coord c = new Coord(Game.Camera.XOffset, Game.Camera.YOffset, Game.Camera.Z);
+        	if (!m.Equals(OldMouse) || !c.Equals(OldCamera))
         	{
         		HandleHover(m.X, m.Y);
         	}
+        	OldCamera = c;
         	if (k.Equals(OldKeyboard) && m.Equals(OldMouse) && sinceInputBegan<Throttle) {
         		if (!m.Equals(OldMouse))
 	        	{

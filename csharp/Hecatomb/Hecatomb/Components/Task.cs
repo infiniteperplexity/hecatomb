@@ -87,6 +87,7 @@ namespace Hecatomb
 				Start();
 			}
 			Labor-=1;
+			Worker.GetComponent<Actor>().Spend();
 			if (Labor<=0)
 			{
 				Finish();

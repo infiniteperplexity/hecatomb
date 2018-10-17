@@ -21,6 +21,12 @@ namespace Hecatomb
 		void ChooseFromMenu();
 		string ListOnMenu();
 	}
+	
+	public interface IChoiceMenu
+	{
+		string MenuHeader {get; set;}
+		List<IMenuListable> MenuChoices {get; set;}
+	}
 		
 	public class MenuChoiceControls : ControlContext
 	{
@@ -56,15 +62,16 @@ namespace Hecatomb
 		static string alphabet = "abcdefghijklmnopqrstuvwxyz";
 		public List<string> Choices;
 		
-		public MenuChoiceControls(string header, List<IMenuListable> choices): base()
+		public MenuChoiceControls(IChoiceMenu menu): base()
 		{
 			var Commands = Game.Commands;
 			KeyMap[Keys.Space] = Commands.Wait;
 			KeyMap[Keys.Escape] = Reset;
 			MenuTop = new List<string>() {
 				"**Esc: Cancel**.",
-				header
+				menu.MenuHeader
 		    };
+			var choices = menu.MenuChoices;
 			TopColors = new TextColors(0, "orange", 1, "yellow");
 			for (int i=0; i<choices.Count; i++)
 			{

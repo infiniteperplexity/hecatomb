@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -25,9 +26,31 @@ namespace Hecatomb
 		public Player() : base()
 		{
 			Acted = false;
-			MinionEIDs = new List<int>();
 		}
 		
+		public void Initialize()
+		{
+			Component c;
+			c = (Component) Game.World.Entities.Spawn(typeof(Minions));
+			c.AddToEntity(this);
+			c = (Component) Game.World.Entities.Spawn(typeof(TaskMaster));
+			c.AddToEntity(this);
+		}
+		
+		public void Act()
+		{
+			Acted = true;
+			Game.Time.Acted();
+		}
+		public void Ready()
+		{
+			HandleVisibility();
+			Game.Camera.Center(x, y, z);
+			Game.MainPanel.Dirty = true;
+			Game.MenuPanel.Dirty = true;
+			Game.StatusPanel.Dirty = true;
+			Acted = false;
+		}
 		public override GameEvent OnSelfSpawn(GameEvent g)
 		{
 			Game.World.Events.Subscribe<PlaceEvent>(this, OnPlace);
@@ -42,24 +65,12 @@ namespace Hecatomb
 			}
 			return p;
 		}
-		public List<Creature> GetMinions()
-		{
-			return MinionEIDs.Select(eid => Game.World.Entities.Spawned[eid]).Cast<Creature>().ToList();
-		}
 		
-		public void AddMinion(Creature c)
-		{
-			int eid = c.EID;
-			if (!MinionEIDs.Contains(eid))
-			{
-				MinionEIDs.Add(eid);
-			}
-		}
 		public void HandleVisibility()
 		{
 			Game.Camera.Center(x, y, z);
 			Game.Visible = GetComponent<Senses>().GetFOV();
-			foreach(Creature c in GetMinions())
+			foreach(Creature c in GetComponent<Minions>())
 			{
 				Senses s = c.GetComponent<Senses>();
 				Game.Visible.UnionWith(s.GetFOV());

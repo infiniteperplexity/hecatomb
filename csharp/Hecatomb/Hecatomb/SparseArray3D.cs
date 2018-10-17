@@ -81,7 +81,7 @@ namespace Hecatomb
 		}
 	}
 	
-	public class SparseJaggedArray3D<T>: SparseArray3D<T>
+	public class SparseJaggedArray3D<T> : SparseArray3D<T>, IEnumerable<T>
 	{
 		private Dictionary<Tuple<int, int, int>, List<T>> dict;
 		
@@ -125,5 +125,24 @@ namespace Hecatomb
 				}
 			}
 	   	}
+		
+		// okay this gets kind of weird...do we concatenate them all, or return the lists?
+		public IEnumerator<T> GetEnumerator()
+	    {
+			List<T> list = new List<T>();
+			foreach(List<T> lt in dict.Values)
+			{
+				foreach(T t in lt)
+				{
+					list.Add(t);
+				}
+			}
+			return (IEnumerator<T>) list;
+	    }
+		 
+		IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
 	}
 }

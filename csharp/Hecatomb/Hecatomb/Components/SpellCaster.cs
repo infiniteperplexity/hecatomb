@@ -15,9 +15,31 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of SpellCaster.
 	/// </summary>
-	public class SpellCaster : Component
+	public class SpellCaster : Component, IChoiceMenu
 	{
 		List<string> Spells;
+		public string MenuHeader
+		{
+			get
+			{
+				return "Choose a spell:";
+			}
+			set {}
+		}
+		public List<IMenuListable> MenuChoices
+		{
+			get
+			{
+				List<IMenuListable> spells = new List<IMenuListable>();
+				foreach (string s in Spells)
+				{
+					spells.Add(GetSpell(s));
+				}
+				return spells;
+			}
+			set {}
+		}
+		
 		public SpellCaster() : base()
 		{
 			Spells = new List<string>() {"RaiseZombieSpell"};
@@ -34,15 +56,15 @@ namespace Hecatomb
 			return (Spell) Activator.CreateInstance(t);
 		}
 		
-		public List<Spell> GetSpells()
-		{
-			List<Spell> spells = new List<Spell>();
-			foreach (string s in Spells)
-			{
-				spells.Add(GetSpell(s));
-			}
-			return spells;
-		}
+//		public List<Spell> GetSpells()
+//		{
+//			List<Spell> spells = new List<Spell>();
+//			foreach (string s in Spells)
+//			{
+//				spells.Add(GetSpell(s));
+//			}
+//			return spells;
+//		}
 		public T GetSpell<T>() where T : Spell, new()
 		{
 			T s = new T();

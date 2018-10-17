@@ -41,7 +41,7 @@ namespace Hecatomb
 					}
 					else
 					{
-						col = (int) c[i+2];
+						col = (int) c[i+1];
 						color = (string) c[i+2];
 						i+=2;
 					}

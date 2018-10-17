@@ -25,7 +25,7 @@ namespace Hecatomb
 		{
 			base.HandleKeyDown(key);
 			GameCamera c = Game.Camera;
-			Z = c.z;
+			Z = c.Z;
 			XOffset = c.XOffset;
 			YOffset = c.YOffset;
 		}

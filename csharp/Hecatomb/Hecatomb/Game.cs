@@ -80,6 +80,7 @@ namespace Hecatomb
 			Controls = DefaultControls;
 			Player p = Game.World.Entities.Spawn<Player>("Necromancer");
 			World.Player = p;
+			p.Initialize();
 			p.Place(
 				Constants.WIDTH/2,
 				Constants.HEIGHT/2,
@@ -142,7 +143,7 @@ namespace Hecatomb
 			{
 				p.Update();
 			}
-           	
+           	Time.Update();
 			Controls.HandleInput();
 			if (World.Player.Acted)
            	{

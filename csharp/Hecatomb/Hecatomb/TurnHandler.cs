@@ -44,7 +44,7 @@ namespace Hecatomb
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 			Creature[] actors = Game.World.Creatures.ToArray();
-			foreach (Creature m in p.GetMinions())
+			foreach (Creature m in p.GetComponent<Minions>())
 			{
 				Minion minion = m.GetComponent<Minion>();
 				if (minion.Task==null)
@@ -100,14 +100,7 @@ namespace Hecatomb
 			Actor actor = Queue.Dequeue();
 			if (actor.Entity is Player)
 			{
-				// do visibility
-				Game.World.Player.HandleVisibility();
-				// recenter screen
-				
-				Game.MainPanel.Dirty = true;
-				Game.MenuPanel.Dirty = true;
-				Game.StatusPanel.Dirty = true;
-				Game.World.Player.Acted = false;
+				Game.World.Player.Ready();
 				// set player acted to false
 				return;
 			}

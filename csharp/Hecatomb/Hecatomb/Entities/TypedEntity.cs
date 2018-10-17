@@ -41,9 +41,11 @@ namespace Hecatomb
 			
 		}
 
-		public void Despawn()
+		public virtual void Despawn()
 		{
-			//Game.World.Entities.Spawned.Remove(this);
+			Spawned = false;
+			Game.World.Entities.Spawned.Remove(EID);
+			EID = -1;
 		}
 	}
 	public abstract class TypedEntity : GameEntity
@@ -118,6 +120,12 @@ namespace Hecatomb
 			y = -1;
 			z = -1;
 			Placed = false;
+		}
+		
+		public virtual void Destroy()
+		{
+			Remove();
+			Despawn();
 		}
 	}
 	
@@ -203,6 +211,15 @@ namespace Hecatomb
 			base.Remove();
 			Game.World.Items[x0,y0,z0] = null;
 		}
+		
+		public override void Despawn()
+		{
+			if (Placed)
+			{
+				Remove();
+			}
+			base.Despawn();
+		}
 	}
 	public class TaskEntity : TypedEntity {
 
@@ -228,6 +245,30 @@ namespace Hecatomb
 			int z0 = z;
 			base.Remove();
 			Game.World.Tasks[x0,y0,z0] = null;
+		}
+	}
+	
+	public class StructureEntity : TypedEntity {
+
+		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
+		{
+//			if (e==null)
+//			{
+//				base.Place(x1, y1, z1, fireEvent);
+//			}
+//			else 
+//			{
+//				throw new InvalidOperationException(String.Format(
+//					"Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
+//				));
+//			}
+		}
+		public override void Remove()
+		{
+			int x0 = x;
+			int y0 = y;
+			int z0 = z;
+			base.Remove();
 		}
 	}
 }

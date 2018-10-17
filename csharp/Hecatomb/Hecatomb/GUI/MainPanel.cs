@@ -83,7 +83,7 @@ public class MainGamePanel : GamePanel
 		{
 			GameCamera Camera = Game.Camera;
 			var grid = Game.World.Tiles;
-			int z = Camera.z;
+			int z = Camera.Z;
 			Tuple<char, string, string> glyph;
 			for (int i=0; i<Camera.Width; i++) {
 		    	for (int j=0; j<Camera.Height; j++) {

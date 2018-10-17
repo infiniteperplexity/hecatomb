@@ -310,7 +310,7 @@ namespace Hecatomb
 			Terrain t = Game.World.Tiles[x,y,z];
 			var c = new Coord(x, y, z);
 			TaskEntity task = Game.World.Tasks[x, y, z];
-			if (p!=null)
+			if (p!=null && p.BG!=null)
 			{
 				return p.BG;
 			}
@@ -340,22 +340,22 @@ namespace Hecatomb
 		public static Coord ToCamera(int x, int y)
 		{
 			GameCamera Camera = Game.Camera;
-			return new Coord(x-Camera.XOffset, y-Camera.YOffset, Camera.z);
+			return new Coord(x-Camera.XOffset, y-Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToCamera(Coord c)
 		{
 			GameCamera Camera = Game.Camera;
-			return new Coord(c.x-Camera.XOffset, c.y-Camera.YOffset, Camera.z);
+			return new Coord(c.x-Camera.XOffset, c.y-Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToAbsolute(int x, int y)
 		{
 			GameCamera Camera = Game.Camera;
-			return new Coord(x+Camera.XOffset, y+Camera.YOffset, Camera.z);
+			return new Coord(x+Camera.XOffset, y+Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToAbsolute(Coord c)
 		{
 			GameCamera Camera = Game.Camera;
-			return new Coord(c.x+Camera.XOffset, c.y+Camera.YOffset, Camera.z);
+			return new Coord(c.x+Camera.XOffset, c.y+Camera.YOffset, Camera.Z);
 		}
 	}	
 }

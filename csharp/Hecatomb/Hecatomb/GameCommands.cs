@@ -19,7 +19,7 @@ namespace Hecatomb
 		public void Wait()
 		{
 			Game.World.Player.GetComponent<Actor>().Wait();
-			Game.World.Player.Acted = true;
+			Game.World.Player.Act();
 		}
 		public void MoveNorthCommand()
 		{
@@ -58,17 +58,17 @@ namespace Hecatomb
 			if (!m.CanPass(x1, y1, z1)) {
 				if (m.CanPass(p.x, p.y, z1+1)){
 					m.StepTo(p.x, p.y, z1+1);
-					p.Acted = true;
+					p.Act();
 					return;
 				} else if (m.CanPass(p.x, p.y, z1-1)){
 					m.StepTo(p.x, p.y, z1-1);
-					p.Acted = true;
+					p.Act();
 					return;
 				}
 			    return;
 			} else {
 			    m.StepTo(x1, y1, z1);
-			    p.Acted = true;
+			    p.Act();
 			    return;
 			}
 		}
@@ -87,7 +87,7 @@ namespace Hecatomb
 			    return;
 			} else {
 			    m.StepTo(x1, y1, z1);
-				p.Acted = true;
+			    p.Act();
 				return;
 			}
 		}
@@ -119,7 +119,7 @@ namespace Hecatomb
 		
 		private void moveCameraVertical(int dz)
 		{
-			Game.Camera.z = Math.Max(Math.Min(Game.Camera.z+dz,Constants.DEPTH-2),1);
+			Game.Camera.Z = Math.Max(Math.Min(Game.Camera.Z+dz,Constants.DEPTH-2),1);
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
@@ -141,27 +141,20 @@ namespace Hecatomb
 			var choices = new List<IMenuListable>() {
 				Game.World.Entities.Mock<DigTask>()
 			};
-			Game.Controls = new MenuChoiceControls("Choose a task:", choices);
+			Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<TaskMaster>());
 			Game.MenuPanel.Dirty = true;
 		}
 		
 		public void ChooseSpell()
 		{
-			
-			var choices = new List<IMenuListable>() {};
-			SpellCaster caster = Game.World.Player.GetComponent<SpellCaster>();
-			foreach (Spell s in caster.GetSpells())
-			{
-				choices.Add(s);
-			}
-			Game.Controls = new MenuChoiceControls("Choose a task:", choices);
+			Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
 			Game.MenuPanel.Dirty = true;
 		}
 		
 		public void AutoWait()
 		{
 			Game.World.Player.GetComponent<Actor>().Wait();
-			Game.World.Player.Acted = true;
+			Game.World.Player.Act();
 		}
 		
 		public void SaveGameCommand()
@@ -173,6 +166,13 @@ namespace Hecatomb
 		{
 			string json = System.IO.File.ReadAllText(@"..\GameWorld.json");
 			Game.World.Parse(json);
+		}
+		
+		public void TogglePause()
+		{
+			Game.Time.PausedAfterLoad = false;
+			Game.Time.AutoPausing = !Game.Time.AutoPausing;
+			Game.StatusPanel.Dirty = true;
 		}
 	}
 }
