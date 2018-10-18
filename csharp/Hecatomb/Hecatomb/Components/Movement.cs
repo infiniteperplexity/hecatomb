@@ -17,15 +17,15 @@ namespace Hecatomb
 	/// </summary>
 	/// 
 	public struct Coord {
-		public int x;
-		public int y;
-		public int z;
+		public int X;
+		public int Y;
+		public int Z;
 		
 		public Coord(int _x, int _y, int _z)
 		{
-			x = _x;
-			y = _y;
-			z = _z;
+			X = _x;
+			Y = _y;
+			Z = _z;
 		}
 		
 		public Coord Rotate(int n)
@@ -36,7 +36,7 @@ namespace Hecatomb
 			}
 			else
 			{
-				Coord c = new Coord(-y, x, z);
+				Coord c = new Coord(-Y, X, Z);
 				return c.Rotate(n-1);
 			}
 		}
@@ -48,7 +48,7 @@ namespace Hecatomb
 		
 		public Coord Flip()
 		{
-			return new Coord(x, y, -z);
+			return new Coord(X, Y, -Z);
 		}
 	}
 	
@@ -216,8 +216,8 @@ namespace Hecatomb
 					Coord c = dir;;
 					int rotate = 0;
 					bool flip = false;
-					bool z = (c.z!=0);
-					bool diag = (Math.Abs(c.x)+Math.Abs(c.y)==2);
+					bool z = (c.Z!=0);
+					bool diag = (Math.Abs(c.X)+Math.Abs(c.Y)==2);
 					if (!z && !diag)
 					{
 						while (!c.Equals(North))
@@ -243,9 +243,9 @@ namespace Hecatomb
 					}
 					else if (z && !diag)
 					{
-						if (c.z!=UpNorth.z)
+						if (c.Z!=UpNorth.Z)
 						{
-							c.z = UpNorth.z;
+							c.Z = UpNorth.Z;
 							flip = true;
 						}
 						while (!c.Equals(UpNorth))
@@ -257,9 +257,9 @@ namespace Hecatomb
 					}
 					else if (z && diag)
 					{
-						if (c.z!=UpNorthEast.z)
+						if (c.Z!=UpNorthEast.Z)
 						{
-							c.z = UpNorthEast.z;
+							c.Z = UpNorthEast.Z;
 							flip = true;
 						}
 						while (!c.Equals(UpNorthEast))
@@ -321,9 +321,9 @@ namespace Hecatomb
 			if (tile.Fallable && Flies==false) {
 				return false;
 			}
-			int dx = x1-Entity.x;
-			int dy = y1-Entity.y;
-			int dz = z1-Entity.z;
+			int dx = x1-Entity.X;
+			int dy = y1-Entity.Y;
+			int dz = z1-Entity.Z;
 			// rare: check whether the square itself is allowed
 			if (dx==0 && dy==0 && dz==0)
 			{
@@ -335,7 +335,7 @@ namespace Hecatomb
 				return false;
 			}	
 			// non-flyers need a slope in order to go up
-			Terrain t0 = Game.World.Tiles[Entity.x, Entity.y, Entity.z];
+			Terrain t0 = Game.World.Tiles[Entity.X, Entity.Y, Entity.Z];
 			if (dz==+1 && !Flies && t0.ZWalk!=+1)
 			{
 				return false;

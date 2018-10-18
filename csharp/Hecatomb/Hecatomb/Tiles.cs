@@ -73,11 +73,11 @@ namespace Hecatomb
 				current = queue.First.Value;
 				queue.RemoveFirst();
 				// ***** if we found the goal, retrace our steps ****
-				if (current.x==x1 && current.y==y1 && current.z==z1)
+				if (current.X==x1 && current.Y==y1 && current.Z==z1)
 				{
 					success = true;
 				}
-				else if (!useLast && QuickDistance(current.x, current.y, current.z, x1, y1, z1)<=1)
+				else if (!useLast && QuickDistance(current.X, current.Y, current.Z, x1, y1, z1)<=1)
 				{
 					success = true;
 				}
@@ -103,9 +103,9 @@ namespace Hecatomb
 				// ***** check passability and scores for neighbors **
 				foreach (Coord dir in dirs)
 				{
-					neighbor = new Coord(current.x+dir.x, current.y + dir.y, current.z + dir.z);
+					neighbor = new Coord(current.X+dir.X, current.Y + dir.Y, current.Z + dir.Z);
 					if (!closedSet.Contains(neighbor)) {
-						if (movable(current.x, current.y, current.z, neighbor.x, neighbor.y, neighbor.z))
+						if (movable(current.X, current.Y, current.Z, neighbor.X, neighbor.Y, neighbor.Z))
 						{
 							// cost of taking this step
 							cost = 1;
@@ -114,7 +114,7 @@ namespace Hecatomb
 							newScore = gscores[current] + cost;
 							// if this is the best known path to the cell...
 							if (!gscores.ContainsKey(neighbor) || gscores[neighbor] > newScore) {
-								fscore = newScore + (int) Math.Ceiling(heuristic(neighbor.x, neighbor.y, neighbor.z, x1, y1, z1));
+								fscore = newScore + (int) Math.Ceiling(heuristic(neighbor.X, neighbor.Y, neighbor.Z, x1, y1, z1));
 								fscores[neighbor] = fscore;
 								// loop through the queue to insert in sorted order
 								node = queue.First;
@@ -199,7 +199,7 @@ namespace Hecatomb
 			List<Coord> l = new List<Coord>();
 			foreach (Coord d in c)
 			{
-				l.Add(new Coord(d.x+x, d.y+y, d.z+z));
+				l.Add(new Coord(d.X+x, d.Y+y, d.Z+z));
 			}
 			return l;
 		}
@@ -307,7 +307,8 @@ namespace Hecatomb
 		{
 			List<Particle> pl = Game.MainPanel.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
-			Terrain t = Game.World.Tiles[x,y,z];
+			Terrain t = Game.World.Tiles[x, y, z];
+			Feature f = Game.World.Features[x, y, z];
 			var c = new Coord(x, y, z);
 			TaskEntity task = Game.World.Tasks[x, y, z];
 			if (p!=null && p.BG!=null)
@@ -325,6 +326,10 @@ namespace Hecatomb
 			else if (!Game.Visible.Contains(c))
 			{
 				return "black";
+			}
+			else if (f!=null && f.BG!=null)
+			{
+				return f.BG;
 			}
 			else
 			{
@@ -345,7 +350,7 @@ namespace Hecatomb
 		public static Coord ToCamera(Coord c)
 		{
 			GameCamera Camera = Game.Camera;
-			return new Coord(c.x-Camera.XOffset, c.y-Camera.YOffset, Camera.Z);
+			return new Coord(c.X-Camera.XOffset, c.Y-Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToAbsolute(int x, int y)
 		{
@@ -355,7 +360,7 @@ namespace Hecatomb
 		public static Coord ToAbsolute(Coord c)
 		{
 			GameCamera Camera = Game.Camera;
-			return new Coord(c.x+Camera.XOffset, c.y+Camera.YOffset, Camera.Z);
+			return new Coord(c.X+Camera.XOffset, c.Y+Camera.YOffset, Camera.Z);
 		}
 	}	
 }

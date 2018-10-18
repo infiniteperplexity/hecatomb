@@ -20,15 +20,15 @@ namespace Hecatomb
 		public override void Start()
 		{
 			base.Start();
-			Feature f = Game.World.Features[Entity.x, Entity.y, Entity.z];
+			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
 			f.Symbol = '\u2717';
 			f.FG = "white";
 		}
 		public override void Finish()
 		{
-			int x = Entity.x;
-			int y = Entity.y;
-			int z = Entity.z;
+			int x = Entity.X;
+			int y = Entity.Y;
+			int z = Entity.Z;
 			Game.World.Features[x, y, z].Remove();
 			var tiles = Game.World.Tiles;
 			Terrain t = tiles[x, y, z];	
@@ -67,7 +67,7 @@ namespace Hecatomb
 				tiles[x, y, z] = down;
 				tiles[x, y, z-1] = up;
 			}		
-			Complete();
+			base.Finish();
 		}
 		
 		public override void ChooseFromMenu()
@@ -80,14 +80,14 @@ namespace Hecatomb
 		{
 			var co = Game.Controls;
 			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<string>() {String.Format("Dig from {0} {1} {2}", c.x, c.y, c.z)};
+			co.MenuMiddle = new List<string>() {String.Format("Dig from {0} {1} {2}", c.X, c.Y, c.Z)};
 			co.MiddleColors[0,0] = "green";
 		}
 		public override void TileHover(Coord c, List<Coord> squares)
 		{
 			var co = Game.Controls;
 			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<string>() {String.Format("Dig to {0} {1} {2}", c.x, c.y, c.z)};
+			co.MenuMiddle = new List<string>() {String.Format("Dig to {0} {1} {2}", c.X, c.Y, c.Z)};
 			co.MiddleColors[0,0] = "red";
 		}
 	}

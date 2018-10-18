@@ -13,10 +13,6 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-	class NoSaveAttribute : Attribute
-	{
-		
-	}
 	/// <summary>
 	/// Description of Component.
 	/// </summary>

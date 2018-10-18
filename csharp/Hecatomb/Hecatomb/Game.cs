@@ -31,6 +31,7 @@ namespace Hecatomb
 		public static ControlContext LastControls;
 		public static ControlContext Controls;
 		public static ControlContext DefaultControls;
+		public static ControlContext CameraControls;
 		public static TimeHandler Time;
 		
 //		public static GameEventHandler Events;
@@ -77,6 +78,7 @@ namespace Hecatomb
 			World.Initialize(System.DateTime.Now.Millisecond);
 			Commands = new GameCommands();
 			DefaultControls = new DefaultControls();
+			CameraControls = new CameraControls();
 			Controls = DefaultControls;
 			Player p = Game.World.Entities.Spawn<Player>("Necromancer");
 			World.Player = p;
@@ -87,7 +89,7 @@ namespace Hecatomb
 				World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
 			);
 			Camera = new GameCamera();
-			Camera.Center(p.x, p.y, p.z);
+			Camera.Center(p.X, p.Y, p.Z);
 			p.HandleVisibility();
 			// proved it's possible to deserialize from method names
 //			Debug.WriteLine("check this out...");

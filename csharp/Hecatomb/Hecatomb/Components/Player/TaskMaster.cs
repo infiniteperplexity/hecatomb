@@ -36,7 +36,7 @@ namespace Hecatomb
 		public string[] Tasks;
 		public TaskMaster()
 		{
-			Tasks = new [] {"DigTask", "ConstructTask"};
+			Tasks = new [] {"DigTask", "BuildTask", "ConstructTask", "FurnishTask", "UndesignateTask"};
 		}
 		
 		public Task GetTask(Type t)

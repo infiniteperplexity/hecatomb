@@ -3,6 +3,7 @@
 		[	
 			{
 				"Type" : "Necromancer",
+				"Name": "necromancer",
 				"FG" : "magenta",
 				"Symbol" : "@",
 				"Components" : {
@@ -14,6 +15,7 @@
 			},
 			{
 				"Type" : "Zombie",
+				"Name": "zombie",
 				"FG" : "lime green",
 				"Symbol" : "z",
 				"Components" : {

@@ -69,9 +69,9 @@ public class MainGamePanel : GamePanel
 			OldDirtyTiles.UnionWith(NextDirtyTiles);
 			foreach (Coord c in OldDirtyTiles)
         	{
-				var glyph = Tiles.GetGlyph(c.x, c.y, c.z);
+				var glyph = Tiles.GetGlyph(c.X, c.Y, c.Z);
 				Coord cc = Tiles.ToCamera(c);
-				DrawGlyph(cc.x, cc.y, glyph.Item1, glyph.Item2, glyph.Item3);
+				DrawGlyph(cc.X, cc.Y, glyph.Item1, glyph.Item2, glyph.Item3);
         	}
 			var swap = OldDirtyTiles;
 			OldDirtyTiles = NextDirtyTiles;
@@ -105,7 +105,11 @@ public class MainGamePanel : GamePanel
 			var vbg = new Vector2(Padding+(1+i)*(Size+Padding),Padding+(1+j)*(Size+Padding));
 			var vfg = new Vector2(xOffset+Padding+(1+i)*(Size+Padding), yOffset+Padding+(1+j)*(Size+Padding));
 			Sprites.Draw(BG, vbg, cbg);
-			if (c!=default(char))
+			if (c=='\u02C7')
+			{
+				Sprites.DrawString(getFont(c), "^", vfg+(new Vector2(-1,0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+			}
+			else if (c!=default(char))
 			{
 				Sprites.DrawString(getFont(c), s, vfg, cfg);
 			}

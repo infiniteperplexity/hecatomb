@@ -22,7 +22,7 @@ namespace Hecatomb
 		void TileHover(Coord c);
 	}
 		
-	public class SelectTileControls : NavigatorControls
+	public class SelectTileControls : CameraControls
 	{
 		ISelectsTile Selector;
 		

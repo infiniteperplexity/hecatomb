@@ -32,10 +32,11 @@ namespace Hecatomb
 			KeyMap[Keys.S] = Commands.SaveGameCommand;
 			KeyMap[Keys.R] = Commands.RestoreGameCommand;
 			KeyMap[Keys.Enter] = Commands.TogglePause;
+			KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
 			
 			MenuTop = new List<string>() {
 				"Esc: System view.",
-				"Avatar mode (Tab: Navigation mode)",
+				"Avatar mode (Tab: Camera mode)",
 				" ",
 			    "Move: NumPad/Arrows, ,/.: Up/Down.",
 			    "(Control+Arrows for diagonal.)",
@@ -57,12 +58,6 @@ namespace Hecatomb
 		
 		public override void ClickTile(Coord c)
 		{
-		}
-		
-		public override void HoverTile(Coord c)
-		{
-			base.HoverTile(c);
-			Game.World.ShowTileDetails(c);
 		}
 	}
 }

@@ -16,39 +16,8 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Entity.
 	/// </summary>
-	/// 
-	
-	public abstract class GameEntity
-	{
-		public int EID;
-		public string ClassName;
-		[JsonIgnore] public bool Spawned;
-
-		public GameEntity()
-		{
-			ClassName = this.GetType().Name;
-			EID = -1;
-			Spawned = false;
-		}
-		
-		public virtual GameEvent OnSelfSpawn(GameEvent g)
-		{
-			return g;
-		}
-		
-		public void Publish(GameEvent g)
-		{
-			
-		}
-
-		public virtual void Despawn()
-		{
-			Spawned = false;
-			Game.World.Entities.Spawned.Remove(EID);
-			EID = -1;
-		}
-	}
-	public abstract class TypedEntity : GameEntity
+	///
+	public abstract partial class TypedEntity : GameEntity
 	{
 		public string TypeName;
 		[JsonIgnore] public string Name;
@@ -56,18 +25,18 @@ namespace Hecatomb
 		[JsonIgnore] public char Symbol;
 		[JsonIgnore] public string FG;
 		[JsonIgnore] public string BG;
-		public int x {get; private set;}
-		public int y {get; private set;}
-		public int z {get; private set;}
+		public int X {get; private set;}
+		public int Y {get; private set;}
+		public int Z {get; private set;}
 		[JsonIgnore] public bool Placed {get; private set;}
 
 		public Dictionary<string, int> Components;
 		
 		public TypedEntity() : base()
 		{
-			x = -1;
-			y = -1;
-			z = -1;
+			X = -1;
+			Y = -1;
+			Z = -1;
 			Placed = false;
 		}
 		public T GetComponent<T>() where T : Component
@@ -103,9 +72,9 @@ namespace Hecatomb
 			{
 				this.Remove();
 			}
-			x = x1;
-			y = y1;
-			z = z1;
+			X = x1;
+			Y = y1;
+			Z = z1;
 			Placed = true;
 			if (fireEvent)
 			{
@@ -115,10 +84,10 @@ namespace Hecatomb
 		
 		public virtual void Remove()
 		{
-			Game.World.Events.Publish(new RemoveEvent() {Entity = this, X = x, Y = y, Z = z});
-			x = -1;
-			y = -1;
-			z = -1;
+			Game.World.Events.Publish(new RemoveEvent() {Entity = this, X = X, Y = Y, Z = Z});
+			X = -1;
+			Y = -1;
+			Z = -1;
 			Placed = false;
 		}
 		
@@ -126,6 +95,43 @@ namespace Hecatomb
 		{
 			Remove();
 			Despawn();
+		}
+		
+		public virtual string Describe(
+			bool article=true,
+			bool definite=false,
+			bool capitalized=false
+		)
+		{
+			string name = Name;
+			bool vowel = false;
+			if ("aeiou".Contains(char.ToLower(name[0]).ToString()))
+			{
+				vowel = true;
+			}
+			if (article || definite)
+			{
+				if (definite)
+				{
+					name = "the " + name;
+				}
+				else
+				{
+					if (vowel)
+					{
+						name = "an " + name;
+					}
+					else
+					{
+						name = "a " + name;
+					}
+				}
+			}
+			if (capitalized)
+			{
+				name = char.ToUpper(name[0]) + name.Substring(1);
+			}
+			return name;
 		}
 	}
 	
@@ -153,9 +159,9 @@ namespace Hecatomb
 		}
 		public override void Remove()
 		{
-			int x0 = x;
-			int y0 = y;
-			int z0 = z;
+			int x0 = X;
+			int y0 = Y;
+			int z0 = Z;
 			base.Remove();
 			Game.World.Creatures[x0,y0,z0] = null;
 		}
@@ -179,9 +185,9 @@ namespace Hecatomb
 		}
 		public override void Remove()
 		{
-			int x0 = x;
-			int y0 = y;
-			int z0 = z;
+			int x0 = X;
+			int y0 = Y;
+			int z0 = Z;
 			base.Remove();
 			Game.World.Features[x0,y0,z0] = null;
 		}
@@ -205,9 +211,9 @@ namespace Hecatomb
 		}
 		public override void Remove()
 		{
-			int x0 = x;
-			int y0 = y;
-			int z0 = z;
+			int x0 = X;
+			int y0 = Y;
+			int z0 = Z;
 			base.Remove();
 			Game.World.Items[x0,y0,z0] = null;
 		}
@@ -240,9 +246,9 @@ namespace Hecatomb
 		}
 		public override void Remove()
 		{
-			int x0 = x;
-			int y0 = y;
-			int z0 = z;
+			int x0 = X;
+			int y0 = Y;
+			int z0 = Z;
 			base.Remove();
 			Game.World.Tasks[x0,y0,z0] = null;
 		}
@@ -265,9 +271,9 @@ namespace Hecatomb
 		}
 		public override void Remove()
 		{
-			int x0 = x;
-			int y0 = y;
-			int z0 = z;
+			int x0 = X;
+			int y0 = Y;
+			int z0 = Z;
 			base.Remove();
 		}
 	}

@@ -15,7 +15,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of NavigationControlContext.
 	/// </summary>
-	public class NavigatorControls : ControlContext
+	public class CameraControls : ControlContext
 	{
 		static int Z;
 		static int XOffset;
@@ -31,7 +31,7 @@ namespace Hecatomb
 		}
 		
 		
-		public NavigatorControls() : base()
+		public CameraControls() : base()
 		{
 			var Commands = Game.Commands;
 			KeyMap[Keys.Up] = Commands.MoveCameraNorth;
@@ -41,10 +41,15 @@ namespace Hecatomb
 			KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
 			KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
 			KeyMap[Keys.Space] = Commands.Wait;
+			// skip for subclasses
+			if (GetType()==typeof(CameraControls))
+			{
+				KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
+			}
 			
 			MenuTop = new List<string>() {
 				"Esc: System view.",
-				"Avatar mode (Tab: Navigation mode)",
+				"Camera mode (Tab: Avatar mode)",
 				" ",
 			    "Move: NumPad/Arrows, ,/.: Up/Down.",
 			    "(Control+Arrows for diagonal.)",

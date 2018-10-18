@@ -49,9 +49,9 @@ namespace Hecatomb
 			Player p = Game.World.Player;
 			string txt = String.Format(
 				"X:{0} Y:{1} Z:{2}                                     {3}",
-				p.x.ToString().PadRight(3),
-				p.y.ToString().PadRight(3),
-				p.z.ToString().PadRight(3),
+				p.X.ToString().PadRight(3),
+				p.Y.ToString().PadRight(3),
+				p.Z.ToString().PadRight(3),
 			    (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "Paused" : "      "
 			);
         	DrawLines(new List<string>() {txt}, statusColors);

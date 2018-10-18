@@ -69,5 +69,11 @@ namespace Hecatomb
 			T t = new T();
 			return t;
 		}
+		
+		public GameEntity Mock(Type t)
+		{
+			GameEntity ge = (GameEntity) Activator.CreateInstance(t);
+			return ge;
+		}
 	}
 }

@@ -77,7 +77,7 @@ namespace Hecatomb
 					bool slope = false;
 					foreach (Coord c in neighbors)
 					{
-						if (GetTile(c.x, c.y, c.z) == Terrain.WallTile)
+						if (GetTile(c.X, c.Y, c.Z) == Terrain.WallTile)
 						{
 							slope = true;
 							break;
@@ -141,9 +141,9 @@ namespace Hecatomb
 
 		public void ShowTileDetails(Coord c)
 		{
-			int x = c.x;
-			int y = c.y;
-			int z = c.z;
+			int x = c.X;
+			int y = c.Y;
+			int z = c.Z;
 			int za = z+1;
 			int zb = z-1;
 			Coord above = new Coord(x, y, za);
@@ -161,17 +161,17 @@ namespace Hecatomb
 				t = Creatures[x, y, z];
 				if (t!=null)
 				{
-					text.Add("Creature: " + t.Name);
+					text.Add("Creature: " + t.Describe());
 				}
 				t = Features[x, y, z];
 				if (t!=null)
 				{
-					text.Add("Feature: " + t.Name);
+					text.Add("Feature: " + t.Describe());
 				}
 				t = Tasks[x, y, z];
 				if (t!=null)
 				{
-					text.Add("Task: " + t.Name);
+					text.Add("Task: " + t.Describe());
 				}
 				text.Add(" ");
 			}
@@ -182,17 +182,17 @@ namespace Hecatomb
 				t = Creatures[x, y, za];
 				if (t!=null)
 				{
-					text.Add("Creature: " + t.Name);
+					text.Add("Creature: " + t.Describe());
 				}
 				t = Features[x, y, za];
 				if (t!=null)
 				{
-					text.Add("Feature: " + t.Name);
+					text.Add("Feature: " + t.Describe());
 				}
 				t = Tasks[x, y, za];
 				if (t!=null)
 				{
-					text.Add("Task: " + t.Name);
+					text.Add("Task: " + t.Describe());
 				}
 				text.Add(" ");
 			}
@@ -202,17 +202,17 @@ namespace Hecatomb
 				t = Creatures[x, y, zb];
 				if (t!=null)
 				{
-					text.Add("Creature: " + t.Name);
+					text.Add("Creature: " + t.Describe());
 				}
 				t = Features[x, y, zb];
 				if (t!=null)
 				{
-					text.Add("Feature: " + t.Name);
+					text.Add("Feature: " + t.Describe());
 				}
 				t = Tasks[x, y, zb];
 				if (t!=null)
 				{
-					text.Add("Task: " + t.Name);
+					text.Add("Task: " +t.Describe());
 				}
 				text.Add(" ");
 			}

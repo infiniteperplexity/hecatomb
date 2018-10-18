@@ -130,18 +130,17 @@ namespace Hecatomb
 		public virtual void Update()
 		{
 			int T = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
-			Debug.WriteLine(T);
-//			if (T>LifeSpan)
-//			{
-//				Debug.WriteLine("removing particle");
-//				Remove();
-//			}
 			Game.MainPanel.DirtifyTile(X, Y, Z);
-			int x = (int) (X0 + Math.Cos(Angle)*(V0*T + 0.5*A*T*T));
-			int y = (int) (Y0 + Math.Sin(Angle)*(V0*T + 0.5*A*T*T));
-			int z = (int) (Z0 + Math.Sin(Incline)*(V0*T + 0.5*A*T*T));
-			Place(x, y, z);
-			Game.MainPanel.DirtifyTile(x, y, z);
+			if (T>LifeSpan && LifeSpan!=int.MaxValue)
+			{
+				Remove();
+				return;
+			}
+//			int x = (int) (X0 + Math.Cos(Angle)*(V0*T + 0.5*A*T*T));
+//			int y = (int) (Y0 + Math.Sin(Angle)*(V0*T + 0.5*A*T*T));
+//			int z = (int) (Z0 + Math.Sin(Incline)*(V0*T + 0.5*A*T*T));
+////			Place(x, y, z);
+//			Game.MainPanel.DirtifyTile(x, y, z);
 		}
 	}
 	
@@ -151,6 +150,7 @@ namespace Hecatomb
 		public Highlight(string s)
 		{
 			BG = s;
+			LifeSpan = int.MaxValue;
 		}
 	}
 }

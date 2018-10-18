@@ -22,6 +22,7 @@ namespace Hecatomb
         static Coord OldCamera;
         static DateTime InputBegan;
         static Highlight Cursor = new Highlight("cyan");
+        public static bool MovingCamera;
         public const int Throttle = 250;
         public Dictionary <Keys, Action> KeyMap;
         public List<string> MenuTop;
@@ -50,8 +51,8 @@ namespace Hecatomb
         
         public void Reset()
         {
-        	Game.LastControls = Game.DefaultControls;
-        	Game.Controls = Game.DefaultControls;
+        	Game.Controls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
+        	Game.LastControls = Game.Controls;	
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
         }
@@ -59,7 +60,7 @@ namespace Hecatomb
         public virtual void Back()
         {
         	Game.Controls = Game.LastControls;
-        	Game.LastControls = Game.DefaultControls;
+        	Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
         }
@@ -123,14 +124,15 @@ namespace Hecatomb
         
         public virtual void ClickTile(Coord c)
         {
-        	Debug.Print("Clicked on tile at {0} {1}", c.x, c.y);
-        	Nothing(c.x, c.y);
+        	Debug.Print("Clicked on tile at {0} {1}", c.X, c.Y);
+        	Nothing(c.X, c.Y);
         }
         
          public virtual void HoverTile(Coord c)
         {
-        	Cursor.Place(c.x, c.y, c.z);
+        	Cursor.Place(c.X, c.Y, c.Z);
         	Game.MainPanel.DirtifyTile(c);
+        	Game.World.ShowTileDetails(c);
         }
         
         public virtual void MenuClick(int x, int y)

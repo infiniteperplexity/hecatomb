@@ -87,8 +87,8 @@ namespace Hecatomb
 		
 		public static readonly Terrain UpSlopeTile = new Terrain(
 			name: "upward slope",
-			symbol: '\u02C4',
-//			symbol: '\u25B3',
+//			symbol: '\u02C4',
+			symbol: '^',
 			fg: "FLOORFG",
 //			fg: "GRASSFG",
 			bg: "GRASSBG",
@@ -98,9 +98,9 @@ namespace Hecatomb
 		
 		public static readonly Terrain DownSlopeTile = new Terrain(
 			name: "downward slope",
-			symbol: '\u02C5',
-//			symbol: '\u25BD',
-			fg: "FLOORFG",
+//			symbol: '\u02C5',
+			symbol: '\u02C7',
+			fg: "BELOWFG",
 //			fg: "GRASSFG",
 			bg: "BELOWBG",
 			zview: -1,

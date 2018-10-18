@@ -9,21 +9,40 @@
 			},
 			{
 				"Type" : "Tree",
+				"Name": "tree",
 				"FG" : "olive",
 				"Symbol" : "\u2698",
 				"Components" : {}
 			},
 			{
 				"Type" : "Shrub",
+				"Name": "shrub",
 				"FG" : "green",
 				"Symbol" : "\u2698",
 				"Components" : {}
 			},
 			{
 				"Type" : "Grave",
+				"Name": "grave",
 				"FG" : "WALLFG",
 				"Symbol" : "\u271D",
 				"Components" : {}
+			},
+			{
+				"Type" : "Ramp",
+				"Name": "ramp",
+				"FG" : "WALLFG",
+				"Symbol" : "^",
+				"AfterSelfPlace" : "AfterRampPlace",
+				"Components" : {}
+			},
+			{
+				"Type" : "Door",
+				"Name": "door",
+				"FG" : "brown",
+				"Symbol" : "+",
+				"Components" : {}
 			}
+
 		]
 }

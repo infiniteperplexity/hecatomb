@@ -19,6 +19,7 @@ namespace Hecatomb
 	public class EntityType
 	{
 		public static Dictionary<string, EntityType> Types = new Dictionary<string, EntityType>();
+		public string TypeName;
 		public string Name;
 		public string[] Components;
 		public string FG;
@@ -29,7 +30,7 @@ namespace Hecatomb
 		/// </summary>
 		public EntityType(string s)
 		{
-			Name = s;
+			TypeName = s;
 			Types[s] = this;
 			Symbol = '@';
 			FG = "White";
@@ -37,6 +38,7 @@ namespace Hecatomb
 			
 		public void Standardize(TypedEntity e)
 		{
+			e.TypeName = TypeName;
 			e.Name = Name;
 			e.FG = FG;
 			e.Symbol = Symbol;
@@ -44,6 +46,7 @@ namespace Hecatomb
 		}
 		public void Typify(TypedEntity e)
 		{
+			e.TypeName = TypeName;
 			e.Name = Name;
 			e.FG = FG;
 			e.BG = BG;
@@ -69,6 +72,7 @@ namespace Hecatomb
 			foreach (var t in obj["Types"])
 			{
 				EntityType et = new EntityType((string) t["Type"]);
+				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
 				var Components = new List<string>();
@@ -87,6 +91,7 @@ namespace Hecatomb
 			foreach (var t in obj["Types"])
 			{
 				EntityType et = new EntityType((string) t["Type"]);
+				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
 				var Components = new List<string>();
@@ -107,6 +112,18 @@ namespace Hecatomb
 				t.Components = new string[] {
 					task.Name
 				};
+			}
+			// dynamically create a typed entity for each subclass of Structure
+			var structures = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Structure))).ToList();
+			foreach (var structure in structures)
+			{
+				EntityType t = new EntityType(structure.Name);
+				t.Components = new string[] {
+					structure.Name
+				};
+				EntityType tf = new EntityType(structure.Name + "Feature");
+				tf.Name = "need to figure this out.";
+				tf.Components = new string[] {};
 			}
 		}
 	}

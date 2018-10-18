@@ -22,7 +22,7 @@ namespace Hecatomb
 		void TileHover(Coord c);
 		void TileHover(Coord c, List<Coord> squares);
 	}
-	public class SelectZoneControls : NavigatorControls
+	public class SelectZoneControls : CameraControls
 	{
 		ISelectsZone Selector;
 		Coord FirstCorner;
@@ -32,7 +32,10 @@ namespace Hecatomb
 		public SelectZoneControls(ISelectsZone i)
 		{
 			Selector = i;
-			KeyMap[Keys.Escape] = Back;
+			KeyMap[Keys.Escape] = ()=>{
+				Clean();
+				Back();
+			};
 			Squares = new List<Coord>();
 			Highlights = new List<Particle>();
 			MenuTop = new List<string>() {
@@ -55,14 +58,12 @@ namespace Hecatomb
 			{
 				base.HoverTile(c);
 				Selector.TileHover(c);
-				Game.World.ShowTileDetails(c);
 			}
 			else
 			{
 				base.HoverTile(c);
 				DrawSquareZone(c);
 				Selector.TileHover(c, Squares);
-				Game.World.ShowTileDetails(c);
 			}
 		}
 		
@@ -77,11 +78,11 @@ namespace Hecatomb
 			}
 			Highlights.Clear();
 			Squares.Clear();
-			int x0 = FirstCorner.x;
-			int y0 = FirstCorner.y;
-			int x1 = c.x;
-			int y1 = c.y;
-			int z = c.z;
+			int x0 = FirstCorner.X;
+			int y0 = FirstCorner.Y;
+			int x1 = c.X;
+			int y1 = c.Y;
+			int z = c.Z;
 			int swap;
 			if (x0>x1) {swap = x0; x0 = x1; x1 = swap;}
 			if (y0>y1) {swap = y0; y0 = y1; y1 = swap;}
@@ -93,7 +94,7 @@ namespace Hecatomb
 					Squares.Add(s);
 					Game.MainPanel.DirtifyTile(s);
 					Highlight h = new Highlight("orange");
-					h.Place(s.x, s.y, s.z);
+					h.Place(s.X, s.Y, s.Z);
 					Highlights.Add(h);
 				}
 			}
@@ -103,6 +104,7 @@ namespace Hecatomb
 		{
 			if (FirstCorner.Equals(default(Coord)))
 			{
+
 				SelectFirstCorner(c);
 			}
 			else
@@ -114,31 +116,34 @@ namespace Hecatomb
 		{
 			FirstCorner = c;
 			MenuTop[1] = "Select second corner with keys or mouse.";
-			KeyMap[Keys.Escape] = BackToFirstSquare;
+//			KeyMap[Keys.Escape] = BackToFirstSquare;
 			Game.MenuPanel.Dirty = true;
 		}
 		
 		private void BackToFirstSquare()
 		{
+			// not currently used
 			FirstCorner = default(Coord);
 			MenuTop[1] = "Select first corner with keys or mouse.";
-			foreach (Particle p in Highlights)
-			{
-				p.Remove();
-			}
+			Clean();
 			Highlights.Clear();
 			Game.MenuPanel.Dirty = true;
 			Game.MainPanel.Dirty = true;
 			KeyMap[Keys.Escape] = Back;
 		}
 		
-		public void SelectSecondCorner(Coord c)
+		private void Clean()
 		{
-			Selector.SelectZone(Squares);
 			foreach (Particle p in Highlights)
 			{
 				p.Remove();
 			}
+			Game.MainPanel.Dirty = true;
+		}
+		public void SelectSecondCorner(Coord c)
+		{
+			Selector.SelectZone(Squares);
+			Clean();
 			Highlights.Clear();
 			Squares.Clear();
 			Game.Controls.Reset();

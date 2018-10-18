@@ -30,9 +30,9 @@ namespace Hecatomb
 		public HashSet<Coord> GetFOV()
 		{
 			resetVisible();
-			int x = Entity.x;
-			int y = Entity.y;
-			storedZ = Entity.z;
+			int x = Entity.X;
+			int y = Entity.Y;
+			storedZ = Entity.Z;
 			ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, addToVisible);
 			return Visible;
 		}

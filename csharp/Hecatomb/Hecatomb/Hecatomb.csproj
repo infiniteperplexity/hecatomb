@@ -42,9 +42,18 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Components\ConstructTask.cs" />
+    <Compile Include="Components\GuardPost.cs" />
     <Compile Include="Components\Player\TaskMaster.cs" />
     <Compile Include="Components\Structure.cs" />
+    <Compile Include="Components\Tasks\BuildTask.cs" />
+    <Compile Include="Components\Tasks\ConstructTask.cs" />
+    <Compile Include="Components\Tasks\DigTask.cs" />
+    <Compile Include="Components\Tasks\FurnishTask.cs" />
+    <Compile Include="Components\Tasks\Task.cs" />
+    <Compile Include="Components\Tasks\UndesignateTask.cs" />
+    <Compile Include="Entities\DelegateStrategies.cs" />
+    <Compile Include="Entities\GameEntity.cs" />
+    <Compile Include="Entities\TypedEntityEvents.cs" />
     <Compile Include="GUI\ForegroundPanel.cs" />
     <Compile Include="GUI\StatusPanel.cs" />
     <Compile Include="Components\Player\Minions.cs" />
@@ -56,17 +65,15 @@
     <Compile Include="Entities\TypedEntity.cs" />
     <Compile Include="GameRandom.cs" />
     <Compile Include="GameWorldSaveParse.cs" />
-    <Compile Include="Components\DigTask.cs" />
     <Compile Include="Components\SpellCaster.cs" />
     <Compile Include="Controls\ControlContext.cs" />
     <Compile Include="Controls\DefaultControls.cs" />
     <Compile Include="Controls\MenuChoiceControls.cs" />
-    <Compile Include="Controls\NavigatorControls.cs" />
+    <Compile Include="Controls\CameraControls.cs" />
     <Compile Include="Controls\SelectBoxControls.cs" />
     <Compile Include="Controls\SelectZoneControls.cs" />
     <Compile Include="Controls\SelectTileControls.cs" />
     <Compile Include="Components\Minion.cs" />
-    <Compile Include="Components\Task.cs" />
     <Compile Include="FlyWeight.cs" />
     <Compile Include="GameEvent.cs" />
     <Compile Include="GUI\FontHandler.cs" />
@@ -125,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components" />
+    <Folder Include="Components\Tasks" />
     <Folder Include="Controls" />
     <Folder Include="Entities" />
     <Folder Include="GUI" />

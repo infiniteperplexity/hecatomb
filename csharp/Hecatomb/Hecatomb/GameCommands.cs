@@ -48,20 +48,20 @@ namespace Hecatomb
 		private void moveHorizontalCommand(int dx, int dy)
 		{
 			Player p = Game.World.Player;
-			int x1 = p.x + dx;
-			int y1 = p.y + dy;
-			int z1 = p.z;
+			int x1 = p.X + dx;
+			int y1 = p.Y + dy;
+			int z1 = p.Z;
 			var m = p.TryComponent<Movement>();
 			if (m==null) {
 				return;
 			}
 			if (!m.CanPass(x1, y1, z1)) {
-				if (m.CanPass(p.x, p.y, z1+1)){
-					m.StepTo(p.x, p.y, z1+1);
+				if (m.CanPass(p.X, p.Y, z1+1)){
+					m.StepTo(p.X, p.Y, z1+1);
 					p.Act();
 					return;
-				} else if (m.CanPass(p.x, p.y, z1-1)){
-					m.StepTo(p.x, p.y, z1-1);
+				} else if (m.CanPass(p.X, p.Y, z1-1)){
+					m.StepTo(p.X, p.Y, z1-1);
 					p.Act();
 					return;
 				}
@@ -76,9 +76,9 @@ namespace Hecatomb
 		private void moveVerticalCommand(int dz)
 		{
 			Player p = Game.World.Player;
-			int x1 = p.x;
-			int y1 = p.y;
-			int z1 = p.z + dz;
+			int x1 = p.X;
+			int y1 = p.Y;
+			int z1 = p.Z + dz;
 			var m = p.TryComponent<Movement>();
 			if (m==null) {
 				return;
@@ -173,6 +173,23 @@ namespace Hecatomb
 			Game.Time.PausedAfterLoad = false;
 			Game.Time.AutoPausing = !Game.Time.AutoPausing;
 			Game.StatusPanel.Dirty = true;
+		}
+		
+		public void ToggleMovingCamera()
+		{
+			ControlContext.MovingCamera = !ControlContext.MovingCamera;
+			if (ControlContext.MovingCamera)
+			{
+				Game.Controls = Game.CameraControls;
+			}
+			else
+			{
+				Game.Controls = Game.DefaultControls;
+			}
+			Player p = Game.World.Player;
+			Game.Camera.Center(p.X, p.Y, p.Z);
+			Game.MainPanel.Dirty = true;
+			Game.MenuPanel.Dirty = true;
 		}
 	}
 }

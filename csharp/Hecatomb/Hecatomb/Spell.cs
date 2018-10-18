@@ -92,14 +92,14 @@ namespace Hecatomb
 		
 		public void SelectTile(Coord c)
 		{
-			Feature f = Game.World.Features[c.x, c.y, c.z];
+			Feature f = Game.World.Features[c.X, c.Y, c.Z];
 			if (Game.World.Explored.Contains(c) && f!=null && f.TypeName=="Grave")
 			{
-				ParticleEmitter emitter = new ParticleEmitter();
-				emitter.Place(c.x, c.y, c.z);
+				//ParticleEmitter emitter = new ParticleEmitter();
+				//emitter.Place(c.X, c.Y, c.Z);
 				f.Destroy();
 				Creature zombie = Game.World.Entities.Spawn<Creature>("Zombie");
-				zombie.Place(c.x, c.y, c.z);
+				zombie.Place(c.X, c.Y, c.Z);
 				Game.World.Player.GetComponent<Minions>().Add(zombie);
 			}
 			else
@@ -110,9 +110,9 @@ namespace Hecatomb
 		
 		public void TileHover(Coord c)
 		{
-			int x = c.x;
-			int y = c.y;
-			int z = c.z;
+			int x = c.X;
+			int y = c.Y;
+			int z = c.Z;
 			Feature f = Game.World.Features[x, y, z];
 			if (!Game.World.Explored.Contains(c))
 			{

@@ -137,7 +137,8 @@ namespace Hecatomb
 					list.Add(t);
 				}
 			}
-			return (IEnumerator<T>) list;
+			return list.GetEnumerator();
+			
 	    }
 		 
 		IEnumerator IEnumerable.GetEnumerator()

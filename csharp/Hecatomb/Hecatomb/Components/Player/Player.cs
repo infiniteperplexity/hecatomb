@@ -45,7 +45,7 @@ namespace Hecatomb
 		public void Ready()
 		{
 			HandleVisibility();
-			Game.Camera.Center(x, y, z);
+			Game.Camera.Center(X, Y, Z);
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
@@ -61,14 +61,14 @@ namespace Hecatomb
 			PlaceEvent p = (PlaceEvent) g;
 			if (p.Entity.Equals(this))
 			{
-				Debug.WriteLine(String.Format("{0} placed at {1} {2} {3}", this.Name, p.X, p.Y, p.Z));
+				Debug.WriteLine(String.Format("{0} placed at {1} {2} {3}", Describe(), p.X, p.Y, p.Z));
 			}
 			return p;
 		}
 		
 		public void HandleVisibility()
 		{
-			Game.Camera.Center(x, y, z);
+			Game.Camera.Center(X, Y, Z);
 			Game.Visible = GetComponent<Senses>().GetFOV();
 			foreach(Creature c in GetComponent<Minions>())
 			{

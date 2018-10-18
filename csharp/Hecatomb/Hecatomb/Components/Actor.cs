@@ -85,7 +85,7 @@ namespace Hecatomb
 					m.Task.GetComponent<Task>().Act();
 				} else {
 					Target = Game.World.Player;
-					Patrol(Target.x, Target.y, Target.z);
+					Patrol(Target.X, Target.Y, Target.Z);
 				}
 				
 			} else {
@@ -96,9 +96,9 @@ namespace Hecatomb
 		
 		public void Patrol(int x1, int y1, int z1)
 		{
-			int x = Entity.x;
-			int y = Entity.y;
-			int z = Entity.z;
+			int x = Entity.X;
+			int y = Entity.Y;
+			int z = Entity.Z;
 			int d = (int) Tiles.QuickDistance(x, y, z, x1, y1, z1);
 			if (d>=5)
 			{	
@@ -120,9 +120,9 @@ namespace Hecatomb
 //		}
 		public void WalkToward(int x1, int y1, int z1, bool useLast=false)
 		{
-			int x = Entity.x;
-			int y = Entity.y;
-			int z = Entity.z;
+			int x = Entity.X;
+			int y = Entity.Y;
+			int z = Entity.Z;
 			Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
 			if (target==null)
 			{
@@ -130,9 +130,9 @@ namespace Hecatomb
 			} else {
 				Coord t = (Coord) target;
 				Movement m = Entity.GetComponent<Movement>();
-				if (m.CanPass(t.x, t.y, t.z))
+				if (m.CanPass(t.X, t.Y, t.Z))
 				{
-					m.StepTo(t.x, t.y, t.z);
+					m.StepTo(t.X, t.Y, t.Z);
 				}
 				else
 				{
@@ -142,9 +142,9 @@ namespace Hecatomb
 		}
 		public void WalkAway(int x1, int y1, int z1)
 		{
-			int x0 = Entity.x;
-			int y0 = Entity.y;
-			int z0 = Entity.z;
+			int x0 = Entity.X;
+			int y0 = Entity.Y;
+			int z0 = Entity.Z;
 			List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
 			if (line.Count<=1)
 			{
@@ -152,8 +152,8 @@ namespace Hecatomb
 			} else
 			{
 				Movement m = Entity.GetComponent<Movement>();
-				int x = line[0].x-x0;
-				int y = line[0].y-y0;
+				int x = line[0].X-x0;
+				int y = line[0].Y-y0;
 				int z = z0;
 				if (m.CanPass(x, y, z))
 				{
@@ -172,9 +172,9 @@ namespace Hecatomb
 			}
 			int r = Game.World.Random.Next(4);
 			Coord d = Movement.Directions4[r];
-			int x1 = Entity.x + d.x;
-			int y1 = Entity.y + d.y;
-			int z1 = Entity.z + d.z;
+			int x1 = Entity.X + d.X;
+			int y1 = Entity.Y + d.Y;
+			int z1 = Entity.Z + d.Z;
 			if (!m.CanPass(x1, y1, z1)) {
 				if (m.Climbs && z1+1<Constants.DEPTH && m.CanPass(x1, y1, z1+1)){
 					m.StepTo(x1, y1, z1+1);

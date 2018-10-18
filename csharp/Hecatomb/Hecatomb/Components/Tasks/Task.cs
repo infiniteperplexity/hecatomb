@@ -15,6 +15,8 @@ namespace Hecatomb
 {
 	public abstract class Task : Component, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
 	{
+		[JsonIgnore] public int BoxWidth {get {return 1;} set{}}
+		[JsonIgnore] public int BoxHeight {get {return 1;} set{}}
 		public int WorkerEID;
 		[JsonIgnore] public Creature Worker
 		{
@@ -41,6 +43,7 @@ namespace Hecatomb
 				}
 			}
 		}
+		public string Makes;
 		[JsonIgnore] public int WorkRange;
 		[JsonIgnore] public int LaborCost;
 		[JsonIgnore] public string MenuName;
@@ -69,14 +72,14 @@ namespace Hecatomb
 			{
 				return; // this can sometimes get unassigned in the midst of things
 			}
-			if (Tiles.QuickDistance(Worker.x, Worker.y, Worker.z, Entity.x, Entity.y, Entity.z)<=WorkRange)
+			if (Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z)<=WorkRange)
 			{
 				Work();
 			}
 			else
 			{
 				bool useLast = (WorkRange == 0) ? true : false;
-				Worker.GetComponent<Actor>().WalkToward(Entity.x, Entity.y, Entity.z, useLast: useLast);
+				Worker.GetComponent<Actor>().WalkToward(Entity.X, Entity.Y, Entity.Z, useLast: useLast);
 			}
 		}
 		
@@ -97,12 +100,12 @@ namespace Hecatomb
 		public virtual void Start()
 		{
 			Feature f = Game.World.Entities.Spawn<Feature>("IncompleteFeature");
-			f.Place(Entity.x, Entity.y, Entity.z);
+			f.Place(Entity.X, Entity.Y, Entity.Z);
 		}
 		
 		public virtual void Finish()
 		{
-			
+			Complete();
 		}
 		
 		public virtual void Complete()
@@ -121,34 +124,37 @@ namespace Hecatomb
 
 		}
 		
+		public virtual void Cancel()
+		{
+			Entity.Despawn();
+			Despawn();
+		}
+		
 		public virtual string ListOnMenu()
 		{
 			return MenuName;
-		}
-		
-		public virtual void SelectBox(List<Coord> squares)
-		{
-			
 		}
 		
 		public virtual void SelectZone(List<Coord> squares)
 		{
 			foreach (Coord c in squares)
 			{
-				if (Game.World.Tasks[c.x, c.y, c.z]==null) 
+				if (Game.World.Tasks[c.X, c.Y, c.Z]==null) 
 				{
 					TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
-					task.Place(c.x, c.y, c.z);
+					task.GetComponent<Task>().Makes = Makes;
+					task.Place(c.X, c.Y, c.Z);
 				}
 			}
 		}
 		
 		public virtual void SelectTile(Coord c)
 		{
-			if (Game.World.Tasks[c.x, c.y, c.z]==null) 
+			if (Game.World.Tasks[c.X, c.Y, c.Z]==null) 
 			{
 				TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
-				task.Place(c.x, c.y, c.z);
+				task.GetComponent<Task>().Makes = Makes;
+				task.Place(c.X, c.Y, c.Z);
 			}
 		}
 		
@@ -160,6 +166,24 @@ namespace Hecatomb
 		public virtual void TileHover(Coord c, List<Coord> squares)
 		{
 			
+		}
+		
+		public virtual void BoxHover(Coord c, List<Coord> squares)
+		{
+			
+		}
+		
+		public virtual void SelectBox(Coord c, List<Coord> squares)
+		{
+			foreach (Coord s in squares)
+			{
+				if (Game.World.Tasks[s.X, s.Y, s.Z]==null) 
+				{
+					TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+					task.GetComponent<Task>().Makes = Makes;
+					task.Place(s.X, s.Y, s.Z);
+				}
+			}
 		}
 	}
 	

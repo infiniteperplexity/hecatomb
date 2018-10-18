@@ -11,12 +11,24 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Structure.
 	/// </summary>
-	public class Structure : Component
+	public abstract class Structure : Component
 	{
-		public Structure() : base()
-		{
-		}
+		public string MenuName;
+		public string Name;
+		public int Width;
+		public int Height;
+		public char[] Symbols;
+		public string[] FGs;
+		public string[] BGs;
+		public Feature[] Features;
 		
+		public Structure()
+		{
+			Width = 3;
+			Height = 3;
+			// ugh.
+			Features = new Feature[Width*Height];
+		}
 		public virtual void Standardize()
 		{
 			Type structureType = this.GetType();

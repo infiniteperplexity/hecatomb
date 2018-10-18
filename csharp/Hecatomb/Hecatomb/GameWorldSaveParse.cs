@@ -101,7 +101,7 @@ namespace Hecatomb
 					Coord c = child.ToObject<Coord>();
 					TypedEntity te = (TypedEntity) ge;
 					EntityType.Types[te.TypeName].Standardize(te);
-					te.Place(c.x, c.y, c.z, fireEvent: false);
+					te.Place(c.X, c.Y, c.Z, fireEvent: false);
 				}
 				else if (ge is Task)
 				{
