@@ -36,7 +36,7 @@ namespace Hecatomb
 			var co = Game.Controls;
 			co.MenuMiddle.Clear();
 			co.MenuMiddle = new List<string>() {String.Format("Undesignate to {0} {1} {2}", c.X, c.Y, c.Z)};
-			co.MiddleColors[0,0] = "red";
+			co.MiddleColors[0,0] = "green";
 		}
 		
 		public virtual void SelectZone(List<Coord> squares)

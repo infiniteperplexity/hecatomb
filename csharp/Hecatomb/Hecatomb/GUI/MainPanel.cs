@@ -107,7 +107,7 @@ public class MainGamePanel : GamePanel
 			Sprites.Draw(BG, vbg, cbg);
 			if (c=='\u02C7')
 			{
-				Sprites.DrawString(getFont(c), "^", vfg+(new Vector2(-1,0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+				Sprites.DrawString(getFont(c), "^", vfg+(new Vector2(-2,0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
 			}
 			else if (c!=default(char))
 			{

@@ -33,7 +33,6 @@
 				"Name": "ramp",
 				"FG" : "WALLFG",
 				"Symbol" : "^",
-				"AfterSelfPlace" : "AfterRampPlace",
 				"Components" : {}
 			},
 			{

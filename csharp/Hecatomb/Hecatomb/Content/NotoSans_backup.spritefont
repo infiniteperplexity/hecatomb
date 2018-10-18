@@ -52,11 +52,11 @@ with.
     -->
     <CharacterRegions>
       <CharacterRegion>
-        <Start>&#x0020;</Start><!-- Basic Latin -->
-        <End>&#x007E;</End>
+        <Start>&#32;</Start><!-- Basic Latin -->
+        <End>&#x007F;</End>
       </CharacterRegion>
       <CharacterRegion>
-        <Start>&#x00A0;</Start><!-- Latin-1 Supplement -->
+        <Start>&#x0080;</Start><!-- Latin-1 Supplement -->
         <End>&#x00FF;</End>
       </CharacterRegion>
       <CharacterRegion>
@@ -67,10 +67,6 @@ with.
         <Start>&#x0180;</Start><!-- Latin Extended B -->
         <End>&#x024F;</End>
       </CharacterRegion>
-        <CharacterRegion>
-        <Start>&#x0250;</Start><!-- IPA Extensions -->
-        <End>&#x02AF;</End>
-      </CharacterRegion>
       <CharacterRegion>
         <Start>&#x02B0;</Start><!-- Spacing Modifiers -->
         <End>&#x02FF;</End>
@@ -78,34 +74,6 @@ with.
       <CharacterRegion>
         <Start>&#x0370;</Start><!-- Greek and Coptic -->
         <End>&#x03FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x0400;</Start><!-- Cyrillic -->
-        <End>&#x04FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x0500;</Start><!-- Cyrillic Supplement -->
-        <End>&#x051D;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x0591;</Start><!-- Hebrew -->
-        <End>&#x05F4;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x0600;</Start><!-- Arabic -->
-        <End>&#x06FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x1D00;</Start><!-- Phonetic Extensions -->
-        <End>&#x1D7F;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x1D80;</Start><!-- Phonetic Extensions Supplement-->
-        <End>&#x1DBF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x1E00;</Start><!-- Latin Extended Additional-->
-        <End>&#x1EF9;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>
