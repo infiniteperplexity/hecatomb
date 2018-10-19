@@ -2,8 +2,8 @@
 fileVersion=1
 
 # font settings
-fontName=Arial
-fontFile=
+fontName=Noto Sans
+fontFile=../Hecatomb/Content/NotoSans-Regular.ttf
 charSet=0
 fontSize=32
 aa=1
@@ -50,6 +50,7 @@ invB=0
 outlineThickness=0
 
 # selected chars
-
+chars=7936-7957,7960-7965,7968-8005,8008-8013,8016-8023,8025,8027,8029,8031-8061,8064-8116,8118-8132,8134
+chars=8135-8147,8150-8155,8157-8175,8178-8180,8182-8190,8210,8224,8286
 
 # imported icon images

@@ -56,6 +56,10 @@ with.
         <End>&#x25FF;</End>
       </CharacterRegion>
       <CharacterRegion>
+        <Start>&#x2B00;</Start><!-- Misc Symbols and Arrows -->
+        <End>&#x2BEF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
         <Start>&#x2700;</Start><!-- Dingbats -->
         <End>&#x27BF;</End>
       </CharacterRegion>

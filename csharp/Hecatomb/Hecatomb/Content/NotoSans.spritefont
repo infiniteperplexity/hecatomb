@@ -107,6 +107,50 @@ with.
         <Start>&#x1E00;</Start><!-- Latin Extended Additional-->
         <End>&#x1EF9;</End>
       </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x1F00;</Start><!-- Greek Extended -->
+        <End>&#x1FFF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2012;</Start><!-- General Punctuation -->
+        <End>&#x205E;</End>
+      </CharacterRegion>
+        <CharacterRegion>
+        <Start>&#x20A0;</Start><!-- Currency -->
+        <End>&#x20BF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2100;</Start><!-- Letter Like Symbols -->
+        <End>&#x214F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2500;</Start><!-- Box Drawing -->
+        <End>&#x256C;</End>
+      </CharacterRegion>
+        <CharacterRegion>
+        <Start>&#x2580;</Start><!-- Block Elements -->
+        <End>&#x2593;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2C60;</Start><!-- Latin Extended C -->
+        <End>&#x2C7F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xA720;</Start><!-- Latin Extended D -->
+        <End>&#xA7FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xFB00;</Start><!-- Alphabetical Presentation -->
+        <End>&#xFB4F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xFB50;</Start><!-- Arabic Presentation A -->
+        <End>&#xFDFD;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xFE70;</Start><!-- Arabic Presentation B -->
+        <End>&#xFEFC;</End>
+      </CharacterRegion>
     </CharacterRegions>
   </Asset>
 </XnaContent>
