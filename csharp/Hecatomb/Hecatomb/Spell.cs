@@ -155,6 +155,21 @@ namespace Hecatomb
 			int z = Entity.Z;
 			Feature f = Game.World.Features[x, y, z];
 			f.Destroy();
+			foreach (Coord c in Tiles.GetNeighbors8(x, y, z))
+			{
+			    int x1 = c.X;
+			    int y1 = c.Y;
+			    int z1 = c.Z;
+			    f = Game.World.Features[x1, y1, z1];
+			    if (Game.World.Features[x1, y1, z1]==null && !Game.World.Tiles[x1, y1, z1].Solid && !Game.World.Tiles[x1, y1, z1].Fallable)
+			    {
+			    	if (Game.World.Random.Next(2)==0)
+			    	{
+			    		Item r = Game.World.Entities.Spawn<Item>("Rock");
+			    		r.Place(x1, y1, z1);
+			    	}
+			    }
+			}
 			Game.World.Tiles[x, y, z] = Terrain.DownSlopeTile;
 			Game.World.Tiles[x, y, z-1] = Terrain.UpSlopeTile;
 			base.Finish();

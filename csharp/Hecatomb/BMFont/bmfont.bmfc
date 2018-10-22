@@ -2,8 +2,8 @@
 fileVersion=1
 
 # font settings
-fontName=Noto Sans Symbols2
-fontFile=../Hecatomb/Content/NotoSansSymbols2-Regular.ttf
+fontName=Noto Sans
+fontFile=../Hecatomb/Content/NotoSans-Regular.ttf
 charSet=0
 fontSize=32
 aa=1
@@ -50,6 +50,6 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=9213
+
 
 # imported icon images

@@ -257,6 +257,7 @@ namespace Hecatomb
 			Creature cr = Game.World.Creatures[x,y,z];
 			Feature fr = Game.World.Features[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
+			Item it = Game.World.Items[x, y, z];
 			List<Particle> pl = Game.MainPanel.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			var c = new Coord(x, y, z);
@@ -270,7 +271,11 @@ namespace Hecatomb
 			}
 			else if (!Game.Visible.Contains(c))
 			{
-				if (fr!=null)
+				if (it!=null)
+				{
+					return it.Symbol;
+				}
+				else if (fr!=null)
 				{
 					return fr.Symbol;
 				}
@@ -284,6 +289,10 @@ namespace Hecatomb
 				if (cr!=null)
 				{
 					return cr.Symbol;
+				}
+				else if (it!=null)
+				{
+					return it.Symbol;
 				}
 				else if (fr!=null)
 				{
@@ -301,6 +310,7 @@ namespace Hecatomb
 			Creature cr = Game.World.Creatures[x,y,z];
 			Feature fr = Game.World.Features[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
+			Item it = Game.World.Items[x, y, z];
 			List<Particle> pl = Game.MainPanel.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			var c = new Coord(x, y, z);
@@ -320,6 +330,10 @@ namespace Hecatomb
 			{
 				return cr.FG;
 			}
+			else if (it!=null)
+			{
+				return it.FG;
+			}
 			else if (fr!=null)
 			{
 				return fr.FG;
@@ -336,6 +350,7 @@ namespace Hecatomb
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			Terrain t = Game.World.Tiles[x, y, z];
 			Feature f = Game.World.Features[x, y, z];
+			Item it = Game.World.Items[x, y, z];
 			var c = new Coord(x, y, z);
 			TaskEntity task = Game.World.Tasks[x, y, z];
 			if (p!=null && p.BG!=null)
@@ -353,6 +368,10 @@ namespace Hecatomb
 			else if (!Game.Visible.Contains(c))
 			{
 				return "black";
+			}
+			else if (it!=null && it.BG!=null)
+			{
+				return it.FG;
 			}
 			else if (f!=null && f.BG!=null)
 			{
