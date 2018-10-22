@@ -17,7 +17,7 @@ namespace Hecatomb
 	{
 		[JsonIgnore] public int BoxWidth {get {return 1;} set{}}
 		[JsonIgnore] public int BoxHeight {get {return 1;} set{}}
-		public int WorkerEID;
+		[JsonProperty] private int WorkerEID;
 		[JsonIgnore] public Creature Worker
 		{
 			get
@@ -31,7 +31,7 @@ namespace Hecatomb
 					return (Creature) Game.World.Entities.Spawned[WorkerEID];
 				}
 			}
-			set
+			protected set
 			{
 				if (value==null)
 				{
@@ -70,6 +70,7 @@ namespace Hecatomb
 		{
 			if (Worker==null)	
 			{
+				Debug.WriteLine("we probably shouldn't have gotten here.");
 				return; // this can sometimes get unassigned in the midst of things
 			}
 			if (Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z)<=WorkRange)
@@ -110,7 +111,7 @@ namespace Hecatomb
 		
 		public virtual void Complete()
 		{
-			Worker.GetComponent<Minion>().Task = null;
+			Worker.GetComponent<Minion>().Unassign();
 			Entity.Remove();
 		}
 		
@@ -184,6 +185,19 @@ namespace Hecatomb
 					task.Place(s.X, s.Y, s.Z);
 				}
 			}
+		}
+		
+		public virtual bool CanAssign(Creature c)
+		{
+			Movement m = c.GetComponent<Movement>();
+			bool useLast = (WorkRange==0);
+			return m.CanReach(Entity.X, Entity.Y, Entity.Z, useLast: useLast);
+		}
+		public virtual void AssignTo(Creature c)
+		{
+			c.GetComponent<Minion>()._AssignTask((TaskEntity) Entity);
+			Worker = c;
+			Debug.WriteLine(Worker);
 		}
 	}
 	

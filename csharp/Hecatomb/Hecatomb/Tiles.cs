@@ -17,7 +17,7 @@ namespace Hecatomb
 	public static class Tiles
 	{
 		
-		private static bool defaultPassable(int x1, int y1, int z1)
+		private static bool defaultStandable(int x1, int y1, int z1)
 		{
 			if (x1<0 || x1>=Constants.WIDTH || y1<0 || y1>=Constants.HEIGHT || z1<0 || z1>=Constants.DEPTH)
 			{
@@ -37,19 +37,46 @@ namespace Hecatomb
 			return (!t.Solid && !t.Fallable);
 		}
 		
+		private static Dictionary<int, Dictionary<int, int>> pathHits = new Dictionary<int, Dictionary<int, int>>();
+		private static Dictionary<int, Dictionary<int, int>> pathMisses = new Dictionary<int, Dictionary<int, int>>();
+		
+		public static Coord? FindPath(Movement m, TypedEntity t, bool useLast=true)
+		{
+			return null;
+		}
+		public static Coord? FindPath(Movement m, int x1, int y1, int z1, bool useLast = true)
+		{
+			int x0 = m.Entity.X;
+			int y0 = m.Entity.Y;
+			int z0 = m.Entity.Z;
+			Func<int, int, int, int, int, int, bool> movable = (int x, int y, int z, int xx, int yy, int zz)=>
+			{
+				return m.CouldMove(x, y, z, xx, yy, zz);
+			};
+			Func<int, int, int, bool> standable = (int x, int y, int z)=>
+			{
+				return m.CanStand(x, y, z);
+			};
+			return FindPath(
+				x0, y0, z0, x1, y1, z1,
+				useLast: useLast,
+				movable: movable,
+				standable: standable
+			);
+		}
 		public static Coord? FindPath(int x0, int y0, int z0, int x1, int y1, int z1,
 		    bool useLast = true,
 		    bool useFirst = false,
 			Func<int, int, int, int, int, int, double> heuristic = null,
 			Func<int, int, int, int, int, int, bool> movable = null,
-			Func<int, int, int, bool> passable = null
+			Func<int, int, int, bool> standable = null
 		) {
 //			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
 			// default value for the cost estimation heuristic
 			heuristic = heuristic ?? QuickDistance;
 			// default value for allowable movement
 			movable = movable ?? defaultMovable;
-			passable = passable ?? defaultPassable;
+			standable = standable ?? defaultStandable;
 			// !should check enclosed right up front
 			// !this doesn't have to be shuffled but it would be nice if it were
 			Coord[] dirs = Movement.Directions10;
@@ -142,9 +169,9 @@ namespace Hecatomb
 								retrace[neighbor] = current;
 								gscores[neighbor] = newScore;
 							}
-						} else if (!passable(x1,y1,z1))
+						} else if (!standable(x1,y1,z1))
 						{
-							// is the cell impassable regardless of where we are moving from?
+							// is the cell imstandable regardless of where we are moving from?
 							closedSet.Add(neighbor);
 						}
 					}

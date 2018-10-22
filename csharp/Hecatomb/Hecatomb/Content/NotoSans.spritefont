@@ -151,6 +151,26 @@ with.
         <Start>&#xFE70;</Start><!-- Arabic Presentation B -->
         <End>&#xFEFC;</End>
       </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2202;</Start><!-- (partial) Mathematical Operators -->
+        <End>&#x2217;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2220;</Start><!-- (partial) Mathematical Operators -->
+        <End>&#x2298;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x229A;</Start><!-- (partial) Mathematical Operators -->
+        <End>&#x22C3;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2302;</Start><!-- (partial) Misc Techincal -->
+        <End>&#x2302;</End>
+      </CharacterRegion>
+    <CharacterRegion>
+        <Start>&#x2E17;</Start><!-- (partial) Supplemental Punctuation -->
+        <End>&#x2E17;</End>
+      </CharacterRegion>
     </CharacterRegions>
   </Asset>
 </XnaContent>

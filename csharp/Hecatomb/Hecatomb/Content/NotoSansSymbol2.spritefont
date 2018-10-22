@@ -56,12 +56,36 @@ with.
         <End>&#x25FF;</End>
       </CharacterRegion>
       <CharacterRegion>
+        <Start>&#x2600;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26E1;</End>
+      </CharacterRegion>
+      <CharacterRegion>
         <Start>&#x2B00;</Start><!-- Misc Symbols and Arrows -->
         <End>&#x2BEF;</End>
       </CharacterRegion>
       <CharacterRegion>
         <Start>&#x2700;</Start><!-- Dingbats -->
         <End>&#x27BF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2218;</Start><!-- Mathematical Operators -->
+        <End>&#x22C6;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2303;</Start><!-- (partial) Misc Techincal -->
+        <End>&#x23FE;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x21AF;</Start><!-- (partial) Arrows -->
+        <End>&#x21AF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2981;</Start><!-- (partial) Misc Math -->
+        <End>&#x29EB;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2301;</Start><!-- Ancient Greek Numbers -->
+        <End>&#x2301;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

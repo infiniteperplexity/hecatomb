@@ -99,7 +99,7 @@ public class MainGamePanel : GamePanel
 			string s = c.ToString();
 			Vector2 measure = measureChar(c);
 			int xOffset = 11-(int) measure.X/2;
-			int yOffset = 10-(int) measure.Y/2;
+			int yOffset = (int) measure.Y;
 			Color cfg = (fg==null) ? Color.Red : Game.Colors[fg];
 			Color cbg = (bg==null) ? Color.Red : Game.Colors[bg];
 			var vbg = new Vector2(Padding+(1+i)*(Size+Padding),Padding+(1+j)*(Size+Padding));
@@ -130,7 +130,29 @@ public class MainGamePanel : GamePanel
 			{
 				if (f.GetGlyphs().ContainsKey(c))
 				{
-					measureCache[c] = f.MeasureString(c.ToString());
+					
+					Vector2 v = f.MeasureString(c.ToString());
+					if (Fonts[0].GetGlyphs().ContainsKey(c))
+		            {
+						
+						measureCache[c] = new Vector2(v.X, -7);
+		            } else if (Fonts[1].GetGlyphs().ContainsKey(c))
+		            {
+
+						measureCache[c] = new Vector2(v.X, -17);
+						if (c=='\u271D')
+						{
+							measureCache[c] = new Vector2(v.X, -16);
+						}
+		            } else if (Fonts[2].GetGlyphs().ContainsKey(c))
+		            {
+						
+						measureCache[c] = new Vector2(v.X, -8);
+		            }
+		            if (c=='\u2717')
+		            {
+		            	measureCache[c]= new Vector2(v.X, -9);
+		            } 
 					return measureCache[c];
 				}
 			}

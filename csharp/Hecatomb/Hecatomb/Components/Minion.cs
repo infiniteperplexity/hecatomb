@@ -32,7 +32,7 @@ namespace Hecatomb
 					return (TaskEntity) Game.World.Entities.Spawned[TaskEID];
 				}
 			}
-			set
+			private set
 			{
 				if (value==null)
 				{
@@ -49,6 +49,17 @@ namespace Hecatomb
 		{
 			TaskEID = -1;
 			Required = new string[] {"Actor"};
+		}
+		
+		// called by Task.AssignEntity
+		public void _AssignTask(TaskEntity t)
+		{
+			Task = t;
+		}
+		
+		public void Unassign()
+		{
+			Task = null;
 		}
 	}
 }

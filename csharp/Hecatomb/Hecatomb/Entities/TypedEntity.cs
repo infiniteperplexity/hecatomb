@@ -105,6 +105,10 @@ namespace Hecatomb
 		{
 			string name = Name;
 			bool vowel = false;
+			if (name==null)
+			{
+				return "";
+			}
 			if ("aeiou".Contains(char.ToLower(name[0]).ToString()))
 			{
 				vowel = true;

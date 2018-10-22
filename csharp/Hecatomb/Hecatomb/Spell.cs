@@ -95,11 +95,14 @@ namespace Hecatomb
 			Feature f = Game.World.Features[c.X, c.Y, c.Z];
 			if (Game.World.Explored.Contains(c) && f!=null && f.TypeName=="Grave")
 			{
-				//ParticleEmitter emitter = new ParticleEmitter();
-				//emitter.Place(c.X, c.Y, c.Z);
-				f.Destroy();
+				ParticleEmitter emitter = new ParticleEmitter();
+				emitter.Place(c.X, c.Y, c.Z);
+//				f.Destroy();
 				Creature zombie = Game.World.Entities.Spawn<Creature>("Zombie");
-				zombie.Place(c.X, c.Y, c.Z);
+				zombie.Place(c.X, c.Y, c.Z-1);
+				TaskEntity emerge = Game.World.Entities.Spawn<TaskEntity>("ZombieEmergeTask");
+				emerge.GetComponent<Task>().AssignTo(zombie);
+				emerge.Place(c.X, c.Y, c.Z);
 				Game.World.Player.GetComponent<Minions>().Add(zombie);
 			}
 			else
@@ -132,4 +135,31 @@ namespace Hecatomb
 		}
 	}
 	
+	public class ZombieEmergeTask : Task
+	{
+		public override void Start()
+		{
+			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+			if (f==null)
+			{
+				base.Start();
+				f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+				f.Symbol = '\u2717';
+				f.FG = "white";
+			}
+		}
+		public override void Finish()
+		{
+			int x = Entity.X;
+			int y = Entity.Y;
+			int z = Entity.Z;
+			Feature f = Game.World.Features[x, y, z];
+			f.Destroy();
+			Game.World.Tiles[x, y, z] = Terrain.DownSlopeTile;
+			Game.World.Tiles[x, y, z-1] = Terrain.UpSlopeTile;
+			base.Finish();
+		}
+	}
 }
+
+

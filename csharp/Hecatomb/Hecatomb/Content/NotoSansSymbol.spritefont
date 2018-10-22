@@ -52,46 +52,61 @@ with.
     -->
     <CharacterRegions>
       <CharacterRegion>
-        <Start>&#x20A0;</Start><!-- Currency Symbols -->
-        <End>&#x20CF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2100;</Start><!-- Letterlike Symbols -->
-        <End>&#x214F;</End>
-      </CharacterRegion>
-      <CharacterRegion>
         <Start>&#x2190;</Start><!-- Arrows -->
-        <End>&#x21FF;</End>
+        <End>&#x2199;</End>
       </CharacterRegion>
       <CharacterRegion>
-        <Start>&#x2200;</Start><!-- Mathematical Operators-->
-        <End>&#x22FF;</End>
-      </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x2300;</Start><!-- Miscellaneous Technical-->
-        <End>&#x23FF;</End>
+        <Start>&#x2160;</Start><!-- Number Forms -->
+        <End>&#x21AB;</End>
       </CharacterRegion>
       <CharacterRegion>
         <Start>&#x2460;</Start><!-- Enclosed Alphanumerics -->
         <End>&#x24FF;</End>
       </CharacterRegion>
       <CharacterRegion>
-        <Start>&#x2500;</Start><!-- Box Drawing -->
-        <End>&#x257F;</End>
+        <Start>&#x271D;</Start><!-- (partial) Dingbats -->
+        <End>&#x2721;</End>
       </CharacterRegion>
       <CharacterRegion>
-        <Start>&#x2580;</Start><!-- Block Elements -->
-        <End>&#x259F;</End>
+        <Start>&#x260A;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x260D;</End>
       </CharacterRegion>
       <CharacterRegion>
-        <Start>&#x2600;</Start><!-- Miscellaneous Symbols -->
+        <Start>&#x2624;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x262F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2638;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x263B;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x263D;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x2653;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2669;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x267E;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2690;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x269D;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26A2;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26A9;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26AD;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26BC;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26CE;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26CE;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26E2;</Start><!-- (partial) Misc Symbols -->
         <End>&#x26FF;</End>
       </CharacterRegion>
-      <CharacterRegion>
-        <Start>&#x271D;</Start><!-- Dingbats -->
-        <End>&#x271D;</End>
-      </CharacterRegion>
-
     </CharacterRegions>
   </Asset>
 </XnaContent>

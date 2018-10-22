@@ -16,134 +16,155 @@ namespace Hecatomb
 	/// Description of Particles.
 	/// </summary>
 	/// 
-	public class ParticleEmitter
-	{
-		public int X;
-		public int Y;
-		public int Z;
-		char[] Symbols;
-		string[] FGs;
-		string[] BGs;
-		DateTime T0;
-		int LifeSpan;
-		public int Rate;
-		DateTime LastEmit;
-		
-		public ParticleEmitter()
-		{
-			T0 = DateTime.Now;
-			Rate = 10;
-			LifeSpan = 1000;
-			Game.MainPanel.Emitters.Add(this);
-			Emit();
-		}
-		
-		public virtual void Update()
-		{
-			int millis;
-			millis = (int) DateTime.Now.Subtract(LastEmit).TotalMilliseconds;
-			if (millis>Rate)
-			{
-				Emit();
-			}
-			millis = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
-			if (millis>LifeSpan)
-			{
-				Debug.WriteLine("removing emitter");
-				Game.MainPanel.Emitters.Remove(this);
-			}
-		}
-		
-		public virtual void Place(int x, int y, int z)
-		{
-			X = x;
-			Y = y;
-			Z = z;
-		}
-		public virtual void Emit()
-		{
-			LastEmit = DateTime.Now;
-			
-			Particle p = new Particle()
-			{
-				Symbol = '@',
-				FG = "yellow"
-			};
-			p.Place(X, Y, Z);
-		}
-	}
-	
-	public class Particle
-	{
-		public int X0;
-		public int Y0;
-		public int Z0;
-		public int V0;
-		public int A;
-		public int Angle;
-		public int Incline;
-		public int X {get; private set;}
-		public int Y {get; private set;}
-		public int Z {get; private set;}
-		public char Symbol;
-		public string FG;
-		public string BG;
-		public bool Placed;
-		public DateTime T0;
-		public int LifeSpan;
+	    public class ParticleEmitter
+    {
+        public int X;
+        public int Y;
+        public int Z;
+        char[] Symbols;
+        string[] FGs;
+        string[] BGs;
+        DateTime T0;
+        int LifeSpan;
+        public int Rate;
+        DateTime LastEmit;
+        
+        public ParticleEmitter()
+        {
+            T0 = DateTime.Now;
+            Rate = 10;
+            LifeSpan = 1000;
+            Game.MainPanel.Emitters.Add(this);
+            LastEmit = DateTime.Now;
+        }
+        
+        public virtual void Update()
+        {
+            int millis;
+            millis = (int) DateTime.Now.Subtract(LastEmit).TotalMilliseconds;
+            if (millis>Rate)
+            {
+                Debug.WriteLine(millis/Rate);
+                for (int i=0; i<millis/Rate; i++)
+                {
+                    Emit();
+                }
+            }
+            millis = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
+            if (millis>LifeSpan)
+            {
+                Game.MainPanel.Emitters.Remove(this);
+            }
+        }
+        
+        public virtual void Place(int x, int y, int z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            LastEmit = DateTime.Now;
+        }
+        public virtual void Emit()
+        {
+//            Debug.WriteLine("emitting");
+            LastEmit = DateTime.Now;
+            Particle p = new Particle()
+            {
+                Symbol = '*',
+                FG = "black",
+                X0 = X,
+                Y0 = Y,
+                Z0 = Z,
+//                V = -10,
+                V = 16,
+                A = -32,
+                LifeSpan = 250,
+//                D = (float) Game.World.Random.Next(1,4),
+                D = 0,
+                Angle = (float) (Game.World.Random.NextDouble()*2*Math.PI)
+            };
+            p.Place(X, Y, Z);
+        }
+    }
+    
+    public class Particle
+    {
+        public float D;
+        public int X0;
+        public int Y0;
+        public int Z0;
+        public float V;
+        public float A;
+        public float Angle;
+        public float Incline;
+        public int X {get; private set;}
+        public int Y {get; private set;}
+        public int Z {get; private set;}
+        public char Symbol;
+        public string FG;
+        public string BG;
+        public bool Placed;
+        public DateTime T0;
+        public int LifeSpan;
 
-		public Particle()
-		{
-			A = 0;
-			Incline = 0;
-			X = -1;
-			Y = -1;
-			Z = -1;
-			T0 = DateTime.Now;
-			Placed = false;
-			LifeSpan = 1000;
-		}
-		
-		public void Place(int _x, int _y, int _z)
-		{
-			if (Placed)
-			{
-				Remove();
-			}
-			Placed = true;
-			X = _x;
-			Y = _y;
-			Z = _z;
-			Game.MainPanel.Particles[_x, _y, _z] = Game.MainPanel.Particles[_x,_y,_z].Concat(new Particle[] {this}).ToList();
-		}
-		
-		public void Remove()
-		{
-			Game.MainPanel.Particles[X, Y, Z] = Game.MainPanel.Particles[X, Y, Z].Where(p=>p!=this).ToList();
-			X = -1;
-			Y = -1;
-			Z = -1;
-			Placed = false;
-			
-		}
-		
-		public virtual void Update()
-		{
-			int T = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
-			Game.MainPanel.DirtifyTile(X, Y, Z);
-			if (T>LifeSpan && LifeSpan!=int.MaxValue)
-			{
-				Remove();
-				return;
-			}
-//			int x = (int) (X0 + Math.Cos(Angle)*(V0*T + 0.5*A*T*T));
-//			int y = (int) (Y0 + Math.Sin(Angle)*(V0*T + 0.5*A*T*T));
-//			int z = (int) (Z0 + Math.Sin(Incline)*(V0*T + 0.5*A*T*T));
-////			Place(x, y, z);
-//			Game.MainPanel.DirtifyTile(x, y, z);
-		}
-	}
-	
+        public Particle()
+        {
+            D = 0;
+            A = 0;
+            V = 0;
+            Incline = 0;
+            X = -1;
+            Y = -1;
+            Z = -1;
+            T0 = DateTime.Now;
+            Placed = false;
+            LifeSpan = 1000;
+        }
+        
+        public void Place(int _x, int _y, int _z)
+        {
+            if (Placed)
+            {
+                Remove();
+            }
+            Placed = true;
+            X = _x;
+            Y = _y;
+            Z = _z;
+            Game.MainPanel.Particles[_x, _y, _z] = Game.MainPanel.Particles[_x,_y,_z].Concat(new Particle[] {this}).ToList();
+        }
+        
+        public void Remove()
+        {
+            Game.MainPanel.Particles[X, Y, Z] = Game.MainPanel.Particles[X, Y, Z].Where(p=>p!=this).ToList();
+            X = -1;
+            Y = -1;
+            Z = -1;
+            Placed = false;
+            
+        }
+        
+        public virtual void Update()
+        {
+            if (this is Highlight)
+            {
+                return;
+            }
+            int T = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
+            Game.MainPanel.DirtifyTile(X, Y, Z);
+            if (T>LifeSpan && LifeSpan!=int.MaxValue)
+            {
+                Remove();
+                return;
+            }
+            float t = ((float) T)/1000f;
+            int x = X0 + (int) (Math.Cos(Angle)*(D+V*t + 0.5*A*t*t));
+            int y = Y0 + (int) (Math.Sin(Angle)*(D+V*t + 0.5*A*t*t));
+            int z = Z0 + (int) (Math.Sin(Incline)*(D+V*t + 0.5*A*t*t));
+            Place(x, y, z);
+            Game.MainPanel.DirtifyTile(x, y, z);
+        }
+    }
 	// is there a good way to handle emitting with random symbols?  well...we need emitters...
 	public class Highlight : Particle
 	{
@@ -154,16 +175,4 @@ namespace Hecatomb
 		}
 	}
 }
-//
-//- There's true or false for being in the initial paused state.
-//- timePassing sort of doubles as a flag and a reference for disabling recursion.
-//- Speeds go from 1/4 to 8/1, using kind of a silly fractional scale.
-//- This is multiplied by 1000 milliseconds.
-//- ToggleTime is a command.
-//- PassTime is I think what happens if you just wait, and it calls a command called Autowait.
-//	- Autowait calls the cursor and tells it to hover.
-//- ParticleTime is completely independent, but will generally update alternately asynchronously.
-//- StartParticles and StopParticles are things...what calls them?  They demand their own updates, although we might blend that in a bit.
-//- An alert stops the particles...the only thing that starts them is adding an emitter, so I think we're gonna refactor that.
-//- lockTime is a special state; it prevents unpausing.
-//- The whole closure space is essentially a "timehandler".
+

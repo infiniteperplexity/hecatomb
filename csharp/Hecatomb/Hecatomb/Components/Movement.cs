@@ -294,20 +294,7 @@ namespace Hecatomb
 			Required = new string[] {"Actor"};
 		}
 		
-		public bool CanPass(int x1, int y1, int z1)
-		{
-			if (!CanMove(x1, y1, z1))
-			{
-				return false;
-			}
-			if (Game.World.Creatures[x1,y1,z1]!=null)
-			{
-				return false;
-			}
-			return true;
-		}
-		
-		public bool CanMove(int x1, int y1, int z1)
+		public bool CanStand(int x1, int y1, int z1)
 		{
 			if (x1<0 || x1>=Constants.WIDTH || y1<0 || y1>=Constants.HEIGHT || z1<0 || z1>=Constants.DEPTH) {
 				return false;
@@ -329,29 +316,7 @@ namespace Hecatomb
 			{
 				return true;
 			}
-			// non-flyers can't climb diagonally
-			if (!Flies && dz!=0 && (dx!=0 || dy!=0))
-			{
-				return false;
-			}	
-			// non-flyers need a slope in order to go up
-			Terrain t0 = Game.World.Tiles[Entity.X, Entity.Y, Entity.Z];
-			if (dz==+1 && !Flies && t0.ZWalk!=+1)
-			{
-				return false;
-      		}
-			// non-phasers can't go through a ceiling
-			if (!Phases)
-			{
-				if (dz==+1 && !tile.Fallable && tile.ZWalk!=-1)
-				{
-					return false;
-				}
-				else if (dz==-1 && t0.ZWalk!=-1 && !t0.Fallable)
-				{
-					return false;
-				}
-			}
+			// check for liquid some day....
 			if (Walks)
 			{
 				return true;
@@ -368,11 +333,91 @@ namespace Hecatomb
 			return false;
 		}
 		
+		public bool CouldMove(int x0, int y0, int z0, int x1, int y1, int z1)
+		{
+			if (!CanStand(x1, y1, z1))
+			{
+				return false;
+			}
+			int dx = x1-x0;
+			int dy = y1-y0;
+			int dz = z1-z0;
+			// rare: check whether the square itself is allowed
+			if (dx==0 && dy==0 && dz==0)
+			{
+				return true;
+			}
+			// non-flyers can't climb diagonally
+			if (!Flies && dz!=0 && (dx!=0 || dy!=0))
+			{
+				return false;
+			}	
+			// non-flyers need a slope in order to go up
+			Terrain t0 = Game.World.Tiles[x0, y0, z0];
+			if (dz==+1 && !Flies && t0.ZWalk!=+1)
+			{
+				return false;
+      		}
+			Terrain tile = Game.World.Tiles[x1,y1,z1];
+			// non-phasers can't go through a ceiling
+			if (!Phases)
+			{
+				if (dz==+1 && !tile.Fallable && tile.ZWalk!=-1)
+				{
+					return false;
+				}
+				else if (dz==-1 && t0.ZWalk!=-1 && !t0.Fallable)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		public bool CanMove(int x1, int y1, int z1)
+		{
+			return CouldMove(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
+		}
+		
+		public bool CanPass(int x1, int y1, int z1)
+		{
+			if (!CanMove(x1, y1, z1))
+			{
+				return false;
+			}
+			if (Game.World.Creatures[x1,y1,z1]!=null)
+			{
+				return false;
+			}
+			return true;
+		}
+				
+				
 		public void StepTo(int x1, int y1, int z1)
 		{
 			Entity.Place(x1, y1, z1);
 			Actor a = Entity.GetComponent<Actor>();
 			a.Spend(16);
+		}
+		
+		
+		
+		public Func<int, int, int, bool> DelegateCanMove()
+		{
+			return (int x, int y, int z)=>{return CanMove(x, y, z);};
+		}
+		public Func<int, int, int, bool> DelegateCanStand()
+		{
+			return (int x, int y, int z)=>{return CanStand(x, y, z);};
+		}
+		
+		public bool CanReach(int x1, int y1, int z1, bool useLast=true)
+		{
+			int x0 = Entity.X;
+			int y0 = Entity.Y;
+			int z0 = Entity.Z;
+			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
+			return (c==null) ? false : true;
 		}
 	}
 }

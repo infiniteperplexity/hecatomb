@@ -51,11 +51,14 @@ namespace Hecatomb
 				{
 					foreach (TaskEntity t in Game.World.Tasks)
 					{
-						if (t.GetComponent<Task>().Worker==null)
+						Task task = t.GetComponent<Task>();
+						if (task.Worker==null)
 						{
-							t.GetComponent<Task>().Worker = m;
-							minion.Task = t;
-							break;
+							if (task.CanAssign(m))
+							{
+								task.AssignTo(m);
+								break;
+							}
 						}
 					}
 				}

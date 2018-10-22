@@ -48,7 +48,7 @@ namespace Hecatomb
 				tiles = terrainFIDs
 				
 			};
-			var json = JsonConvert.SerializeObject(jsonready, Formatting.Indented);
+			var json = JsonConvert.SerializeObject(jsonready, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
 			System.IO.File.WriteAllText(@"..\GameWorld.json", json);
 			return json;
 		}

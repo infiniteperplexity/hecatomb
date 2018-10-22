@@ -39,5 +39,12 @@ namespace Hecatomb
 			Calls+=1;
 			return random.Next(i);
 		}
+		
+		public double NextDouble()
+		{
+			Calls+=1;
+			return random.NextDouble();
+		}
+		
 	}
 }
