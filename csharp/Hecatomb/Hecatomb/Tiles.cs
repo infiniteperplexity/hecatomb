@@ -40,11 +40,44 @@ namespace Hecatomb
 		private static Dictionary<int, Dictionary<int, int>> pathHits = new Dictionary<int, Dictionary<int, int>>();
 		private static Dictionary<int, Dictionary<int, int>> pathMisses = new Dictionary<int, Dictionary<int, int>>();
 		
-		public static Coord? FindPath(Movement m, TypedEntity t, bool useLast=true)
+//		public static Coord? FindPath(
+		public static LinkedList<Coord> FindPath(
+			Movement m, TypedEntity t, bool useLast=true)
 		{
-			return null;
+			int x0 = m.Entity.X;
+			int y0 = m.Entity.Y;
+			int z0 = m.Entity.Z;
+			int x1 = t.X;
+			int y1 = t.Y;
+			int z1 = t.Z;
+			Func<int, int, int, int, int, int, bool> movable = (int x, int y, int z, int xx, int yy, int zz)=>
+			{
+				return m.CouldMove(x, y, z, xx, yy, zz);
+			};
+			Func<int, int, int, bool> standable = (int x, int y, int z)=>
+			{
+				return m.CanStand(x, y, z);
+			};
+			var path = FindPath(
+				x0, y0, z0, x1, y1, z1,
+				useLast: useLast,
+				movable: movable,
+				standable: standable
+			);
+			if (path.Count==0)
+			{
+				pathMisses[m.Entity.EID][t.EID] = 10;
+			}
+			else
+			{
+				pathHits[m.Entity.EID][t.EID] = 10;
+			}
+			return path;
 		}
-		public static Coord? FindPath(Movement m, int x1, int y1, int z1, bool useLast = true)
+		
+		public static LinkedList<Coord> FindPath(
+//		public static Coord? FindPath(
+			Movement m, int x1, int y1, int z1, bool useLast = true)
 		{
 			int x0 = m.Entity.X;
 			int y0 = m.Entity.Y;
@@ -64,7 +97,9 @@ namespace Hecatomb
 				standable: standable
 			);
 		}
-		public static Coord? FindPath(int x0, int y0, int z0, int x1, int y1, int z1,
+		public static LinkedList<Coord> FindPath(
+//		public static Coord? FindPath(
+			int x0, int y0, int z0, int x1, int y1, int z1,
 		    bool useLast = true,
 		    bool useFirst = false,
 			Func<int, int, int, int, int, int, double> heuristic = null,
@@ -110,19 +145,25 @@ namespace Hecatomb
 				}
 				if (success)
 				{
+					LinkedList<Coord> path = new LinkedList<Coord> {};
+					path.AddFirst(current);
 					// ***trace backwards
 					Coord previous = current;
 					while (retrace.ContainsKey(current))
 					{		
 						previous = retrace[current];
+						
 					    if (retrace.ContainsKey(previous)) {
 					       	current = previous;
 						} else {
 //							if (useFirst) return previous
-							return current;
+							//return current;
+							return path;
 						}
+						path.AddFirst(current);
 					}
-					return current;
+//					return current;
+					return path;
 				}
 				// ***************************************************
 				Coord neighbor;
@@ -180,7 +221,8 @@ namespace Hecatomb
 			}
 			// ***** failed to find a path ***************************
 			Debug.WriteLine("failed to find a path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
-			return null;
+//			return null;
+			return new LinkedList<Coord>();
 		}
 		
 		public static double QuickDistance(int x0, int y0, int z0, int x1, int y1, int z1)

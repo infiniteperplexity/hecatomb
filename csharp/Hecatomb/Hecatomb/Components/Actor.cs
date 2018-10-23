@@ -123,7 +123,9 @@ namespace Hecatomb
 			int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
-			Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
+			var path = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
+			Coord? target = (path.Count>0) ? path.First.Value : (Coord?) null;
+			//Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
 			if (target==null)
 			{
 				WalkRandom();

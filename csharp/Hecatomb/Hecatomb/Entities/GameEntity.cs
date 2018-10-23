@@ -44,4 +44,16 @@ namespace Hecatomb
 			EID = -1;
 		}
 	}
+	
+	public class StateTracker: GameEntity
+	{
+		//!!! this is wrong...it needs to register itself with the statetracker on the World object
+		public string Name;
+		public static new Dictionary<string, StateTracker> StateTrackers;
+		public StateTracker(string s) : base()
+		{
+			Name = s;
+			StateTrackers[s] = this;
+		}
+	}
 }

@@ -22,7 +22,8 @@
 					"Actor": {},
 					"Senses": {},
 					"Movement": {},
-					"Minion": {}
+					"Minion": {},
+					"Inventory": {}
 				}
 			}
 		]

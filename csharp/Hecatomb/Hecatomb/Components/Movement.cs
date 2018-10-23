@@ -416,7 +416,9 @@ namespace Hecatomb
 			int x0 = Entity.X;
 			int y0 = Entity.Y;
 			int z0 = Entity.Z;
-			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
+			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
+			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;
+//			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
 			return (c==null) ? false : true;
 		}
 	}
