@@ -8,6 +8,7 @@
  */
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -18,6 +19,7 @@ namespace Hecatomb
 		[JsonIgnore] public int BoxWidth {get {return 1;} set{}}
 		[JsonIgnore] public int BoxHeight {get {return 1;} set{}}
 		[JsonProperty] private int WorkerEID;
+		public Dictionary<string, int> Ingredients;
 		[JsonIgnore] public Creature Worker
 		{
 			get
@@ -47,6 +49,7 @@ namespace Hecatomb
 		[JsonIgnore] public int WorkRange;
 		[JsonIgnore] public int LaborCost;
 		[JsonIgnore] public string MenuName;
+		public List<Item> Claimed;
 		public int Labor;
 		
 		public Task() : base()
@@ -55,6 +58,7 @@ namespace Hecatomb
 			WorkRange = 1;
 			LaborCost = 10;
 			Labor = LaborCost;
+			Claimed = new List<Item>();
 		}
 		
 		public virtual void Standardize()
@@ -73,6 +77,10 @@ namespace Hecatomb
 				Debug.WriteLine("we probably shouldn't have gotten here.");
 				return; // this can sometimes get unassigned in the midst of things
 			}
+			if (!HasIngredients() && Labor==LaborCost)
+			{
+				FetchIngredient();
+			}
 			if (Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z)<=WorkRange)
 			{
 				Work();
@@ -82,6 +90,39 @@ namespace Hecatomb
 				bool useLast = (WorkRange == 0) ? true : false;
 				Worker.GetComponent<Actor>().WalkToward(Entity.X, Entity.Y, Entity.Z, useLast: useLast);
 			}
+		}
+		
+		public void FetchIngredient()
+		{
+			if (Claimed==null || Claimed.Count==0)
+			{
+				return;
+			}
+			Item i = Claimed[0];
+			if (i.X==Worker.X && i.Y==Worker.Y && i.Z==Worker.Z)
+			{
+				i.Remove();
+				Worker.GetComponent<Inventory>().Item = i;
+				i.Claimed = false;
+				Claimed.Clear();
+				Worker.GetComponent<Actor>().Spend();
+			}
+			else
+			{
+				Worker.GetComponent<Actor>().WalkToward(i.X, i.Y, i.Z, useLast: true);
+			}
+		}
+		
+		public bool HasIngredients()
+		{
+			return (Worker.GetComponent<Inventory>().Item!=null);
+		}
+		
+		public void SpendIngredients()
+		{
+			Item i = Worker.GetComponent<Inventory>().Item;
+			Worker.GetComponent<Inventory>().Item = null;
+			i.Despawn();
 		}
 		
 		public virtual void Work()
@@ -100,6 +141,7 @@ namespace Hecatomb
 		
 		public virtual void Start()
 		{
+			SpendIngredients();
 			Feature f = Game.World.Entities.Spawn<Feature>("IncompleteFeature");
 			f.Place(Entity.X, Entity.Y, Entity.Z);
 		}
@@ -191,13 +233,59 @@ namespace Hecatomb
 		{
 			Movement m = c.GetComponent<Movement>();
 			bool useLast = (WorkRange==0);
-			return m.CanReach(Entity.X, Entity.Y, Entity.Z, useLast: useLast);
+			return m.CanReach(Entity.X, Entity.Y, Entity.Z, useLast: useLast) && CanFindIngredients();
 		}
 		public virtual void AssignTo(Creature c)
 		{
 			c.GetComponent<Minion>()._AssignTask((TaskEntity) Entity);
 			Worker = c;
-			Debug.WriteLine(Worker);
+			ClaimIngredients();
+		}
+		
+		public void ClaimIngredients()
+		{
+			if (Ingredients==null)
+			{
+				return;
+			}
+			List<Item> available = Game.World.Items.Where(i=>i.Owned && !i.Claimed).ToList();
+			foreach(string s in Ingredients.Keys)
+			{
+				// also, must be reachable
+				List<Item> items = available.Where(i=>i.TypeName==s).ToList();
+				int n = 0;
+				// should sort by distance
+				foreach (Item i in available)
+				{
+					i.Claimed = true;
+					Claimed.Add(i);
+					n+=1;
+					if (n>=Ingredients[s])
+					{
+					    break;
+					}
+				}
+			}
+		}
+		// should this be on Worker, maybe?  I dunno...
+		public bool CanFindIngredients()
+		{
+			if (Ingredients==null)
+			{
+				return true;
+			}
+			List<Item> available = Game.World.Items.Where(i=>i.Owned && !i.Claimed).ToList();
+			foreach(string s in Ingredients.Keys)
+			{
+				// also, must be reachable
+				List<Item> items = available.Where(i=>i.TypeName==s).ToList();
+				if (items.Count<Ingredients[s])
+				{
+					return false;
+				}
+				
+			}
+			return true;
 		}
 	}
 	

@@ -198,6 +198,9 @@ namespace Hecatomb
 	}
 	public class Item : TypedEntity {
 
+		public bool Owned;
+		public bool Claimed;
+		
 		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			Item e = Game.World.Items[x1,y1,z1];

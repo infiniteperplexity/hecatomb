@@ -17,6 +17,10 @@ namespace Hecatomb
 		public BuildTask(): base()
 		{
 			MenuName = "build floors or walls";
+			Ingredients = new Dictionary<string, int>
+			{
+				{"Rock", 1}
+			};
 		}
 			
 		public override void Start()
