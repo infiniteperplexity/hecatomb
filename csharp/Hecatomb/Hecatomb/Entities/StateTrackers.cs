@@ -64,44 +64,4 @@ namespace Hecatomb
 			return g;
 		}
 	}
-	
-	public TutorialTracker() : StateTracker
-	{
-		public enum TutorialStates
-		{
-			MovementOne,
-			MovementTwo,
-			ClimbSlopes,
-			RaiseZombieOne,
-			RaiseZombieTwo,
-			RaiseZombieThree,
-			Achievements,
-			WaitForZombie,
-			Unpausing,
-			AssignJob,
-			ChooseJob,
-			ChooseTiles,
-			WaitForDig,
-			RaiseSecondZombie,
-			WaitForSecondZombie,
-			CameraModeOne,
-			CameraModeTwo,
-			HarvestOne,
-			HarvestTwo,
-			HarvestThree,
-			WaitForHarvest,
-			EndOfTutorial
-			
-		}
-		
-		TutorialStates TutorialState;
-		public override void Activate()
-		{
-			Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);
-			TutorialState = TutorialStates.MovementOne;
-			base.Activate();
-		}
-		
-		
-	}
 }

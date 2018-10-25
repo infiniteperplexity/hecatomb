@@ -131,7 +131,14 @@ namespace Hecatomb
 				foreach (int eid in listeners.Keys)
 				{
 					Type T = typeof(Func<GameEvent, GameEvent>);
-					Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(T, Entities.Spawned[eid], listeners[eid]);
+					if (type=="GameEvent")
+					{
+						Events.GlobalListeners[eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(T, Entities.Spawned[eid], listeners[eid]);
+					}
+					else
+					{
+						Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(T, Entities.Spawned[eid], listeners[eid]);
+					}
 				}
 			}
 		}

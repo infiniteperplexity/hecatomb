@@ -19,9 +19,11 @@ namespace Hecatomb
 	public class GameEventHandler
 	{
 		public Dictionary<string, Dictionary<int, Func<GameEvent, GameEvent>>> ListenerTypes;
+		public Dictionary<int, Func<GameEvent, GameEvent>> GlobalListeners;
 		
 		public GameEventHandler()
 		{
+			GlobalListeners = new Dictionary<int, Func<GameEvent, GameEvent>>();
 			ListenerTypes = new Dictionary<string, Dictionary<int, Func<GameEvent, GameEvent>>>();
 			var events = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameEvent))).ToList();
 			foreach (var e in events)
@@ -36,25 +38,49 @@ namespace Hecatomb
 			{
 				throw new InvalidOperationException(String.Format("Unspawned {0} cannot listen to events"));
 			}
-			var listeners = ListenerTypes[typeof(T).Name];
-			if (!listeners.ContainsKey(g.EID))
+			if (typeof(T)==typeof(GameEvent))
 			{
-				Debug.WriteLine(f.GetType());
-				listeners[g.EID] = f;
+				if (!GlobalListeners.ContainsKey(g.EID))
+				{
+					GlobalListeners[g.EID] = f;
+				}
+			}
+			else
+			{
+				var listeners = ListenerTypes[typeof(T).Name];
+				if (!listeners.ContainsKey(g.EID))
+				{
+					listeners[g.EID] = f;
+				}
 			}
 		}
 		
+		
 		public void Unsubscribe<T>(GameEntity g)
 		{
-			var listeners = ListenerTypes[typeof(T).Name];
-			if (listeners.ContainsKey(g.EID))
+			if (typeof(T)==typeof(GameEvent))
 			{
-				listeners.Remove(g.EID);
+				if (GlobalListeners.ContainsKey(g.EID))
+				{
+					GlobalListeners.Remove(g.EID);
+				}
+			}
+			else
+			{
+				var listeners = ListenerTypes[typeof(T).Name];
+				if (listeners.ContainsKey(g.EID))
+				{
+					listeners.Remove(g.EID);
+				}
 			}
 		}
 		
 		public void UnsubscribeAll(GameEntity g)
 		{
+			if (GlobalListeners.ContainsKey(g.EID))
+			{
+				GlobalListeners.Remove(g.EID);
+			}
 			foreach (var listeners in ListenerTypes.Values)
 			{
 				if (listeners.ContainsKey(g.EID))
@@ -67,6 +93,10 @@ namespace Hecatomb
 		public void Publish(GameEvent g)
 		{
 			// !we probably have to clone this stuff in order to avoid enumeration problems.
+			foreach (var listener in GlobalListeners.Values)
+			{
+				g = listener(g);
+			}
 			var listeners = ListenerTypes[g.GetType().Name];
 			foreach (var listener in listeners.Values)
 			{
@@ -84,6 +114,11 @@ namespace Hecatomb
 				{
 					jsonready[type][eid] = ListenerTypes[type][eid].Method.Name;
 				}
+			}
+			jsonready["GameEvent"] = new Dictionary<int, string>();
+			foreach (var eid in GlobalListeners.Keys)
+			{
+					jsonready["GameEvent"][eid] = GlobalListeners[eid].Method.Name;
 			}
 			return jsonready;
 		}
@@ -120,6 +155,18 @@ namespace Hecatomb
 	public class TurnEndEvent : GameEvent
 	{
 		public int Turn;
+	}
+	
+	public class PlayerActionEvent : GameEvent
+	{
+		public string ActionType;
+		public object Details;
+	}
+	
+	public class ContextChangeEvent : GameEvent
+	{
+		public ControlContext OldContext;
+		public ControlContext NewContext;
 	}
 }
 

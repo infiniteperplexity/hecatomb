@@ -51,21 +51,7 @@ namespace Hecatomb
 			Game.StatusPanel.Dirty = true;
 			Acted = false;
 		}
-		public override GameEvent OnSelfSpawn(GameEvent g)
-		{
-			Game.World.Events.Subscribe<PlaceEvent>(this, OnPlace);
-			return g;
-		}
-		public GameEvent OnPlace(GameEvent g)
-		{
-			PlaceEvent p = (PlaceEvent) g;
-			if (p.Entity.Equals(this))
-			{
-				Debug.WriteLine(String.Format("{0} placed at {1} {2} {3}", Describe(), p.X, p.Y, p.Z));
-			}
-			return p;
-		}
-		
+
 		public void HandleVisibility()
 		{
 			Game.Camera.Center(X, Y, Z);

@@ -90,6 +90,8 @@ namespace Hecatomb
 			);
 			Camera = new GameCamera();
 			Camera.Center(p.X, p.Y, p.Z);
+			var t = Game.World.Entities.Spawn<TutorialTracker>();
+			t.Activate();
 			p.HandleVisibility();
 			// proved it's possible to deserialize from method names
 //			Debug.WriteLine("check this out...");

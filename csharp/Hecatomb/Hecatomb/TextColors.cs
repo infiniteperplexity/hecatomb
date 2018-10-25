@@ -15,6 +15,7 @@ namespace Hecatomb
 	public class TextColors
 	{
 		public Dictionary<Tuple<int, int>, string> Colors;
+		public static TextColors NoColors = new TextColors();
 		public TextColors(params object[] c)
 		{
 			Colors = new Dictionary<Tuple<int, int>, string>();

@@ -57,16 +57,19 @@ namespace Hecatomb
 			}
 			if (!m.CanPass(x1, y1, z1)) {
 				if (m.CanPass(p.X, p.Y, z1+1)){
+					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1+1)});
 					m.StepTo(p.X, p.Y, z1+1);
 					p.Act();
 					return;
 				} else if (m.CanPass(p.X, p.Y, z1-1)){
+					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1-1)});
 					m.StepTo(p.X, p.Y, z1-1);
 					p.Act();
 					return;
 				}
 			    return;
 			} else {
+				Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1)});
 			    m.StepTo(x1, y1, z1);
 			    p.Act();
 			    return;
@@ -86,6 +89,7 @@ namespace Hecatomb
 			if (!m.CanPass(x1, y1, z1)) {
 			    return;
 			} else {
+				Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1)});
 			    m.StepTo(x1, y1, z1);
 			    p.Act();
 				return;

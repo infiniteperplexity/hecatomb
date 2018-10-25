@@ -54,12 +54,13 @@
     <Compile Include="Components\Tasks\UndesignateTask.cs" />
     <Compile Include="Entities\DelegateStrategies.cs" />
     <Compile Include="Entities\GameEntity.cs" />
+    <Compile Include="Entities\StateTrackers.cs" />
+    <Compile Include="Entities\TutorialTracker.cs" />
     <Compile Include="Entities\TypedEntityEvents.cs" />
     <Compile Include="GUI\ForegroundPanel.cs" />
     <Compile Include="GUI\StatusPanel.cs" />
     <Compile Include="Components\Player\Minions.cs" />
     <Compile Include="Components\Player\Player.cs" />
-    <Compile Include="StateTrackers.cs" />
     <Compile Include="TextColors.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityHandler.cs" />
