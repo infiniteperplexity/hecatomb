@@ -9,6 +9,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -19,7 +20,7 @@ namespace Hecatomb
 		
 		private static bool defaultStandable(int x1, int y1, int z1)
 		{
-			if (x1<0 || x1>=Constants.WIDTH || y1<0 || y1>=Constants.HEIGHT || z1<0 || z1>=Constants.DEPTH)
+			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth)
 			{
       			return false;
     		}
@@ -29,7 +30,7 @@ namespace Hecatomb
 		
 		private static bool defaultMovable(int x0, int y0, int z0, int x1, int y1, int z1)
 		{
-			if (x1<0 || x1>=Constants.WIDTH || y1<0 || y1>=Constants.HEIGHT || z1<0 || z1>=Constants.DEPTH)
+			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth)
 			{
       			return false;
     		}
@@ -122,7 +123,7 @@ namespace Hecatomb
 			standable = standable ?? defaultStandable;
 			// !should check enclosed right up front
 			// !this doesn't have to be shuffled but it would be nice if it were
-			Coord[] dirs = Movement.Directions10;
+			Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
 			//Coord[] dirs = Game.Random.Shuffled(Movement.Directions26);
 			Coord current = new Coord(x0, y0, z0);
 			// cost for the best known path to each cell

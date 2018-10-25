@@ -29,8 +29,8 @@ namespace Hecatomb
 		{
 			int xhalf = Width/2;
 			int yhalf = Height/2;
-			XOffset = Math.Min(Math.Max(0, x-xhalf), Constants.WIDTH-Width);
-			YOffset = Math.Min(Math.Max(0, y-yhalf), Constants.HEIGHT-Height);
+			XOffset = Math.Min(Math.Max(0, x-xhalf), Game.World.Width-Width);
+			YOffset = Math.Min(Math.Max(0, y-yhalf), Game.World.Height-Height);
 			Z = _z;
 		}
 	}

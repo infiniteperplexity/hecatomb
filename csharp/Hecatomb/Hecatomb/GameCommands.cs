@@ -123,7 +123,7 @@ namespace Hecatomb
 		
 		private void moveCameraVertical(int dz)
 		{
-			Game.Camera.Z = Math.Max(Math.Min(Game.Camera.Z+dz,Constants.DEPTH-2),1);
+			Game.Camera.Z = Math.Max(Math.Min(Game.Camera.Z+dz, Game.World.Depth-2),1);
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
@@ -133,8 +133,8 @@ namespace Hecatomb
 			GameCamera c = Game.Camera;
 			int xhalf = c.Width/2;
 			int yhalf = c.Height/2;
-			c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Constants.WIDTH-c.Width);
-			c.YOffset = Math.Min(Math.Max(0, c.YOffset+dy), Constants.HEIGHT-c.Height);
+			c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Game.World.Width-c.Width);
+			c.YOffset = Math.Min(Math.Max(0, c.YOffset+dy), Game.World.Height-c.Height);
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;

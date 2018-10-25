@@ -75,7 +75,7 @@ namespace Hecatomb
 			Colors = new GameColors();
 			Time = new TimeHandler();
 			World = new GameWorld();
-			World.Initialize(System.DateTime.Now.Millisecond);
+			World.Initialize(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			Commands = new GameCommands();
 			DefaultControls = new DefaultControls();
 			CameraControls = new CameraControls();
@@ -84,9 +84,9 @@ namespace Hecatomb
 			World.Player = p;
 			p.Initialize();
 			p.Place(
-				Constants.WIDTH/2,
-				Constants.HEIGHT/2,
-				World.GroundLevel(Constants.WIDTH/2, Constants.HEIGHT/2)
+				World.Width/2,
+				World.Height/2,
+				World.GetGroundLevel(World.Width/2, World.Height/2)
 			);
 			Camera = new GameCamera();
 			Camera.Center(p.X, p.Y, p.Z);

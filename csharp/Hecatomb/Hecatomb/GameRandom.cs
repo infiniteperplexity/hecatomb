@@ -6,6 +6,7 @@
  */
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -45,6 +46,5 @@ namespace Hecatomb
 			Calls+=1;
 			return random.NextDouble();
 		}
-		
 	}
 }

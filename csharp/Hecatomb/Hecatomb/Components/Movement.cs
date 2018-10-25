@@ -296,7 +296,7 @@ namespace Hecatomb
 		
 		public bool CanStand(int x1, int y1, int z1)
 		{
-			if (x1<0 || x1>=Constants.WIDTH || y1<0 || y1>=Constants.HEIGHT || z1<0 || z1>=Constants.DEPTH) {
+			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth) {
 				return false;
 			}
 			Terrain tile = Game.World.Tiles[x1,y1,z1];

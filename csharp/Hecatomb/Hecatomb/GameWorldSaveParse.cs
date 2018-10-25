@@ -20,13 +20,13 @@ namespace Hecatomb
 	{
 		public string Stringify()
 		{
-			int[,,] terrainFIDs = new int[Constants.WIDTH, Constants.HEIGHT, Constants.DEPTH];
+			int[,,] terrainFIDs = new int[Width, Height, Depth];
 			// can easily piggyback covers in here
-			for (int i=0; i<Constants.WIDTH; i++)
+			for (int i=0; i<Width; i++)
 			{
-				for (int j=0; j<Constants.HEIGHT; j++)
+				for (int j=0; j<Height; j++)
 				{
-					for (int k=0; k<Constants.DEPTH; k++)
+					for (int k=0; k<Depth; k++)
 					{
 						terrainFIDs[i,j,k] = Tiles[i,j,k].FID;
 					}
@@ -62,11 +62,11 @@ namespace Hecatomb
 			Random.Initialize();
 			// *** Terrains and Covers ***
 			int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
-			for (int i=0; i<Constants.WIDTH; i++)
+			for (int i=0; i<tiles.GetLength(0); i++)
 			{
-				for (int j=0; j<Constants.HEIGHT; j++)
+				for (int j=0; j<tiles.GetLength(1); j++)
 				{
-					for (int k=0; k<Constants.DEPTH; k++)
+					for (int k=0; k<tiles.GetLength(2); k++)
 					{
 //						 piggyback covers in here too
 						Tiles[i,j,k] = (Terrain) FlyWeight.FlyWeightTypes[typeof(Terrain)][tiles[i,j,k]];

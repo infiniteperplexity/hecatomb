@@ -19,6 +19,10 @@ namespace Hecatomb
 	/// </summary>
 	public partial class GameWorld
 	{
+		public int Width;
+		public int Height;
+		public int Depth;
+		
 		public Terrain[,,] Tiles {get; set;}
 		public SparseArray3D<Creature> Creatures;
 		public SparseArray3D<Feature> Features;
@@ -38,31 +42,31 @@ namespace Hecatomb
 		
 		public GameWorld() {}
 		
-		public void Initialize(int seed)
+		public void Initialize(int width, int height, int depth, object generator=null, int seed=0)
 		{
 			Random = new GameRandom(seed);
 			Entities = new EntityHandler();
-			int WIDTH = Constants.WIDTH;
-			int HEIGHT = Constants.HEIGHT;
-			int DEPTH = Constants.DEPTH;
-			int GROUNDLEVEL = Constants.GROUNDLEVEL;
+			Width = width;
+			Height = height;
+			Depth = depth;
+			int GroundLevel = 50;
 			float hscale = 2f;
 			float vscale = 5f;
 			Events = new GameEventHandler();
 			ElevationNoise = new FastNoise(seed: Random.Next(1024));
 			VegetationNoise = new FastNoise(seed: Random.Next(1024));
-			Tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
+			Tiles = new Terrain[Width, Height, Depth];
 			StateTrackers = new Dictionary<string, StateTracker>();
-			Creatures = new SparseArray3D<Creature>(WIDTH, HEIGHT, DEPTH);
-			Features = new SparseArray3D<Feature>(WIDTH, HEIGHT, DEPTH);
-			Items = new SparseArray3D<Item>(WIDTH, HEIGHT, DEPTH);
-			Tasks = new SparseArray3D<TaskEntity>(WIDTH, HEIGHT, DEPTH);
+			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
+			Features = new SparseArray3D<Feature>(Width, Height, Depth);
+			Items = new SparseArray3D<Item>(Width, Height, Depth);
+			Tasks = new SparseArray3D<TaskEntity>(Width, Height, Depth);
 			Explored = new HashSet<Coord>();
-			for (int i=0; i<WIDTH; i++) {
-				for (int j=0; j<HEIGHT; j++) {
-					for (int k=0; k<DEPTH; k++) {
-						int elev = GROUNDLEVEL + (int) (vscale*ElevationNoise.GetSimplexFractal(hscale*i,hscale*j));
-						if (i==0 || i==WIDTH-1 || j==0 || j==HEIGHT-1 || k<elev) {
+			for (int i=0; i<Width; i++) {
+				for (int j=0; j<Height; j++) {
+					for (int k=0; k<Depth; k++) {
+						int elev = GroundLevel + (int) (vscale*ElevationNoise.GetSimplexFractal(hscale*i,hscale*j));
+						if (i==0 || i==Width-1 || j==0 || j==Height-1 || k<elev) {
 							Tiles[i,j,k] = Terrain.WallTile;
 						} else if (k==elev) {
 							Tiles[i,j,k] = Terrain.FloorTile;
@@ -72,9 +76,9 @@ namespace Hecatomb
 					}
 				}
 			}
-			for (int i=1; i<WIDTH-1; i++) {
-				for (int j=1; j<HEIGHT-1; j++) {
-					int k = GroundLevel(i, j);
+			for (int i=1; i<Width-1; i++) {
+				for (int j=1; j<Height-1; j++) {
+					int k = GetGroundLevel(i, j);
 					List<Coord> neighbors = Hecatomb.Tiles.GetNeighbors8(i, j, k);
 					bool slope = false;
 					foreach (Coord c in neighbors)
@@ -119,20 +123,20 @@ namespace Hecatomb
 		
 		public Terrain GetTile(int x, int y, int z)
 		{
-			if (x<0 || x>=Constants.WIDTH || y<0 || y>=Constants.HEIGHT || z<0 || z>=Constants.DEPTH) {
+			if (x<0 || x>=Width || y<0 || y>=Height || z<0 || z>=Depth) {
 				return Terrain.OutOfBoundsTile;
 			} else {
 				return Tiles[x,y,z];
 			}
 		}
 		
-		public int GroundLevel(int x, int y)
+		public int GetGroundLevel(int x, int y)
 		{
-			if (x<=0 || x>=Constants.WIDTH-1 || y<=0 || y>=Constants.HEIGHT-1) {
+			if (x<=0 || x>=Width-1 || y<=0 || y>=Height-1) {
 				throw new IndexOutOfRangeException(String.Format("Cannot get GroundLevel for boundary column {0} {1}.",x,y));
 			}
-			int elev = Constants.DEPTH-1;
-			for (int i=Constants.DEPTH-1; i>0; i--) {
+			int elev = Depth-1;
+			for (int i=Depth-1; i>0; i--) {
 				if (Tiles[x,y,i].Solid)
 				{
 					return i+1;
