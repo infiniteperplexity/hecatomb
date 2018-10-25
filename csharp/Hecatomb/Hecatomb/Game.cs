@@ -67,18 +67,47 @@ namespace Hecatomb
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
         /// </summary>
+        /// 
         protected override void Initialize()
         {
+        	
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
-			Colors = new GameColors();
+            Colors = new GameColors();
 			Time = new TimeHandler();
-			World = new GameWorld();
-			World.Initialize(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			Commands = new GameCommands();
 			DefaultControls = new DefaultControls();
 			CameraControls = new CameraControls();
+			Camera = new GameCamera();
+			ShowIntro();
+			StartGame();
+			base.Initialize();
+			StartGame();
+        }
+        
+        protected void ShowIntro()
+        {
+        	World = new GameWorld(25, 25, 1);
+        	WorldBuilder builder = new IntroBuilder();
+			builder.Build(World);
+        	Controls = DefaultControls;
+//			Controls = new StaticMenuControls(
+//				new List<Keys> {Keys.N},
+//				new List<string> {"start game"},
+//				new List<Action> {StartGame}
+//			);
+        	Player p = Game.World.Entities.Spawn<Player>("Necromancer");
+			World.Player = p;
+        	p.Initialize();
+        	p.Place(12, 12, 0);
+        	p.HandleVisibility();
+        }
+        protected  void StartGame()
+        {
+			World = new GameWorld(256, 256, 64, seed: System.DateTime.Now.Millisecond);
+			WorldBuilder builder = new DefaultBuilder();
+			builder.Build(World);
 			Controls = DefaultControls;
 			Player p = Game.World.Entities.Spawn<Player>("Necromancer");
 			World.Player = p;
@@ -88,7 +117,6 @@ namespace Hecatomb
 				World.Height/2,
 				World.GetGroundLevel(World.Width/2, World.Height/2)
 			);
-			Camera = new GameCamera();
 			Camera.Center(p.X, p.Y, p.Z);
 			var t = Game.World.Entities.Spawn<TutorialTracker>();
 			t.Activate();
@@ -97,7 +125,7 @@ namespace Hecatomb
 //			Debug.WriteLine("check this out...");
 //			var f = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), World.Player, "OnPlace");
 //			f(new PlaceEvent() {Entity = World.Player, X = 6, Y = 6, Z = 6});
-            base.Initialize();
+            
         }
 
 

@@ -127,7 +127,7 @@ namespace Hecatomb
 	   	}
 		
 		// okay this gets kind of weird...do we concatenate them all, or return the lists?
-		public IEnumerator<T> GetEnumerator()
+		public new IEnumerator<T> GetEnumerator()
 	    {
 			List<T> list = new List<T>();
 			foreach(List<T> lt in dict.Values)
@@ -140,10 +140,5 @@ namespace Hecatomb
 			return list.GetEnumerator();
 			
 	    }
-		 
-		IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
 	}
 }

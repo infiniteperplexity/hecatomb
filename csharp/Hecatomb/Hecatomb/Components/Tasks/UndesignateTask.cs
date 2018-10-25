@@ -39,7 +39,7 @@ namespace Hecatomb
 			co.MiddleColors[0,0] = "green";
 		}
 		
-		public virtual void SelectZone(List<Coord> squares)
+		public override void SelectZone(List<Coord> squares)
 		{
 			foreach (Coord c in squares)
 			{

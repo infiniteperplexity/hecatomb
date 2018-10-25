@@ -5,14 +5,6 @@
  * Time: 12:40 PM
  */
 using System;
-
-/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/8/2018
- * Time: 12:50 PM
- */
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
@@ -22,7 +14,7 @@ namespace Hecatomb
 	public class ConstructTask : Task, IChoiceMenu, ISelectsBox
 	{
 		public int FeatureIndex;
-		public int BoxWidth
+		public new int BoxWidth
 		{
 			get
 			{
@@ -31,7 +23,7 @@ namespace Hecatomb
 			set {}
 		}
 		
-		public int BoxHeight
+		public new int BoxHeight
 		{
 			get
 			{

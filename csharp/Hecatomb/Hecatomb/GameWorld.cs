@@ -40,21 +40,13 @@ namespace Hecatomb
 		
 		public TurnHandler Turns;
 		
-		public GameWorld() {}
-		
-		public void Initialize(int width, int height, int depth, object generator=null, int seed=0)
-		{
+		public GameWorld(int width, int height, int depth, int seed=0) {
 			Random = new GameRandom(seed);
 			Entities = new EntityHandler();
 			Width = width;
 			Height = height;
 			Depth = depth;
-			int GroundLevel = 50;
-			float hscale = 2f;
-			float vscale = 5f;
 			Events = new GameEventHandler();
-			ElevationNoise = new FastNoise(seed: Random.Next(1024));
-			VegetationNoise = new FastNoise(seed: Random.Next(1024));
 			Tiles = new Terrain[Width, Height, Depth];
 			StateTrackers = new Dictionary<string, StateTracker>();
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
@@ -62,63 +54,22 @@ namespace Hecatomb
 			Items = new SparseArray3D<Item>(Width, Height, Depth);
 			Tasks = new SparseArray3D<TaskEntity>(Width, Height, Depth);
 			Explored = new HashSet<Coord>();
-			for (int i=0; i<Width; i++) {
-				for (int j=0; j<Height; j++) {
-					for (int k=0; k<Depth; k++) {
-						int elev = GroundLevel + (int) (vscale*ElevationNoise.GetSimplexFractal(hscale*i,hscale*j));
-						if (i==0 || i==Width-1 || j==0 || j==Height-1 || k<elev) {
-							Tiles[i,j,k] = Terrain.WallTile;
-						} else if (k==elev) {
-							Tiles[i,j,k] = Terrain.FloorTile;
-						} else {
-							Tiles[i,j,k] = Terrain.EmptyTile;
-						}
-					}
-				}
-			}
-			for (int i=1; i<Width-1; i++) {
-				for (int j=1; j<Height-1; j++) {
-					int k = GetGroundLevel(i, j);
-					List<Coord> neighbors = Hecatomb.Tiles.GetNeighbors8(i, j, k);
-					bool slope = false;
-					foreach (Coord c in neighbors)
-					{
-						if (GetTile(c.X, c.Y, c.Z) == Terrain.WallTile)
-						{
-							slope = true;
-							break;
-						}
-					}
-
-					if (slope)
-					{
-						Tiles[i, j, k] = Terrain.UpSlopeTile;
-						if (GetTile(i, j, k+1)==Terrain.EmptyTile)
-						{
-							Tiles[i, j, k+1] = Terrain.DownSlopeTile;
-						}
-					} else {
-						float plants = vscale*VegetationNoise.GetSimplexFractal(hscale*i,hscale*j);
-						if (plants>1.0f)
-						{
-							if (Random.Next(2)==1)
-							{
-								Feature tree = Entities.Spawn<Feature>("Tree");
-								tree.Place(i, j, k);
-							}
-						}
-						else
-						{
-							if (Random.Next(50)==0)
-							{
-								Feature grave = Entities.Spawn<Feature>("Grave");
-								grave.Place(i, j, k);
-							}
-						}
-					}
-				}
-			}
 			Turns = new TurnHandler();
+		}
+		
+		public void Reset()
+		{
+			// Random = new GameRandom(Random.Seed);
+			Entities = new EntityHandler();
+			Events = new GameEventHandler();
+			Tiles = new Terrain[Width, Height, Depth];
+			StateTrackers = new Dictionary<string, StateTracker>();
+			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
+			Features = new SparseArray3D<Feature>(Width, Height, Depth);
+			Items = new SparseArray3D<Item>(Width, Height, Depth);
+			Tasks = new SparseArray3D<TaskEntity>(Width, Height, Depth);
+			Explored = new HashSet<Coord>();
+			Turns = new TurnHandler(); 
 		}
 		
 		public Terrain GetTile(int x, int y, int z)

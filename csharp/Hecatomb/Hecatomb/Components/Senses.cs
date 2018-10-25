@@ -42,7 +42,8 @@ namespace Hecatomb
 		}
 		
 		private bool cannotSeeThrough(int x, int y) {
-			return Game.World.Tiles[x, y, storedZ].Opaque;
+			return Game.World.GetTile(x, y, storedZ).Opaque;
+//			return Game.World.Tiles[x, y, storedZ].Opaque;
 		}
 		private void resetVisible()
 		{
