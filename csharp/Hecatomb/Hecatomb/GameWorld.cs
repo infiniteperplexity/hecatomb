@@ -24,6 +24,7 @@ namespace Hecatomb
 		public SparseArray3D<Feature> Features;
 		public SparseArray3D<Item> Items;
 		public SparseArray3D<TaskEntity> Tasks;
+		public Dictionary<string, StateTracker> StateTrackers;
 		public HashSet<Coord> Explored;
 		public GameEventHandler Events;
 		public EntityHandler Entities;
@@ -51,6 +52,7 @@ namespace Hecatomb
 			ElevationNoise = new FastNoise(seed: Random.Next(1024));
 			VegetationNoise = new FastNoise(seed: Random.Next(1024));
 			Tiles = new Terrain[WIDTH, HEIGHT, DEPTH];
+			StateTrackers = new Dictionary<string, StateTracker>();
 			Creatures = new SparseArray3D<Creature>(WIDTH, HEIGHT, DEPTH);
 			Features = new SparseArray3D<Feature>(WIDTH, HEIGHT, DEPTH);
 			Items = new SparseArray3D<Item>(WIDTH, HEIGHT, DEPTH);
@@ -224,6 +226,17 @@ namespace Hecatomb
 				colors[i,0] = (i<change) ? main : other;
 			}
 			Game.MenuPanel.Dirty = true;
+		}
+		
+		public T GetTracker<T>() where T : StateTracker, new()
+		{
+			string s = typeof(T).Name;
+			if (!StateTrackers.ContainsKey(s))
+			{
+				var tracker = Entities.Spawn<T>();
+				tracker.Activate();
+			}
+			return (T) StateTrackers[s];
 		}
 	}
 }

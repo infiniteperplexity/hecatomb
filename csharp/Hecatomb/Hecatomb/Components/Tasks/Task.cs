@@ -19,6 +19,7 @@ namespace Hecatomb
 		[JsonIgnore] public int BoxWidth {get {return 1;} set{}}
 		[JsonIgnore] public int BoxHeight {get {return 1;} set{}}
 		[JsonProperty] private int WorkerEID;
+		[JsonIgnore] public string TypeName;
 		public Dictionary<string, int> Ingredients;
 		[JsonIgnore] public Creature Worker
 		{
@@ -80,6 +81,7 @@ namespace Hecatomb
 			if (!HasIngredients() && Labor==LaborCost)
 			{
 				FetchIngredient();
+				return;
 			}
 			if (Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z)<=WorkRange)
 			{
@@ -94,6 +96,7 @@ namespace Hecatomb
 		
 		public void FetchIngredient()
 		{
+			Debug.WriteLine("trying to fetch an ingredient");
 			if (Claimed==null || Claimed.Count==0)
 			{
 				return;
@@ -103,6 +106,7 @@ namespace Hecatomb
 			{
 				i.Remove();
 				Worker.GetComponent<Inventory>().Item = i;
+				Debug.WriteLine("picking up an item");
 				i.Claimed = false;
 				Claimed.Clear();
 				Worker.GetComponent<Actor>().Spend();
@@ -115,11 +119,19 @@ namespace Hecatomb
 		
 		public bool HasIngredients()
 		{
+			if (Ingredients==null || Ingredients.Count==0)
+			{
+				return true;
+			}
 			return (Worker.GetComponent<Inventory>().Item!=null);
 		}
 		
 		public void SpendIngredients()
 		{
+			if (Ingredients==null || Ingredients.Count==0)
+			{
+				return;
+			}
 			Item i = Worker.GetComponent<Inventory>().Item;
 			Worker.GetComponent<Inventory>().Item = null;
 			i.Despawn();
@@ -232,8 +244,8 @@ namespace Hecatomb
 		public virtual bool CanAssign(Creature c)
 		{
 			Movement m = c.GetComponent<Movement>();
-			bool useLast = (WorkRange==0);
-			return m.CanReach(Entity.X, Entity.Y, Entity.Z, useLast: useLast) && CanFindIngredients();
+			bool useLast = (WorkRange==0);	
+			return m.CanReach(Entity, useLast: useLast) && CanFindIngredients();
 		}
 		public virtual void AssignTo(Creature c)
 		{

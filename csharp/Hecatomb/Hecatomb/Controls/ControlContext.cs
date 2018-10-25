@@ -23,7 +23,7 @@ namespace Hecatomb
         static DateTime InputBegan;
         static Highlight Cursor = new Highlight("cyan");
         public static bool MovingCamera;
-        public const int Throttle = 250;
+        public const int Throttle = 125;
         public Dictionary <Keys, Action> KeyMap;
         public List<string> MenuTop;
         public TextColors TopColors;

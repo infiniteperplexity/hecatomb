@@ -28,6 +28,7 @@ namespace Hecatomb
 			{
 				ListenerTypes[e.Name] = new Dictionary<int, Func<GameEvent, GameEvent>>();
 			}
+			
 		}
 		public void Subscribe<T>(GameEntity g, Func<GameEvent, GameEvent> f, float priority=0)
 		{

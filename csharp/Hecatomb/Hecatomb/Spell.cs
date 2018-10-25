@@ -167,6 +167,7 @@ namespace Hecatomb
 			    	{
 			    		Item r = Game.World.Entities.Spawn<Item>("Rock");
 			    		r.Place(x1, y1, z1);
+			    		r.Owned = true;
 			    	}
 			    }
 			}

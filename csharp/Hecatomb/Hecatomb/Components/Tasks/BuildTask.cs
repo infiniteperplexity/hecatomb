@@ -17,6 +17,7 @@ namespace Hecatomb
 		public BuildTask(): base()
 		{
 			MenuName = "build floors or walls";
+			TypeName = "build";
 			Ingredients = new Dictionary<string, int>
 			{
 				{"Rock", 1}

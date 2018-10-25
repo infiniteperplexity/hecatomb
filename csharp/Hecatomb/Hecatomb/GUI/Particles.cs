@@ -44,7 +44,6 @@ namespace Hecatomb
             millis = (int) DateTime.Now.Subtract(LastEmit).TotalMilliseconds;
             if (millis>Rate)
             {
-                Debug.WriteLine(millis/Rate);
                 for (int i=0; i<millis/Rate; i++)
                 {
                     Emit();

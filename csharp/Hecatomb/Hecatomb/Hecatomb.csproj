@@ -59,6 +59,7 @@
     <Compile Include="GUI\StatusPanel.cs" />
     <Compile Include="Components\Player\Minions.cs" />
     <Compile Include="Components\Player\Player.cs" />
+    <Compile Include="StateTrackers.cs" />
     <Compile Include="TextColors.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityHandler.cs" />

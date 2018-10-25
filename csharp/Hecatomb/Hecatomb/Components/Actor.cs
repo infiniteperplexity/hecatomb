@@ -78,7 +78,7 @@ namespace Hecatomb
 			}
 			Minion m = Entity.TryComponent<Minion>();
 			if (m!=null)
-			{
+			{				
 				if (m.Task!=null)
 				{
 					Target = m.Task;
@@ -132,13 +132,15 @@ namespace Hecatomb
 			} else {
 				Coord t = (Coord) target;
 				Movement m = Entity.GetComponent<Movement>();
-				if (m.CanPass(t.X, t.Y, t.Z))
+				Coord? tt = m.TryStep(t.X, t.Y, t.Z);
+				if (tt==null)
 				{
-					m.StepTo(t.X, t.Y, t.Z);
+					WalkRandom();
 				}
 				else
 				{
-					WalkRandom();
+					t = (Coord) tt;
+					m.StepTo(t.X, t.Y, t.Z);
 				}
 			}
 		}
@@ -157,11 +159,15 @@ namespace Hecatomb
 				int x = line[0].X-x0;
 				int y = line[0].Y-y0;
 				int z = z0;
-				if (m.CanPass(x, y, z))
+				Coord? t = m.TryStep(x, y, z);
+				if (t==null)
 				{
-					m.StepTo(x, y, z);
-				} else {
 					WalkRandom();
+				}
+				else
+				{
+					Coord c = (Coord) t;
+					m.StepTo(c.X, c.Y, c.Z);
 				}
 			}
 		}
@@ -177,16 +183,15 @@ namespace Hecatomb
 			int x1 = Entity.X + d.X;
 			int y1 = Entity.Y + d.Y;
 			int z1 = Entity.Z + d.Z;
-			if (!m.CanPass(x1, y1, z1)) {
-				if (m.Climbs && z1+1<Constants.DEPTH && m.CanPass(x1, y1, z1+1)){
-					m.StepTo(x1, y1, z1+1);
-				} else if (m.Climbs && z1-1>=0 && m.CanPass(x1, y1, z1-1)){
-					m.StepTo(x1, y1, z1-1);
-				} else {
-					Wait();
-				}
-			} else {
-			    m.StepTo(x1, y1, z1);
+			Coord? t = m.TryStep(x1, y1, z1);
+			if (t==null)
+			{
+				Wait();
+			}
+			else
+			{
+				d = (Coord) t;
+				m.StepTo(d.X, d.Y, d.Z);
 			}
 		}
 		

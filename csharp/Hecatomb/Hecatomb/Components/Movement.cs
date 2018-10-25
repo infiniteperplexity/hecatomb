@@ -393,6 +393,35 @@ namespace Hecatomb
 		}
 				
 				
+		public Coord? TryStep(int x1, int y1, int z1)
+		{
+			int x = x1-Entity.X;
+			int y = y1-Entity.Y;
+			int z = z1-Entity.Z;
+			Coord c = new Coord(x, y, z);
+			if (CanPass(x, y, z))
+			{
+				return c;
+			}
+			if (Fallbacks.ContainsKey(c))
+			{
+				var fallbacks = Fallbacks[c];
+				foreach (var row in fallbacks)
+				{
+					foreach (Coord dir in row)
+					{
+						x = dir.X;
+						y = dir.Y;
+						z = dir.Z;
+						if (CanPass(Entity.X+x, Entity.Y+y, Entity.Z+z))
+						{
+							return new Coord(Entity.X+x, Entity.Y+y, Entity.Z+z);
+						}
+					}
+				}
+			}
+			return null;
+		}
 		public void StepTo(int x1, int y1, int z1)
 		{
 			Entity.Place(x1, y1, z1);
@@ -418,7 +447,15 @@ namespace Hecatomb
 			int z0 = Entity.Z;
 			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
 			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;
-//			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
+//			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);			
+			return (c==null) ? false : true;
+		}
+		
+		public bool CanReach(TypedEntity t, bool useLast=true)
+		{
+			var path = Tiles.FindPath(this, t, useLast: useLast);
+			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;
+//			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);			
 			return (c==null) ? false : true;
 		}
 	}

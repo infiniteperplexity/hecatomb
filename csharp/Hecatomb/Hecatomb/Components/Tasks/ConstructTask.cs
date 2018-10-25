@@ -80,6 +80,7 @@ namespace Hecatomb
 		{
 			Structures = new string[]{"GuardPost"};
 			MenuName = "construct a structure.";
+			TypeName = "construct";
 		}
 			
 		private Structure Mock()

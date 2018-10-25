@@ -29,7 +29,14 @@ namespace Hecatomb
 			}
 			set
 			{
-				ItemEID = value.EID;
+				if (value==null)
+				{
+					ItemEID = -1;
+				}
+				else
+				{
+					ItemEID = value.EID;
+				}
 			}
 		}
 		public Inventory() : base()

@@ -128,6 +128,8 @@ namespace Hecatomb
 			foreach (var task in tasks)
 			{
 				EntityType t = new EntityType(task.Name);
+				t.Name = task.Name;
+				// do I need "mock" here to get the correct name?
 				t.Components = new string[] {
 					task.Name
 				};

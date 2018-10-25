@@ -37,13 +37,15 @@ namespace Hecatomb
 			return (!t.Solid && !t.Fallable);
 		}
 		
-		private static Dictionary<int, Dictionary<int, int>> pathHits = new Dictionary<int, Dictionary<int, int>>();
-		private static Dictionary<int, Dictionary<int, int>> pathMisses = new Dictionary<int, Dictionary<int, int>>();
-		
 //		public static Coord? FindPath(
 		public static LinkedList<Coord> FindPath(
 			Movement m, TypedEntity t, bool useLast=true)
 		{
+			var misses = Game.World.GetTracker<PathTracker>().PathMisses;
+			if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
+			{
+				return new LinkedList<Coord>();
+			}
 			int x0 = m.Entity.X;
 			int y0 = m.Entity.Y;
 			int z0 = m.Entity.Z;
@@ -66,11 +68,17 @@ namespace Hecatomb
 			);
 			if (path.Count==0)
 			{
-				pathMisses[m.Entity.EID][t.EID] = 10;
+				Debug.Print(m.Entity.Describe() + " failed to find a path to " + t.Describe());
+				if (!misses.ContainsKey(m.Entity.EID))
+				{
+					misses[m.Entity.EID] = new Dictionary<int, int>();
+				}
+				misses[m.Entity.EID][t.EID] = 10;
 			}
 			else
 			{
-				pathHits[m.Entity.EID][t.EID] = 10;
+				Debug.Print(m.Entity.Describe() + " found a path to " + t.Describe());
+//				pathHits[m.Entity.EID][t.EID] = 10;
 			}
 			return path;
 		}
@@ -131,17 +139,36 @@ namespace Hecatomb
 			// next coordinate to check
 			int newScore, cost, fscore;
 			bool success = false;
+			// check for complete enclosure, which is a common late failure condition
+			bool accessible = false;
+			foreach (Coord dir in dirs)
+			{
+				if (useLast && movable(x1+dir.X, y1+dir.Y, z1+dir.Z, x1, y1, z1))
+				{
+					accessible = true;
+				}
+				else if (!useLast && standable(x1+dir.X, y1+dir.Y, z1+dir.Z))
+				{
+					accessible = true;
+				}
+			}
+			if (accessible==false)
+			{
+				return new LinkedList<Coord>();
+			}
+			//
 			while (queue.Count>0) {
 				current = queue.First.Value;
 				queue.RemoveFirst();
 				// ***** if we found the goal, retrace our steps ****
+				
 				if (current.X==x1 && current.Y==y1 && current.Z==z1)
 				{
 					success = true;
 				}
 				else if (!useLast && QuickDistance(current.X, current.Y, current.Z, x1, y1, z1)<=1)
 				{
-					success = true;
+					    success = true;
 				}
 				if (success)
 				{
@@ -399,21 +426,25 @@ namespace Hecatomb
 			{
 				return p.BG;
 			}
-			if (!Game.World.Explored.Contains(c))
-			{
-				return "black";
-			}
 			else if (task!=null)
 			{
 				return "orange";
+			}
+			else if (!Game.World.Explored.Contains(c))
+			{
+				return "black";
 			}
 			else if (!Game.Visible.Contains(c))
 			{
 				return "black";
 			}
+			else if (it!=null && it.Claimed)
+			{
+				return "white";
+			}
 			else if (it!=null && it.BG!=null)
 			{
-				return it.FG;
+				return it.BG;
 			}
 			else if (f!=null && f.BG!=null)
 			{

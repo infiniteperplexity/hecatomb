@@ -31,10 +31,10 @@ namespace Hecatomb
 		{
 			if (Game.World.Player.Acted)
 			{
-				Next();
+				NextTurn();
 			}
 		}
-		public void Next()
+		public void NextTurn()
 		{
 			Player p = Game.World.Player;
 			p.Acted = false;
@@ -51,9 +51,11 @@ namespace Hecatomb
 				{
 					foreach (TaskEntity t in Game.World.Tasks)
 					{
+						
 						Task task = t.GetComponent<Task>();
 						if (task.Worker==null)
 						{
+							
 							if (task.CanAssign(m))
 							{
 								task.AssignTo(m);
@@ -88,7 +90,7 @@ namespace Hecatomb
 				{
 					Game.World.Events.Publish(new TurnEndEvent() {Turn=Turn});
 					// publish turn end event
-					Next(); // should call it NextTurn
+					NextTurn();
 					return;
 				}
 				else
@@ -110,7 +112,6 @@ namespace Hecatomb
 			else
 			{
 				int checkPoints = actor.CurrentPoints;
-				Debug.WriteLine(checkPoints);
 				if (checkPoints>0)
 				{
 					actor.Act();
@@ -125,10 +126,6 @@ namespace Hecatomb
 				}
 				NextActor();
 			}
-			// in english...if queue and deck are both 0, next turn
-			// if queue is zero but deck is not, flip and next
-			// otherwise just next
-			
 		}
 		
 		public void PlayerActed()
