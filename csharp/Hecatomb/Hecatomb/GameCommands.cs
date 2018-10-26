@@ -195,5 +195,10 @@ namespace Hecatomb
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 		}
+		
+		public void ShowConsole()
+		{
+			DebugConsole.ShowConsole();
+		}
 	}
 }

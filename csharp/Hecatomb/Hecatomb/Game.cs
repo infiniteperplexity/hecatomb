@@ -83,7 +83,6 @@ namespace Hecatomb
 			ShowIntro();
 			StartGame();
 			base.Initialize();
-			StartGame();
         }
         
         protected void ShowIntro()

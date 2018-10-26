@@ -36,6 +36,7 @@ namespace Hecatomb
 		}
 		public void NextTurn()
 		{
+			
 			Player p = Game.World.Player;
 			p.Acted = false;
 			Turn+=1;
