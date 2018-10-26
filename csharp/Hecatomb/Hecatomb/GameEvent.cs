@@ -147,6 +147,11 @@ namespace Hecatomb
 		public GameEntity Entity;
 	}
 	
+	public class DespawnEvent : GameEvent
+	{
+		public GameEntity Entity;
+	}
+	
 	public class TurnBeginEvent : GameEvent
 	{
 		public int Turn;

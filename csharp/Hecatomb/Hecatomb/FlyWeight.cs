@@ -15,6 +15,7 @@ namespace Hecatomb
 	public class FlyWeight
 	{
 		public static Dictionary<Type, List<FlyWeight>> FlyWeightTypes = new Dictionary<Type, List<FlyWeight>>();
+		// should we also index them by name?
 		public int FID;
 		public string Name;
 		public FlyWeight()

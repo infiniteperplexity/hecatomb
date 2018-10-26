@@ -64,6 +64,7 @@
     <Compile Include="Components\Player\Player.cs" />
     <Compile Include="RecursiveBacktracker.cs" />
     <Compile Include="StaticMenuControls.cs" />
+    <Compile Include="TeamTracker.cs" />
     <Compile Include="TextColors.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityHandler.cs" />
