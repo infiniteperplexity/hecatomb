@@ -71,7 +71,15 @@ namespace Hecatomb
 						{
 							if (world.Random.Next(2)==1)
 							{
-								Feature tree = world.Entities.Spawn<Feature>("Tree");
+								Feature tree;
+								if (world.Random.Next(2)==1)
+								{
+									tree = world.Entities.Spawn<Feature>("ClubTree");
+								}
+								else
+								{
+									tree = world.Entities.Spawn<Feature>("SpadeTree");
+								}
 								tree.Place(i, j, k);
 							}
 						}

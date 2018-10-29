@@ -58,11 +58,12 @@ namespace Hecatomb
 			Coord[] moves = new Coord[]
 			{
 				new Coord(x1, y1, z1),
-				new Coord(x1, y1, z1+1),
-				new Coord(x1, y1, z1-1)
+				new Coord(p.X, p.Y, z1+1),
+				new Coord(p.X, p.Y, z1-1)
 			};
 			foreach (Coord c in moves)
 			{
+				Debug.WriteLine(c.Z);
 				if (m.CanPass(c.X, c.Y, c.Z))
 				{
 					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=c});

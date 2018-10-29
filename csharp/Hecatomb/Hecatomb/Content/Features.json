@@ -8,10 +8,17 @@
 				"Components" : {}
 			},
 			{
-				"Type" : "Tree",
+				"Type" : "ClubTree",
 				"Name": "tree",
 				"FG" : "olive",
-				"Symbol" : "\u2698",
+				"Symbol" : "\u2663",
+				"Components" : {}
+			},
+			{
+				"Type" : "SpadeTree",
+				"Name": "tree",
+				"FG" : "olive",
+				"Symbol" : "\u2660",
 				"Components" : {}
 			},
 			{
