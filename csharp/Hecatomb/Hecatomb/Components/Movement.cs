@@ -294,6 +294,29 @@ namespace Hecatomb
 			Required = new string[] {"Actor"};
 		}
 		
+		// was there a version of this that can push the creature?
+		public void Displace(Creature c)
+		{
+			Displace(Entity.X, Entity.Y, Entity.Z);
+		}
+		public void Displace(Creature cr, int x, int y, int z)
+		{
+			int x1 = cr.X;
+			int y1 = cr.Y;
+			int z1 = cr.Z;
+			cr.Remove();
+			StepTo(x1, y1, z1);
+			Movement m = cr.TryComponent<Movement>();
+			if (m!=null)
+			{
+				m.StepTo(x, y, z);
+			}
+			else
+			{
+				cr.Place(x, y, z);
+			}
+		}
+
 		public bool CanStand(int x1, int y1, int z1)
 		{
 			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth) {
@@ -392,7 +415,9 @@ namespace Hecatomb
 			return true;
 		}
 				
-				
+
+		// arguably this belongs on Actor, as it reflect a "choice"
+		// in the JS version, displacing other creatures is handled here as well		
 		public Coord? TryStep(int x1, int y1, int z1)
 		{
 			int x = x1-Entity.X;

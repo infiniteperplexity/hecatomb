@@ -35,23 +35,27 @@ namespace Hecatomb
 			Berserk = berserk;
 		}
 		
-//		public bool IsHostile(Creature c)
-//		{
-//			Actor a = c.GetComponent<Actor>();
-//			return IsHostile(a);
-//		}
-//		public bool IsHostile(Actor a)
-//		{
-//			Team t = a.Team;
-//			return IsHostile(t);
-//		}
-//		
-//		public bool IsHostile(string t)
-//		{
-//			return IsHostile(;
-//		}
+		public bool IsHostile(Creature c)
+		{
+			Actor a = c.GetComponent<Actor>();
+			return IsHostile(a);
+		}
+		public bool IsHostile(Actor a)
+		{
+			Team t = a.Team;
+			return IsHostile(t);
+		}
+
 		public bool IsHostile(Team t)
 		{
+			if (Berserk)
+			{
+				return true;
+			}
+			if (Xenophobic && t!=this)
+			{
+				return true;
+			}
 			if (Enemies.Contains(t.Name) || t.Enemies.Contains(Name))
 			{
 				return true;
@@ -61,6 +65,7 @@ namespace Hecatomb
 				return false;
 			}
 		}
+		// I'm not sure whether cacheing is needed here or not.
 		public List<Creature> GetEnemies()
 		{
 			TeamTracker tt = Game.World.GetTracker<TeamTracker>();
@@ -79,6 +84,12 @@ namespace Hecatomb
 			TeamTracker tt = Game.World.GetTracker<TeamTracker>();
 			tt.Membership[Name].Add(c.EID);
 		}
+		
+		public void RemoveMember(Creature c)
+		{
+			TeamTracker tt = Game.World.GetTracker<TeamTracker>();
+			tt.Membership[Name].Remove(c.EID);
+		}
 //		
 //		public List<int> GetMembers()
 //		{
@@ -87,6 +98,8 @@ namespace Hecatomb
 	}
 		
 			
+	// The teams themselves do not hold state; rather, the TeamTracker holds state for them
+	// It might also do some cacheing but I'm not sure yet
 	public class TeamTracker : StateTracker
 	{
 		public Dictionary<string, List<int>> Membership;
@@ -95,7 +108,7 @@ namespace Hecatomb
 		public TeamTracker() : base()
 		{
 			Membership = new Dictionary<string, List<int>>();
-			foreach(FlyWeight fl in FlyWeight.FlyWeightTypes[typeof(Team)])
+			foreach(FlyWeight fl in FlyWeight.Enumerated[typeof(Team)])
 			{
 				Membership[fl.Name] = new List<int>();
 			}

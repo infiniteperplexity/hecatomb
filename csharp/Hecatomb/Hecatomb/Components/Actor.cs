@@ -23,6 +23,31 @@ namespace Hecatomb
 		public int TargetEID;
 		public int ActionPoints;
 		public int CurrentPoints;
+		private string TeamName;
+		[JsonIgnore] public Team Team
+		{
+			get
+			{
+				return (TeamName==null) ? null : (Team) FlyWeight.Types[typeof(Team)][TeamName];
+			}
+			set
+			{
+				if (value==null)
+				{
+					if (TeamName!=null)
+					{
+						Team t = (Team) FlyWeight.Types[typeof(Team)][TeamName];
+						t.RemoveMember((Creature) Entity);
+					}
+					TeamName = null;
+				}
+				else
+				{
+					value.AddMember((Creature) Entity);
+					TeamName = value.Name;
+				}
+			}
+		}
 		
 		[JsonIgnore] TypedEntity Target {
 			get
@@ -76,6 +101,8 @@ namespace Hecatomb
 			{
 				return;
 			}
+			// in the JS version, there are several different modules on here...
+			// are they flyweights?  They might be
 			Minion m = Entity.TryComponent<Minion>();
 			if (m!=null)
 			{				

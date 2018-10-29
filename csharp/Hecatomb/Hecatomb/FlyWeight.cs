@@ -14,26 +14,26 @@ namespace Hecatomb
 	/// </summary>
 	public class FlyWeight
 	{
-		public static Dictionary<Type, List<FlyWeight>> FlyWeightTypes = new Dictionary<Type, List<FlyWeight>>();
+		public static Dictionary<Type, List<FlyWeight>> Enumerated = new Dictionary<Type, List<FlyWeight>>();
+		public static Dictionary<Type, Dictionary<string, FlyWeight>> Types = new Dictionary<Type, Dictionary<string, FlyWeight>>();
 		// should we also index them by name?
 		public int FID;
 		public string Name;
-		public FlyWeight()
-		{
+		public FlyWeight(string name="")
+		{	
+			Name = name;
 			Type t = this.GetType();
-			if (!FlyWeightTypes.ContainsKey(t))
+			if (!Enumerated.ContainsKey(t))
 			{
-				FlyWeightTypes[t] = new List<FlyWeight>();
+				Enumerated[t] = new List<FlyWeight>();
 			}
-			FID = FlyWeightTypes[t].Count;
-			FlyWeightTypes[t].Add(this);
-		}
-		
-		public string Stringify()
-		{
-			string t = this.GetType().Name;
-			string fid = FID.ToString();
-			return "{\"" + t + "\": " + fid + "}";
+			FID = Enumerated[t].Count;
+			Enumerated[t].Add(this);
+			if (!Types.ContainsKey(t))
+			{
+				Types[t] = new Dictionary<string, FlyWeight>();
+			}
+			Types[t][Name] = this;
 		}
 	}
 }

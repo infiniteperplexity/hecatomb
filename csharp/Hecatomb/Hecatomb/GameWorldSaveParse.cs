@@ -69,7 +69,7 @@ namespace Hecatomb
 					for (int k=0; k<tiles.GetLength(2); k++)
 					{
 //						 piggyback covers in here too
-						Tiles[i,j,k] = (Terrain) FlyWeight.FlyWeightTypes[typeof(Terrain)][tiles[i,j,k]];
+						Tiles[i,j,k] = (Terrain) FlyWeight.Enumerated[typeof(Terrain)][tiles[i,j,k]];
 					}
 				}
 			}
