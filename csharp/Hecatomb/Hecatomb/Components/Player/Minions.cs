@@ -46,6 +46,7 @@ namespace Hecatomb
 		public void Add(Creature m)
 		{
 			MinionEIDs.Add(m.EID);
+			m.GetComponent<Actor>().Team = Team.PlayerTeam;
 		}
 		public void Remove(Creature m)
 		{

@@ -35,6 +35,7 @@ namespace Hecatomb
 			c.AddToEntity(this);
 			c = (Component) Game.World.Entities.Spawn(typeof(TaskMaster));
 			c.AddToEntity(this);
+			GetComponent<Actor>().Team = Team.PlayerTeam;
 		}
 		
 		public void Act()

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -27,12 +28,36 @@ namespace Hecatomb
 			string[] enemies=null,
 			bool xenophobic=false,
 			bool berserk=false			
-		) : base()
+		) : base(name)
 		{
 			Name = name;
-			Enemies = Enemies.ToList();
+			Enemies = (enemies==null) ? new List<string>() : enemies.ToList();
 			Xenophobic = xenophobic;
 			Berserk = berserk;
+		}
+		
+		public bool IsFriendly(Creature c)
+		{
+			Actor a = c.GetComponent<Actor>();
+			return IsFriendly(a);
+		}
+		public bool IsFriendly(Actor a)
+		{
+			Team t = a.Team;
+			return IsFriendly(t);
+		}
+
+		public bool IsFriendly(Team t)
+		{
+			if (Berserk)
+			{
+				return false;
+			}
+			if (t==this)
+			{
+				return true;
+			}
+			return false;
 		}
 		
 		public bool IsHostile(Creature c)
@@ -90,7 +115,12 @@ namespace Hecatomb
 			TeamTracker tt = Game.World.GetTracker<TeamTracker>();
 			tt.Membership[Name].Remove(c.EID);
 		}
+		
+		public static Team PlayerTeam = new Team(name: "PlayerTeam");
 //		
+		
+		
+		
 //		public List<int> GetMembers()
 //		{
 //			
@@ -112,11 +142,18 @@ namespace Hecatomb
 			{
 				Membership[fl.Name] = new List<int>();
 			}
+			
+		}
+		
+		public override void Activate()
+		{
+			base.Activate();
 			Game.World.Events.Subscribe<DespawnEvent>(this, OnDespawn);
 		}
 		
 		public GameEvent OnDespawn(GameEvent ge)
 		{
+			Debug.WriteLine("who is getting despawned?");
 			DespawnEvent ds = (DespawnEvent) ge;
 			foreach (List<int> members in Membership.Values)
 			{

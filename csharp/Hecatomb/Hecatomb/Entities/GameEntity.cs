@@ -39,6 +39,7 @@ namespace Hecatomb
 	
 		public virtual void Despawn()
 		{
+			Game.World.Events.Publish(new DespawnEvent {Entity = this});
 			Spawned = false;
 			Game.World.Entities.Spawned.Remove(EID);
 			EID = -1;

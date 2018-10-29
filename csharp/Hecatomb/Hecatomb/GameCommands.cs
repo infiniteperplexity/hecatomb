@@ -55,24 +55,29 @@ namespace Hecatomb
 			if (m==null) {
 				return;
 			}
-			if (!m.CanPass(x1, y1, z1)) {
-				if (m.CanPass(p.X, p.Y, z1+1)){
-					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1+1)});
-					m.StepTo(p.X, p.Y, z1+1);
-					p.Act();
-					return;
-				} else if (m.CanPass(p.X, p.Y, z1-1)){
-					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1-1)});
-					m.StepTo(p.X, p.Y, z1-1);
+			Coord[] moves = new Coord[]
+			{
+				new Coord(x1, y1, z1),
+				new Coord(x1, y1, z1+1),
+				new Coord(x1, y1, z1-1)
+			};
+			foreach (Coord c in moves)
+			{
+				if (m.CanPass(c.X, c.Y, c.Z))
+				{
+					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=c});
+				    m.StepTo(c.X, c.Y, c.Z);
 					p.Act();
 					return;
 				}
-			    return;
-			} else {
-				Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1)});
-			    m.StepTo(x1, y1, z1);
-			    p.Act();
-			    return;
+				Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
+				if (cr!=null && p.GetComponent<Actor>().Team.IsFriendly(cr))
+				{
+					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=c});
+					m.Displace(cr);
+					p.Act();
+					return;
+				}		    	
 			}
 		}
 			
@@ -87,7 +92,15 @@ namespace Hecatomb
 				return;
 			}
 			if (!m.CanPass(x1, y1, z1)) {
-			    return;
+				Creature cr = Game.World.Creatures[x1, y1, z1];
+				if (cr!=null && p.GetComponent<Actor>().Team.IsFriendly(cr))
+				{
+					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1)});
+					m.Displace(cr);
+					p.Act();
+				}
+				return;
+			    
 			} else {
 				Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1)});
 			    m.StepTo(x1, y1, z1);

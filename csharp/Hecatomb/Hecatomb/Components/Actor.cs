@@ -158,16 +158,10 @@ namespace Hecatomb
 				WalkRandom();
 			} else {
 				Coord t = (Coord) target;
-				Movement m = Entity.GetComponent<Movement>();
-				Coord? tt = m.TryStep(t.X, t.Y, t.Z);
-				if (tt==null)
+				bool acted = TryStepTo(t.X, t.Y, t.Z);
+				if (!acted)
 				{
 					WalkRandom();
-				}
-				else
-				{
-					t = (Coord) tt;
-					m.StepTo(t.X, t.Y, t.Z);
 				}
 			}
 		}
@@ -186,45 +180,92 @@ namespace Hecatomb
 				int x = line[0].X-x0;
 				int y = line[0].Y-y0;
 				int z = z0;
-				Coord? t = m.TryStep(x, y, z);
-				if (t==null)
+				bool acted = TryStepTo(x, y, z);
+				if (!acted)
 				{
 					WalkRandom();
-				}
-				else
-				{
-					Coord c = (Coord) t;
-					m.StepTo(c.X, c.Y, c.Z);
 				}
 			}
 		}
 		public void WalkRandom()
 		{
-			Movement m = Entity.GetComponent<Movement>();
-			if (m==null) 
-			{
-				return;
-			}
 			int r = Game.World.Random.Next(4);
 			Coord d = Movement.Directions4[r];
 			int x1 = Entity.X + d.X;
 			int y1 = Entity.Y + d.Y;
 			int z1 = Entity.Z + d.Z;
-			Coord? t = m.TryStep(x1, y1, z1);
-			if (t==null)
+			bool acted = TryStepTo(x1, y1, z1);
+			if (!acted)
 			{
 				Wait();
 			}
-			else
-			{
-				d = (Coord) t;
-				m.StepTo(d.X, d.Y, d.Z);
-			}
 		}
 		
+		
+		public bool TryStepTo(int x1, int y1, int z1)
+		{
+			Debug.WriteLine(Team);
+			Movement m = Entity.GetComponent<Movement>();
+			// okay what's up here?
+			int x = x1-Entity.X;
+			int y = y1-Entity.Y;
+			int z = z1-Entity.Z;
+			Coord c = new Coord(x, y, z);
+			Creature cr;
+			// we want to loop through the base
+			Coord[][] fallbacks;
+			// use fallbacks for ordinary, directional movement
+			if (Movement.Fallbacks.ContainsKey(c))
+			{
+				fallbacks = Movement.Fallbacks[c];
+			}
+			else
+			{
+				// otherwise mock up an array with only one row
+				fallbacks = new Coord[][] {new Coord[] {c}};
+			}
+			foreach (var row in fallbacks)
+			{
+				foreach (Coord dir in row)
+				{
+					x = dir.X+Entity.X;
+					y = dir.Y+Entity.Y;
+					z = dir.Z+Entity.Z;
+					cr = Game.World.Creatures[x, y, z];
+					if (m.CanPass(x, y, z))
+					{
+						m.StepTo(x, y, z);
+						return true;
+					}
+					else if (cr!=null && m.CanMove(x, y, z) && Team.IsFriendly(cr) && cr!=Game.World.Player)
+					{
+						Minion minion = cr.TryComponent<Minion>();
+						if (minion!=null && minion.Task!=null)
+						{
+							// for now, make working creatures unpushable
+							// eventually, try to push creature into a neighboring square where it can still work
+							
+							continue;
+						}
+						if (Game.World.Random.NextDouble()<0.5)
+						{
+							m.Displace(cr);
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
 		public void Wait()
 		{
 			Spend(ActionPoints);
+		}
+		
+		public void CheckForHostile()
+		{
+			// so...back in the JS version, this totally flogged performance.
+			// we could rebuild the hostility matrix every time a team changes...
 		}
 	}
 }

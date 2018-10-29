@@ -36,7 +36,7 @@ namespace Hecatomb
 		{
 			if (!g.Spawned)
 			{
-				throw new InvalidOperationException(String.Format("Unspawned {0} cannot listen to events"));
+				throw new InvalidOperationException(String.Format("Unspawned {0} cannot listen to events", g));
 			}
 			if (typeof(T)==typeof(GameEvent))
 			{

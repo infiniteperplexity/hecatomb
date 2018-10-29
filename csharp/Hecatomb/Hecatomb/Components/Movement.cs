@@ -297,7 +297,7 @@ namespace Hecatomb
 		// was there a version of this that can push the creature?
 		public void Displace(Creature c)
 		{
-			Displace(Entity.X, Entity.Y, Entity.Z);
+			Displace(c, Entity.X, Entity.Y, Entity.Z);
 		}
 		public void Displace(Creature cr, int x, int y, int z)
 		{
