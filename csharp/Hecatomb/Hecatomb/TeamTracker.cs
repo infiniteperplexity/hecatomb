@@ -95,6 +95,7 @@ namespace Hecatomb
 		{
 			TeamTracker tt = Game.World.GetTracker<TeamTracker>();
 			List<Creature> enemies = new List<Creature>();
+			// this is crap...it's not symmetrical and it ignores berserk
 			foreach (string enemy in Enemies)
 			{
 				foreach (int eid in tt.Membership[enemy])
