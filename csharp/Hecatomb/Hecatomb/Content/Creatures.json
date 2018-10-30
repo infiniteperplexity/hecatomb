@@ -25,6 +25,30 @@
 					"Minion": {},
 					"Inventory": {}
 				}
+			},
+			{
+				"Type" : "PackRat",
+				"Name" : "pack rat",
+				"FG" : "brown",
+				"Symbol" : "r",
+				"Components" : {
+					"Actor": {"TeamName" : "NeutralAnimals"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {}
+				}
+			},
+			{
+				"Type" : "HungryGhoul",
+				"Name" : "ghoul",
+				"FG" : "red",
+				"Symbol" : "z",
+				"Components" : {
+					"Actor": {"TeamName" : "Berserkers"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {}
+				}
 			}
 		]
 }

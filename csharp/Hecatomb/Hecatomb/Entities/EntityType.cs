@@ -21,10 +21,11 @@ namespace Hecatomb
 		public static Dictionary<string, EntityType> Types = new Dictionary<string, EntityType>();
 		public string TypeName;
 		public string Name;
-		public string[] Components;
+//		public string[] Components;
 		public string FG;
 		public string BG;
 		public char Symbol;
+		public Dictionary<string, string> Components;
 		/// <summary>
 		/// Description of EntityType.
 		/// </summary>
@@ -34,6 +35,7 @@ namespace Hecatomb
 			Types[s] = this;
 			Symbol = '@';
 			FG = "White";
+			Components = new Dictionary<string, string>();
 		}
 			
 		public void Standardize(TypedEntity e)
@@ -51,12 +53,12 @@ namespace Hecatomb
 			e.FG = FG;
 			e.BG = BG;
 			e.Symbol = Symbol;
-			foreach (string t in Components)
+			foreach (string t in Components.Keys)
 			{
 				Type T = Type.GetType("Hecatomb." + t);
-				Component c = (Component) Game.World.Entities.Spawn(Type.GetType("Hecatomb." + t));
+				Component c = (Component) Game.World.Entities.Spawn(Type.GetType("Hecatomb." + t));	
 				c.AddToEntity(e);
-				
+				c.ApplyParameters(Components[t]);
 			}
 		}
 		
@@ -71,19 +73,16 @@ namespace Hecatomb
 			obj = JObject.Parse(json);
 			foreach (var t in obj["Types"])
 			{
+				
 				EntityType et = new EntityType((string) t["Type"]);
 				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
-				var Components = new List<string>();
 				foreach (JProperty comp in (JToken) t["Components"])
 				{
 					string name = (string) comp.Name;
-					Components.Add(name);
-					// need to do something more with this, eventually
-					Debug.WriteLine((JToken) comp.Value);
+					et.Components[name] = comp.Value.ToString();
 				}
-				et.Components = Components.ToArray<string>();
 			}
 			f = @"Content/Features.json";
 			json = File.ReadAllText(f);
@@ -94,15 +93,11 @@ namespace Hecatomb
 				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
-				var Components = new List<string>();
 				foreach (JProperty comp in (JToken) t["Components"])
 				{
 					string name = (string) comp.Name;
-					Components.Add(name);
-					// need to do something more with this, eventually
-					Debug.WriteLine((JToken) comp.Value);
+					et.Components[name] = comp.Value.ToString();
 				}
-				et.Components = Components.ToArray<string>();
 			}
 			f = @"Content/Items.json";
 			json = File.ReadAllText(f);
@@ -113,15 +108,11 @@ namespace Hecatomb
 				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
-				var Components = new List<string>();
 				foreach (JProperty comp in (JToken) t["Components"])
 				{
 					string name = (string) comp.Name;
-					Components.Add(name);
-					// need to do something more with this, eventually
-					Debug.WriteLine((JToken) comp.Value);
+					et.Components[name] = comp.Value.ToString();
 				}
-				et.Components = Components.ToArray<string>();
 			}
 			// dynamically create a typed entity for each subclass of Task
 			var tasks = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Task))).ToList();
@@ -130,21 +121,17 @@ namespace Hecatomb
 				EntityType t = new EntityType(task.Name);
 				t.Name = task.Name;
 				// do I need "mock" here to get the correct name?
-				t.Components = new string[] {
-					task.Name
-				};
+				t.Components = new Dictionary<string, string>() {{task.Name, "{}"}};
 			}
 			// dynamically create a typed entity for each subclass of Structure
 			var structures = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Structure))).ToList();
 			foreach (var structure in structures)
 			{
 				EntityType t = new EntityType(structure.Name);
-				t.Components = new string[] {
-					structure.Name
-				};
+				t.Components = new Dictionary<string, string>() {{structure.Name, "{}"}};
 				EntityType tf = new EntityType(structure.Name + "Feature");
 				tf.Name = "need to figure this out.";
-				tf.Components = new string[] {};
+				tf.Components = new Dictionary<string, string>();
 			}
 		}
 	}

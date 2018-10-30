@@ -63,7 +63,6 @@ namespace Hecatomb
 			};
 			foreach (Coord c in moves)
 			{
-				Debug.WriteLine(c.Z);
 				if (m.CanPass(c.X, c.Y, c.Z))
 				{
 					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=c});

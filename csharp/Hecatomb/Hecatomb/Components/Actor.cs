@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -204,7 +205,6 @@ namespace Hecatomb
 		
 		public bool TryStepTo(int x1, int y1, int z1)
 		{
-			Debug.WriteLine(Team);
 			Movement m = Entity.GetComponent<Movement>();
 			// okay what's up here?
 			int x = x1-Entity.X;
@@ -267,5 +267,15 @@ namespace Hecatomb
 			// so...back in the JS version, this totally flogged performance.
 			// we could rebuild the hostility matrix every time a team changes...
 		}
+		
+		public override void ApplyParameters(string json)
+		{
+			JObject obj = JObject.Parse(json);
+			if (obj["TeamName"]!=null)
+			{
+				this.Team = (Team) FlyWeight.Types[typeof(Team)][(string) obj["TeamName"]];
+			}
+		}
+		
 	}
 }

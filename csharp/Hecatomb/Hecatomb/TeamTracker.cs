@@ -117,6 +117,8 @@ namespace Hecatomb
 		}
 		
 		public static Team PlayerTeam = new Team(name: "PlayerTeam");
+		public static Team NeutralAnimals = new Team(name: "NeutralAnimals");
+		public static Team Berserkers = new Team(name: "Berserkers", berserk: true);
 //		
 		
 		
@@ -168,6 +170,7 @@ namespace Hecatomb
 			return ge;
 		}
 		
+
 //		public void CalculateHostility()
 //		{
 //			foreach(

@@ -10,6 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -90,6 +91,10 @@ namespace Hecatomb
 				Entity.Components.Remove(this.GetType().BaseType.Name);
 			}
 			EntityEID = -1;
+		}
+		
+		public virtual void ApplyParameters(string json)
+		{
 		}
 	}
 }
