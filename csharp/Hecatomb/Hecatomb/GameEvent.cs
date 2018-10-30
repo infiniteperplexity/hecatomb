@@ -173,6 +173,11 @@ namespace Hecatomb
 		public ControlContext OldContext;
 		public ControlContext NewContext;
 	}
+	
+	public class AttackEvent : GameEvent
+	{
+		
+	}
 }
 
 

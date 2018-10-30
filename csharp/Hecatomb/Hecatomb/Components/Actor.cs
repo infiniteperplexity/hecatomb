@@ -272,22 +272,22 @@ namespace Hecatomb
 			int z = Entity.Z;
 			// so...back in the JS version, this totally flogged performance.
 			// we could rebuild the hostility matrix every time a team changes...
-			if (Target==null)
-			{
-				List<Creature> enemies = Team.GetEnemies();
-				Debug.WriteLine(enemies.Count);
-				enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)<10)).ToList();
-				enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
-				if (enemies.Count>0)
-				{
-					Debug.WriteLine("found an enemy");
-					Target = enemies[0];
-				}
-			}
-			if (Target!=null)
-			{
-				WalkToward(Target.X, Target.Y, Target.Z);
-			}
+//			if (Target==null)
+//			{
+//				List<Creature> enemies = Team.GetEnemies();
+//				Debug.WriteLine(enemies.Count);
+//				enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)<10)).ToList();
+//				enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
+//				if (enemies.Count>0)
+//				{
+//					Debug.WriteLine("found an enemy");
+//					Target = enemies[0];
+//				}
+//			}
+//			if (Target!=null)
+//			{
+//				WalkToward(Target.X, Target.Y, Target.Z);
+//			}
 		}
 		
 

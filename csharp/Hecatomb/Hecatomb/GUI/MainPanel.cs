@@ -147,7 +147,7 @@ public class MainGamePanel : GamePanel
 		            } else if (Fonts[2].GetGlyphs().ContainsKey(c))
 		            {
 						
-						measureCache[c] = new Vector2(v.X, -8);
+						measureCache[c] = new Vector2(v.X+1, -7);
 		            }
 		            if (c=='\u2717')
 		            {

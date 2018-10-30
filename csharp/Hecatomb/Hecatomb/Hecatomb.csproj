@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Behavior.cs" />
+    <Compile Include="Combat.cs" />
     <Compile Include="Components\GuardPost.cs" />
     <Compile Include="Components\Inventory.cs" />
     <Compile Include="Components\Player\TaskMaster.cs" />
