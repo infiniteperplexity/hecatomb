@@ -50,7 +50,14 @@ namespace Hecatomb
 		{
 			return new Coord(X, Y, -Z);
 		}
-	}
+
+        public void Deconstruct(out int x, out int y, out int z)
+        {
+            x = X;
+            y = Y;
+            z = Z;
+        }
+    }
 	
 	public class Movement : Component
 	{
