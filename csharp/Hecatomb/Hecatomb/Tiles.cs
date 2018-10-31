@@ -257,9 +257,24 @@ namespace Hecatomb
 		{
 			return Math.Sqrt((x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
 		}
-		
-		
-		public static List<Coord> GetLine(int x0, int y0, int x1, int y1)
+
+        public static double QuickDistance(TypedEntity t, int x1, int y1, int z1)
+        {
+            return QuickDistance(t.X, t.Y, t.Z, x1, y1, z1);
+        }
+
+        public static double QuickDistance(int x0, int y0, int z0, TypedEntity t)
+        {
+            return QuickDistance(x0, y0, z0, t.X, t.Y, t.Z);
+        }
+
+        public static double QuickDistance(TypedEntity t0, TypedEntity t1)
+        {
+            return QuickDistance(t0.X, t0.Y, t0.Z, t1.X, t1.Y, t1.Z);
+        }
+
+
+        public static List<Coord> GetLine(int x0, int y0, int x1, int y1)
 		{
 			return GetLine2D(x0, y0, x1, y1);
 		}

@@ -178,6 +178,12 @@ namespace Hecatomb
 	{
 		
 	}
+
+    public class SensoryEvent : GameEvent
+    {
+        public string Visible;
+        public string Audible;
+    }
 }
 
 

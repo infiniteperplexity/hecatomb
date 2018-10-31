@@ -18,9 +18,9 @@ namespace Hecatomb
 	public class Team : FlyWeight
 	{
 		// enemies of all other teams
-		bool Xenophobic;
+		public bool Xenophobic;
 		// enemies of all including own team
-		bool Berserk;
+		public bool Berserk;
 		// list of names of enemy teams
 		List<string> Enemies;
 		public Team(
@@ -119,7 +119,7 @@ namespace Hecatomb
 		
 		public static Team PlayerTeam = new Team(name: "PlayerTeam");
 		public static Team NeutralAnimals = new Team(name: "NeutralAnimals");
-		public static Team Berserkers = new Team(name: "Berserkers", berserk: true);
+		public static Team Berserkers = new Team(name: "Berserkers", enemies: new[] { "PlayerTeam" });
 //		
 		
 		

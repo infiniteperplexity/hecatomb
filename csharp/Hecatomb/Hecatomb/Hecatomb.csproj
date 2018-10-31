@@ -43,7 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Behavior.cs" />
-    <Compile Include="Combat.cs" />
+    <Compile Include="Components\Combat.cs" />
     <Compile Include="Components\GuardPost.cs" />
     <Compile Include="Components\Inventory.cs" />
     <Compile Include="Components\Player\TaskMaster.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="Components\Player\Player.cs" />
     <Compile Include="RecursiveBacktracker.cs" />
     <Compile Include="StaticMenuControls.cs" />
-    <Compile Include="TeamTracker.cs" />
+    <Compile Include="Entities\TeamTracker.cs" />
     <Compile Include="TextColors.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityHandler.cs" />
@@ -120,6 +120,9 @@
       <HintPath>..\packages\ShadowCaster.1.0.2\lib\ShadowCaster.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -142,14 +145,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components" />
-    <Folder Include="Components\Tasks" />
-    <Folder Include="Controls" />
-    <Folder Include="Entities" />
-    <Folder Include="GUI" />
-    <Folder Include="Components\Player" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

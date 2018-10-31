@@ -123,6 +123,7 @@ namespace Hecatomb
 				}
 				if (actor.CurrentPoints>0)
 				{
+                    actor.Acted = false;
 					Deck.Enqueue(actor);
 				}
 				NextActor();

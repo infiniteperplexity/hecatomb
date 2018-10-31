@@ -26,6 +26,7 @@ namespace Hecatomb
 		public int ActionPoints;
 		public int CurrentPoints;
 		private string TeamName;
+        public bool Acted;
 		[JsonIgnore] public Team Team
 		{
 			get
@@ -88,14 +89,16 @@ namespace Hecatomb
 			{
 				CurrentPoints+=16;
 			}
+            Acted = false;
 		}
 		public void Spend(int i)
 		{
 			CurrentPoints-=i;
+            Acted = true;
 		}
 		public void Spend()
 		{
-			CurrentPoints-=16;
+			Spend(16);
 		}
 		public void Act()
 		{
@@ -103,11 +106,24 @@ namespace Hecatomb
 			{
 				return;
 			}
+            if (Target is Creature && Team!=null && Team.IsHostile((Creature) Target))
+            {
+                WalkToward(Target.X, Target.Y, Target.Z);
+                Debug.WriteLine(Tiles.QuickDistance(Entity, Target));
+            }
+            if (Acted)
+            {
+                return;
+            }
 			// in the JS version, there are several different modules on here...
 			// are they flyweights?  They might be
 			CheckForHostile();
-			// should be checking for acted?
-			Minion m = Entity.TryComponent<Minion>();
+            if (Acted)
+            {
+                return;
+            }
+            // should be checking for acted?
+            Minion m = Entity.TryComponent<Minion>();
 			if (m!=null)
 			{				
 				if (m.Task!=null)
@@ -161,9 +177,16 @@ namespace Hecatomb
 			{
 				WalkRandom();
 			} else {
+                if (Target is Creature && Team!=null && Team.IsHostile((Creature) Target))
+                {
+                    if (Tiles.QuickDistance(Entity, Target)<=1)
+                    {
+                        Debug.WriteLine("Trying to attack!!!");
+                    }
+                }
 				Coord t = (Coord) target;
-				bool acted = TryStepTo(t.X, t.Y, t.Z);
-				if (!acted)
+				TryStepTo(t.X, t.Y, t.Z);
+				if (!Acted)
 				{
 					WalkRandom();
 				}
@@ -270,25 +293,34 @@ namespace Hecatomb
 			int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
-			// so...back in the JS version, this totally flogged performance.
-			// we could rebuild the hostility matrix every time a team changes...
-//			if (Target==null)
-//			{
-//				List<Creature> enemies = Team.GetEnemies();
-//				Debug.WriteLine(enemies.Count);
-//				enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)<10)).ToList();
-//				enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
-//				if (enemies.Count>0)
-//				{
-//					Debug.WriteLine("found an enemy");
-//					Target = enemies[0];
-//				}
-//			}
-//			if (Target!=null)
-//			{
-//				WalkToward(Target.X, Target.Y, Target.Z);
-//			}
-		}
+
+
+            // so...back in the JS version, this totally flogged performance.
+            // we could rebuild the hostility matrix every time a team changes...
+            if (Target==null && Team!=null)
+            {
+                List<Creature> enemies;
+                if (Team.Berserk)
+                {
+                    enemies = Game.World.Creatures.Where(cr => cr!=Entity).ToList();
+                }
+                else
+                {
+                    enemies = Team.GetEnemies();
+                }
+                //enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
+                enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
+                if (enemies.Count > 0)
+                {
+                    Debug.WriteLine("found an enemy");
+                    Target = enemies[0];
+                }
+            }
+            if (Target != null)
+            {
+                WalkToward(Target.X, Target.Y, Target.Z);
+            }
+        }
 		
 
 		public override void ApplyParameters(string json)

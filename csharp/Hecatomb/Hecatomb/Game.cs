@@ -104,6 +104,7 @@ namespace Hecatomb
         }
         protected  void StartGame()
         {
+            var testValueTuple = (foo: 5, bar: "baz");
 			World = new GameWorld(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);
