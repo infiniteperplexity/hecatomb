@@ -17,7 +17,7 @@ namespace Hecatomb
 public class MainGamePanel : GamePanel
 	{
 		List<SpriteFont> Fonts;
-		Dictionary<char, Vector2> measureCache;
+		Dictionary<char, ValueTuple<Vector2,SpriteFont>> fontCache;
 		public int Size;
 		public int Padding;
 		public SparseJaggedArray3D<Particle> Particles;
@@ -44,7 +44,7 @@ public class MainGamePanel : GamePanel
 				SpriteFont font = Game.MyContentManager.Load<SpriteFont>(s);
 				Fonts.Add(font);
 			}
-			measureCache = new Dictionary<char, Vector2>();
+			fontCache = new Dictionary<char, ValueTuple<Vector2, SpriteFont>>();
 			Particles = new SparseJaggedArray3D<Particle>(Game.World.Width, Game.World.Height, Game.World.Depth);
 			OldDirtyTiles = new HashSet<Coord>();
 			NextDirtyTiles = new HashSet<Coord>();
@@ -84,20 +84,20 @@ public class MainGamePanel : GamePanel
 			GameCamera Camera = Game.Camera;
 			var grid = Game.World.Tiles;
 			int z = Camera.Z;
-			Tuple<char, string, string> glyph;
+			//ValueTuple<char, string, string> glyph;
 			for (int i=0; i<Camera.Width; i++) {
 		    	for (int j=0; j<Camera.Height; j++) {
 					int x = i + Camera.XOffset;
 					int y = j + Camera.YOffset;
-					glyph = Tiles.GetGlyph(x, y, z);
-					DrawGlyph(i, j, glyph.Item1, glyph.Item2, glyph.Item3);
-		    	}
+                    var (sym, fg, bg) = Tiles.GetGlyph(x, y, z);
+                    DrawGlyph(i, j, sym, fg, bg);
+                }
 			}
 		}
 		public void DrawGlyph(int i, int j, char c, string fg, string bg)
 		{
 			string s = c.ToString();
-			Vector2 measure = measureChar(c);
+            var (measure, font) = resolveFont(c);
 			int xOffset = 11-(int) measure.X/2;
 			int yOffset = (int) measure.Y;
 			Color cfg = (fg==null) ? Color.Red : Game.Colors[fg];
@@ -105,70 +105,74 @@ public class MainGamePanel : GamePanel
 			var vbg = new Vector2(Padding+(1+i)*(Size+Padding),Padding+(1+j)*(Size+Padding));
 			var vfg = new Vector2(xOffset+Padding+(1+i)*(Size+Padding), yOffset+Padding+(1+j)*(Size+Padding));
 			Sprites.Draw(BG, vbg, cbg);
-			if (c=='\u02C7')
-			{
-				Sprites.DrawString(getFont(c), "^", vfg+(new Vector2(-2,0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
-			}
-			else if (c!=default(char))
-			{
-				Sprites.DrawString(getFont(c), s, vfg, cfg);
-			}
-		}
-		
-		protected Vector2 measureChar(char c)
-		{	
-			if (c==default(char))
-			{
-				return new Vector2(0,0);
-			}
-			if (measureCache.ContainsKey(c))
-			{
-				return measureCache[c];
-			}
-			string s = c.ToString();
-			foreach (SpriteFont f in Fonts)
-			{
-				if (f.GetGlyphs().ContainsKey(c))
-				{
-					
-					Vector2 v = f.MeasureString(c.ToString());
-					if (Fonts[0].GetGlyphs().ContainsKey(c))
-		            {
-						
-						measureCache[c] = new Vector2(v.X, -7);
-		            } else if (Fonts[1].GetGlyphs().ContainsKey(c))
-		            {
+            if (c == '\u02C7')
+            {
+                Sprites.DrawString(Fonts[0], "^", vfg + (new Vector2(-2, 0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+            }
+            else
+            {
+                Sprites.DrawString(font, s, vfg, cfg);
+            }
+            //if (Fonts[0].GetGlyphs().ContainsKey(c))
+            //{
+            //    Sprites.DrawString(Fonts[0], "X", vfg, cfg);
+            //}
+            //Sprites.DrawString(Fonts[0], "X", vfg, cfg);
+            //if (c=='\u02C7')
+            //{
+            //	Sprites.DrawString(getFont(c), "^", vfg+(new Vector2(-2,0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+            //}
+            //else if (c!=default(char))
+            // {
+            //Sprites.DrawString(getFont(c), s, vfg, cfg);
+            //}
 
-						measureCache[c] = new Vector2(v.X, -17);
-						if (c=='\u271D')
-						{
-							measureCache[c] = new Vector2(v.X, -16);
-						}
-		            } else if (Fonts[2].GetGlyphs().ContainsKey(c))
-		            {
-						
-						measureCache[c] = new Vector2(v.X+1, -7);
-		            }
-		            if (c=='\u2717')
-		            {
-		            	measureCache[c]= new Vector2(v.X, -9);
-		            } 
-					return measureCache[c];
-				}
-			}
-			throw new InvalidOperationException(String.Format("No font found for symbol {0}",c));
-		}
-		
-		public SpriteFont getFont(char c)
-		{
-			foreach (SpriteFont f in Fonts)
-			{
-				if (f.GetGlyphs().ContainsKey(c))
-				{
-					return f;
-				}
-			}
-			throw new InvalidOperationException(String.Format("No font found for symbol {0}",c));
-		}
+        }
+
+        protected (Vector2, SpriteFont) resolveFont(char c)
+        {
+            if (c == default(char))
+            {
+                return (new Vector2(0, 0), Fonts[0]);
+            }
+            if (fontCache.ContainsKey(c))
+            {
+                return fontCache[c];
+            }
+            string s = c.ToString();
+            foreach (SpriteFont f in Fonts)
+            {
+                if (f.GetGlyphs().ContainsKey(c))
+                {
+
+                    Vector2 v = f.MeasureString(c.ToString());
+                    if (Fonts[0].GetGlyphs().ContainsKey(c))
+                    {
+
+                        fontCache[c] = (new Vector2(v.X, -7), f);
+                    }
+                    else if (Fonts[1].GetGlyphs().ContainsKey(c))
+                    {
+
+                        fontCache[c] = (new Vector2(v.X, -17), f);
+                        if (c == '\u271D')
+                        {
+                            fontCache[c] = (new Vector2(v.X, -16), f);
+                        }
+                    }
+                    else if (Fonts[2].GetGlyphs().ContainsKey(c))
+                    {
+
+                        fontCache[c] = (new Vector2(v.X + 1, -7), f);
+                    }
+                    if (c == '\u2717')
+                    {
+                        fontCache[c] = (new Vector2(v.X, -9), f);
+                    }
+                    return fontCache[c];
+                }
+            }
+            throw new InvalidOperationException(String.Format("No font found for symbol {0}", c));
+        }
 	}
 }

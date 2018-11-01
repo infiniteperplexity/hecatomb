@@ -472,12 +472,17 @@ namespace Hecatomb
 			}
 		}
 		
-		public static Tuple<char, string, string> GetGlyph(int x, int y, int z)
-		{
-			return new Tuple<char, string, string>(GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
-		}
-		
-		public static Coord ToCamera(int x, int y)
+		//public static Tuple<char, string, string> GetGlyph(int x, int y, int z)
+		//{
+		//	return new Tuple<char, string, string>(GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
+		//}
+
+        public static (char, string, string) GetGlyph(int x, int y, int z)
+        {
+            return (GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
+        }
+
+        public static Coord ToCamera(int x, int y)
 		{
 			GameCamera Camera = Game.Camera;
 			return new Coord(x-Camera.XOffset, y-Camera.YOffset, Camera.Z);

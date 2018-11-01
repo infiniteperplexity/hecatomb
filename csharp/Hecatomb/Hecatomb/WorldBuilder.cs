@@ -68,8 +68,8 @@ namespace Hecatomb
 					} else {
 						if (world.Random.Next(250)==1)
 						{
-							Creature rat = Game.World.Entities.Spawn<Creature>("PackRat");
-							rat.Place(i, j, k);
+							//Creature rat = Game.World.Entities.Spawn<Creature>("PackRat");
+							//rat.Place(i, j, k);
 						}
 						float plants = vscale*VegetationNoise.GetSimplexFractal(hscale*i,hscale*j);
 						if (plants>1.0f)
@@ -100,8 +100,8 @@ namespace Hecatomb
 				}
 			}
 			int z = world.GetGroundLevel(50, 50);
-			Creature ghoul = world.Entities.Spawn<Creature>("HungryGhoul");
-			ghoul.Place(50, 50, z);
+			//Creature ghoul = world.Entities.Spawn<Creature>("HungryGhoul");
+			//ghoul.Place(50, 50, z);
 		}
 	}
 	

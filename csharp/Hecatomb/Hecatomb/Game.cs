@@ -192,9 +192,12 @@ namespace Hecatomb
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            ControlContext.Redrawn = true;
         	sprites.Begin();
         	if (MainPanel.Dirty)
         	{
+                GraphicsDevice.Clear(Color.Black);
+                
         		MainPanel.DrawContent();
         		MainPanel.Dirty = false;
         	}
