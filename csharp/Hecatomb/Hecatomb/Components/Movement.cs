@@ -460,6 +460,38 @@ namespace Hecatomb
 			Actor a = Entity.GetComponent<Actor>();
 			a.Spend(16);
 		}
+
+
+        public bool CanTouch(int x0, int y0, int z0, int x1, int y1, int z1)
+        {
+            if (Tiles.QuickDistance(x0, y0, z0, x1, y1, z1)>=2)
+            {
+                return false;
+            }
+            if (CouldMove(x0, y0, z0, x1, y1, z1))
+            {
+                return true;
+            }
+            // basically all valid moves, plus open diagonals and straight up
+            Terrain t = Game.World.GetTile(x1, y1, z1);
+            if (z1-z0==+1 && (t==Terrain.EmptyTile || t==Terrain.DownSlopeTile))
+            {
+                return true;
+            }
+            if (z1 - z0 == -1)
+            {
+                t = Game.World.GetTile(x1, y1, z0);
+                if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool CanTouch(int x1, int y1, int z1)
+        {
+            return CanTouch(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
+        }
 		
 		
 		
@@ -490,5 +522,16 @@ namespace Hecatomb
 //			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);			
 			return (c==null) ? false : true;
 		}
-	}
+
+        public LinkedList<Coord> FindPath(TypedEntity t, bool useLast = true)
+        {
+            return Tiles.FindPath(this, t, useLast: useLast);
+        }
+
+        public bool CanFind(TypedEntity t, bool useLast = true)
+        {
+            return (FindPath(t, useLast: useLast).Count>0);
+        }
+
+    }
 }

@@ -117,7 +117,7 @@ namespace Hecatomb
             }
 			// in the JS version, there are several different modules on here...
 			// are they flyweights?  They might be
-			CheckForHostile();
+			//CheckForHostile();
             if (Acted)
             {
                 return;
