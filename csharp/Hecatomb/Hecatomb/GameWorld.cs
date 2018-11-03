@@ -24,6 +24,7 @@ namespace Hecatomb
 		public int Depth;
 		
 		public Terrain[,,] Tiles {get; set;}
+        public Cover[,,] Covers {get; set;}
 		public SparseArray3D<Creature> Creatures;
 		public SparseArray3D<Feature> Features;
 		public SparseArray3D<Item> Items;
@@ -48,6 +49,7 @@ namespace Hecatomb
 			Depth = depth;
 			Events = new GameEventHandler();
 			Tiles = new Terrain[Width, Height, Depth];
+            Covers = new Cover[Width, Height, Depth];
 			StateTrackers = new Dictionary<string, StateTracker>();
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
@@ -63,6 +65,7 @@ namespace Hecatomb
 			Entities = new EntityHandler();
 			Events = new GameEventHandler();
 			Tiles = new Terrain[Width, Height, Depth];
+            Covers = new Covers[Width, Height, Depth];
 			StateTrackers = new Dictionary<string, StateTracker>();
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);

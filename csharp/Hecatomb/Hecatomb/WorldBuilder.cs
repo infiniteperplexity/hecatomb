@@ -36,11 +36,14 @@ namespace Hecatomb
 						int elev = GroundLevel + (int) (vscale*ElevationNoise.GetSimplexFractal(hscale*i,hscale*j));
 						if (i==0 || i==world.Width-1 || j==0 || j==world.Height-1 || k<elev) {
 							world.Tiles[i,j,k] = Terrain.WallTile;
+                            world.Covers[i,j,k] = Cover.Soil;
 						} else if (k==elev) {
 							world.Tiles[i,j,k] = Terrain.FloorTile;
-						} else {
+                            world.Covers[i,j,k] = Cover.Grass;
+                        } else {
 							world.Tiles[i,j,k] = Terrain.EmptyTile;
-						}
+                            world.Covers[i,j,k] = Cover.NoCover;
+                        }
 					}
 				}
 			}
