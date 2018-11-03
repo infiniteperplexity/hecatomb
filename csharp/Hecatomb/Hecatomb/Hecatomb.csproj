@@ -54,6 +54,7 @@
     <Compile Include="Components\Tasks\FurnishTask.cs" />
     <Compile Include="Components\Tasks\Task.cs" />
     <Compile Include="Components\Tasks\UndesignateTask.cs" />
+    <Compile Include="Cover.cs" />
     <Compile Include="DebugConsole.cs" />
     <Compile Include="Entities\DelegateStrategies.cs" />
     <Compile Include="Entities\GameEntity.cs" />
