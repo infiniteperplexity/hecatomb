@@ -318,7 +318,17 @@ namespace Hecatomb
             }
             if (Target != null)
             {
-                WalkToward(Target.X, Target.Y, Target.Z);
+                Movement m = Entity.GetComponent<Movement>();
+                Attacker a = Entity.TryComponent<Attacker>();
+                // this is poorly thought out
+                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
+                {
+                    a.Attack(Target);
+                }
+                else
+                {
+                    WalkToward(Target.X, Target.Y, Target.Z);
+                }
             }
         }
 		

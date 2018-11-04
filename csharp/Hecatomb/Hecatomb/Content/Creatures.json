@@ -10,7 +10,9 @@
 					"Actor" : {},
 					"Senses": {},
 					"Movement": {},
-					"SpellCaster": {}
+					"SpellCaster": {},
+					"Attacker": {},
+					"Defender": {}
 				}
 			},
 			{
@@ -23,19 +25,23 @@
 					"Senses": {},
 					"Movement": {},
 					"Minion": {},
-					"Inventory": {}
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
 				}
 			},
 			{
 				"Type" : "PackRat",
-				"Name" : "pack rat",
+				"Name" : "p,ack rat",
 				"FG" : "brown",
 				"Symbol" : "r",
 				"Components" : {
 					"Actor": {"TeamName" : "NeutralAnimals"},
 					"Senses": {},
 					"Movement": {},
-					"Inventory": {}
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
 				}
 			},
 			{
@@ -47,7 +53,9 @@
 					"Actor": {"TeamName" : "Berserkers"},
 					"Senses": {},
 					"Movement": {},
-					"Inventory": {}
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
 				}
 			}
 		]

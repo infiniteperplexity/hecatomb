@@ -176,7 +176,10 @@ namespace Hecatomb
 	
 	public class AttackEvent : GameEvent
 	{
-		
+        public Attacker Attacker;
+        public Defender Defender;
+        public int Roll;
+        public Dictionary<string, int> Modifiers;
 	}
 
     public class SensoryEvent : GameEvent

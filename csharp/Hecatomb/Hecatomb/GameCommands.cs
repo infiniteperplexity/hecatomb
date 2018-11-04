@@ -77,7 +77,13 @@ namespace Hecatomb
 					m.Displace(cr);
 					p.Act();
 					return;
-				}		    	
+				}
+                else if (cr!=null && p.GetComponent<Actor>().Team.IsHostile(cr))
+                {
+                    p.GetComponent<Attacker>().Attack(cr);
+                    p.Act();
+                    return;
+                }
 			}
 		}
 			
@@ -99,6 +105,11 @@ namespace Hecatomb
 					m.Displace(cr);
 					p.Act();
 				}
+                else if (cr!=null && p.GetComponent<Actor>().Team.IsHostile(cr))
+                {
+                    p.GetComponent<Attacker>().Attack(cr);
+                    p.Act();
+                }
 				return;
 			    
 			} else {
