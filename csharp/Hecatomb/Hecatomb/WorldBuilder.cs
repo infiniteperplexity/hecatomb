@@ -39,10 +39,24 @@ namespace Hecatomb
                             world.Covers[i,j,k] = Cover.Soil;
 						} else if (k==elev) {
 							world.Tiles[i,j,k] = Terrain.FloorTile;
-                            world.Covers[i,j,k] = Cover.Grass;
+                            if (k<=48)
+                            {
+                                world.Covers[i, j, k] = Cover.Water;
+                            }
+                            else
+                            {
+                                world.Covers[i, j, k] = Cover.Grass;
+                            }
                         } else {
-							world.Tiles[i,j,k] = Terrain.EmptyTile;
-                            world.Covers[i,j,k] = Cover.NoCover;
+                            world.Tiles[i, j, k] = Terrain.EmptyTile;
+                            if (k <= 48)
+                            {
+                                world.Covers[i, j, k] = Cover.Water;
+                            }
+                            else
+                            {
+                                world.Covers[i, j, k] = Cover.NoCover;
+                            }
                         }
 					}
 				}

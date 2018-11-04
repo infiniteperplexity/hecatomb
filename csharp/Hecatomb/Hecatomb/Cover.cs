@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using Microsoft.Xna.Framework;
 
 namespace Hecatomb
 {
@@ -18,6 +19,7 @@ namespace Hecatomb
         public readonly char Symbol;
         public readonly string FG;
         public readonly string BG;
+        public readonly string Dark;
         public readonly bool Solid;
         public readonly bool Liquid;
         public readonly int Hardness;
@@ -28,6 +30,7 @@ namespace Hecatomb
             string name,
             string fg = "white",
             string bg = "black",
+            string dark = null,
             char symbol = ' ',
             bool liquid = false,
             bool solid = false,
@@ -38,6 +41,7 @@ namespace Hecatomb
             Name = name;
             FG = fg;
             BG = bg;
+            Dark = dark; // maybe some default logic here?
             Symbol = symbol;
             Liquid = liquid;
             Solid = solid;
@@ -45,6 +49,17 @@ namespace Hecatomb
             Mineral = mineral;
         }
 
+        public Color Shimmer()
+        {
+            Color c = Game.Colors[BG];
+            int r = c.R;
+            int g = c.G;
+            int b = c.B;
+            r = (int) Game.World.Random.NextNormal(r, r / 16f);
+            g = (int) Game.World.Random.NextNormal(g, g / 16f);
+            b = (int) Game.World.Random.NextNormal(b, b / 16f);
+            return new Color(r, g, b);
+        }
         public static readonly Cover NoCover = new Cover(
             name: "no cover",
             fg: "black",

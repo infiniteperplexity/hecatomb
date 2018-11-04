@@ -65,7 +65,7 @@ namespace Hecatomb
 			Entities = new EntityHandler();
 			Events = new GameEventHandler();
 			Tiles = new Terrain[Width, Height, Depth];
-            Covers = new Covers[Width, Height, Depth];
+            Covers = new Cover[Width, Height, Depth];
 			StateTrackers = new Dictionary<string, StateTracker>();
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
@@ -118,6 +118,7 @@ namespace Hecatomb
 			if (Explored.Contains(c))
 			{
 				text.Add("Terrain: " + Tiles[x, y, z].Name);
+                text.Add("Cover: " + Covers[x, y, z].Name);
 				t = Creatures[x, y, z];
 				if (t!=null)
 				{
@@ -139,7 +140,8 @@ namespace Hecatomb
 			if (Explored.Contains(above))
 			{
 				text.Add("Above: " + Tiles[x, y, za].Name);
-				t = Creatures[x, y, za];
+                text.Add("Cover: " + Covers[x, y, za].Name);
+                t = Creatures[x, y, za];
 				if (t!=null)
 				{
 					text.Add("Creature: " + t.Describe());
@@ -159,7 +161,8 @@ namespace Hecatomb
 			if (Explored.Contains(below))
 			{
 				text.Add("Below: " + Tiles[x, y, zb].Name);
-				t = Creatures[x, y, zb];
+                text.Add("Cover: " + Covers[x, y, zb].Name);
+                t = Creatures[x, y, zb];
 				if (t!=null)
 				{
 					text.Add("Creature: " + t.Describe());
