@@ -5,6 +5,7 @@
  * Time: 12:43 PM
  */
 using System;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -43,8 +44,8 @@ namespace Hecatomb
 		{
 			ItemEID = -1;
 		}
-        public GameEvent OnSelfSpawn(GameEvent ge)
-        {
+        public override GameEvent OnSelfSpawn(GameEvent ge)
+        {   
             Game.World.Events.Subscribe<DespawnEvent>(this, OnItemDespawn);
             return ge;
         }

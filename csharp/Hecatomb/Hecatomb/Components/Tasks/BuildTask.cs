@@ -47,6 +47,7 @@ namespace Hecatomb
 			if (t==floor || t==up)
 			{
 				tiles[x, y, z] = wall;
+                Game.World.Covers[x, y, z] = Cover.Soil;
 				Terrain ta = Game.World.GetTile(x, y, z+1);
 				if (ta==empty || ta==down)
 				{

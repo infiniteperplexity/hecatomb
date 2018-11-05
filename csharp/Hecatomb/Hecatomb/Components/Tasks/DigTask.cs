@@ -32,12 +32,14 @@ namespace Hecatomb
 			int z = Entity.Z;
 			Game.World.Features[x, y, z].Remove();
 			var tiles = Game.World.Tiles;
+            var covers = Game.World.Covers;
 			Terrain t = tiles[x, y, z];	
 			Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;
 			Terrain up = Terrain.UpSlopeTile;
 			Terrain down = Terrain.DownSlopeTile;
 			Terrain empty = Terrain.EmptyTile;
+            Cover none = Cover.NoCover;
 			if (t==floor)
 			{
 				Terrain tb = Game.World.GetTile(x, y, z-1);
@@ -45,29 +47,36 @@ namespace Hecatomb
 				{
 					tiles[x, y, z] = down;
 					tiles[x, y, z-1] = up;
-				} else if (tb==up)
+                    covers[x, y, z] = none;
+                    covers[x, y, z-1] = none;
+                } else if (tb==up)
 				{
 					tiles[x, y, z] = down;
-				}
+                    covers[x, y, z] = none;
+                }
 				else if (tb==empty || tb==down || tb==floor)
 				{
 					tiles[x, y, z] = empty;
-				}
+                    covers[x, y, z] = none;
+                }
 			}
 			else if (t==up)
 			{
 				tiles[x, y, z] = floor;
-			}
+                covers[x, y, z] = none;
+            }
 			else if (t==down)
 			{
 				tiles[x, y, z] = empty;
 				tiles[x, y, z-1] = floor;
-			}
+                covers[x, y, z] = none;
+                covers[x, y, z-1] = none;
+            }
 			else if (t==wall)
 			{
-				tiles[x, y, z] = down;
-				tiles[x, y, z-1] = up;
-			}		
+				tiles[x, y, z] = floor;
+                covers[x, y, z] = none;
+            }		
 			base.Finish();
 		}
 		

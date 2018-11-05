@@ -28,7 +28,7 @@ namespace Hecatomb
 			string[] enemies=null,
 			bool xenophobic=false,
 			bool berserk=false			
-		) : base(name)
+		) : base(name, name)
 		{
 			Name = name;
 			Enemies = (enemies==null) ? new List<string>() : enemies.ToList();

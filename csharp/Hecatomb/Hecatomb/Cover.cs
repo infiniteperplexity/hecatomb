@@ -27,6 +27,7 @@ namespace Hecatomb
 
 
         public Cover(
+            string type,
             string name,
             string fg = "white",
             string bg = "black",
@@ -36,9 +37,8 @@ namespace Hecatomb
             bool solid = false,
             int hardness = 0,
             string mineral = null
-        ) : base()
+        ) : base(type, name)
         {
-            Name = name;
             FG = fg;
             BG = bg;
             Dark = dark; // maybe some default logic here?
@@ -61,12 +61,14 @@ namespace Hecatomb
             return new Color(r, g, b);
         }
         public static readonly Cover NoCover = new Cover(
+            type: "NoCover",
             name: "no cover",
             fg: "black",
             bg: "black"
         );
 
         public static readonly Cover Grass = new Cover(
+            type: "Grass",
             symbol: '"',
             name: "grass",
             fg: "GRASSFG",
@@ -74,6 +76,7 @@ namespace Hecatomb
         );
 
         public static readonly Cover Water = new Cover(
+            type: "Water",
             symbol: '~',
             name: "water",
             fg: "WATERFG",
@@ -82,6 +85,7 @@ namespace Hecatomb
         );
 
         public static readonly Cover Soil = new Cover(
+            type: "Soil",
             name: "soil",
             fg: "WALLFG",
             bg: "WALLBG",
@@ -89,6 +93,7 @@ namespace Hecatomb
         );
 
         public static readonly Cover Limestone = new Cover(
+            type: "Limestone",
             name: "limestone",
             fg: "WALLFG",
             bg: "WALLBG",
@@ -97,6 +102,7 @@ namespace Hecatomb
         );
 
         public static readonly Cover Basalt = new Cover(
+            type: "Basalt",
             name: "basalt",
             fg: "WALLFG",
             bg: "WALLBG",
@@ -105,6 +111,7 @@ namespace Hecatomb
         );
 
         public static readonly Cover Granite = new Cover(
+            type: "Granite",
             name: "granite",
             fg: "WALLFG",
             bg: "WALLBG",
@@ -113,6 +120,7 @@ namespace Hecatomb
         );
 
         public static readonly Cover Bedrock = new Cover(
+            type: "Bedrock",
             name: "bedrock",
             fg: "WALLFG",
             bg: "WALLBG",
@@ -122,6 +130,7 @@ namespace Hecatomb
 
         public static readonly Cover CoalSeam = new Cover(
             symbol: '\u2234',
+            type: "CoalSeam",
             name: "coal seam",
             fg: "WALLFG",
             bg: "WALLBG",
@@ -131,6 +140,7 @@ namespace Hecatomb
 
         public static readonly Cover FlintCluster = new Cover(
             symbol: '\u2234',
+            type: "FlintCluster",
             name: "flint cluster",
             fg: "WALLFG",
             bg: "WALLBG",

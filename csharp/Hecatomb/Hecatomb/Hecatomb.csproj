@@ -65,7 +65,9 @@
     <Compile Include="GUI\StatusPanel.cs" />
     <Compile Include="Components\Player\Minions.cs" />
     <Compile Include="Components\Player\Player.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="RecursiveBacktracker.cs" />
+    <Compile Include="Resource.cs" />
     <Compile Include="StaticMenuControls.cs" />
     <Compile Include="Entities\TeamTracker.cs" />
     <Compile Include="TextColors.cs" />

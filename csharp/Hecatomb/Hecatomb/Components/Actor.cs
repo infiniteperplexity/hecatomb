@@ -101,7 +101,7 @@ namespace Hecatomb
 			Spend(16);
 		}
 		public void Act()
-		{
+		 {
 			if (Entity is Player)
 			{
 				return;

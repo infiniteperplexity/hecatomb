@@ -165,14 +165,16 @@ namespace Hecatomb
 			    {
 			    	if (Game.World.Random.Next(2)==0)
 			    	{
-			    		Item r = Game.World.Entities.Spawn<Item>("Rock");
-			    		r.Place(x1, y1, z1);
-			    		r.Owned = true;
+                        Item.PlaceResource(("Rock", 1), x1, y1, z1);
+                        Item item = Game.World.Items[x1, y1, z1];
+                        item.Owned = true;
 			    	}
 			    }
 			}
 			Game.World.Tiles[x, y, z] = Terrain.DownSlopeTile;
 			Game.World.Tiles[x, y, z-1] = Terrain.UpSlopeTile;
+            Game.World.Covers[x, y, z] = Cover.NoCover;
+            Game.World.Covers[x, y, z - 1] = Cover.NoCover;
 			base.Finish();
 		}
 	}

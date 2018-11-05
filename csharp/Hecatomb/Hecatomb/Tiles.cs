@@ -387,7 +387,7 @@ namespace Hecatomb
 				}
 				else if (it!=null)
 				{
-					return it.Symbol;
+                    return it.GetGlyph().Item1;
 				}
 				else if (fr!=null)
 				{
@@ -437,8 +437,8 @@ namespace Hecatomb
 			}
 			else if (it!=null)
 			{
-				return it.FG;
-			}
+                return it.GetGlyph().Item2;
+            }
 			else if (fr!=null)
 			{
 				return fr.FG;
@@ -488,9 +488,9 @@ namespace Hecatomb
             {
                 return "white";
             }
-            else if (it != null && it.BG != null)
+            else if (it != null && it.GetGlyph().Item3 != null)
             {
-                return it.BG;
+                return it.GetGlyph().Item3;
             }
             else if (f != null && f.BG != null)
             {

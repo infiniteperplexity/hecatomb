@@ -27,7 +27,8 @@ namespace Hecatomb
 
 		
 		public Terrain(
-			string name,
+            string type = "",
+			string name = "",
 			string fg = "white",
 			string bg = "black",
 			char symbol = ' ',
@@ -37,9 +38,8 @@ namespace Hecatomb
 			bool mutable = true,
 			int zview = 0,
 			int zwalk = 0
-		) : base()
+		) : base(type, name)
 		{
-			Name = name;
 			FG = fg;
 			BG = bg;
 			Symbol = symbol;
@@ -52,6 +52,7 @@ namespace Hecatomb
 		}
 		
 		public static readonly Terrain VoidTile = new Terrain(
+            type: "VoidTile",
 			name: "boundary",
 			fg: "black",
 			bg: "black",
@@ -61,7 +62,8 @@ namespace Hecatomb
 		);
 		
 		public static readonly Terrain EmptyTile = new Terrain(
-			name: "empty",
+            type: "EmptyTile",
+            name: "empty",
 			symbol: '.',
 			fg: "BELOWFG",
 		    bg: "BELOWBG", 
@@ -70,14 +72,16 @@ namespace Hecatomb
 		);
 		
 		public static readonly Terrain FloorTile = new Terrain(
-			name: "floor",
+            type: "FloorTile",
+            name: "floor",
 			symbol: '.',
 			fg: "GRASSFG",
 			bg: "GRASSBG"
 		);
 		
 		public static readonly Terrain WallTile = new Terrain(
-			name: "wall",
+            type: "WallTile",
+            name: "wall",
 			symbol: '#',
 			fg: "WALLFG",
 			bg: "WALLBG",
@@ -86,7 +90,8 @@ namespace Hecatomb
 		);
 		
 		public static readonly Terrain UpSlopeTile = new Terrain(
-			name: "upward slope",
+            type: "UpSlopeTile",
+            name: "upward slope",
 //			symbol: '\u02C4',
 			symbol: '^',
 			fg: "FLOORFG",
@@ -97,7 +102,8 @@ namespace Hecatomb
 		);
 		
 		public static readonly Terrain DownSlopeTile = new Terrain(
-			name: "downward slope",
+            type: "DownSlopeTile",
+            name: "downward slope",
 //			symbol: '\u02C5',
 			symbol: '\u02C7',
 			fg: "BELOWFG",
@@ -108,7 +114,8 @@ namespace Hecatomb
 		);	
 		
 		public static readonly Terrain OutOfBoundsTile = new Terrain(
-			name: "out of bounds",
+            type: "OutOfBoundsTile",
+            name: "out of bounds",
 			symbol: ' ',
 			fg: "black",
 			bg: "black",

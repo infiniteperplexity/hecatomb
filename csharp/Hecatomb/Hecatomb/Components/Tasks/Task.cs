@@ -133,7 +133,20 @@ namespace Hecatomb
 
         public bool HasIngredients()
         {
-            return (Worker.GetComponent<Inventory>().Item.HasResources(Ingredients));
+            if (Ingredients.Count==0)
+            {
+                return true;
+            }
+            Inventory inv = Worker.GetComponent<Inventory>();
+            // so...something weird happens here...
+            if (inv.Item == null)
+            {
+                return false;
+            }
+            else
+            {
+                return (Worker.GetComponent<Inventory>().Item.HasResources(Ingredients));
+            }
         }
 
         public void SpendIngredients()
@@ -297,7 +310,10 @@ namespace Hecatomb
                     return;
                 }
             }
-            throw new InvalidOperationException("Apparently there weren't enough items to claim");
+            if (needed.Keys.Count > 0)
+            {
+                throw new InvalidOperationException("Apparently there weren't enough items to claim");
+            }
         }
     }
 }
