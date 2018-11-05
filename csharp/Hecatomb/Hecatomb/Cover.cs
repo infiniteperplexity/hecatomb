@@ -76,8 +76,8 @@ namespace Hecatomb
         public static readonly Cover Water = new Cover(
             symbol: '~',
             name: "water",
-            fg: "blue",
-            bg: "blue",
+            fg: "WATERFG",
+            bg: "WATERBG",
             liquid: true
         );
 

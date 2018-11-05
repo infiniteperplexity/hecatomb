@@ -29,7 +29,9 @@ namespace Hecatomb
 		public SparseArray3D<Feature> Features;
 		public SparseArray3D<Item> Items;
 		public SparseArray3D<TaskEntity> Tasks;
-		public Dictionary<string, StateTracker> StateTrackers;
+        public List<ParticleEmitter> Emitters;
+        public SparseJaggedArray3D<Particle> Particles;
+        public Dictionary<string, StateTracker> StateTrackers;
 		public HashSet<Coord> Explored;
 		public GameEventHandler Events;
 		public EntityHandler Entities;
@@ -55,6 +57,8 @@ namespace Hecatomb
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
 			Items = new SparseArray3D<Item>(Width, Height, Depth);
 			Tasks = new SparseArray3D<TaskEntity>(Width, Height, Depth);
+            Particles = new SparseJaggedArray3D<Particle>(Width, Height, Depth);
+            Emitters = new List<ParticleEmitter>();
 			Explored = new HashSet<Coord>();
 			Turns = new TurnHandler();
 		}
@@ -71,7 +75,9 @@ namespace Hecatomb
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
 			Items = new SparseArray3D<Item>(Width, Height, Depth);
 			Tasks = new SparseArray3D<TaskEntity>(Width, Height, Depth);
-			Explored = new HashSet<Coord>();
+            Particles = new SparseJaggedArray3D<Particle>(Width, Height, Depth);
+            Emitters = new List<ParticleEmitter>();
+            Explored = new HashSet<Coord>();
 			Turns = new TurnHandler(); 
 		}
 		

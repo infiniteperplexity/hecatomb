@@ -20,7 +20,6 @@ public class MainGamePanel : GamePanel
 		Dictionary<char, ValueTuple<Vector2,SpriteFont>> fontCache;
 		public int Size;
 		public int Padding;
-		public SparseJaggedArray3D<Particle> Particles;
 		public HashSet<Coord> OldDirtyTiles;
 		public HashSet<Coord> NextDirtyTiles;
 		
@@ -45,7 +44,6 @@ public class MainGamePanel : GamePanel
 				Fonts.Add(font);
 			}
 			fontCache = new Dictionary<char, ValueTuple<Vector2, SpriteFont>>();
-			Particles = new SparseJaggedArray3D<Particle>(Game.World.Width, Game.World.Height, Game.World.Depth);
 			OldDirtyTiles = new HashSet<Coord>();
 			NextDirtyTiles = new HashSet<Coord>();
 		}

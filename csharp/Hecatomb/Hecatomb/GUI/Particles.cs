@@ -34,7 +34,7 @@ namespace Hecatomb
             T0 = DateTime.Now;
             Rate = 10;
             LifeSpan = 1000;
-            Game.MainPanel.Emitters.Add(this);
+            Game.World.Emitters.Add(this);
             LastEmit = DateTime.Now;
         }
         
@@ -52,7 +52,7 @@ namespace Hecatomb
             millis = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
             if (millis>LifeSpan)
             {
-                Game.MainPanel.Emitters.Remove(this);
+                Game.World.Emitters.Remove(this);
             }
         }
         
@@ -130,12 +130,12 @@ namespace Hecatomb
             X = _x;
             Y = _y;
             Z = _z;
-            Game.MainPanel.Particles[_x, _y, _z] = Game.MainPanel.Particles[_x,_y,_z].Concat(new Particle[] {this}).ToList();
+            Game.World.Particles[_x, _y, _z] = Game.World.Particles[_x,_y,_z].Concat(new Particle[] {this}).ToList();
         }
         
         public void Remove()
         {
-            Game.MainPanel.Particles[X, Y, Z] = Game.MainPanel.Particles[X, Y, Z].Where(p=>p!=this).ToList();
+            Game.World.Particles[X, Y, Z] = Game.World.Particles[X, Y, Z].Where(p=>p!=this).ToList();
             X = -1;
             Y = -1;
             Z = -1;

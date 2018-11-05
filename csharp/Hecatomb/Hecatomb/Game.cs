@@ -81,8 +81,8 @@ namespace Hecatomb
 			CameraControls = new CameraControls();
 			Camera = new GameCamera();
 			ShowIntro();
-			StartGame();
 			base.Initialize();
+            StartGame();
         }
         
         protected void ShowIntro()
@@ -172,7 +172,7 @@ namespace Hecatomb
 //            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
 //                Exit();
 
-           	foreach (Particle p in MainPanel.Particles.ToList())
+           	foreach (Particle p in World.Particles.ToList())
 			{
 				p.Update();
 			}

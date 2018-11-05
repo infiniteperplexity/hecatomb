@@ -51,11 +51,11 @@ namespace Hecatomb
 		public void Update()
 		{
 			// this will happen almost continually
-			foreach (ParticleEmitter e in Game.MainPanel.Emitters.ToList())
+			foreach (ParticleEmitter e in Game.World.Emitters.ToList())
 			{
 				e.Update();
 			}
-			foreach (Particle p in Game.MainPanel.Particles.ToList())
+			foreach (Particle p in Game.World.Particles.ToList())
 			{	
 				p.Update();
 			}

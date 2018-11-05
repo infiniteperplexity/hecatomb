@@ -49,8 +49,10 @@ namespace Hecatomb
 				{"WALLBG", new Color(0x77, 0x77, 0x88)},
 				{"FLOORBG", new Color(0x44, 0x55, 0x66)},
 				{"BELOWBG", new Color(0x11, 0x11, 0x22)},
-				{"TWOBELOWFG", new Color(0x22, 0x11, 0x22)}
-			};
+				{"TWOBELOWFG", new Color(0x22, 0x11, 0x22)},
+                {"WATERFG", new Color(0x33, 0x88, 0xFF)},
+                {"WATERBG", new Color(0x11, 0x44, 0xBB)}
+            };
 			
 //			PropertyInfo[] properties = typeof(Color).GetProperties();
 //			foreach(PropertyInfo property in properties)

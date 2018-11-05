@@ -17,7 +17,6 @@ namespace Hecatomb
 
 	public abstract class GamePanel
 	{
-		public List<ParticleEmitter> Emitters;
 		protected GraphicsDeviceManager Graphics;
 		protected SpriteBatch Sprites;
 		public Texture2D BG;
@@ -31,7 +30,6 @@ namespace Hecatomb
 			Graphics = graphics;
 			Sprites = sprites;
 			Dirty = true;
-			Emitters = new List<ParticleEmitter>();
 		}
 		
 		public virtual void DrawContent() {}

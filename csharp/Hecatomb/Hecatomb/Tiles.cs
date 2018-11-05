@@ -345,7 +345,7 @@ namespace Hecatomb
 			Item it = Game.World.Items[x, y, z];
             Cover cv = Game.World.Covers[x, y, z];
             Cover cb = Game.World.Covers[x, y, z - 1];
-            List<Particle> pl = Game.MainPanel.Particles[x,y,z];
+            List<Particle> pl = Game.World.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			var c = new Coord(x, y, z);
 			if (p!=null && p.Symbol!=default(char))
@@ -366,6 +366,14 @@ namespace Hecatomb
 				{
 					return fr.Symbol;
 				}
+                else if (cv!=Cover.NoCover && !cv.Solid)
+                {
+                    return cv.Symbol;
+                }
+                else if (cb.Liquid)
+                {
+                    return cb.Symbol;
+                }
 				else
 				{
 					return t.Symbol;
@@ -385,6 +393,14 @@ namespace Hecatomb
 				{
 					return fr.Symbol;
 				}
+                else if (cv!=Cover.NoCover && !cv.Solid)
+                {
+                    return cv.Symbol;
+                }
+                else if (cb.Liquid)
+                {
+                    return cb.Symbol;
+                }
 				else
 				{
 					return t.Symbol;
@@ -400,7 +416,7 @@ namespace Hecatomb
             Cover cv = Game.World.Covers[x, y, z];
             Cover cb = Game.World.Covers[x, y, z - 1];
             Item it = Game.World.Items[x, y, z];
-			List<Particle> pl = Game.MainPanel.Particles[x,y,z];
+			List<Particle> pl = Game.World.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			var c = new Coord(x, y, z);
 			if (p!=null && p.FG!=null)
@@ -427,6 +443,14 @@ namespace Hecatomb
 			{
 				return fr.FG;
 			}
+            else if (cv!=Cover.NoCover)
+            {
+                return cv.FG;
+            }
+            else if (cb!=Cover.NoCover && cb.Liquid)
+            {
+                return cb.FG;
+            }
 			else
 			{
 				return t.FG;
@@ -435,7 +459,7 @@ namespace Hecatomb
 
 		public static string GetBG(int x, int y, int z)
 		{
-			List<Particle> pl = Game.MainPanel.Particles[x,y,z];
+			List<Particle> pl = Game.World.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			Terrain t = Game.World.Tiles[x, y, z];
             Cover cv = Game.World.Covers[x, y, z];
@@ -444,38 +468,47 @@ namespace Hecatomb
 			Item it = Game.World.Items[x, y, z];
 			var c = new Coord(x, y, z);
 			TaskEntity task = Game.World.Tasks[x, y, z];
-			if (p!=null && p.BG!=null)
-			{
-				return p.BG;
-			}
-			else if (task!=null)
-			{
-				return "orange";
-			}
-			else if (!Game.World.Explored.Contains(c))
-			{
-				return "black";
-			}
-			else if (!Game.Visible.Contains(c))
-			{
-				return "black";
-			}
-			else if (it!=null && it.Claimed)
-			{
-				return "white";
-			}
-			else if (it!=null && it.BG!=null)
-			{
-				return it.BG;
-			}
-			else if (f!=null && f.BG!=null)
-			{
-				return f.BG;
-			}
-			else
-			{
-				return t.BG;
-			}
+            if (p != null && p.BG != null)
+            {
+                return p.BG;
+            }
+            else if (task != null)
+            {
+                return "orange";
+            }
+            else if (!Game.World.Explored.Contains(c))
+            {
+                return "black";
+            }
+            else if (!Game.Visible.Contains(c))
+            {
+                return "black";
+            }
+            else if (it != null && it.Claimed)
+            {
+                return "white";
+            }
+            else if (it != null && it.BG != null)
+            {
+                return it.BG;
+            }
+            else if (f != null && f.BG != null)
+            {
+                return f.BG;
+            }
+            else if (cv != Cover.NoCover)
+            {
+                return cv.BG;
+            }
+            else if (cb.Liquid)
+            {
+                return cb.BG;
+                //return cb.Shimmer();
+            }
+            else
+            {
+                return t.BG;
+            }
 		}
 		
 		//public static Tuple<char, string, string> GetGlyph(int x, int y, int z)
