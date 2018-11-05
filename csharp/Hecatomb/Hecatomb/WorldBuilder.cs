@@ -139,6 +139,31 @@ namespace Hecatomb
                     }
 				}
 			}
-		}
+            RecursiveBacktracker maze = new RecursiveBacktracker(12, 12);
+            for (int i=0; i<world.Width/2; i++)
+            {
+                for (int j=0; j<world.Height/2; j++)
+                {
+                    TaskEntity t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
+                    t.Place(2 * i, 2 * j, 0);
+                    if (!maze.BottomWalls[i,j])
+                    {
+                        t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
+                        t.Place(2 * i, 2 * j + 1, 0);
+                    }
+                    if (!maze.RightWalls[i,j])
+                    {
+                        t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
+                        t.Place(2 * i + 1, 2 * j, 0);
+                    }
+                }
+            }
+
+            //Game.World.Entities.Spawn<Creature>("Necromancer").Place(12, 12, 0);
+            Game.World.Entities.Spawn<Creature>("Zombie").Place(12, 13, 0);
+            Game.World.Entities.Spawn<Creature>("Zombie").Place(12, 11, 0);
+            Game.World.Entities.Spawn<Creature>("Zombie").Place(11, 12, 0);
+            Game.World.Entities.Spawn<Creature>("Zombie").Place(13, 12, 0);
+        }
 	}
 }
