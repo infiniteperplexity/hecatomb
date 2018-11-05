@@ -18,7 +18,7 @@ namespace Hecatomb
 	public class Spell : IMenuListable
 	{
 		public string MenuName;
-		private int cost;
+		protected int cost;
 		public SpellCaster Component;
 		public Creature Caster;
 		
@@ -176,6 +176,37 @@ namespace Hecatomb
 			base.Finish();
 		}
 	}
+
+    public class TestGhoulSpell : Spell, ISelectsTile
+    {
+        public TestGhoulSpell() : base()
+        {
+            cost = 0;
+            MenuName = "Summon test ghoul.";
+        }
+
+        public override void ChooseFromMenu()
+        {
+            Game.Controls.Set(new SelectTileControls(this));
+        }
+
+        public void SelectTile(Coord c)
+        {
+            ParticleEmitter emitter = new ParticleEmitter();
+            emitter.Place(c.X, c.Y, c.Z);
+            Creature zombie = Game.World.Entities.Spawn<Creature>("HungryGhoul");
+            zombie.Place(c.X, c.Y, c.Z);
+        }
+
+        public void TileHover(Coord c)
+        {
+            int x = c.X;
+            int y = c.Y;
+            int z = c.Z;
+            Game.Controls.MenuMiddle = new List<string>() { "Spawn a test ghoul here." };
+            Game.Controls.MiddleColors = ControlContext.ValidColor;
+        }
+    }
 }
 
 

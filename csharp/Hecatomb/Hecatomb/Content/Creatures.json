@@ -32,7 +32,7 @@
 			},
 			{
 				"Type" : "PackRat",
-				"Name" : "p,ack rat",
+				"Name" : "pack rat",
 				"FG" : "brown",
 				"Symbol" : "r",
 				"Components" : {

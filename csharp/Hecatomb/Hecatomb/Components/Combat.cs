@@ -29,16 +29,19 @@ namespace Hecatomb
             {
                 Attacker = this,
                 Defender = t.TryComponent<Defender>(),
-                Roll = Game.World.Random.Next(20),
+                Roll = Game.World.Random.Next(20)+1,
                 Modifiers = new Dictionary<string, int>()
             };
             Defender defender = attack.Defender;
             int evade = defender.Evasion - defender.Wounds;
             Game.World.Events.Publish(attack);
             // at this point in the JS code, we aggro the defender in most cases
+            Debug.WriteLine("rolled " + attack.Roll);
+            Debug.WriteLine("evade " + evade);
             if (attack.Roll + Accuracy >= 11 + evade)
             {
                 defender.Defend(attack);
+                Debug.WriteLine("Hit");
             }
             else
             {
@@ -61,12 +64,13 @@ namespace Hecatomb
         public void Defend(AttackEvent attack)
         {
             Attacker attacker = attack.Attacker;
-            int damage = attacker.Damage - Armor - Toughness;
+            int damage = attack.Roll + attacker.Damage - Armor - Toughness;
             Endure(damage);
         }
         // probably a damage event
         public void Endure(int damage)
         {
+            Debug.WriteLine("Total damage is " + damage);
             if (damage >= 20)
             {
                 // critical damage (die)
@@ -107,6 +111,7 @@ namespace Hecatomb
                     Wounds += 1;
                 }
             }
+            Debug.Print("Total wounds for {0} are {1}", Entity.Describe(), Wounds);
             // now tally wounds
             if (Wounds >= 8)
             {

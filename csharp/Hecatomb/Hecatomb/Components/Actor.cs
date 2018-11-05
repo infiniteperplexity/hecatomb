@@ -106,18 +106,9 @@ namespace Hecatomb
 			{
 				return;
 			}
-            if (Target is Creature && Team!=null && Team.IsHostile((Creature) Target))
-            {
-                WalkToward(Target.X, Target.Y, Target.Z);
-                Debug.WriteLine(Tiles.QuickDistance(Entity, Target));
-            }
-            if (Acted)
-            {
-                return;
-            }
 			// in the JS version, there are several different modules on here...
 			// are they flyweights?  They might be
-			//CheckForHostile();
+			CheckForHostile();
             if (Acted)
             {
                 return;
@@ -170,7 +161,8 @@ namespace Hecatomb
 			int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
-			var path = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
+            Debug.Print("{0} {1} {2}, {3} {4} {5}", x, y, z, x1, y1, z1);
+            var path = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
 			Coord? target = (path.Count>0) ? path.First.Value : (Coord?) null;
 			//Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
 			if (target==null)
@@ -316,13 +308,18 @@ namespace Hecatomb
                     Target = enemies[0];
                 }
             }
-            if (Target != null)
+            if (Target==Entity)
+            {
+                Debug.WriteLine("Somehow ended up targeting itself.");
+            }
+            if (Target != null && Target is Creature && Team.IsHostile((Creature) Target))
             {
                 Movement m = Entity.GetComponent<Movement>();
                 Attacker a = Entity.TryComponent<Attacker>();
                 // this is poorly thought out
                 if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
                 {
+                    Debug.WriteLine("attacking");
                     a.Attack(Target);
                 }
                 else

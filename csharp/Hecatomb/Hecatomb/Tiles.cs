@@ -344,6 +344,7 @@ namespace Hecatomb
 			Terrain t = Game.World.Tiles[x,y,z];
 			Item it = Game.World.Items[x, y, z];
             Cover cv = Game.World.Covers[x, y, z];
+            Cover cb = Game.World.Covers[x, y, z - 1];
             List<Particle> pl = Game.MainPanel.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			var c = new Coord(x, y, z);
@@ -397,6 +398,7 @@ namespace Hecatomb
 			Feature fr = Game.World.Features[x,y,z];
 			Terrain t = Game.World.Tiles[x,y,z];
             Cover cv = Game.World.Covers[x, y, z];
+            Cover cb = Game.World.Covers[x, y, z - 1];
             Item it = Game.World.Items[x, y, z];
 			List<Particle> pl = Game.MainPanel.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
@@ -437,6 +439,7 @@ namespace Hecatomb
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			Terrain t = Game.World.Tiles[x, y, z];
             Cover cv = Game.World.Covers[x, y, z];
+            Cover cb = Game.World.Covers[x, y, z - 1];
             Feature f = Game.World.Features[x, y, z];
 			Item it = Game.World.Items[x, y, z];
 			var c = new Coord(x, y, z);

@@ -96,6 +96,15 @@ namespace Hecatomb
 			Remove();
 			Despawn();
 		}
+
+        public virtual void Despawn()
+        {
+            foreach (int c in Components.Values)
+            {
+                Game.World.Entities.Spawned[c].Despawn();
+            }
+            base.Despawn();
+        }
 		
 		public virtual string Describe(
 			bool article=true,
@@ -232,6 +241,7 @@ namespace Hecatomb
 				Remove();
 			}
 			base.Despawn();
+
 		}
 	}
 	public class TaskEntity : TypedEntity {

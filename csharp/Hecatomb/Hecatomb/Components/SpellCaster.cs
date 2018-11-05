@@ -42,7 +42,10 @@ namespace Hecatomb
 		
 		public SpellCaster() : base()
 		{
-			Spells = new List<string>() {"RaiseZombieSpell"};
+			Spells = new List<string>() {
+                "RaiseZombieSpell",
+                "TestGhoulSpell"
+            };
 		}
 		
 		public Spell GetSpell(Type t)

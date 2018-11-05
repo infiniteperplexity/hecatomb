@@ -104,6 +104,12 @@ namespace Hecatomb
 				}
 			}
 			Actor actor = Queue.Dequeue();
+            // need to check if it's been despawned
+            if (!actor.Spawned)
+            {
+                NextActor();
+                return;
+            }
 			if (actor.Entity is Player)
 			{
 				Game.World.Player.Ready();
