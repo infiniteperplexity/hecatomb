@@ -40,7 +40,7 @@ namespace Hecatomb
 		
 //		public static Coord? FindPath(
 		public static LinkedList<Coord> FindPath(
-			Movement m, TypedEntity t, bool useLast=true)
+			Movement m, PositionedEntity t, bool useLast=true)
 		{
 			var misses = Game.World.GetTracker<PathTracker>().PathMisses;
 			if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
@@ -258,17 +258,17 @@ namespace Hecatomb
 			return Math.Sqrt((x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
 		}
 
-        public static double QuickDistance(TypedEntity t, int x1, int y1, int z1)
+        public static double QuickDistance(PositionedEntity t, int x1, int y1, int z1)
         {
             return QuickDistance(t.X, t.Y, t.Z, x1, y1, z1);
         }
 
-        public static double QuickDistance(int x0, int y0, int z0, TypedEntity t)
+        public static double QuickDistance(int x0, int y0, int z0, PositionedEntity t)
         {
             return QuickDistance(x0, y0, z0, t.X, t.Y, t.Z);
         }
 
-        public static double QuickDistance(TypedEntity t0, TypedEntity t1)
+        public static double QuickDistance(PositionedEntity t0, PositionedEntity t1)
         {
             return QuickDistance(t0.X, t0.Y, t0.Z, t1.X, t1.Y, t1.Z);
         }
@@ -484,7 +484,7 @@ namespace Hecatomb
             {
                 return "black";
             }
-            else if (it != null && it.Claimed)
+            else if (it != null && it.Claims.Count>0)
             {
                 return "white";
             }

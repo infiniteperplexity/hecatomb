@@ -22,7 +22,7 @@ namespace Hecatomb
 	public abstract class Component : GameEntity
 	{
 		[JsonProperty] private int EntityEID;
-		[JsonIgnore] public TypedEntity Entity
+		[JsonIgnore] public PositionedEntity Entity
 		{
 			get
 			{
@@ -32,7 +32,7 @@ namespace Hecatomb
 				}
 				else
 				{
-					return (TypedEntity) Game.World.Entities.Spawned[EntityEID];
+					return (PositionedEntity) Game.World.Entities.Spawned[EntityEID];
 				}
 			}
 			set
@@ -55,7 +55,7 @@ namespace Hecatomb
 			Required = new string[0];
 		}
 		
-		public void AddToEntity(TypedEntity e)
+		public void AddToEntity(PositionedEntity e)
 		{
 			if (!Spawned)
 			{

@@ -47,7 +47,7 @@ namespace Hecatomb
 			return t;
 		}
 			
-		public T Spawn<T>(string s) where T: TypedEntity, new()
+		public T Spawn<T>(string s) where T: PositionedEntity, new()
 		{
 			T t = Spawn<T>();
 			t.Symbol = default(char);

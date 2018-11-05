@@ -96,10 +96,10 @@ namespace Hecatomb
 				Entities.Spawned[ge.EID] = ge;
 				Entities.MaxEID = Math.Max(Entities.MaxEID, ge.EID);
 				ge.Spawned = true;
-				if (ge is TypedEntity)
+				if (ge is PositionedEntity)
 				{
 					Coord c = child.ToObject<Coord>();
-					TypedEntity te = (TypedEntity) ge;
+					PositionedEntity te = (PositionedEntity) ge;
 					EntityType.Types[te.TypeName].Standardize(te);
 					te.Place(c.X, c.Y, c.Z, fireEvent: false);
 				}

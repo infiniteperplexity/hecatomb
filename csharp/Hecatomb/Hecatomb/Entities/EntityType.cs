@@ -38,7 +38,7 @@ namespace Hecatomb
 			Components = new Dictionary<string, string>();
 		}
 			
-		public void Standardize(TypedEntity e)
+		public void Standardize(PositionedEntity e)
 		{
 			e.TypeName = TypeName;
 			e.Name = Name;
@@ -46,7 +46,7 @@ namespace Hecatomb
 			e.Symbol = Symbol;
 			e.BG = BG;
 		}
-		public void Typify(TypedEntity e)
+		public void Typify(PositionedEntity e)
 		{
 			e.TypeName = TypeName;
 			e.Name = Name;

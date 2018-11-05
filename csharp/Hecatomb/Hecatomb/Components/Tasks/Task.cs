@@ -14,291 +14,290 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-	public abstract class Task : Component, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
-	{
-		[JsonIgnore] public int BoxWidth {get {return 1;} set{}}
-		[JsonIgnore] public int BoxHeight {get {return 1;} set{}}
-		[JsonProperty] private int WorkerEID;
-		[JsonIgnore] public string TypeName;
-		public Dictionary<string, int> Ingredients;
-		[JsonIgnore] public Creature Worker
-		{
-			get
-			{
-				if (WorkerEID==-1)
-				{
-					return null;
-				}
-				else
-				{
-					return (Creature) Game.World.Entities.Spawned[WorkerEID];
-				}
-			}
-			protected set
-			{
-				if (value==null)
-				{
-					WorkerEID = -1;
-				}
-				else
-				{
-					WorkerEID = value.EID;
-				}
-			}
-		}
-		public string Makes;
-		[JsonIgnore] public int WorkRange;
-		[JsonIgnore] public int LaborCost;
-		[JsonIgnore] public string MenuName;
-		public List<Item> Claimed;
-		public int Labor;
-		
-		public Task() : base()
-		{
-			WorkerEID = -1;
-			WorkRange = 1;
-			LaborCost = 10;
-			Labor = LaborCost;
-			Claimed = new List<Item>();
-		}
-		
-		public virtual void Standardize()
-		{
-			Type taskType = this.GetType();
-			Task task = (Task) Activator.CreateInstance(taskType);
-			WorkRange = task.WorkRange;
-			LaborCost = task.LaborCost;
-			MenuName = task.MenuName;
-		}
+    public abstract class Task : Component, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
+    {
+        [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
+        [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
+        [JsonProperty] private int WorkerEID;
+        [JsonIgnore] public string TypeName;
+        public Dictionary<string, int> Ingredients;
+        protected Dictionary<int, Dictionary<string, int>> Claims;
+        [JsonIgnore]
+        public Creature Worker
+        {
+            get
+            {
+                if (WorkerEID == -1)
+                {
+                    return null;
+                }
+                else
+                {
+                    return (Creature)Game.World.Entities.Spawned[WorkerEID];
+                }
+            }
+            protected set
+            {
+                if (value == null)
+                {
+                    WorkerEID = -1;
+                }
+                else
+                {
+                    WorkerEID = value.EID;
+                }
+            }
+        }
+        public string Makes;
+        [JsonIgnore] public int WorkRange;
+        [JsonIgnore] public int LaborCost;
+        [JsonIgnore] public string MenuName;
+        public int Labor;
 
-		public virtual void Act()
-		{
-			if (Worker==null)	
-			{
-				Debug.WriteLine("we probably shouldn't have gotten here.");
-				return; // this can sometimes get unassigned in the midst of things
-			}
-			if (!HasIngredients() && Labor==LaborCost)
-			{
-				FetchIngredient();
-				return;
-			}
-			if (Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z)<=WorkRange)
-			{
-				Work();
-			}
-			else
-			{
-				bool useLast = (WorkRange == 0) ? true : false;
-				Worker.GetComponent<Actor>().WalkToward(Entity.X, Entity.Y, Entity.Z, useLast: useLast);
-			}
-		}
-		
-		public void FetchIngredient()
-		{
-			Debug.WriteLine("trying to fetch an ingredient");
-			if (Claimed==null || Claimed.Count==0)
-			{
-				return;
-			}
-			Item i = Claimed[0];
-			if (i.X==Worker.X && i.Y==Worker.Y && i.Z==Worker.Z)
-			{
-				i.Remove();
-				Worker.GetComponent<Inventory>().Item = i;
-				Debug.WriteLine("picking up an item");
-				i.Claimed = false;
-				Claimed.Clear();
-				Worker.GetComponent<Actor>().Spend();
-			}
-			else
-			{
-				Worker.GetComponent<Actor>().WalkToward(i.X, i.Y, i.Z, useLast: true);
-			}
-		}
-		
-		public bool HasIngredients()
-		{
-			if (Ingredients==null || Ingredients.Count==0)
-			{
-				return true;
-			}
-			return (Worker.GetComponent<Inventory>().Item!=null);
-		}
-		
-		public void SpendIngredients()
-		{
-			if (Ingredients==null || Ingredients.Count==0)
-			{
-				return;
-			}
-			Item i = Worker.GetComponent<Inventory>().Item;
-			Worker.GetComponent<Inventory>().Item = null;
-			i.Despawn();
-		}
-		
-		public virtual void Work()
-		{
-			if (Labor==LaborCost)
-			{
-				Start();
-			}
-			Labor-=1;
-			Worker.GetComponent<Actor>().Spend();
-			if (Labor<=0)
-			{
-				Finish();
-			}
-		}
-		
-		public virtual void Start()
-		{
-			SpendIngredients();
-			Feature f = Game.World.Entities.Spawn<Feature>("IncompleteFeature");
-			f.Place(Entity.X, Entity.Y, Entity.Z);
-		}
-		
-		public virtual void Finish()
-		{
-			Complete();
-		}
-		
-		public virtual void Complete()
-		{
-			Worker.GetComponent<Minion>().Unassign();
-			Entity.Remove();
-		}
-		
-		public virtual void ChooseFromMenu()
-		{
-			Game.Controls.Set(new SelectZoneControls(this));
-		}
-		
-		public virtual void Designate()
-		{
+        public Task() : base()
+        {
+            WorkerEID = -1;
+            WorkRange = 1;
+            LaborCost = 10;
+            Labor = LaborCost;
+            Ingredients = new Dictionary<string, int>();
+            Claims = new Dictionary<int, Dictionary<string, int>>();
+        }
 
-		}
-		
-		public virtual void Cancel()
-		{
-			Entity.Despawn();
-			Despawn();
-		}
-		
-		public virtual string ListOnMenu()
-		{
-			return MenuName;
-		}
-		
-		public virtual void SelectZone(List<Coord> squares)
-		{
-			foreach (Coord c in squares)
-			{
-				if (Game.World.Tasks[c.X, c.Y, c.Z]==null) 
-				{
-					TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
-					task.GetComponent<Task>().Makes = Makes;
-					task.Place(c.X, c.Y, c.Z);
-				}
-			}
-		}
-		
-		public virtual void SelectTile(Coord c)
-		{
-			if (Game.World.Tasks[c.X, c.Y, c.Z]==null) 
-			{
-				TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
-				task.GetComponent<Task>().Makes = Makes;
-				task.Place(c.X, c.Y, c.Z);
-			}
-		}
-		
-		public virtual void TileHover(Coord c)
-		{
-			
-		}
-		
-		public virtual void TileHover(Coord c, List<Coord> squares)
-		{
-			
-		}
-		
-		public virtual void BoxHover(Coord c, List<Coord> squares)
-		{
-			
-		}
-		
-		public virtual void SelectBox(Coord c, List<Coord> squares)
-		{
-			foreach (Coord s in squares)
-			{
-				if (Game.World.Tasks[s.X, s.Y, s.Z]==null) 
-				{
-					TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
-					task.GetComponent<Task>().Makes = Makes;
-					task.Place(s.X, s.Y, s.Z);
-				}
-			}
-		}
-		
-		public virtual bool CanAssign(Creature c)
-		{
-			Movement m = c.GetComponent<Movement>();
-			bool useLast = (WorkRange==0);	
-			return m.CanReach(Entity, useLast: useLast) && CanFindIngredients();
-		}
-		public virtual void AssignTo(Creature c)
-		{
-			c.GetComponent<Minion>()._AssignTask((TaskEntity) Entity);
-			Worker = c;
-			ClaimIngredients();
-		}
-		
-		public void ClaimIngredients()
-		{
-			if (Ingredients==null)
-			{
-				return;
-			}
-			List<Item> available = Game.World.Items.Where(i=>i.Owned && !i.Claimed).ToList();
-			foreach(string s in Ingredients.Keys)
-			{
-				// also, must be reachable
-				List<Item> items = available.Where(i=>i.TypeName==s).ToList();
-				int n = 0;
-				// should sort by distance
-				foreach (Item i in available)
-				{
-					i.Claimed = true;
-					Claimed.Add(i);
-					n+=1;
-					if (n>=Ingredients[s])
-					{
-					    break;
-					}
-				}
-			}
-		}
-		// should this be on Worker, maybe?  I dunno...
-		public bool CanFindIngredients()
-		{
-			if (Ingredients==null)
-			{
-				return true;
-			}
-			List<Item> available = Game.World.Items.Where(i=>i.Owned && !i.Claimed).ToList();
-			foreach(string s in Ingredients.Keys)
-			{
-				// also, must be reachable
-				List<Item> items = available.Where(i=>i.TypeName==s).ToList();
-				if (items.Count<Ingredients[s])
-				{
-					return false;
-				}
-				
-			}
-			return true;
-		}
-	}
-	
+        public virtual void Standardize()
+        {
+            Type taskType = this.GetType();
+            Task task = (Task)Activator.CreateInstance(taskType);
+            WorkRange = task.WorkRange;
+            LaborCost = task.LaborCost;
+            MenuName = task.MenuName;
+        }
+
+        public virtual void Act()
+        {
+            if (Worker == null)
+            {
+                Debug.WriteLine("we probably shouldn't have gotten here.");
+                return; // this can sometimes get unassigned in the midst of things
+            }
+            if (!HasIngredients() && Labor == LaborCost)
+            {
+                FetchIngredient();
+                return;
+            }
+            if (Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z) <= WorkRange)
+            {
+                Work();
+            }
+            else
+            {
+                bool useLast = (WorkRange == 0) ? true : false;
+                Worker.GetComponent<Actor>().WalkToward(Entity.X, Entity.Y, Entity.Z, useLast: useLast);
+            }
+        }
+
+        public void FetchIngredient()
+        {
+            Debug.WriteLine("trying to fetch an ingredient");
+            if (Claims.Count == 0)
+            {
+                return;
+            }
+            int eid = Claims.Keys.ToList()[0];
+            Item item = (Item) Game.World.Entities.Spawned[eid];
+            // now need to do some validation
+            if (!item.Placed || !item.HasResources(Claims[eid]))
+            {
+                Claims.Remove(eid);
+            }
+            // if we're standing on any claimed ingredient
+            if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z)
+            {
+                item.RemoveResources(Claims[eid]);
+                Inventory inv = Worker.GetComponent<Inventory>();
+                if (inv.Item==null)
+                {
+                    inv.Item = Game.World.Entities.Spawn<Item>();
+                }
+                inv.Item.AddResources(Claims[eid]);
+                item.UnclaimResources(Claims[eid]);
+                Claims.Remove(eid);
+                Debug.WriteLine("picking up an item");
+                Worker.GetComponent<Actor>().Spend();
+            }
+            else
+            {
+                Worker.GetComponent<Actor>().WalkToward(item.X, item.Y, item.Z, useLast: true);
+            }
+        }
+
+        public bool HasIngredients()
+        {
+            return (Worker.GetComponent<Inventory>().Item.HasResources(Ingredients));
+        }
+
+        public void SpendIngredients()
+        {
+            if (Ingredients == null || Ingredients.Count == 0)
+            {
+                return;
+            }
+            Worker.GetComponent<Inventory>().Item.RemoveResources(Ingredients);
+        }
+
+        public virtual void Work()
+        {
+            if (Labor == LaborCost)
+            {
+                Start();
+            }
+            Labor -= 1;
+            Worker.GetComponent<Actor>().Spend();
+            if (Labor <= 0)
+            {
+                Finish();
+            }
+        }
+
+        public virtual void Start()
+        {
+            SpendIngredients();
+            Feature f = Game.World.Entities.Spawn<Feature>("IncompleteFeature");
+            f.Place(Entity.X, Entity.Y, Entity.Z);
+        }
+
+        public virtual void Finish()
+        {
+            Complete();
+        }
+
+        public virtual void Complete()
+        {
+            Worker.GetComponent<Minion>().Unassign();
+            Entity.Remove();
+        }
+
+        public virtual void ChooseFromMenu()
+        {
+            Game.Controls.Set(new SelectZoneControls(this));
+        }
+
+        public virtual void Designate()
+        {
+
+        }
+
+        public virtual void Cancel()
+        {
+            Entity.Despawn();
+            Despawn();
+        }
+
+        public virtual string ListOnMenu()
+        {
+            return MenuName;
+        }
+
+        public virtual void SelectZone(List<Coord> squares)
+        {
+            foreach (Coord c in squares)
+            {
+                if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+                {
+                    TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                    task.GetComponent<Task>().Makes = Makes;
+                    task.Place(c.X, c.Y, c.Z);
+                }
+            }
+        }
+
+        public virtual void SelectTile(Coord c)
+        {
+            if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+            {
+                TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                task.GetComponent<Task>().Makes = Makes;
+                task.Place(c.X, c.Y, c.Z);
+            }
+        }
+
+        public virtual void TileHover(Coord c)
+        {
+
+        }
+
+        public virtual void TileHover(Coord c, List<Coord> squares)
+        {
+
+        }
+
+        public virtual void BoxHover(Coord c, List<Coord> squares)
+        {
+
+        }
+
+        public virtual void SelectBox(Coord c, List<Coord> squares)
+        {
+            foreach (Coord s in squares)
+            {
+                if (Game.World.Tasks[s.X, s.Y, s.Z] == null)
+                {
+                    TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                    task.GetComponent<Task>().Makes = Makes;
+                    task.Place(s.X, s.Y, s.Z);
+                }
+            }
+        }
+
+        public virtual bool CanAssign(Creature c)
+        {
+            Movement m = c.GetComponent<Movement>();
+            bool useLast = (WorkRange == 0);
+            return m.CanReach(Entity, useLast: useLast) && m.CanFindResources(Ingredients);
+        }
+        public virtual void AssignTo(Creature c)
+        {
+            c.GetComponent<Minion>()._AssignTask((TaskEntity)Entity);
+            Worker = c;
+            ClaimIngredients();
+        }
+
+        public void ClaimIngredients()
+        {
+            Dictionary<string, int> needed = new Dictionary<string, int>(Ingredients);
+            List<Item> owned = Game.World.Items.Where(i => i.Owned).ToList();
+            Movement m = Worker.GetComponent<Movement>();
+            owned = owned.Where(it => m.CanReach(it)).ToList();
+            owned = owned.OrderBy(it => { return Tiles.QuickDistance(Entity.X, Entity.Y, Entity.Z, it.X, it.Y, it.Z); }).ToList();
+            // assume we have verified that there are enough
+            foreach (Item item in owned)
+            {
+                foreach (string resource in needed.Keys.ToList())
+                {
+                    int claimed = (item.Claims.ContainsKey(resource)) ? item.Claims[resource] : 0;
+                    int n = (item.Resources.ContainsKey(resource)) ? item.Resources[resource] : 0;
+                    // if there is at least some
+                    if (n - claimed > 0)
+                    {
+                        // if there is enough
+                        if (n - claimed >= needed[resource])
+                        {
+                            needed.Remove(resource);
+                        }
+                        item.Claims[resource] = n;
+                        if (!Claims.ContainsKey(item.EID))
+                        {
+                            Claims[item.EID] = new Dictionary<string, int>();
+                        }
+                        Claims[item.EID][resource] = n - claimed;
+                    }
+                }
+                if (needed.Keys.Count == 0)
+                {
+                    return;
+                }
+            }
+            throw new InvalidOperationException("Apparently there weren't enough items to claim");
+        }
+    }
 }

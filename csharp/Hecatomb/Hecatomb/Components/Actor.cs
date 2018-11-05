@@ -52,7 +52,7 @@ namespace Hecatomb
 			}
 		}
 		
-		[JsonIgnore] TypedEntity Target {
+		[JsonIgnore] PositionedEntity Target {
 			get
 			{
 				if (TargetEID==-1)
@@ -61,7 +61,7 @@ namespace Hecatomb
 				}
 				else 
 				{
-					return (TypedEntity) Game.World.Entities.Spawned[TargetEID];
+					return (PositionedEntity) Game.World.Entities.Spawned[TargetEID];
 				}
 			}
 			set

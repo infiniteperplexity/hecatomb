@@ -120,7 +120,7 @@ namespace Hecatomb
 			List<string> text = new List<string>() {
 				"Coord: " + x + "," + y + ", " + z
 			};
-			TypedEntity t;
+			PositionedEntity t;
 			if (Explored.Contains(c))
 			{
 				text.Add("Terrain: " + Tiles[x, y, z].Name);

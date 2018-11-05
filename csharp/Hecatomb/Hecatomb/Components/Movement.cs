@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -515,7 +516,7 @@ namespace Hecatomb
 			return (c==null) ? false : true;
 		}
 		
-		public bool CanReach(TypedEntity t, bool useLast=true)
+		public bool CanReach(PositionedEntity t, bool useLast=true)
 		{
 			var path = Tiles.FindPath(this, t, useLast: useLast);
 			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;
@@ -523,14 +524,56 @@ namespace Hecatomb
 			return (c==null) ? false : true;
 		}
 
-        public LinkedList<Coord> FindPath(TypedEntity t, bool useLast = true)
+        public LinkedList<Coord> FindPath(PositionedEntity t, bool useLast = true)
         {
             return Tiles.FindPath(this, t, useLast: useLast);
         }
 
-        public bool CanFind(TypedEntity t, bool useLast = true)
+        public bool CanFind(PositionedEntity t, bool useLast = true)
         {
             return (FindPath(t, useLast: useLast).Count>0);
+        }
+
+        public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true)
+        {
+            Dictionary<string, int> found = new Dictionary<string, int>();
+            foreach (string resource in resources.Keys)
+            {
+                found[resource] = 0;
+            }
+            List<Item> items = Game.World.Items.ToList();
+            items = items.Where(
+                it => { return (ownedOnly == false || it.Owned); }
+            ).ToList();
+            items = items.Where(
+                it => { return CanReach(it); }
+            ).ToList();
+            foreach (Item item in items)
+            {
+                foreach (string resource in item.Resources.Keys)
+                {
+                    if (found.ContainsKey(resource))
+                    {
+                        if (respectClaims)
+                        {
+                            int claimed = (item.Claims.ContainsKey(resource)) ? item.Claims[resource] : 0;
+                            found[resource] += (item.Resources[resource] - claimed);
+                        }
+                        else
+                        {
+                            found[resource] += item.Resources[resource];
+                        }
+                    }
+                }
+            }
+            foreach (string resource in resources.Keys)
+            {
+                if (found[resource]<resources[resource])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
     }

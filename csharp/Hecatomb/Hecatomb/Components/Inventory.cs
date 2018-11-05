@@ -43,5 +43,19 @@ namespace Hecatomb
 		{
 			ItemEID = -1;
 		}
-	}
+        public GameEvent OnSelfSpawn(GameEvent ge)
+        {
+            Game.World.Events.Subscribe<DespawnEvent>(this, OnItemDespawn);
+            return ge;
+        }
+        public GameEvent OnItemDespawn(GameEvent ge)
+        {
+            DespawnEvent de = (DespawnEvent)ge;
+            if (de.Entity == Item)
+            {
+                Item = null;
+            }
+            return ge;
+        }
+    }
 }

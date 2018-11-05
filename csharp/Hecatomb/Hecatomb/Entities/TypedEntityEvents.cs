@@ -11,8 +11,8 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of TypedEntityEvents.
 	/// </summary>
-	public abstract partial class TypedEntity
+	public abstract partial class PositionedEntity
 	{
-		public Action<TypedEntity, int, int, int> AfterSelfPlace;
+		public Action<PositionedEntity, int, int, int> AfterSelfPlace;
 	}
 }

@@ -23,7 +23,7 @@ namespace Hecatomb
         public Attacker() : base()
         {
         }
-        public void Attack(TypedEntity t)
+        public void Attack(PositionedEntity t)
         {
             AttackEvent attack = new AttackEvent()
             {
