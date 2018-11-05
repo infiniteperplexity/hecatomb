@@ -9,6 +9,7 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Globalization;
 using System.Diagnostics;
 using System;
 
@@ -73,14 +74,29 @@ namespace Hecatomb
 	   	{
 	      get {
 				Color result;
-				if (colors.TryGetValue(s, out result)) {
-					return result;
-				} else {
+                if (colors.TryGetValue(s, out result))
+                {
+                    return result;
+                }
+                else if (s[0] == '#')
+                {
+                    int r = Int32.Parse(s.Substring(1, 2), NumberStyles.HexNumber);
+                    int g = Int32.Parse(s.Substring(3, 2), NumberStyles.HexNumber);
+                    int b = Int32.Parse(s.Substring(5, 2), NumberStyles.HexNumber);
+                    return new Color(r, g, b);
+                }
+                else
+                {
 					return Color.Red;
 				}
 			}
 	      set { colors[s] = value; }
 	   	}
+
+        public static string Stringify(Color c)
+        {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+        }
 	}
 	  
 }

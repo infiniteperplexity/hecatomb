@@ -7,7 +7,6 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using Microsoft.Xna.Framework;
 
 namespace Hecatomb
 {
@@ -49,16 +48,16 @@ namespace Hecatomb
             Mineral = mineral;
         }
 
-        public Color Shimmer()
+        public string Shimmer()
         {
-            Color c = Game.Colors[BG];
+            var c = Game.Colors[BG];
             int r = c.R;
             int g = c.G;
             int b = c.B;
             r = (int) Game.World.Random.NextNormal(r, r / 16f);
             g = (int) Game.World.Random.NextNormal(g, g / 16f);
             b = (int) Game.World.Random.NextNormal(b, b / 16f);
-            return new Color(r, g, b);
+            return ("#" + r.ToString("X2") + g.ToString("X2") + b.ToString("X2"));
         }
         public static readonly Cover NoCover = new Cover(
             type: "NoCover",

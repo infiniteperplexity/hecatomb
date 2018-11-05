@@ -336,6 +336,37 @@ namespace Hecatomb
 			return getNeighbors(x, y, z, Movement.Directions26);
 		}
 		
+        //public static (char, string, string) GetGlyph(int x, int y, int z)
+        //{
+        //    Creature cr = Game.World.Creatures[x, y, z];
+        //    Feature fr = Game.World.Features[x, y, z];
+        //    Terrain t = Game.World.Tiles[x, y, z];
+        //    Item it = Game.World.Items[x, y, z];
+        //    Cover cv = Game.World.Covers[x, y, z];
+        //    Cover cvb = Game.World.Covers[x, y, z - 1];
+        //    List<Particle> pl = Game.World.Particles[x, y, z];
+        //    Particle p = (pl.Count > 0) ? pl[0] : null;
+        //    Coord c = new Coord(x, y, z);
+        //    Coord ca = new Coord(x, y, z + 1);
+        //    Coord cb = new Coord(x, y, z - 1);
+        //    char sym;
+        //    string fg;
+        //    string bg;
+        //    if (!Game.World.Explored.Contains(c))
+        //    {
+        //        // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
+        //        if (Game.World.Tiles[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
+        //        {
+        //            return (Terrain.WallTile.Symbol, "SHADOWFG", "SHADOWBG");
+        //        }
+        //        // otherwise render blank
+        //        else
+        //        {
+        //            return (' ', "black", "black");
+        //        }
+        //    }
+
+        //}
 		
 		public static char GetSymbol(int x, int y, int z)
 		{
@@ -348,12 +379,23 @@ namespace Hecatomb
             List<Particle> pl = Game.World.Particles[x,y,z];
 			Particle p = (pl.Count>0) ? pl[0] : null;
 			var c = new Coord(x, y, z);
+            // won't handle particles the same as in the JS code
 			if (p!=null && p.Symbol!=default(char))
 			{
 				return p.Symbol;
 			}
+            // should include debug logic as well
 			if (!Game.World.Explored.Contains(c))
 			{
+                // uneexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
+                if (Game.World.Tiles[x, y, z+1]==Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z+1)))
+                {
+                    return Terrain.WallTile.Symbol;
+                }
+                else
+                {
+
+                }
 				return ' ';
 			}
 			else if (!Game.Visible.Contains(c))
@@ -502,8 +544,7 @@ namespace Hecatomb
             }
             else if (cb.Liquid)
             {
-                return cb.BG;
-                //return cb.Shimmer();
+                return cb.Shimmer();
             }
             else
             {
