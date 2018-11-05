@@ -19,7 +19,7 @@ namespace Hecatomb
 			world.Reset();
 		}
 	}
-	
+
 	public class DefaultBuilder : WorldBuilder
 	{
 		public override void Build(GameWorld world)
@@ -129,7 +129,14 @@ namespace Hecatomb
 			base.Build(world);
 			for (int i=0; i<world.Width; i++) {
 				for (int j=0; j<world.Height; j++) {
-					world.Tiles[i, j, 0] = Terrain.FloorTile;
+                    if (i <= 16 && i > 9 && j <= 16 && j > 9)
+                    {
+                        world.Tiles[i, j, 0] = Terrain.FloorTile;
+                    }
+                    else
+                    {
+                        world.Tiles[i, j, 0] = Terrain.WallTile;
+                    }
 				}
 			}
 		}

@@ -393,7 +393,7 @@ namespace Hecatomb
 				{
 					return fr.Symbol;
 				}
-                else if (cv!=Cover.NoCover && !cv.Solid)
+                else if (cv!=Cover.NoCover && !cv.Solid && !cv.Liquid && t==Terrain.FloorTile)
                 {
                     return cv.Symbol;
                 }
