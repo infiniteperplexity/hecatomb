@@ -70,7 +70,7 @@ namespace Hecatomb
         /// 
         protected override void Initialize()
         {
-        	
+            game.Window.Title = "Hecatomb";
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;

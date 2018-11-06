@@ -86,6 +86,7 @@ namespace Hecatomb
         public static readonly Cover Soil = new Cover(
             type: "Soil",
             name: "soil",
+            symbol: '#',
             fg: "WALLFG",
             bg: "WALLBG",
             solid: true
@@ -94,6 +95,7 @@ namespace Hecatomb
         public static readonly Cover Limestone = new Cover(
             type: "Limestone",
             name: "limestone",
+            symbol: '#',
             fg: "WALLFG",
             bg: "WALLBG",
             solid: true,
@@ -103,6 +105,7 @@ namespace Hecatomb
         public static readonly Cover Basalt = new Cover(
             type: "Basalt",
             name: "basalt",
+            symbol: '#',
             fg: "WALLFG",
             bg: "WALLBG",
             solid: true,
@@ -112,6 +115,7 @@ namespace Hecatomb
         public static readonly Cover Granite = new Cover(
             type: "Granite",
             name: "granite",
+            symbol: '#',
             fg: "WALLFG",
             bg: "WALLBG",
             solid: true,
@@ -121,6 +125,7 @@ namespace Hecatomb
         public static readonly Cover Bedrock = new Cover(
             type: "Bedrock",
             name: "bedrock",
+            symbol: '#',
             fg: "WALLFG",
             bg: "WALLBG",
             solid: true,

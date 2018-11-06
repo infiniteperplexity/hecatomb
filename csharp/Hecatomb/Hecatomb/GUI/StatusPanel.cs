@@ -29,7 +29,7 @@ namespace Hecatomb
 			int padding = Game.MainPanel.Padding;
 			X0 = padding+(size+padding);
 			Y0 = padding+(2+Game.Camera.Width)*(size+padding);
-			statusColors = new TextColors(0,4,"yellow");
+			statusColors = new TextColors(0,5,"yellow");
 		}
 		
 		public void Initialize()
@@ -48,14 +48,16 @@ namespace Hecatomb
 			Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
 			Player p = Game.World.Player;
 			TurnHandler t = Game.World.Turns;
-			string txt = String.Format(
-				"X:{0} Y:{1} Z:{2} {3}                                {4}",
-				p.X.ToString().PadRight(3),
-				p.Y.ToString().PadRight(3),
-				p.Z.ToString().PadRight(3),
-				t.Turn.ToString().PadRight(4),
-			    (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "Paused" : "      "
-			);
+            string txt = String.Format(
+                "Sanity:{5}/{6} X:{0} Y:{1} Z:{2} {3}                    {4}",
+                p.X.ToString().PadLeft(3,'0'),
+                p.Y.ToString().PadLeft(3, '0'),
+                p.Z.ToString().PadLeft(2, '0'),
+                t.Turn.ToString().PadLeft(4,'0'),
+                (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "Paused" : "      ",
+                Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3,'0'),
+                Game.World.Player.GetComponent<SpellCaster>().MaxSanity.ToString().PadLeft(3,'0')
+            );
         	DrawLines(new List<string>() {txt}, statusColors);
 		}
 	}

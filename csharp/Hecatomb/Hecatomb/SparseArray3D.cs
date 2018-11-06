@@ -63,9 +63,22 @@ namespace Hecatomb
 				}
 			}
 	   	}
-		
-		
-		public IEnumerator<T> GetEnumerator()
+
+
+        public T this[Coord c]
+        {
+            get
+            {
+                return this[c.X, c.Y, c.Z];
+            }
+            set
+            {
+                this[c.X, c.Y, c.Z] = value;
+            }
+        }
+
+
+        public IEnumerator<T> GetEnumerator()
 	    {
 	        return dict.Values.GetEnumerator();
 	    }

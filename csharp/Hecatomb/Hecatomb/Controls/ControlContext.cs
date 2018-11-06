@@ -48,6 +48,7 @@ namespace Hecatomb
         	Game.Controls = c;
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
         }
         
         public void Reset()
@@ -56,6 +57,7 @@ namespace Hecatomb
         	Game.LastControls = Game.Controls;	
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
         }
         
         public virtual void Back()

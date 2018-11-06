@@ -462,33 +462,30 @@ namespace Hecatomb
 			a.Spend(16);
 		}
 
-
+        // okay we're getting to a bit of a weird place here...a method pulling double duty...
+            // CanTouch could be asking whether you can touch the boundaries of the square itself...
+            // ...or it could be asking whether you can touch the contents of the square.
+            // I think this basically only matters for digging
         public bool CanTouch(int x0, int y0, int z0, int x1, int y1, int z1)
         {
-            if (Tiles.QuickDistance(x0, y0, z0, x1, y1, z1)>=2)
+            int dz = z1 - z0;
+            int dx = x1 - x0;
+            int dy = y1 - y0;
+            if (dz==0)
             {
-                return false;
+               
             }
-            if (CouldMove(x0, y0, z0, x1, y1, z1))
+            else if (dz==+1)
             {
-                return true;
+
             }
-            // basically all valid moves, plus open diagonals and straight up
-            Terrain t = Game.World.GetTile(x1, y1, z1);
-            if (z1-z0==+1 && (t==Terrain.EmptyTile || t==Terrain.DownSlopeTile))
+            else if (dz==-1)
             {
-                return true;
-            }
-            if (z1 - z0 == -1)
-            {
-                t = Game.World.GetTile(x1, y1, z0);
-                if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
-                {
-                    return true;
-                }
+
             }
             return false;
         }
+
         public bool CanTouch(int x1, int y1, int z1)
         {
             return CanTouch(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
@@ -510,7 +507,7 @@ namespace Hecatomb
 			int x0 = Entity.X;
 			int y0 = Entity.Y;
 			int z0 = Entity.Z;
-			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
+			var path = Tiles.FindPath(this, x1, y1, z1);
 			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;
 //			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);			
 			return (c==null) ? false : true;

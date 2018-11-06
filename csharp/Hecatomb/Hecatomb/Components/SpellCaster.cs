@@ -7,6 +7,8 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -18,6 +20,8 @@ namespace Hecatomb
 	public class SpellCaster : Component, IChoiceMenu
 	{
 		List<string> Spells;
+        public int MaxSanity;
+        public int Sanity;
 		public string MenuHeader
 		{
 			get
@@ -26,6 +30,21 @@ namespace Hecatomb
 			}
 			set {}
 		}
+
+        public override GameEvent OnSelfSpawn(GameEvent ge)
+        {
+            Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);
+            return ge;
+        }
+
+        public GameEvent OnTurnBegin(GameEvent ge)
+        {
+            if (Game.World.Random.Next(10)==0)
+            {
+                Sanity = Math.Min(MaxSanity, Sanity + 1);
+            }
+            return ge;
+        }
 		public List<IMenuListable> MenuChoices
 		{
 			get
@@ -42,6 +61,8 @@ namespace Hecatomb
 		
 		public SpellCaster() : base()
 		{
+            MaxSanity = 20;
+            Sanity = 20;
 			Spells = new List<string>() {
                 "RaiseZombieSpell",
                 "TestGhoulSpell"
@@ -50,14 +71,20 @@ namespace Hecatomb
 		
 		public Spell GetSpell(Type t)
 		{
-			return (Spell) Activator.CreateInstance(t);
+            Spell spell = (Spell)Activator.CreateInstance(t);
+            spell.Component = this;
+            spell.Caster = (Creature) Entity;
+            return spell;
 		}
 		
 		public Spell GetSpell(String s)
 		{
 			Type t = Type.GetType("Hecatomb."+s);
-			return (Spell) Activator.CreateInstance(t);
-		}
+            Spell spell = (Spell) Activator.CreateInstance(t);
+            spell.Component = this;
+            spell.Caster = (Creature) Entity;
+            return spell;
+        }
 		
 //		public List<Spell> GetSpells()
 //		{

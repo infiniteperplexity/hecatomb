@@ -96,6 +96,7 @@
     <Compile Include="GUI\MenuPanel.cs" />
     <Compile Include="GUI\Particles.cs" />
     <Compile Include="Spell.cs" />
+    <Compile Include="TileRendering.cs" />
     <Compile Include="Tiles.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Components\Movement.cs" />

@@ -15,7 +15,7 @@ namespace Hecatomb
 {
 	/// <summary>
 	/// Description of AStar.
-	public static class Tiles
+	public static partial class Tiles
 	{
 		
 		private static bool defaultStandable(int x1, int y1, int z1)
@@ -27,8 +27,12 @@ namespace Hecatomb
 			Terrain t = Game.World.Tiles[x1,y1,z1];
 			return (!t.Solid && !t.Fallable);
 		}
-		
-		private static bool defaultMovable(int x0, int y0, int z0, int x1, int y1, int z1)
+
+        private static bool sameSquare(int x0, int y0, int z0, int x1, int y1, int z1)
+        {
+            return (x0==x1 && y0==y1 && z0==z1);
+        }
+        private static bool defaultMovable(int x0, int y0, int z0, int x1, int y1, int z1)
 		{
 			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth)
 			{
@@ -61,9 +65,22 @@ namespace Hecatomb
 			{
 				return m.CanStand(x, y, z);
 			};
-			var path = FindPath(
+            Func<int, int, int, int, int, int, bool> condition;
+
+            if (useLast)
+            {
+                condition = sameSquare;
+            }
+            else
+            {
+                condition = (int x, int y, int z, int xx, int yy, int zz) =>
+                {
+                    return m.CanTouch(x, y, z, xx, yy, zz);
+                };
+            }
+            var path = FindPath(
 				x0, y0, z0, x1, y1, z1,
-				useLast: useLast,
+				condition: condition,
 				movable: movable,
 				standable: standable
 			);
@@ -85,7 +102,6 @@ namespace Hecatomb
 		}
 		
 		public static LinkedList<Coord> FindPath(
-//		public static Coord? FindPath(
 			Movement m, int x1, int y1, int z1, bool useLast = true)
 		{
 			int x0 = m.Entity.X;
@@ -101,7 +117,8 @@ namespace Hecatomb
 			};
 			return FindPath(
 				x0, y0, z0, x1, y1, z1,
-				useLast: useLast,
+                useLast: useLast,
+				condition: m.CanTouch,
 				movable: movable,
 				standable: standable
 			);
@@ -109,16 +126,18 @@ namespace Hecatomb
 		public static LinkedList<Coord> FindPath(
 //		public static Coord? FindPath(
 			int x0, int y0, int z0, int x1, int y1, int z1,
-		    bool useLast = true,
 		    bool useFirst = false,
+            bool useLast = true,
 			Func<int, int, int, int, int, int, double> heuristic = null,
-			Func<int, int, int, int, int, int, bool> movable = null,
+            Func<int, int, int, int, int, int, bool> condition = null,
+            Func<int, int, int, int, int, int, bool> movable = null,
 			Func<int, int, int, bool> standable = null
 		) {
 //			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
 			// default value for the cost estimation heuristic
 			heuristic = heuristic ?? QuickDistance;
-			// default value for allowable movement
+            // default value for allowable movement
+            condition = condition ?? sameSquare;
 			movable = movable ?? defaultMovable;
 			standable = standable ?? defaultStandable;
 			// !should check enclosed right up front
@@ -167,7 +186,8 @@ namespace Hecatomb
 				{
 					success = true;
 				}
-				else if (!useLast && QuickDistance(current.X, current.Y, current.Z, x1, y1, z1)<=1)
+                // so this is pretty weird...how do we make sure we can't dig a tunnel from above?
+				else if (condition(current.X, current.Y, current.Z, x1, y1, z1))
 				{
 					    success = true;
 				}
@@ -336,231 +356,7 @@ namespace Hecatomb
 			return getNeighbors(x, y, z, Movement.Directions26);
 		}
 		
-        //public static (char, string, string) GetGlyph(int x, int y, int z)
-        //{
-        //    Creature cr = Game.World.Creatures[x, y, z];
-        //    Feature fr = Game.World.Features[x, y, z];
-        //    Terrain t = Game.World.Tiles[x, y, z];
-        //    Item it = Game.World.Items[x, y, z];
-        //    Cover cv = Game.World.Covers[x, y, z];
-        //    Cover cvb = Game.World.Covers[x, y, z - 1];
-        //    List<Particle> pl = Game.World.Particles[x, y, z];
-        //    Particle p = (pl.Count > 0) ? pl[0] : null;
-        //    Coord c = new Coord(x, y, z);
-        //    Coord ca = new Coord(x, y, z + 1);
-        //    Coord cb = new Coord(x, y, z - 1);
-        //    char sym;
-        //    string fg;
-        //    string bg;
-        //    if (!Game.World.Explored.Contains(c))
-        //    {
-        //        // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
-        //        if (Game.World.Tiles[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
-        //        {
-        //            return (Terrain.WallTile.Symbol, "SHADOWFG", "SHADOWBG");
-        //        }
-        //        // otherwise render blank
-        //        else
-        //        {
-        //            return (' ', "black", "black");
-        //        }
-        //    }
-
-        //}
-		
-		public static char GetSymbol(int x, int y, int z)
-		{
-			Creature cr = Game.World.Creatures[x,y,z];
-			Feature fr = Game.World.Features[x,y,z];
-			Terrain t = Game.World.Tiles[x,y,z];
-			Item it = Game.World.Items[x, y, z];
-            Cover cv = Game.World.Covers[x, y, z];
-            Cover cb = Game.World.Covers[x, y, z - 1];
-            List<Particle> pl = Game.World.Particles[x,y,z];
-			Particle p = (pl.Count>0) ? pl[0] : null;
-			var c = new Coord(x, y, z);
-            // won't handle particles the same as in the JS code
-			if (p!=null && p.Symbol!=default(char))
-			{
-				return p.Symbol;
-			}
-            // should include debug logic as well
-			if (!Game.World.Explored.Contains(c))
-			{
-                // uneexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
-                if (Game.World.Tiles[x, y, z+1]==Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z+1)))
-                {
-                    return Terrain.WallTile.Symbol;
-                }
-                else
-                {
-
-                }
-				return ' ';
-			}
-			else if (!Game.Visible.Contains(c))
-			{
-				if (it!=null)
-				{
-					return it.Symbol;
-				}
-				else if (fr!=null)
-				{
-					return fr.Symbol;
-				}
-                else if (cv!=Cover.NoCover && !cv.Solid)
-                {
-                    return cv.Symbol;
-                }
-                else if (cb.Liquid)
-                {
-                    return cb.Symbol;
-                }
-				else
-				{
-					return t.Symbol;
-				}
-			}
-			else
-			{
-				if (cr!=null)
-				{
-					return cr.Symbol;
-				}
-				else if (it!=null)
-				{
-                    return it.GetGlyph().Item1;
-				}
-				else if (fr!=null)
-				{
-					return fr.Symbol;
-				}
-                else if (cv!=Cover.NoCover && !cv.Solid && !cv.Liquid && t==Terrain.FloorTile)
-                {
-                    return cv.Symbol;
-                }
-                else if (cb.Liquid)
-                {
-                    return cb.Symbol;
-                }
-				else
-				{
-					return t.Symbol;
-				}
-			}
-		}
-
-		public static string GetFG(int x, int y, int z)
-		{
-			Creature cr = Game.World.Creatures[x,y,z];
-			Feature fr = Game.World.Features[x,y,z];
-			Terrain t = Game.World.Tiles[x,y,z];
-            Cover cv = Game.World.Covers[x, y, z];
-            Cover cb = Game.World.Covers[x, y, z - 1];
-            Item it = Game.World.Items[x, y, z];
-			List<Particle> pl = Game.World.Particles[x,y,z];
-			Particle p = (pl.Count>0) ? pl[0] : null;
-			var c = new Coord(x, y, z);
-			if (p!=null && p.FG!=null)
-			{
-				return p.FG;
-			}
-			if (!Game.World.Explored.Contains(c))
-			{
-				return "black";
-			}
-			else if (!Game.Visible.Contains(c))
-			{
-				return "SHADOWFG";
-			}
-			else if (cr!=null)
-			{
-				return cr.FG;
-			}
-			else if (it!=null)
-			{
-                return it.GetGlyph().Item2;
-            }
-			else if (fr!=null)
-			{
-				return fr.FG;
-			}
-            else if (cv!=Cover.NoCover)
-            {
-                return cv.FG;
-            }
-            else if (cb!=Cover.NoCover && cb.Liquid)
-            {
-                return cb.FG;
-            }
-			else
-			{
-				return t.FG;
-			}
-		}
-
-		public static string GetBG(int x, int y, int z)
-		{
-			List<Particle> pl = Game.World.Particles[x,y,z];
-			Particle p = (pl.Count>0) ? pl[0] : null;
-			Terrain t = Game.World.Tiles[x, y, z];
-            Cover cv = Game.World.Covers[x, y, z];
-            Cover cb = Game.World.Covers[x, y, z - 1];
-            Feature f = Game.World.Features[x, y, z];
-			Item it = Game.World.Items[x, y, z];
-			var c = new Coord(x, y, z);
-			TaskEntity task = Game.World.Tasks[x, y, z];
-            if (p != null && p.BG != null)
-            {
-                return p.BG;
-            }
-            else if (task != null)
-            {
-                return "orange";
-            }
-            else if (!Game.World.Explored.Contains(c))
-            {
-                return "black";
-            }
-            else if (!Game.Visible.Contains(c))
-            {
-                return "black";
-            }
-            else if (it != null && it.Claims.Count>0)
-            {
-                return "white";
-            }
-            else if (it != null && it.GetGlyph().Item3 != null)
-            {
-                return it.GetGlyph().Item3;
-            }
-            else if (f != null && f.BG != null)
-            {
-                return f.BG;
-            }
-            else if (cv != Cover.NoCover)
-            {
-                return cv.BG;
-            }
-            else if (cb.Liquid)
-            {
-                return cb.Shimmer();
-            }
-            else
-            {
-                return t.BG;
-            }
-		}
-		
-		//public static Tuple<char, string, string> GetGlyph(int x, int y, int z)
-		//{
-		//	return new Tuple<char, string, string>(GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
-		//}
-
-        public static (char, string, string) GetGlyph(int x, int y, int z)
-        {
-            return (GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
-        }
+       
 
         public static Coord ToCamera(int x, int y)
 		{

@@ -87,7 +87,14 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-			Game.Controls.Set(new SelectTileControls(this));
+            if (GetCost() > Component.Sanity)
+            {
+                Debug.WriteLine("cannot cast spell");
+            }
+            else
+            {
+                Game.Controls.Set(new SelectTileControls(this));
+            }
 		}
 		
 		public void SelectTile(Coord c)
@@ -95,7 +102,8 @@ namespace Hecatomb
 			Feature f = Game.World.Features[c.X, c.Y, c.Z];
 			if (Game.World.Explored.Contains(c) && f!=null && f.TypeName=="Grave")
 			{
-				ParticleEmitter emitter = new ParticleEmitter();
+                Component.Sanity -= GetCost();
+                ParticleEmitter emitter = new ParticleEmitter();
 				emitter.Place(c.X, c.Y, c.Z);
 //				f.Destroy();
 				Creature zombie = Game.World.Entities.Spawn<Creature>("Zombie");
@@ -104,6 +112,7 @@ namespace Hecatomb
 				emerge.GetComponent<Task>().AssignTo(zombie);
 				emerge.Place(c.X, c.Y, c.Z);
 				Game.World.Player.GetComponent<Minions>().Add(zombie);
+                
 			}
 			else
 			{

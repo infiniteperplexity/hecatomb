@@ -161,8 +161,8 @@ namespace Hecatomb
 			int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
-            Debug.Print("{0} {1} {2}, {3} {4} {5}", x, y, z, x1, y1, z1);
-            var path = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
+            Movement m = Entity.GetComponent<Movement>();
+            var path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast);
 			Coord? target = (path.Count>0) ? path.First.Value : (Coord?) null;
 			//Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
 			if (target==null)
