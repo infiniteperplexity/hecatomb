@@ -64,6 +64,8 @@ namespace Hecatomb
 			{
 				tiles[x, y, z] = floor;
                 covers[x, y, z] = none;
+                tiles[x, y, z + 1] = empty;
+                covers[x, y, z + 1] = none;
             }
 			else if (t==down)
 			{

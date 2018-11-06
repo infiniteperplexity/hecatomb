@@ -462,10 +462,7 @@ namespace Hecatomb
 			a.Spend(16);
 		}
 
-        // okay we're getting to a bit of a weird place here...a method pulling double duty...
-            // CanTouch could be asking whether you can touch the boundaries of the square itself...
-            // ...or it could be asking whether you can touch the contents of the square.
-            // I think this basically only matters for digging
+        // tentative...this does not allow (1) diagonal work/attacks or (2) digging upward...could handle the latter with ramps
         public bool CanTouch(int x0, int y0, int z0, int x1, int y1, int z1)
         {
             int dz = z1 - z0;
@@ -473,15 +470,18 @@ namespace Hecatomb
             int dy = y1 - y0;
             if (dz==0)
             {
-               
+               if (Math.Abs(dx)<=1 && Math.Abs(dy)<=1)
+                {
+                    return true;
+                }
             }
-            else if (dz==+1)
+            else if (dz==+1 && dx==0 && dy==0 && Game.World.Tiles[x1, y1, z1].ZView == -1)
             {
-
+                return true;
             }
-            else if (dz==-1)
+            else if (dz==-1 && dx == 0 && dy == 0 && Game.World.Tiles[x0, y0, z0].ZView == -1)
             {
-
+                return true;
             }
             return false;
         }
@@ -507,17 +507,15 @@ namespace Hecatomb
 			int x0 = Entity.X;
 			int y0 = Entity.Y;
 			int z0 = Entity.Z;
-			var path = Tiles.FindPath(this, x1, y1, z1);
-			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;
-//			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);			
+			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);
+			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;		
 			return (c==null) ? false : true;
 		}
 		
 		public bool CanReach(PositionedEntity t, bool useLast=true)
 		{
 			var path = Tiles.FindPath(this, t, useLast: useLast);
-			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;
-//			Coord? c = Tiles.FindPath(this, x1, y1, z1, useLast: useLast);			
+			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;		
 			return (c==null) ? false : true;
 		}
 

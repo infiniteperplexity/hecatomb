@@ -142,7 +142,7 @@ namespace Hecatomb
                     sym = '\u25E6';
                 }
                 // roof above floor or empty tile
-                if ((terrain == Terrain.FloorTile || terrain == Terrain.EmptyTile) && Tiles[x, y, z + 1] != Terrain.EmptyTile)
+                else if ((terrain == Terrain.FloorTile || terrain == Terrain.EmptyTile) && Tiles[x, y, z + 1] != Terrain.EmptyTile)
                 {
                     sym = '\'';
                 }
@@ -230,155 +230,27 @@ namespace Hecatomb
             return (sym, fg);
         }
 
-        public static char GetSymbol(int x, int y, int z)
-        {
-            Creature cr = Game.World.Creatures[x, y, z];
-            Feature fr = Game.World.Features[x, y, z];
-            Terrain t = Game.World.Tiles[x, y, z];
-            Item it = Game.World.Items[x, y, z];
-            Cover cv = Game.World.Covers[x, y, z];
-            Cover cb = Game.World.Covers[x, y, z - 1];
-            List<Particle> pl = Game.World.Particles[x, y, z];
-            Particle p = (pl.Count > 0) ? pl[0] : null;
-            var c = new Coord(x, y, z);
-            // won't handle particles the same as in the JS code
-            if (p != null && p.Symbol != default(char))
-            {
-                return p.Symbol;
-            }
-            // should include debug logic as well
-            if (!Game.World.Explored.Contains(c))
-            {
-                // uneexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
-                if (Game.World.Tiles[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
-                {
-                    return Terrain.WallTile.Symbol;
-                }
-                else
-                {
-
-                }
-                return ' ';
-            }
-            else if (!Game.Visible.Contains(c))
-            {
-                if (it != null)
-                {
-                    return it.Symbol;
-                }
-                else if (fr != null)
-                {
-                    return fr.Symbol;
-                }
-                else if (cv != Cover.NoCover && !cv.Solid)
-                {
-                    return cv.Symbol;
-                }
-                else if (cb.Liquid)
-                {
-                    return cb.Symbol;
-                }
-                else
-                {
-                    return t.Symbol;
-                }
-            }
-            else
-            {
-                if (cr != null)
-                {
-                    return cr.Symbol;
-                }
-                else if (it != null)
-                {
-                    return it.GetGlyph().Item1;
-                }
-                else if (fr != null)
-                {
-                    return fr.Symbol;
-                }
-                else if (cv != Cover.NoCover && !cv.Solid && !cv.Liquid && t == Terrain.FloorTile)
-                {
-                    return cv.Symbol;
-                }
-                else if (cb.Liquid)
-                {
-                    return cb.Symbol;
-                }
-                else
-                {
-                    return t.Symbol;
-                }
-            }
-        }
-
-        public static string GetFG(int x, int y, int z)
-        {
-            Creature cr = Game.World.Creatures[x, y, z];
-            Feature fr = Game.World.Features[x, y, z];
-            Terrain t = Game.World.Tiles[x, y, z];
-            Cover cv = Game.World.Covers[x, y, z];
-            Cover cb = Game.World.Covers[x, y, z - 1];
-            Item it = Game.World.Items[x, y, z];
-            List<Particle> pl = Game.World.Particles[x, y, z];
-            Particle p = (pl.Count > 0) ? pl[0] : null;
-            var c = new Coord(x, y, z);
-            if (p != null && p.FG != null)
-            {
-                return p.FG;
-            }
-            if (!Game.World.Explored.Contains(c))
-            {
-                return "black";
-            }
-            else if (!Game.Visible.Contains(c))
-            {
-                return "SHADOWFG";
-            }
-            else if (cr != null)
-            {
-                return cr.FG;
-            }
-            else if (it != null)
-            {
-                return it.GetGlyph().Item2;
-            }
-            else if (fr != null)
-            {
-                return fr.FG;
-            }
-            else if (cv != Cover.NoCover)
-            {
-                return cv.FG;
-            }
-            else if (cb != Cover.NoCover && cb.Liquid)
-            {
-                return cb.FG;
-            }
-            else
-            {
-                return t.FG;
-            }
-        }
-
-        public static string GetBG(int x, int y, int z)
+        public static string GetBackground(int x, int y, int z)
         {
             List<Particle> pl = Game.World.Particles[x, y, z];
             Particle p = (pl.Count > 0) ? pl[0] : null;
             Terrain t = Game.World.Tiles[x, y, z];
+            Terrain tb = Game.World.Tiles[x, y, z - 1];
             Cover cv = Game.World.Covers[x, y, z];
             Cover cb = Game.World.Covers[x, y, z - 1];
             Feature f = Game.World.Features[x, y, z];
             Item it = Game.World.Items[x, y, z];
             var c = new Coord(x, y, z);
             TaskEntity task = Game.World.Tasks[x, y, z];
+            // particle
             if (p != null && p.BG != null)
             {
                 return p.BG;
             }
+            // this should event
             else if (task != null)
             {
-                return "orange";
+                return (task.BG ?? "orange");
             }
             else if (!Game.World.Explored.Contains(c))
             {
@@ -404,9 +276,28 @@ namespace Hecatomb
             {
                 return cv.BG;
             }
-            else if (cb.Liquid)
+            else if (t.ZView == -1)
             {
-                return cb.Shimmer();
+                if (cb.Liquid)
+                {
+                    return cb.Shimmer();
+                }
+                else if (cb != Cover.NoCover)
+                {
+                    return cb.DarkBG;
+                }
+                else
+                {
+                    Cover cb2 = Game.World.Covers[x, y, z - 2];
+                    if (Game.World.Tiles[x, y, z - 1].ZView ==-1 && cb2.Liquid)
+                    {
+                        return cb2.DarkBG;
+                    }
+                    else
+                    {
+                        return t.BG;
+                    }
+                }
             }
             else
             {
@@ -422,7 +313,7 @@ namespace Hecatomb
         public static (char, string, string) GetGlyph(int x, int y, int z)
         {
             var tuple = GetColoredSymbol(x, y, z);
-            return (tuple.Item1, tuple.Item2, GetBG(x, y, z));
+            return (tuple.Item1, tuple.Item2, GetBackground(x, y, z));
             //return (GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
         }
     }

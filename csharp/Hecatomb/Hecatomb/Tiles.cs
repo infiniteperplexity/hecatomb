@@ -82,7 +82,8 @@ namespace Hecatomb
 				x0, y0, z0, x1, y1, z1,
 				condition: condition,
 				movable: movable,
-				standable: standable
+				standable: standable,
+                useLast: useLast
 			);
 			if (path.Count==0)
 			{
@@ -115,7 +116,19 @@ namespace Hecatomb
 			{
 				return m.CanStand(x, y, z);
 			};
-			return FindPath(
+            Func<int, int, int, int, int, int, bool> condition;
+            if (useLast)
+            {
+                condition = sameSquare;
+            }
+            else
+            {
+                condition = (int x, int y, int z, int xx, int yy, int zz) =>
+                { 
+                    return m.CanTouch(x, y, z, xx, yy, zz);
+                };
+            }
+            return FindPath(
 				x0, y0, z0, x1, y1, z1,
                 useLast: useLast,
 				condition: m.CanTouch,
@@ -181,15 +194,9 @@ namespace Hecatomb
 				current = queue.First.Value;
 				queue.RemoveFirst();
 				// ***** if we found the goal, retrace our steps ****
-				
-				if (current.X==x1 && current.Y==y1 && current.Z==z1)
+				if (condition(current.X, current.Y, current.Z, x1, y1, z1))
 				{
-					success = true;
-				}
-                // so this is pretty weird...how do we make sure we can't dig a tunnel from above?
-				else if (condition(current.X, current.Y, current.Z, x1, y1, z1))
-				{
-					    success = true;
+			        success = true;
 				}
 				if (success)
 				{

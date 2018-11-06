@@ -18,7 +18,7 @@ namespace Hecatomb
         public readonly char Symbol;
         public readonly string FG;
         public readonly string BG;
-        public readonly string Dark;
+        public readonly string DarkBG;
         public readonly bool Solid;
         public readonly bool Liquid;
         public readonly int Hardness;
@@ -30,7 +30,7 @@ namespace Hecatomb
             string name,
             string fg = "white",
             string bg = "black",
-            string dark = null,
+            string darkbg = null,
             char symbol = ' ',
             bool liquid = false,
             bool solid = false,
@@ -40,7 +40,7 @@ namespace Hecatomb
         {
             FG = fg;
             BG = bg;
-            Dark = dark; // maybe some default logic here?
+            DarkBG = darkbg ?? "purple";
             Symbol = symbol;
             Liquid = liquid;
             Solid = solid;
@@ -71,7 +71,8 @@ namespace Hecatomb
             symbol: '"',
             name: "grass",
             fg: "GRASSFG",
-            bg: "GRASSBG"
+            bg: "GRASSBG",
+            darkbg: "DARKGRASS"
         );
 
         public static readonly Cover Water = new Cover(
@@ -80,6 +81,7 @@ namespace Hecatomb
             name: "water",
             fg: "WATERFG",
             bg: "WATERBG",
+            darkbg: "DARKWATER",
             liquid: true
         );
 
