@@ -43,6 +43,7 @@ namespace Hecatomb
             {
                 var item = Game.World.Entities.Spawn<Item>();
                 item.AddResources(resources);
+                item.Owned = true;
                 item.Place(x, y, z);
             }
             Entity.Despawn();
@@ -53,7 +54,6 @@ namespace Hecatomb
             JObject obj = JObject.Parse(json);
             var yield = obj["Yields"];
             Yields = yield.ToObject<Dictionary<string, float>>();
-            Debug.WriteLine(Yields.Count);
         }
     }
 
