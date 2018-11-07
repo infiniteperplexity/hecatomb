@@ -12,14 +12,22 @@
 				"Name": "tree",
 				"FG" : "olive",
 				"Symbol" : "\u2663",
-				"Components" : {}
+				"Components" : {
+					"Harvestable": {
+						"Yields": {"Wood": 1}
+					}
+				}
 			},
 			{
 				"Type" : "SpadeTree",
 				"Name": "tree",
 				"FG" : "olive",
 				"Symbol" : "\u2660",
-				"Components" : {}
+				"Components" : {
+					"Harvestable": {
+						"Yields": {"Wood": 1}
+					}
+				}
 			},
 			{
 				"Type" : "Shrub",
@@ -40,14 +48,22 @@
 				"Name": "ramp",
 				"FG" : "WALLFG",
 				"Symbol" : "^",
-				"Components" : {}
+				"Components" : {
+					"Fixture":	{
+						"Ingredients": {"Rock": 1}
+					}
+				}
 			},
 			{
 				"Type" : "Door",
 				"Name": "door",
 				"FG" : "brown",
 				"Symbol" : "\u25EB",
-				"Components" : {}
+				"Components" : {
+					"Fixture":	{
+						"Ingredients": {"Wood": 2}
+					}
+				}
 			}
 
 		]

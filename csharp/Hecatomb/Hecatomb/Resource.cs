@@ -33,11 +33,11 @@ namespace Hecatomb
             fg: "gray"
         );
 
-        public static readonly Resource Woold = new Resource(
+        public static readonly Resource Wood = new Resource(
             type: "Wood",
             name: "wood",
-            symbol: '\u2022',
-            fg: "gray"
+            symbol: '=',
+            fg: "brown"
         );
 
 

@@ -8,6 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -86,7 +88,22 @@ namespace Hecatomb
 			co.MenuMiddle = new List<string>() {String.Format("Build {3} at {0} {1} {2}", c.X, c.Y, c.Z, Makes)};
 			co.MiddleColors[0,0] = "green";
 		}
-	}
+
+        public override void SelectTile(Coord c)
+        {
+            if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+            {
+                TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                string json = EntityType.Types[Makes].Components["Fixture"];
+                JObject obj = JObject.Parse(json);
+                var ingredients = obj["Ingredients"];
+                task.GetComponent<Task>().Ingredients = ingredients.ToObject<Dictionary<string, int>>();
+                task.GetComponent<Task>().Makes = Makes;
+                task.Place(c.X, c.Y, c.Z);
+                
+            }
+        }
+    }
 
 }
 

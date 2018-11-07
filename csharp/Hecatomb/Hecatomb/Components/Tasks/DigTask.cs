@@ -14,7 +14,7 @@ namespace Hecatomb
 	{
 		public DigTask(): base()
 		{
-			MenuName = "dig corridors/pits/slopes";
+			MenuName = "dig or harvest";
 			TypeName = "dig";
 		}
 			
@@ -213,9 +213,10 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Tiles[x, y, z];
-                if (
-                        (priority == 5 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
-                        || (priority == 4 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
+                if (priority == 5 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
+                {
+                    Game.World.Entities.Spawn<TaskEntity>("HarvestTask").Place(x, y, z);
+                } else if (    (priority == 4 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
                         || (priority == 3 && t == Terrain.FloorTile)
                         || (priority == 2 && t == Terrain.DownSlopeTile)
                         || !Game.World.Explored.Contains(square))

@@ -52,16 +52,6 @@ namespace Hecatomb
             Game.World.Items[x0, y0, z0] = null;
         }
 
-        public override void Despawn()
-        {
-            Debug.WriteLine("despawnign an item");
-            if (Placed)
-            {
-                Remove();
-            }
-            base.Despawn();
-        }
-
         public void AddResources(Dictionary<string, int> resources)
         {
             foreach (string resource in resources.Keys)

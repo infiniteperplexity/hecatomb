@@ -65,6 +65,8 @@
     <Compile Include="GUI\StatusPanel.cs" />
     <Compile Include="Components\Player\Minions.cs" />
     <Compile Include="Components\Player\Player.cs" />
+    <Compile Include="Harvestable.cs" />
+    <Compile Include="HarvestTask.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="RecursiveBacktracker.cs" />
     <Compile Include="Resource.cs" />

@@ -58,7 +58,7 @@ namespace Hecatomb
 				Type T = Type.GetType("Hecatomb." + t);
 				Component c = (Component) Game.World.Entities.Spawn(Type.GetType("Hecatomb." + t));	
 				c.AddToEntity(e);
-				c.ApplyParameters(Components[t]);
+				c.InterpretJSON(Components[t]);
 			}
 		}
 		

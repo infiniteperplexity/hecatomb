@@ -107,6 +107,10 @@ namespace Hecatomb
                     Game.World.Entities.Spawned[c].Despawn();
                 }
             }
+            if (Placed)
+            {
+                Remove();
+            }
             base.Despawn();
         }
 		

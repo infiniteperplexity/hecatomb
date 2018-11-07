@@ -330,7 +330,7 @@ namespace Hecatomb
         }
 		
 
-		public override void ApplyParameters(string json)
+		public override void InterpretJSON(string json)
 		{
 			JObject obj = JObject.Parse(json);
 			if (obj["TeamName"]!=null)

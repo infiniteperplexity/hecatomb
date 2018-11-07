@@ -93,13 +93,10 @@ namespace Hecatomb
 			EntityEID = -1;
 		}
 		
-		public virtual void ApplyParameters(string json)
+		public virtual void InterpretJSON(string json)
 		{
 		}
 	}
 
-    public class Harvestable : Component
-    {
 
-    }
 }
