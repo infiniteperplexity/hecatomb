@@ -97,4 +97,9 @@ namespace Hecatomb
 		{
 		}
 	}
+
+    public class Harvestable : Component
+    {
+
+    }
 }

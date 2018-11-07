@@ -4,7 +4,7 @@
 			{
 				"Type" : "IncompleteFeature",
 				"FG" : "brown",
-				"Symbol" : "\u2693",
+				"Symbol" : "\u25AB",
 				"Components" : {}
 			},
 			{
@@ -46,7 +46,7 @@
 				"Type" : "Door",
 				"Name": "door",
 				"FG" : "brown",
-				"Symbol" : "+",
+				"Symbol" : "\u25EB",
 				"Components" : {}
 			}
 

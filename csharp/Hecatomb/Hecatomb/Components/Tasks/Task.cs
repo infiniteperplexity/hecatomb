@@ -262,6 +262,11 @@ namespace Hecatomb
             }
         }
 
+        public virtual bool ValidTile(Coord c)
+        {
+            return true;
+        }
+           
         public virtual bool CanAssign(Creature c)
         {
             Movement m = c.GetComponent<Movement>();

@@ -42,7 +42,6 @@ namespace Hecatomb
 			return (!t.Solid && !t.Fallable);
 		}
 		
-//		public static Coord? FindPath(
 		public static LinkedList<Coord> FindPath(
 			Movement m, PositionedEntity t, bool useLast=true)
 		{
@@ -176,16 +175,17 @@ namespace Hecatomb
 			bool accessible = false;
 			foreach (Coord dir in dirs)
 			{
+                // can I factor out useLast?
 				if (useLast && movable(x1+dir.X, y1+dir.Y, z1+dir.Z, x1, y1, z1))
 				{
 					accessible = true;
 				}
-				else if (!useLast && standable(x1+dir.X, y1+dir.Y, z1+dir.Z))
+				else if (!useLast && condition(x1+dir.X, y1+dir.Y, z1+dir.Z, x1, y1, z1))
 				{
 					accessible = true;
 				}
 			}
-			if (accessible==false)
+			if (!accessible)
 			{
 				return new LinkedList<Coord>();
 			}
