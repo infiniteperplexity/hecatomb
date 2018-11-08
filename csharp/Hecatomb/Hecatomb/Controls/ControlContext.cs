@@ -53,8 +53,10 @@ namespace Hecatomb
         
         public void Reset()
         {
+            var old = Game.Controls;         
         	Game.Controls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
-        	Game.LastControls = Game.Controls;	
+            Game.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Game.Controls });
+            Game.LastControls = Game.Controls;	
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
@@ -62,8 +64,10 @@ namespace Hecatomb
         
         public virtual void Back()
         {
-        	Game.Controls = Game.LastControls;
-        	Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
+            var old = Game.Controls;
+            Game.Controls = Game.LastControls;
+            Game.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Game.Controls });
+            Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
         }

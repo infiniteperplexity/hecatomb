@@ -63,9 +63,22 @@ namespace Hecatomb
 			};
 			foreach (Coord c in moves)
 			{
+                Dictionary<string, object> details = new Dictionary<string, object>();
+                if (c.Z==z1+1)
+                {
+                    details["Direction"] = "Up";
+                }
+                else if (c.Z==z1-1)
+                {
+                    details["Direction"] = "Down";
+                }
+                else
+                {
+                    details["Direction"] = "Not specified yet";
+                }
 				if (m.CanPass(c.X, c.Y, c.Z))
 				{
-					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=c});
+					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=details});
 				    m.StepTo(c.X, c.Y, c.Z);
 					p.Act();
 					return;
@@ -73,7 +86,7 @@ namespace Hecatomb
 				Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
 				if (cr!=null && p.GetComponent<Actor>().Team.IsFriendly(cr))
 				{
-					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=c});
+					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=details});
 					m.Displace(cr);
 					p.Act();
 					return;
@@ -101,7 +114,8 @@ namespace Hecatomb
 				Creature cr = Game.World.Creatures[x1, y1, z1];
 				if (cr!=null && p.GetComponent<Actor>().Team.IsFriendly(cr))
 				{
-					Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1)});
+                    string detail = (dz == +1) ? "Up" : "Down";
+					Game.World.Events.Publish(new PlayerActionEvent() { ActionType = "Move", Details = new Dictionary<string, object>() { { "Direction", detail } } });
 					m.Displace(cr);
 					p.Act();
 				}
@@ -113,8 +127,9 @@ namespace Hecatomb
 				return;
 			    
 			} else {
-				Game.World.Events.Publish(new PlayerActionEvent() {ActionType="Move", Details=new Coord(x1, y1, z1)});
-			    m.StepTo(x1, y1, z1);
+                string detail = (dz == +1) ? "Up" : "Down";
+                Game.World.Events.Publish(new PlayerActionEvent() { ActionType = "Move", Details = new Dictionary<string, object>() { { "Direction", detail } } });
+                m.StepTo(x1, y1, z1);
 			    p.Act();
 				return;
 			}
@@ -175,7 +190,9 @@ namespace Hecatomb
 		
 		public void ChooseSpell()
 		{
-			Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
+            Game.World.Events.Publish(new PlayerActionEvent() { ActionType = "ShowSpells" });
+
+            Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
 			Game.MenuPanel.Dirty = true;
 		}
 		

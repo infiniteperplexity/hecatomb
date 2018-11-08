@@ -16,6 +16,7 @@ namespace Hecatomb
     public class TutorialTracker : StateTracker
     {
         public int MoveCount;
+        public int SlopeCount;
         public int CurrentIndex;
         // the tutorial is always active but it's not always visible
         public bool Visible;
@@ -33,6 +34,7 @@ namespace Hecatomb
 		public override void Activate()
 		{
 			MoveCount = 0;
+            SlopeCount = 0;
 			CurrentIndex = 0;
             Visible = true;
 			Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
@@ -48,7 +50,7 @@ namespace Hecatomb
                         "Move: NumPad/Arrows.",
                         "(Control+Arrows for diagonal.)",
                         " ",
-                        @"/: Toggle tutorial."
+                        @"\: Toggle tutorial."
                     },
                     ControlColors = new TextColors(2,"cyan"),
                     InstructionsText = new List<string>()
@@ -67,13 +69,16 @@ namespace Hecatomb
 						if (p.ActionType=="Move")
 						{
 							MoveCount+=1;
-							Coord d = (Coord) p.Details;
 							if (MoveCount>=5)
 							{
 								NextState();
 							}
 						}
-					}
+                        else if (p.ActionType=="ShowSpells")
+                        {
+                            GotoState("ChooseSpell");
+                        }
+                    }
 				},
 				new TutorialState("Movement")
 				{
@@ -84,7 +89,7 @@ namespace Hecatomb
                         "Move: NumPad/Arrows.",
                         "(Control+Arrows for diagonal.)",
                         " ",
-                        @"/: Toggle tutorial."
+                        @"\: Toggle tutorial."
                     },
                     ControlColors = new TextColors(2,"cyan"),
                     InstructionsText = new List<string>()
@@ -97,7 +102,7 @@ namespace Hecatomb
                         " ",
                         "- Gray areas with # are walls, but they may have walkable floors one level above you.",
                         " ",
-                        "- Other symbols (X, Y, Z) may be trees or plants.",
+                        "- Other symbols (clubs, spades, flowers) may be trees or plants.",
                         " ",
                         "- Letters such as s or b are wild animals, mostly harmless for now.",
                         " ",
@@ -116,30 +121,188 @@ namespace Hecatomb
 						if (p.ActionType=="Move")
 						{
 							MoveCount+=1;
-							Coord d = (Coord) p.Details;
 							if (MoveCount>=10)
 							{
 								NextState();
 							}
 						}
-					}
+                        else if (p.ActionType=="ShowSpells")
+                        {
+                            GotoState("ChooseSpell");
+                        }
+                    }
 				},
 				new TutorialState("Slopes")
 				{
-					
-				},
+                    ControlText = new List<string>()
+                    {
+                        "Esc: System view.",
+                        " ",
+                        "Move: NumPad/Arrows, ,/.: Up/Down.",
+                        "(Control+Arrows for diagonal.)",
+                        " ",
+                        @"\: Toggle tutorial."
+                    },
+                    ControlColors = new TextColors(2,2,"cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "You scramble up and down the slopes for a better view of the area.",
+                        " ",
+                        "- The ^ and v symbols are slopes.",
+                        " ",
+                        "- The game world is a 3D grid of tiles.  Slopes provide access to different elevation levels.",
+                        " ",
+                        "- You can climb up or down a slope by standing on it and pressing . (<) or , (>).",
+                        " ",
+                        "- If you try to walk sideways off a cliff or into a wall, you will automatically climb a slope instead if possible.",
+                        " ",
+                        "- When you climb up or down, colors change with your relative elevation.",
+                        " ",
+                        "Try climbing up and down a few slopes."
+                    },
+                    InstructionsColors = new TextColors(
+                        2, "lime green",2,2,"WALLFG",2,3,"lime green",2,4,"WALLFG",2,5,"lime green",
+                        4, "lime green",
+                        6, "lime green",
+                        8, "lime green",
+                        10, "lime green",
+                        12, "cyan"
+                    ),
+                    OnPlayerAction = (PlayerActionEvent p) =>
+                    {
+                        if (p.ActionType=="Move")
+                        {
+                            if (p.Details!=null && (p.Details["Direction"]=="Up" || p.Details["Direction"]=="Down"))
+                            {
+                                SlopeCount+=1;
+                            }
+                            if (SlopeCount>=3)
+                            {
+                                NextState();
+                            }
+                        }
+                        else if (p.ActionType=="ShowSpells")
+                        {
+                            GotoState("ChooseSpell");
+                        }
+                    }
+                },
 				new TutorialState("CastSpell")
 				{
-					
-				},
+                    ControlText = new List<string>()
+                    {
+                        "Esc: System view.",
+                        " ",
+                        "Move: NumPad/Arrows, ,/.: Up/Down.",
+                        "(Control+Arrows for diagonal.)",
+                        " ",
+                        "Z: Cast spell.",
+                        " ",
+                        @"\: Toggle tutorial."
+                    },
+                    ControlColors = new TextColors(5,"cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "Enough of this pointless wandering - it is time to summon an undead servant.",
+                        " ",
+                        "Near where you started, there should be some cross-shaped symbols. These are tombstones.  If you want to know what a symbol represents, hover over it with the mouse and look at the bottom half of the right panel.",
+                        " ",
+                        "Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
+                    },
+                    InstructionsColors = new TextColors(
+                        2, "lime green",
+                        4, "cyan"
+                    ),
+                    OnPlayerAction = (PlayerActionEvent p) =>
+                    {
+                        if (p.ActionType=="ShowSpells")
+                        {
+                            NextState();
+                        }
+                    },
+                    OnContextChange = (ContextChangeEvent c) =>
+                    {
+                        if (c.Note=="Reset" || c.Note=="Back")
+                        {
+                            GotoState("CastSpell");
+                        }
+                    }
+                },
 				new TutorialState("ChooseSpell")
 				{
-					
-				},
+                    ControlText = new List<string>()
+                    {
+                        "**Esc: Cancel.**",
+                        "Select a square with keys or mouse.",
+                        " ",
+                        "Move: NumPad/Arrows, ,/.: Up/Down.",
+                        "(Control+Arrows for diagonal.)",
+                        " ",
+                        "Click / Space: Select.",
+                    },
+                    ControlColors = new TextColors(0, "orange", 1, "yellow", 6, "cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "Select a tombstone, either by using the mouse, or by navigating with the direction keys and pressing space to select.  Make sure the tombstone is on the current elevation level.",
+                        " ",
+                        "Notice that the bottom portion of this panel gives you information about the square you are hovering over - whether it's a valid target for your spell, what the terrain is like, and so on."
+                    },
+                    InstructionsColors = new TextColors(
+                        0, "cyan",
+                        2, "lime green"
+                    ),
+                    OnPlayerAction = (PlayerActionEvent p) =>
+                    {
+                        if (p.ActionType=="ChooseSpell" && p.Details!=null && p.Details["Spell"] is RaiseZombieSpell)
+                        {
+                            NextState();
+                        }
+                    },
+                    OnContextChange = (ContextChangeEvent c) =>
+                    {
+                        // this might not work correctly...
+                        if (c.Note=="Reset" || c.Note=="Back")
+                        {
+                            GotoState("CastSpell");
+                        }
+                    }
+                },
 				new TutorialState("TargetSpell")
 				{
-					
-				},
+                    ControlText = new List<string>()
+                    {
+                        "**Esc: Cancel**.",
+                        "Choose a spell:",
+                        "a) Raise Zombie"
+                    },
+                    ControlColors = new TextColors(0, "orange", 1, "yellow", 2, "cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "Enough of this pointless wandering - it is time to summon an undead servant.",
+                        " ",
+                        "Near where you started, there should be some cross-shaped symbols. These are tombstones.  If you want to know what a symbol represents, hover over it with the mouse and look at the bottom half of the right panel.",
+                        " ",
+                        "Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
+                    },
+                    InstructionsColors = new TextColors(
+                        2, "lime green",
+                        4, "cyan"
+                    ),
+                    OnPlayerAction = (PlayerActionEvent p) =>
+                    {
+                        if (p.ActionType=="ChooseSpell" && p.Details!=null && p.Details["Spell"] is RaiseZombieSpell)
+                        {
+                            NextState();
+                        }
+                    },
+                    OnContextChange = (ContextChangeEvent c) =>
+                    {
+                        if (c.Note=="Reset" || c.Note=="Back")
+                        {
+                            GotoState("CastSpell");
+                        }
+                    }
+                },
 				new TutorialState("Achievements")
 				{
 					

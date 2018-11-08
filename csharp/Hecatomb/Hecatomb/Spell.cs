@@ -41,6 +41,7 @@ namespace Hecatomb
 		
 		public virtual void ChooseFromMenu()
 		{
+            Game.World.Events.Publish(new PlayerActionEvent() { ActionType = "ChooseSpell", Details = new Dictionary<string, object>() { { "Spell", this} } });
 //			Game.Controls.Set(new SelectTileControls(this));
 		}
 		
@@ -87,6 +88,7 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
+            base.ChooseFromMenu();
             if (GetCost() > Component.Sanity)
             {
                 Debug.WriteLine("cannot cast spell");

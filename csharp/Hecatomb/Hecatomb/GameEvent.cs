@@ -165,12 +165,13 @@ namespace Hecatomb
 	public class PlayerActionEvent : GameEvent
 	{
 		public string ActionType;
-		public object Details;
+		public Dictionary<string, object> Details;
 	}
 	
 	public class ContextChangeEvent : GameEvent
 	{
-		public ControlContext OldContext;
+        public string Note;
+        public ControlContext OldContext;
 		public ControlContext NewContext;
 	}
 	
