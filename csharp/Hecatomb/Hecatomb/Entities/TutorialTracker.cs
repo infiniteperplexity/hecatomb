@@ -37,7 +37,8 @@ namespace Hecatomb
             SlopeCount = 0;
 			CurrentIndex = 0;
             Visible = true;
-			Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
+            Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);
+			//Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
 			base.Activate();
             TutorialStates = new List<TutorialState>
             {
@@ -64,9 +65,9 @@ namespace Hecatomb
                         "Try walking around using the numeric keypad.If your keyboard has no keypad, use the arrow keys.One turn will pass for each step you take."
                     },
                     InstructionsColors = new TextColors(0, "yellow", 2, "white", 4, "lime green", 4, 4, "magenta", 6, "cyan"),
-                    OnPlayerAction = (PlayerActionEvent p) =>
+                    HandleEvent = (TutorialEvent t) =>
 					{
-						if (p.ActionType=="Move")
+						if (t.Action=="Move")
 						{
 							MoveCount+=1;
 							if (MoveCount>=5)
@@ -74,7 +75,7 @@ namespace Hecatomb
 								NextState();
 							}
 						}
-                        else if (p.ActionType=="ShowSpells")
+                        else if (t.Action=="ShowSpells")
                         {
                             GotoState("ChooseSpell");
                         }
@@ -116,9 +117,9 @@ namespace Hecatomb
                         10, "lime green",
                         12, "cyan"
                     ),
-                    OnPlayerAction = (PlayerActionEvent p) =>
+                    HandleEvent = (TutorialEvent t) =>
 					{
-						if (p.ActionType=="Move")
+						if (t.Action=="Move")
 						{
 							MoveCount+=1;
 							if (MoveCount>=10)
@@ -126,7 +127,7 @@ namespace Hecatomb
 								NextState();
 							}
 						}
-                        else if (p.ActionType=="ShowSpells")
+                        else if (t.Action=="ShowSpells")
                         {
                             GotoState("ChooseSpell");
                         }
@@ -168,11 +169,10 @@ namespace Hecatomb
                         10, "lime green",
                         12, "cyan"
                     ),
-                    OnPlayerAction = (PlayerActionEvent p) =>
+                    HandleEvent = (TutorialEvent t) =>
                     {
-                        if (p.ActionType=="Move")
+                        if (t.Action=="Climb")
                         {
-                            if (p.Details!=null && (p.Details["Direction"]=="Up" || p.Details["Direction"]=="Down"))
                             {
                                 SlopeCount+=1;
                             }
@@ -181,7 +181,7 @@ namespace Hecatomb
                                 NextState();
                             }
                         }
-                        else if (p.ActionType=="ShowSpells")
+                        else if (t.Action=="ShowSpells")
                         {
                             GotoState("ChooseSpell");
                         }
@@ -213,20 +213,17 @@ namespace Hecatomb
                         2, "lime green",
                         4, "cyan"
                     ),
-                    OnPlayerAction = (PlayerActionEvent p) =>
+                    HandleEvent = (TutorialEvent t) =>
                     {
-                        if (p.ActionType=="ShowSpells")
+                        if (t.Action=="ShowSpells")
                         {
                             NextState();
                         }
-                    },
-                    OnContextChange = (ContextChangeEvent c) =>
-                    {
-                        if (c.Note=="Reset" || c.Note=="Back")
+                        else if (t.Action=="Cancel")
                         {
                             GotoState("CastSpell");
                         }
-                    }
+                    },
                 },
 				new TutorialState("ChooseSpell")
 				{
@@ -251,21 +248,17 @@ namespace Hecatomb
                         0, "cyan",
                         2, "lime green"
                     ),
-                    OnPlayerAction = (PlayerActionEvent p) =>
+                    HandleEvent = (TutorialEvent t) =>
                     {
-                        if (p.ActionType=="ChooseSpell" && p.Details!=null && p.Details["Spell"] is RaiseZombieSpell)
+                        if (t.Action =="ChooseRaiseZombie")
                         {
                             NextState();
                         }
-                    },
-                    OnContextChange = (ContextChangeEvent c) =>
-                    {
-                        // this might not work correctly...
-                        if (c.Note=="Reset" || c.Note=="Back")
+                        else if (t.Action == "Cancel")
                         {
                             GotoState("CastSpell");
                         }
-                    }
+                    },
                 },
 				new TutorialState("TargetSpell")
 				{
@@ -288,25 +281,22 @@ namespace Hecatomb
                         2, "lime green",
                         4, "cyan"
                     ),
-                    OnPlayerAction = (PlayerActionEvent p) =>
+                    HandleEvent = (TutorialEvent t) =>
                     {
-                        if (p.ActionType=="ChooseSpell" && p.Details!=null && p.Details["Spell"] is RaiseZombieSpell)
+                        if (t.Action=="CastRaiseZombie")
                         {
                             NextState();
                         }
-                    },
-                    OnContextChange = (ContextChangeEvent c) =>
-                    {
-                        if (c.Note=="Reset" || c.Note=="Back")
+                        else if (t.Action=="Cancel")
                         {
                             GotoState("CastSpell");
                         }
-                    }
+                    },
                 },
-				new TutorialState("Achievements")
-				{
+				//new TutorialState("Achievements")
+				//{
 					
-				},
+				//},
 				new TutorialState("WaitForZombie")
 				{
 					
@@ -381,7 +371,7 @@ namespace Hecatomb
 		
 		public GameEvent HandleEvent(GameEvent g)
 		{
-			TutorialStates[CurrentIndex].HandleEvent(g);
+			TutorialStates[CurrentIndex].HandleEvent((TutorialEvent) g);
 			return g;
 		}
 		
@@ -390,8 +380,7 @@ namespace Hecatomb
 		{
 			public string Name;
 			public Action OnBegin;
-			public Action<PlayerActionEvent> OnPlayerAction;
-			public Action<ContextChangeEvent> OnContextChange;
+            public Action<TutorialEvent> HandleEvent;
 			public List<string> ControlText;
 			public List<string> InstructionsText;
 			public TextColors ControlColors;
@@ -399,9 +388,8 @@ namespace Hecatomb
 			public TutorialState(string name)
 			{
 				Name = name;
-				OnBegin = NonEvent;
-				OnPlayerAction = NonEvent;
-				OnContextChange = NonEvent;
+                OnBegin = NonEvent;
+				HandleEvent = NonEvent;
 				ControlText = new List<string>();
 				InstructionsText = new List<string>();;
 				ControlColors = TextColors.NoColors;
@@ -414,20 +402,8 @@ namespace Hecatomb
 				Game.MenuPanel.Dirty = true;
 				OnBegin();
 			}
-			public GameEvent HandleEvent(GameEvent g)
-			{
-				if (g is PlayerActionEvent)
-				{
-					OnPlayerAction((PlayerActionEvent) g);
-				}
-				else if (g is ContextChangeEvent)
-				{
-					OnContextChange((ContextChangeEvent) g);
-				}
-				return g;
-			}
-			public void NonEvent() {}
-			public void NonEvent(GameEvent g) {}
+            public void NonEvent() { }
+			public void NonEvent(TutorialEvent t) {}
 		}
 		
 	}

@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AchievementTracker.cs" />
     <Compile Include="Behavior.cs" />
     <Compile Include="Components\Combat.cs" />
     <Compile Include="Components\GuardPost.cs" />

@@ -61,6 +61,7 @@ namespace Hecatomb
             Emitters = new List<ParticleEmitter>();
 			Explored = new HashSet<Coord>();
 			Turns = new TurnHandler();
+            
 		}
 		
 		public void Reset()

@@ -41,7 +41,7 @@ namespace Hecatomb
 		
 		public virtual void ChooseFromMenu()
 		{
-            Game.World.Events.Publish(new PlayerActionEvent() { ActionType = "ChooseSpell", Details = new Dictionary<string, object>() { { "Spell", this} } });
+           
 //			Game.Controls.Set(new SelectTileControls(this));
 		}
 		
@@ -89,6 +89,7 @@ namespace Hecatomb
 		public override void ChooseFromMenu()
 		{
             base.ChooseFromMenu();
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie"});
             if (GetCost() > Component.Sanity)
             {
                 Debug.WriteLine("cannot cast spell");
@@ -104,6 +105,8 @@ namespace Hecatomb
 			Feature f = Game.World.Features[c.X, c.Y, c.Z];
 			if (Game.World.Explored.Contains(c) && f!=null && f.TypeName=="Grave")
 			{
+                Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
+                Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
                 Component.Sanity -= GetCost();
                 ParticleEmitter emitter = new ParticleEmitter();
 				emitter.Place(c.X, c.Y, c.Z);
@@ -161,7 +164,8 @@ namespace Hecatomb
 		}
 		public override void Finish()
 		{
-			int x = Entity.X;
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
+            int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
 			Feature f = Game.World.Features[x, y, z];

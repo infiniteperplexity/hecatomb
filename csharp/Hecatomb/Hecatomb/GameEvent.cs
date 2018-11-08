@@ -174,6 +174,11 @@ namespace Hecatomb
         public ControlContext OldContext;
 		public ControlContext NewContext;
 	}
+
+    public class TutorialEvent : GameEvent
+    {
+        public string Action;
+    }
 	
 	public class AttackEvent : GameEvent
 	{
@@ -187,6 +192,11 @@ namespace Hecatomb
     {
         public string Visible;
         public string Audible;
+    }
+
+    public class AchievementEvent : GameEvent
+    {
+        public string Action;
     }
 }
 
