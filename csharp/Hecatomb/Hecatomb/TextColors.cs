@@ -6,6 +6,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -31,7 +32,7 @@ namespace Hecatomb
 					col = 0;
 					color = (string) c[i];
 				}
-				else if (c[i] is int)
+				else
 				{
 					row = (int) c[i];
 					if (c[i+1] is string)
@@ -45,12 +46,12 @@ namespace Hecatomb
 						col = (int) c[i+1];
 						color = (string) c[i+2];
 						i+=2;
-					}
-					p+=1;
-					Colors[new Tuple<int, int>(row, col)] = color;
-					i+=1;
+					}	
 				}
-			}
+                p += 1;
+                Colors[new Tuple<int, int>(row, col)] = color;
+                i += 1;
+            }
 		}
 		
 		public string this[int i, int j]

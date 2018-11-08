@@ -156,7 +156,6 @@ namespace Hecatomb
 		
 		public GameEvent OnDespawn(GameEvent ge)
 		{
-			Debug.WriteLine("who is getting despawned?");
 			DespawnEvent ds = (DespawnEvent) ge;
 			foreach (List<int> members in Membership.Values)
 			{

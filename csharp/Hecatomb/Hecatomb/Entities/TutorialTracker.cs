@@ -10,32 +10,64 @@ using System.Collections.Generic;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of TutorialTracker.
-	/// </summary>
-	public class TutorialTracker : StateTracker
-	{
-		public int MoveCount;
-		public int CurrentIndex;
-		public List<TutorialState> TutorialStates;
+    /// <summary>
+    /// Description of TutorialTracker.
+    /// </summary>
+    public class TutorialTracker : StateTracker
+    {
+        public int MoveCount;
+        public int CurrentIndex;
+        // the tutorial is always active but it's not always visible
+        public bool Visible;
+        public List<TutorialState> TutorialStates;
+        public TutorialState Current
+        {
+            get
+            {
+                return TutorialStates[CurrentIndex];
+            }
+            set { }
+        }
+        protected TextColors StrayColorsMiddle = new TextColors("orange");
 		
 		public override void Activate()
 		{
 			MoveCount = 0;
 			CurrentIndex = 0;
+            Visible = true;
 			Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
 			base.Activate();
-			TutorialStates = new List<TutorialState>
-			{
-				new TutorialState("Welcome")
-				{
-					OnPlayerAction = (PlayerActionEvent p) =>
+            TutorialStates = new List<TutorialState>
+            {
+                new TutorialState("Welcome")
+                {
+                    ControlText = new List<string>()
+                    {
+                        "Esc: System view.",
+                        " ",
+                        "Move: NumPad/Arrows.",
+                        "(Control+Arrows for diagonal.)",
+                        " ",
+                        @"/: Toggle tutorial."
+                    },
+                    ControlColors = new TextColors(2,"cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "Welcome to the Hecatomb in-game tutorial.  Follow the instructions on this panel to proceed through the tutorial, or press ? to turn off these messages and play without the tutorial.",
+                        " ",
+                        "You walk amongst the tombstones of a hillside graveyard, searching for the site upon which you will build your mighty fortress.",
+                        " ",
+                        "This symbol is you: @",
+                        " ",
+                        "Try walking around using the numeric keypad.If your keyboard has no keypad, use the arrow keys.One turn will pass for each step you take."
+                    },
+                    InstructionsColors = new TextColors(0, "yellow", 2, "white", 4, "lime green", 4, 4, "magenta", 6, "cyan"),
+                    OnPlayerAction = (PlayerActionEvent p) =>
 					{
 						if (p.ActionType=="Move")
 						{
 							MoveCount+=1;
 							Coord d = (Coord) p.Details;
-							Debug.Print("Player stepped to {0} {1} {2}", d.X, d.Y, d.Z);
 							if (MoveCount>=5)
 							{
 								NextState();
@@ -45,13 +77,46 @@ namespace Hecatomb
 				},
 				new TutorialState("Movement")
 				{
-					OnPlayerAction = (PlayerActionEvent p) =>
+                    ControlText = new List<string>()
+                    {
+                        "Esc: System view.",
+                        " ",
+                        "Move: NumPad/Arrows.",
+                        "(Control+Arrows for diagonal.)",
+                        " ",
+                        @"/: Toggle tutorial."
+                    },
+                    ControlColors = new TextColors(2,"cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "You walk amongst the tombstones of a hillside graveyard, searching for the site upon which you will build your mighty fortress.",
+                        " ",
+                        @"- Green areas with "" are grass.",
+                        " ",
+                        "- Dim green areas are also grass, one elevation level below you.",
+                        " ",
+                        "- Gray areas with # are walls, but they may have walkable floors one level above you.",
+                        " ",
+                        "- Other symbols (X, Y, Z) may be trees or plants.",
+                        " ",
+                        "- Letters such as s or b are wild animals, mostly harmless for now.",
+                        " ",
+                        "Try walking around using the numeric keypad.  If your keyboard has no keypad, use the arrow keys.  One turn will pass for each step you take."
+                    },
+                    InstructionsColors = new TextColors(
+                        2, "lime green",2,4,"GRASSFG",2,5,"lime green",
+                        4, "lime green",    
+                        6, "lime green", 6,4,"WALLFG",6,5,"lime green",
+                        8, "lime green",
+                        10, "lime green",
+                        12, "cyan"
+                    ),
+                    OnPlayerAction = (PlayerActionEvent p) =>
 					{
 						if (p.ActionType=="Move")
 						{
 							MoveCount+=1;
 							Coord d = (Coord) p.Details;
-							Debug.Print("Player stepped2 to {0} {1} {2}", d.X, d.Y, d.Z);
 							if (MoveCount>=10)
 							{
 								NextState();

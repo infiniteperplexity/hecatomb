@@ -130,7 +130,7 @@ namespace Hecatomb
             return FindPath(
 				x0, y0, z0, x1, y1, z1,
                 useLast: useLast,
-				condition: m.CanTouch,
+				condition: condition,
 				movable: movable,
 				standable: standable
 			);

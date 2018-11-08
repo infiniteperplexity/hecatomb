@@ -94,8 +94,6 @@ namespace Hecatomb
             }
             else
             {
-                Debug.Print("removing {0} of {1} from pile", resource.Item2, resource.Item1);
-
                 Resources[resource.Item1] -= resource.Item2;
                 if (Resources[resource.Item1] == 0)
                 {
@@ -103,7 +101,6 @@ namespace Hecatomb
                 }
                 if (Resources.Keys.Count == 0)
                 {
-                    Debug.WriteLine("despawning empty pile");
                     Despawn();
                 }
             }

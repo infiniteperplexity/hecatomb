@@ -51,13 +51,18 @@ namespace Hecatomb
 		{
 			Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
 			var c = Game.Controls;
-			var text = c.MenuTop.Concat(middleLines).ToList();
-			if (c.MenuMiddle.Count>0)
+            var tutorial = Game.World.GetTracker<TutorialTracker>();
+            List<string> MenuTop = (tutorial.Visible) ? tutorial.Current.ControlText : c.MenuTop;
+            TextColors TopColors = (tutorial.Visible) ? tutorial.Current.ControlColors : c.TopColors;
+            List<string> MenuMiddle = (tutorial.Visible) ? tutorial.Current.InstructionsText : c.MenuMiddle;
+            TextColors MiddleColors = (tutorial.Visible) ? tutorial.Current.InstructionsColors : c.MiddleColors;
+            var text = MenuTop.Concat(middleLines).ToList();
+			if (MenuMiddle.Count>0)
 			{
 				text.Add(" ");
 			}
 			int i0 = text.Count;
-			text = text.Concat(c.MenuMiddle).ToList();
+			text = text.Concat(MenuMiddle).ToList();
 			if (c.MenuBottom.Count>0)
 			{
 				text.Add(" ");
@@ -65,13 +70,13 @@ namespace Hecatomb
 			int i1 = text.Count;
 			text = text.Concat(c.MenuBottom).ToList();
 			var colors = new TextColors();
-			foreach (var key in c.TopColors.Keys)
+			foreach (var key in TopColors.Keys)
 			{
-				colors[key.Item1, key.Item2] = c.TopColors[key.Item1, key.Item2];
+				colors[key.Item1, key.Item2] = TopColors[key.Item1, key.Item2];
 			}
-			foreach (var key in c.MiddleColors.Keys)
+			foreach (var key in MiddleColors.Keys)
 			{
-				colors[key.Item1+i0, key.Item2] = c.MiddleColors[key.Item1, key.Item2];
+				colors[key.Item1+i0, key.Item2] = MiddleColors[key.Item1, key.Item2];
 			}
 			foreach (var key in c.BottomColors.Keys)
 			{

@@ -296,18 +296,18 @@ namespace Hecatomb
                     int n = (item.Resources.ContainsKey(resource)) ? item.Resources[resource] : 0;
                     // if there is at least some
                     if (n - claimed > 0)
-                    {
-                        // if there is enough
-                        if (n - claimed >= needed[resource])
-                        {
-                            needed.Remove(resource);
-                        }
+                    {                   
                         item.Claims[resource] = n;
                         if (!Claims.ContainsKey(item.EID))
                         {
                             Claims[item.EID] = new Dictionary<string, int>();
                         }
                         Claims[item.EID][resource] = n - claimed;
+                        needed[resource] -= (n - claimed);
+                        if (needed[resource]==0)
+                        {
+                            needed.Remove(resource);
+                        }
                     }
                 }
                 if (needed.Keys.Count == 0)
