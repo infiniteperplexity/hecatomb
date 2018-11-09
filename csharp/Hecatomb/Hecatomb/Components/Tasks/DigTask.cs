@@ -27,6 +27,7 @@ namespace Hecatomb
 		}
 		public override void Finish()
 		{
+            Game.World.Events.Publish(new TutorialEvent() { Action = "DigTaskComplete" });
 			int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
@@ -84,6 +85,7 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
 //			Game.Controls.Set(new SelectTileControls(this));
 			Game.Controls.Set(new SelectZoneControls(this));
 		}
@@ -223,13 +225,11 @@ namespace Hecatomb
                {
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null)
-                    {
+                        Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
                         Game.World.Entities.Spawn<TaskEntity>("DigTask").Place(x, y, z);
                     }
                }
             }
-
-        }
 
         public override bool ValidTile(Coord c)
         {
@@ -256,5 +256,4 @@ namespace Hecatomb
             return true;
         }
 	}
-
 }

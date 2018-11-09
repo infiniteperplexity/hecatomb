@@ -34,6 +34,8 @@ namespace Hecatomb
 			KeyMap[Keys.Enter] = Commands.TogglePause;
 			KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
 			KeyMap[Keys.OemPipe] = Commands.ShowConsole;
+            KeyMap[Keys.A] = Commands.ShowAchievements;
+            KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
 			
 			MenuTop = new List<string>() {
 				"Esc: System view.",

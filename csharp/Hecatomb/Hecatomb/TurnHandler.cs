@@ -40,7 +40,8 @@ namespace Hecatomb
 			Player p = Game.World.Player;
 			p.Acted = false;
 			Turn+=1;
-			Game.World.Events.Publish(new TurnBeginEvent() {Turn=Turn});
+            Game.World.Events.Publish(new TutorialEvent() { Action = "TurnBegin" });
+            Game.World.Events.Publish(new TurnBeginEvent() {Turn=Turn});
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
@@ -50,6 +51,20 @@ namespace Hecatomb
 				Minion minion = m.GetComponent<Minion>();
 				if (minion.Task==null)
 				{
+                    // special case: if the initial ZombieEmerge task got canceled
+                    int x = m.X;
+                    int y = m.Y;
+                    int z = m.Z;
+                    if (Game.World.Tiles[x, y, z].Solid)
+                    {
+                        if (Game.World.Features[x, y, z+1]?.TypeName=="Grave")
+                        {
+                            Game.World.Tasks[x, y, z + 1]?.TryComponent<Task>()?.Cancel();
+                            var task = Game.World.Entities.Spawn<TaskEntity>("ZombieEmergeTask");
+                            task.Place(x, y, z + 1);
+                            task.GetComponent<Task>().AssignTo(m);               
+                        }
+                    }
 					foreach (TaskEntity t in Game.World.Tasks)
 					{
 						
@@ -124,7 +139,7 @@ namespace Hecatomb
 					actor.Act();
 					if (actor.CurrentPoints==checkPoints)
 					{
-						throw new InvalidOperationException(String.Format("{0} somehow avoided using action poionts.", actor.Entity));
+						throw new InvalidOperationException(String.Format("{0} somehow avoided using action points.", actor.Entity));
 					}
 				}
 				if (actor.CurrentPoints>0)

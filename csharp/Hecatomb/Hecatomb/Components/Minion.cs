@@ -57,7 +57,7 @@ namespace Hecatomb
 			Task = t;
 		}
 		
-		public void Unassign()
+		public void _Unassign()
 		{
 			Task = null;
 		}

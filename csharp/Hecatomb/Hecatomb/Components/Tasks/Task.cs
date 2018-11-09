@@ -186,7 +186,7 @@ namespace Hecatomb
 
         public virtual void Complete()
         {
-            Worker.GetComponent<Minion>().Unassign();
+            Worker.GetComponent<Minion>()._Unassign();
             Entity.Remove();
         }
 
@@ -202,8 +202,18 @@ namespace Hecatomb
 
         public virtual void Cancel()
         {
+            Unassign();
             Entity.Despawn();
             Despawn();
+        }
+
+        public override void Despawn()
+        {
+            if (Worker!=null)
+            {
+                Unassign();
+            }
+            base.Despawn();
         }
 
         public virtual string ListOnMenu()
@@ -220,6 +230,30 @@ namespace Hecatomb
                     TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
                     task.GetComponent<Task>().Makes = Makes;
                     task.Place(c.X, c.Y, c.Z);
+                }
+            }
+        }
+
+        public void Unassign()
+        {
+            if (Worker != null)
+            {
+                Worker.GetComponent<Minion>()._Unassign();
+            }
+            UnclaimIngredients();
+        }
+
+        public void UnclaimIngredients()
+        {
+            foreach (int eid in Claims.Keys)
+            {
+                // need some kind of null check here...or maybe a listener?
+                Item item = (Item)Game.World.Entities.Spawned[eid];
+                var resources = Claims[eid];
+                foreach (string resource in resources.Keys)
+                {
+                    int n = resources[resource];
+                    item.Claims[resource] -= n;
                 }
             }
         }

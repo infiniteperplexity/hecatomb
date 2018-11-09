@@ -168,9 +168,7 @@ namespace Hecatomb
 		
 		public void ChooseTask()
 		{
-			var choices = new List<IMenuListable>() {
-				Game.World.Entities.Mock<DigTask>()
-			};
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
 			Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<TaskMaster>());
 			Game.MenuPanel.Dirty = true;
 		}
@@ -202,6 +200,7 @@ namespace Hecatomb
 		
 		public void TogglePause()
 		{
+            Game.World.Events.Publish(new TutorialEvent() { Action = "TogglePause" });
 			Game.Time.PausedAfterLoad = false;
 			Game.Time.AutoPausing = !Game.Time.AutoPausing;
 			Game.StatusPanel.Dirty = true;
@@ -209,6 +208,14 @@ namespace Hecatomb
 		
 		public void ToggleMovingCamera()
 		{
+            if (!ControlContext.MovingCamera)
+            {
+                Game.World.Events.Publish(new TutorialEvent() { Action = "CameraMode" });
+            }
+            else
+            {
+                Game.World.Events.Publish(new TutorialEvent() { Action = "MainMode" });
+            }
 			ControlContext.MovingCamera = !ControlContext.MovingCamera;
 			if (ControlContext.MovingCamera)
 			{
@@ -228,5 +235,17 @@ namespace Hecatomb
 		{
 			DebugConsole.ShowConsole();
 		}
+
+        public void ShowAchievements()
+        {
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowAchievements" });
+        }
+
+        public void ToggleTutorial()
+        {
+            var tutorial = Game.World.GetTracker<TutorialTracker>();
+            tutorial.Visible = !tutorial.Visible;
+            Game.MenuPanel.Dirty = true;
+        }
 	}
 }
