@@ -815,337 +815,47 @@ namespace Hecatomb
                     },
                     
                 },
-                new TutorialState("AssignJob2")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "Esc: System view.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, J: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
-                    },
-                    ControlColors = new TextColors(9,3, "cyan"),
-                    InstructionsText = new List<string>()
-                    {
-                        "You close your eyes and concentrate, formulating a task for your unthinking slave.",
-                        " ",
-                        "Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
-                        " ",
-                        "(Remember, if auto-pause is turned off, you can turn it back on by pressing Enter / Return.)"
-                    },
-                    InstructionsColors = new TextColors(
-                        2, "lime green",
-                        4, "cyan",
-                        6, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action == "ShowJobs")
-                        {
-                            NextState();
-                        }
-                    }
-                },
-                new TutorialState("ChooseJob2")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "**Esc: Cancel**.",
-                        "Choose a task:",
-                        "a) Dig or harvest"
-                    },
-                    ControlColors = new TextColors(0, "orange", 1, "yellow", 2, "cyan"),
-                    InstructionsText = new List<string>()
-                    {
-                        "You close your eyes and concentrate, formulating a task for your unthinking slave.",
-                        " ",
-                        "Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
-                        " ",
-                        "(Remember, if auto-pause is turned off, you can turn it back on by pressing Enter / Return.)"
-                    },
-                    InstructionsColors = new TextColors(
-                        2, "lime green",
-                        4, "cyan",
-                        6, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action =="ChooseDigTask")
-                        {
-                            NextState();
-                        }
-                        else if (t.Action == "Cancel")
-                        {
-                            GotoState("AssignJob");
-                        }
-                    },
-                },
-                new TutorialState("ChooseHarvestTiles")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "**Esc: Cancel.**",
-                        "Select a square with keys or mouse.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "Click / Space: Select.",
-                    },
-                    ControlColors = new TextColors(0, "orange", 1, "yellow", 6, "cyan"),
-                    // there's a divergence between how the tutorial used to work and how it works now...
-                    // now it's possible to accidentally harvest trees in this step
-                    InstructionsText = new List<string>()
-                    {
-                        "Using the mouse or keyboard, select two corners of a rectangular area for your zombie to dig.",
-                        " ",
-                        "What 'dig' means is contextual, depending on the terrain you select:",
-                        " ",
-                        "- Digging on the floor will make a pit.",
-                        " ",
-                        "- Digging in a wall will make a tunnel.",
-                        " ",
-                        "- Digging on a slope levels the slope.",
-                        " ",
-                        "Look below this panel for a hint about what digging does in the highlighted square."
-                    },
-                    InstructionsColors = new TextColors(
-                        0, "cyan",
-                        2, "lime green",
-                        4, "lime green",
-                        6, "lime green",
-                        8, "lime green",
-                        10, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action == "DesignateDigTask")
-                        {
-                            NextState();
-                        }
-                        else if (t.Action == "Cancel")
-                        {
-                            GotoState("AssignJob");
-                        }
-                    },
-                },
-                new TutorialState("WaitForHarvest")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "Esc: System view.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, A: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
-                    },
-                    ControlColors = new TextColors(4, "cyan"),
-                    InstructionsText = new List<string>()
-                    {
-                        "The zombie shuffles dutifully to complete its task.",
-                        " ",
-                        "Now wait (pass turns) while your zombie digs.",
-                        " ",
-                        "There is a chance that you will unlock one or more additional achievements, depending on where your zombie digs and what it finds.  Note that some types of soil or stone may be too hard to dig through, at least until your zombies equip better tools."
-                    },
-                    InstructionsColors = new TextColors(
-                        2, "lime green",
-                        4, "cyan",
-                        6, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action == "DigTaskComplete")
-                        {
-                            NextState();
-                        }
-                    },
-                },
-                new TutorialState("AssignJob3")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "Esc: System view.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, J: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
-                    },
-                    ControlColors = new TextColors(9,3, "cyan"),
-                    InstructionsText = new List<string>()
-                    {
-                        "You close your eyes and concentrate, formulating a task for your unthinking slave.",
-                        " ",
-                        "Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
-                        " ",
-                        "(Remember, if auto-pause is turned off, you can turn it back on by pressing Enter / Return.)"
-                    },
-                    InstructionsColors = new TextColors(
-                        2, "lime green",
-                        4, "cyan",
-                        6, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action == "ShowJobs")
-                        {
-                            NextState();
-                        }
-                    }
-                },
-                new TutorialState("ChooseJob3")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "**Esc: Cancel**.",
-                        "Choose a task:",
-                        "a) Dig or harvest"
-                    },
-                    ControlColors = new TextColors(0, "orange", 1, "yellow", 2, "cyan"),
-                    InstructionsText = new List<string>()
-                    {
-                        "You close your eyes and concentrate, formulating a task for your unthinking slave.",
-                        " ",
-                        "Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
-                        " ",
-                        "(Remember, if auto-pause is turned off, you can turn it back on by pressing Enter / Return.)"
-                    },
-                    InstructionsColors = new TextColors(
-                        2, "lime green",
-                        4, "cyan",
-                        6, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action =="ChooseDigTask")
-                        {
-                            NextState();
-                        }
-                        else if (t.Action == "Cancel")
-                        {
-                            GotoState("AssignJob");
-                        }
-                    },
-                },
-                new TutorialState("ChooseDoorTile")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "**Esc: Cancel.**",
-                        "Select a square with keys or mouse.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "Click / Space: Select.",
-                    },
-                    ControlColors = new TextColors(0, "orange", 1, "yellow", 6, "cyan"),
-                    // there's a divergence between how the tutorial used to work and how it works now...
-                    // now it's possible to accidentally harvest trees in this step
-                    InstructionsText = new List<string>()
-                    {
-                        "Using the mouse or keyboard, select two corners of a rectangular area for your zombie to dig.",
-                        " ",
-                        "What 'dig' means is contextual, depending on the terrain you select:",
-                        " ",
-                        "- Digging on the floor will make a pit.",
-                        " ",
-                        "- Digging in a wall will make a tunnel.",
-                        " ",
-                        "- Digging on a slope levels the slope.",
-                        " ",
-                        "Look below this panel for a hint about what digging does in the highlighted square."
-                    },
-                    InstructionsColors = new TextColors(
-                        0, "cyan",
-                        2, "lime green",
-                        4, "lime green",
-                        6, "lime green",
-                        8, "lime green",
-                        10, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action == "DesignateDigTask")
-                        {
-                            NextState();
-                        }
-                        else if (t.Action == "Cancel")
-                        {
-                            GotoState("AssignJob");
-                        }
-                    },
-                },
-                new TutorialState("WaitForDoor")
-                {
-                    ControlText = new List<string>()
-                    {
-                        "Esc: System view.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, A: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
-                    },
-                    ControlColors = new TextColors(4, "cyan"),
-                    InstructionsText = new List<string>()
-                    {
-                        "The zombie shuffles dutifully to complete its task.",
-                        " ",
-                        "Now wait (pass turns) while your zombie digs.",
-                        " ",
-                        "There is a chance that you will unlock one or more additional achievements, depending on where your zombie digs and what it finds.  Note that some types of soil or stone may be too hard to dig through, at least until your zombies equip better tools."
-                    },
-                    InstructionsColors = new TextColors(
-                        2, "lime green",
-                        4, "cyan",
-                        6, "lime green"
-                    ),
-                    HandleEvent = (TutorialEvent t) =>
-                    {
-                        if (t.Action == "DigTaskComplete")
-                        {
-                            NextState();
-                        }
-                    },
-                },
-                // at this point, we want to 
+                // Maybe just call it quits at this point
 				new TutorialState("EndOfTutorial")
 				{
-					
-				}
+                    ControlText = new List<string>()
+                    {
+                        "Esc: System view.",
+                        "Navigation mode (Tab: Avatar mode)",
+                        " ",
+                        "Move: NumPad/Arrows, ,/.: Up/Down",
+                        "(Control+Arrows for diagonal.)",
+                        "Wait: NumPad 5 / Control+Space.",
+                        " ",
+                        "Enter: Enable auto-pause.",
+                        "+/-: Change speed.",
+                        " ",
+                        "Z: Cast spell, J: Assign job.",
+                        " ",
+                        "PageUp/Down: Scroll messages.",
+                        "A: Achievements, /: Toggle tutorial."
+                    },
+                    ControlColors = new TextColors(1, "cyan", 3, "cyan", 4, "cyan", 5, "cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        // rewrite
+                        "Cruel laughter wells in your throat.  Your fortress will cast a shadow of menace over all the land.  The undead under your command will become a legion, a multitude, an army.  And then all who have wronged you will pay!",
+                        " ",
+                        "Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  See if you can unlock all the achievements in the demo.",
+                        " ",
+                        "Press ? to dismiss these messages."                    },
+                    InstructionsColors = new TextColors(
+                        2, "lime green",
+                        4, "cyan"
+                    ),
+                    HandleEvent = (TutorialEvent t) =>
+                    {
+                        if (t.Action=="HideTutorial")
+                        {
+                            NextState();
+                        }
+                    },
+                }
 			};
 			
 		}

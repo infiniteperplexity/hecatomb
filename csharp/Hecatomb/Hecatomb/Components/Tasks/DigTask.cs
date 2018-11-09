@@ -217,6 +217,7 @@ namespace Hecatomb
                 Terrain t = Game.World.Tiles[x, y, z];
                 if (priority == 5 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
                 {
+                    Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
                     Game.World.Entities.Spawn<TaskEntity>("HarvestTask").Place(x, y, z);
                 } else if (    (priority == 4 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
                         || (priority == 3 && t == Terrain.FloorTile)
