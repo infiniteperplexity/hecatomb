@@ -73,6 +73,7 @@
     <Compile Include="Resource.cs" />
     <Compile Include="StaticMenuControls.cs" />
     <Compile Include="Entities\TeamTracker.cs" />
+    <Compile Include="StructureControls.cs" />
     <Compile Include="TextColors.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityHandler.cs" />

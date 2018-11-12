@@ -31,9 +31,20 @@ namespace Hecatomb
         
         public ParticleEmitter()
         {
+            Symbols = new char[] {
+                //'\u26E7', // pentagram
+                //'\u2135', // aleph
+                //'\u2625', // ankh
+                //'\u03BE', // xi
+                //'\u26B1', // funeral urn
+                //'\u2620' // skull
+                '\u037C','\u037D','\u03A6','\u03A8','\u03A9','\u03B1',
+                '\u03B3','\u03B4','\u03B6'
+
+            };
             T0 = DateTime.Now;
             Rate = 10;
-            LifeSpan = 1000;
+            LifeSpan = 650;
             Game.World.Emitters.Add(this);
             LastEmit = DateTime.Now;
         }
@@ -69,7 +80,7 @@ namespace Hecatomb
             LastEmit = DateTime.Now;
             Particle p = new Particle()
             {
-                Symbol = '*',
+                Symbol = Symbols[Game.World.Random.Next(Symbols.Length)],
                 FG = "black",
                 X0 = X,
                 Y0 = Y,
