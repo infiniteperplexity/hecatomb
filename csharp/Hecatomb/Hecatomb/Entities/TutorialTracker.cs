@@ -19,8 +19,8 @@ namespace Hecatomb
         public int SlopeCount;
         public bool HasUnpaused;
         public int TurnsWaited;
-        public string OffTutorialText;
-        public string OffTutorialCamera;
+        public List<string> OffTutorialText;
+        public List<string> OffTutorialCamera;
         public TextColors OffTutorialColor;
         
 
@@ -43,9 +43,9 @@ namespace Hecatomb
 			MoveCount = 0;
             SlopeCount = 0;
 			CurrentIndex = 0;
-            Visible = true;
-            OffTutorialText = "You have strayed from the tutorial.  Press Escape to get back on track or? to hide tutorial messages.";
-            OffTutorialCamera = "You have strayed from the tutorial.  Press Tab to get back on track or? to hide tutorial messages.";
+            //Visible = true;
+            OffTutorialText = new List<string>() { "You have strayed from the tutorial.  Press Escape to get back on track or ? to hide tutorial messages." };
+            OffTutorialCamera = new List<string>() { "You have strayed from the tutorial.  Press Tab to get back on track or ? to hide tutorial messages." };
             OffTutorialColor = new TextColors("orange");
             Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);
 			//Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
@@ -237,6 +237,7 @@ namespace Hecatomb
                 },
 				new TutorialState("ChooseSpell")
 				{
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel**.",
@@ -270,6 +271,7 @@ namespace Hecatomb
                 },
 				new TutorialState("TargetSpell")
 				{
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel.**",
@@ -475,6 +477,7 @@ namespace Hecatomb
                 },
 				new TutorialState("ChooseJob")
 				{
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel**.",
@@ -509,6 +512,7 @@ namespace Hecatomb
                 },
 				new TutorialState("ChooseDigTiles")
 				{
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel.**",
@@ -592,7 +596,14 @@ namespace Hecatomb
                     {
                         if (t.Action == "DigTaskComplete")
                         {
-                            NextState();
+                            if (Game.World.Player.GetComponent<Minions>().Count>1)
+                            {
+                                GotoState("CameraMode");
+                            }
+                            else
+                            {
+                                NextState();
+                            }                    
                         }
                     },
                 },
@@ -635,6 +646,7 @@ namespace Hecatomb
                 },
                 new TutorialState("ChooseSpell2")
                 {
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel**.",
@@ -667,6 +679,7 @@ namespace Hecatomb
                 },
                 new TutorialState("TargetSpell2")
                 {
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel.**",
@@ -737,12 +750,21 @@ namespace Hecatomb
                     {
                         if (t.Action=="ZombieEmerges")
                         {
-                            NextState();
+                            // in the unusual circumstance that there are no rocks available, skip to the end of the tutorial
+                            if (Game.World.Player.GetComponent<Movement>().CanFindResources(new Dictionary<string, int>() {{"Rock", 1}}))
+                            {
+                                NextState();
+                            }
+                            else
+                            {
+                                GotoState("EndOfTutorial");
+                            }   
                         }
                     },
                 },
                 new TutorialState("CameraMode")
 				{
+
                     ControlText = new List<string>()
                     {
                         "Esc: System view.",
@@ -783,6 +805,7 @@ namespace Hecatomb
                 },
 				new TutorialState("MoveCamera")
 				{
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "Esc: System view.",
@@ -843,16 +866,12 @@ namespace Hecatomb
                     ControlColors = new TextColors(9,3, "cyan"),
                     InstructionsText = new List<string>()
                     {
-                        "You close your eyes and concentrate, formulating a task for your unthinking slave.",
+                        "The stones your zombies hew from the hills can be shaped into walls and pillars.",
                         " ",
-                        "Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
-                        " ",
-                        "(Remember, if auto-pause is turned off, you can turn it back on by pressing Enter / Return.)"
+                        "Press J to assign a job, and then press B to make your zombie build.",
                     },
                     InstructionsColors = new TextColors(
-                        2, "lime green",
-                        4, "cyan",
-                        6, "lime green"
+                        2, "cyan"
                     ),
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -864,6 +883,7 @@ namespace Hecatomb
                 },
                 new TutorialState("ChooseJob2")
                 {
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel**.",
@@ -895,6 +915,7 @@ namespace Hecatomb
                 },
                 new TutorialState("ChooseBuildTiles")
                 {
+                    RequiresDefaultControls = false,
                     ControlText = new List<string>()
                     {
                         "**Esc: Cancel.**",
@@ -1055,7 +1076,7 @@ namespace Hecatomb
 			public List<string> InstructionsText;
 			public TextColors ControlColors;
 			public TextColors InstructionsColors;
-            public ControlContext ProperContext;
+            public bool RequiresDefaultControls;
             public TutorialState(string name)
 			{
 				Name = name;
@@ -1065,7 +1086,7 @@ namespace Hecatomb
 				InstructionsText = new List<string>();
 				ControlColors = TextColors.NoColors;
 				InstructionsColors = TextColors.NoColors;
-                ProperContext = Game.DefaultControls;
+                RequiresDefaultControls = true;
 			}
 			
 			public void Begin()

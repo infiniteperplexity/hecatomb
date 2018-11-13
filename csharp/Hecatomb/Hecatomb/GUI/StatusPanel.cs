@@ -21,6 +21,7 @@ namespace Hecatomb
     {
         TextColors statusColors;
         public List<string> MessageHistory;
+        public List<string> ColorHistory;
 
         public StatusGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
         {
@@ -34,6 +35,7 @@ namespace Hecatomb
             Y0 = padding + (2 + Game.Camera.Width) * (size + padding);
             statusColors = new TextColors(0, 5, "yellow", 1, "cyan");
             MessageHistory = new List<string>();
+            ColorHistory = new List<string>();
         }
 
         public void Initialize()
@@ -68,13 +70,15 @@ namespace Hecatomb
             DrawLines(list, statusColors);
         }
 
-        public void PushMessage(string s)
+        public void PushMessage(string s, string color = null)
         {
             int MaxArchive = 100;
             MessageHistory.Insert(0, s);
+            ColorHistory.Insert(0, color ?? "white");
             while (MessageHistory.Count > MaxArchive)
             {
                 MessageHistory.RemoveAt(MaxArchive);
+                ColorHistory.RemoveAt(MaxArchive);
             }
         }
     }

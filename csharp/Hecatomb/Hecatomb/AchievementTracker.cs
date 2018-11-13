@@ -32,7 +32,7 @@ namespace Hecatomb
             {
                 if (achievement.Condition(ae) && !achievement.Unlocked)
                 {
-                    Debug.WriteLine("Achievement unlocked!");
+                    Game.StatusPanel.PushMessage("Achievement unlocked: " + achievement.Name + " " + achievement.Description, "magenta");
                     achievement.Unlocked = true;
                 }
             }

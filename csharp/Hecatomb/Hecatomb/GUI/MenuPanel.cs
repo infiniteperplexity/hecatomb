@@ -52,10 +52,31 @@ namespace Hecatomb
 			Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
 			var c = Game.Controls;
             var tutorial = Game.World.GetTracker<TutorialTracker>();
-            List<string> MenuTop = (tutorial.Visible) ? tutorial.Current.ControlText : c.MenuTop;
-            TextColors TopColors = (tutorial.Visible) ? tutorial.Current.ControlColors : c.TopColors;
-            List<string> MenuMiddle = (tutorial.Visible) ? tutorial.Current.InstructionsText : c.MenuMiddle;
-            TextColors MiddleColors = (tutorial.Visible) ? tutorial.Current.InstructionsColors : c.MiddleColors;
+       
+            List<string> MenuTop = c.MenuTop;
+            TextColors TopColors = c.TopColors;
+            List<string> MenuMiddle = c.MenuMiddle;
+            TextColors MiddleColors = c.MiddleColors;
+            if (tutorial.Visible)
+            {
+                if (!tutorial.Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
+                {
+                    MenuTop = tutorial.Current.ControlText;
+                    TopColors = tutorial.Current.ControlColors;
+                    MenuMiddle = tutorial.Current.InstructionsText;
+                    MiddleColors = tutorial.Current.InstructionsColors;
+                }
+                else if (Game.Controls == Game.CameraControls)
+                {
+                    MenuMiddle = tutorial.OffTutorialCamera;
+                    MiddleColors = tutorial.OffTutorialColor;
+                }
+                else
+                {
+                    MenuMiddle = tutorial.OffTutorialText;
+                    MiddleColors = tutorial.OffTutorialColor;
+                }
+            }
             var text = MenuTop.Concat(middleLines).ToList();
 			if (MenuMiddle.Count>0)
 			{
