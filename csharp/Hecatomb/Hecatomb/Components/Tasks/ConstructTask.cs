@@ -158,7 +158,8 @@ namespace Hecatomb
 					tc.Makes = Makes;
 					tc.Structure = str;
 					tc.FeatureIndex = i;
-					task.Place(s.X, s.Y, s.Z);
+                    tc.Ingredients = str.GetComponent<Structure>().Ingredients[i] ?? new Dictionary<string, int>();
+                    task.Place(s.X, s.Y, s.Z);
 				}
 			}
 		}

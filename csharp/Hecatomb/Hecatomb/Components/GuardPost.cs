@@ -5,6 +5,7 @@
  * Time: 10:24 AM
  */
 using System;
+using System.Collections.Generic;
 
 namespace Hecatomb
 {
@@ -33,6 +34,12 @@ namespace Hecatomb
 				"FLOORBG","WALLBG","FLOORBG",
 				"WALLBG","FLOORBG","WALLBG",
 			};
+            Ingredients = new Dictionary<string, int>[]
+            {
+                null, null, null,
+                null, new Dictionary<string, int>() {{"Rock", 1}}, null,
+                null, null, null
+            };
 			MenuName = "guard post";
 			Name = "guard post";
 		}
