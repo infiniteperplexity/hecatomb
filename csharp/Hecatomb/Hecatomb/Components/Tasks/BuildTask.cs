@@ -33,7 +33,8 @@ namespace Hecatomb
 		}
 		public override void Finish()
 		{
-			int x = Entity.X;
+            Game.World.Events.Publish(new TutorialEvent() { Action = "BuildTaskComplete" });
+            int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
 			Game.World.Features[x, y, z].Remove();
@@ -63,10 +64,18 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-			Game.Controls.Set(new SelectZoneControls(this));
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseBuildTask" });
+            Game.Controls.Set(new SelectZoneControls(this));
 		}
-		
-		public override void TileHover(Coord c)
+
+        public override void SelectZone(List<Coord> squares)
+        {
+            base.SelectZone(squares);
+            Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateBuildTask" });
+        }
+
+
+        public override void TileHover(Coord c)
 		{
 			var co = Game.Controls;
 			co.MenuMiddle.Clear();

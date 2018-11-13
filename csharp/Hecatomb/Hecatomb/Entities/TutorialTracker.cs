@@ -815,6 +815,158 @@ namespace Hecatomb
                     },
                     
                 },
+                new TutorialState("AssignJob2")
+                {
+                    ControlText = new List<string>()
+                    {
+                        "Esc: System view.",
+                        " ",
+                        "Move: NumPad/Arrows, ,/.: Up/Down.",
+                        "(Control+Arrows for diagonal.)",
+                        "Wait: NumPad 5 / Space.",
+                        " ",
+                        "Enter: Enable auto-pause.",
+                        "+/-: Change speed.",
+                        " ",
+                        "Z: Cast spell, J: Assign job.",
+                        " ",
+                        "PageUp/Down: Scroll messages.",
+                        "A: Achievements, /: Toggle tutorial."
+                    },
+                    ControlColors = new TextColors(9,3, "cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "You close your eyes and concentrate, formulating a task for your unthinking slave.",
+                        " ",
+                        "Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
+                        " ",
+                        "(Remember, if auto-pause is turned off, you can turn it back on by pressing Enter / Return.)"
+                    },
+                    InstructionsColors = new TextColors(
+                        2, "lime green",
+                        4, "cyan",
+                        6, "lime green"
+                    ),
+                    HandleEvent = (TutorialEvent t) =>
+                    {
+                        if (t.Action == "ShowJobs")
+                        {
+                            NextState();
+                        }
+                    }
+                },
+                new TutorialState("ChooseJob2")
+                {
+                    ControlText = new List<string>()
+                    {
+                        "**Esc: Cancel**.",
+                        "Choose a task:",
+                        "a) dig or harvest",
+                        "b) build walls or floors"
+                    },
+                    ControlColors = new TextColors(0, "orange", 1, "yellow", 3, "cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "The stones your zombies hew from the hills can be shaped into walls and pillars.",
+                        " ",
+                        "Press J to assign a job, and then press B to make your zombie build.",
+                    },
+                    InstructionsColors = new TextColors(
+                        2, "cyan"
+                    ),
+                    HandleEvent = (TutorialEvent t) =>
+                    {
+                        if (t.Action =="ChooseBuildTask")
+                        {
+                            NextState();
+                        }
+                        else if (t.Action == "Cancel")
+                        {
+                            GotoState("AssignJob2");
+                        }
+                    },
+                },
+                new TutorialState("ChooseBuildTiles")
+                {
+                    ControlText = new List<string>()
+                    {
+                        "**Esc: Cancel.**",
+                        "Select a square with keys or mouse.",
+                        " ",
+                        "Move: NumPad/Arrows, ,/.: Up/Down.",
+                        "(Control+Arrows for diagonal.)",
+                        " ",
+                        "Click / Space: Select.",
+                    },
+                    ControlColors = new TextColors(0, "orange", 1, "yellow", 6, "cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "Using the mouse or keyboard, select two corners of a rectangular area for your zombie to build.",
+                        " ",
+                        "What 'build' means is contextual, depending on the terrain you select:",
+                        " ",
+                        "- Building on a floor or upward slope will make a wall.",
+                        " ",
+                        "- Building on a downward slope or empty space will make a floor.",
+                        " ",
+                        "Look below this panel for a hint about what building does in the highlighted square."
+                    },
+                    InstructionsColors = new TextColors(
+                        0, "cyan",
+                        2, "lime green",
+                        4, "lime green",
+                        6, "lime green",
+                        8, "lime green"
+                    ),
+                    HandleEvent = (TutorialEvent t) =>
+                    {
+                        if (t.Action == "DesignateBuildTask")
+                        {
+                            NextState();
+                        }
+                        else if (t.Action == "Cancel")
+                        {
+                            GotoState("AssignJob2");
+                        }
+                    },
+                },
+                new TutorialState("WaitForBuild")
+                {
+                    ControlText = new List<string>()
+                    {
+                        "Esc: System view.",
+                        " ",
+                        "Move: NumPad/Arrows, ,/.: Up/Down.",
+                        "(Control+Arrows for diagonal.)",
+                        "Wait: NumPad 5 / Space.",
+                        " ",
+                        "Enter: Enable auto-pause.",
+                        "+/-: Change speed.",
+                        " ",
+                        "Z: Cast spell, A: Assign job.",
+                        " ",
+                        "PageUp/Down: Scroll messages.",
+                        "A: Achievements, /: Toggle tutorial."
+                    },
+                    ControlColors = new TextColors(4, "cyan"),
+                    InstructionsText = new List<string>()
+                    {
+                        "Building walls or floors requires rocks as ingredients.  Notice that your zombies claim rocks and fetch them; the claimed rocks are highlighted.",
+                        " ",
+                        "Wait for your zombies to build."
+                    },
+                    InstructionsColors = new TextColors(
+                        0, "lime green",
+                        2, "cyan"
+                    ),
+                    HandleEvent = (TutorialEvent t) =>
+                    {
+                        if (t.Action == "BuildTaskComplete")
+                        {
+                            NextState();
+                        }
+                    },
+                },
                 // Maybe just call it quits at this point
 				new TutorialState("EndOfTutorial")
 				{
