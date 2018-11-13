@@ -45,10 +45,6 @@ namespace Hecatomb
                 bgdata[i] = Color.White;
             }
             BG.SetData(bgdata);
-            for (int i = 0; i < 5; i++)
-            {
-                PushMessage("test" + i);
-            }
         }
 
         public override void DrawContent()

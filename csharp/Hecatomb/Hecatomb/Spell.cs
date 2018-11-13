@@ -153,6 +153,7 @@ namespace Hecatomb
 	{
 		public override void Start()
 		{
+            Game.World.Events.Publish(new SensoryEvent() { X = Entity.X, Y = Entity.Y, Z = Entity.Z, Sight = "You hear an ominous stirring from under the ground..." });
 			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
 			if (f==null)
 			{
@@ -164,11 +165,13 @@ namespace Hecatomb
 		}
 		public override void Finish()
 		{
+            
             Game.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
             int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
-			Feature f = Game.World.Features[x, y, z];
+            Game.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = x, Y = y, Z = z });
+            Feature f = Game.World.Features[x, y, z];
 			f.Destroy();
 			foreach (Coord c in Tiles.GetNeighbors8(x, y, z))
 			{

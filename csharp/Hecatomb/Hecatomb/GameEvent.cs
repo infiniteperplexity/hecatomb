@@ -102,6 +102,7 @@ namespace Hecatomb
 			{
 				g = listener(g);
 			}
+            g.Fire();
 		}
 		
 		public Dictionary<string, Dictionary<int, string>> StringifyListeners()
@@ -124,7 +125,13 @@ namespace Hecatomb
 		}
 	}
 	
-	public class GameEvent{}
+	public class GameEvent{
+
+        public virtual void Fire()
+        {
+
+        }
+    }
 	
 	public class PlaceEvent : GameEvent
 	{
@@ -188,15 +195,24 @@ namespace Hecatomb
         public Dictionary<string, int> Modifiers;
 	}
 
-    public class SensoryEvent : GameEvent
-    {
-        public string Visible;
-        public string Audible;
-    }
-
     public class AchievementEvent : GameEvent
     {
         public string Action;
+    }
+
+    public class SensoryEvent: GameEvent
+    {
+        public int X;
+        public int Y;
+        public int Z;
+        public string Sight;
+        public string Sound;
+
+        public override void Fire()
+        {
+            // a lot more conditionals than this...
+            Game.StatusPanel.PushMessage(Sight);
+        }
     }
 }
 

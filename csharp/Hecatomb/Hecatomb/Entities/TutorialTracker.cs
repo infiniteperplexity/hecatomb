@@ -19,6 +19,10 @@ namespace Hecatomb
         public int SlopeCount;
         public bool HasUnpaused;
         public int TurnsWaited;
+        public string OffTutorialText;
+        public string OffTutorialCamera;
+        public TextColors OffTutorialColor;
+        
 
         public int CurrentIndex;
         // the tutorial is always active but it's not always visible
@@ -40,6 +44,9 @@ namespace Hecatomb
             SlopeCount = 0;
 			CurrentIndex = 0;
             Visible = true;
+            OffTutorialText = "You have strayed from the tutorial.  Press Escape to get back on track or? to hide tutorial messages.";
+            OffTutorialCamera = "You have strayed from the tutorial.  Press Tab to get back on track or? to hide tutorial messages.";
+            OffTutorialColor = new TextColors("orange");
             Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);
 			//Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
 			base.Activate();
@@ -1048,15 +1055,17 @@ namespace Hecatomb
 			public List<string> InstructionsText;
 			public TextColors ControlColors;
 			public TextColors InstructionsColors;
-			public TutorialState(string name)
+            public ControlContext ProperContext;
+            public TutorialState(string name)
 			{
 				Name = name;
                 OnBegin = NonEvent;
 				HandleEvent = NonEvent;
 				ControlText = new List<string>();
-				InstructionsText = new List<string>();;
+				InstructionsText = new List<string>();
 				ControlColors = TextColors.NoColors;
 				InstructionsColors = TextColors.NoColors;
+                ProperContext = Game.DefaultControls;
 			}
 			
 			public void Begin()
