@@ -109,6 +109,12 @@ namespace Hecatomb
 			{
 				Feature fr = sc.Features[0];
 				Structure.Place(fr.X, fr.Y, fr.Z);
+                foreach (Feature feat in sc.Features)
+                {
+                    Structural st = Game.World.Entities.Spawn<Structural>();
+                    st.Structure = Structure;
+                    st.AddToEntity(feat);
+                }
 			}
 			base.Finish();
 		}

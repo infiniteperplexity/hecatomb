@@ -18,10 +18,10 @@ namespace Hecatomb
 		{
 			Symbols = new char[]
 			{
-				'#',' ','#',
-				' ','0',' ',
-				'#',' ','#'
-			};
+                '\u2694','.','\u2658',
+				'.','.','.',
+                '\u2658','.','\u2694'
+            };
 			FGs = new string[]
 			{
 				"WALLFG","FLOORFG","WALLFG",
@@ -31,7 +31,7 @@ namespace Hecatomb
 			BGs = new string[]
 			{
 				"WALLBG","FLOORBG","WALLBG",
-				"FLOORBG","WALLBG","FLOORBG",
+				"FLOORBG","FLOORBG","FLOORBG",
 				"WALLBG","FLOORBG","WALLBG",
 			};
             Ingredients = new Dictionary<string, int>[]

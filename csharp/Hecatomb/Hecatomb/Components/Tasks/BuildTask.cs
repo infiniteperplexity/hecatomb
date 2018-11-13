@@ -61,33 +61,125 @@ namespace Hecatomb
 			}
 			base.Finish();
 		}
-		
-		public override void ChooseFromMenu()
+
+        public override void TileHover(Coord c)
+        {
+            var co = Game.Controls;
+            co.MenuMiddle.Clear();
+            if (ValidTile(c))
+            {
+                co.MenuMiddle = new List<string>() { String.Format("Build walls or floors from {0} {1} {2}.", c.X, c.Y, c.Z) };
+                co.MiddleColors[0, 0] = "green";
+            }
+            else
+            {
+                co.MenuMiddle = new List<string>() { "Can't build here." };
+                co.MiddleColors[0, 0] = "orange";
+            }
+        }
+        public override void TileHover(Coord c, List<Coord> squares)
+        {
+            var co = Game.Controls;
+            co.MenuMiddle.Clear();
+            int priority = 0;
+            foreach (Coord square in squares)
+            {
+                int x = square.X;
+                int y = square.Y;
+                int z = square.Z;
+                Terrain t = Game.World.Tiles[x, y, z];
+                if (Game.World.Explored.Contains(square))
+                {
+                    if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
+                    {
+                        priority = Math.Max(priority, 2);
+                    }
+                    else if (t == Terrain.FloorTile || t == Terrain.UpSlopeTile)
+                    {
+                        priority = Math.Max(priority, 1);
+                    }
+                }
+            }
+            string color = "green";
+            string txt;
+            if (priority == 2)
+            {
+                txt = "Build floors in this area.";
+            }
+            else if (priority == 1)
+            {
+                txt = "Build walls in this area.";
+            }
+            else
+            {
+                txt = "Cannot build in this area.";
+                color = "orange";
+            }
+            co.MenuMiddle = new List<string>() { txt };
+            co.MiddleColors[0, 0] = color;
+        }
+        public override void SelectZone(List<Coord> squares)
+        {
+            int priority = 0;
+            foreach (Coord square in squares)
+            {
+                int x = square.X;
+                int y = square.Y;
+                int z = square.Z;
+                Terrain t = Game.World.Tiles[x, y, z];
+                if (Game.World.Explored.Contains(square))
+                {
+                    if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
+                    {
+                        priority = Math.Max(priority, 2);
+                    }
+                    else if (t == Terrain.FloorTile || t == Terrain.UpSlopeTile)
+                    {
+                        priority = Math.Max(priority, 1);
+                    }
+                }
+            }
+            foreach (Coord square in squares)
+            {
+                int x = square.X;
+                int y = square.Y;
+                int z = square.Z;
+                Terrain t = Game.World.Tiles[x, y, z];
+                if ((priority == 2 && (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile))
+                      || (priority == 1 && t == Terrain.FloorTile || t == Terrain.UpSlopeTile))
+                {
+                    // should I cancel existing tasks?
+                    if (Game.World.Tasks[x, y, z] == null && Game.World.Features[x, y, z]==null)
+                        Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateBuildTask" });
+                    Game.World.Entities.Spawn<TaskEntity>("BuildTask").Place(x, y, z);
+                }
+            }
+        }
+
+
+        public override void ChooseFromMenu()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseBuildTask" });
             Game.Controls.Set(new SelectZoneControls(this));
 		}
 
-        public override void SelectZone(List<Coord> squares)
+        public override bool ValidTile(Coord c)
         {
-            base.SelectZone(squares);
-            Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateBuildTask" });
+            if (!Game.World.Explored.Contains(c))
+            {
+                return false;
+            }
+            // can't build on a wall tile
+            if (Game.World.Tiles[c.X, c.Y, c.Z] == Terrain.WallTile)
+            {
+                return false;
+            }
+            // can't build on a feature
+            else if (Game.World.Features[c.X, c.Y, c.Z]!=null)
+            {
+                return false;
+            }
+            return true;
         }
-
-
-        public override void TileHover(Coord c)
-		{
-			var co = Game.Controls;
-			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<string>() {String.Format("Build from {0} {1} {2}", c.X, c.Y, c.Z)};
-			co.MiddleColors[0,0] = "green";
-		}
-		public override void TileHover(Coord c, List<Coord> squares)
-		{
-			var co = Game.Controls;
-			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<string>() {String.Format("Build to {0} {1} {2}", c.X, c.Y, c.Z)};
-			co.MiddleColors[0,0] = "red";
-		}
-	}
+    }
 }

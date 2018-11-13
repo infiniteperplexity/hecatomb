@@ -42,7 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AchievementTracker.cs" />
+    <Compile Include="Entities\AchievementTracker.cs" />
     <Compile Include="Behavior.cs" />
     <Compile Include="Components\Combat.cs" />
     <Compile Include="Components\GuardPost.cs" />
@@ -69,6 +69,7 @@
     <Compile Include="Harvestable.cs" />
     <Compile Include="HarvestTask.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="Properties\Structural.cs" />
     <Compile Include="RecursiveBacktracker.cs" />
     <Compile Include="Resource.cs" />
     <Compile Include="StaticMenuControls.cs" />

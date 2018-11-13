@@ -12,7 +12,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Structure.
 	/// </summary>
-	public abstract class Structure : Component
+	public abstract class Structure : Component, IChoiceMenu
 	{
 		public string MenuName;
 		public string Name;
@@ -55,6 +55,24 @@ namespace Hecatomb
                 }
             }
             return ingredients;
+        }
+
+        public virtual string MenuHeader
+        {
+            get
+            {
+                return String.Format("Name at {0} {1} {2}", Entity.X, Entity.Y, Entity.Z);
+            }
+            set { }
+        }
+
+        public virtual List<IMenuListable> MenuChoices
+        {
+            get
+            {
+                return new List<IMenuListable>();
+            }
+            set { }
         }
 	}
 }
