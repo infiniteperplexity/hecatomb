@@ -64,9 +64,24 @@ namespace Hecatomb
 		
 		public MenuChoiceControls(IChoiceMenu menu): base()
 		{
+            if (menu is Structure)
+            {
+                Structure s = (Structure)menu;
+                s.Highlight();
+                Game.MainPanel.Dirty = true;
+            }
 			var Commands = Game.Commands;
 			KeyMap[Keys.Space] = Commands.Wait;
-			KeyMap[Keys.Escape] = Reset;
+            KeyMap[Keys.Escape] =
+                () =>
+                {
+                    if (menu is Structure)
+                    {
+                        Structure s = (Structure)menu;
+                        s.Unhighlight();
+                    }
+                    Reset();
+                };
 			MenuTop = new List<string>() {
 				"**Esc: Cancel**.",
 				menu.MenuHeader

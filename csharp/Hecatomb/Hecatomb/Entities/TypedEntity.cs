@@ -29,6 +29,7 @@ namespace Hecatomb
 		public int X {get; private set;}
 		public int Y {get; private set;}
 		public int Z {get; private set;}
+        public string Highlight;
 		[JsonIgnore] public bool Placed {get; private set;}
 
 		public Dictionary<string, int> Components;
@@ -217,19 +218,6 @@ namespace Hecatomb
 	
 	public class StructureEntity : PositionedEntity {
 
-		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
-		{
-//			if (e==null)
-//			{
-//				base.Place(x1, y1, z1, fireEvent);
-//			}
-//			else 
-//			{
-//				throw new InvalidOperationException(String.Format(
-//					"Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
-//				));
-//			}
-		}
 		public override void Remove()
 		{
 			int x0 = X;

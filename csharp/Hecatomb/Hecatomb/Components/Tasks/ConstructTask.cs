@@ -108,6 +108,7 @@ namespace Hecatomb
 			if (finished)
 			{
 				Feature fr = sc.Features[0];
+                Game.StatusPanel.PushMessage(String.Format("{0} {1} {2}", fr.X, fr.Y, fr.Z));
 				Structure.Place(fr.X, fr.Y, fr.Z);
                 foreach (Feature feat in sc.Features)
                 {

@@ -43,7 +43,7 @@ namespace Hecatomb
                     return (' ', "black");
                 }
             }
-            if (particle!=null && particle.Symbol!=default(char))
+            if (particle != null && particle.Symbol != default(char))
             {
                 return (particle.Symbol, particle.FG);
             }
@@ -175,7 +175,7 @@ namespace Hecatomb
                     }
                 }
                 // minerals, earths, and grassy floors
-                else if (cover.Solid || terrain.Solid || terrain==Terrain.FloorTile)
+                else if (cover.Solid || terrain.Solid || terrain == Terrain.FloorTile)
                 {
                     sym = cover.Symbol;
                 }
@@ -190,10 +190,10 @@ namespace Hecatomb
                 if (cover == Cover.NoCover)
                 {
                     // ground with noteworthy cover below
-                    if (terrain == Terrain.FloorTile || terrain == Terrain.DownSlopeTile) 
+                    if (terrain == Terrain.FloorTile || terrain == Terrain.DownSlopeTile)
                     {
                         // waterlogged ground or mineral-laden ground
-                        if (coverb.Liquid || coverb.Mineral!=null)
+                        if (coverb.Liquid || coverb.Mineral != null)
                         {
                             fg = fg ?? coverb.FG;
                         }
@@ -223,7 +223,7 @@ namespace Hecatomb
                     fg = fg ?? terrain.FG;
                 }
             }
-            if (sym==default(char) || fg == null)
+            if (sym == default(char) || fg == null)
             {
                 throw new InvalidOperationException("Got an invalid glyph");
             }
@@ -268,9 +268,9 @@ namespace Hecatomb
             {
                 return it.GetGlyph().Item3;
             }
-            else if (f != null && f.BG != null)
+            else if (f != null && (f.BG != null || f.Highlight!=null))
             {
-                return f.BG;
+                return f.Highlight ?? f.BG;
             }
             else if (cv != Cover.NoCover)
             {

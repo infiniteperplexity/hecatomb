@@ -61,7 +61,7 @@ namespace Hecatomb
         {
             get
             {
-                return String.Format("Name at {0} {1} {2}", Entity.X, Entity.Y, Entity.Z);
+                return String.Format("{3} at {0} {1} {2}", Entity.X, Entity.Y, Entity.Z, Name);
             }
             set { }
         }
@@ -74,5 +74,26 @@ namespace Hecatomb
             }
             set { }
         }
+
+        public void Highlight(string s)
+        {
+            foreach (Feature fr in Features)
+            {
+                fr.Highlight = s;
+            }
+        }
+
+        public void Highlight()
+        {
+            Highlight("lime green");
+        }
+        public void Unhighlight()
+        {
+            foreach (Feature fr in Features)
+            {
+                fr.Highlight = null;
+            }
+        }
+
 	}
 }
