@@ -57,7 +57,7 @@ namespace Hecatomb
 		{
 			Game.Camera.Center(X, Y, Z);
 			Game.Visible = GetComponent<Senses>().GetFOV();
-			foreach(Creature c in GetComponent<Minions>())
+			foreach(Creature c in GetComponent<Minions>().GetList())
 			{
 				Senses s = c.GetComponent<Senses>();
 				Game.Visible.UnionWith(s.GetFOV());

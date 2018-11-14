@@ -6,13 +6,15 @@
  */
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
 
 	public class TaskMaster : Component, IChoiceMenu
 	{
-		public string MenuHeader
+        [JsonIgnore]
+        public string MenuHeader
 		{
 			get
 			{
@@ -20,7 +22,8 @@ namespace Hecatomb
 			}
 			set {}
 		}
-		public List<IMenuListable> MenuChoices
+        [JsonIgnore]
+        public List<IMenuListable> MenuChoices
 		{
 			get
 			{

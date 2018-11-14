@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -19,15 +20,16 @@ namespace Hecatomb
         public int SlopeCount;
         public bool HasUnpaused;
         public int TurnsWaited;
-        public List<string> OffTutorialText;
-        public List<string> OffTutorialCamera;
-        public TextColors OffTutorialColor;
+        [JsonIgnore] public List<string> OffTutorialText;
+        [JsonIgnore] public List<string> OffTutorialCamera;
+        [JsonIgnore] public TextColors OffTutorialColor;
         
 
         public int CurrentIndex;
         // the tutorial is always active but it's not always visible
         public bool Visible;
-        public List<TutorialState> TutorialStates;
+        [JsonIgnore] public List<TutorialState> TutorialStates;
+        [JsonIgnore]
         public TutorialState Current
         {
             get
@@ -36,7 +38,7 @@ namespace Hecatomb
             }
             set { }
         }
-        protected TextColors StrayColorsMiddle = new TextColors("orange");
+        [JsonIgnore] protected TextColors StrayColorsMiddle = new TextColors("orange");
 		
 		public override void Activate()
 		{

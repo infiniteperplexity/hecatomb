@@ -16,6 +16,7 @@ namespace Hecatomb
 
         public Item() : base()
         {
+            TypeName = "Item";
             Resources = new Dictionary<string, int>();
             Claims = new Dictionary<string, int>();
         }

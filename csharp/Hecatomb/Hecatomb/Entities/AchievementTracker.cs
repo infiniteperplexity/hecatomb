@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -45,7 +46,7 @@ namespace Hecatomb
             public string Name;
             public string Description;
             public bool Unlocked;
-            public Func<AchievementEvent, bool> Condition;
+            [JsonIgnore] public Func<AchievementEvent, bool> Condition;
             public Achievement()
             {
                 Condition = Nothing;

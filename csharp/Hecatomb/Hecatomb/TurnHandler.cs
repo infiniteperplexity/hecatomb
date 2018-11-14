@@ -46,7 +46,7 @@ namespace Hecatomb
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 			Creature[] actors = Game.World.Creatures.ToArray();
-			foreach (Creature m in p.GetComponent<Minions>())
+			foreach (Creature m in p.GetComponent<Minions>().GetList())
 			{
 				Minion minion = m.GetComponent<Minion>();
 				if (minion.Task==null)

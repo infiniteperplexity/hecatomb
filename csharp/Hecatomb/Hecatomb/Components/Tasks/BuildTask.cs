@@ -37,7 +37,7 @@ namespace Hecatomb
             int x = Entity.X;
 			int y = Entity.Y;
 			int z = Entity.Z;
-			Game.World.Features[x, y, z].Remove();
+			Game.World.Features[x, y, z].Despawn();
 			var tiles = Game.World.Tiles;
 			Terrain t = tiles[x, y, z];	
 			Terrain floor = Terrain.FloorTile;

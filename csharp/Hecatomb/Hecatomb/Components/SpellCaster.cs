@@ -11,6 +11,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -22,7 +23,7 @@ namespace Hecatomb
 		List<string> Spells;
         public int MaxSanity;
         public int Sanity;
-		public string MenuHeader
+		[JsonIgnore] public string MenuHeader
 		{
 			get
 			{
@@ -45,7 +46,8 @@ namespace Hecatomb
             }
             return ge;
         }
-		public List<IMenuListable> MenuChoices
+        [JsonIgnore]
+        public List<IMenuListable> MenuChoices
 		{
 			get
 			{

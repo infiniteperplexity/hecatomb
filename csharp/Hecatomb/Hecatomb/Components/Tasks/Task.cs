@@ -186,8 +186,9 @@ namespace Hecatomb
 
         public virtual void Complete()
         {
-            Worker.GetComponent<Minion>()._Unassign();
-            Entity.Remove();
+            Unassign();
+            Entity.Despawn();
+            Despawn();
         }
 
         public virtual void ChooseFromMenu()

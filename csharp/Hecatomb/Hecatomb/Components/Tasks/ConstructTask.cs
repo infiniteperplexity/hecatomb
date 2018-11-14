@@ -14,7 +14,7 @@ namespace Hecatomb
 	public class ConstructTask : Task, IChoiceMenu, ISelectsBox
 	{
 		public int FeatureIndex;
-		public new int BoxWidth
+		[JsonIgnore] public new int BoxWidth
 		{
 			get
 			{
@@ -22,8 +22,9 @@ namespace Hecatomb
 			}
 			set {}
 		}
-		
-		public new int BoxHeight
+
+        [JsonIgnore]
+        public new int BoxHeight
 		{
 			get
 			{
@@ -44,7 +45,8 @@ namespace Hecatomb
 			}
 		}
 		public string[] Structures;
-		public string MenuHeader
+        [JsonIgnore]
+        public string MenuHeader
 		{
 			get
 			{
@@ -52,7 +54,8 @@ namespace Hecatomb
 			}
 			set {}
 		}
-		public List<IMenuListable> MenuChoices
+        [JsonIgnore]
+        public List<IMenuListable> MenuChoices
 		{
 			get
 			{
@@ -89,7 +92,7 @@ namespace Hecatomb
 		public override void Finish()
 		{
 			Feature incomplete = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
-			incomplete.Destroy();
+			incomplete.Despawn();
 			Feature f = Game.World.Entities.Spawn<Feature>(Makes+"Feature");
 			f.Place(Entity.X, Entity.Y, Entity.Z);
 			Structure sc = Structure.GetComponent<Structure>();

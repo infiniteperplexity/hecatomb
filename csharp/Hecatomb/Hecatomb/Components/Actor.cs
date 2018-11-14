@@ -27,6 +27,7 @@ namespace Hecatomb
 		public int CurrentPoints;
 		private string TeamName;
         public bool Acted;
+        // so I guess this doesn't get reconstituted correctly when restoring a game
 		[JsonIgnore] public Team Team
 		{
 			get
@@ -61,7 +62,12 @@ namespace Hecatomb
 				}
 				else 
 				{
-					return (PositionedEntity) Game.World.Entities.Spawned[TargetEID];
+                    if (!Game.World.Entities.Spawned.ContainsKey(TargetEID))
+                    {
+                        TargetEID = -1;
+                        return null;
+                    }
+				    return (PositionedEntity) Game.World.Entities.Spawned[TargetEID];
 				}
 			}
 			set

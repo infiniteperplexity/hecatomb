@@ -51,7 +51,7 @@ namespace Hecatomb
 		public override void Finish()
 		{
 			Feature incomplete = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
-			incomplete.Destroy();
+			incomplete.Despawn();
 			Feature finished = Game.World.Entities.Spawn<Feature>(Makes);
 			finished.Place(Entity.X, Entity.Y, Entity.Z);
 			base.Finish();

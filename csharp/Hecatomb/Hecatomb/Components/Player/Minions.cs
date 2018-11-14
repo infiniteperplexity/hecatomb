@@ -15,7 +15,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of MinionsOwner.
 	/// </summary>
-	public class Minions : Component, System.Collections.IEnumerable
+	public class Minions : Component
 	{
 		[JsonIgnore] public int Count
 		{
@@ -57,12 +57,9 @@ namespace Hecatomb
 			return MinionEIDs.Contains(m.EID);
 		}
 
-		public System.Collections.IEnumerator GetEnumerator()
-	    {
-			foreach (int eid in MinionEIDs)
-			{
-				yield return Game.World.Entities.Spawned[eid];
-			}
-	    }
+        public List<Creature> GetList()
+        {
+            return MinionEIDs.Select(eid => (Creature)Game.World.Entities.Spawned[eid]).ToList();
+        }
 	}
 }
