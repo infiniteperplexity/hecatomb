@@ -64,7 +64,8 @@ namespace Hecatomb
 		public static readonly Terrain EmptyTile = new Terrain(
             type: "EmptyTile",
             name: "empty",
-			symbol: '.',
+			//symbol: '.',
+            symbol: '\u22C5',
 			fg: "BELOWFG",
 		    bg: "BELOWBG", 
 			fallable: true,
@@ -103,6 +104,7 @@ namespace Hecatomb
             type: "DownSlopeTile",
             name: "downward slope",
 			symbol: '\u02C7',
+            //symbol: '\u2228',
 			fg: "BELOWFG",
 			bg: "BELOWBG",
 			zview: -1,
