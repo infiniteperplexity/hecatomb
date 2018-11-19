@@ -180,7 +180,7 @@ namespace Hecatomb
 				{
 					accessible = true;
 				}
-				else if (!useLast && condition(x1+dir.X, y1+dir.Y, z1+dir.Z, x1, y1, z1))
+				else if (!useLast && standable(x1 + dir.X, y1 + dir.Y, z1 + dir.Z) && condition(x1+dir.X, y1+dir.Y, z1+dir.Z, x1, y1, z1))
 				{
 					accessible = true;
 				}

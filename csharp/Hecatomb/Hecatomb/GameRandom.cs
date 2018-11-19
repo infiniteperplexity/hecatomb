@@ -40,8 +40,15 @@ namespace Hecatomb
 			Calls+=1;
 			return random.Next(i);
 		}
-		
-		public double NextDouble()
+
+        public int Next(int i, int j)
+        {
+            Calls += 1;
+            return random.Next(i, j);
+        }
+
+
+        public double NextDouble()
 		{
 			Calls+=1;
 			return random.NextDouble();

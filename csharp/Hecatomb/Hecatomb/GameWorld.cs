@@ -122,7 +122,7 @@ namespace Hecatomb
 				"Coord: " + x + "," + y + ", " + z
 			};
 			PositionedEntity t;
-			if (Explored.Contains(c))
+			if (Explored.Contains(c) || Game.Options.Explored)
 			{
 				text.Add("Terrain: " + Tiles[x, y, z].Name);
                 text.Add("Cover: " + Covers[x, y, z].Name);
@@ -144,7 +144,7 @@ namespace Hecatomb
 				text.Add(" ");
 			}
 			change = text.Count;
-			if (Explored.Contains(above))
+			if (Explored.Contains(above) || Game.Options.Explored)
 			{
 				text.Add("Above: " + Tiles[x, y, za].Name);
                 text.Add("Cover: " + Covers[x, y, za].Name);
@@ -165,7 +165,7 @@ namespace Hecatomb
 				}
 				text.Add(" ");
 			}
-			if (Explored.Contains(below))
+			if (Explored.Contains(below) || Game.Options.Explored)
 			{
 				text.Add("Below: " + Tiles[x, y, zb].Name);
                 text.Add("Cover: " + Covers[x, y, zb].Name);

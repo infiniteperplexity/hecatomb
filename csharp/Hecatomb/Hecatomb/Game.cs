@@ -18,6 +18,7 @@ namespace Hecatomb
     /// </summary>
     public class Game : Microsoft.Xna.Framework.Game
     {
+        public static GameOptions Options;
     	public static GameWorld World;
 		public static GameCommands Commands;
 		public static GameColors Colors;
@@ -74,12 +75,18 @@ namespace Hecatomb
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
+            Options = new GameOptions()
+            {
+                //Explored = true,
+                //Visible = true
+            };
             Colors = new GameColors();
 			Time = new TimeHandler();
 			Commands = new GameCommands();
 			DefaultControls = new DefaultControls();
 			CameraControls = new CameraControls();
 			Camera = new GameCamera();
+            
 			ShowIntro();
 			base.Initialize();
             StartGame();

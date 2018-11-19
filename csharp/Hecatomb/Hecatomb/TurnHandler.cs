@@ -65,7 +65,7 @@ namespace Hecatomb
                             task.GetComponent<Task>().AssignTo(m);               
                         }
                     }
-					foreach (TaskEntity t in Game.World.Tasks)
+					foreach (TaskEntity t in Game.World.Tasks.ToList())
 					{
 						
 						Task task = t.GetComponent<Task>();

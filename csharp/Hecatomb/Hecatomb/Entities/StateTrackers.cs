@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -44,19 +45,18 @@ namespace Hecatomb
 	
 		public GameEvent OnTurnBegin(GameEvent g)
 		{
-			foreach (int eid1 in PathMisses.Keys)
+			foreach (int eid1 in PathMisses.Keys.ToList())
 			{
-				var dict = PathMisses[eid1];
-				foreach (int eid2 in dict.Keys)
+                var dict = PathMisses[eid1];
+				foreach (int eid2 in dict.Keys.ToList())
 				{
-					int n = dict[eid2];
-					n-=1;
-					if (n<=0)
+                    dict[eid2] -= 1;
+					if (dict[eid2] <= 0)
 					{
-						dict.Remove(eid2);
+                        dict.Remove(eid2);
 						if (dict.Count==0)
 						{
-							PathMisses.Remove(eid1);
+                            PathMisses.Remove(eid1);
 						}
 					}
 				}

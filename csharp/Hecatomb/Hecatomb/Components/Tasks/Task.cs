@@ -304,6 +304,16 @@ namespace Hecatomb
            
         public virtual bool CanAssign(Creature c)
         {
+            if (!Entity.Placed)
+            {
+                return false;
+            }
+            if (!ValidTile(new Coord(Entity.X, Entity.Y, Entity.Z)))
+            {
+                Game.StatusPanel.PushMessage("Canceling invalid task.");
+                Cancel();
+                return false;
+            }
             Movement m = c.GetComponent<Movement>();
             bool useLast = (WorkRange == 0);
             return m.CanReach(Entity, useLast: useLast) && m.CanFindResources(Ingredients);

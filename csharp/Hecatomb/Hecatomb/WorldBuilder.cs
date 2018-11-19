@@ -6,6 +6,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -61,7 +62,9 @@ namespace Hecatomb
 					}
 				}
 			}
-			for (int i=1; i<world.Width-1; i++) {
+            placeSoils();
+            placeOres();
+            for (int i=1; i<world.Width-1; i++) {
 				for (int j=1; j<world.Height-1; j++) {
 					int k =world.GetGroundLevel(i, j);
 					List<Coord> neighbors = Tiles.GetNeighbors8(i, j, k);
@@ -120,15 +123,125 @@ namespace Hecatomb
 			//Creature ghoul = world.Entities.Spawn<Creature>("HungryGhoul");
 			//ghoul.Place(50, 50, z);
 		}
-	}
-	
-	public class IntroBuilder : WorldBuilder
-	{
-		public override void Build(GameWorld world)
-		{
-			base.Build(world);
-			for (int i=0; i<world.Width; i++) {
-				for (int j=0; j<world.Height; j++) {
+
+
+        protected void placeSoils()
+        {
+            int soil = 1;
+            int limestone = 5;
+            int basalt = 12;
+            int granite = 12;
+            int bedrock = 64;
+            List<Cover> layers = new List<Cover>();
+            for (int i=0; i<soil; i++)
+            {
+                layers.Add(Cover.Soil);
+            }
+            for (int i = 0; i < limestone; i++)
+            {
+                layers.Add(Cover.Limestone);
+            }
+            for (int i = 0; i < basalt; i++)
+            {
+                layers.Add(Cover.Basalt);
+            }
+            for (int i = 0; i < granite; i++)
+            {
+                layers.Add(Cover.Granite);
+            }
+            for (int i = 0; i < bedrock; i++)
+            {
+                layers.Add(Cover.Bedrock);
+            }
+            for (int x=1; x<Game.World.Width-1; x++)
+            {
+                for (int y=1; y<Game.World.Height-1; y++)
+                {
+                    int z = Game.World.GetGroundLevel(x, y)-1;
+                    for (int i=0; z-i>0; i++)
+                    {
+                        Cover c = layers[i];
+                        if (Game.World.Random.Next(16)==0)
+                        {
+                            if (i<soil)
+                            {
+                                c = Cover.Limestone;
+                            }
+                            else if (i<soil+limestone)
+                            {
+                                c = Cover.Basalt;
+                            }
+                            else if (i < soil + limestone + basalt)
+                            {
+                                c = Cover.Granite;
+                            }
+                            else
+                            {
+                                c = Cover.Bedrock;
+                            }
+                        }
+                        Game.World.Covers[x, y, z - i] = c;
+                    }
+                    
+                }
+            }
+        }
+        protected void placeOres()
+        {
+            placeOres(512);
+        }
+        protected void placeOres(int n)
+        {
+            int nveins = n;
+            int segmax = 5;
+            int segmin = 2;
+            int seglen = 3;
+            for (int z = 1; z < Game.World.Depth - 1; z++)
+            {
+                for (int i = 0; i < nveins; i++)
+                {
+                    int x0 = Game.World.Random.Next(1, Game.World.Width - 2);
+                    int y0 = Game.World.Random.Next(1, Game.World.Height - 2);
+                    Cover c = Game.World.Covers[x0, y0, z];
+                    if (c.Solid)
+                    {
+                        Cover[] choices = new Cover[] { Cover.FlintCluster, Cover.FlintCluster, Cover.FlintCluster, Cover.CoalSeam, Cover.CoalSeam };
+                        Cover choice = choices[Game.World.Random.Next(choices.Length)];
+                        double displace = Game.World.Random.NextDouble() * 256;
+                        double angle = Game.World.Random.NextDouble() * 2 * Math.PI;
+                        int segs = Game.World.Random.Next(segmin, segmax);
+                        for (int j = 0; j < segs; j++)
+                        {
+                            int x1 = x0 + (int)(Math.Cos(angle) * seglen);
+                            int y1 = y0 + (int)(Math.Sin(angle) * seglen);
+                            List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
+                            foreach (var coord in line)
+                            {
+                                (int x, int y, int _) = coord;
+                                if (x > 0 && x < Game.World.Width - 2 && y > 0 && y < Game.World.Height - 2)
+                                {
+                                    if (Game.World.Random.Next(3) > 0 && Game.World.Covers[x, y, z].Solid)
+                                    {
+                                        Game.World.Covers[x, y, z] = choice;
+                                    }
+                                }
+                            }
+                            x0 = x1;
+                            y0 = y1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public class IntroBuilder : WorldBuilder
+    {
+        public override void Build(GameWorld world)
+        {
+            base.Build(world);
+            for (int i = 0; i < world.Width; i++) {
+                for (int j = 0; j < world.Height; j++) {
                     if (i <= 16 && i > 9 && j <= 16 && j > 9)
                     {
                         world.Tiles[i, j, 0] = Terrain.FloorTile;
@@ -137,33 +250,33 @@ namespace Hecatomb
                     {
                         world.Tiles[i, j, 0] = Terrain.WallTile;
                     }
-				}
-			}
+                }
+            }
             RecursiveBacktracker maze = new RecursiveBacktracker(12, 12);
-            for (int i=0; i<world.Width/2; i++)
+            for (int i = 0; i < world.Width / 2; i++)
             {
-                for (int j=0; j<world.Height/2; j++)
+                for (int j = 0; j < world.Height / 2; j++)
                 {
                     TaskEntity t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
                     t.Place(2 * i, 2 * j, 0);
-                    if (!maze.BottomWalls[i,j])
+                    if (!maze.BottomWalls[i, j])
                     {
                         t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
                         t.Place(2 * i, 2 * j + 1, 0);
                     }
-                    if (!maze.RightWalls[i,j])
+                    if (!maze.RightWalls[i, j])
                     {
                         t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
                         t.Place(2 * i + 1, 2 * j, 0);
                     }
                 }
             }
-
             //Game.World.Entities.Spawn<Creature>("Necromancer").Place(12, 12, 0);
             Game.World.Entities.Spawn<Creature>("Zombie").Place(12, 13, 0);
             Game.World.Entities.Spawn<Creature>("Zombie").Place(12, 11, 0);
             Game.World.Entities.Spawn<Creature>("Zombie").Place(11, 12, 0);
             Game.World.Entities.Spawn<Creature>("Zombie").Place(13, 12, 0);
         }
-	}
+  
+    }
 }

@@ -89,8 +89,8 @@ namespace Hecatomb
             type: "Soil",
             name: "soil",
             symbol: '#',
-            fg: "WALLFG",
-            bg: "WALLBG",
+            fg: "#BBBBAA",
+            bg: "#888877",
             solid: true
         );
 
@@ -98,8 +98,8 @@ namespace Hecatomb
             type: "Limestone",
             name: "limestone",
             symbol: '#',
-            fg: "WALLFG",
-            bg: "WALLBG",
+            fg: "#999999",
+            bg: "#666666",
             solid: true,
             hardness: 1
         );
@@ -108,8 +108,8 @@ namespace Hecatomb
             type: "Basalt",
             name: "basalt",
             symbol: '#',
-            fg: "WALLFG",
-            bg: "WALLBG",
+            fg: "#8888CC",
+            bg: "#666699",
             solid: true,
             hardness: 2
         );
@@ -118,8 +118,8 @@ namespace Hecatomb
             type: "Granite",
             name: "granite",
             symbol: '#',
-            fg: "WALLFG",
-            bg: "WALLBG",
+            fg: "#AA9999",
+            bg: "#776666",
             solid: true,
             hardness: 3
         );
@@ -128,28 +128,29 @@ namespace Hecatomb
             type: "Bedrock",
             name: "bedrock",
             symbol: '#',
-            fg: "WALLFG",
-            bg: "WALLBG",
+            fg: "#778877",
+            bg: "#445544",
             solid: true,
             hardness: 4
         );
 
         public static readonly Cover CoalSeam = new Cover(
-            symbol: '\u2234',
             type: "CoalSeam",
+            symbol: '\u26EC',
             name: "coal seam",
-            fg: "WALLFG",
-            bg: "WALLBG",
+            fg: "#222222",
+            bg: Soil.BG,
             solid: true,
             mineral: "Coal"
         );
 
         public static readonly Cover FlintCluster = new Cover(
-            symbol: '\u2234',
+            //symbol: '\u2234',
+            symbol: '\u26EC',
             type: "FlintCluster",
             name: "flint cluster",
-            fg: "WALLFG",
-            bg: "WALLBG",
+            fg: "#DDDDDD",
+            bg: Soil.BG,
             solid: true,
             mineral: "Flint"
         );

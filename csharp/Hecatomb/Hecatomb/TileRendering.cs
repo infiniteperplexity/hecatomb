@@ -24,13 +24,13 @@ namespace Hecatomb
             Coord c = new Coord(x, y, z);
             Coord ca = new Coord(x, y, z + 1);
             Coord cb = new Coord(x, y, z - 1);
-            bool visible = Game.Visible.Contains(c);
-            bool va = Game.Visible.Contains(ca);
-            bool vb = Game.Visible.Contains(cb);
+            bool visible = Game.Visible.Contains(c) || Game.Options.Visible;
+            bool va = Game.Visible.Contains(ca) || Game.Options.Visible;
+            bool vb = Game.Visible.Contains(cb) || Game.Options.Visible;
             int zview = terrain.ZView;
             char sym;
             string fg = null;
-            if (!Game.World.Explored.Contains(c))
+            if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
             {
                 // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
                 if (Game.World.Tiles[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
@@ -252,11 +252,11 @@ namespace Hecatomb
             {
                 return (task.BG ?? "orange");
             }
-            else if (!Game.World.Explored.Contains(c))
+            else if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
             {
                 return "black";
             }
-            else if (!Game.Visible.Contains(c))
+            else if (!Game.Visible.Contains(c) && !Game.Options.Visible)
             {
                 return "black";
             }
