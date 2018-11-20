@@ -33,6 +33,20 @@ namespace Hecatomb
             fg: "gray"
         );
 
+        public static readonly Resource Flint = new Resource(
+            type: "Flint",
+            name: "flint",
+            symbol: '\u2022',
+            fg: "#CCCCCC"
+        );
+
+        public static readonly Resource Coal = new Resource(
+            type: "Coal",
+            name: "coal",
+            symbol: '\u2022',
+            fg: "#222222"
+        );
+
         public static readonly Resource Wood = new Resource(
             type: "Wood",
             name: "wood",

@@ -71,7 +71,7 @@
     <Compile Include="Components\Harvestable.cs" />
     <Compile Include="Components\Tasks\HarvestTask.cs" />
     <Compile Include="Item.cs" />
-    <Compile Include="Properties\Structural.cs" />
+    <Compile Include="Components\Structural.cs" />
     <Compile Include="RecursiveBacktracker.cs" />
     <Compile Include="Entities\ResearchTracker.cs" />
     <Compile Include="Resource.cs" />

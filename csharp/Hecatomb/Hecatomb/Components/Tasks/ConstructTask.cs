@@ -73,7 +73,7 @@ namespace Hecatomb
 		
 		public ConstructTask(): base()
 		{
-			Structures = new string[]{"GuardPost"};
+			Structures = new string[]{"GuardPost", "Workshop","Stockpile","BlackMarket","Sanctum"};
 			MenuName = "construct a structure.";
 			TypeName = "construct";
 		}
@@ -98,7 +98,8 @@ namespace Hecatomb
 			Structure sc = Structure.GetComponent<Structure>();
 			f.Symbol = sc.Symbols[FeatureIndex];
 			f.FG = sc.FGs[FeatureIndex];
-			f.BG = sc.BGs[FeatureIndex];
+            //f.BG = sc.BGs[FeatureIndex];
+            f.BG = sc.BG;
 			sc.Features[FeatureIndex] = f;
 			bool finished = true;
 			foreach (Feature fr in sc.Features)

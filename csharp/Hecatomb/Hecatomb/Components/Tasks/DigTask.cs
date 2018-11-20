@@ -49,6 +49,7 @@ namespace Hecatomb
 					tiles[x, y, z] = down;
 					tiles[x, y, z-1] = up;
                     covers[x, y, z] = none;
+                    covers[x, y, z - 1].Mine(x, y, z - 1);
                     covers[x, y, z-1] = none;
                 } else if (tb==up)
 				{
@@ -78,6 +79,7 @@ namespace Hecatomb
 			else if (t==wall)
 			{
 				tiles[x, y, z] = floor;
+                covers[x, y, z].Mine(x, y, z);
                 covers[x, y, z] = none;
             }		
 			base.Finish();

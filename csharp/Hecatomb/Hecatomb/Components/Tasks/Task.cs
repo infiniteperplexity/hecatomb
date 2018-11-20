@@ -133,6 +133,10 @@ namespace Hecatomb
 
         public bool HasIngredients()
         {
+            if (Game.Options.NoIngredients)
+            {
+                return true;
+            }
             if (Ingredients.Count==0)
             {
                 return true;
@@ -151,6 +155,10 @@ namespace Hecatomb
 
         public void SpendIngredients()
         {
+            if (Game.Options.NoIngredients)
+            {
+                return;
+            }
             if (Ingredients == null || Ingredients.Count == 0)
             {
                 return;
@@ -332,6 +340,10 @@ namespace Hecatomb
 
         public void ClaimIngredients()
         {
+            if (Game.Options.NoIngredients)
+            {
+                return;
+            }
             Dictionary<string, int> needed = new Dictionary<string, int>(Ingredients);
             List<Item> owned = Game.World.Items.Where(i => i.Owned).ToList();
             Movement m = Worker.GetComponent<Movement>();

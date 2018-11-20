@@ -155,6 +155,13 @@ namespace Hecatomb
             mineral: "Flint"
         );
 
+        public void Mine(int x, int y, int z)
+        {
+            if (this.Mineral!=null)
+            {
+                Item.PlaceResource((this.Mineral, 1), x, y, z);
+            }
+        }
 
     }
 }

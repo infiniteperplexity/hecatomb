@@ -10,6 +10,7 @@ namespace Hecatomb
     {
         public bool Explored;
         public bool Visible;
+        public bool NoIngredients;
     }
     
 }

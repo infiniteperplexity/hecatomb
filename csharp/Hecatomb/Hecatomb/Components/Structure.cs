@@ -21,6 +21,7 @@ namespace Hecatomb
 		public char[] Symbols;
 		public string[] FGs;
 		public string[] BGs;
+        public string BG;
 		public Feature[] Features;
         public Dictionary<string, int>[] Ingredients;
 		

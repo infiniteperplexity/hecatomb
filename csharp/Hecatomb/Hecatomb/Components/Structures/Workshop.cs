@@ -24,11 +24,11 @@ namespace Hecatomb
             };
             FGs = new string[]
             {
+                "#BB9922", "#BB9922","#CCCCCC",
                 "#BB9922", "#BB9922","FLOORFG",
-                "#BB9922", "#BB9922","FLOORFG",
-                "FLOORFG","FLOORFG","#BB9922"
+                "#CCCCCC","FLOORFG","#BB9922"
             };
-            //"#665555"
+            BG = "#665555";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",

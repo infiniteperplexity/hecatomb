@@ -78,7 +78,8 @@ namespace Hecatomb
             Options = new GameOptions()
             {
                 //Explored = true,
-                //Visible = true
+                //Visible = true,
+                NoIngredients = true
             };
             Colors = new GameColors();
 			Time = new TimeHandler();
@@ -113,6 +114,8 @@ namespace Hecatomb
         {
             var init = Resource.Rock;
             init = Resource.Wood;
+            init = Resource.Coal;
+            init = Resource.Flint;
 			World = new GameWorld(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);

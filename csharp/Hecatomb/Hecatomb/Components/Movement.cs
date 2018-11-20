@@ -531,6 +531,10 @@ namespace Hecatomb
 
         public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true)
         {
+            if (Game.Options.NoIngredients)
+            {
+                return true;
+            }
             Dictionary<string, int> found = new Dictionary<string, int>();
             foreach (string resource in resources.Keys)
             {

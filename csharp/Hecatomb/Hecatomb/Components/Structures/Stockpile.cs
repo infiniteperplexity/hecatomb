@@ -29,7 +29,7 @@ namespace Hecatomb
                 "#BB9922","FLOORFG", "#BB9922",
                 "FLOORFG","FLOORFG","#BB9922"
             };
-            //"#444455"
+            BG = "#444455";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",

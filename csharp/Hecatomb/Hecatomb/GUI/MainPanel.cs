@@ -37,7 +37,7 @@ public class MainGamePanel : GamePanel
 			}
 			BG.SetData(bgdata);
 			Fonts = new List<SpriteFont>();
-			string[] fonts = new string[] {"NotoSans", "NotoSansSymbol", "NotoSansSymbol2"};
+			string[] fonts = new string[] {"NotoSans", "NotoSansSymbol", "NotoSansSymbol2","Cambria"};
 			foreach(string s in fonts)
 			{
 				SpriteFont font = Game.MyContentManager.Load<SpriteFont>(s);
@@ -162,6 +162,10 @@ public class MainGamePanel : GamePanel
                     {
 
                         fontCache[c] = (new Vector2(v.X + 1, -7), f);
+                    }
+                    else if (Fonts[3].GetGlyphs().ContainsKey(c))
+                    {
+                        fontCache[c] = (new Vector2(v.X + 1, -5), f);
                     }
                     if (c == '\u2717')
                     {
