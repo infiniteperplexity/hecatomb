@@ -74,7 +74,7 @@ namespace Hecatomb
 							
 							if (task.CanAssign(m))
 							{
-								task.AssignTo(m);
+                                task.AssignTo(m);
 								break;
 							}
 						}

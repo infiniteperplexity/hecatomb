@@ -304,11 +304,16 @@ namespace Hecatomb
            
         public virtual bool CanAssign(Creature c)
         {
+            Coord crd = new Coord(Entity.X, Entity.Y, Entity.Z);
+            if (!Game.World.Explored.Contains(crd))
+            {
+                return false;
+            }
             if (!Entity.Placed)
             {
                 return false;
             }
-            if (!ValidTile(new Coord(Entity.X, Entity.Y, Entity.Z)))
+            if (!ValidTile(crd))
             {
                 Game.StatusPanel.PushMessage("Canceling invalid task.");
                 Cancel();

@@ -211,6 +211,10 @@ namespace Hecatomb
             }
             foreach (Coord square in squares)
             {
+                if (Game.World.Tasks[square.X, square.Y, square.Z] != null)
+                {
+                    continue;
+                }
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
@@ -256,7 +260,6 @@ namespace Hecatomb
             // there's a whole song and dance about hardness, but let's hold off on that
             if (Game.World.Covers[c.X, c.Y, c.Z].Hardness>0)
             {
-                Debug.WriteLine("flag 2");
                 return false;
             }
             return true;
