@@ -33,7 +33,7 @@ namespace Hecatomb
             int padding = Game.MainPanel.Padding;
             X0 = padding + (size + padding);
             Y0 = padding + (2 + Game.Camera.Width) * (size + padding);
-            statusColors = new TextColors(0, 5, "yellow", 1, "cyan");
+            statusColors = new TextColors(0, 6, "yellow", 1, "cyan");
             MessageHistory = new List<string>();
             ColorHistory = new List<string>();
         }
@@ -54,16 +54,13 @@ namespace Hecatomb
             Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             Player p = Game.World.Player;
             TurnHandler t = Game.World.Turns;
-            string txt = String.Format(
-                "Sanity:{5}/{6} X:{0} Y:{1} Z:{2} {3}                    {4}",
-                p.X.ToString().PadLeft(3, '0'),
-                p.Y.ToString().PadLeft(3, '0'),
-                p.Z.ToString().PadLeft(2, '0'),
-                t.Turn.ToString().PadLeft(4, '0'),
-                (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "Paused" : "      ",
-                Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3, '0'),
-                Game.World.Player.GetComponent<SpellCaster>().MaxSanity.ToString().PadLeft(3, '0')
-            );
+            string sanity = Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3, '0') + Game.World.Player.GetComponent<SpellCaster>().MaxSanity.ToString().PadLeft(3, '0');
+            string x = p.X.ToString().PadLeft(3, '0');
+            string y = p.Y.ToString().PadLeft(3, '0');
+            string z = p.Z.ToString().PadLeft(3, '0');
+            string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "Paused" : "      ";
+            string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
+            string txt = $"Sanity:{sanity} X:{x} Y:{y} Z:{z} {time}         {paused}";
             int MaxVisible = 4;
             List<string> list = new List<string> { txt };
             list = list.Concat(MessageHistory.Take(MaxVisible)).ToList();

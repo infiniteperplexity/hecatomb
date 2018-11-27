@@ -2,8 +2,8 @@
 fileVersion=1
 
 # font settings
-fontName=Cambria
-fontFile=../Hecatomb/Content/NotoSans-Regular.ttf
+fontName=PT Mono
+fontFile=../Hecatomb/Content/PTM55FT.ttf
 charSet=0
 fontSize=32
 aa=1
@@ -50,6 +50,6 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=10810
+
 
 # imported icon images

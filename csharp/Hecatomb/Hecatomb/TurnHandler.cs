@@ -12,9 +12,47 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-	public class TurnHandler
-	{
-		public int Turn;
+
+
+
+    public class TurnHandler
+    {
+        public static int StartHour = 8;
+        public static int DawnHour = 6;
+        public static int DuskHour = 17;
+        public static int LunarDays = 12;
+        public static int WaxingMoon = 2;
+        public static int FullMoon = 5;
+        public static int WaningMoon = 8;
+        public static int NewMoon = 11;
+        public static int Darkness = 64;
+        public static Dictionary<string, int> LightLevels = new Dictionary<string, int>()
+        {
+            ["WaningMoon"] = 32,
+            ["WaxingMoon"] = 32,
+            ["FullMoon"] = 64,
+            ["NewMoon"] = 0
+        };
+
+
+        public static Dictionary<string, char> PhaseSymbols = new Dictionary<string, char>()
+        {
+            ["Sunlight"] = '\u2600',
+            ["Twilight"] = '\u25D2',
+            ["WaningMoon"] = '\u2600',
+            ["WaxingMoon"] = '\u263D',
+            ["FullMoon"] = '\u2600',
+            ["NewMoon"] = '\u25CF'
+        };
+
+        public int Turn;
+        public int Day;
+        public int Hour;
+        public int Minute;
+        public char PhaseSymbol;
+        public int LightLevel;
+        public string MoonPhase;
+
 		// already acted, but still have points to act again
 		[JsonIgnore] public Queue<Actor> Deck;
 		// have not yet acted and have points remaining
@@ -23,6 +61,12 @@ namespace Hecatomb
 		public TurnHandler()
 		{
 			Turn = 0;
+            Day = 0;
+            Hour = StartHour;
+            Minute = 0;
+            PhaseSymbol = PhaseSymbols["Sunlight"];
+            MoonPhase = "WaxingMoon";
+            LightLevel = 255;
 			Deck = new Queue<Actor>();
 			Queue = new Queue<Actor>();
 		}
@@ -34,15 +78,77 @@ namespace Hecatomb
 				NextTurn();
 			}
 		}
-		public void NextTurn()
-		{
-			
-			Player p = Game.World.Player;
-			p.Acted = false;
-			Turn+=1;
+        public void NextTurn()
+        {
+
+            Player p = Game.World.Player;
+            p.Acted = false;
+            Turn += 1;
+            Minute += 1;
+            if (Minute >= 60)
+            {
+                Minute = 0;
+                Hour += 1;
+                if (Hour >= 24)
+                {
+                    Hour = 0;
+                    Day += 1;
+                }
+            }
             Game.World.Events.Publish(new TutorialEvent() { Action = "TurnBegin" });
-            Game.World.Events.Publish(new TurnBeginEvent() {Turn=Turn});
-			Game.MainPanel.Dirty = true;
+            Game.World.Events.Publish(new TurnBeginEvent() { Turn = Turn });
+            if (Minute == 0)
+            {
+                if (Hour == DawnHour)
+                {
+                    Game.StatusPanel.PushMessage("The sun is coming up.");
+                    PhaseSymbol = PhaseSymbols["Twilight"];
+                }
+                else if (Hour == DuskHour)
+                {
+                    Game.StatusPanel.PushMessage("Night is falling.");
+                    PhaseSymbol = PhaseSymbols["Twilight"];
+                }
+                else if (Hour == DawnHour + 1)
+                {
+                    PhaseSymbol = PhaseSymbols["Sunlight"];
+                    LightLevel = 255;
+                }
+                else if (Hour == DuskHour + 1)
+                {
+                    int day = Day % LunarDays;
+                    if (day <= WaxingMoon || day > NewMoon)
+                    {
+                        MoonPhase = "WaxingMoon";
+                    }
+                    else if (day <= FullMoon)
+                    {
+                        MoonPhase = "FullMoon";
+                    }
+                    else if (day <= WaningMoon)
+                    {
+                        MoonPhase = "WaningMoon";
+                    }
+                    else
+                    {
+                        MoonPhase = "NewMoon";
+                    }
+                    PhaseSymbol = PhaseSymbols[MoonPhase];
+                    LightLevel = LightLevels[MoonPhase] + Darkness;
+                }
+            }
+            if (Turn % 5 == 0)
+            {
+                if (Hour >= DawnHour && Hour <= DawnHour + 1)
+                {
+                    LightLevel = (int) Math.Min(255, (Minute/60) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
+                }
+                else if (Hour >= DuskHour && Hour <= DuskHour + 1)
+                {
+                    LightLevel = (int)Math.Min(255, ((60-Minute) / 60) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
+                }
+            }
+            Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 			Creature[] actors = Game.World.Creatures.ToArray();
