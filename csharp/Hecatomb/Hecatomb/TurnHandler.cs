@@ -17,7 +17,8 @@ namespace Hecatomb
 
     public class TurnHandler
     {
-        public static int StartHour = 8;
+        //public static int StartHour = 8;
+        public static int StartHour = 16;
         public static int DawnHour = 6;
         public static int DuskHour = 17;
         public static int LunarDays = 12;
@@ -137,17 +138,17 @@ namespace Hecatomb
                     LightLevel = LightLevels[MoonPhase] + Darkness;
                 }
             }
-            if (Turn % 5 == 0)
-            {
-                if (Hour >= DawnHour && Hour <= DawnHour + 1)
+            //if (Turn % 5 == 0)
+            //{
+                if (Hour == DawnHour)
                 {
-                    LightLevel = (int) Math.Min(255, (Minute/60) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
+                    LightLevel = (int) Math.Min(255, (Minute/60f) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
                 }
-                else if (Hour >= DuskHour && Hour <= DuskHour + 1)
+                else if (Hour == DuskHour)
                 {
-                    LightLevel = (int)Math.Min(255, ((60-Minute) / 60) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
+                    LightLevel = (int)Math.Min(255, ((60-Minute) / 60f) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
                 }
-            }
+            //}
             Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;

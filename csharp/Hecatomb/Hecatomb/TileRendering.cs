@@ -10,7 +10,7 @@ namespace Hecatomb
     public partial class Tiles
     {
 
-        public static (char, string) GetColoredSymbol(int x, int y, int z)
+        public static (char, string) GetColoredSymbol(int x, int y, int z, bool useLighting = true)
         {
             var Creatures = Game.World.Creatures;
             var Items = Game.World.Items;
@@ -226,6 +226,11 @@ namespace Hecatomb
             if (sym == default(char) || fg == null)
             {
                 throw new InvalidOperationException("Got an invalid glyph");
+            }
+            if (useLighting)
+            {
+                int lighting = Game.World.Turns.LightLevel;
+                return (sym, Game.Colors.Shade(fg, lighting));
             }
             return (sym, fg);
         }
