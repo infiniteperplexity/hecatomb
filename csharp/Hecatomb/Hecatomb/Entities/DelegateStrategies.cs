@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Reflection;
 
-
 namespace Hecatomb
 {
 	/// <summary>
@@ -17,21 +16,23 @@ namespace Hecatomb
 	/// </summary>
 	public class DelegateStrategies
 	{
-		string[] StrategyNames;
-		Dictionary<string, Dictionary<string, Action>> Strategies;
+		public string[] StrategyNames;
+		public Dictionary<string, Dictionary<string, Action<PositionedEntity, int, int, int>>> Strategies;
 		
 		public DelegateStrategies()
 		{
 			StrategyNames = new [] {"AfterSelfPlace"};
 			foreach (string s in StrategyNames)
 			{
-				Strategies[s] = new Dictionary<string, Action>();
+				Strategies[s] = new Dictionary<string, Action<PositionedEntity, int, int, int>>();
 			}
-//			Strategies["AfterSelfPlace"]["AfterRampPlace"] = (TypedEntity t, int x, int y, int z) => {
-//				Feature ramp = (Feature) t;
-//				ramp.Remove();
-//				Debug.WriteLine("let's pretend we just built a slope.");
-//			};
+			Strategies["AfterSelfPlace"]["AfterRampPlace"] = (PositionedEntity t, int x, int y, int z) => {
+				Feature ramp = (Feature) t;
+				ramp.Remove();
+                Game.World.Covers[x, y, z] = Cover.NoCover;
+                Game.World.Tiles[x, y, z] = Terrain.UpSlopeTile;
+                Game.World.Tiles[x, y, z + 1] = Terrain.DownSlopeTile;
+			};
 		}
 	}
 }

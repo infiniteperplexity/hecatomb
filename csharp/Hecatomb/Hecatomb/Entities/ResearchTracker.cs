@@ -21,7 +21,7 @@ namespace Hecatomb
         }
     }
 
-    public class Research
+    public class Research : IMenuListable
     {
         public string Name;
         public Dictionary<string, int> Ingredients;
@@ -46,10 +46,22 @@ namespace Hecatomb
             }
         }
 
+        public string ListOnMenu()
+        {
+            return Name;
+        }
+
+        public void ChooseFromMenu()
+        {
+
+        }
+
         public static Research FlintTools = new Research()
         {
             Name = "FlintTools", Turns = 25, Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, {"Wood", 2 } }
         };
+
+
 
     }
 }

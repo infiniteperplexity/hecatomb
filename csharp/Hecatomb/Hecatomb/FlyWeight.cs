@@ -21,6 +21,7 @@ namespace Hecatomb
 		public int FID;
         public string TypeName;
 		public string Name;
+
         public FlyWeight(string type, string name)
         {
             TypeName = type;

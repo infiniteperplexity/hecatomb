@@ -63,6 +63,7 @@
     <Compile Include="Entities\StateTrackers.cs" />
     <Compile Include="Entities\TutorialTracker.cs" />
     <Compile Include="Entities\TypedEntityEvents.cs" />
+    <Compile Include="FancyString.cs" />
     <Compile Include="GameOptions.cs" />
     <Compile Include="GUI\ForegroundPanel.cs" />
     <Compile Include="GUI\StatusPanel.cs" />

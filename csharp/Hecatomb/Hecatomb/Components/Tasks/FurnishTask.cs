@@ -111,7 +111,9 @@ namespace Hecatomb
                 string json = EntityType.Types[Makes].Components["Fixture"];
                 JObject obj = JObject.Parse(json);
                 var ingredients = obj["Ingredients"];
+                Debug.WriteLine(ingredients);
                 task.GetComponent<Task>().Ingredients = ingredients.ToObject<Dictionary<string, int>>();
+                Debug.WriteLine(task.GetComponent<Task>().Ingredients.Count);
                 task.GetComponent<Task>().Makes = Makes;
                 task.Place(c.X, c.Y, c.Z);
                 

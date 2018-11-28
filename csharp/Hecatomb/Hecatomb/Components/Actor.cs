@@ -86,8 +86,8 @@ namespace Hecatomb
 		{
 			TargetEID = -1;
 			ActionPoints = 16;
-			CurrentPoints = (Game.World.Turns.Turn==0) ? ActionPoints : 0;
-		}
+            CurrentPoints = (Game.World.Turns.Turn==0) ? ActionPoints : 0;
+        }
 		
 		public void Regain()
 		{

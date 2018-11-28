@@ -25,6 +25,7 @@ namespace Hecatomb
         public string BG;
 		public Feature[] Features;
         public Dictionary<string, int>[] Ingredients;
+        public string[] Researches;
 		
 		public Structure()
 		{
@@ -72,7 +73,9 @@ namespace Hecatomb
         {
             get
             {
-                return new List<IMenuListable>();
+                var list = new List<IMenuListable>();
+
+                return list;
             }
             set { }
         }

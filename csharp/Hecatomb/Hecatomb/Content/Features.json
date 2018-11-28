@@ -4,7 +4,7 @@
 			{
 				"Type" : "IncompleteFeature",
 				"FG" : "brown",
-				"Symbol" : "\u25A7",
+				"Symbol" : "\u25AB",
 				"Components" : {}
 			},
 			{
@@ -48,6 +48,7 @@
 				"Name": "ramp",
 				"FG" : "WALLFG",
 				"Symbol" : "^",
+				"AfterSelfPlace" : "AfterRampPlace",
 				"Components" : {
 					"Fixture":	{
 						"Ingredients": {"Rock": 1}
@@ -58,10 +59,24 @@
 				"Type" : "Door",
 				"Name": "door",
 				"FG" : "brown",
-				"Symbol" : "\u25EB",
+				"Symbol" : "\u25A7",
 				"Components" : {
 					"Fixture":	{
-						"Ingredients": {"Wood": 2}
+						"Ingredients": {"Wood": 2},
+						"Structures": ["Workshop"]
+					}
+				}
+			},
+			{
+				"Type" : "SpearTrap",
+				"Name": "spear trap",
+				"FG" : "brown",
+				"Symbol" : "\u25A7",
+				"Components" : {
+					"Fixture":	{
+						"Ingredients": {"Wood": 2, "Flint": 1},
+						"Structures": ["Workshop"],
+						"Research": ["SpearTrap"]
 					}
 				}
 			}
