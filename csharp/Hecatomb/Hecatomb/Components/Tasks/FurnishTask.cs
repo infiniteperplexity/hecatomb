@@ -39,9 +39,23 @@ namespace Hecatomb
 			}
 			set {}
 		}
-//		public static 
-		
-		public FurnishTask(): base()
+        [JsonIgnore]
+        public List<bool> ValidChoices
+        {
+            get
+            {
+                List<bool> list = new List<bool>();
+                foreach (string s in Fixtures)
+                {
+                    list.Add(true);
+                }
+                return list;
+            }
+            set { }
+        }
+        //		public static 
+
+        public FurnishTask(): base()
 		{
 			MenuName = "build fixtures";
 			TypeName = "furnish";

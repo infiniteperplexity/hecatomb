@@ -26,6 +26,7 @@ namespace Hecatomb
 	{
 		string MenuHeader {get; set;}
 		List<IMenuListable> MenuChoices {get; set;}
+        List<bool> ValidChoices { get; set; }
 	}
 		
 	public class MenuChoiceControls : ControlContext
@@ -88,6 +89,9 @@ namespace Hecatomb
 		    };
 			var choices = menu.MenuChoices;
 			TopColors = new TextColors(0, "orange", 1, "yellow");
+            // not the real thing to do...
+            var valid = menu.ValidChoices;
+            TopColors.Colors[Tuple.Create(2, 0)] = "white"; 
 			for (int i=0; i<choices.Count; i++)
 			{
 				KeyMap[Alphabet[i]] = choices[i].ChooseFromMenu;

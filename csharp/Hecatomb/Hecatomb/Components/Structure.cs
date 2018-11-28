@@ -6,6 +6,7 @@
  */
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -72,6 +73,16 @@ namespace Hecatomb
             get
             {
                 return new List<IMenuListable>();
+            }
+            set { }
+        }
+
+        [JsonIgnore]
+        public List<bool> ValidChoices
+        {
+            get
+            {
+                return new List<bool>();
             }
             set { }
         }

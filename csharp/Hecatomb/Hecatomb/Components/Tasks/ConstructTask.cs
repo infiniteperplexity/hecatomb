@@ -70,8 +70,22 @@ namespace Hecatomb
 			}
 			set {}
 		}
-		
-		public ConstructTask(): base()
+        [JsonIgnore]
+        public List<bool> ValidChoices
+        {
+            get
+            {
+                var list = new List<bool>();
+                foreach (string s in Structures)
+                {
+                    list.Add(true);
+                }
+                return list;
+            }
+            set { }
+        }
+
+        public ConstructTask(): base()
 		{
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","BlackMarket","Sanctum"};
 			MenuName = "construct a structure.";
