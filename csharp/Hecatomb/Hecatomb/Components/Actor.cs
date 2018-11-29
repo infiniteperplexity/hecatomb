@@ -32,7 +32,7 @@ namespace Hecatomb
 		{
 			get
 			{
-				return (TeamName==null) ? null : (Team) FlyWeight.Types[typeof(Team)][TeamName];
+				return (TeamName==null) ? null : Team.Types[TeamName];
 			}
 			set
 			{
@@ -40,15 +40,14 @@ namespace Hecatomb
 				{
 					if (TeamName!=null)
 					{
-						Team t = (Team) FlyWeight.Types[typeof(Team)][TeamName];
-						t.RemoveMember((Creature) Entity);
+                        Team.Types[TeamName].RemoveMember((Creature) Entity);
 					}
 					TeamName = null;
 				}
 				else
 				{
 					value.AddMember((Creature) Entity);
-					TeamName = value.Name;
+					TeamName = value.TypeName;
 				}
 			}
 		}
@@ -341,7 +340,7 @@ namespace Hecatomb
 			JObject obj = JObject.Parse(json);
 			if (obj["TeamName"]!=null)
 			{
-				this.Team = (Team) FlyWeight.Types[typeof(Team)][(string) obj["TeamName"]];
+                this.Team = Team.Types[(string)obj["TeamName"]];
 			}
 		}
 		

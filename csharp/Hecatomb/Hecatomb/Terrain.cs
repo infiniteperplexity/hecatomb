@@ -13,8 +13,9 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Terrain.
 	/// </summary>
-	public class Terrain : FlyWeight
+	public class Terrain : FlyWeight<Terrain>
 	{
+        public readonly string Name;
 		public readonly char Symbol;
 		public readonly string FG;
 		public readonly	string BG;
@@ -38,8 +39,9 @@ namespace Hecatomb
 			bool mutable = true,
 			int zview = 0,
 			int zwalk = 0
-		) : base(type, name)
+		) : base(type)
 		{
+            Name = name;
 			FG = fg;
 			BG = bg;
 			Symbol = symbol;

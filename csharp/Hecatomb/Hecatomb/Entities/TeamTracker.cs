@@ -15,7 +15,7 @@ namespace Hecatomb
 	/// Description of TeamTracker.
 	/// </summary>
 	/// 
-	public class Team : FlyWeight
+	public class Team : FlyWeight<Team>
 	{
 		// enemies of all other teams
 		public bool Xenophobic;
@@ -24,13 +24,13 @@ namespace Hecatomb
 		// list of names of enemy teams
 		List<string> Enemies;
 		public Team(
-			string name,
+			string type,
 			string[] enemies=null,
 			bool xenophobic=false,
 			bool berserk=false			
-		) : base(name, name)
+		) : base(type)
 		{
-			Name = name;
+			TypeName = type;
 			Enemies = (enemies==null) ? new List<string>() : enemies.ToList();
 			Xenophobic = xenophobic;
 			Berserk = berserk;
@@ -81,7 +81,7 @@ namespace Hecatomb
 			{
 				return true;
 			}
-			if (Enemies.Contains(t.Name) || t.Enemies.Contains(Name))
+			if (Enemies.Contains(t.TypeName) || t.Enemies.Contains(TypeName))
 			{
 				return true;
 			}
@@ -108,18 +108,18 @@ namespace Hecatomb
 		public void AddMember(Creature c)
 		{
 			TeamTracker tt = Game.World.GetTracker<TeamTracker>();
-			tt.Membership[Name].Add(c.EID);
+			tt.Membership[TypeName].Add(c.EID);
 		}
 		
 		public void RemoveMember(Creature c)
 		{
 			TeamTracker tt = Game.World.GetTracker<TeamTracker>();
-			tt.Membership[Name].Remove(c.EID);
+			tt.Membership[TypeName].Remove(c.EID);
 		}
 		
-		public static Team PlayerTeam = new Team(name: "PlayerTeam");
-		public static Team NeutralAnimals = new Team(name: "NeutralAnimals");
-		public static Team Berserkers = new Team(name: "Berserkers", enemies: new[] { "PlayerTeam" });
+		public static Team PlayerTeam = new Team(type: "PlayerTeam");
+		public static Team NeutralAnimals = new Team(type: "NeutralAnimals");
+		public static Team Berserkers = new Team(type: "Berserkers", enemies: new[] { "PlayerTeam" });
 //		
 		
 		
@@ -141,11 +141,10 @@ namespace Hecatomb
 		public TeamTracker() : base()
 		{
 			Membership = new Dictionary<string, List<int>>();
-			foreach(FlyWeight fl in FlyWeight.Enumerated[typeof(Team)])
-			{
-				Membership[fl.Name] = new List<int>();
-			}
-			
+            foreach (Team t in Team.Enumerated)
+            {
+                Membership[t.TypeName] = new List<int>();
+            }
 		}
 		
 		public override void Activate()

@@ -112,12 +112,7 @@ namespace Hecatomb
         }
         protected  void StartGame()
         {
-            var init = Resource.Rock;
-            init = Resource.Wood;
-            init = Resource.Coal;
-            init = Resource.Flint;
-
-            Debug.WriteLine(FlyWeight.Types[typeof(Resource)]["Coal"].ToString());
+            //Debug.WriteLine(FlyWeight.Types[typeof(Resource)]["Coal"].ToString());
 			World = new GameWorld(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);

@@ -11,9 +11,9 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Behavior.
 	/// </summary>
-	public class Behavior : FlyWeight
+	public class Behavior : FlyWeight<Behavior>
 	{
-		public Behavior(string type, string name) : base(type, name)
+		public Behavior(string type, string name) : base(type)
 		{
 		}
 		

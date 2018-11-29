@@ -25,7 +25,7 @@ namespace Hecatomb
         {
             List<string> ordered = Resources.Keys.OrderByDescending(k => Resources[k]).ThenBy(k => k).ToList();
             // this is done by small letter...urgh...
-            Resource resource = (Resource)FlyWeight.Types[typeof(Resource)][ordered[0]];
+            Resource resource = Resource.Types[ordered[0]];
             return (resource.Symbol, resource.FG, resource.BG);
         }
 

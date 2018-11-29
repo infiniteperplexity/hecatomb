@@ -7,37 +7,42 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of FlyWeight.
-	/// </summary>
-	public class FlyWeight
+    // FlyWeights represent game entities for which every "instance" has exactly the same properties
+	// A self-referencing generic class allows something resembling static inheritance
+	public class FlyWeight<T> where T : FlyWeight<T>
 	{
-		public static Dictionary<Type, List<FlyWeight>> Enumerated = new Dictionary<Type, List<FlyWeight>>();
-		public static Dictionary<Type, Dictionary<string, FlyWeight>> Types = new Dictionary<Type, Dictionary<string, FlyWeight>>();
-		// should we also index them by name?
+        // FlyWeights are numbered for efficient serialization
 		public int FID;
+        public static List<T> Enumerated = new List<T>();
+        // FlyWeights are indexed by string for convenient access
         public string TypeName;
-		public string Name;
+        public static Dictionary<string, T> Types = new Dictionary<string, T>();
 
-        public FlyWeight(string type, string name)
+        public FlyWeight(string s)
         {
-            TypeName = type;
-            Name = name;
-            Type t = this.GetType();
-            if (!Enumerated.ContainsKey(t))
+            // newly-initialized FlyWeights automatically index themselves
+            FID = Enumerated.Count;
+            Enumerated.Add((T) this);
+            TypeName = s;
+            Types[s] = (T)this;
+        }
+
+        static FlyWeight()
+        {
+            // FlyWeight instances are stored as static members of the derived FlyWeight class
+            // the static constructor uses reflection to make sure they are initialized before the indexers are accessed
+            // this may or may not be the best way of doing things
+            foreach (FieldInfo f in typeof(T).GetFields())
             {
-                Enumerated[t] = new List<FlyWeight>();
+                if (f.IsStatic)
+                {
+                    f.GetValue(null);
+                }
             }
-            FID = Enumerated[t].Count;
-            Enumerated[t].Add(this);
-            if (!Types.ContainsKey(t))
-            {
-                Types[t] = new Dictionary<string, FlyWeight>();
-            }
-			Types[t][TypeName] = this;
-		}
-	}
+        }
+    }
 }

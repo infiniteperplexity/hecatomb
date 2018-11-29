@@ -7,8 +7,9 @@ using System.Diagnostics;
 
 namespace Hecatomb
 {
-    public class Resource : FlyWeight
+    public class Resource : FlyWeight<Resource>
     {
+        public string Name;
         public char Symbol;
         public string FG;
         public string BG;
@@ -19,8 +20,9 @@ namespace Hecatomb
             char symbol = ' ',
             string fg = "white",
             string bg = null
-        ) : base(type, name)
+        ) : base(type)
         {
+            Name = name;
             Symbol = symbol;
             FG = fg;
             BG = bg;

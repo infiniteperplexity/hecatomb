@@ -13,8 +13,9 @@ namespace Hecatomb
     /// <summary>
     /// Description of Terrain.
     /// </summary>
-    public class Cover : FlyWeight
+    public class Cover : FlyWeight<Cover>
     {
+        public readonly string Name;
         public readonly char Symbol;
         public readonly string FG;
         public readonly string BG;
@@ -27,7 +28,7 @@ namespace Hecatomb
 
         public Cover(
             string type,
-            string name,
+            string name = "",
             string fg = "white",
             string bg = "black",
             string darkbg = null,
@@ -36,8 +37,9 @@ namespace Hecatomb
             bool solid = false,
             int hardness = 0,
             string mineral = null
-        ) : base(type, name)
+        ) : base(type)
         {
+            Name = name;
             FG = fg;
             BG = bg;
             DarkBG = darkbg ?? "purple";
