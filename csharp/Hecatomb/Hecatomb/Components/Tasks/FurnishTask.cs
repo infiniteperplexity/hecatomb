@@ -99,8 +99,7 @@ namespace Hecatomb
 		{
 			var co = Game.Controls;
 			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<string>() {String.Format("Build {3} at {0} {1} {2}", c.X, c.Y, c.Z, Makes)};
-			co.MiddleColors[0,0] = "green";
+			co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {3} at {0} {1} {2}", c.X, c.Y, c.Z, Makes)};
 		}
 
         public override void SelectTile(Coord c)

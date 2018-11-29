@@ -19,9 +19,7 @@ namespace Hecatomb
     /// </summary>
     public class StatusGamePanel : TextPanel
     {
-        TextColors statusColors;
-        public List<string> MessageHistory;
-        public List<string> ColorHistory;
+        public List<ColoredText> MessageHistory;
 
         public StatusGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
         {
@@ -33,9 +31,7 @@ namespace Hecatomb
             int padding = Game.MainPanel.Padding;
             X0 = padding + (size + padding);
             Y0 = padding + (2 + Game.Camera.Width) * (size + padding);
-            statusColors = new TextColors(0, 6, "yellow", 1, "cyan");
-            MessageHistory = new List<string>();
-            ColorHistory = new List<string>();
+            MessageHistory = new List<ColoredText>();
         }
 
         public void Initialize()
@@ -58,24 +54,26 @@ namespace Hecatomb
             string x = p.X.ToString().PadLeft(3, '0');
             string y = p.Y.ToString().PadLeft(3, '0');
             string z = p.Z.ToString().PadLeft(3, '0');
-            string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "Paused" : "      ";
+            string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "{yellow}Paused" : "      ";
             string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
             string txt = $"Sanity:{sanity} X:{x} Y:{y} Z:{z} {time}         {paused}";
             int MaxVisible = 4;
-            List<string> list = new List<string> { txt };
+            List<ColoredText> list = new List<ColoredText> { txt };
             list = list.Concat(MessageHistory.Take(MaxVisible)).ToList();
-            DrawLines(list, statusColors);
+            if (list.Count>1 && list[1].Colors.Count==0)
+            {
+                list[1] = new ColoredText(list[1].Text, "cyan");
+            }
+            DrawLines(list);
         }
 
-        public void PushMessage(string s, string color = null)
+        public void PushMessage(ColoredText ct)
         {
             int MaxArchive = 100;
-            MessageHistory.Insert(0, s);
-            ColorHistory.Insert(0, color ?? "white");
+            MessageHistory.Insert(0, ct);
             while (MessageHistory.Count > MaxArchive)
             {
                 MessageHistory.RemoveAt(MaxArchive);
-                ColorHistory.RemoveAt(MaxArchive);
             }
         }
     }

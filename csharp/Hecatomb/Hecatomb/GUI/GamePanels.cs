@@ -43,44 +43,77 @@ namespace Hecatomb
 		public int Height;
 		public int Size;
 		public int Spacing;
-		public TextColors nocolors;
+        private List<(string, string, int)> buffer;
 		public TextPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
+            buffer = new List<(string, string, int)>();
 			Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
-			nocolors = new TextColors();
 		}
-		public void DrawLines(List<string> lines)
-		{
-			DrawLines(lines, nocolors);
-		}
-		public void DrawLines(List<string> lines, TextColors fgs)
-		{
-			Vector2 v;
-			string[] tokens;
-			int p = 0;
-			int m;
-			for (int i=0; i<lines.Count; i++)
-			{
-				int totalWidth = 0;
-				string fg = "white";
-//				string bg = "white";
-				v = new Vector2(X0, Y0 + p*Size);
-				tokens = lines[i].Split();
-				for (int j=0; j<tokens.Length; j++)
-				{
-					fg = fgs[i, j] ?? fg;
-					m = Spacing + (int) Font.MeasureString(tokens[j]).X;
-					if (j>0 && totalWidth+m >= Width-Size)
-					{
-						p+=1;
-						totalWidth = 0;
-					}
-					v = new Vector2(X0 + totalWidth, Y0 + p*Size);
-					Sprites.DrawString(Font, tokens[j], v, Game.Colors[fg]);
-					totalWidth = totalWidth + m;
-				}
-				p+=1;
+        public void DrawLines(List<ColoredText> lines)
+        {
+            Vector2 v;
+            int displayRow = 0;
+            int displayColumn = 0;
+            int idx = 0;
+            string text = "";
+            string fg = "white";
+            SortedList<int, string> colors;
+            buffer.Clear();
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // advance by one line for every line of input
+                displayRow++;
+                text = lines[i].Text;
+                colors = lines[i].Colors;
+                // return to left margin
+                displayColumn = 0;
+                // where the last token on this line ended
+                idx = 0;
+                // set color to the first color or white
+                fg = (colors.ContainsKey(0)) ? colors[0] : "white";
+                // step through each character
+   //             for (int j = 0; j < lines[i].Text.Length; j++)
+   //             {
+   //                 if (colors.ContainsKey(j))
+   //                 {
+   //                     buffer.Add((text.Substring(idx, j), fg, displayColumn));
+   //                     idx = j;
+   //                     fg = lines[i].Colors[j];
+   //                 }
+   //                 else if (j > Width - Size)
+   //                 {
+   //                     displayRow++;
+   //                     buffer.Add((text.Substring(k, j), fg, k));
+   //                     k = j;
+   //                     p++;
+   //                 }
+   //             }
+
+   //                 do
+   //                 {
+
+   //                 } while ()
+   //             }
+   //             else
+   //             {
+   //                 foreach (int idx in lines[i].Colors.Keys)
+   //                 {
+
+   //                 }
+   //             }
+			//	int totalWidth = 0;
+			//	string fg = "white";
+			//	v = new Vector2(X0, Y0 + p*Size);
+   //             List<>
+   //             string text = lines[i].Text;
+   //             while (text.Length>= Width - Size)
+   //             {
+
+   //             }
 			}
 		}
 	}
 }
+
+//v = new Vector2(X0 + totalWidth, Y0 + p* Size);
+//Sprites.DrawString(Font, tokens[j], v, Game.Colors[fg]);

@@ -133,18 +133,15 @@ namespace Hecatomb
 			Feature f = Game.World.Features[x, y, z];
 			if (!Game.World.Explored.Contains(c))
 			{
-				Game.Controls.MenuMiddle = new List<string>() {"Unexplored tile."};
-				Game.Controls.MiddleColors = ControlContext.InvalidColor;
+				Game.Controls.MenuMiddle = new List<ColoredText>() {"{orange}Unexplored tile."};
 			}
 			else if (f!=null && f.TypeName=="Grave")
 			{
-				Game.Controls.MenuMiddle = new List<string>() {String.Format("Raise a zombie at {0} {1} {2}", x, y, z)};
-				Game.Controls.MiddleColors = ControlContext.ValidColor;
+				Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z)};
 			}
 			else
 			{
-				Game.Controls.MenuMiddle = new List<string>() {"Select a tile with a tombstone or corpse."};
-				Game.Controls.MiddleColors = ControlContext.InvalidColor;;
+				Game.Controls.MenuMiddle = new List<ColoredText>() {"{orange}Select a tile with a tombstone or corpse."};
 			}
 		}
 	}
@@ -223,8 +220,7 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Game.Controls.MenuMiddle = new List<string>() { "Spawn a test ghoul here." };
-            Game.Controls.MiddleColors = ControlContext.ValidColor;
+            Game.Controls.MenuMiddle = new List<ColoredText>() { "Spawn a test ghoul here." };
         }
     }
 }

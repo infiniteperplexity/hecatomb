@@ -18,7 +18,7 @@ namespace Hecatomb
 	/// </summary>
 	public class MenuGamePanel : TextPanel
 	{
-		public List<string> middleLines;
+		public List<ColoredText> middleLines;
 		
 		public MenuGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
@@ -29,7 +29,7 @@ namespace Hecatomb
 			int padding = Game.MainPanel.Padding;
 			X0 = padding+(2+Game.Camera.Width)*(size+padding);
 			Y0 = padding+(size+padding);
-			middleLines = new List<string>() {
+			middleLines = new List<ColoredText>() {
 				" ",
 				"--------------------------------------"
 			};
@@ -52,29 +52,23 @@ namespace Hecatomb
 			Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
 			var c = Game.Controls;
             var tutorial = Game.World.GetTracker<TutorialTracker>();
-       
-            List<string> MenuTop = c.MenuTop;
-            TextColors TopColors = c.TopColors;
-            List<string> MenuMiddle = c.MenuMiddle;
-            TextColors MiddleColors = c.MiddleColors;
+
+            List<ColoredText> MenuTop = c.MenuTop;
+            List<ColoredText> MenuMiddle = c.MenuMiddle;
             if (tutorial.Visible)
             {
                 if (!tutorial.Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
                 {
                     MenuTop = tutorial.Current.ControlText;
-                    TopColors = tutorial.Current.ControlColors;
                     MenuMiddle = tutorial.Current.InstructionsText;
-                    MiddleColors = tutorial.Current.InstructionsColors;
                 }
                 else if (Game.Controls == Game.CameraControls)
                 {
                     MenuMiddle = tutorial.OffTutorialCamera;
-                    MiddleColors = tutorial.OffTutorialColor;
                 }
                 else
                 {
                     MenuMiddle = tutorial.OffTutorialText;
-                    MiddleColors = tutorial.OffTutorialColor;
                 }
             }
             var text = MenuTop.Concat(middleLines).ToList();
@@ -91,19 +85,7 @@ namespace Hecatomb
 			int i1 = text.Count;
 			text = text.Concat(c.MenuBottom).ToList();
 			var colors = new TextColors();
-			foreach (var key in TopColors.Keys)
-			{
-				colors[key.Item1, key.Item2] = TopColors[key.Item1, key.Item2];
-			}
-			foreach (var key in MiddleColors.Keys)
-			{
-				colors[key.Item1+i0, key.Item2] = MiddleColors[key.Item1, key.Item2];
-			}
-			foreach (var key in c.BottomColors.Keys)
-			{
-				colors[key.Item1+i1, key.Item2] = c.BottomColors[key.Item1, key.Item2];
-			}
-			DrawLines(text, colors);
+			DrawLines(text);
 		}
 	}
 }

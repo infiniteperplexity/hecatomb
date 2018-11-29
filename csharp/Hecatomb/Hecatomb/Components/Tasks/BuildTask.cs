@@ -68,13 +68,11 @@ namespace Hecatomb
             co.MenuMiddle.Clear();
             if (ValidTile(c))
             {
-                co.MenuMiddle = new List<string>() { String.Format("Build walls or floors from {0} {1} {2}.", c.X, c.Y, c.Z) };
-                co.MiddleColors[0, 0] = "green";
+                co.MenuMiddle = new List<ColoredText>() { "{green}"+String.Format("Build walls or floors from {0} {1} {2}.", c.X, c.Y, c.Z) };
             }
             else
             {
-                co.MenuMiddle = new List<string>() { "Can't build here." };
-                co.MiddleColors[0, 0] = "orange";
+                co.MenuMiddle = new List<ColoredText>() { "{orange}Can't build here." };
             }
         }
         public override void TileHover(Coord c, List<Coord> squares)
@@ -100,23 +98,20 @@ namespace Hecatomb
                     }
                 }
             }
-            string color = "green";
             string txt;
             if (priority == 2)
             {
-                txt = "Build floors in this area.";
+                txt = "{green}Build floors in this area.";
             }
             else if (priority == 1)
             {
-                txt = "Build walls in this area.";
+                txt = "{green}Build walls in this area.";
             }
             else
             {
-                txt = "Cannot build in this area.";
-                color = "orange";
+                txt = "{orange}Cannot build in this area.";
             }
-            co.MenuMiddle = new List<string>() { txt };
-            co.MiddleColors[0, 0] = color;
+            co.MenuMiddle = new List<ColoredText>() { txt };
         }
         public override void SelectZone(List<Coord> squares)
         {

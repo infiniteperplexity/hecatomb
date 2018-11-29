@@ -118,7 +118,7 @@ namespace Hecatomb
 			string main = "light cyan";
 			string other = "gainsboro";
 			int change = 0;
-			List<string> text = new List<string>() {
+			List<ColoredText> text = new List<ColoredText>() {
 				"Coord: " + x + "," + y + ", " + z
 			};
 			PositionedEntity t;
@@ -187,11 +187,9 @@ namespace Hecatomb
 				text.Add(" ");
 			}
 			Game.Controls.MenuBottom = text;
-			var colors = Game.Controls.BottomColors;
-			colors.Clear();
 			for (int i=0; i<text.Count; i++)
 			{
-				colors[i,0] = (i<change) ? main : other;
+                Game.Controls.MenuBottom[i].Colors[0] = (i<change) ? main : other;
 			}
 			Game.MenuPanel.Dirty = true;
 		}

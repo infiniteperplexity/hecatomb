@@ -101,7 +101,7 @@ namespace Hecatomb
         	Controls = DefaultControls;
 //			Controls = new StaticMenuControls(
 //				new List<Keys> {Keys.N},
-//				new List<string> {"start game"},
+//				new List<ColoredText> {"start game"},
 //				new List<Action> {StartGame}
 //			);
         	Player p = Game.World.Entities.Spawn<Player>("Necromancer");

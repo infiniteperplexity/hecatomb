@@ -37,9 +37,9 @@ namespace Hecatomb
             KeyMap[Keys.A] = Commands.ShowAchievements;
             KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
 			
-			MenuTop = new List<string>() {
+			MenuTop = new List<ColoredText>() {
 				"Esc: System view.",
-				"Avatar mode (Tab: Camera mode)",
+				"{yellow}Avatar mode (Tab: Camera mode)",
 				" ",
 			    "Move: NumPad/Arrows, ,/.: Up/Down.",
 			    "(Control+Arrows for diagonal.)",
@@ -56,7 +56,6 @@ namespace Hecatomb
 			    "PageUp/Down: Scroll messages.",
 			    "A: Achievements, /: Toggle tutorial."
 			};
-			TopColors = new TextColors(1,"yellow");
 		}
 		
 		public override void ClickTile(Coord c)

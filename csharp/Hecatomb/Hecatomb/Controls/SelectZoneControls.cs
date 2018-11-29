@@ -38,9 +38,9 @@ namespace Hecatomb
 			};
 			Squares = new List<Coord>();
 			Highlights = new List<Particle>();
-			MenuTop = new List<string>() {
-     			"**Esc: Cancel.**",
-      			"Select first corner with keys or mouse.",
+			MenuTop = new List<ColoredText>() {
+     			"{orange}**Esc: Cancel.**",
+      			"{yellow}Select first corner with keys or mouse.",
       			" ",
      			"Move: NumPad/Arrows, ,/.: Up/Down.",
       			"(Control+Arrows for diagonal.)",
@@ -49,7 +49,6 @@ namespace Hecatomb
       			"Click / Space: Select.",
       			"Enter: Toggle Pause."
 			};
-			TopColors = new TextColors(0, "orange", 1, "yellow");
 		}
 		
 		public override void HoverTile(Coord c)

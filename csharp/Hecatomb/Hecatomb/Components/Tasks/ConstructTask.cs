@@ -166,8 +166,7 @@ namespace Hecatomb
 		{
 			var co = Game.Controls;
 			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<string>() {String.Format("Build from {0} {1} {2}", c.X, c.Y, c.Z)};
-			co.MiddleColors[0,0] = "green";
+			co.MenuMiddle = new List<ColoredText>() {"{green}"+String.Format("Build from {0} {1} {2}", c.X, c.Y, c.Z)};
 		}
 		
 		public override void SelectBox(Coord c, List<Coord> squares)

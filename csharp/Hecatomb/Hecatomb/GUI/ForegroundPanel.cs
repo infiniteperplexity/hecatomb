@@ -23,16 +23,13 @@ namespace Hecatomb
 	public class ForegroundPanel : TextPanel
 	{
 		bool Active;
-		List<string> notext;
-		List<string> CurrentText;
-		TextColors CurrentColors;
+		List<ColoredText> CurrentText;
 		
 		public ForegroundPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
 			X0 = 0;
 			Y0 = 0;
 			Active = false;
-			notext = new List<String>();
 		}
 		
 		public void Initialize()
@@ -54,27 +51,19 @@ namespace Hecatomb
 			if (Active)
 			{
 				// there isn't any...?
-				base.DrawLines(CurrentText, CurrentColors);
+				base.DrawLines(CurrentText);
 			}
 		}
 		
-		public void Splash(List<string> lines)
+		public void Splash(List<ColoredText> lines)
 		{
-			Splash(lines, nocolors);
-		}
-		
-		public void Splash(List<string> lines, TextColors colors)
-		{
-			Active = true;
-			Dirty = true;
-			CurrentText = lines;
-			CurrentColors = colors;
-		}
+            Active = true;
+            Dirty = true;
+            CurrentText = lines;
+        }
 		
 		public void Reset()
 		{
-			CurrentText = notext;
-			CurrentColors = nocolors;
 			Active = false;
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;

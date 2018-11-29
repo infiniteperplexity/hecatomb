@@ -14,13 +14,13 @@ namespace Hecatomb
 {
 	public class StaticMenuControls : ControlContext
 	{
-		public StaticMenuControls(List<Keys> keys, List<string> names, List<Action> actions, TextColors colors=null): base()
+		public StaticMenuControls(List<Keys> keys, List<ColoredText> names, List<Action> actions): base()
 		{
-			TopColors = colors ?? TextColors.NoColors;
-			MenuTop = new List<string>();
+			MenuTop = new List<ColoredText>();
 			for (int i=0; i<keys.Count; i++)
 			{
 				KeyMap[keys[i]] = actions[i];
+                // concatenation gets weird here...
 				MenuTop.Add(keys[i].ToString()+ ") "+names[i]);
 			}
 		}

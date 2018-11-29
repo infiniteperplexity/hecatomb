@@ -47,9 +47,9 @@ namespace Hecatomb
 				KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
 			}
 			
-			MenuTop = new List<string>() {
+			MenuTop = new List<ColoredText>() {
 				"Esc: System view.",
-				"Camera mode (Tab: Avatar mode)",
+				"{yellow}Camera mode (Tab: Avatar mode)",
 				" ",
 			    "Move: NumPad/Arrows, ,/.: Up/Down.",
 			    "(Control+Arrows for diagonal.)",
@@ -66,7 +66,6 @@ namespace Hecatomb
 			    "PageUp/Down: Scroll messages.",
 			    "A: Achievements, /: Toggle tutorial."
 			};
-			TopColors = new TextColors(1, "yellow");
 		}
 	}
 }

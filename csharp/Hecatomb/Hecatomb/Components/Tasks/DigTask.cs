@@ -98,18 +98,15 @@ namespace Hecatomb
             co.MenuMiddle.Clear();
             if (!Game.World.Explored.Contains(c))
             {
-                co.MenuMiddle = new List<string>() {"Unexplored tile."};
-                co.MiddleColors[0, 0] = "orange";
+                co.MenuMiddle = new List<ColoredText>() {"{yellow}Unexplored tile."};
             }
             else if (ValidTile(c))
             {
-                co.MenuMiddle = new List<string>() { String.Format("Dig or harvest from {0} {1} {2}.", c.X, c.Y, c.Z) };
-                co.MiddleColors[0, 0] = "green";
+                co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Dig or harvest from {0} {1} {2}.", c.X, c.Y, c.Z) };
             }
             else
             {
-                co.MenuMiddle = new List<string>() {"Can't dig or harvest here."};
-                co.MiddleColors[0, 0] = "orange";
+                co.MenuMiddle = new List<ColoredText>() {"{orange}Can't dig or harvest here."};
             }
 		}
 		public override void TileHover(Coord c, List<Coord> squares)
@@ -147,36 +144,32 @@ namespace Hecatomb
                     priority = Math.Max(priority, 1);
                 }
             }
-            string color = "green";
             string txt;
             if (priority==5)
             {
-                txt = "Harvest area.";
+                txt = "{green}Harvest area.";
             }
             else if (priority==4)
             {
-                txt = "Dig corridors and remove slopes in this area.";
+                txt = "{green}Dig corridors and remove slopes in this area.";
             }
             else if (priority==3)
             {
-                txt = "Dig through floors in this area.";
+                txt = "{green}Dig through floors in this area.";
             }
             else if (priority==2)
             {
-                txt = "Remove slopes below this area.";
+                txt = "{green}Remove slopes below this area.";
             }
             else if (priority==1)
             {
-                txt = "Dig or harvest unexplored area.";
-                color = "orange";
+                txt = "{orange}Dig or harvest unexplored area.";
             }
             else
             {
-                txt = "Cannot dig or harvest area.";
-                color = "orange";
+                txt = "{orange}Cannot dig or harvest area.";
             } 
-			co.MenuMiddle = new List<string>() {txt};
-            co.MiddleColors[0, 0] = color;
+			co.MenuMiddle = new List<ColoredText>() {txt};
         }
         public override void SelectZone(List<Coord> squares)
         {

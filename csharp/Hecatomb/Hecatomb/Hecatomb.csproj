@@ -86,6 +86,7 @@
     <Compile Include="Components\Player\Player.cs" />
     <Compile Include="Components\Harvestable.cs" />
     <Compile Include="Components\Tasks\HarvestTask.cs" />
+    <Compile Include="ColoredText.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Components\Structural.cs" />
     <Compile Include="RecursiveBacktracker.cs" />

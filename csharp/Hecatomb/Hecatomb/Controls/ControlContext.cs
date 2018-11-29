@@ -26,20 +26,15 @@ namespace Hecatomb
         public const int Throttle = 200;
         public static bool Redrawn = false;
         public Dictionary <Keys, Action> KeyMap;
-        public List<string> MenuTop;
-        public TextColors TopColors;
-        public List<string> MenuMiddle;
-        public TextColors MiddleColors;
-        public List<string> MenuBottom;
-        public TextColors BottomColors;
+        public List<ColoredText> MenuTop;
+        public List<ColoredText> MenuMiddle;
+        public List<ColoredText> MenuBottom;
         public Action<Coord> OnTileClick;
         public Action<Coord> OnTileHover;
         public Action<int, int> OnMenuHover;
         public Action<int, int> OnMenuClick;
         public Action<int, int> OnStatusClick;
         public Action<int, int> OnStatusHover;
-        public static TextColors ValidColor = new TextColors(0,"lime green");
-        public static TextColors InvalidColor = new TextColors(0,"orange");
            
         
         public void Set(ControlContext c)
@@ -175,12 +170,9 @@ namespace Hecatomb
 		public ControlContext()
 		{
 			KeyMap = new Dictionary<Keys, Action>();
-			MenuTop = new List<string>();
-			TopColors = new TextColors();
-			MenuMiddle = new List<string>();
-			MiddleColors = new TextColors();
-			MenuBottom = new List<string>();
-			BottomColors = new TextColors();
+			MenuTop = new List<ColoredText>();
+			MenuMiddle = new List<ColoredText>();
+			MenuBottom = new List<ColoredText>();
 			OnTileClick = ClickTile;
 			OnTileHover = HoverTile;
 			OnMenuClick = MenuClick;
