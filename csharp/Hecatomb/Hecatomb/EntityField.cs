@@ -9,7 +9,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    [JsonConverter(EntityFieldConverter<T>)]
     class EntityField<T> where T : GameEntity
     {
         public int EID;
