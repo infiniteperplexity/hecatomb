@@ -56,8 +56,10 @@ namespace Hecatomb
             string fg = "white";
             string text = "";
             SortedList<int, string> colors;
+            int spaces = 0;
             for (int i = 0; i < lines.Count; i++)
             {
+                spaces = 0;
                 text = lines[i].Text;
                 colors = lines[i].Colors;
                 // advance by one line for every line of input
@@ -73,17 +75,25 @@ namespace Hecatomb
                     {
                         fg = colors[j];
                     }
-                    x++;
-                    if (x >= Width - Size)
+                    //x++;
+                    if (x+j-p+1 >= (Width/Spacing)-2)
                     {
-                        x = 0;
+                        spaces = 0;
+                        x = -1;
                         y++;
                     }
                     if (text[j]==' ')
                     {
-                        v = new Vector2(X0 + x * Spacing, Y0 + y * Size);
+                        spaces += 1;
+                        v = new Vector2(X0 + x * Spacing - spaces, Y0 + y * Size);
                         Sprites.DrawString(Font, text.Substring(p, j-p), v, Game.Colors[fg]);
+                        x += (j - p) + 1;
                         p = j;
+                    }
+                    else if (j==text.Length-1)
+                    {
+                        v = new Vector2(X0 + x * Spacing, Y0 + y * Size);
+                        Sprites.DrawString(Font, text.Substring(p), v, Game.Colors[fg]);
                     }
                 }
 			}
