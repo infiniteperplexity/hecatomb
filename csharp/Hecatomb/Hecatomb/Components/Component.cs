@@ -96,7 +96,10 @@ namespace Hecatomb
 		public virtual void InterpretJSON(string json)
 		{
 		}
+
+        public virtual void AfterSelfPlace(int x, int y, int z)
+        {
+
+        }
 	}
-
-
 }

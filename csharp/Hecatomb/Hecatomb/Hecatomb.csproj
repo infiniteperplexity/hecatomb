@@ -57,6 +57,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\RampFeatureComponent.cs" />
     <Compile Include="Components\Structures\BlackMarket.cs" />
     <Compile Include="Entities\AchievementTracker.cs" />
     <Compile Include="Behavior.cs" />
@@ -79,7 +80,6 @@
     <Compile Include="Entities\TutorialTracker.cs" />
     <Compile Include="Entities\TypedEntityEvents.cs" />
     <Compile Include="EntityField.cs" />
-    <Compile Include="FancyString.cs" />
     <Compile Include="GameOptions.cs" />
     <Compile Include="GUI\ForegroundPanel.cs" />
     <Compile Include="GUI\StatusPanel.cs" />

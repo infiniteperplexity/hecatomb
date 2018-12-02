@@ -48,11 +48,11 @@
 				"Name": "ramp",
 				"FG" : "WALLFG",
 				"Symbol" : "^",
-				"AfterSelfPlace" : "AfterRampPlace",
 				"Components" : {
 					"Fixture":	{
 						"Ingredients": {"Rock": 1}
-					}
+					},
+					"RampFeatureComponent": {}
 				}
 			},
 			{

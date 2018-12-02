@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Hecatomb
 {
@@ -36,6 +37,7 @@ namespace Hecatomb
 		
 		public PositionedEntity() : base()
 		{
+            Components = new Dictionary<string, int>();
 			X = -1;
 			Y = -1;
 			Z = -1;
@@ -82,7 +84,13 @@ namespace Hecatomb
 			{
 				Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
 			}
-		}
+            // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about
+            foreach (int eid in Components.Values)
+            {
+                Component c = (Component)Game.World.Entities.Spawned[eid];
+                c.AfterSelfPlace(x1, y1, z1);
+            }
+        }
 		
 		public virtual void Remove()
 		{
@@ -171,6 +179,7 @@ namespace Hecatomb
 				}
 				Game.World.Creatures[x1,y1,z1] = this;
 				base.Place(x1, y1, z1, fireEvent);
+                
 			}
 			else 
 			{

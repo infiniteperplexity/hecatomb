@@ -155,7 +155,9 @@ namespace Hecatomb
             int Padding = MainPanel.Padding;
             graphics.PreferredBackBufferWidth = Padding+(2+Camera.Width)*(Size+Padding)+MenuPanel.Width;  // set this value to the desired width of your window
 			graphics.PreferredBackBufferHeight = Padding+(2+Camera.Height)*(Size+Padding)+StatusPanel.Height;   // set this value to the desired height of your window
-			graphics.ApplyChanges();
+            //graphics.ToggleFullScreen();
+            graphics.ApplyChanges();
+
     
 
             // TODO: use this.Content to load your game content here
