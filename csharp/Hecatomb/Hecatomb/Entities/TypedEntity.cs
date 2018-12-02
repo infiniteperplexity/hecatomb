@@ -19,7 +19,7 @@ namespace Hecatomb
 	/// Description of Entity.
 	/// </summary>
 	///
-	public abstract partial class PositionedEntity : GameEntity
+	public abstract class PositionedEntity : GameEntity
 	{
 		public string TypeName;
 		[JsonIgnore] public string Name;
@@ -33,11 +33,13 @@ namespace Hecatomb
         public string Highlight;
 		[JsonIgnore] public bool Placed {get; private set;}
 
-		public Dictionary<string, int> Components;
+        public Dictionary<string, EntityField<Component>> Components;
+        //public Dictionary<string, int> Components;
 		
 		public PositionedEntity() : base()
 		{
-            Components = new Dictionary<string, int>();
+            //Components = new Dictionary<string, int>();
+            Components = new Dictionary<string, EntityField<Component>>();
 			X = -1;
 			Y = -1;
 			Z = -1;
@@ -85,9 +87,8 @@ namespace Hecatomb
 				Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
 			}
             // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about
-            foreach (int eid in Components.Values)
+            foreach (Component c in Components.Values)
             {
-                Component c = (Component)Game.World.Entities.Spawned[eid];
                 c.AfterSelfPlace(x1, y1, z1);
             }
         }

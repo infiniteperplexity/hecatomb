@@ -74,11 +74,9 @@
     <Compile Include="Components\Tasks\UndesignateTask.cs" />
     <Compile Include="Cover.cs" />
     <Compile Include="DebugConsole.cs" />
-    <Compile Include="Entities\DelegateStrategies.cs" />
     <Compile Include="Entities\GameEntity.cs" />
     <Compile Include="Entities\StateTrackers.cs" />
     <Compile Include="Entities\TutorialTracker.cs" />
-    <Compile Include="Entities\TypedEntityEvents.cs" />
     <Compile Include="EntityField.cs" />
     <Compile Include="GameOptions.cs" />
     <Compile Include="GUI\ForegroundPanel.cs" />

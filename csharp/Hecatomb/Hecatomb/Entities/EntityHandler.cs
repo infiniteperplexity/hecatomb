@@ -53,7 +53,7 @@ namespace Hecatomb
 			t.Symbol = default(char);
 			t.FG = "white";
 			t.TypeName = s;
-			t.Components = new Dictionary<string, int>();
+			t.Components = new Dictionary<string, EntityField<Component>>();
 			if (EntityType.Types.ContainsKey(s))
 			{
 				EntityType et = EntityType.Types[s];

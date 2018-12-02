@@ -130,11 +130,13 @@ namespace Hecatomb
 			var t = Game.World.Entities.Spawn<TutorialTracker>();
 			t.Activate();
 			p.HandleVisibility();
-			// proved it's possible to deserialize from method names
-//			Debug.WriteLine("check this out...");
-//			var f = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), World.Player, "OnPlace");
-//			f(new PlaceEvent() {Entity = World.Player, X = 6, Y = 6, Z = 6});
-            
+
+            // proved it's possible to deserialize from method names
+
+            //			Debug.WriteLine("check this out...");
+            //			var f = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), World.Player, "OnPlace");
+            //			f(new PlaceEvent() {Entity = World.Player, X = 6, Y = 6, Z = 6});
+
         }
 
 

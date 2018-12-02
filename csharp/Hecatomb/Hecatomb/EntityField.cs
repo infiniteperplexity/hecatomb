@@ -9,10 +9,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    class EntityField<T> where T : GameEntity
+    public struct EntityField<T> where T : GameEntity
     {
         public int EID;
-        private T Entity
+        [JsonIgnore] public T Entity
         {
             get
             {
@@ -37,34 +37,24 @@ namespace Hecatomb
             }
         }
 
-        public EntityField(int eid)
-        {
-            EID = eid;
-        }
-
         public static implicit operator T(EntityField<T> et)
         {
             return et.Entity;
         }
-    }
 
-    public class EntityFieldConverter<T> : JsonConverter where T: GameEntity
-    {
-        public override bool CanConvert(Type objectType)
+        public static implicit operator int(EntityField<T> et)
         {
-            return (objectType == typeof(EntityField<T>));
+            return et.EID;
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public static implicit operator EntityField<T>(T t)
         {
-            return new EntityField<T>(JToken.Load(reader).ToObject<int>());
+            return new EntityField<T>() { EID = t.EID };
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public static implicit operator EntityField<T>(int eid)
         {
-            EntityField<T> ef = (EntityField<T>)value;
-            JToken.FromObject(ef.EID).WriteTo(writer);
+            return new EntityField<T>() { EID = eid };
         }
     }
-
 }

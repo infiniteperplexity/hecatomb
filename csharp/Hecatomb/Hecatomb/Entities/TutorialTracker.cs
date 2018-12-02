@@ -103,11 +103,11 @@ namespace Hecatomb
                     {
                         "You walk amongst the tombstones of a hillside graveyard, searching for the site upon which you will build your mighty fortress.",
                         " ",
-                        @"{lime green}- Green areas with {GRASSFG}"" are grass.",
+                        @"{lime green}- Green areas with {GRASSFG}"" {lime green}are grass.",
                         " ",
                         "{lime green}- Dim green areas are also grass, one elevation level below you.",
                         " ",
-                        "{lime green}- Gray areas with {WALLFG}# are walls, but they may have walkable floors one level above you.",
+                        "{lime green}- Gray areas with {WALLFG}# {lime green}are walls, but they may have walkable floors one level above you.",
                         " ",
                         "{lime green}- Other symbols (clubs, spades, flowers) may be trees or plants.",
                         " ",
@@ -146,7 +146,7 @@ namespace Hecatomb
                     {
                         "You scramble up and down the slopes for a better view of the area.",
                         " ",
-                        "{lime green}- The {WALLFG}^ and {WALLFG}v symbols are slopes.",
+                        "{lime green}- The {WALLFG}^ {lime green}and {WALLFG}v {lime green}symbols are slopes.",
                         " ",
                         "{lime green}- The game world is a 3D grid of tiles.  Slopes provide access to different elevation levels.",
                         " ",
