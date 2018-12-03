@@ -36,20 +36,7 @@ namespace Hecatomb
 			}
 			set {}
 		}
-        [JsonIgnore]
-        public List<bool> ValidChoices
-        {
-            get
-            {
-                List<bool> tasks = new List<bool>();
-                foreach (string t in Tasks)
-                {
-                    tasks.Add(true);
-                }
-                return tasks;
-            }
-            set { }
-        }
+        
         public string[] Tasks;
 		public TaskMaster()
 		{

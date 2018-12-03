@@ -70,20 +70,6 @@ namespace Hecatomb
 			}
 			set {}
 		}
-        [JsonIgnore]
-        public List<bool> ValidChoices
-        {
-            get
-            {
-                var list = new List<bool>();
-                foreach (string s in Structures)
-                {
-                    list.Add(true);
-                }
-                return list;
-            }
-            set { }
-        }
 
         public ConstructTask(): base()
 		{

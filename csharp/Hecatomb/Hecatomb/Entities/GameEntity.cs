@@ -19,9 +19,11 @@ namespace Hecatomb
 		public int EID;
 		public string ClassName;
 		[JsonIgnore] public bool Spawned;
+        [JsonIgnore] public Dictionary<Type, Delegate> Listeners;
 	
 		public GameEntity()
 		{
+            Listeners = new Dictionary<Type, Delegate>();
 			ClassName = this.GetType().Name;
 			EID = -1;
 			Spawned = false;

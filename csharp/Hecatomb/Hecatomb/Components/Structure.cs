@@ -85,16 +85,6 @@ namespace Hecatomb
             set { }
         }
 
-        [JsonIgnore]
-        public List<bool> ValidChoices
-        {
-            get
-            {
-                return new List<bool>();
-            }
-            set { }
-        }
-
         public void Highlight(string s)
         {
             foreach (Feature fr in Features)

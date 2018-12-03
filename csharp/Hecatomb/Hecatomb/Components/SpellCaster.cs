@@ -59,21 +59,7 @@ namespace Hecatomb
 				return spells;
 			}
 			set {}
-		}
-        [JsonIgnore]
-        public List<bool> ValidChoices
-        {
-            get
-            {
-                List<bool> spells = new List<bool>();
-                foreach (string s in Spells)
-                {
-                    spells.Add(true);
-                }
-                return spells;
-            }
-            set { }
-        }
+		}  
 		
 		public SpellCaster() : base()
 		{
