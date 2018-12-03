@@ -21,11 +21,38 @@ namespace Hecatomb
         }
     }
 
-    public class Research : IMenuListable
+
+    public class ResearchMenuListing : IMenuListable
+    {
+        Research MyResearch;
+        Structure MyStructure;
+        public ResearchMenuListing(Research r, Structure s)
+        {
+            MyResearch = r;
+            MyStructure = s;
+        }
+
+        public ColoredText ListOnMenu()
+        {
+            return MyResearch.Name;
+        }
+
+        public void ChooseFromMenu()
+        {
+            MyStructure.Researching = MyResearch.Name;
+            MyStructure.ResearchTurns = MyResearch.Turns;
+        }
+    }
+    public class Research : FlyWeight<Research>
     {
         public string Name;
         public Dictionary<string, int> Ingredients;
         public int Turns;
+
+        public Research(string s) : base(s)
+        {
+       
+        }
 
         public bool Researched
         {
@@ -46,21 +73,19 @@ namespace Hecatomb
             }
         }
 
-        public string ListOnMenu()
-        {
-            return Name;
-        }
+       
 
-        public void ChooseFromMenu()
+        public static Research FlintTools = new Research("FlintTools")
         {
-
-        }
-
-        public static Research FlintTools = new Research()
-        {
-            Name = "FlintTools", Turns = 25, Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, {"Wood", 2 } }
+            Name = "flint tools", Turns = 25, Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, {"Wood", 2 } }
         };
 
+        public static Research SpearTrap = new Research("SpearTrap")
+        {
+            Name = "spear trap",
+            Turns = 25,
+            Ingredients = new Dictionary<string, int>() { { "Flint", 1 }, { "Wood", 1 } }
+        };
 
 
     }

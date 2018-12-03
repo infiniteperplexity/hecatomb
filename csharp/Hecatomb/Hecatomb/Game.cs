@@ -88,7 +88,7 @@ namespace Hecatomb
 			CameraControls = new CameraControls();
 			Camera = new GameCamera();
             
-			ShowIntro();
+			//ShowIntro();
 			base.Initialize();
             StartGame();
         }

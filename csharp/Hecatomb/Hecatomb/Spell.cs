@@ -46,7 +46,7 @@ namespace Hecatomb
 		}
 		
 		
-		public virtual string ListOnMenu()
+		public virtual ColoredText ListOnMenu()
 		{
 			return MenuName;
 		}

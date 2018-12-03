@@ -26,6 +26,8 @@ namespace Hecatomb
 		public Feature[] Features;
         public Dictionary<string, int>[] Ingredients;
         public string[] Researches;
+        public string Researching;
+        public int ResearchTurns;
 		
 		public Structure()
 		{
@@ -74,7 +76,10 @@ namespace Hecatomb
             get
             {
                 var list = new List<IMenuListable>();
-
+                foreach (string s in Researches)
+                {
+                    list.Add(new ResearchMenuListing(Research.Types[s], this));
+                }
                 return list;
             }
             set { }

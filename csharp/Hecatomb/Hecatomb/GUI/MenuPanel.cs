@@ -84,7 +84,6 @@ namespace Hecatomb
 			}
 			int i1 = text.Count;
 			text = text.Concat(c.MenuBottom).ToList();
-			var colors = new TextColors();
 			DrawLines(text);
 		}
 	}

@@ -83,7 +83,7 @@ namespace Hecatomb
 			}
 		}
 		
-		public override string ListOnMenu()
+		public override ColoredText ListOnMenu()
 		{
 			if (Makes!=null)
 			{

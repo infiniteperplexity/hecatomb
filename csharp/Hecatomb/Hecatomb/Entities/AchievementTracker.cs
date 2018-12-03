@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-    class AchievementTracker : StateTracker
+    public class AchievementTracker : StateTracker
     {
         public List<Achievement> Achievements;
 

@@ -19,7 +19,7 @@ namespace Hecatomb
 	public interface IMenuListable
 	{
 		void ChooseFromMenu();
-		string ListOnMenu();
+		ColoredText ListOnMenu();
 	}
 	
 	public interface IChoiceMenu

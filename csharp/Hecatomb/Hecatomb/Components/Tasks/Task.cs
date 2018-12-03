@@ -225,7 +225,7 @@ namespace Hecatomb
             base.Despawn();
         }
 
-        public virtual string ListOnMenu()
+        public virtual ColoredText ListOnMenu()
         {
             return MenuName;
         }
