@@ -43,12 +43,8 @@ namespace Hecatomb
 		public Inventory() : base()
 		{
 			ItemEID = -1;
+            AddListener<DespawnEvent>(OnItemDespawn);
 		}
-        public override GameEvent OnSelfSpawn(GameEvent ge)
-        {   
-            Game.World.Events.Subscribe<DespawnEvent>(this, OnItemDespawn);
-            return ge;
-        }
         public GameEvent OnItemDespawn(GameEvent ge)
         {
             DespawnEvent de = (DespawnEvent)ge;

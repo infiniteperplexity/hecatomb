@@ -59,7 +59,7 @@ namespace Hecatomb
 			Keys.Z
 		};
 		
-		static string alphabet = "abcdefghijklmnopqrstuvwxyz";
+		public static string alphabet = "abcdefghijklmnopqrstuvwxyz";
 		public List<string> Choices;
 		
 		public MenuChoiceControls(IChoiceMenu menu): base()

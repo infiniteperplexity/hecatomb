@@ -70,7 +70,7 @@ namespace Hecatomb
             Feature fr = Game.World.Features[x, y, z];
             if (fr?.TryComponent<Structural>()!=null)
             {
-                Game.Controls = new MenuChoiceControls(fr.GetComponent<Structural>().Structure.GetComponent<Structure>());
+                Game.Controls = new StructureControls(fr.GetComponent<Structural>().Structure.GetComponent<Structure>());
             }
 
            

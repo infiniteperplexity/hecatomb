@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -35,6 +36,7 @@ namespace Hecatomb
             Height = 3;
 			Features = new Feature[Width*Height];
             Ingredients = new Dictionary<string, int>[Width*Height];
+            AddListener<TurnBeginEvent>(OnTurnBegin);
 		}
 		public virtual void Standardize()
 		{
@@ -60,6 +62,24 @@ namespace Hecatomb
                 }
             }
             return ingredients;
+        }
+
+        public GameEvent OnTurnBegin(GameEvent ge)
+        {
+            if (Researching != null)
+            {
+                ResearchTurns -= 1;
+                if (ResearchTurns == 0)
+                {
+                    var researched = Game.World.GetTracker<ResearchTracker>().Researched;
+                    if (!researched.Contains(Researching))
+                    {
+                        researched.Add(Researching);
+                    }
+                    Researching = null;
+                }
+            }
+            return ge;
         }
 
         public virtual string MenuHeader

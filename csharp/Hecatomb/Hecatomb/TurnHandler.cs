@@ -17,8 +17,8 @@ namespace Hecatomb
 
     public class TurnHandler
     {
-        //public static int StartHour = 8;
-        public static int StartHour = 16;
+        public static int StartHour = 8;
+        //public static int StartHour = 16;
         public static int DawnHour = 6;
         public static int DuskHour = 17;
         public static int LunarDays = 12;

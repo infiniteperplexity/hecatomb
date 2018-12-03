@@ -32,12 +32,6 @@ namespace Hecatomb
 			set {}
 		}
 
-        public override GameEvent OnSelfSpawn(GameEvent ge)
-        {
-            Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);
-            return ge;
-        }
-
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             if (Game.World.Random.Next(10)==0)
@@ -69,6 +63,7 @@ namespace Hecatomb
                 "RaiseZombieSpell",
                 "TestGhoulSpell"
             };
+            AddListener<TurnBeginEvent>(OnTurnBegin);
 		}
 		
 		public Spell GetSpell(Type t)

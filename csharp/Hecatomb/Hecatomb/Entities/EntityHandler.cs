@@ -33,8 +33,11 @@ namespace Hecatomb
 			MaxEID = ge.EID;
 			Spawned[ge.EID] = ge;
 			ge.Spawned = true;
-			ge.OnSelfSpawn(new SpawnEvent() {Entity = ge});
-			return ge;
+            foreach (Type type in ge.Listeners.Keys)
+            {
+                Game.World.Events.Subscribe(type, ge, ge.Listeners[type]);
+            }
+            return ge;
 		}
 		public T Spawn<T>() where T : GameEntity, new()
 		{
@@ -43,7 +46,10 @@ namespace Hecatomb
 			MaxEID = t.EID;
 			Spawned[t.EID] = t;
 			t.Spawned = true;
-			t.OnSelfSpawn(new SpawnEvent() {Entity = t});
+            foreach (Type type in t.Listeners.Keys)
+            {
+                Game.World.Events.Subscribe(type, t, t.Listeners[type]);
+            }
 			return t;
 		}
 			

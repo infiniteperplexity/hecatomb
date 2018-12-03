@@ -32,6 +32,20 @@ namespace Hecatomb
 			}
 			
 		}
+
+        public void Subscribe(Type t, GameEntity g, Func<GameEvent, GameEvent> f, float priority = 0)
+        {
+            if (!g.Spawned)
+            {
+                throw new InvalidOperationException(String.Format("Unspawned {0} cannot listen to events", g));
+            }
+            var listeners = ListenerTypes[t.Name];
+            if (!listeners.ContainsKey(g.EID))
+            {
+                listeners[g.EID] = f;
+            }
+        }
+        
 		public void Subscribe<T>(GameEntity g, Func<GameEvent, GameEvent> f, float priority=0)
 		{
 			if (!g.Spawned)

@@ -167,6 +167,7 @@ namespace Hecatomb
         	OldCamera = new Coord(-1, -1, -1);
         	InputBegan = DateTime.Now;
         }
+
 		public ControlContext()
 		{
 			KeyMap = new Dictionary<Keys, Action>();
@@ -231,5 +232,10 @@ namespace Hecatomb
         		HandleClick(m.X, m.Y);
         	}
 		}
+
+        public virtual void RefreshContent()
+        {
+
+        }
 	}	
 }

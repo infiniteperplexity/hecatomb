@@ -19,20 +19,20 @@ namespace Hecatomb
 		public int EID;
 		public string ClassName;
 		[JsonIgnore] public bool Spawned;
-        [JsonIgnore] public Dictionary<Type, Delegate> Listeners;
+        [JsonIgnore] public Dictionary<Type, Func<GameEvent, GameEvent>> Listeners;
 	
 		public GameEntity()
 		{
-            Listeners = new Dictionary<Type, Delegate>();
+            Listeners = new Dictionary<Type, Func<GameEvent, GameEvent>>();
 			ClassName = this.GetType().Name;
 			EID = -1;
 			Spawned = false;
 		}
-			
-		public virtual GameEvent OnSelfSpawn(GameEvent g)
-		{
-			return g;
-		}
+
+        public void AddListener<T>(Func<GameEvent, GameEvent> f)
+        {
+            Listeners[typeof(T)] = f;
+        }
 			
 		public void Publish(GameEvent g)
 		{

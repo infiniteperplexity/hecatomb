@@ -34,13 +34,14 @@ namespace Hecatomb
 
         public ColoredText ListOnMenu()
         {
-            return MyResearch.Name;
+            return ("research " + MyResearch.Name + " ($: 1 thing)");
         }
 
         public void ChooseFromMenu()
         {
             MyStructure.Researching = MyResearch.Name;
             MyStructure.ResearchTurns = MyResearch.Turns;
+            Game.MenuPanel.Dirty = true;
         }
     }
     public class Research : FlyWeight<Research>
