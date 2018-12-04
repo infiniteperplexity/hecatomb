@@ -34,7 +34,14 @@ namespace Hecatomb
 
         public ColoredText ListOnMenu()
         {
-            return ("research " + MyResearch.Name + " ($: 1 thing)");
+            if (MyResearch.Ingredients.Count == 0)
+            {
+                return ("research " + MyResearch.Name);
+            }
+            else
+            {
+                return ("research " + MyResearch.Name + " ($: " +Resource.Format(MyResearch.Ingredients)+")");
+            }
         }
 
         public void ChooseFromMenu()

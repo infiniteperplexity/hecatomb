@@ -28,6 +28,52 @@ namespace Hecatomb
             BG = bg;
         }
 
+        public static string Format(ValueTuple<string, int> vt)
+        {
+            var (s, i) = vt;
+            return (i + " " + Resource.Types[s].Name);
+        }
+        public static string Format(ValueTuple<string, int>[] vts)
+        {
+            if (vts.Length==0)
+            {
+                return "";
+            }
+            string s = Format(vts[0]);
+            for(int i=1; i<vts.Length; i++)
+            {
+                s += (", " + Format(vts[i]));
+            }
+            return s;
+        }
+        public static string Format(List<ValueTuple<string, int>> vts)
+        {
+            if (vts.Count==0)
+            {
+                return "";
+            }
+            string s = Format(vts[0]);
+            for (int i = 1; i < vts.Count; i++)
+            {
+                s += (", " + Format(vts[i]));
+            }
+            return s;
+        }
+        public static string Format(Dictionary<string, int> d)
+        {
+            if (d.Count==0)
+            {
+                return "";
+            }
+            List<string> list = d.Keys.ToList();
+            string s = Format((list[0], d[list[0]]));
+            for (int i = 1; i < list.Count; i++)
+            {
+                s += (", " + Format((list[i], d[list[i]])));
+            }
+            return s;
+        }
+
         public static readonly Resource Rock = new Resource(
             type: "Rock",
             name: "rock",
