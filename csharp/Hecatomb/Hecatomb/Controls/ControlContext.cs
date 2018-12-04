@@ -203,7 +203,7 @@ namespace Hecatomb
         	}
         	OldCamera = c;
             //if (!Redrawn)
-            if (k.Equals(OldKeyboard) && m.Equals(OldMouse) && sinceInputBegan<Throttle)
+            if (k.Equals(OldKeyboard) && sinceInputBegan<Throttle && m.LeftButton==OldMouse.LeftButton && m.RightButton==OldMouse.RightButton)
             {
                 if (!m.Equals(OldMouse))
 	        	{
