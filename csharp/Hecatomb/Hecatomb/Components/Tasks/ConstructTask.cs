@@ -60,11 +60,12 @@ namespace Hecatomb
 			get
 			{
 				var list = new List<IMenuListable>();
-				foreach (string s in Structures)
+                // only if we have the prerequisite structures / technologies...
+                foreach (string s in Structures)
 				{
 					var task = Game.World.Entities.Mock<ConstructTask>();
 					task.Makes = s;
-					list.Add(task);
+                    list.Add(task);
 				}
 				return list;
 			}
@@ -138,9 +139,23 @@ namespace Hecatomb
 		
 		public override ColoredText ListOnMenu()
 		{
+
 			if (Makes!=null)
 			{
-				return Makes;
+                var structure = Mock();
+                if (structure.GetIngredients().Count==0 /*|| Game.Options.NoIngredients*/)
+                {
+                    return Makes;
+                }
+                else if (Game.World.Player.GetComponent<Movement>().CanFindResources(structure.GetIngredients()))
+                {
+                    return (Makes + " ($: " + Resource.Format(structure.GetIngredients()) + ")");
+                }
+                else
+                {
+                    return ("{gray}" + Makes + " ($: " + Resource.Format(structure.GetIngredients()) + ")");
+                }
+                
 			}
 			else
 			{

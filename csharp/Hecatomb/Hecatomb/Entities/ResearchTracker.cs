@@ -34,6 +34,7 @@ namespace Hecatomb
 
         public ColoredText ListOnMenu()
         {
+            
             //you'd want to check for a path between the structure and the ingredients
             if (MyResearch.Ingredients.Count == 0)
             {
@@ -41,14 +42,23 @@ namespace Hecatomb
             }
             else
             {
-                return (MyResearch.Name + " ($: " +Resource.Format(MyResearch.Ingredients)+")");
+                bool available = false;
+                if (Game.World.Player.GetComponent<Movement>().CanFindResources(MyResearch.Ingredients))
+                {
+                    available = true;
+                }
+                return (((available) ? "{white}" : "{gray}") + MyResearch.Name + " ($: " +Resource.Format(MyResearch.Ingredients)+")");
             }
         }
 
         public void ChooseFromMenu()
         {
-            MyStructure.Researching = MyResearch.Name;
-            MyStructure.ResearchTurns = MyResearch.Turns;
+            if (Game.World.Player.GetComponent<Movement>().CanFindResources(MyResearch.Ingredients))
+            {
+                // actually need to create a task for this...
+                MyStructure.Researching = MyResearch.Name;
+                MyStructure.ResearchTurns = MyResearch.Turns;
+            }
             Game.MenuPanel.Dirty = true;
         }
     }

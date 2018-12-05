@@ -61,9 +61,26 @@ namespace Hecatomb
 				c.InterpretJSON(Components[t]);
 			}
 		}
-		
-		
-		public static void LoadEntities()
+
+        // this doesn't work
+        public void MockTypify(PositionedEntity e)
+        {
+            e.TypeName = TypeName;
+            e.Name = Name;
+            e.FG = FG;
+            e.BG = BG;
+            e.Symbol = Symbol;
+            foreach (string t in Components.Keys)
+            {
+                Type T = Type.GetType("Hecatomb." + t);
+                Component c = (Component)Game.World.Entities.Mock(Type.GetType("Hecatomb." + t));
+                c.AddToEntity(e);
+                c.InterpretJSON(Components[t]);
+            }
+        }
+
+
+        public static void LoadEntities()
 		{
 			// dynamically load creature types from JSON
 			string f, json;

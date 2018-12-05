@@ -46,7 +46,8 @@ namespace Hecatomb
 			get
 			{
 				List<IMenuListable> spells = new List<IMenuListable>();
-				foreach (string s in Spells)
+                // only if we have the prerequisite structures / technologies...
+                foreach (string s in Spells)
 				{
 					spells.Add(GetSpell(s));
 				}

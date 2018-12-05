@@ -75,8 +75,27 @@ namespace Hecatomb
 			T t = new T();
 			return t;
 		}
-		
-		public GameEntity Mock(Type t)
+
+        public T Mock<T>(string s) where T : PositionedEntity, new()
+        {
+            T t = Mock<T>();
+            t.Symbol = default(char);
+            t.FG = "white";
+            t.TypeName = s;
+            t.Components = new Dictionary<string, EntityField<Component>>();
+            if (EntityType.Types.ContainsKey(s))
+            {
+                EntityType et = EntityType.Types[s];
+                et.MockTypify(t);
+            }
+            else
+            {
+                throw new InvalidOperationException(String.Format("EntityType {0} does not exist.", s));
+            }
+            return t;
+        }
+
+        public GameEntity Mock(Type t)
 		{
 			GameEntity ge = (GameEntity) Activator.CreateInstance(t);
 			return ge;

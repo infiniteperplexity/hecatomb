@@ -39,7 +39,7 @@ namespace Hecatomb
             {
                 new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}},
                 new Dictionary<string, int>() {{"Wood", 1}}, new Dictionary<string, int>() {{"Coal", 2}}, new Dictionary<string, int>() {{"Wood", 1}},
-                new Dictionary<string, int>() {{"Rocm", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
+                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
             };
             MenuName = "sanctum";
             Name = "sanctum";

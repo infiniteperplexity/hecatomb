@@ -227,7 +227,19 @@ namespace Hecatomb
 
         public virtual ColoredText ListOnMenu()
         {
-            return MenuName;
+            if (Ingredients.Count==0)
+            {
+                return MenuName;
+            }
+            else if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients))
+            {
+                return ( MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+            }
+            else
+            {
+                return ("{gray}" + MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+            }
+
         }
 
         public virtual void SelectZone(List<Coord> squares)

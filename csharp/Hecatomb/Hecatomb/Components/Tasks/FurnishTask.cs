@@ -29,6 +29,7 @@ namespace Hecatomb
 			get
 			{
 				var list = new List<IMenuListable>();
+                // only if we have the prerequisite structures / technologies...
 				foreach (string s in Fixtures)
 				{
 					var task = Game.World.Entities.Mock<FurnishTask>();
@@ -68,12 +69,29 @@ namespace Hecatomb
 				Game.Controls.Set(new SelectTileControls(this));
 			}
 		}
-		
-		public override ColoredText ListOnMenu()
+
+
+
+        public override ColoredText ListOnMenu()
 		{
+            
 			if (Makes!=null)
 			{
-				return Makes;
+                var fixture = Game.World.Entities.Mock<Fixture>();
+                fixture.InterpretJSON(EntityType.Types[Makes].Components["Fixture"]);
+                Debug.WriteLine(fixture.Ingredients.Count);
+                if (fixture.Ingredients.Count == 0)
+                {
+                    return Makes;
+                }
+                else if (Game.World.Player.GetComponent<Movement>().CanFindResources(fixture.Ingredients))
+                {
+                    return (Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
+                }
+                else
+                {
+                    return ("{gray}" + Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
+                }
 			}
 			else
 			{
@@ -96,9 +114,7 @@ namespace Hecatomb
                 string json = EntityType.Types[Makes].Components["Fixture"];
                 JObject obj = JObject.Parse(json);
                 var ingredients = obj["Ingredients"];
-                Debug.WriteLine(ingredients);
                 task.GetComponent<Task>().Ingredients = ingredients.ToObject<Dictionary<string, int>>();
-                Debug.WriteLine(task.GetComponent<Task>().Ingredients.Count);
                 task.GetComponent<Task>().Makes = Makes;
                 task.Place(c.X, c.Y, c.Z);
                 

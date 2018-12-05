@@ -101,6 +101,12 @@ namespace Hecatomb
             symbol: '=',
             fg: "brown"
         );
+        public static readonly Resource TradeGoods = new Resource(
+            type: "TradeGoods",
+            name: "trade goods",
+            symbol: '\u2696',
+            fg: "#AAAA44"
+        );
 
 
     }
