@@ -21,11 +21,15 @@ namespace Hecatomb
 		protected int cost;
 		public SpellCaster Component;
 		public Creature Caster;
+        public string[] Researches;
+        public string[] Structures;
 		
 		
 		
 		public Spell(): base()
 		{
+            Researches = new string[0];
+            Structures = new string[0];
 			cost = 10;
 		}
 		

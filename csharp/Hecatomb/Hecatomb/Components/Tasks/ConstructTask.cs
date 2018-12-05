@@ -60,12 +60,32 @@ namespace Hecatomb
 			get
 			{
 				var list = new List<IMenuListable>();
-                // only if we have the prerequisite structures / technologies...
-                foreach (string s in Structures)
-				{
-					var task = Game.World.Entities.Mock<ConstructTask>();
-					task.Makes = s;
-                    list.Add(task);
+                var structures = Hecatomb.Structure.ListAll();
+                var researched = Game.World.GetTracker<ResearchTracker>().Researched;
+                foreach (string st in Structures)
+				{   
+                    var structure = (Structure) Game.World.Entities.Mock(Type.GetType("Hecatomb."+st));
+                    bool valid = true;
+                    foreach (string s in structure.ResearchPrereqs)
+                    {
+                        if (!researched.Contains(s))
+                        {
+                            valid = false;
+                        }
+                    }
+                    foreach (string s in structure.StructurePrereqs)
+                    {
+                        if (!structures.Contains(s))
+                        {
+                            valid = false;
+                        }
+                    }
+                    if (valid)
+                    {
+                        var task = Game.World.Entities.Mock<ConstructTask>();
+                        task.Makes = st;
+                        list.Add(task);
+                    }
 				}
 				return list;
 			}

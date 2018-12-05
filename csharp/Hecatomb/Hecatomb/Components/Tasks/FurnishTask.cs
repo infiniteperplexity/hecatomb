@@ -29,12 +29,35 @@ namespace Hecatomb
 			get
 			{
 				var list = new List<IMenuListable>();
+                var structures = Structure.ListAll();
+                var researched = Game.World.GetTracker<ResearchTracker>().Researched;
+                
                 // only if we have the prerequisite structures / technologies...
-				foreach (string s in Fixtures)
+                foreach (string f in Fixtures)
 				{
-					var task = Game.World.Entities.Mock<FurnishTask>();
-					task.Makes = s;
-					list.Add(task);
+                    var fixture = Game.World.Entities.Mock<Fixture>();
+                    fixture.InterpretJSON(EntityType.Types[f].Components["Fixture"]);
+                    bool valid = true;
+                    foreach (string s in fixture.Research)
+                    {
+                        if (!researched.Contains(s))
+                        {
+                            valid = false;
+                        }
+                    }
+                    foreach (string s in fixture.Structures)
+                    {
+                        if (!structures.Contains(s))
+                        {
+                            valid = false;
+                        }
+                    }
+                    if (valid)
+                    {
+                        var task = Game.World.Entities.Mock<FurnishTask>();
+                        task.Makes = f;
+                        list.Add(task);
+                    }
 				}
 				return list;
 			}
@@ -79,7 +102,6 @@ namespace Hecatomb
 			{
                 var fixture = Game.World.Entities.Mock<Fixture>();
                 fixture.InterpretJSON(EntityType.Types[Makes].Components["Fixture"]);
-                Debug.WriteLine(fixture.Ingredients.Count);
                 if (fixture.Ingredients.Count == 0)
                 {
                     return Makes;

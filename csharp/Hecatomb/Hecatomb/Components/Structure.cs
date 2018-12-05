@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -27,6 +28,8 @@ namespace Hecatomb
 		public Feature[] Features;
         public Dictionary<string, int>[] Ingredients;
         public string[] Researches;
+        public string[] ResearchPrereqs;
+        public string[] StructurePrereqs;
         public string Researching;
         public int ResearchTurns;
 		
@@ -37,12 +40,36 @@ namespace Hecatomb
 			Features = new Feature[Width*Height];
             Ingredients = new Dictionary<string, int>[Width*Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
+            ResearchPrereqs = new string[0];
+            StructurePrereqs = new string[0];
 		}
 		public virtual void Standardize()
 		{
 			Type structureType = this.GetType();
 			Structure structure = (Structure) Activator.CreateInstance(structureType);
 		}
+
+        public static List<string> ListAll()
+        {
+            List<GameEntity> list = Game.World.Entities.Spawned.Values.Where(((GameEntity e) =>
+                {
+                    if (!(e is StructureEntity))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        var se = (StructureEntity)e;
+                        if (se.Placed)
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+                })).ToList();
+            List<string> s = list.Select(e => e.ClassName).ToList();
+            return s;
+        }
 
         public Dictionary<string, int> GetIngredients()
         {
