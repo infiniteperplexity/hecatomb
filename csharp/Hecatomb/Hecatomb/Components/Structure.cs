@@ -96,9 +96,13 @@ namespace Hecatomb
             get
             {
                 var list = new List<IMenuListable>();
+                var researched = Game.World.GetTracker<ResearchTracker>().Researched;
                 foreach (string s in Researches)
                 {
-                    list.Add(new ResearchMenuListing(Research.Types[s], this));
+                    if (!researched.Contains(s))
+                    {
+                        list.Add(new ResearchMenuListing(Research.Types[s], this));
+                    }
                 }
                 return list;
             }

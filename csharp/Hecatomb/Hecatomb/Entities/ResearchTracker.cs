@@ -34,13 +34,14 @@ namespace Hecatomb
 
         public ColoredText ListOnMenu()
         {
+            //you'd want to check for a path between the structure and the ingredients
             if (MyResearch.Ingredients.Count == 0)
             {
-                return ("research " + MyResearch.Name);
+                return MyResearch.Name;
             }
             else
             {
-                return ("research " + MyResearch.Name + " ($: " +Resource.Format(MyResearch.Ingredients)+")");
+                return (MyResearch.Name + " ($: " +Resource.Format(MyResearch.Ingredients)+")");
             }
         }
 
