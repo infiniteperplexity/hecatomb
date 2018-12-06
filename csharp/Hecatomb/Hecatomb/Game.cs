@@ -117,6 +117,7 @@ namespace Hecatomb
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);
             World.GetTracker<AchievementTracker>();
+            World.GetTracker<HumanTracker>();
             Controls = DefaultControls;
 			Player p = Game.World.Entities.Spawn<Player>("Necromancer");
 			World.Player = p;

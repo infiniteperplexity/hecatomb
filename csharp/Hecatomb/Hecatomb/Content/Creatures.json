@@ -57,6 +57,23 @@
 					"Attacker": {},
 					"Defender": {}
 				}
+			},
+			{
+				"Type" : "AngryPeasant",
+				"Name" : "peasant",
+				"FG" : "brown",
+				"Symbol" : "@",
+				"Components" : {
+					"Actor": {
+						"TeamName" : "HumanTeam",
+						"Goals": ["HuntForPlayer"]
+					},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
 			}
 		]
 }

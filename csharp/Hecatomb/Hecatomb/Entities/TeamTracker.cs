@@ -120,15 +120,16 @@ namespace Hecatomb
 		public static Team PlayerTeam = new Team(type: "PlayerTeam");
 		public static Team NeutralAnimals = new Team(type: "NeutralAnimals");
 		public static Team Berserkers = new Team(type: "Berserkers", enemies: new[] { "PlayerTeam" });
-//		
-		
-		
-		
-//		public List<int> GetMembers()
-//		{
-//			
-//		}
-	}
+        public static Team HumanTeam = new Team(type: "HumanTeam", enemies: new[] { "PlayerTeam" });
+        //		
+
+
+
+        //		public List<int> GetMembers()
+        //		{
+        //			
+        //		}
+    }
 		
 			
 	// The teams themselves do not hold state; rather, the TeamTracker holds state for them

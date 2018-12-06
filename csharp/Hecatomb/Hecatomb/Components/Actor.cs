@@ -27,6 +27,9 @@ namespace Hecatomb
 		public int CurrentPoints;
 		private string TeamName;
         public bool Acted;
+        public List<Action> Goals;
+        public Action Alert;
+        public Action Fallback;
         // so I guess this doesn't get reconstituted correctly when restoring a game
 		[JsonIgnore] public Team Team
 		{
@@ -86,6 +89,9 @@ namespace Hecatomb
 			TargetEID = -1;
 			ActionPoints = 16;
             CurrentPoints = (Game.World.Turns.Turn==0) ? ActionPoints : 0;
+            Alert = CheckForHostile;
+            Goals = new List<Action>();
+            Fallback = WalkRandom;
         }
 		
 		public void Regain()
@@ -118,7 +124,15 @@ namespace Hecatomb
             {
                 return;
             }
-            // should be checking for acted?
+            foreach(Action goal in Goals)
+            {
+                goal();
+                if (Acted)
+                {
+                    return;
+                }
+            }
+            // this should be a "goal"
             Minion m = Entity.TryComponent<Minion>();
 			if (m!=null)
 			{				
@@ -342,7 +356,36 @@ namespace Hecatomb
 			{
                 this.Team = Team.Types[(string)obj["TeamName"]];
 			}
+            if (obj["Goals"]!=null)
+            {
+                List<string> goals = obj["Goals"].ToObject<List<string>>();
+                foreach (string s in goals)
+                {
+                    if (s=="HuntForPlayer")
+                    {
+                        Goals.Add(HuntForPlayer);
+                    }
+                }
+            }
 		}
+
+
+        public void HuntForPlayer()
+        {
+            Debug.WriteLine("hunting for player");
+            if (Target == null)
+            {
+                Movement m = Entity.GetComponent<Movement>();
+                if (m.CanReach(Game.World.Player))
+                {
+                    Target = Game.World.Player;
+                }
+            }
+            else if (Target==Game.World.Player)
+            {
+                WalkToward(Target.X, Target.Y, Target.Z);
+            }
+        }
 		
 	}
 }

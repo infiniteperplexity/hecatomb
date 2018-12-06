@@ -88,8 +88,10 @@
     <Compile Include="Components\Tasks\HarvestTask.cs" />
     <Compile Include="ColoredText.cs" />
     <Compile Include="HecatombServiceLocator.cs" />
+    <Compile Include="HumanTracker.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Components\Structural.cs" />
+    <Compile Include="Properties\Behaviors.cs" />
     <Compile Include="RecursiveBacktracker.cs" />
     <Compile Include="Entities\ResearchTracker.cs" />
     <Compile Include="Resource.cs" />
