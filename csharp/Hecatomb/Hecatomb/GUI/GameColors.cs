@@ -31,6 +31,8 @@ namespace Hecatomb
                 {"dark gray", new Color(0x55, 0x55, 0x55)},
                 {"lime green", Color.LimeGreen},
                 {"olive", Color.Olive},
+                {"dark green", Color.DarkGreen },
+                {"forest green", Color.ForestGreen},
                 {"light gray", Color.LightGray},
                 {"light cyan", Color.LightCyan},
                 {"gainsboro", Color.Gainsboro},

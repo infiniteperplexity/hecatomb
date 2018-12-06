@@ -10,7 +10,7 @@
 			{
 				"Type" : "ClubTree",
 				"Name": "tree",
-				"FG" : "olive",
+				"FG" : "#44AA33",
 				"Symbol" : "\u2663",
 				"Components" : {
 					"Harvestable": {
@@ -21,7 +21,7 @@
 			{
 				"Type" : "SpadeTree",
 				"Name": "tree",
-				"FG" : "olive",
+				"FG" : "#669933",
 				"Symbol" : "\u2660",
 				"Components" : {
 					"Harvestable": {
