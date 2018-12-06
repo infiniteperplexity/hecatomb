@@ -319,8 +319,8 @@ namespace Hecatomb
                 {
                     enemies = Team.GetEnemies();
                 }
-                //enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
-                enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
+                enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
+                //enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
                 if (enemies.Count > 0)
                 {
                     Debug.WriteLine("found an enemy");
