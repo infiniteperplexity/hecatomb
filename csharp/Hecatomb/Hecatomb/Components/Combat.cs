@@ -65,19 +65,23 @@ namespace Hecatomb
         {
             Attacker attacker = attack.Attacker;
             int damage = attack.Roll + attacker.Damage - Armor - Toughness;
-            Endure(damage);
+            Endure(damage, attack);
         }
         // probably a damage event
-        public void Endure(int damage)
+        public void Endure(int damage, AttackEvent attack)
         {
+            Creature ca = (Creature)attack.Attacker.Entity;
+            Creature cd = (Creature) Entity;
             Debug.WriteLine("Total damage is " + damage);
             if (damage >= 20)
             {
                 // critical damage (die)
+                Game.World.Events.Publish(new SensoryEvent() { Sight = "{red}" + $"{ca.Describe()} deals critical damage to {cd.Describe()}" });
                 Wounds = 8;
             }
             else if (damage >= 17)
             {
+                Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals severe damage to {cd.Describe()}" });
                 // severe damage
                 if (Wounds < 6)
                 {
@@ -90,6 +94,7 @@ namespace Hecatomb
             }
             else if (damage >= 14)
             {
+                Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals moderate damage to {cd.Describe()}" });
                 // moderate damage
                 if (Wounds < 4)
                 {
@@ -102,6 +107,7 @@ namespace Hecatomb
             }
             else if (damage >= 8)
             {
+                Game.World.Events.Publish(new SensoryEvent() { Sight = "{yellow}" + $"{ca.Describe()} deals mild damage to {cd.Describe()}" });
                 if (Wounds < 2)
                 {
                     Wounds = 2;
@@ -110,6 +116,13 @@ namespace Hecatomb
                 {
                     Wounds += 1;
                 }
+            }
+            else
+            {
+                Game.World.Events.Publish(new SensoryEvent()
+                {
+                    Sight = $"{ca.Describe()} hits {cd.Describe()} but deals no damage."
+                });
             }
             Debug.Print("Total wounds for {0} are {1}", Entity.Describe(), Wounds);
             // now tally wounds
@@ -122,6 +135,7 @@ namespace Hecatomb
                 else
                 {
                     Debug.WriteLine("This creature should die.");
+                    Game.World.Events.Publish(new SensoryEvent() { Sight = $"{cd.Describe()} dies!" });
                     Entity.Destroy();
                 }
             }

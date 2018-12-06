@@ -219,8 +219,8 @@ namespace Hecatomb
         public int X;
         public int Y;
         public int Z;
-        public string Sight;
-        public string Sound;
+        public ColoredText Sight;
+        public ColoredText Sound;
 
         public override void Fire()
         {
