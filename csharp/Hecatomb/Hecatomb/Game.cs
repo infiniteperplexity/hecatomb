@@ -79,7 +79,7 @@ namespace Hecatomb
             {
                 //Explored = true,
                 //Visible = true,
-                //NoIngredients = true
+                NoIngredients = true
             };
             Colors = new GameColors();
 			Time = new TimeHandler();

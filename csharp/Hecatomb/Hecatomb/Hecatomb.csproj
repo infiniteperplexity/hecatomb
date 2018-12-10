@@ -87,6 +87,8 @@
     <Compile Include="Components\Harvestable.cs" />
     <Compile Include="Components\Tasks\HarvestTask.cs" />
     <Compile Include="ColoredText.cs" />
+    <Compile Include="ResearchTask.cs" />
+    <Compile Include="SpearTrapFeatureComponent.cs" />
     <Compile Include="HecatombServiceLocator.cs" />
     <Compile Include="HumanTracker.cs" />
     <Compile Include="Item.cs" />

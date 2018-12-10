@@ -53,11 +53,16 @@ namespace Hecatomb
 
         public void ChooseFromMenu()
         {
+            // maybe this object could just be research tasks?
             if (Game.World.Player.GetComponent<Movement>().CanFindResources(MyResearch.Ingredients))
             {
+                int x = MyStructure.Entity.X;
+                int y = MyStructure.Entity.Y;
+                int z = MyStructure.Entity.Z;
+                ResearchTask research = new ResearchTask() { Makes = MyResearch.TypeName, Labor = MyResearch.Turns };
                 // actually need to create a task for this...
-                MyStructure.Researching = MyResearch.Name;
-                MyStructure.ResearchTurns = MyResearch.Turns;
+                //MyStructure.Researching = MyResearch.TypeName;
+                //MyStructure.ResearchTurns = MyResearch.Turns;
             }
             Game.MenuPanel.Dirty = true;
         }

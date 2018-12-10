@@ -31,13 +31,14 @@ namespace Hecatomb
 				var list = new List<IMenuListable>();
                 var structures = Structure.ListAll();
                 var researched = Game.World.GetTracker<ResearchTracker>().Researched;
-                
+                Debug.WriteLine(JsonConvert.SerializeObject(researched));
                 // only if we have the prerequisite structures / technologies...
                 foreach (string f in Fixtures)
 				{
                     var fixture = Game.World.Entities.Mock<Fixture>();
                     fixture.InterpretJSON(EntityType.Types[f].Components["Fixture"]);
                     bool valid = true;
+                    
                     foreach (string s in fixture.Research)
                     {
                         if (!researched.Contains(s))
@@ -69,13 +70,14 @@ namespace Hecatomb
 		{
 			MenuName = "build fixtures";
 			TypeName = "furnish";
-			Fixtures = new string[] {"Ramp", "Door"};
+			Fixtures = new string[] {"Ramp", "Door", "SpearTrap"};
 		}
 			
 		public override void Finish()
 		{
 			Feature incomplete = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
 			incomplete.Despawn();
+            Game.World.Covers[Entity.X, Entity.Y, Entity.Z] = Cover.NoCover;
 			Feature finished = Game.World.Entities.Spawn<Feature>(Makes);
 			finished.Place(Entity.X, Entity.Y, Entity.Z);
 			base.Finish();

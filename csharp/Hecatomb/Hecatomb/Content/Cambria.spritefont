@@ -51,9 +51,17 @@ with.
     See the documentation for more information.
     -->
     <CharacterRegions>
+        <CharacterRegion>
+        <Start>&#x2980;</Start><!-- Misc Math Symbols -->
+        <End>&#x29FF;</End>
+      </CharacterRegion>
       <CharacterRegion>
         <Start>&#x2A00;</Start><!-- Supplemental Mathematical Operators -->
         <End>&#x2AFF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2900;</Start><!-- Supplemental Arrows B -->
+        <End>&#x297F;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

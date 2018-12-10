@@ -380,8 +380,20 @@ namespace Hecatomb
                 {
                     Target = Game.World.Player;
                 }
+                else
+                {
+                    List<Feature> doors = Game.World.Features.Where(f => (f.TypeName == "Door")).ToList();
+                    foreach (Feature door in doors)
+                    {
+                        if (m.CanReach(door))
+                        {
+                            Target = door;
+                            break;
+                        }
+                    }
+                }
             }
-            else if (Target==Game.World.Player)
+            else if (Target==Game.World.Player || Target?.TypeName=="Door")
             {
                 WalkToward(Target.X, Target.Y, Target.Z);
             }

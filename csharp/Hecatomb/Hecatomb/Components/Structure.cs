@@ -67,7 +67,7 @@ namespace Hecatomb
                         return false;
                     }
                 })).ToList();
-            List<string> s = list.Select(e => e.ClassName).ToList();
+            List<string> s = list.Select(e => ((StructureEntity)e).GetComponent<Structure>().ClassName).ToList();
             return s;
         }
 
@@ -96,7 +96,7 @@ namespace Hecatomb
             if (Researching != null)
             {
                 ResearchTurns -= 1;
-                if (ResearchTurns == 0)
+                if (ResearchTurns <= 0)
                 {
                     var researched = Game.World.GetTracker<ResearchTracker>().Researched;
                     if (!researched.Contains(Researching))

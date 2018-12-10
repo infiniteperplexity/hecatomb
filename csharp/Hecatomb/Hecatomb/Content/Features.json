@@ -59,25 +59,28 @@
 				"Type" : "Door",
 				"Name": "door",
 				"FG" : "brown",
+				"Solid": true,
 				"Symbol" : "\u25A7",
 				"Components" : {
 					"Fixture":	{
 						"Ingredients": {"Wood": 2},
 						"Structures": ["Workshop"]
-					}
+					},
+					"Defender": {}
 				}
 			},
 			{
 				"Type" : "SpearTrap",
 				"Name": "spear trap",
 				"FG" : "brown",
-				"Symbol" : "\u25A7",
+				"Symbol" : "\u2963",
 				"Components" : {
 					"Fixture":	{
 						"Ingredients": {"Wood": 2, "Flint": 1},
 						"Structures": ["Workshop"],
 						"Research": ["SpearTrap"]
-					}
+					},
+					"SpearTrapFeatureComponent": {}
 				}
 			}
 

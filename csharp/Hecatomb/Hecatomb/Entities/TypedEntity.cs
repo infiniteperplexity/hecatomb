@@ -200,6 +200,8 @@ namespace Hecatomb
 	}
 	public class Feature : PositionedEntity {
 
+        public bool Solid;
+
 		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			Feature e = Game.World.Features[x1,y1,z1];

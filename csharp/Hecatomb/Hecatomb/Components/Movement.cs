@@ -325,21 +325,30 @@ namespace Hecatomb
 			}
 		}
 
-		public bool CanStand(int x1, int y1, int z1)
-		{
-			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth) {
-				return false;
-			}
-			Terrain tile = Game.World.Tiles[x1,y1,z1];
-			// non-phasers can't go through a solid wall
-			if (!Phases && tile.Solid) {
-				return false;
-			}
-			// non-flyers can't cross a pit
-			if (tile.Fallable && Flies==false) {
-				return false;
-			}
-			int dx = x1-Entity.X;
+        public bool CanStand(int x1, int y1, int z1)
+        {
+            if (x1 < 0 || x1 >= Game.World.Width || y1 < 0 || y1 >= Game.World.Height || z1 < 0 || z1 >= Game.World.Depth) {
+                return false;
+            }
+            Terrain tile = Game.World.Tiles[x1, y1, z1];
+            // non-phasers can't go through a solid wall
+            if (!Phases && tile.Solid) {
+                return false;
+            }
+            // non-flyers can't cross a pit
+            if (tile.Fallable && Flies == false) {
+                return false;
+            }
+            if (Entity.GetComponent<Actor>().Team != Team.PlayerTeam)
+            {
+                Feature f = Game.World.Features[x1, y1, z1];
+                if (f != null && f.Solid && !Phases)
+                {
+                    return false;
+                }
+            }
+            
+            int dx = x1-Entity.X;
 			int dy = y1-Entity.Y;
 			int dz = z1-Entity.Z;
 			// rare: check whether the square itself is allowed
