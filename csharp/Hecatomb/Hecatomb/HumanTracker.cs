@@ -23,7 +23,7 @@ namespace Hecatomb
             if (te.Turn==10)
             {
                 
-                Creature peasant = Game.World.Entities.Spawn<Creature>("AngryPeasant");
+                //Creature peasant = Game.World.Entities.Spawn<Creature>("AngryPeasant");
                 int side = Game.World.Random.Next(4);
                 int x, y;
                 if (side==0)
@@ -47,7 +47,7 @@ namespace Hecatomb
                     x = Game.World.Random.Next(1, 254);
                 }
                 Debug.WriteLine("spawning a peasant at "+x + " "+y);
-                peasant.Place(x, y, Game.World.GetGroundLevel(x, y));
+                //peasant.Place(x, y, Game.World.GetGroundLevel(x, y));
             }
             return ge;
         }

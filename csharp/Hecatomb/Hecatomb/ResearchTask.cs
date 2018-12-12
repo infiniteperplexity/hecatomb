@@ -19,7 +19,7 @@ namespace Hecatomb
         //}
         // not quite certain how I want to do this...
 
-        public ResearchTask()
+        //public ResearchTask()
         public override bool CanAssign(Creature c)
         {
             if (Labor<LaborCost)
@@ -31,7 +31,7 @@ namespace Hecatomb
         public override void Work()
         {
             Unassign();
-            Structure.Researching = 
+            //Structure.Researching = 
         }
         public override void Finish()
         {

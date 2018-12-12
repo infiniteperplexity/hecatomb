@@ -230,6 +230,15 @@ namespace Hecatomb
             if (useLighting)
             {
                 int lighting = Game.World.Turns.LightLevel;
+                int outdoors = Game.World.Outdoors[x, y, z];
+                if (outdoors==0)
+                {
+                    lighting = 0;
+                }
+                else if (outdoors==1)
+                {
+                    lighting = lighting / 2;
+                }
                 return (sym, Game.Colors.Shade(fg, lighting));
             }
             return (sym, fg);

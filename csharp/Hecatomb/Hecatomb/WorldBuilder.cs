@@ -185,6 +185,7 @@ namespace Hecatomb
                     
                 }
             }
+            Game.World.ValidateOutdoors();
         }
         protected void placeOres()
         {

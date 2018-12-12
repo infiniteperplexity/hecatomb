@@ -25,6 +25,8 @@ namespace Hecatomb
 		
 		public Terrain[,,] Tiles {get; set;}
         public Cover[,,] Covers {get; set;}
+        public int[,,] Lighting { get; set; }
+        public int[,,] Outdoors { get; set; }
 		public SparseArray3D<Creature> Creatures;
 		public SparseArray3D<Feature> Features;
 		public SparseArray3D<Item> Items;
@@ -50,7 +52,9 @@ namespace Hecatomb
 			Height = height;
 			Depth = depth;
 			Events = new GameEventHandler();
-			Tiles = new Terrain[Width, Height, Depth];
+            Lighting = new int[Width, Height, Depth];
+            Outdoors = new int[Width, Height, Depth];
+            Tiles = new Terrain[Width, Height, Depth];
             Covers = new Cover[Width, Height, Depth];
 			StateTrackers = new Dictionary<string, StateTracker>();
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
@@ -204,5 +208,37 @@ namespace Hecatomb
 			}
 			return (T) StateTrackers[s];
 		}
+
+        public void ValidateOutdoors()
+        {
+            Outdoors = new int[Width, Height, Depth];
+            for (int x = 1; x < Width - 1; x++)
+            {
+                for (int y = 1; y < Height - 1; y++)
+                {
+
+                    for (int z = Depth - 1; z > 0; z--)
+                    {
+                        Outdoors[x, y, z] = 2;
+                        foreach (Coord dir in Movement.Directions8)
+                        {
+                            var (dx, dy, _) = dir;
+                            if (Outdoors[x+dx, y+dy, z]==0)
+                            {
+                                Outdoors[x + dx, y + dy, z] = 1;
+                            }
+                        }
+                        if (Tiles[x, y, z].Solid)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        public void ValidateLighting()
+        {
+          
+        }
 	}
 }

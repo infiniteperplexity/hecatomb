@@ -55,6 +55,7 @@ namespace Hecatomb
 
 		public void HandleVisibility()
 		{
+            Game.World.ValidateLighting();
 			Game.Camera.Center(X, Y, Z);
 			Game.Visible = GetComponent<Senses>().GetFOV();
 			foreach(Creature c in GetComponent<Minions>().GetList())

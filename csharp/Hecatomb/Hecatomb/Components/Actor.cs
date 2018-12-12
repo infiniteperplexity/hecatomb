@@ -393,10 +393,10 @@ namespace Hecatomb
                     }
                 }
             }
-            else if (Target==Game.World.Player || Target?.TypeName=="Door")
-            {
-                WalkToward(Target.X, Target.Y, Target.Z);
-            }
+            //else if (Target==Game.World.Player || Target?.TypeName=="Door")
+            //{
+             //   WalkToward(Target.X, Target.Y, Target.Z);
+            //}
         }
 		
 	}

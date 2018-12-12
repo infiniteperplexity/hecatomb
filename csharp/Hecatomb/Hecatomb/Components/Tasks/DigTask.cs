@@ -83,6 +83,7 @@ namespace Hecatomb
                 covers[x, y, z] = none;
             }		
 			base.Finish();
+            Game.World.ValidateOutdoors();
 		}
 		
 		public override void ChooseFromMenu()
