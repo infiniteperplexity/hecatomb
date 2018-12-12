@@ -172,7 +172,7 @@ namespace Hecatomb
                             task.GetComponent<Task>().AssignTo(m);               
                         }
                     }
-					foreach (TaskEntity t in Game.World.Tasks.ToList())
+					foreach (TaskEntity t in Game.World.Tasks.OrderBy( t => Tiles.QuickDistance(m.X, m.Y, m.Z, t.X, t.Y, t.Z)).ToList())
 					{
 						
 						Task task = t.GetComponent<Task>();

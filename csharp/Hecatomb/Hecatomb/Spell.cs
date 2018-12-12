@@ -195,6 +195,7 @@ namespace Hecatomb
             Game.World.Covers[x, y, z] = Cover.NoCover;
             Game.World.Covers[x, y, z - 1] = Cover.NoCover;
 			base.Finish();
+            Game.World.ValidateOutdoors();
 		}
 	}
 

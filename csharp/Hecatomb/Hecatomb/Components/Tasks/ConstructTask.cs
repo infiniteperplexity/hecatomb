@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Hecatomb
 {
@@ -103,8 +104,29 @@ namespace Hecatomb
 		{
 			return (Structure) Game.World.Entities.Mock(Type.GetType("Hecatomb."+Makes));
 		}
-		
-		public override void Start()
+
+        public override bool CanAssign(Creature c)
+        {
+            // don't start building the "free" structure tiles until the "costly" ones are done
+            if (Ingredients.Count == 0)
+            {
+                foreach (TaskEntity task in Game.World.Tasks)
+                {
+                    Task t = task.GetComponent<Task>();
+                    if (t is ConstructTask)
+                    {
+                        ConstructTask ct = (ConstructTask)t;
+                        if (ct.Structure == Structure && ct.Worker == null && ct.Ingredients.Count > 0)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return base.CanAssign(c);
+        }
+
+        public override void Start()
 		{
 			base.Start();
 			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];

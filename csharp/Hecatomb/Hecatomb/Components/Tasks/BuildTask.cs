@@ -60,6 +60,7 @@ namespace Hecatomb
 				tiles[x, y, z] = floor;
 			}
 			base.Finish();
+            Game.World.ValidateOutdoors();
 		}
 
         public override void TileHover(Coord c)

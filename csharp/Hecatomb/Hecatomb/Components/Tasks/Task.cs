@@ -85,7 +85,7 @@ namespace Hecatomb
                 FetchIngredient();
                 return;
             }
-            if (Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z) <= WorkRange)
+            if ((int) Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, Entity.X, Entity.Y, Entity.Z) <= WorkRange)
             {
                 Work();
             }

@@ -141,8 +141,8 @@ namespace Hecatomb
 					Target = m.Task;
 					m.Task.GetComponent<Task>().Act();
 				} else {
-					Target = Game.World.Player;
-					Patrol(Target.X, Target.Y, Target.Z);
+					var p = Game.World.Player;
+					Patrol(p.X, p.Y, p.Z);
 				}
 				
 			} else {
@@ -318,7 +318,10 @@ namespace Hecatomb
                 else
                 {
                     enemies = Team.GetEnemies();
-                    Debug.WriteLine("Enemies count is " + enemies.Count);
+                    //foreach (var enemy in enemies)
+                    //{
+                    //    Debug.Print("{0} found an enemy in {1}, {2} away.", Entity.Describe(), enemy.Describe(), Tiles.QuickDistance(Entity.X, Entity.Y, Entity.Z, enemy.X, enemy.Y, enemy.Z));
+                    //}
                 }
                 enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
                 //enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
