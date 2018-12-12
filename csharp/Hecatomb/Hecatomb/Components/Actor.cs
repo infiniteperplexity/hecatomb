@@ -318,6 +318,7 @@ namespace Hecatomb
                 else
                 {
                     enemies = Team.GetEnemies();
+                    Debug.WriteLine("Enemies count is " + enemies.Count);
                 }
                 enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
                 //enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();

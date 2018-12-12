@@ -117,7 +117,7 @@ namespace Hecatomb
 			tt.Membership[TypeName].Remove(c.EID);
 		}
 		
-		public static Team PlayerTeam = new Team(type: "PlayerTeam");
+		public static Team PlayerTeam = new Team(type: "PlayerTeam", enemies: new[] { "HumanTeam" });
 		public static Team NeutralAnimals = new Team(type: "NeutralAnimals");
 		public static Team Berserkers = new Team(type: "Berserkers", enemies: new[] { "PlayerTeam" });
         public static Team HumanTeam = new Team(type: "HumanTeam", enemies: new[] { "PlayerTeam" });
