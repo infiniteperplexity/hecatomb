@@ -113,6 +113,10 @@ namespace Hecatomb
 		}
 		public void Act()
 		 {
+            if (Entity.TryComponent<Minion>() != null)
+            {
+                Debug.WriteLine("zombie takes turn.");
+            }
 			if (Entity is Player)
 			{
 				return;
@@ -138,6 +142,7 @@ namespace Hecatomb
 			{				
 				if (m.Task!=null)
 				{
+                    Debug.WriteLine("zombie performs task");
 					Target = m.Task;
 					m.Task.GetComponent<Task>().Act();
 				} else {

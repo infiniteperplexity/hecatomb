@@ -28,7 +28,7 @@ namespace Hecatomb
 	
 	public class PathTracker: StateTracker
 	{
-		// cacheing misses is much more important than cacheing successes
+        // cacheing misses is much more important than cacheing successes
 		public Dictionary<int, Dictionary<int, int>> PathMisses;
 
 		public override void Activate()

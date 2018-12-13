@@ -181,6 +181,7 @@ namespace Hecatomb
 							
 							if (task.CanAssign(m))
 							{
+                                Debug.Print("Assigning {0} to {1}", task.Entity.Describe(), m.Describe());
                                 task.AssignTo(m);
 								break;
 							}
@@ -251,6 +252,7 @@ namespace Hecatomb
 				}
 				if (actor.CurrentPoints>0)
 				{
+                    Debug.Print("Replacing {0} on the queue.", actor.Entity.Describe());
                     actor.Acted = false;
 					Deck.Enqueue(actor);
 				}

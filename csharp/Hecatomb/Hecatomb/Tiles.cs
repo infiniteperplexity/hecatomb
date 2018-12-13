@@ -86,7 +86,7 @@ namespace Hecatomb
 			);
 			if (path.Count==0)
 			{
-				Debug.Print(m.Entity.Describe() + " failed to find a path to " + t.Describe());
+				Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.Describe(),t.Describe(), t.X, t.Y, t.Z);
 				if (!misses.ContainsKey(m.Entity.EID))
 				{
 					misses[m.Entity.EID] = new Dictionary<int, int>();
@@ -189,8 +189,15 @@ namespace Hecatomb
 			{
 				return new LinkedList<Coord>();
 			}
-			//
+            //
+            int tally = 0;
 			while (queue.Count>0) {
+                tally += 1;
+                if (tally>=500)
+                {
+                    Debug.Print("failed after 500 tries.");
+                    return new LinkedList<Coord>();
+                }
 				current = queue.First.Value;
 				queue.RemoveFirst();
 				// ***** if we found the goal, retrace our steps ****
@@ -200,6 +207,7 @@ namespace Hecatomb
 				}
 				if (success)
 				{
+                    //Debug.Print("Found path after {0} loops.", tally);
 					LinkedList<Coord> path = new LinkedList<Coord> {};
 					path.AddFirst(current);
 					// ***trace backwards

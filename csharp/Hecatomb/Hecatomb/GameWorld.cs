@@ -211,6 +211,7 @@ namespace Hecatomb
 
         public void ValidateOutdoors()
         {
+            GetTracker<PathTracker>().Reset();
             Outdoors = new int[Width, Height, Depth];
             for (int x = 1; x < Width - 1; x++)
             {
