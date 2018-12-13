@@ -9,19 +9,20 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    public struct EntityField<T> where T : GameEntity
+    using static HecatombAliases;
+    public struct EntityField<T> where T : Entity
     {
         public int EID;
         [JsonIgnore] public T Entity
         {
             get
             {
-                if (!Game.World.Entities.Spawned.ContainsKey(EID))
+                if (!Entities.ContainsKey(EID))
                 {
                     EID = -1;
                     return null;
                 }
-                return (T) Game.World.Entities.Spawned[EID];
+                return (T)Entities[EID];
             }
             set
             {
@@ -34,6 +35,29 @@ namespace Hecatomb
                 {
                     EID = value.EID;
                 }
+            }
+        }
+        [JsonIgnore] public int X
+        {
+            get
+            {
+                return (Entity as PositionedEntity).X;
+            }
+        }
+        [JsonIgnore]
+        public int Y
+        {
+            get
+            {
+                return (Entity as PositionedEntity).Y;
+            }
+        }
+        [JsonIgnore]
+        public int Z
+        {
+            get
+            {
+                return (Entity as PositionedEntity).Z;
             }
         }
 
@@ -55,6 +79,28 @@ namespace Hecatomb
         public static implicit operator EntityField<T>(int eid)
         {
             return new EntityField<T>() { EID = eid };
+        }
+
+        public override bool Equals(Object obj)
+        {
+            return (obj is EntityField<T> && this == (EntityField<T>)obj)
+                || (obj is int && EID == (int)obj)
+                || (obj is T && Entity == (T)Entity);
+        }
+
+        public static bool operator ==(EntityField<T> one, EntityField<T> two)
+        {
+            return one.Equals(two);
+        }
+
+        public static bool operator !=(EntityField<T> one, EntityField<T> two)
+        {
+            return !one.Equals(two);
+        }
+
+        public override int GetHashCode()
+        {
+            return EID.GetHashCode() + Entity.GetHashCode();
         }
     }
 }

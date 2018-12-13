@@ -30,7 +30,7 @@ namespace Hecatomb
 				}
 				else
 				{
-					return (TaskEntity) Game.World.Entities.Spawned[TaskEID];
+					return (TaskEntity) Entities[TaskEID];
 				}
 			}
 			private set
@@ -69,12 +69,12 @@ namespace Hecatomb
             int y = Entity.Y;
             int z = Entity.Z;
             Creature cr = (Creature)Entity;
-            if ( Game.World.Tiles[x, y, z].Solid && Task?.TryComponent<Task>()?.ClassName != "ZombieEmergeTask")
+            if ( Game.World.Terrains[x, y, z].Solid && Task?.TryComponent<Task>()?.ClassName != "ZombieEmergeTask")
             {
                 if (Game.World.Features[x, y, z + 1]?.TypeName == "Grave")
                 {
                     Game.World.Tasks[x, y, z + 1]?.TryComponent<Task>()?.Cancel();
-                    var task = Game.World.Entities.Spawn<TaskEntity>("ZombieEmergeTask");
+                    var task = Hecatomb.Entity.Spawn<TaskEntity>("ZombieEmergeTask");
                     task.Place(x, y, z + 1);
                     task.GetComponent<Task>().AssignTo(cr);
                 }

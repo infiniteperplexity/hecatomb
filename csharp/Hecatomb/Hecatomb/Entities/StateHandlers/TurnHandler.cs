@@ -12,10 +12,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-
-
-
-    public class TurnHandler
+    public class TurnHandler : StateHandler
     {
         public static int StartHour = 8;
         //public static int StartHour = 16;
@@ -156,7 +153,7 @@ namespace Hecatomb
 			// ***
 			Queue.Clear();
 			Deck.Clear();
-			foreach (GameEntity e in Game.World.Entities.Spawned.Values)
+			foreach (Entity e in Entities.Values)
 			{
 				if (e is Actor)
 				{
@@ -253,7 +250,7 @@ namespace Hecatomb
 			Queue<Actor> qa = new Queue<Actor>();
 			for (int i=0; i<list.Count; i++)
 			{
-				qa.Enqueue((Actor) Game.World.Entities.Spawned[list[i]]);
+				qa.Enqueue((Actor) Entities[list[i]]);
 			}
 			return qa;
 		}

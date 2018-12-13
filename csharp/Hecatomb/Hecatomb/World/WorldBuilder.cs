@@ -15,7 +15,7 @@ namespace Hecatomb
 	/// </summary>
 	public abstract class WorldBuilder
 	{
-		public virtual void Build(GameWorld world)
+		public virtual void Build(World world)
 		{
 			world.Reset();
 		}
@@ -23,7 +23,7 @@ namespace Hecatomb
 
 	public class DefaultBuilder : WorldBuilder
 	{
-		public override void Build(GameWorld world)
+		public override void Build(World world)
 		{
 			base.Build(world);
 			int GroundLevel = 50;
@@ -36,10 +36,10 @@ namespace Hecatomb
 					for (int k=0; k<world.Depth; k++) {
 						int elev = GroundLevel + (int) (vscale*ElevationNoise.GetSimplexFractal(hscale*i,hscale*j));
 						if (i==0 || i==world.Width-1 || j==0 || j==world.Height-1 || k<elev) {
-							world.Tiles[i,j,k] = Terrain.WallTile;
+							world.Terrains[i,j,k] = Terrain.WallTile;
                             world.Covers[i,j,k] = Cover.Soil;
 						} else if (k==elev) {
-							world.Tiles[i,j,k] = Terrain.FloorTile;
+							world.Terrains[i,j,k] = Terrain.FloorTile;
                             if (k<=48)
                             {
                                 world.Covers[i, j, k] = Cover.Water;
@@ -49,7 +49,7 @@ namespace Hecatomb
                                 world.Covers[i, j, k] = Cover.Grass;
                             }
                         } else {
-                            world.Tiles[i, j, k] = Terrain.EmptyTile;
+                            world.Terrains[i, j, k] = Terrain.EmptyTile;
                             if (k <= 48)
                             {
                                 world.Covers[i, j, k] = Cover.Water;
@@ -80,10 +80,10 @@ namespace Hecatomb
 
 					if (slope)
 					{
-						world.Tiles[i, j, k] = Terrain.UpSlopeTile;
+						world.Terrains[i, j, k] = Terrain.UpSlopeTile;
 						if (world.GetTile(i, j, k+1)==Terrain.EmptyTile)
 						{
-							world.Tiles[i, j, k+1] = Terrain.DownSlopeTile;
+							world.Terrains[i, j, k+1] = Terrain.DownSlopeTile;
 						}
 					} else {
 						if (world.Random.Next(250)==1)
@@ -99,11 +99,11 @@ namespace Hecatomb
 								Feature tree;
 								if (world.Random.Next(2)==1)
 								{
-									tree = world.Entities.Spawn<Feature>("ClubTree");
+									tree = Entity.Spawn<Feature>("ClubTree");
 								}
 								else
 								{
-									tree = world.Entities.Spawn<Feature>("SpadeTree");
+									tree = Entity.Spawn<Feature>("SpadeTree");
 								}
 								tree.Place(i, j, k);
 							}
@@ -112,7 +112,7 @@ namespace Hecatomb
 						{
 							if (world.Random.Next(50)==0)
 							{
-								Feature grave = world.Entities.Spawn<Feature>("Grave");
+								Feature grave = Entity.Spawn<Feature>("Grave");
 								grave.Place(i, j, k);
 							}
 						}
@@ -238,18 +238,18 @@ namespace Hecatomb
 
     public class IntroBuilder : WorldBuilder
     {
-        public override void Build(GameWorld world)
+        public override void Build(World world)
         {
             base.Build(world);
             for (int i = 0; i < world.Width; i++) {
                 for (int j = 0; j < world.Height; j++) {
                     if (i <= 16 && i > 9 && j <= 16 && j > 9)
                     {
-                        world.Tiles[i, j, 0] = Terrain.FloorTile;
+                        world.Terrains[i, j, 0] = Terrain.FloorTile;
                     }
                     else
                     {
-                        world.Tiles[i, j, 0] = Terrain.WallTile;
+                        world.Terrains[i, j, 0] = Terrain.WallTile;
                     }
                 }
             }
@@ -258,25 +258,25 @@ namespace Hecatomb
             {
                 for (int j = 0; j < world.Height / 2; j++)
                 {
-                    TaskEntity t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
+                    TaskEntity t = Entity.Spawn<TaskEntity>("DigTask");
                     t.Place(2 * i, 2 * j, 0);
                     if (!maze.BottomWalls[i, j])
                     {
-                        t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
+                        t = Entity.Spawn<TaskEntity>("DigTask");
                         t.Place(2 * i, 2 * j + 1, 0);
                     }
                     if (!maze.RightWalls[i, j])
                     {
-                        t = Game.World.Entities.Spawn<TaskEntity>("DigTask");
+                        t = Entity.Spawn<TaskEntity>("DigTask");
                         t.Place(2 * i + 1, 2 * j, 0);
                     }
                 }
             }
             //Game.World.Entities.Spawn<Creature>("Necromancer").Place(12, 12, 0);
-            Game.World.Entities.Spawn<Creature>("Zombie").Place(12, 13, 0);
-            Game.World.Entities.Spawn<Creature>("Zombie").Place(12, 11, 0);
-            Game.World.Entities.Spawn<Creature>("Zombie").Place(11, 12, 0);
-            Game.World.Entities.Spawn<Creature>("Zombie").Place(13, 12, 0);
+            Entity.Spawn<Creature>("Zombie").Place(12, 13, 0);
+            Entity.Spawn<Creature>("Zombie").Place(12, 11, 0);
+            Entity.Spawn<Creature>("Zombie").Place(11, 12, 0);
+            Entity.Spawn<Creature>("Zombie").Place(13, 12, 0);
         }
   
     }

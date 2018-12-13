@@ -19,7 +19,7 @@ namespace Hecatomb
     public class Game : Microsoft.Xna.Framework.Game
     {
         public static Options Options;
-    	public static GameWorld World;
+    	public static World World;
 		public static Commands Commands;
 		public static Colors Colors;
 		public static Camera Camera;
@@ -90,7 +90,7 @@ namespace Hecatomb
         
         protected void ShowIntro()
         {
-        	World = new GameWorld(25, 25, 1);
+        	World = new World(25, 25, 1);
         	WorldBuilder builder = new IntroBuilder();
 			builder.Build(World);
         	Controls = DefaultControls;
@@ -99,7 +99,7 @@ namespace Hecatomb
 //				new List<ColoredText> {"start game"},
 //				new List<Action> {StartGame}
 //			);
-        	Player p = Game.World.Entities.Spawn<Player>("Necromancer");
+        	Player p = Entity.Spawn<Player>("Necromancer");
 			World.Player = p;
         	p.Initialize();
         	p.Place(12, 12, 0);
@@ -108,13 +108,13 @@ namespace Hecatomb
         protected  void StartGame()
         {
             //Debug.WriteLine(FlyWeight.Types[typeof(Resource)]["Coal"].ToString());
-			World = new GameWorld(256, 256, 64, seed: System.DateTime.Now.Millisecond);
+			World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);
-            World.GetTracker<AchievementTracker>();
+            World.GetTracker<AchievementHandler>();
             World.GetTracker<HumanTracker>();
             Controls = DefaultControls;
-			Player p = Game.World.Entities.Spawn<Player>("Necromancer");
+			Player p = Hecatomb.Entity.Spawn<Player>("Necromancer");
 			World.Player = p;
 			p.Initialize();
 			p.Place(
@@ -123,7 +123,7 @@ namespace Hecatomb
 				World.GetGroundLevel(World.Width/2, World.Height/2)
 			);
 			Camera.Center(p.X, p.Y, p.Z);
-			var t = Game.World.Entities.Spawn<TutorialTracker>();
+			var t = Hecatomb.Entity.Spawn<TutorialHandler>();
 			t.Activate();
 			p.HandleVisibility();
 

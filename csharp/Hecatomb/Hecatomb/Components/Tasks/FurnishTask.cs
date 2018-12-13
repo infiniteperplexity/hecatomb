@@ -35,7 +35,7 @@ namespace Hecatomb
                 // only if we have the prerequisite structures / technologies...
                 foreach (string f in Fixtures)
 				{
-                    var fixture = Game.World.Entities.Mock<Fixture>();
+                    var fixture = Hecatomb.Entity.Mock<Fixture>();
                     fixture.InterpretJSON(EntityType.Types[f].Components["Fixture"]);
                     bool valid = true;
                     
@@ -55,7 +55,7 @@ namespace Hecatomb
                     }
                     if (valid)
                     {
-                        var task = Game.World.Entities.Mock<FurnishTask>();
+                        var task = Hecatomb.Entity.Mock<FurnishTask>();
                         task.Makes = f;
                         list.Add(task);
                     }
@@ -78,7 +78,7 @@ namespace Hecatomb
 			Feature incomplete = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
 			incomplete.Despawn();
             Game.World.Covers[Entity.X, Entity.Y, Entity.Z] = Cover.NoCover;
-			Feature finished = Game.World.Entities.Spawn<Feature>(Makes);
+			Feature finished = Hecatomb.Entity.Spawn<Feature>(Makes);
 			finished.Place(Entity.X, Entity.Y, Entity.Z);
 			base.Finish();
 		}
@@ -102,7 +102,7 @@ namespace Hecatomb
             
 			if (Makes!=null)
 			{
-                var fixture = Game.World.Entities.Mock<Fixture>();
+                var fixture = Hecatomb.Entity.Mock<Fixture>();
                 fixture.InterpretJSON(EntityType.Types[Makes].Components["Fixture"]);
                 if (fixture.Ingredients.Count == 0)
                 {
@@ -134,7 +134,7 @@ namespace Hecatomb
         {
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
             {
-                TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                TaskEntity task = Hecatomb.Entity.Spawn<TaskEntity>(this.GetType().Name);
                 string json = EntityType.Types[Makes].Components["Fixture"];
                 JObject obj = JObject.Parse(json);
                 var ingredients = obj["Ingredients"];

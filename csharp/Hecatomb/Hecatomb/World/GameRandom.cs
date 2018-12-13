@@ -10,16 +10,13 @@ using System.Linq;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of GameRandom.
-	/// </summary>
-	public class GameRandom
+	public class HecatombRandom
 	{
 		public int Seed;
 		public int Calls;
 		private Random random;
 		
-		public GameRandom(int seed, int calls=0)
+		public HecatombRandom(int seed, int calls=0)
 		{
 			Seed = seed;
 			Calls = calls;

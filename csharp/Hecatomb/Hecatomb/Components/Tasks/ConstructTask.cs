@@ -38,7 +38,7 @@ namespace Hecatomb
 		{
 			get
 			{
-				return (StructureEntity) Game.World.Entities.Spawned[StructureEID];
+				return (StructureEntity) Entities[StructureEID];
 			}
 			set
 			{
@@ -65,7 +65,7 @@ namespace Hecatomb
                 var researched = Game.World.GetTracker<ResearchTracker>().Researched;
                 foreach (string st in Structures)
 				{   
-                    var structure = (Structure) Game.World.Entities.Mock(Type.GetType("Hecatomb."+st));
+                    var structure = (Structure) Hecatomb.Entity.Mock(Type.GetType("Hecatomb."+st));
                     bool valid = true;
                     foreach (string s in structure.ResearchPrereqs)
                     {
@@ -83,7 +83,7 @@ namespace Hecatomb
                     }
                     if (valid)
                     {
-                        var task = Game.World.Entities.Mock<ConstructTask>();
+                        var task = Hecatomb.Entity.Mock<ConstructTask>();
                         task.Makes = st;
                         list.Add(task);
                     }
@@ -102,7 +102,7 @@ namespace Hecatomb
 			
 		private Structure Mock()
 		{
-			return (Structure) Game.World.Entities.Mock(Type.GetType("Hecatomb."+Makes));
+			return (Structure) Hecatomb.Entity.Mock(Type.GetType("Hecatomb."+Makes));
 		}
 
         public override bool CanAssign(Creature c)
@@ -136,7 +136,7 @@ namespace Hecatomb
 		{
 			Feature incomplete = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
 			incomplete.Despawn();
-			Feature f = Game.World.Entities.Spawn<Feature>(Makes+"Feature");
+			Feature f = Hecatomb.Entity.Spawn<Feature>(Makes+"Feature");
 			f.Place(Entity.X, Entity.Y, Entity.Z);
             Game.World.Covers[Entity.X, Entity.Y, Entity.Z] = Cover.NoCover;
 			Structure sc = Structure.GetComponent<Structure>();
@@ -160,7 +160,7 @@ namespace Hecatomb
 				Structure.Place(fr.X, fr.Y, fr.Z);
                 foreach (Feature feat in sc.Features)
                 {
-                    Structural st = Game.World.Entities.Spawn<Structural>();
+                    Structural st = Hecatomb.Entity.Spawn<Structural>();
                     st.Structure = Structure;
                     st.AddToEntity(feat);
                 }
@@ -215,13 +215,13 @@ namespace Hecatomb
 		
 		public override void SelectBox(Coord c, List<Coord> squares)
 		{
-			StructureEntity str = Game.World.Entities.Spawn<StructureEntity>(Makes);
+			StructureEntity str = Hecatomb.Entity.Spawn<StructureEntity>(Makes);
 			for (int i=0; i<squares.Count; i++)
 			{
 				Coord s = squares[i];
 				if (Game.World.Tasks[s.X, s.Y, s.Z]==null) 
 				{
-					TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+					TaskEntity task = Hecatomb.Entity.Spawn<TaskEntity>(this.GetType().Name);
 					ConstructTask tc = (ConstructTask) task.GetComponent<Task>();
 					tc.Makes = Makes;
 					tc.Structure = str;

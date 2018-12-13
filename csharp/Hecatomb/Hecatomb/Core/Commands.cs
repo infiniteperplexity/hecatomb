@@ -243,7 +243,7 @@ namespace Hecatomb
 
         public void ToggleTutorial()
         {
-            var tutorial = Game.World.GetTracker<TutorialTracker>();
+            var tutorial = Game.World.GetTracker<TutorialHandler>();
             tutorial.Visible = !tutorial.Visible;
             Game.MenuPanel.Dirty = true;
         }

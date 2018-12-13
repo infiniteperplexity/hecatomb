@@ -8,14 +8,13 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-    public class AchievementTracker : StateTracker
+    public class AchievementHandler : StateHandler
     {
         public List<Achievement> Achievements;
 
-        public override void Activate()
+        public AchievementHandler() : base()
         {
-            base.Activate();
-            Game.World.Events.Subscribe<AchievementEvent>(this, HandleEvent);
+            AddListener<AchievementEvent>(HandleEvent);
             Achievements = new List<Achievement>()
             {
                 new Achievement()

@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    class HumanTracker : StateTracker
+    class HumanTracker : StateHandler
     {
 
         public HumanTracker()
@@ -44,7 +44,7 @@ namespace Hecatomb
                     y = 254;
                     x = Game.World.Random.Next(1, 254);
                 }
-                Creature peasant = Game.World.Entities.Spawn<Creature>("AngryPeasant");
+                Creature peasant = Entity.Spawn<Creature>("AngryPeasant");
                 Debug.WriteLine("spawning a peasant at "+x + " "+y);
                 peasant.Place(x, y, Game.World.GetGroundLevel(x, y));
             }

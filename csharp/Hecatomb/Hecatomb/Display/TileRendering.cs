@@ -15,7 +15,7 @@ namespace Hecatomb
             var Creatures = Game.World.Creatures;
             var Items = Game.World.Items;
             var Features = Game.World.Features;
-            var Tiles = Game.World.Tiles;
+            var Tiles = Game.World.Terrains;
             Terrain terrain = Tiles[x, y, z];
             Cover cover = Game.World.Covers[x, y, z];
             Cover coverb = Game.World.Covers[x, y, z - 1];
@@ -33,7 +33,7 @@ namespace Hecatomb
             if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
             {
                 // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
-                if (Game.World.Tiles[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
+                if (Game.World.Terrains[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
                 {
                     return (Terrain.WallTile.Symbol, "SHADOWFG");
                 }
@@ -248,8 +248,8 @@ namespace Hecatomb
         {
             List<Particle> pl = Game.World.Particles[x, y, z];
             Particle p = (pl.Count > 0) ? pl[0] : null;
-            Terrain t = Game.World.Tiles[x, y, z];
-            Terrain tb = Game.World.Tiles[x, y, z - 1];
+            Terrain t = Game.World.Terrains[x, y, z];
+            Terrain tb = Game.World.Terrains[x, y, z - 1];
             Cover cv = Game.World.Covers[x, y, z];
             Cover cb = Game.World.Covers[x, y, z - 1];
             Feature f = Game.World.Features[x, y, z];
@@ -303,7 +303,7 @@ namespace Hecatomb
                 else
                 {
                     Cover cb2 = Game.World.Covers[x, y, z - 2];
-                    if (Game.World.Tiles[x, y, z - 1].ZView ==-1 && cb2.Liquid)
+                    if (Game.World.Terrains[x, y, z - 1].ZView ==-1 && cb2.Liquid)
                     {
                         return cb2.DarkBG;
                     }

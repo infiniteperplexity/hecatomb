@@ -14,10 +14,8 @@ using System.Linq;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of Class1.
-	/// </summary>
-	public partial class GameWorld
+
+	public partial class World
 	{
 		public string Stringify()
 		{
@@ -29,7 +27,7 @@ namespace Hecatomb
 				{
 					for (int k=0; k<Depth; k++)
 					{
-						terrainFIDs[i,j,k] = Tiles[i,j,k].FID;
+						terrainFIDs[i,j,k] = Terrains[i,j,k].FID;
                         coverFIDs[i, j, k] = Covers[i, j, k].FID;
                     }
 				}
@@ -44,7 +42,7 @@ namespace Hecatomb
                 random = Random,
                 player = Player.EID,
                 turns = turns,
-                entities = Entities.Spawned,
+                entities = Entities,
                 explored = Explored,
                 events = Events.StringifyListeners(),
                 tiles = terrainFIDs,
@@ -68,7 +66,7 @@ namespace Hecatomb
 		{
 			JObject parsed = (JObject) JsonConvert.DeserializeObject(json);
 			// *** Random Seed ***
-			Random = parsed["random"].ToObject<GameRandom>();
+			Random = parsed["random"].ToObject<HecatombRandom>();
 			Random.Initialize();
 			// *** Terrains and Covers ***
 			int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
@@ -80,32 +78,32 @@ namespace Hecatomb
 					for (int k=0; k<tiles.GetLength(2); k++)
 					{
 //						 piggyback covers in here too
-						Tiles[i,j,k] = Terrain.Enumerated[tiles[i,j,k]];
+						Terrains[i,j,k] = Terrain.Enumerated[tiles[i,j,k]];
                         Covers[i, j, k] = Cover.Enumerated[covers[i, j, k]];
                     }
 				}
 			}
 			// *** Entities ***
 			
-			foreach (int eid in Entities.Spawned.Keys.ToList())
+			foreach (int eid in Entities.Keys.ToList())
 			{
                 // this process can trigger recursive despawning
-                if (Entities.Spawned.ContainsKey(eid))
+                if (Entities.ContainsKey(eid))
                 {
-                    Entities.Spawned[eid].Despawn();
+                    Entities[eid].Despawn();
                 }
 			}
             // may want to double check that everything has been cleared?
 			int pid = (int) parsed["player"];
-			Entities.MaxEID = -1;
+			Entity.MaxEID = -1;
 			foreach (var child in parsed["entities"].Values())
 			{
                 // will this handle Player?  It's such a terrible way I do that...
 				string t = (string) child["ClassName"];
 				Type T = Type.GetType("Hecatomb." + t);
-				GameEntity ge = (GameEntity) child.ToObject(T);
-				Entities.Spawned[ge.EID] = ge;
-				Entities.MaxEID = Math.Max(Entities.MaxEID, ge.EID);
+				Entity ge = (Entity) child.ToObject(T);
+				Entities[ge.EID] = ge;
+				Entity.MaxEID = Math.Max(Entity.MaxEID, ge.EID);
 				ge.Spawned = true;
 				if (ge is PositionedEntity)
 				{
@@ -127,7 +125,7 @@ namespace Hecatomb
 			}
 			// *** Player ***
 			
-			Player = (Player) Entities.Spawned[pid];
+			Player = (Player) Entities[pid];
 			Explored = parsed.GetValue("explored").ToObject<HashSet<Coord>>();
 			Player.HandleVisibility();
 			Game.MainPanel.Dirty = true;
@@ -146,15 +144,7 @@ namespace Hecatomb
 				listeners.Clear();
 				foreach (int eid in listeners.Keys)
 				{
-					Type T = typeof(Func<GameEvent, GameEvent>);
-					if (type=="GameEvent")
-					{
-						Events.GlobalListeners[eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(T, Entities.Spawned[eid], listeners[eid]);
-					}
-					else
-					{
-						Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(T, Entities.Spawned[eid], listeners[eid]);
-					}
+					Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(Type.GetType("Hecatomb."+type), Entities[eid], listeners[eid]);
 				}
 			}
 		}

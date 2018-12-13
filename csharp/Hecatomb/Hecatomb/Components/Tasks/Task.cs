@@ -33,7 +33,7 @@ namespace Hecatomb
                 }
                 else
                 {
-                    return (Creature)Game.World.Entities.Spawned[WorkerEID];
+                    return (Creature)Entities[WorkerEID];
                 }
             }
             protected set
@@ -104,7 +104,7 @@ namespace Hecatomb
                 return;
             }
             int eid = Claims.Keys.ToList()[0];
-            Item item = (Item) Game.World.Entities.Spawned[eid];
+            Item item = (Item)Entities[eid];
             // now need to do some validation
             if (!item.Placed || !item.HasResources(Claims[eid]))
             {
@@ -117,7 +117,7 @@ namespace Hecatomb
                 Inventory inv = Worker.GetComponent<Inventory>();
                 if (inv.Item==null)
                 {
-                    inv.Item = Game.World.Entities.Spawn<Item>();
+                    inv.Item = Hecatomb.Entity.Spawn<Item>();
                 }
                 inv.Item.AddResources(Claims[eid]);
                 item.UnclaimResources(Claims[eid]);
@@ -183,7 +183,7 @@ namespace Hecatomb
         public virtual void Start()
         {
             SpendIngredients();
-            Feature f = Game.World.Entities.Spawn<Feature>("IncompleteFeature");
+            Feature f = Hecatomb.Entity.Spawn<Feature>("IncompleteFeature");
             f.Place(Entity.X, Entity.Y, Entity.Z);
         }
 
@@ -248,7 +248,7 @@ namespace Hecatomb
             {
                 if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
                 {
-                    TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                    TaskEntity task = Hecatomb.Entity.Spawn<TaskEntity>(this.GetType().Name);
                     task.GetComponent<Task>().Makes = Makes;
                     task.Place(c.X, c.Y, c.Z);
                 }
@@ -269,7 +269,7 @@ namespace Hecatomb
             foreach (int eid in Claims.Keys)
             {
                 // need some kind of null check here...or maybe a listener?
-                Item item = (Item)Game.World.Entities.Spawned[eid];
+                Item item = (Item)Entities[eid];
                 var resources = Claims[eid];
                 foreach (string resource in resources.Keys)
                 {
@@ -283,7 +283,7 @@ namespace Hecatomb
         {
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
             {
-                TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                TaskEntity task = Hecatomb.Entity.Spawn<TaskEntity>(this.GetType().Name);
                 task.GetComponent<Task>().Makes = Makes;
                 task.Place(c.X, c.Y, c.Z);
             }
@@ -310,7 +310,7 @@ namespace Hecatomb
             {
                 if (Game.World.Tasks[s.X, s.Y, s.Z] == null)
                 {
-                    TaskEntity task = Game.World.Entities.Spawn<TaskEntity>(this.GetType().Name);
+                    TaskEntity task = Hecatomb.Entity.Spawn<TaskEntity>(this.GetType().Name);
                     task.GetComponent<Task>().Makes = Makes;
                     task.Place(s.X, s.Y, s.Z);
                 }

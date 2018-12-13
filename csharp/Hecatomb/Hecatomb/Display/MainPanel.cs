@@ -80,7 +80,7 @@ public class MainGamePanel : GamePanel
 		public override void DrawContent()
 		{
 			Camera Camera = Game.Camera;
-			var grid = Game.World.Tiles;
+			var grid = Game.World.Terrains;
 			int z = Camera.Z;
 			//ValueTuple<char, string, string> glyph;
 			for (int i=0; i<Camera.Width; i++) {

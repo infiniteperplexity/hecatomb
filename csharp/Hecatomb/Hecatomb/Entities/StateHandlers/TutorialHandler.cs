@@ -14,7 +14,7 @@ namespace Hecatomb
     /// <summary>
     /// Description of TutorialTracker.
     /// </summary>
-    public class TutorialTracker : StateTracker
+    public class TutorialHandler : StateHandler
     {
         public int MoveCount;
         public int SlopeCount;

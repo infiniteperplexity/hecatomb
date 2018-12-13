@@ -32,7 +32,7 @@ namespace Hecatomb
 			int y = Entity.Y;
 			int z = Entity.Z;
 			Game.World.Features[x, y, z].Despawn();
-			var tiles = Game.World.Tiles;
+			var tiles = Game.World.Terrains;
             var covers = Game.World.Covers;
 			Terrain t = tiles[x, y, z];	
 			Terrain floor = Terrain.FloorTile;
@@ -120,7 +120,7 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Tiles[x, y, z];
+                Terrain t = Game.World.Terrains[x, y, z];
                 if (Game.World.Explored.Contains(square))
                 {
                     if (Game.World.Features[x, y, z]?.TryComponent<Harvestable>()!=null)
@@ -180,7 +180,7 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Tiles[x, y, z];
+                Terrain t = Game.World.Terrains[x, y, z];
                 if (Game.World.Explored.Contains(square))
                 {
                     if (Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
@@ -214,11 +214,11 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Tiles[x, y, z];
+                Terrain t = Game.World.Terrains[x, y, z];
                 if (priority == 5 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
                 {
                     Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
-                    Game.World.Entities.Spawn<TaskEntity>("HarvestTask").Place(x, y, z);
+                    Hecatomb.Entity.Spawn<TaskEntity>("HarvestTask").Place(x, y, z);
                 } else if (    (priority == 4 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
                         || (priority == 3 && t == Terrain.FloorTile)
                         || (priority == 2 && t == Terrain.DownSlopeTile)
@@ -227,7 +227,7 @@ namespace Hecatomb
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null)
                         Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
-                        Game.World.Entities.Spawn<TaskEntity>("DigTask").Place(x, y, z);
+                        Hecatomb.Entity.Spawn<TaskEntity>("DigTask").Place(x, y, z);
                     }
                }
             }
@@ -241,8 +241,8 @@ namespace Hecatomb
             {
                 return true;
             }
-            Terrain t = Game.World.Tiles[c.X, c.Y, c.Z];
-            Terrain tb = Game.World.Tiles[c.X, c.Y, c.Z - 1];
+            Terrain t = Game.World.Terrains[c.X, c.Y, c.Z];
+            Terrain tb = Game.World.Terrains[c.X, c.Y, c.Z - 1];
             // can't dig an empty tile no matter what
             if (t==Terrain.EmptyTile)
             {

@@ -115,9 +115,9 @@ namespace Hecatomb
                 ParticleEmitter emitter = new ParticleEmitter();
 				emitter.Place(c.X, c.Y, c.Z);
 //				f.Destroy();
-				Creature zombie = Game.World.Entities.Spawn<Creature>("Zombie");
+				Creature zombie = Entity.Spawn<Creature>("Zombie");
 				zombie.Place(c.X, c.Y, c.Z-1);
-				TaskEntity emerge = Game.World.Entities.Spawn<TaskEntity>("ZombieEmergeTask");
+				TaskEntity emerge = Entity.Spawn<TaskEntity>("ZombieEmergeTask");
 				emerge.GetComponent<Task>().AssignTo(zombie);
 				emerge.Place(c.X, c.Y, c.Z);
 				Game.World.Player.GetComponent<Minions>().Add(zombie);
@@ -180,7 +180,7 @@ namespace Hecatomb
 			    int y1 = c.Y;
 			    int z1 = c.Z;
 			    f = Game.World.Features[x1, y1, z1];
-			    if (Game.World.Features[x1, y1, z1]==null && !Game.World.Tiles[x1, y1, z1].Solid && !Game.World.Tiles[x1, y1, z1].Fallable)
+			    if (Game.World.Features[x1, y1, z1]==null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
 			    {
 			    	if (Game.World.Random.Next(2)==0)
 			    	{
@@ -190,8 +190,8 @@ namespace Hecatomb
 			    	}
 			    }
 			}
-			Game.World.Tiles[x, y, z] = Terrain.DownSlopeTile;
-			Game.World.Tiles[x, y, z-1] = Terrain.UpSlopeTile;
+			Game.World.Terrains[x, y, z] = Terrain.DownSlopeTile;
+			Game.World.Terrains[x, y, z-1] = Terrain.UpSlopeTile;
             Game.World.Covers[x, y, z] = Cover.NoCover;
             Game.World.Covers[x, y, z - 1] = Cover.NoCover;
 			base.Finish();
@@ -216,7 +216,7 @@ namespace Hecatomb
         {
             ParticleEmitter emitter = new ParticleEmitter();
             emitter.Place(c.X, c.Y, c.Z);
-            Creature zombie = Game.World.Entities.Spawn<Creature>("HungryGhoul");
+            Creature zombie = Hecatomb.Entity.Spawn<Creature>("HungryGhoul");
             zombie.Place(c.X, c.Y, c.Z);
         }
 

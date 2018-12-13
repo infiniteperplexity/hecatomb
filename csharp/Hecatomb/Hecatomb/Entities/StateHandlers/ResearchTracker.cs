@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-    public class ResearchTracker : StateTracker
+    public class ResearchTracker : StateHandler
     {
         public List<string> Researched;
         public ResearchTracker() : base()

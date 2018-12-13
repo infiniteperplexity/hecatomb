@@ -22,7 +22,7 @@ namespace Hecatomb
 	
 	public class Actor : Component
 	{
-		public int TargetEID;
+        public EntityField<PositionedEntity> Target;
 		public int ActionPoints;
 		public int CurrentPoints;
 		private string TeamName;
@@ -54,39 +54,8 @@ namespace Hecatomb
 				}
 			}
 		}
-		
-		[JsonIgnore] PositionedEntity Target {
-			get
-			{
-				if (TargetEID==-1)
-				{
-					return null;
-				}
-				else 
-				{
-                    if (!Game.World.Entities.Spawned.ContainsKey(TargetEID))
-                    {
-                        TargetEID = -1;
-                        return null;
-                    }
-				    return (PositionedEntity) Game.World.Entities.Spawned[TargetEID];
-				}
-			}
-			set
-			{
-				if (value==null)
-				{
-					TargetEID = -1;
-				}
-				else
-				{
-					TargetEID = value.EID;
-				}
-			}
-		}
 		public Actor() : base()
 		{
-			TargetEID = -1;
 			ActionPoints = 16;
             CurrentPoints = (Game.World.Turns.Turn==0) ? ActionPoints : 0;
             Alert = CheckForHostile;
@@ -177,7 +146,7 @@ namespace Hecatomb
 			{
 				WalkRandom();
 			} else {
-                if (Target is Creature && Team!=null && Team.IsHostile((Creature) Target))
+                if (Target.Entity is Creature && Team!=null && Team.IsHostile((Creature) Target.Entity))
                 {
                     if (Tiles.QuickDistance(Entity, Target)<=1)
                     {
@@ -324,7 +293,7 @@ namespace Hecatomb
             {
                 Debug.WriteLine("Somehow ended up targeting itself.");
             }
-            if (Target != null && Target is Creature && Team.IsHostile((Creature) Target))
+            if (Target != null && Target.Entity is Creature && Team.IsHostile((Creature) Target.Entity))
             {
                 Movement m = Entity.GetComponent<Movement>();
                 Attacker a = Entity.TryComponent<Attacker>();

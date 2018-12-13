@@ -51,7 +51,7 @@ namespace Hecatomb
 
         public static List<string> ListAll()
         {
-            List<GameEntity> list = Game.World.Entities.Spawned.Values.Where(((GameEntity e) =>
+            List<Entity> list = Entities.Values.Where(((Entity e) =>
                 {
                     if (!(e is StructureEntity))
                     {

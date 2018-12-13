@@ -330,7 +330,7 @@ namespace Hecatomb
             if (x1 < 0 || x1 >= Game.World.Width || y1 < 0 || y1 >= Game.World.Height || z1 < 0 || z1 >= Game.World.Depth) {
                 return false;
             }
-            Terrain tile = Game.World.Tiles[x1, y1, z1];
+            Terrain tile = Game.World.Terrains[x1, y1, z1];
             // non-phasers can't go through a solid wall
             if (!Phases && tile.Solid) {
                 return false;
@@ -393,12 +393,12 @@ namespace Hecatomb
 				return false;
 			}	
 			// non-flyers need a slope in order to go up
-			Terrain t0 = Game.World.Tiles[x0, y0, z0];
+			Terrain t0 = Game.World.Terrains[x0, y0, z0];
 			if (dz==+1 && !Flies && t0.ZWalk!=+1)
 			{
 				return false;
       		}
-			Terrain tile = Game.World.Tiles[x1,y1,z1];
+			Terrain tile = Game.World.Terrains[x1,y1,z1];
 			// non-phasers can't go through a ceiling
 			if (!Phases)
 			{
@@ -484,11 +484,11 @@ namespace Hecatomb
                     return true;
                 }
             }
-            else if (dz==+1 && dx==0 && dy==0 && Game.World.Tiles[x1, y1, z1].ZView == -1)
+            else if (dz==+1 && dx==0 && dy==0 && Game.World.Terrains[x1, y1, z1].ZView == -1)
             {
                 return true;
             }
-            else if (dz==-1 && dx == 0 && dy == 0 && Game.World.Tiles[x0, y0, z0].ZView == -1)
+            else if (dz==-1 && dx == 0 && dy == 0 && Game.World.Terrains[x0, y0, z0].ZView == -1)
             {
                 return true;
             }

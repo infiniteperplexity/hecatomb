@@ -14,9 +14,9 @@ namespace Hecatomb
         {
             Entity.Despawn();
             Game.World.Covers[x, y, z].Mine(x, y, z);
-            Game.World.Tiles[x, y, z] = Terrain.UpSlopeTile;
+            Game.World.Terrains[x, y, z] = Terrain.UpSlopeTile;
             Game.World.Covers[x, y, z + 1].Mine(x, y, z + 1);
-            Game.World.Tiles[x, y, z + 1] = Terrain.DownSlopeTile;
+            Game.World.Terrains[x, y, z + 1] = Terrain.DownSlopeTile;
         }
     }
 }

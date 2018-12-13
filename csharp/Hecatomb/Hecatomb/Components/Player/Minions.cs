@@ -35,7 +35,7 @@ namespace Hecatomb
 	   	{
 			get
 			{	
-				return (Creature) Game.World.Entities.Spawned[MinionEIDs[i]];
+				return (Creature) Entities[MinionEIDs[i]];
 			}
 			set
 			{
@@ -59,7 +59,7 @@ namespace Hecatomb
 
         public List<Creature> GetList()
         {
-            return MinionEIDs.Select(eid => (Creature)Game.World.Entities.Spawned[eid]).ToList();
+            return MinionEIDs.Select(eid => (Creature) Entities[eid]).ToList();
         }
 	}
 }

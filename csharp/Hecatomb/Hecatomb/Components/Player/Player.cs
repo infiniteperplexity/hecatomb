@@ -31,9 +31,9 @@ namespace Hecatomb
 		public void Initialize()
 		{
 			Component c;
-			c = (Component) Game.World.Entities.Spawn(typeof(Minions));
+			c = (Component) Hecatomb.Entity.Spawn(typeof(Minions));
 			c.AddToEntity(this);
-			c = (Component) Game.World.Entities.Spawn(typeof(TaskMaster));
+			c = (Component) Entity.Spawn(typeof(TaskMaster));
 			c.AddToEntity(this);
 			GetComponent<Actor>().Team = Team.PlayerTeam;
 		}

@@ -24,7 +24,7 @@ namespace Hecatomb
 			{
       			return false;
     		}
-			Terrain t = Game.World.Tiles[x1,y1,z1];
+			Terrain t = Game.World.Terrains[x1,y1,z1];
 			return (!t.Solid && !t.Fallable);
 		}
 
@@ -38,14 +38,14 @@ namespace Hecatomb
 			{
       			return false;
     		}
-			Terrain t = Game.World.Tiles[x1,y1,z1];
+			Terrain t = Game.World.Terrains[x1,y1,z1];
 			return (!t.Solid && !t.Fallable);
 		}
 		
 		public static LinkedList<Coord> FindPath(
 			Movement m, PositionedEntity t, bool useLast=true)
 		{
-			var misses = Game.World.GetTracker<PathTracker>().PathMisses;
+			var misses = Game.World.GetTracker<PathHandler>().PathMisses;
 			if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
 			{
 				return new LinkedList<Coord>();

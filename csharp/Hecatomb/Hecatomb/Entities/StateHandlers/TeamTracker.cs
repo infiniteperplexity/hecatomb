@@ -11,6 +11,7 @@ using System.Diagnostics;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
 	/// <summary>
 	/// Description of TeamTracker.
 	/// </summary>
@@ -100,7 +101,7 @@ namespace Hecatomb
 			{
 				foreach (int eid in tt.Membership[enemy])
 				{
-					enemies.Add((Creature) Game.World.Entities.Spawned[eid]);
+					enemies.Add((Creature) Entities[eid]);
 				}
 			}
 			return enemies;
@@ -134,7 +135,7 @@ namespace Hecatomb
 			
 	// The teams themselves do not hold state; rather, the TeamTracker holds state for them
 	// It might also do some cacheing but I'm not sure yet
-	public class TeamTracker : StateTracker
+	public class TeamTracker : StateHandler
 	{
 		public Dictionary<string, List<int>> Membership;
 		private Dictionary<int, Dictionary<int, bool>> hostilityMatrix;

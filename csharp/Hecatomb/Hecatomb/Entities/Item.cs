@@ -221,7 +221,7 @@ namespace Hecatomb
             Item it = Game.World.Items[x, y, z];
             if (it == null)
             {
-                it = Game.World.Entities.Spawn<Item>();
+                it = Entity.Spawn<Item>();
                 it.Place(x, y, z);
             }
             it.AddResource(resource);

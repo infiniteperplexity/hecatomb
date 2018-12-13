@@ -56,7 +56,7 @@ namespace Hecatomb
 			foreach (string t in Components.Keys)
 			{
 				Type T = Type.GetType("Hecatomb." + t);
-				Component c = (Component) Game.World.Entities.Spawn(Type.GetType("Hecatomb." + t));	
+				Component c = (Component)Hecatomb.Entity.Spawn(Type.GetType("Hecatomb." + t));	
 				c.AddToEntity(e);
 				c.InterpretJSON(Components[t]);
 			}
@@ -73,7 +73,7 @@ namespace Hecatomb
             foreach (string t in Components.Keys)
             {
                 Type T = Type.GetType("Hecatomb." + t);
-                Component c = (Component)Game.World.Entities.Mock(Type.GetType("Hecatomb." + t));
+                Component c = (Component)Entity.Mock(Type.GetType("Hecatomb." + t));
                 c.AddToEntity(e);
                 c.InterpretJSON(Components[t]);
             }

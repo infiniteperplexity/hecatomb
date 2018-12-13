@@ -19,7 +19,7 @@ namespace Hecatomb
 	/// Description of Entity.
 	/// </summary>
 	///
-	public abstract class PositionedEntity : GameEntity
+	public abstract class PositionedEntity : Entity
 	{
 		public string TypeName;
 		[JsonIgnore] public string Name;
@@ -50,7 +50,7 @@ namespace Hecatomb
 			string t = typeof(T).Name;
 			if (Components.ContainsKey(t)) {
 				int eid = Components[t];
-				return (T) Game.World.Entities.Spawned[eid];
+				return (T) Entities[eid];
 			} else {
 				throw new InvalidOperationException(String.Format("{0} has no component of type {1}", this, t));
 			}
@@ -62,7 +62,7 @@ namespace Hecatomb
 			string t = typeof(T).Name;
 			if (Components.ContainsKey(t)) {
 				int eid = Components[t];
-				return (T) Game.World.Entities.Spawned[eid];
+				return (T) Entities[eid];
 			} else {
 				return default(T);
 			}
@@ -114,7 +114,7 @@ namespace Hecatomb
             {
                 foreach (int c in Components.Values)
                 {
-                    Game.World.Entities.Spawned[c].Despawn();
+                    Entities[c].Despawn();
                 }
             }
             if (Placed)

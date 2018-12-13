@@ -12,51 +12,67 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+
 namespace Hecatomb
 {
-	/// <summary>
-	/// GameWorld should contain *all* the truly persistent state for the game - state that's not derived, or part of the GUI.
-	/// </summary>
-	public partial class GameWorld
+    using static HecatombAliases;
+    /// <summary>
+    /// GameWorld should contain *all* the truly persistent state for the game - state that's not derived, or part of the GUI.
+
+
+
+
+
+    public partial class World
 	{
+        // dimensions
 		public int Width;
 		public int Height;
 		public int Depth;
-		
-		public Terrain[,,] Tiles {get; set;}
-        public Cover[,,] Covers {get; set;}
-        public int[,,] Lighting { get; set; }
-        public int[,,] Outdoors { get; set; }
+
+        // world state
+        public Dictionary<int, Entity> Entities
+        {
+            get
+            {
+                return Entity.Entities;
+            }
+        }
+        public Terrain[,,] Terrains;
+        public Cover[,,] Covers;
+        public int[,,] Lighting;
+        public int[,,] Outdoors;
 		public SparseArray3D<Creature> Creatures;
 		public SparseArray3D<Feature> Features;
 		public SparseArray3D<Item> Items;
 		public SparseArray3D<TaskEntity> Tasks;
         public List<ParticleEmitter> Emitters;
         public SparseJaggedArray3D<Particle> Particles;
-        public Dictionary<string, StateTracker> StateTrackers;
+        public Dictionary<string, StateHandler> StateHandlers;
 		public HashSet<Coord> Explored;
-		public GameEventHandler Events;
-		public EntityHandler Entities;
+		public EventHandler Events;
 		public Player Player;
-		public GameRandom Random;
-		
-		public FastNoise ElevationNoise;
+		public HecatombRandom Random;
+        public TurnHandler Turns;
+
+        // should these attach to builder?
+        public FastNoise ElevationNoise;
 		public FastNoise VegetationNoise;
 		
-		public TurnHandler Turns;
 		
-		public GameWorld(int width, int height, int depth, int seed=0) {
-			Random = new GameRandom(seed);
-			Entities = new EntityHandler();
+		
+		public World(int width, int height, int depth, int seed=0) {
+			Random = new HecatombRandom(seed);
+            Entity.Reset();
 			Width = width;
 			Height = height;
 			Depth = depth;
-			Events = new GameEventHandler();
+			Events = new EventHandler();
             Lighting = new int[Width, Height, Depth];
             Outdoors = new int[Width, Height, Depth];
-            Tiles = new Terrain[Width, Height, Depth];
+            Terrains = new Terrain[Width, Height, Depth];
             Covers = new Cover[Width, Height, Depth];
-			StateTrackers = new Dictionary<string, StateTracker>();
+			StateHandlers = new Dictionary<string, StateHandler>();
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
 			Items = new SparseArray3D<Item>(Width, Height, Depth);
@@ -70,12 +86,12 @@ namespace Hecatomb
 		
 		public void Reset()
 		{
-			// Random = new GameRandom(Random.Seed);
-			Entities = new EntityHandler();
-			Events = new GameEventHandler();
-			Tiles = new Terrain[Width, Height, Depth];
+            // Random = new GameRandom(Random.Seed);
+            Entity.Reset();
+			Events = new EventHandler();
+			Terrains = new Terrain[Width, Height, Depth];
             Covers = new Cover[Width, Height, Depth];
-			StateTrackers = new Dictionary<string, StateTracker>();
+			StateHandlers = new Dictionary<string, StateHandler>();
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
 			Items = new SparseArray3D<Item>(Width, Height, Depth);
@@ -91,7 +107,7 @@ namespace Hecatomb
 			if (x<0 || x>=Width || y<0 || y>=Height || z<0 || z>=Depth) {
 				return Terrain.OutOfBoundsTile;
 			} else {
-				return Tiles[x,y,z];
+				return Terrains[x,y,z];
 			}
 		}
 		
@@ -102,7 +118,7 @@ namespace Hecatomb
 			}
 			int elev = Depth-1;
 			for (int i=Depth-1; i>0; i--) {
-				if (Tiles[x,y,i].Solid)
+				if (Terrains[x,y,i].Solid)
 				{
 					return i+1;
 				}
@@ -128,7 +144,7 @@ namespace Hecatomb
 			PositionedEntity t;
 			if (Explored.Contains(c) || Game.Options.Explored)
 			{
-				text.Add("Terrain: " + Tiles[x, y, z].Name);
+				text.Add("Terrain: " + Terrains[x, y, z].Name);
                 text.Add("Cover: " + Covers[x, y, z].Name);
 				t = Creatures[x, y, z];
 				if (t!=null)
@@ -150,7 +166,7 @@ namespace Hecatomb
 			change = text.Count;
 			if (Explored.Contains(above) || Game.Options.Explored)
 			{
-				text.Add("Above: " + Tiles[x, y, za].Name);
+				text.Add("Above: " + Terrains[x, y, za].Name);
                 text.Add("Cover: " + Covers[x, y, za].Name);
                 t = Creatures[x, y, za];
 				if (t!=null)
@@ -171,7 +187,7 @@ namespace Hecatomb
 			}
 			if (Explored.Contains(below) || Game.Options.Explored)
 			{
-				text.Add("Below: " + Tiles[x, y, zb].Name);
+				text.Add("Below: " + Terrains[x, y, zb].Name);
                 text.Add("Cover: " + Covers[x, y, zb].Name);
                 t = Creatures[x, y, zb];
 				if (t!=null)
@@ -198,20 +214,20 @@ namespace Hecatomb
 			Game.MenuPanel.Dirty = true;
 		}
 		
-		public T GetTracker<T>() where T : StateTracker, new()
+		public T GetTracker<T>() where T : StateHandler, new()
 		{
 			string s = typeof(T).Name;
-			if (!StateTrackers.ContainsKey(s))
+			if (!StateHandlers.ContainsKey(s))
 			{
-				var tracker = Entities.Spawn<T>();
+				var tracker = Entity.Spawn<T>();
 				tracker.Activate();
 			}
-			return (T) StateTrackers[s];
+			return (T) StateHandlers[s];
 		}
 
         public void ValidateOutdoors()
         {
-            GetTracker<PathTracker>().Reset();
+            GetTracker<PathHandler>().ResetPaths();
             Outdoors = new int[Width, Height, Depth];
             for (int x = 1; x < Width - 1; x++)
             {
@@ -229,7 +245,7 @@ namespace Hecatomb
                                 Outdoors[x + dx, y + dy, z] = 1;
                             }
                         }
-                        if (Tiles[x, y, z].Solid)
+                        if (Terrains[x, y, z].Solid)
                         {
                             break;
                         }

@@ -19,7 +19,7 @@ namespace Hecatomb
                 }
                 else
                 {
-                    return (StructureEntity) Game.World.Entities.Spawned[StructureEID];
+                    return (StructureEntity) Entities[StructureEID];
                 }
             }
             set

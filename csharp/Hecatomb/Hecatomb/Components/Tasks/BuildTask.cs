@@ -38,7 +38,7 @@ namespace Hecatomb
 			int y = Entity.Y;
 			int z = Entity.Z;
 			Game.World.Features[x, y, z].Despawn();
-			var tiles = Game.World.Tiles;
+			var tiles = Game.World.Terrains;
 			Terrain t = tiles[x, y, z];	
 			Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;
@@ -86,7 +86,7 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Tiles[x, y, z];
+                Terrain t = Game.World.Terrains[x, y, z];
                 if (Game.World.Explored.Contains(square))
                 {
                     if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
@@ -122,7 +122,7 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Tiles[x, y, z];
+                Terrain t = Game.World.Terrains[x, y, z];
                 if (Game.World.Explored.Contains(square))
                 {
                     if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
@@ -140,14 +140,14 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Tiles[x, y, z];
+                Terrain t = Game.World.Terrains[x, y, z];
                 if ((priority == 2 && (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile))
                       || (priority == 1 && t == Terrain.FloorTile || t == Terrain.UpSlopeTile))
                 {
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null && Game.World.Features[x, y, z]==null)
                         Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateBuildTask" });
-                    Game.World.Entities.Spawn<TaskEntity>("BuildTask").Place(x, y, z);
+                    Hecatomb.Entity.Spawn<TaskEntity>("BuildTask").Place(x, y, z);
                 }
             }
         }
@@ -166,7 +166,7 @@ namespace Hecatomb
                 return false;
             }
             // can't build on a wall tile
-            if (Game.World.Tiles[c.X, c.Y, c.Z] == Terrain.WallTile)
+            if (Game.World.Terrains[c.X, c.Y, c.Z] == Terrain.WallTile)
             {
                 return false;
             }

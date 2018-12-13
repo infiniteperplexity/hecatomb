@@ -41,7 +41,7 @@ namespace Hecatomb
             }
             if (resources.Count > 0)
             {
-                var item = Game.World.Entities.Spawn<Item>();
+                var item = Hecatomb.Entity.Spawn<Item>();
                 item.AddResources(resources);
                 item.Owned = true;
                 item.Place(x, y, z);
