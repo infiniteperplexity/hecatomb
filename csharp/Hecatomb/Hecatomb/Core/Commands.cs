@@ -14,7 +14,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Commands.
 	/// </summary>
-	public class GameCommands
+	public class Commands
 	{
 		public void Wait()
 		{
@@ -156,7 +156,7 @@ namespace Hecatomb
 		}
 		private void moveCameraHorizontal(int dx, int dy)
 		{
-			GameCamera c = Game.Camera;
+			Camera c = Game.Camera;
 			int xhalf = c.Width/2;
 			int yhalf = c.Height/2;
 			c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Game.World.Width-c.Width);

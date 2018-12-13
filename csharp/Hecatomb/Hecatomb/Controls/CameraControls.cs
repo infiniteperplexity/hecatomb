@@ -24,7 +24,7 @@ namespace Hecatomb
 		public override void HandleKeyDown(Keys key)
 		{
 			base.HandleKeyDown(key);
-			GameCamera c = Game.Camera;
+			Camera c = Game.Camera;
 			Z = c.Z;
 			XOffset = c.XOffset;
 			YOffset = c.YOffset;

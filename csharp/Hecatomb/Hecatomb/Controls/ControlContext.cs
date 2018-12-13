@@ -80,7 +80,7 @@ namespace Hecatomb
         	{
          		int Size = Game.MainPanel.Size;
 	        	int Padding = Game.MainPanel.Padding;
-	        	GameCamera Camera = Game.Camera;
+	        	Camera Camera = Game.Camera;
 	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.Z);
 	        	OnTileClick(tile);
         	}
@@ -109,7 +109,7 @@ namespace Hecatomb
         	{
          		int Size = Game.MainPanel.Size;
 	        	int Padding = Game.MainPanel.Padding;
-	        	GameCamera Camera = Game.Camera;
+	        	Camera Camera = Game.Camera;
 	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.Z);
 	        	OnTileHover(tile);
         	} else if (x>=Game.MenuPanel.X0)

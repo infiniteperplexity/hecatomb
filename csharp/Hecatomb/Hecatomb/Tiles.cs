@@ -376,22 +376,22 @@ namespace Hecatomb
 
         public static Coord ToCamera(int x, int y)
 		{
-			GameCamera Camera = Game.Camera;
+			Camera Camera = Game.Camera;
 			return new Coord(x-Camera.XOffset, y-Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToCamera(Coord c)
 		{
-			GameCamera Camera = Game.Camera;
+			Camera Camera = Game.Camera;
 			return new Coord(c.X-Camera.XOffset, c.Y-Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToAbsolute(int x, int y)
 		{
-			GameCamera Camera = Game.Camera;
+			Camera Camera = Game.Camera;
 			return new Coord(x+Camera.XOffset, y+Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToAbsolute(Coord c)
 		{
-			GameCamera Camera = Game.Camera;
+			Camera Camera = Game.Camera;
 			return new Coord(c.X+Camera.XOffset, c.Y+Camera.YOffset, Camera.Z);
 		}
 	}	

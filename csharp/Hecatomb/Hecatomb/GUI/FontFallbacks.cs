@@ -15,11 +15,11 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of FontHandler.
 	/// </summary>
-	public class FontHandler
+	public class FontFallbacks
 	{
 		List<SpriteFont> Fonts;
 		Dictionary<char, Vector2> measureCache;
-		public FontHandler(params string[] fonts)
+		public FontFallbacks(params string[] fonts)
 		{
 			Fonts = new List<SpriteFont>();
 			foreach(string s in fonts)

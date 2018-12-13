@@ -79,7 +79,7 @@ public class MainGamePanel : GamePanel
 
 		public override void DrawContent()
 		{
-			GameCamera Camera = Game.Camera;
+			Camera Camera = Game.Camera;
 			var grid = Game.World.Tiles;
 			int z = Camera.Z;
 			//ValueTuple<char, string, string> glyph;

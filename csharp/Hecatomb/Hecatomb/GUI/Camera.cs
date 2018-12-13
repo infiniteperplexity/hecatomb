@@ -13,7 +13,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Camera.
 	/// </summary>
-	public class GameCamera
+	public class Camera
 	{
 		public int Height = 25;
 		public int Width = 25;
@@ -21,7 +21,7 @@ namespace Hecatomb
 		public int YOffset = 0;
 		public int Z = 0;
 		
-		public GameCamera()
+		public Camera()
 		{
 		}
 		

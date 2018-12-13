@@ -18,12 +18,12 @@ namespace Hecatomb
     /// <summary>
     /// Descripti
     /// </summary>
-    public class GameColors
+    public class Colors
     {
 
         private Dictionary<string, Color> colors;
 
-        public GameColors()
+        public Colors()
         {
             colors = new Dictionary<string, Color>() {
                 {"white", Color.White},

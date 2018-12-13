@@ -6,11 +6,18 @@ using System.Threading.Tasks;
 
 namespace Hecatomb
 {
-    public class GameOptions
+    public class Options
     {
         public bool Explored;
         public bool Visible;
         public bool NoIngredients;
+
+        public Options()
+        {
+            Explored = false;
+            Visible = false;
+            NoIngredients = false;
+        }
     }
     
 }

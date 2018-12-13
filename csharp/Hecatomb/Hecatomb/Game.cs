@@ -18,11 +18,11 @@ namespace Hecatomb
     /// </summary>
     public class Game : Microsoft.Xna.Framework.Game
     {
-        public static GameOptions Options;
+        public static Options Options;
     	public static GameWorld World;
-		public static GameCommands Commands;
-		public static GameColors Colors;
-		public static GameCamera Camera;
+		public static Commands Commands;
+		public static Colors Colors;
+		public static Camera Camera;
 		public static ContentManager MyContentManager;
 		public static Dictionary<string, object> Caches;
 		public static MainGamePanel MainPanel;
@@ -40,7 +40,7 @@ namespace Hecatomb
         GraphicsDeviceManager graphics;
         SpriteBatch sprites;
         
-        public static Hecatomb.Game game;
+        public static global::Hecatomb.Game game;
         
         
         [STAThread]
@@ -75,18 +75,13 @@ namespace Hecatomb
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
-            Options = new GameOptions()
-            {
-                //Explored = true,
-                //Visible = true,
-                //NoIngredients = true
-            };
-            Colors = new GameColors();
+            Options = new Options();
+            Colors = new Colors();
 			Time = new TimeHandler();
-			Commands = new GameCommands();
+			Commands = new Commands();
 			DefaultControls = new DefaultControls();
 			CameraControls = new CameraControls();
-			Camera = new GameCamera();
+			Camera = new Camera();
             
 			//ShowIntro();
 			base.Initialize();

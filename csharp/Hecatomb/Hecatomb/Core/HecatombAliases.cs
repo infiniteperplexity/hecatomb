@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Hecatomb
 {
-    public static class HecatombServiceLocator
+    public static class HecatombAliases
     {
         // GUI elements
         public static MainGamePanel MainPanel;
         public static MenuGamePanel MenuPanel;
         public static StatusGamePanel StatusPanel;
         public static ControlContext Controls;
-        public static GameCommands Commands;
-        public static GameColors Colors;
+        public static Commands Commands;
+        public static Colors Colors;
 
         // World state
         public static GameWorld World;
