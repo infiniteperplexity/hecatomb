@@ -191,11 +191,12 @@ namespace Hecatomb
 			}
             //
             int tally = 0;
+            int maxtries = 2500;
 			while (queue.Count>0) {
                 tally += 1;
-                if (tally>=500)
+                if (tally>=maxtries)
                 {
-                    Debug.Print("failed after 500 tries.");
+                    Debug.Print("failed after {0} tries.",tally);
                     return new LinkedList<Coord>();
                 }
 				current = queue.First.Value;

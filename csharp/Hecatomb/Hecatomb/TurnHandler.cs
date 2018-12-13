@@ -153,42 +153,6 @@ namespace Hecatomb
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 			Creature[] actors = Game.World.Creatures.ToArray();
-			foreach (Creature m in p.GetComponent<Minions>().GetList())
-			{
-				Minion minion = m.GetComponent<Minion>();
-				if (minion.Task==null)
-				{
-                    // special case: if the initial ZombieEmerge task got canceled
-                    int x = m.X;
-                    int y = m.Y;
-                    int z = m.Z;
-                    if (Game.World.Tiles[x, y, z].Solid)
-                    {
-                        if (Game.World.Features[x, y, z+1]?.TypeName=="Grave")
-                        {
-                            Game.World.Tasks[x, y, z + 1]?.TryComponent<Task>()?.Cancel();
-                            var task = Game.World.Entities.Spawn<TaskEntity>("ZombieEmergeTask");
-                            task.Place(x, y, z + 1);
-                            task.GetComponent<Task>().AssignTo(m);               
-                        }
-                    }
-					foreach (TaskEntity t in Game.World.Tasks.OrderBy( t => Tiles.QuickDistance(m.X, m.Y, m.Z, t.X, t.Y, t.Z)).ToList())
-					{
-						
-						Task task = t.GetComponent<Task>();
-						if (task.Worker==null)
-						{
-							
-							if (task.CanAssign(m))
-							{
-                                Debug.Print("Assigning {0} to {1}", task.Entity.Describe(), m.Describe());
-                                task.AssignTo(m);
-								break;
-							}
-						}
-					}
-				}
-			}
 			// ***
 			Queue.Clear();
 			Deck.Clear();

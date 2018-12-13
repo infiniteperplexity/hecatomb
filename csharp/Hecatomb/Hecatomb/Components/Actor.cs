@@ -113,46 +113,30 @@ namespace Hecatomb
 		}
 		public void Act()
 		 {
-            if (Entity.TryComponent<Minion>() != null)
-            {
-                Debug.WriteLine("zombie takes turn.");
-            }
 			if (Entity is Player)
 			{
 				return;
 			}
-			// in the JS version, there are several different modules on here...
-			// are they flyweights?  They might be
 			CheckForHostile();
-            if (Acted)
+            if (!Acted)
             {
-                return;
-            }
-            foreach(Action goal in Goals)
-            {
-                goal();
-                if (Acted)
+                foreach (Action goal in Goals)
                 {
-                    return;
+                    goal();
+                    if (Acted)
+                    {
+                        return;
+                    }
                 }
             }
-            // this should be a "goal"
-            Minion m = Entity.TryComponent<Minion>();
-			if (m!=null)
-			{				
-				if (m.Task!=null)
-				{
-                    Debug.WriteLine("zombie performs task");
-					Target = m.Task;
-					m.Task.GetComponent<Task>().Act();
-				} else {
-					var p = Game.World.Player;
-					Patrol(p.X, p.Y, p.Z);
-				}
-				
-			} else {
-				Wander();
-			}
+            if (!Acted)
+            {
+                Entity.TryComponent<Minion>()?.Act();
+            }
+            if (!Acted)
+            {
+                Wander();
+            }
 			
 		}
 		
