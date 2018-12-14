@@ -22,7 +22,7 @@ namespace Hecatomb
 	
 	public class Actor : Component
 	{
-        public EntityField<PositionedEntity> Target;
+        public EntityField<TileEntity> Target;
 		public int ActionPoints;
 		public int CurrentPoints;
 		private string TeamName;

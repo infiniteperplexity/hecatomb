@@ -521,19 +521,19 @@ namespace Hecatomb
 			return (c==null) ? false : true;
 		}
 		
-		public bool CanReach(PositionedEntity t, bool useLast=true)
+		public bool CanReach(TileEntity t, bool useLast=true)
 		{
 			var path = Tiles.FindPath(this, t, useLast: useLast);
 			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;		
 			return (c==null) ? false : true;
 		}
 
-        public LinkedList<Coord> FindPath(PositionedEntity t, bool useLast = true)
+        public LinkedList<Coord> FindPath(TileEntity t, bool useLast = true)
         {
             return Tiles.FindPath(this, t, useLast: useLast);
         }
 
-        public bool CanFind(PositionedEntity t, bool useLast = true)
+        public bool CanFind(TileEntity t, bool useLast = true)
         {
             return (FindPath(t, useLast: useLast).Count>0);
         }

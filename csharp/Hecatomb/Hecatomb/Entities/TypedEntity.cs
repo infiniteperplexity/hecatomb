@@ -19,7 +19,7 @@ namespace Hecatomb
 	/// Description of Entity.
 	/// </summary>
 	///
-	public abstract class PositionedEntity : Entity
+	public abstract class TileEntity : Entity
 	{
 		public string TypeName;
 		[JsonIgnore] public string Name;
@@ -36,7 +36,7 @@ namespace Hecatomb
         public Dictionary<string, EntityField<Component>> Components;
         //public Dictionary<string, int> Components;
 		
-		public PositionedEntity() : base()
+		public TileEntity() : base()
 		{
             //Components = new Dictionary<string, int>();
             Components = new Dictionary<string, EntityField<Component>>();
@@ -166,7 +166,7 @@ namespace Hecatomb
 		}
 	}
 	
-	public class Creature : PositionedEntity {
+	public class Creature : TileEntity {
 		
 		public override void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
@@ -198,7 +198,7 @@ namespace Hecatomb
 			Game.World.Creatures[x0,y0,z0] = null;
 		}
 	}
-	public class Feature : PositionedEntity {
+	public class Feature : TileEntity {
 
         public bool Solid;
 
@@ -228,7 +228,7 @@ namespace Hecatomb
 	}
     
 	
-	public class StructureEntity : PositionedEntity {
+	public class StructureEntity : TileEntity {
 
 		public override void Remove()
 		{

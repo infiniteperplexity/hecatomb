@@ -23,7 +23,7 @@ namespace Hecatomb
 
     public class PlaceEvent : GameEvent
     {
-        public PositionedEntity Entity;
+        public TileEntity Entity;
         public int X;
         public int Y;
         public int Z;
@@ -31,7 +31,7 @@ namespace Hecatomb
 
     public class RemoveEvent : GameEvent
     {
-        public PositionedEntity Entity;
+        public TileEntity Entity;
         public int X;
         public int Y;
         public int Z;

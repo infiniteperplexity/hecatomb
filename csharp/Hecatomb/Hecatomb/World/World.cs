@@ -141,7 +141,7 @@ namespace Hecatomb
 			List<ColoredText> text = new List<ColoredText>() {
 				"Coord: " + x + "," + y + ", " + z
 			};
-			PositionedEntity t;
+			TileEntity t;
 			if (Explored.Contains(c) || Game.Options.Explored)
 			{
 				text.Add("Terrain: " + Terrains[x, y, z].Name);

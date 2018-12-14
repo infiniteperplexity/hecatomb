@@ -94,6 +94,7 @@
     <Compile Include="Components\Structural.cs" />
     <Compile Include="Events\GameEvents.cs" />
     <Compile Include="Entities\StateHandlers\PathHandler.cs" />
+    <Compile Include="RefactoredTask.cs" />
     <Compile Include="Utilities\RecursiveBacktracker.cs" />
     <Compile Include="Entities\StateHandlers\ResearchTracker.cs" />
     <Compile Include="FlyWeights\Resource.cs" />
@@ -127,7 +128,7 @@
     <Compile Include="Spell.cs" />
     <Compile Include="Controls\StructureControls.cs" />
     <Compile Include="Display\TileRendering.cs" />
-    <Compile Include="Tiles.cs" />
+    <Compile Include="Tile.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Components\Movement.cs" />
     <Compile Include="Components\Senses.cs" />

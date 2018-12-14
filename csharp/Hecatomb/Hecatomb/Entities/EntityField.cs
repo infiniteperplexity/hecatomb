@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb
 {
     using static HecatombAliases;
-    public struct EntityField<T> where T : Entity
+    public class EntityField<T> where T : Entity
     {
         public int EID;
         [JsonIgnore] public T Entity
@@ -41,7 +41,7 @@ namespace Hecatomb
         {
             get
             {
-                return (Entity as PositionedEntity).X;
+                return (Entity as TileEntity).X;
             }
         }
         [JsonIgnore]
@@ -49,7 +49,7 @@ namespace Hecatomb
         {
             get
             {
-                return (Entity as PositionedEntity).Y;
+                return (Entity as TileEntity).Y;
             }
         }
         [JsonIgnore]
@@ -57,7 +57,7 @@ namespace Hecatomb
         {
             get
             {
-                return (Entity as PositionedEntity).Z;
+                return (Entity as TileEntity).Z;
             }
         }
 
@@ -83,7 +83,8 @@ namespace Hecatomb
 
         public override bool Equals(Object obj)
         {
-            return (obj is EntityField<T> && this == (EntityField<T>)obj)
+            return (obj == null && EID == -1)
+                || (obj is EntityField<T> && this == (EntityField<T>)obj)
                 || (obj is int && EID == (int)obj)
                 || (obj is T && Entity == (T)Entity);
         }

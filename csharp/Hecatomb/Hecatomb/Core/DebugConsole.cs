@@ -26,7 +26,7 @@ namespace Hecatomb
 			string[] parsed = s.Split(' ');
 			if (parsed[0]=="spawn")
 			{
-				PositionedEntity et = Entity.Spawn<Creature>(parsed[1]);
+				TileEntity et = Entity.Spawn<Creature>(parsed[1]);
 				int x = Int32.Parse(parsed[2]);
 				int y = Int32.Parse(parsed[3]);
 				int z = Int32.Parse(parsed[4]);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Hecatomb
 {
-    public class Item : PositionedEntity
+    public class Item : TileEntity
     {
 
         public bool Owned;
@@ -248,31 +248,5 @@ namespace Hecatomb
             }
         }
     }
-    public class TaskEntity : PositionedEntity
-    {
-
-        public override void Place(int x1, int y1, int z1, bool fireEvent = true)
-        {
-            TaskEntity e = Game.World.Tasks[x1, y1, z1];
-            if (e == null)
-            {
-                Game.World.Tasks[x1, y1, z1] = this;
-                base.Place(x1, y1, z1, fireEvent);
-            }
-            else
-            {
-                throw new InvalidOperationException(String.Format(
-                    "Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
-                ));
-            }
-        }
-        public override void Remove()
-        {
-            int x0 = X;
-            int y0 = Y;
-            int z0 = Z;
-            base.Remove();
-            Game.World.Tasks[x0, y0, z0] = null;
-        }
-    }
+    
 }

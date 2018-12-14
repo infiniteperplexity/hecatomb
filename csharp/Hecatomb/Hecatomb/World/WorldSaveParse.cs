@@ -105,10 +105,10 @@ namespace Hecatomb
 				Entities[ge.EID] = ge;
 				Entity.MaxEID = Math.Max(Entity.MaxEID, ge.EID);
 				ge.Spawned = true;
-				if (ge is PositionedEntity)
+				if (ge is TileEntity)
 				{
 					Coord c = child.ToObject<Coord>();
-					PositionedEntity te = (PositionedEntity) ge;
+					TileEntity te = (TileEntity) ge;
                     Debug.WriteLine(te.GetType());
                     Debug.Print(te.TypeName);
                     if (!(te is Item))
