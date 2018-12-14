@@ -67,6 +67,13 @@ namespace Hecatomb
                 return Game.World.Player;
             }
         }
+        public static HashSet<Coord> Explored
+        {
+            get
+            {
+                return Game.World.Explored;
+            }
+        }
         public static Terrain[,,] Terrains
         {
             get
@@ -95,8 +102,7 @@ namespace Hecatomb
                 return Game.World.Features;
             }
         }
-        //public static SparseArray3D<Task> Tasks
-        public static SparseArray3D<TaskEntity> Tasks
+        public static SparseArray3D<Task> Tasks
         {
             get
             {

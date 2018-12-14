@@ -258,16 +258,16 @@ namespace Hecatomb
             {
                 for (int j = 0; j < world.Height / 2; j++)
                 {
-                    TaskEntity t = Entity.Spawn<TaskEntity>("DigTask");
+                    Task t = Entity.Spawn<DigTask>();
                     t.Place(2 * i, 2 * j, 0);
                     if (!maze.BottomWalls[i, j])
                     {
-                        t = Entity.Spawn<TaskEntity>("DigTask");
+                        t = Entity.Spawn<DigTask>();
                         t.Place(2 * i, 2 * j + 1, 0);
                     }
                     if (!maze.RightWalls[i, j])
                     {
-                        t = Entity.Spawn<TaskEntity>("DigTask");
+                        t = Entity.Spawn<DigTask>();
                         t.Place(2 * i + 1, 2 * j, 0);
                     }
                 }

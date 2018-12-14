@@ -18,42 +18,17 @@ namespace Hecatomb
 	/// </summary>
 	public class Minion : Component
 	{
-	
-		public int TaskEID;
-		[JsonIgnore] public TaskEntity Task
-		{
-			get
-			{
-				if (TaskEID==-1)
-				{
-					return null;
-				}
-				else
-				{
-					return (TaskEntity) Entities[TaskEID];
-				}
-			}
-			private set
-			{
-				if (value==null)
-				{
-					TaskEID = -1;
-				}
-				else
-				{
-					TaskEID = value.EID;
-				}
-			}
-		}
+
+        public EntityField<Task> Task;
 		
 		public Minion(): base()
 		{
-			TaskEID = -1;
+            Task = new EntityField<Task>();
 			Required = new string[] {"Actor"};
 		}
 		
 		// called by Task.AssignEntity
-		public void _AssignTask(TaskEntity t)
+		public void _AssignTask(Task t)
 		{
 			Task = t;
 		}
@@ -69,21 +44,20 @@ namespace Hecatomb
             int y = Entity.Y;
             int z = Entity.Z;
             Creature cr = (Creature)Entity;
-            if ( Game.World.Terrains[x, y, z].Solid && Task?.TryComponent<Task>()?.ClassName != "ZombieEmergeTask")
+            if ( Game.World.Terrains[x, y, z].Solid && Task?.ClassName != "ZombieEmergeTask")
             {
                 if (Game.World.Features[x, y, z + 1]?.TypeName == "Grave")
                 {
-                    Game.World.Tasks[x, y, z + 1]?.TryComponent<Task>()?.Cancel();
-                    var task = Hecatomb.Entity.Spawn<TaskEntity>("ZombieEmergeTask");
+                    Game.World.Tasks[x, y, z + 1]?.Cancel();
+                    var task = Hecatomb.Entity.Spawn<ZombieEmergeTask>();
                     task.Place(x, y, z + 1);
-                    task.GetComponent<Task>().AssignTo(cr);
+                    task.AssignTo(cr);
                 }
             }
             if (Task==null)
             {
-                foreach(TaskEntity te in Game.World.Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
+                foreach(Task task in Game.World.Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
                 {
-                    var task = te.GetComponent<Task>();
                     if (task.Worker==null && task.CanAssign(cr))
                     {
                         task.AssignTo(cr);
@@ -91,7 +65,7 @@ namespace Hecatomb
                     }
                 }
             }
-            Task?.TryComponent<Task>()?.Act();
+            Task?.Entity.Act();
             Actor actor = Entity.GetComponent<Actor>();
             if (!actor.Acted)
             {

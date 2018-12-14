@@ -255,7 +255,7 @@ namespace Hecatomb
             Feature f = Game.World.Features[x, y, z];
             Item it = Game.World.Items[x, y, z];
             var c = new Coord(x, y, z);
-            TaskEntity task = Game.World.Tasks[x, y, z];
+            Task task = Game.World.Tasks[x, y, z];
             // particle
             if (p != null && p.BG != null)
             {

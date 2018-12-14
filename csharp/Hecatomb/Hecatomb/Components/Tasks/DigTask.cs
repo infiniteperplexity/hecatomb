@@ -21,20 +21,17 @@ namespace Hecatomb
 		public override void Start()
 		{
 			base.Start();
-			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+			Feature f = Game.World.Features[X, Y, Z];
 			f.Symbol = '\u2717';
 			f.FG = "white";
 		}
 		public override void Finish()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "DigTaskComplete" });
-			int x = Entity.X;
-			int y = Entity.Y;
-			int z = Entity.Z;
-			Game.World.Features[x, y, z].Despawn();
+			Game.World.Features[X, Y, Z].Despawn();
 			var tiles = Game.World.Terrains;
             var covers = Game.World.Covers;
-			Terrain t = tiles[x, y, z];	
+			Terrain t = tiles[X, Y, Z];	
 			Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;
 			Terrain up = Terrain.UpSlopeTile;
@@ -218,7 +215,7 @@ namespace Hecatomb
                 if (priority == 5 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
                 {
                     Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
-                    Hecatomb.Entity.Spawn<TaskEntity>("HarvestTask").Place(x, y, z);
+                    Entity.Spawn<HarvestTask>().Place(x, y, z);
                 } else if (    (priority == 4 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
                         || (priority == 3 && t == Terrain.FloorTile)
                         || (priority == 2 && t == Terrain.DownSlopeTile)
@@ -227,7 +224,7 @@ namespace Hecatomb
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null)
                         Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
-                        Hecatomb.Entity.Spawn<TaskEntity>("DigTask").Place(x, y, z);
+                        Entity.Spawn<DigTask>().Place(x, y, z);
                     }
                }
             }

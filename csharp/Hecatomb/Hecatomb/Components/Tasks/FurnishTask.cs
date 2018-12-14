@@ -75,11 +75,11 @@ namespace Hecatomb
 			
 		public override void Finish()
 		{
-			Feature incomplete = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+			Feature incomplete = Game.World.Features[X, Y, Z];
 			incomplete.Despawn();
-            Game.World.Covers[Entity.X, Entity.Y, Entity.Z] = Cover.NoCover;
-			Feature finished = Hecatomb.Entity.Spawn<Feature>(Makes);
-			finished.Place(Entity.X, Entity.Y, Entity.Z);
+            Game.World.Covers[X, Y, Z] = Cover.NoCover;
+			Feature finished = Entity.Spawn<Feature>(Makes);
+			finished.Place(X, Y, Z);
 			base.Finish();
 		}
 		
@@ -134,12 +134,12 @@ namespace Hecatomb
         {
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
             {
-                TaskEntity task = Hecatomb.Entity.Spawn<TaskEntity>(this.GetType().Name);
+                Task task = Entity.Spawn<FurnishTask>().Name);
                 string json = EntityType.Types[Makes].Components["Fixture"];
                 JObject obj = JObject.Parse(json);
                 var ingredients = obj["Ingredients"];
-                task.GetComponent<Task>().Ingredients = ingredients.ToObject<Dictionary<string, int>>();
-                task.GetComponent<Task>().Makes = Makes;
+                task.Ingredients = ingredients.ToObject<Dictionary<string, int>>();
+                task.Makes = Makes;
                 task.Place(c.X, c.Y, c.Z);
                 
             }

@@ -60,6 +60,31 @@ namespace Hecatomb
                 return (Entity as TileEntity).Z;
             }
         }
+        [JsonIgnore]
+        public bool Placed
+        {
+            get
+            {
+                return (Entity as TileEntity).Placed;
+            }
+        }
+        [JsonIgnore]
+        public string ClassName
+        {
+            get
+            {
+                return Entity.ClassName;
+            }
+        }
+        public S GetComponent<S>() where S: Component
+        {
+            return (Entity as TileEntity).GetComponent<S>();
+        }
+        public S TryComponent<S>() where S : Component
+        {
+            return (Entity as TileEntity).TryComponent<S>();
+        }
+
 
         public static implicit operator T(EntityField<T> et)
         {
@@ -83,7 +108,7 @@ namespace Hecatomb
 
         public override bool Equals(Object obj)
         {
-            return (obj == null && EID == -1)
+            return (object.ReferenceEquals(obj, null) && EID == -1)
                 || (obj is EntityField<T> && this == (EntityField<T>)obj)
                 || (obj is int && EID == (int)obj)
                 || (obj is T && Entity == (T)Entity);

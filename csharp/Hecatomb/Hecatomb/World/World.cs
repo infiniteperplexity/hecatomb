@@ -45,7 +45,7 @@ namespace Hecatomb
 		public SparseArray3D<Creature> Creatures;
 		public SparseArray3D<Feature> Features;
 		public SparseArray3D<Item> Items;
-		public SparseArray3D<TaskEntity> Tasks;
+		public SparseArray3D<Task> Tasks;
         public List<ParticleEmitter> Emitters;
         public SparseJaggedArray3D<Particle> Particles;
         public Dictionary<string, StateHandler> StateHandlers;
@@ -76,7 +76,7 @@ namespace Hecatomb
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
 			Items = new SparseArray3D<Item>(Width, Height, Depth);
-			Tasks = new SparseArray3D<TaskEntity>(Width, Height, Depth);
+			Tasks = new SparseArray3D<Task>(Width, Height, Depth);
             Particles = new SparseJaggedArray3D<Particle>(Width, Height, Depth);
             Emitters = new List<ParticleEmitter>();
 			Explored = new HashSet<Coord>();
@@ -95,7 +95,7 @@ namespace Hecatomb
 			Creatures = new SparseArray3D<Creature>(Width, Height, Depth);
 			Features = new SparseArray3D<Feature>(Width, Height, Depth);
 			Items = new SparseArray3D<Item>(Width, Height, Depth);
-			Tasks = new SparseArray3D<TaskEntity>(Width, Height, Depth);
+			Tasks = new SparseArray3D<Task>(Width, Height, Depth);
             Particles = new SparseJaggedArray3D<Particle>(Width, Height, Depth);
             Emitters = new List<ParticleEmitter>();
             Explored = new HashSet<Coord>();

@@ -34,12 +34,9 @@ namespace Hecatomb
 		public override void Finish()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "BuildTaskComplete" });
-            int x = Entity.X;
-			int y = Entity.Y;
-			int z = Entity.Z;
-			Game.World.Features[x, y, z].Despawn();
+			Game.World.Features[X, Y, Z].Despawn();
 			var tiles = Game.World.Terrains;
-			Terrain t = tiles[x, y, z];	
+			Terrain t = tiles[X, Y, Z];	
 			Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;
 			Terrain up = Terrain.UpSlopeTile;
@@ -147,7 +144,7 @@ namespace Hecatomb
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null && Game.World.Features[x, y, z]==null)
                         Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateBuildTask" });
-                    Hecatomb.Entity.Spawn<TaskEntity>("BuildTask").Place(x, y, z);
+                    Entity.Spawn<BuildTask>().Place(x, y, z);
                 }
             }
         }

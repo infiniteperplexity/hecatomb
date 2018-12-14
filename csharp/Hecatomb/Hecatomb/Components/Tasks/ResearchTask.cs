@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    class ResearchTask : Task
+    class ResearchTask : System.Threading.Tasks.Task
     {
         EntityField<Structure> Structure;
         public string MyResearch;

@@ -117,8 +117,8 @@ namespace Hecatomb
 //				f.Destroy();
 				Creature zombie = Entity.Spawn<Creature>("Zombie");
 				zombie.Place(c.X, c.Y, c.Z-1);
-				TaskEntity emerge = Entity.Spawn<TaskEntity>("ZombieEmergeTask");
-				emerge.GetComponent<Task>().AssignTo(zombie);
+				Task emerge = Entity.Spawn<ZombieEmergeTask>();
+				emerge.AssignTo(zombie);
 				emerge.Place(c.X, c.Y, c.Z);
 				Game.World.Player.GetComponent<Minions>().Add(zombie);
                 
@@ -154,12 +154,12 @@ namespace Hecatomb
 	{
 		public override void Start()
 		{
-            Game.World.Events.Publish(new SensoryEvent() { X = Entity.X, Y = Entity.Y, Z = Entity.Z, Sight = "You hear an ominous stirring from under the ground..." });
-			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+            Game.World.Events.Publish(new SensoryEvent() { X = X, Y = Y, Z = Z, Sight = "You hear an ominous stirring from under the ground..." });
+			Feature f = Game.World.Features[X, Y, Z];
 			if (f==null)
 			{
 				base.Start();
-				f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+				f = Game.World.Features[X, Y, Z];
 				f.Symbol = '\u2717';
 				f.FG = "white";
 			}
@@ -168,13 +168,10 @@ namespace Hecatomb
 		{
             
             Game.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
-            int x = Entity.X;
-			int y = Entity.Y;
-			int z = Entity.Z;
-            Game.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = x, Y = y, Z = z });
-            Feature f = Game.World.Features[x, y, z];
+            Game.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = X, Y = Y, Z = Z });
+            Feature f = Game.World.Features[X, Y, Z];
 			f.Destroy();
-			foreach (Coord c in Tiles.GetNeighbors8(x, y, z))
+			foreach (Coord c in Tiles.GetNeighbors8(X, Y, Z))
 			{
 			    int x1 = c.X;
 			    int y1 = c.Y;
@@ -190,10 +187,10 @@ namespace Hecatomb
 			    	}
 			    }
 			}
-			Game.World.Terrains[x, y, z] = Terrain.DownSlopeTile;
-			Game.World.Terrains[x, y, z-1] = Terrain.UpSlopeTile;
-            Game.World.Covers[x, y, z] = Cover.NoCover;
-            Game.World.Covers[x, y, z - 1] = Cover.NoCover;
+			Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
+			Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
+            Game.World.Covers[X, Y, Z] = Cover.NoCover;
+            Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
 			base.Finish();
             Game.World.ValidateOutdoors();
 		}

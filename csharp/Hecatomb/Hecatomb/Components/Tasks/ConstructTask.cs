@@ -110,12 +110,11 @@ namespace Hecatomb
             // don't start building the "free" structure tiles until the "costly" ones are done
             if (Ingredients.Count == 0)
             {
-                foreach (TaskEntity task in Game.World.Tasks)
+                foreach (Task task in Game.World.Tasks)
                 {
-                    Task t = task.GetComponent<Task>();
-                    if (t is ConstructTask)
+                    if (task is ConstructTask)
                     {
-                        ConstructTask ct = (ConstructTask)t;
+                        ConstructTask ct = (ConstructTask)task;
                         if (ct.Structure == Structure && ct.Worker == null && ct.Ingredients.Count > 0)
                         {
                             return false;
@@ -129,16 +128,16 @@ namespace Hecatomb
         public override void Start()
 		{
 			base.Start();
-			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+			Feature f = Game.World.Features[X, Y, Z];
 			f.FG = Structure.GetComponent<Structure>().FGs[FeatureIndex];
 		}
 		public override void Finish()
 		{
-			Feature incomplete = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+			Feature incomplete = Game.World.Features[X, Y, Z];
 			incomplete.Despawn();
-			Feature f = Hecatomb.Entity.Spawn<Feature>(Makes+"Feature");
-			f.Place(Entity.X, Entity.Y, Entity.Z);
-            Game.World.Covers[Entity.X, Entity.Y, Entity.Z] = Cover.NoCover;
+			Feature f = Entity.Spawn<Feature>(Makes+"Feature");
+			f.Place(X, Y, Z);
+            Game.World.Covers[X, Y, Z] = Cover.NoCover;
 			Structure sc = Structure.GetComponent<Structure>();
 			f.Symbol = sc.Symbols[FeatureIndex];
 			f.FG = sc.FGs[FeatureIndex];
@@ -221,13 +220,12 @@ namespace Hecatomb
 				Coord s = squares[i];
 				if (Game.World.Tasks[s.X, s.Y, s.Z]==null) 
 				{
-					TaskEntity task = Hecatomb.Entity.Spawn<TaskEntity>(this.GetType().Name);
-					ConstructTask tc = (ConstructTask) task.GetComponent<Task>();
+					ConstructTask tc = Entity.Spawn<ConstructTask>();
 					tc.Makes = Makes;
 					tc.Structure = str;
 					tc.FeatureIndex = i;
                     tc.Ingredients = str.GetComponent<Structure>().Ingredients[i] ?? new Dictionary<string, int>();
-                    task.Place(s.X, s.Y, s.Z);
+                    tc.Place(s.X, s.Y, s.Z);
 				}
 			}
 		}
