@@ -134,7 +134,7 @@ namespace Hecatomb
         {
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
             {
-                Task task = Entity.Spawn<FurnishTask>().Name);
+                Task task = Entity.Spawn<FurnishTask>();
                 string json = EntityType.Types[Makes].Components["Fixture"];
                 JObject obj = JObject.Parse(json);
                 var ingredients = obj["Ingredients"];

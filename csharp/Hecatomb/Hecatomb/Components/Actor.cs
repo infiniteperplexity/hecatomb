@@ -146,7 +146,7 @@ namespace Hecatomb
 			{
 				WalkRandom();
 			} else {
-                if (Target.Entity is Creature && Team!=null && Team.IsHostile((Creature) Target.Entity))
+                if (Target?.Entity is Creature && Team!=null && Team.IsHostile((Creature) Target.Entity))
                 {
                     if (Tiles.QuickDistance(Entity, Target)<=1)
                     {

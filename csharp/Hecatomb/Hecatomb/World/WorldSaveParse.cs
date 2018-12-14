@@ -120,7 +120,7 @@ namespace Hecatomb
 				else if (ge is Task)
 				{
 					Task task = (Task) ge;
-					task.Standardize();
+					//task.Standardize();
 				}
 			}
 			// *** Player ***

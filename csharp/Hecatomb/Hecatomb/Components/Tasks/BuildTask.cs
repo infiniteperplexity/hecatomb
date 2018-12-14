@@ -27,7 +27,7 @@ namespace Hecatomb
 		public override void Start()
 		{
 			base.Start();
-			Feature f = Game.World.Features[Entity.X, Entity.Y, Entity.Z];
+			Feature f = Game.World.Features[X, Y, Z];
 			f.Symbol = '\u2692';
 			f.FG = "white";
 		}
@@ -44,17 +44,17 @@ namespace Hecatomb
 			Terrain empty = Terrain.EmptyTile;
 			if (t==floor || t==up)
 			{
-				tiles[x, y, z] = wall;
-                Game.World.Covers[x, y, z] = Cover.Soil;
-				Terrain ta = Game.World.GetTile(x, y, z+1);
+				tiles[X, Y, Z] = wall;
+                Game.World.Covers[X, Y, Z] = Cover.Soil;
+				Terrain ta = Game.World.GetTile(X, Y, Z+1);
 				if (ta==empty || ta==down)
 				{
-					tiles[x, y, z+1] = floor;
+					tiles[X, Y, Z+1] = floor;
 				}
 			}
 			else if (t==empty || t==down)
 			{
-				tiles[x, y, z] = floor;
+				tiles[X, Y, Z] = floor;
 			}
 			base.Finish();
             Game.World.ValidateOutdoors();

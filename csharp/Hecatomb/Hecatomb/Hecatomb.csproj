@@ -70,7 +70,6 @@
     <Compile Include="Components\Tasks\ConstructTask.cs" />
     <Compile Include="Components\Tasks\DigTask.cs" />
     <Compile Include="Components\Tasks\FurnishTask.cs" />
-    <Compile Include="Components\Tasks\Task.cs" />
     <Compile Include="Components\Tasks\UndesignateTask.cs" />
     <Compile Include="FlyWeights\Cover.cs" />
     <Compile Include="Core\DebugConsole.cs" />
@@ -94,7 +93,7 @@
     <Compile Include="Components\Structural.cs" />
     <Compile Include="Events\GameEvents.cs" />
     <Compile Include="Entities\StateHandlers\PathHandler.cs" />
-    <Compile Include="RefactoredTask.cs" />
+    <Compile Include="Task.cs" />
     <Compile Include="Utilities\RecursiveBacktracker.cs" />
     <Compile Include="Entities\StateHandlers\ResearchTracker.cs" />
     <Compile Include="FlyWeights\Resource.cs" />

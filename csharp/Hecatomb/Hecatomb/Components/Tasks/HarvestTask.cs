@@ -23,10 +23,7 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            int x = Entity.X;
-            int y = Entity.Y;
-            int z = Entity.Z;
-            Feature f = Game.World.Features[x, y, z];
+            Feature f = Game.World.Features[X, Y, Z];
             Harvestable h = f.TryComponent<Harvestable>();
             if (h!=null)
             {

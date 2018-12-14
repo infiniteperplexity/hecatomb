@@ -108,19 +108,38 @@ namespace Hecatomb
 
         public override bool Equals(Object obj)
         {
-            return (object.ReferenceEquals(obj, null) && EID == -1)
-                || (obj is EntityField<T> && this == (EntityField<T>)obj)
+            if (object.ReferenceEquals(obj, null))
+            {
+                return (EID == -1);
+            }
+            return (obj is EntityField<T> && this == (EntityField<T>)obj)
                 || (obj is int && EID == (int)obj)
                 || (obj is T && Entity == (T)Entity);
         }
 
         public static bool operator ==(EntityField<T> one, EntityField<T> two)
         {
+            if (object.ReferenceEquals(one, null))
+            {
+                if (object.ReferenceEquals(two, null))
+                {
+                    return true;
+                }
+                return false;
+            }
             return one.Equals(two);
         }
 
         public static bool operator !=(EntityField<T> one, EntityField<T> two)
         {
+            if (object.ReferenceEquals(one, null))
+            {
+                if (object.ReferenceEquals(two, null))
+                {
+                    return false;
+                }
+                return true;
+            }
             return !one.Equals(two);
         }
 

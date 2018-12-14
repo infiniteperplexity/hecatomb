@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
 	/// <summary>
 	/// Description of UndesignateTask.
 	/// </summary>
@@ -41,11 +42,8 @@ namespace Hecatomb
 		{
 			foreach (Coord c in squares)
 			{
-				var te = Game.World.Tasks[c.X, c.Y, c.Z];
-				if (te!=null) 
-				{
-					te.GetComponent<Task>().Cancel();
-				}
+
+				Tasks[c.X, c.Y, c.Z]?.Cancel();
 			}
 		}
 	}

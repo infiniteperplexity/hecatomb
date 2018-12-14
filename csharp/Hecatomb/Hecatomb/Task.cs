@@ -313,7 +313,7 @@ namespace Hecatomb
                 if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
                 {
                     Task task = (Task)Entity.Spawn(this.GetType());
-                    task..Makes = Makes;
+                    task.Makes = Makes;
                     task.Place(c.X, c.Y, c.Z);
                 }
             }

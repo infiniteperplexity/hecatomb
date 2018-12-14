@@ -40,44 +40,44 @@ namespace Hecatomb
             Cover none = Cover.NoCover;
 			if (t==floor)
 			{
-				Terrain tb = Game.World.GetTile(x, y, z-1);
+				Terrain tb = Game.World.GetTile(X, Y, Z-1);
 				if (tb==wall)
 				{
-					tiles[x, y, z] = down;
-					tiles[x, y, z-1] = up;
-                    covers[x, y, z] = none;
-                    covers[x, y, z - 1].Mine(x, y, z - 1);
-                    covers[x, y, z-1] = none;
+					tiles[X, Y, Z] = down;
+					tiles[X, Y, Z-1] = up;
+                    covers[X, Y, Z] = none;
+                    covers[X, Y, Z - 1].Mine(X, Y, Z - 1);
+                    covers[X, Y, Z-1] = none;
                 } else if (tb==up)
 				{
-					tiles[x, y, z] = down;
-                    covers[x, y, z] = none;
+					tiles[X, Y, Z] = down;
+                    covers[X, Y, Z] = none;
                 }
 				else if (tb==empty || tb==down || tb==floor)
 				{
-					tiles[x, y, z] = empty;
-                    covers[x, y, z] = none;
+					tiles[X, Y, Z] = empty;
+                    covers[X, Y, Z] = none;
                 }
 			}
 			else if (t==up)
 			{
-				tiles[x, y, z] = floor;
-                covers[x, y, z] = none;
-                tiles[x, y, z + 1] = empty;
-                covers[x, y, z + 1] = none;
+				tiles[X, Y, Z] = floor;
+                covers[X, Y, Z] = none;
+                tiles[X, Y, Z + 1] = empty;
+                covers[X, Y, Z + 1] = none;
             }
 			else if (t==down)
 			{
-				tiles[x, y, z] = empty;
-				tiles[x, y, z-1] = floor;
-                covers[x, y, z] = none;
-                covers[x, y, z-1] = none;
+				tiles[X, Y, Z] = empty;
+				tiles[X, Y, Z-1] = floor;
+                covers[X, Y, Z] = none;
+                covers[X, Y, Z-1] = none;
             }
 			else if (t==wall)
 			{
-				tiles[x, y, z] = floor;
-                covers[x, y, z].Mine(x, y, z);
-                covers[x, y, z] = none;
+				tiles[X, Y, Z] = floor;
+                covers[X, Y, Z].Mine(X, Y, Z);
+                covers[X, Y, Z] = none;
             }		
 			base.Finish();
             Game.World.ValidateOutdoors();
