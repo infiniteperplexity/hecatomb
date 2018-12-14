@@ -18,12 +18,12 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Player.
 	/// </summary>
-	public class Player : Creature
+	public class PlayerEntity : Creature
 	{
 		[JsonProperty] private List<int> MinionEIDs;
 		
 		public bool Acted;
-		public Player() : base()
+		public PlayerEntity() : base()
 		{
 			Acted = false;
 		}

@@ -18,9 +18,9 @@ namespace Hecatomb
     /// </summary>
     public class Game : Microsoft.Xna.Framework.Game
     {
-        public static Options Options;
+        public static HecatombOptions Options;
     	public static World World;
-		public static Commands Commands;
+		public static HecatombCommmands Commands;
 		public static Colors Colors;
 		public static Camera Camera;
 		public static ContentManager MyContentManager;
@@ -75,10 +75,10 @@ namespace Hecatomb
         	IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
-            Options = new Options();
+            Options = new HecatombOptions();
             Colors = new Colors();
 			Time = new TimeHandler();
-			Commands = new Commands();
+			Commands = new HecatombCommmands();
 			DefaultControls = new DefaultControls();
 			CameraControls = new CameraControls();
 			Camera = new Camera();
@@ -99,7 +99,7 @@ namespace Hecatomb
 //				new List<ColoredText> {"start game"},
 //				new List<Action> {StartGame}
 //			);
-        	Player p = Entity.Spawn<Player>("Necromancer");
+        	PlayerEntity p = Entity.Spawn<PlayerEntity>("Necromancer");
 			World.Player = p;
         	p.Initialize();
         	p.Place(12, 12, 0);
@@ -114,7 +114,7 @@ namespace Hecatomb
             World.GetTracker<AchievementHandler>();
             World.GetTracker<HumanTracker>();
             Controls = DefaultControls;
-			Player p = Hecatomb.Entity.Spawn<Player>("Necromancer");
+			PlayerEntity p = Hecatomb.Entity.Spawn<PlayerEntity>("Necromancer");
 			World.Player = p;
 			p.Initialize();
 			p.Place(

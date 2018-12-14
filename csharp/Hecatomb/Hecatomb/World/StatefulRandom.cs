@@ -10,13 +10,13 @@ using System.Linq;
 
 namespace Hecatomb
 {
-	public class HecatombRandom
+	public class StatefulRandom
 	{
 		public int Seed;
 		public int Calls;
 		private Random random;
 		
-		public HecatombRandom(int seed, int calls=0)
+		public StatefulRandom(int seed, int calls=0)
 		{
 			Seed = seed;
 			Calls = calls;

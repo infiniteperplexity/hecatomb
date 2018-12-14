@@ -10,9 +10,10 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb
 {
     using static HecatombAliases;
-    public class EntityField<T> where T : Entity
+    // abstract base helps check type membership
+    public abstract class EntityFieldBase { public int EID; }
+    public class EntityField<T> : EntityFieldBase where T : Entity
     {
-        public int EID;
         [JsonIgnore] public T Entity
         {
             get
@@ -112,9 +113,23 @@ namespace Hecatomb
             {
                 return (EID == -1);
             }
-            return (obj is EntityField<T> && this == (EntityField<T>)obj)
-                || (obj is int && EID == (int)obj)
-                || (obj is T && Entity == (T)Entity);
+            // problem...what if there is a subtype relationship with T?
+            else if (obj is int)
+            {
+                return (EID == (int)obj);
+            }
+            else if (obj is Entity)
+            {
+                return Entity == (Entity)Entity;
+            }
+            else if (obj is EntityFieldBase)
+            {
+                return (EID == ((EntityFieldBase)obj).EID);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static bool operator ==(EntityField<T> one, EntityField<T> two)

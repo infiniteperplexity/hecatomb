@@ -1,73 +1,63 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/17/2018
- * Time: 12:33 PM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of Structure.
-	/// </summary>
-	public abstract class Structure : Component, IChoiceMenu
-	{
-		public string MenuName;
-		public string Name;
-		public int Width;
-		public int Height;
-		public char[] Symbols;
-		public string[] FGs;
-		public string[] BGs;
-        public string BG;
-		public Feature[] Features;
+    using static HecatombAliases;
+
+    public abstract class Structure : TileEntity, IChoiceMenu
+    {
+        public string MenuName;
+        public int Width;
+        public int Height;
+        public char[] Symbols;
+        public string[] FGs;
+        public string[] BGs;
+        public Feature[] Features;
         public Dictionary<string, int>[] Ingredients;
         public string[] Researches;
         public string[] ResearchPrereqs;
         public string[] StructurePrereqs;
         public string Researching;
         public int ResearchTurns;
-		
-		public Structure()
-		{
-			Width = 3;
+
+        public Structure()
+        {
+            Width = 3;
             Height = 3;
-			Features = new Feature[Width*Height];
-            Ingredients = new Dictionary<string, int>[Width*Height];
+            Features = new Feature[Width * Height];
+            Ingredients = new Dictionary<string, int>[Width * Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
             ResearchPrereqs = new string[0];
             StructurePrereqs = new string[0];
-		}
-		public virtual void Standardize()
-		{
-			Type structureType = this.GetType();
-			Structure structure = (Structure) Activator.CreateInstance(structureType);
-		}
+        }
 
         public static List<string> ListAll()
         {
             List<Entity> list = Entities.Values.Where(((Entity e) =>
+            {
+                if (!(e is Structure))
                 {
-                    if (!(e is StructureEntity))
+                    return false;
+                }
+                else
+                {
+                    var se = (Structure)e;
+                    if (se.Placed)
                     {
-                        return false;
+                        return true;
                     }
-                    else
-                    {
-                        var se = (StructureEntity)e;
-                        if (se.Placed)
-                        {
-                            return true;
-                        }
-                        return false;
-                    }
-                })).ToList();
-            List<string> s = list.Select(e => ((StructureEntity)e).GetComponent<Structure>().ClassName).ToList();
+                    return false;
+                }
+            })).ToList();
+            List<string> s = list.Select(e => e.ClassName).ToList();
             return s;
         }
 
@@ -76,7 +66,7 @@ namespace Hecatomb
             var ingredients = new Dictionary<string, int>();
             foreach (var resources in Ingredients)
             {
-                if (resources!=null)
+                if (resources != null)
                 {
                     foreach (string resource in resources.Keys)
                     {
@@ -98,7 +88,7 @@ namespace Hecatomb
                 ResearchTurns -= 1;
                 if (ResearchTurns <= 0)
                 {
-                    var researched = Game.World.GetTracker<ResearchTracker>().Researched;
+                    var researched = Game.World.GetTracker<ResearchHandler>().Researched;
                     if (!researched.Contains(Researching))
                     {
                         researched.Add(Researching);
@@ -113,7 +103,7 @@ namespace Hecatomb
         {
             get
             {
-                return String.Format("{3} at {0} {1} {2}", Entity.X, Entity.Y, Entity.Z, Name);
+                return String.Format("{3} at {0} {1} {2}", X, Y, Z, Name);
             }
             set { }
         }
@@ -123,7 +113,7 @@ namespace Hecatomb
             get
             {
                 var list = new List<IMenuListable>();
-                var researched = Game.World.GetTracker<ResearchTracker>().Researched;
+                var researched = Game.World.GetTracker<ResearchHandler>().Researched;
                 foreach (string s in Researches)
                 {
                     if (!researched.Contains(s))
@@ -136,7 +126,7 @@ namespace Hecatomb
             set { }
         }
 
-        public void Highlight(string s)
+        public void HighlightSquares(string s)
         {
             foreach (Feature fr in Features)
             {
@@ -144,9 +134,9 @@ namespace Hecatomb
             }
         }
 
-        public void Highlight()
+        public void HighlightSquares()
         {
-            Highlight("lime green");
+            HighlightSquares("lime green");
         }
         public void Unhighlight()
         {
@@ -156,5 +146,5 @@ namespace Hecatomb
             }
         }
 
-	}
+    }
 }

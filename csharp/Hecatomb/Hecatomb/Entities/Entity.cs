@@ -61,8 +61,13 @@ namespace Hecatomb
             }
             return ge;
         }
-        public static T Spawn<T>() where T : Entity, new()
+
+        public static T Spawn<T>(Type t) where T : Entity
         {
+            return (T) Spawn(t);
+        }
+        public static T Spawn<T>() where T : Entity, new()
+        {   
             T t = new T();
             t.EID = MaxEID + 1;
             MaxEID = t.EID;
@@ -123,6 +128,11 @@ namespace Hecatomb
         {
             Entity ge = (Entity)Activator.CreateInstance(t);
             return ge;
+        }
+
+        public static T Mock<T>(Type t) where T : Entity
+        {
+            return (T)Mock(t);
         }
 
         public virtual void Despawn()

@@ -68,9 +68,9 @@ namespace Hecatomb
 
             }
             Feature fr = Game.World.Features[x, y, z];
-            if (fr?.TryComponent<Structural>()!=null)
+            if (fr?.TryComponent<StructuralComponent>()!=null)
             {
-                Game.Controls = new StructureControls(fr.GetComponent<Structural>().Structure.GetComponent<Structure>());
+                Game.Controls = new StructureControls(fr.GetComponent<StructuralComponent>().Structure);
             }
 
            

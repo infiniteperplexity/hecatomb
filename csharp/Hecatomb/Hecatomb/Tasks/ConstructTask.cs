@@ -12,7 +12,9 @@ using System.Linq;
 
 namespace Hecatomb
 {
-	public class ConstructTask : Task, IChoiceMenu, ISelectsBox
+    using static HecatombAliases;
+
+    public class ConstructTask : Task, IChoiceMenu, ISelectsBox
 	{
 		public int FeatureIndex;
 		[JsonIgnore] public new int BoxWidth
@@ -34,17 +36,7 @@ namespace Hecatomb
 			set {}
 		}
 		[JsonProperty] private int StructureEID;
-		[JsonIgnore] public StructureEntity Structure
-		{
-			get
-			{
-				return (StructureEntity) Entities[StructureEID];
-			}
-			set
-			{
-				StructureEID = value.EID;
-			}
-		}
+        public EntityField<Structure> Structure;
 		public string[] Structures;
         [JsonIgnore]
         public string MenuHeader
@@ -62,7 +54,7 @@ namespace Hecatomb
 			{
 				var list = new List<IMenuListable>();
                 var structures = Hecatomb.Structure.ListAll();
-                var researched = Game.World.GetTracker<ResearchTracker>().Researched;
+                var researched = Game.World.GetTracker<ResearchHandler>().Researched;
                 foreach (string st in Structures)
 				{   
                     var structure = (Structure) Hecatomb.Entity.Mock(Type.GetType("Hecatomb."+st));
@@ -95,6 +87,7 @@ namespace Hecatomb
 
         public ConstructTask(): base()
 		{
+            Structure = new EntityField<Structure>();
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","BlackMarket","Sanctum"};
 			MenuName = "construct a structure.";
 			TypeName = "construct";
@@ -110,7 +103,7 @@ namespace Hecatomb
             // don't start building the "free" structure tiles until the "costly" ones are done
             if (Ingredients.Count == 0)
             {
-                foreach (Task task in Game.World.Tasks)
+                foreach (Task task in Tasks)
                 {
                     if (task is ConstructTask)
                     {
@@ -129,7 +122,7 @@ namespace Hecatomb
 		{
 			base.Start();
 			Feature f = Game.World.Features[X, Y, Z];
-			f.FG = Structure.GetComponent<Structure>().FGs[FeatureIndex];
+			f.FG = Structure.Entity.FGs[FeatureIndex];
 		}
 		public override void Finish()
 		{
@@ -138,14 +131,13 @@ namespace Hecatomb
 			Feature f = Entity.Spawn<Feature>(Makes+"Feature");
 			f.Place(X, Y, Z);
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
-			Structure sc = Structure.GetComponent<Structure>();
-			f.Symbol = sc.Symbols[FeatureIndex];
-			f.FG = sc.FGs[FeatureIndex];
+			f.Symbol = Structure.Entity.Symbols[FeatureIndex];
+			f.FG = Structure.Entity.FGs[FeatureIndex];
             //f.BG = sc.BGs[FeatureIndex];
-            f.BG = sc.BG;
-			sc.Features[FeatureIndex] = f;
+            f.BG = Structure.Entity.BG;
+			Structure.Entity.Features[FeatureIndex] = f;
 			bool finished = true;
-			foreach (Feature fr in sc.Features)
+			foreach (Feature fr in Structure.Entity.Features)
 			{
 				if (fr==null)
 				{
@@ -154,12 +146,12 @@ namespace Hecatomb
 			}
 			if (finished)
 			{
-				Feature fr = sc.Features[0];
-                Game.StatusPanel.PushMessage(String.Format("{0} {1} {2}", fr.X, fr.Y, fr.Z));
-				Structure.Place(fr.X, fr.Y, fr.Z);
-                foreach (Feature feat in sc.Features)
+				Feature fr = Structure.Entity.Features[0];
+                Status.PushMessage(String.Format("{0} {1} {2}", fr.X, fr.Y, fr.Z));
+				Structure.Entity.Place(fr.X, fr.Y, fr.Z);
+                foreach (Feature feat in Structure.Entity.Features)
                 {
-                    Structural st = Hecatomb.Entity.Spawn<Structural>();
+                    StructuralComponent st = Spawn<StructuralComponent>();
                     st.Structure = Structure;
                     st.AddToEntity(feat);
                 }
@@ -214,7 +206,7 @@ namespace Hecatomb
 		
 		public override void SelectBox(Coord c, List<Coord> squares)
 		{
-			StructureEntity str = Hecatomb.Entity.Spawn<StructureEntity>(Makes);
+			Structure str = Spawn<Structure>(Type.GetType("Hecatomb."+Makes));
 			for (int i=0; i<squares.Count; i++)
 			{
 				Coord s = squares[i];
@@ -224,7 +216,7 @@ namespace Hecatomb
 					tc.Makes = Makes;
 					tc.Structure = str;
 					tc.FeatureIndex = i;
-                    tc.Ingredients = str.GetComponent<Structure>().Ingredients[i] ?? new Dictionary<string, int>();
+                    tc.Ingredients = str.Ingredients[i] ?? new Dictionary<string, int>();
                     tc.Place(s.X, s.Y, s.Z);
 				}
 			}

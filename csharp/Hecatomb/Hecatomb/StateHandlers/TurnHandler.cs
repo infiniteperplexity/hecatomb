@@ -79,7 +79,7 @@ namespace Hecatomb
         public void NextTurn()
         {
 
-            Player p = Game.World.Player;
+            PlayerEntity p = Game.World.Player;
             p.Acted = false;
             Turn += 1;
             Minute += 1;
@@ -194,7 +194,7 @@ namespace Hecatomb
                 NextActor();
                 return;
             }
-			if (actor.Entity is Player)
+			if (actor.Entity is PlayerEntity)
 			{
 				Game.World.Player.Ready();
 				// set player acted to false

@@ -14,7 +14,7 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of Commands.
 	/// </summary>
-	public class Commands
+	public class HecatombCommmands
 	{
 		public void Wait()
 		{
@@ -47,7 +47,7 @@ namespace Hecatomb
 		}
 		private void moveHorizontalCommand(int dx, int dy)
 		{
-			Player p = Game.World.Player;
+			PlayerEntity p = Game.World.Player;
 			int x1 = p.X + dx;
 			int y1 = p.Y + dy;
 			int z1 = p.Z;
@@ -90,7 +90,7 @@ namespace Hecatomb
 			
 		private void moveVerticalCommand(int dz)
 		{
-			Player p = Game.World.Player;
+			PlayerEntity p = Game.World.Player;
 			int x1 = p.X;
 			int y1 = p.Y;
 			int z1 = p.Z + dz;
@@ -225,7 +225,7 @@ namespace Hecatomb
 			{
 				Game.Controls = Game.DefaultControls;
 			}
-			Player p = Game.World.Player;
+			PlayerEntity p = Game.World.Player;
 			Game.Camera.Center(p.X, p.Y, p.Z);
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;

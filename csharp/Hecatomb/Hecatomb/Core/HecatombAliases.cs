@@ -37,7 +37,7 @@ namespace Hecatomb
                 return Game.Controls;
             }
         }
-        public static Commands Commands
+        public static HecatombCommmands Commands
         {
             get
             {
@@ -53,6 +53,14 @@ namespace Hecatomb
         }
 
         // World state
+        public static HecatombOptions Options
+        {
+            get
+            {
+                return Game.Options;
+            }
+        }
+
         public static World World
         {
             get
@@ -60,7 +68,7 @@ namespace Hecatomb
                 return Game.World;
             }
         }
-        public static Player Player
+        public static PlayerEntity Player
         {
             get
             {
@@ -137,11 +145,11 @@ namespace Hecatomb
                 return Entity.Entities;
             }
         }
-        public static ResearchTracker Research
+        public static ResearchHandler Research
         {
             get
             {
-                return Game.World.GetTracker<ResearchTracker>();
+                return Game.World.GetTracker<ResearchHandler>();
             }
         }
         public static TutorialHandler Tutorial
@@ -164,6 +172,44 @@ namespace Hecatomb
             {
                 return Game.Time;
             }
+        }
+
+        // spawning methods
+        public static Entity Spawn(Type t)
+        {
+            return Entity.Spawn(t);
+        }
+        public static T Spawn<T>() where T : Entity, new()
+        {
+            return Entity.Spawn<T>();
+        }
+        public static T Spawn<T>(Type t) where T : Entity
+        {
+            return Entity.Spawn<T>(t);
+        }
+        public static T Spawn<T>(string s) where T : TileEntity, new()
+        {
+            return Entity.Spawn<T>(s);
+        }
+
+        public static T Mock<T>() where T : Entity, new()
+        {
+            return Entity.Mock<T>();
+        }
+
+        public static T Mock<T>(string s) where T : TileEntity, new()
+        {
+            return Entity.Mock<T>(s);
+        }
+
+        public static Entity Mock(Type t)
+        {
+            return Entity.Mock(t);
+        }
+
+        public static T Mock<T>(Type t) where T : Entity
+        {
+            return Entity.Mock<T>(t);
         }
     }
 }

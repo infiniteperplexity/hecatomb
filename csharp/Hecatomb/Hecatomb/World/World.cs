@@ -51,8 +51,8 @@ namespace Hecatomb
         public Dictionary<string, StateHandler> StateHandlers;
 		public HashSet<Coord> Explored;
 		public EventHandler Events;
-		public Player Player;
-		public HecatombRandom Random;
+		public PlayerEntity Player;
+		public StatefulRandom Random;
         public TurnHandler Turns;
 
         // should these attach to builder?
@@ -62,7 +62,7 @@ namespace Hecatomb
 		
 		
 		public World(int width, int height, int depth, int seed=0) {
-			Random = new HecatombRandom(seed);
+			Random = new StatefulRandom(seed);
             Entity.Reset();
 			Width = width;
 			Height = height;

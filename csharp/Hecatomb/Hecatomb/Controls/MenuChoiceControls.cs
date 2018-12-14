@@ -67,7 +67,7 @@ namespace Hecatomb
             if (menu is Structure)
             {
                 Structure s = (Structure)menu;
-                s.Highlight();
+                s.HighlightSquares();
                 Game.MainPanel.Dirty = true;
             }
 			var Commands = Game.Commands;

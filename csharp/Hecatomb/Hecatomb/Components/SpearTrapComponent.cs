@@ -9,9 +9,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    public class SpearTrapFeatureComponent : Component
+    public class SpearTrapComponent : Component
     {
-        public SpearTrapFeatureComponent() : base()
+        public SpearTrapComponent() : base()
         {
             AddListener<PlaceEvent>(OnStep);
         }

@@ -52,7 +52,7 @@ namespace Hecatomb
         public StructureControls(Structure s) : base(s)
         {
             MyStructure = s;
-            s.Highlight();
+            s.HighlightSquares();
             Game.MainPanel.Dirty = true;
             var Commands = Game.Commands;
             KeyMap[Keys.Space] = Commands.Wait;

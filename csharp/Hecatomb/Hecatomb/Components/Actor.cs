@@ -82,7 +82,7 @@ namespace Hecatomb
 		}
 		public void Act()
 		 {
-			if (Entity is Player)
+			if (Entity is PlayerEntity)
 			{
 				return;
 			}

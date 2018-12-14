@@ -40,18 +40,12 @@ namespace Hecatomb
         // override Place from TileEntity
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
-            Task existing = Tasks[x1, y1, z1];
-            if (existing == null)
+            if (Tasks[x1, y1, z1]!=null)
             {
-                Tasks[x1, y1, z1] = this;
-                base.Place(x1, y1, z1, fireEvent);
+                throw new InvalidOperationException($"Task placement conflict at {x1} {y1} {z1}");
             }
-            else
-            {
-                throw new InvalidOperationException(String.Format(
-                    "Cannot place {0} at {1} {2} {3} because {4} is already there.", ClassName, x1, y1, z1, existing.ClassName
-                ));
-            }
+            Tasks[x1, y1, z1] = this;
+            base.Place(x1, y1, z1, fireEvent);
         }
         // override Remove from TileEntity
         public override void Remove()
@@ -63,10 +57,7 @@ namespace Hecatomb
         // override Despawn from TileEntity
         public override void Despawn()
         {
-            if (Worker==null)
-            {
-                Unassign();
-            }
+            Unassign();
             base.Despawn();
         }
 
@@ -93,8 +84,7 @@ namespace Hecatomb
                 return false;
             }
             Movement m = c.GetComponent<Movement>();
-            bool useLast = (WorkRange == 0);
-            return m.CanReach(this, useLast: useLast) && m.CanFindResources(Ingredients);
+            return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients);
         }
         public virtual void AssignTo(Creature c)
         {
@@ -109,16 +99,13 @@ namespace Hecatomb
         }
         public void Unassign()
         {
-            if (Worker != null)
-            {
-                Worker.GetComponent<Minion>()._Unassign();
-            }
+            Worker?.GetComponent<Minion>()?._Unassign();
             UnclaimIngredients();
         }
         // ingredients
         public bool HasIngredients()
         {
-            if (Game.Options.NoIngredients)
+            if (Options.NoIngredients)
             {
                 return true;
             }
@@ -207,7 +194,6 @@ namespace Hecatomb
                 inv.Item.AddResources(Claims[eid]);
                 item.UnclaimResources(Claims[eid]);
                 Claims.Remove(eid);
-                Debug.WriteLine("picking up an item");
                 Worker.GetComponent<Actor>().Spend();
             }
             else
@@ -217,7 +203,7 @@ namespace Hecatomb
         }
         public void SpendIngredients()
         {
-            if (Game.Options.NoIngredients)
+            if (Options.NoIngredients)
             {
                 return;
             }
@@ -249,15 +235,13 @@ namespace Hecatomb
                 FetchIngredient();
                 return;
             }
-            // !!!! refactor
             if ((int)Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, X, Y, Z) <= WorkRange)
             {
                 Work();
             }
             else
             {
-                bool useLast = (WorkRange == 0) ? true : false;
-                Worker.GetComponent<Actor>().WalkToward(X, Y, Z, useLast: useLast);
+                Worker.GetComponent<Actor>().WalkToward(X, Y, Z, useLast: (WorkRange == 0));
             }
         }
 
@@ -278,8 +262,7 @@ namespace Hecatomb
         public virtual void Start()
         {
             SpendIngredients();
-            Feature f = Entity.Spawn<Feature>("IncompleteFeature");
-            f.Place(X, Y, Z);
+            Spawn<Feature>("IncompleteFeature").Place(X, Y, Z);
         }
 
         public virtual void Finish()
@@ -297,9 +280,9 @@ namespace Hecatomb
         // ISelectsTile
         public virtual void SelectTile(Coord c)
         {
-            if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+            if (Tasks[c.X, c.Y, c.Z] == null)
             {
-                Task task = (Task)Entity.Spawn(this.GetType());
+                Task task = Spawn<Task>(this.GetType());
                 task.Makes = Makes;
                 task.Place(c.X, c.Y, c.Z);
             }
@@ -312,7 +295,7 @@ namespace Hecatomb
             {
                 if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
                 {
-                    Task task = (Task)Entity.Spawn(this.GetType());
+                    Task task = Spawn<Task>(this.GetType());
                     task.Makes = Makes;
                     task.Place(c.X, c.Y, c.Z);
                 }
@@ -324,9 +307,9 @@ namespace Hecatomb
         {
             foreach (Coord s in squares)
             {
-                if (Game.World.Tasks[s.X, s.Y, s.Z] == null)
+                if (Tasks[s.X, s.Y, s.Z] == null)
                 {
-                    Task task = (Task)Entity.Spawn(this.GetType());
+                    Task task = (Task)Spawn(this.GetType());
                     task.Makes = Makes;
                     task.Place(s.X, s.Y, s.Z);
                 }
@@ -344,7 +327,7 @@ namespace Hecatomb
             {
                 return MenuName;
             }
-            else if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients))
+            else if (Player.GetComponent<Movement>().CanFindResources(Ingredients))
             {
                 return (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
             }

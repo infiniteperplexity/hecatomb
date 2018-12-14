@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Hecatomb
 {
-    public class Options
+    public class HecatombOptions
     {
         public bool Explored;
         public bool Visible;
         public bool NoIngredients;
 
-        public Options()
+        public HecatombOptions()
         {
             Explored = false;
             Visible = false;

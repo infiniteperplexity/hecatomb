@@ -48,7 +48,7 @@ namespace Hecatomb
 				List<IMenuListable> spells = new List<IMenuListable>();
                 // only if we have the prerequisite structures / technologies...
                 var structures = Structure.ListAll();
-                var researched = Game.World.GetTracker<ResearchTracker>().Researched;
+                var researched = Game.World.GetTracker<ResearchHandler>().Researched;
                 foreach (string sp in Spells)
 				{
                     var spell = GetSpell(sp);

@@ -70,7 +70,7 @@ namespace Hecatomb
 		
 		public override int GetCost()
 		{
-			Player master = (Player) Caster;
+			PlayerEntity master = (PlayerEntity) Caster;
 			var minions = master.GetComponent<Minions>();
 			if (minions.Count==0)
 			{

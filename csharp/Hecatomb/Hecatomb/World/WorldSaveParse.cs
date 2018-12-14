@@ -66,7 +66,7 @@ namespace Hecatomb
 		{
 			JObject parsed = (JObject) JsonConvert.DeserializeObject(json);
 			// *** Random Seed ***
-			Random = parsed["random"].ToObject<HecatombRandom>();
+			Random = parsed["random"].ToObject<StatefulRandom>();
 			Random.Initialize();
 			// *** Terrains and Covers ***
 			int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
@@ -125,7 +125,7 @@ namespace Hecatomb
 			}
 			// *** Player ***
 			
-			Player = (Player) Entities[pid];
+			Player = (PlayerEntity) Entities[pid];
 			Explored = parsed.GetValue("explored").ToObject<HashSet<Coord>>();
 			Player.HandleVisibility();
 			Game.MainPanel.Dirty = true;
