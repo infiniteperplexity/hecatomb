@@ -12,7 +12,7 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class Creature : TileEntity
+    public class Creature : TypedEntity
     {
 
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)

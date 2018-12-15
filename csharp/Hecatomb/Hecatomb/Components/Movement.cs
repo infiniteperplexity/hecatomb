@@ -466,7 +466,7 @@ namespace Hecatomb
 		}
 		public void StepTo(int x1, int y1, int z1)
 		{
-			Entity.Place(x1, y1, z1);
+			Entity.Entity.Place(x1, y1, z1);
 			Actor a = Entity.GetComponent<Actor>();
 			a.Spend(16);
 		}

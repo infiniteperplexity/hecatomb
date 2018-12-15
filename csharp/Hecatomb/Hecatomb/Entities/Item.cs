@@ -16,7 +16,6 @@ namespace Hecatomb
 
         public Item() : base()
         {
-            TypeName = "Item";
             Resources = new Dictionary<string, int>();
             Claims = new Dictionary<string, int>();
         }
@@ -40,7 +39,7 @@ namespace Hecatomb
             else
             {
                 throw new InvalidOperationException(String.Format(
-                    "Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
+                    "Cannot place {0} at {1} {2} {3} because {4} is already there.", ClassName, x1, y1, z1, e.ClassName
                 ));
             }
         }

@@ -12,7 +12,7 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class Feature : TileEntity
+    public class Feature : TypedEntity
     {
 
         public bool Solid;

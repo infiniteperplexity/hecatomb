@@ -23,7 +23,7 @@ namespace Hecatomb
         public Attacker() : base()
         {
         }
-        public void Attack(TileEntity t)
+        public void Attack(TypedEntity t)
         {
             AttackEvent attack = new AttackEvent()
             {
@@ -136,7 +136,7 @@ namespace Hecatomb
                 {
                     Debug.WriteLine("This creature should die.");
                     Game.World.Events.Publish(new SensoryEvent() { Sight = $"{cd.Describe()} dies!" });
-                    Entity.Destroy();
+                    Entity.Entity.Destroy();
                 }
             }
         }

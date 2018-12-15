@@ -82,7 +82,7 @@ namespace Hecatomb
 		}
 		public void Act()
 		 {
-			if (Entity is PlayerEntity)
+			if (Entity.Entity is PlayerEntity)
 			{
 				return;
 			}
@@ -295,13 +295,14 @@ namespace Hecatomb
             }
             if (Target != null && Target.Entity is Creature && Team.IsHostile((Creature) Target.Entity))
             {
+                Creature cr = (Creature)Target;
                 Movement m = Entity.GetComponent<Movement>();
                 Attacker a = Entity.TryComponent<Attacker>();
                 // this is poorly thought out
                 if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
                 {
                     Debug.WriteLine("attacking");
-                    a.Attack(Target);
+                    a.Attack(cr);
                 }
                 else
                 {

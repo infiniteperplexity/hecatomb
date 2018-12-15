@@ -108,13 +108,10 @@ namespace Hecatomb
 				if (ge is TileEntity)
 				{
 					Coord c = child.ToObject<Coord>();
-					TileEntity te = (TileEntity) ge;
+					TypedEntity te = (TypedEntity) ge;
                     Debug.WriteLine(te.GetType());
                     Debug.Print(te.TypeName);
-                    if (!(te is Item))
-                    {
-                        EntityType.Types[te.TypeName].Standardize(te);
-                    }
+                    EntityType.Types[te.TypeName].Standardize(te);
 					te.Place(c.X, c.Y, c.Z, fireEvent: false);
 				}
 				else if (ge is Task)

@@ -69,7 +69,6 @@ namespace Hecatomb
         public FurnishTask(): base()
 		{
 			MenuName = "build fixtures";
-			TypeName = "furnish";
 			Fixtures = new string[] {"Ramp", "Door", "SpearTrap"};
 		}
 			

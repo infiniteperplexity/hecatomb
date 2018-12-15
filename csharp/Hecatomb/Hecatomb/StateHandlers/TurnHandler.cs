@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
     public class TurnHandler : StateHandler
     {
         public static int StartHour = 8;
@@ -194,7 +195,7 @@ namespace Hecatomb
                 NextActor();
                 return;
             }
-			if (actor.Entity is PlayerEntity)
+			if (actor.Entity == Player)
 			{
 				Game.World.Player.Ready();
 				// set player acted to false
@@ -213,7 +214,7 @@ namespace Hecatomb
 				}
 				if (actor.CurrentPoints>0)
 				{
-                    Debug.Print("Replacing {0} on the queue.", actor.Entity.Describe());
+                    Debug.Print("Replacing {0} on the queue.", actor.Entity.Entity.Describe());
                     actor.Acted = false;
 					Deck.Enqueue(actor);
 				}

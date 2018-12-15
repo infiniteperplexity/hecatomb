@@ -21,41 +21,16 @@ namespace Hecatomb
 	
 	public abstract class Component : Entity
 	{
-		[JsonProperty] private int EntityEID;
-		[JsonIgnore] public TileEntity Entity
-		{
-			get
-			{
-				if (EntityEID==-1)
-				{
-					return null;
-				}
-				else
-				{
-					return (TileEntity) Entities[EntityEID];
-				}
-			}
-			set
-			{
-				if (value==null)
-				{
-					EntityEID = -1;
-				}
-				else
-				{
-					EntityEID = value.EID;
-				}
-			}
-		}
+        public EntityField<TypedEntity> Entity;
 		[JsonIgnore] public string[] Required;
 		
 		public Component() : base()
 		{
-			EntityEID = -1;
+            Entity = new EntityField<TypedEntity>();
 			Required = new string[0];
 		}
 		
-		public void AddToEntity(TileEntity e)
+		public void AddToEntity(TypedEntity e)
 		{
 			if (!Spawned)
 			{
@@ -69,7 +44,7 @@ namespace Hecatomb
 				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
 				e.Components[this.GetType().BaseType.Name] = this.EID;
 			}
-			EntityEID = e.EID;
+            Entity = e;
 		}
 		
 //		public virtual GameEvent OnEntityEvent(GameEvent ge)
@@ -85,12 +60,12 @@ namespace Hecatomb
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))
 			{
-				Entity.Components.Remove(this.GetType().Name);
+				Entity.Entity.Components.Remove(this.GetType().Name);
 			} else {
 				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
-				Entity.Components.Remove(this.GetType().BaseType.Name);
+				Entity.Entity.Components.Remove(this.GetType().BaseType.Name);
 			}
-			EntityEID = -1;
+			Entity.EID = -1;
 		}
 		
 		public virtual void InterpretJSON(string json)

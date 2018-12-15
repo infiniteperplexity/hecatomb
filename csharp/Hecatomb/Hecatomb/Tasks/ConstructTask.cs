@@ -90,7 +90,6 @@ namespace Hecatomb
             Structure = new EntityField<Structure>();
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","BlackMarket","Sanctum"};
 			MenuName = "construct a structure.";
-			TypeName = "construct";
 		}
 			
 		private Structure Mock()

@@ -80,7 +80,7 @@ namespace Hecatomb
             return t;
         }
 
-        public static T Spawn<T>(string s) where T : TileEntity, new()
+        public static T Spawn<T>(string s) where T : TypedEntity, new()
         {
             T t = Spawn<T>();
             t.Symbol = default(char);
@@ -105,7 +105,7 @@ namespace Hecatomb
             return t;
         }
 
-        public static T Mock<T>(string s) where T : TileEntity, new()
+        public static T Mock<T>(string s) where T : TypedEntity, new()
         {
             T t = Mock<T>();
             t.Symbol = default(char);

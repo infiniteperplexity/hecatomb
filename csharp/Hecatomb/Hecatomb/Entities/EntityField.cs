@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb
 {
     using static HecatombAliases;
-    // abstract base helps check type membership
+    // abstract base class helps check type membership
     public abstract class EntityFieldBase { public int EID; }
     public class EntityField<T> : EntityFieldBase where T : Entity
     {
@@ -77,13 +77,28 @@ namespace Hecatomb
                 return Entity.ClassName;
             }
         }
+
+        public string Describe(
+            bool article = true,
+            bool definite = false,
+            bool capitalized = false)
+        {
+            return (Entity as TileEntity).Describe(article: article, definite: definite, capitalized: capitalized);
+        }
+
+        public void Despawn()
+        {
+            Entity.Despawn();
+            EID = -1;
+        }
+
         public S GetComponent<S>() where S: Component
         {
-            return (Entity as TileEntity).GetComponent<S>();
+            return (Entity as TypedEntity).GetComponent<S>();
         }
         public S TryComponent<S>() where S : Component
         {
-            return (Entity as TileEntity).TryComponent<S>();
+            return (Entity as TypedEntity).TryComponent<S>();
         }
 
 
@@ -94,6 +109,10 @@ namespace Hecatomb
 
         public static implicit operator int(EntityField<T> et)
         {
+            if (object.ReferenceEquals(et, null))
+            {
+                return -1;
+            }
             return et.EID;
         }
 

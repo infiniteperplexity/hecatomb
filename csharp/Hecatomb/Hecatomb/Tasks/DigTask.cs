@@ -15,7 +15,6 @@ namespace Hecatomb
 		public DigTask(): base()
 		{
 			MenuName = "dig or harvest";
-			TypeName = "dig";
 		}
 			
 		public override void Start()

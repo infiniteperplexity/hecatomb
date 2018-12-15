@@ -86,7 +86,7 @@ namespace Hecatomb
 			);
 			if (path.Count==0)
 			{
-				Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.Describe(),t.Describe(), t.X, t.Y, t.Z);
+				Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.Entity.Describe(),t.Describe(), t.X, t.Y, t.Z);
 				if (!misses.ContainsKey(m.Entity.EID))
 				{
 					misses[m.Entity.EID] = new Dictionary<int, int>();

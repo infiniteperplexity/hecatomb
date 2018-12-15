@@ -99,6 +99,7 @@
     <Compile Include="Entities\Creature.cs" />
     <Compile Include="Components\StructuralComponent.cs" />
     <Compile Include="FlyWeights\Team.cs" />
+    <Compile Include="Entities\TypedEntity.cs" />
     <Compile Include="Utilities\RecursiveBacktracker.cs" />
     <Compile Include="StateHandlers\ResearchHandler.cs" />
     <Compile Include="FlyWeights\Resource.cs" />

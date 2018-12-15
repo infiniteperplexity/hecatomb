@@ -38,7 +38,7 @@ namespace Hecatomb
 			Components = new Dictionary<string, string>();
 		}
 			
-		public void Standardize(TileEntity e)
+		public void Standardize(TypedEntity e)
 		{
 			e.TypeName = TypeName;
 			e.Name = Name;
@@ -46,7 +46,7 @@ namespace Hecatomb
 			e.Symbol = Symbol;
 			e.BG = BG;
 		}
-		public void Typify(TileEntity e)
+		public void Typify(TypedEntity e)
 		{
 			e.TypeName = TypeName;
 			e.Name = Name;
@@ -63,7 +63,7 @@ namespace Hecatomb
 		}
 
         // this doesn't work
-        public void MockTypify(TileEntity e)
+        public void MockTypify(TypedEntity e)
         {
             e.TypeName = TypeName;
             e.Name = Name;
@@ -130,25 +130,6 @@ namespace Hecatomb
 					string name = (string) comp.Name;
 					et.Components[name] = comp.Value.ToString();
 				}
-			}
-			// dynamically create a typed entity for each subclass of Task
-			var tasks = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Task))).ToList();
-			foreach (var task in tasks)
-			{
-				EntityType t = new EntityType(task.Name);
-				t.Name = task.Name;
-				// do I need "mock" here to get the correct name?
-				t.Components = new Dictionary<string, string>() {{task.Name, "{}"}};
-			}
-			// dynamically create a typed entity for each subclass of Structure
-			var structures = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Structure))).ToList();
-			foreach (var structure in structures)
-			{
-				EntityType t = new EntityType(structure.Name);
-				t.Components = new Dictionary<string, string>() {{structure.Name, "{}"}};
-				EntityType tf = new EntityType(structure.Name + "Feature");
-				tf.Name = "need to figure this out.";
-				tf.Components = new Dictionary<string, string>();
 			}
 		}
 	}

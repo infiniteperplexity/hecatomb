@@ -187,7 +187,7 @@ namespace Hecatomb
         {
             return Entity.Spawn<T>(t);
         }
-        public static T Spawn<T>(string s) where T : TileEntity, new()
+        public static T Spawn<T>(string s) where T : TypedEntity, new()
         {
             return Entity.Spawn<T>(s);
         }
@@ -197,7 +197,7 @@ namespace Hecatomb
             return Entity.Mock<T>();
         }
 
-        public static T Mock<T>(string s) where T : TileEntity, new()
+        public static T Mock<T>(string s) where T : TypedEntity, new()
         {
             return Entity.Mock<T>(s);
         }

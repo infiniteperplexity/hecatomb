@@ -21,7 +21,7 @@ namespace Hecatomb
 	///
 	public abstract class TileEntity : Entity
 	{
-		public string TypeName;
+		
 		[JsonIgnore] public string Name;
 		// might remove this...but for testing...
 		[JsonIgnore] public char Symbol;
@@ -33,40 +33,19 @@ namespace Hecatomb
         public string Highlight;
 		[JsonIgnore] public bool Placed {get; private set;}
 
-        public Dictionary<string, EntityField<Component>> Components;
+        
         //public Dictionary<string, int> Components;
 		
 		public TileEntity() : base()
 		{
             //Components = new Dictionary<string, int>();
-            Components = new Dictionary<string, EntityField<Component>>();
+            
 			X = -1;
 			Y = -1;
 			Z = -1;
 			Placed = false;
 		}
-		public T GetComponent<T>() where T : Component
-		{
-			string t = typeof(T).Name;
-			if (Components.ContainsKey(t)) {
-				int eid = Components[t];
-				return (T) Entities[eid];
-			} else {
-				throw new InvalidOperationException(String.Format("{0} has no component of type {1}", this, t));
-			}
-		}
 		
-		
-		public T TryComponent<T>() where T : Component
-		{
-			string t = typeof(T).Name;
-			if (Components.ContainsKey(t)) {
-				int eid = Components[t];
-				return (T) Entities[eid];
-			} else {
-				return default(T);
-			}
-		}
 		
 		public virtual void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
@@ -87,10 +66,7 @@ namespace Hecatomb
 				Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
 			}
             // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about
-            foreach (Component c in Components.Values)
-            {
-                c.AfterSelfPlace(x1, y1, z1);
-            }
+            
         }
 		
 		public virtual void Remove()
@@ -110,13 +86,6 @@ namespace Hecatomb
 
         public override void Despawn()
         {
-            if (Components != null)
-            {
-                foreach (int c in Components.Values)
-                {
-                    Entities[c].Despawn();
-                }
-            }
             if (Placed)
             {
                 Remove();
