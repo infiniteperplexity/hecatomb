@@ -21,12 +21,12 @@ namespace Hecatomb
 	
 	public abstract class Component : Entity
 	{
-        public EntityField<TypedEntity> Entity;
+        public TypedEntityField<TypedEntity> Entity;
 		[JsonIgnore] public string[] Required;
 		
 		public Component() : base()
 		{
-            Entity = new EntityField<TypedEntity>();
+            Entity = new TypedEntityField<TypedEntity>();
 			Required = new string[0];
 		}
 		

@@ -15,14 +15,15 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of Actor.
-	/// </summary>
-	/// 
+    /// <summary>
+    /// Description of Actor.
+    /// </summary>
+    /// 
+    using static HecatombAliases;
 	
 	public class Actor : Component
 	{
-        public EntityField<TileEntity> Target;
+        public TileEntityField<TileEntity> Target;
 		public int ActionPoints;
 		public int CurrentPoints;
 		private string TeamName;
@@ -82,7 +83,7 @@ namespace Hecatomb
 		}
 		public void Act()
 		 {
-			if (Entity.Entity is PlayerEntity)
+			if (Entity == Game.World.Player)
 			{
 				return;
 			}

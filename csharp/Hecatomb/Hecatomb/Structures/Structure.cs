@@ -88,7 +88,7 @@ namespace Hecatomb
                 ResearchTurns -= 1;
                 if (ResearchTurns <= 0)
                 {
-                    var researched = Game.World.GetTracker<ResearchHandler>().Researched;
+                    var researched = Game.World.GetState<ResearchHandler>().Researched;
                     if (!researched.Contains(Researching))
                     {
                         researched.Add(Researching);
@@ -113,7 +113,7 @@ namespace Hecatomb
             get
             {
                 var list = new List<IMenuListable>();
-                var researched = Game.World.GetTracker<ResearchHandler>().Researched;
+                var researched = Game.World.GetState<ResearchHandler>().Researched;
                 foreach (string s in Researches)
                 {
                     if (!researched.Contains(s))

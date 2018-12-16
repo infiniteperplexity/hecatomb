@@ -68,7 +68,7 @@ namespace Hecatomb
                 return Game.World;
             }
         }
-        public static PlayerEntity Player
+        public static Creature Player
         {
             get
             {
@@ -135,7 +135,7 @@ namespace Hecatomb
         {
             get
             {
-                return Game.World.GetTracker<AchievementHandler>();
+                return Game.World.GetState<AchievementHandler>();
             }
         }
         public static Dictionary<int, Entity> Entities
@@ -149,14 +149,14 @@ namespace Hecatomb
         {
             get
             {
-                return Game.World.GetTracker<ResearchHandler>();
+                return Game.World.GetState<ResearchHandler>();
             }
         }
         public static TutorialHandler Tutorial
         {
             get
             {
-                return Game.World.GetTracker<TutorialHandler>();
+                return Game.World.GetState<TutorialHandler>();
             }
         }
         public static TurnHandler Turns
@@ -210,6 +210,11 @@ namespace Hecatomb
         public static T Mock<T>(Type t) where T : Entity
         {
             return Entity.Mock<T>(t);
+        }
+
+        public static T GetState<T>() where T : StateHandler, new()
+        {
+            return Game.World.GetState<T>();
         }
     }
 }

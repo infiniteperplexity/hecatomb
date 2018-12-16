@@ -73,17 +73,17 @@ namespace Hecatomb
         {
             get
             {
-                return Game.World.GetTracker<ResearchHandler>().Researched.Contains(Name);
+                return Game.World.GetState<ResearchHandler>().Researched.Contains(Name);
             }
             set
             {
                 if (value == false)
                 {
-                    Game.World.GetTracker<ResearchHandler>().Researched.Remove(Name);
+                    Game.World.GetState<ResearchHandler>().Researched.Remove(Name);
                 }
                 else if (value == true)
                 {
-                    Game.World.GetTracker<ResearchHandler>().Researched.Add(Name);
+                    Game.World.GetState<ResearchHandler>().Researched.Add(Name);
                 }
             }
         }

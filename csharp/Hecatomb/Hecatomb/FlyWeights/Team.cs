@@ -90,7 +90,7 @@ namespace Hecatomb
         // I'm not sure whether cacheing is needed here or not.
         public List<Creature> GetEnemies()
         {
-            TeamTracker tt = Game.World.GetTracker<TeamTracker>();
+            TeamTracker tt = Game.World.GetState<TeamTracker>();
             List<Creature> enemies = new List<Creature>();
             // this is crap...it's not symmetrical and it ignores berserk
             foreach (string enemy in Enemies)
@@ -104,13 +104,13 @@ namespace Hecatomb
         }
         public void AddMember(Creature c)
         {
-            TeamTracker tt = Game.World.GetTracker<TeamTracker>();
+            TeamTracker tt = Game.World.GetState<TeamTracker>();
             tt.Membership[TypeName].Add(c.EID);
         }
 
         public void RemoveMember(Creature c)
         {
-            TeamTracker tt = Game.World.GetTracker<TeamTracker>();
+            TeamTracker tt = Game.World.GetState<TeamTracker>();
             tt.Membership[TypeName].Remove(c.EID);
         }
 

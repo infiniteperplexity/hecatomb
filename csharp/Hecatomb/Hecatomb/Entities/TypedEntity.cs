@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
@@ -16,6 +15,7 @@ namespace Hecatomb
     {
         public string TypeName;
         public Dictionary<string, EntityField<Component>> Components;
+
 
         public TypedEntity() : base()
         {

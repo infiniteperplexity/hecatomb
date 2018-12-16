@@ -45,7 +45,7 @@ namespace Hecatomb
 		public static LinkedList<Coord> FindPath(
 			Movement m, TileEntity t, bool useLast=true)
 		{
-			var misses = Game.World.GetTracker<PathHandler>().PathMisses;
+			var misses = Game.World.GetState<PathHandler>().PathMisses;
 			if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
 			{
 				return new LinkedList<Coord>();

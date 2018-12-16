@@ -99,11 +99,11 @@ namespace Hecatomb
 //				new List<ColoredText> {"start game"},
 //				new List<Action> {StartGame}
 //			);
-        	PlayerEntity p = Entity.Spawn<PlayerEntity>("Necromancer");
+        	Creature p = Entity.Spawn<Creature>("Necromancer");
 			World.Player = p;
-        	p.Initialize();
+        	//p.Initialize();
         	p.Place(12, 12, 0);
-        	p.HandleVisibility();
+        	TurnHandler.HandleVisibility();
         }
         protected  void StartGame()
         {
@@ -111,12 +111,12 @@ namespace Hecatomb
 			World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);
-            World.GetTracker<AchievementHandler>();
-            World.GetTracker<HumanTracker>();
+            World.GetState<AchievementHandler>();
+            World.GetState<HumanTracker>();
             Controls = DefaultControls;
-			PlayerEntity p = Hecatomb.Entity.Spawn<PlayerEntity>("Necromancer");
+			Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
 			World.Player = p;
-			p.Initialize();
+			//p.Initialize();
 			p.Place(
 				World.Width/2,
 				World.Height/2,
@@ -125,7 +125,7 @@ namespace Hecatomb
 			Camera.Center(p.X, p.Y, p.Z);
 			var t = Hecatomb.Entity.Spawn<TutorialHandler>();
 			t.Activate();
-			p.HandleVisibility();
+			TurnHandler.HandleVisibility();
 
             // proved it's possible to deserialize from method names
 
@@ -186,9 +186,9 @@ namespace Hecatomb
 			}
            	Time.Update();
 			Controls.HandleInput();
-			if (World.Player.Acted)
+			if (Game.World.Turns.PlayerActed)
            	{
-           		World.Turns.PlayerActed();
+           		World.Turns.AfterPlayerActed();
            	}
 			World.Turns.Try();
             base.Update(gameTime);

@@ -251,7 +251,7 @@ namespace Hecatomb
             }
             // there's a whole song and dance about hardness, but let's hold off on that
             int hardness = Game.World.Covers[c.X, c.Y, c.Z].Hardness;
-            if (hardness>0 && !Game.World.GetTracker<ResearchHandler>().Researched.Contains("FlintTools"))
+            if (hardness>0 && !Game.World.GetState<ResearchHandler>().Researched.Contains("FlintTools"))
             {
                 return false;
             }

@@ -23,7 +23,7 @@ namespace Hecatomb
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
         // instance properties
-        public EntityField<Creature> Worker;
+        public TypedEntityField<Creature> Worker;
         protected Dictionary<int, Dictionary<string, int>> Claims;
         public string Makes;
         public int Labor;
@@ -31,6 +31,7 @@ namespace Hecatomb
         // constructor
         public Task() : base()
         {
+            Worker = new TypedEntityField<Creature>();
             WorkRange = 1;
             LaborCost = 10;
             Labor = LaborCost;

@@ -35,8 +35,7 @@ namespace Hecatomb
 			}
 			set {}
 		}
-		[JsonProperty] private int StructureEID;
-        public EntityField<Structure> Structure;
+        public TileEntityField<Structure> Structure;
 		public string[] Structures;
         [JsonIgnore]
         public string MenuHeader
@@ -54,7 +53,7 @@ namespace Hecatomb
 			{
 				var list = new List<IMenuListable>();
                 var structures = Hecatomb.Structure.ListAll();
-                var researched = Game.World.GetTracker<ResearchHandler>().Researched;
+                var researched = Game.World.GetState<ResearchHandler>().Researched;
                 foreach (string st in Structures)
 				{   
                     var structure = (Structure) Hecatomb.Entity.Mock(Type.GetType("Hecatomb."+st));
@@ -87,7 +86,7 @@ namespace Hecatomb
 
         public ConstructTask(): base()
 		{
-            Structure = new EntityField<Structure>();
+            Structure = new TileEntityField<Structure>();
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","BlackMarket","Sanctum"};
 			MenuName = "construct a structure.";
 		}

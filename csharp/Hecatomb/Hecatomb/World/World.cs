@@ -51,7 +51,7 @@ namespace Hecatomb
         public Dictionary<string, StateHandler> StateHandlers;
 		public HashSet<Coord> Explored;
 		public EventHandler Events;
-		public PlayerEntity Player;
+		public Creature Player;
 		public StatefulRandom Random;
         public TurnHandler Turns;
 
@@ -214,7 +214,7 @@ namespace Hecatomb
 			Game.MenuPanel.Dirty = true;
 		}
 		
-		public T GetTracker<T>() where T : StateHandler, new()
+		public T GetState<T>() where T : StateHandler, new()
 		{
 			string s = typeof(T).Name;
 			if (!StateHandlers.ContainsKey(s))
@@ -227,7 +227,7 @@ namespace Hecatomb
 
         public void ValidateOutdoors()
         {
-            GetTracker<PathHandler>().ResetPaths();
+            GetState<PathHandler>().ResetPaths();
             Outdoors = new int[Width, Height, Depth];
             for (int x = 1; x < Width - 1; x++)
             {

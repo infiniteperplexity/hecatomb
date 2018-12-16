@@ -52,9 +52,11 @@ namespace Hecatomb
         public int LightLevel;
         public string MoonPhase;
 
+        public bool PlayerActed;
+
 		// already acted, but still have points to act again
 		[JsonIgnore] public Queue<Actor> Deck;
-		// have not yet acted and have points remaining
+        // have not yet acted and have points remaining
 		[JsonIgnore] public Queue<Actor> Queue;
 		
 		public TurnHandler()
@@ -72,7 +74,7 @@ namespace Hecatomb
 		
 		public void Try()
 		{
-			if (Game.World.Player.Acted)
+			if (PlayerActed)
 			{
 				NextTurn();
 			}
@@ -80,8 +82,8 @@ namespace Hecatomb
         public void NextTurn()
         {
 
-            PlayerEntity p = Game.World.Player;
-            p.Acted = false;
+            Creature p = Game.World.Player;
+            PlayerActed = false;
             Turn += 1;
             Minute += 1;
             if (Minute >= 60)
@@ -197,7 +199,12 @@ namespace Hecatomb
             }
 			if (actor.Entity == Player)
 			{
-				Game.World.Player.Ready();
+                HandleVisibility();
+                Game.Camera.Center(Player.X, Player.Y, Player.Z);
+                Game.MainPanel.Dirty = true;
+                Game.MenuPanel.Dirty = true;
+                Game.StatusPanel.Dirty = true;
+                PlayerActed = false;
 				// set player acted to false
 				return;
 			}
@@ -222,7 +229,7 @@ namespace Hecatomb
 			}
 		}
 		
-		public void PlayerActed()
+		public void AfterPlayerActed()
 		{
 			//Game.Time.Acted();
 			Actor actor = Game.World.Player.GetComponent<Actor>();
@@ -255,5 +262,21 @@ namespace Hecatomb
 			}
 			return qa;
 		}
-	}
+
+        public static void HandleVisibility()
+        {
+            Game.World.ValidateLighting();
+            Game.Camera.Center(Player.X, Player.Y, Player.Z);
+            Game.Visible = Game.World.Player.GetComponent<Senses>().GetFOV();
+            foreach (Creature c in GetState<TaskHandler>().Minions)
+            {
+                Senses s = c.GetComponent<Senses>();
+                Game.Visible.UnionWith(s.GetFOV());
+            }
+            foreach (var t in Game.Visible)
+            {
+                Game.World.Explored.Add(t);
+            }
+        }
+    }
 }

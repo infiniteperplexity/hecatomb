@@ -48,7 +48,7 @@ namespace Hecatomb
         public override void DrawContent()
         {
             Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-            PlayerEntity p = Game.World.Player;
+            Creature p = Game.World.Player;
             TurnHandler t = Game.World.Turns;
             string sanity = Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3, '0') + '/' + Game.World.Player.GetComponent<SpellCaster>().MaxSanity.ToString().PadLeft(3, '0');
             string x = p.X.ToString().PadLeft(3, '0');

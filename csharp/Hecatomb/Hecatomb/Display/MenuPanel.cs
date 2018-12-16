@@ -52,7 +52,7 @@ namespace Hecatomb
 			Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
 			var c = Game.Controls;
             c.RefreshContent();
-            var tutorial = Game.World.GetTracker<TutorialHandler>();
+            var tutorial = Game.World.GetState<TutorialHandler>();
 
             List<ColoredText> MenuTop = c.MenuTop;
             List<ColoredText> MenuMiddle = c.MenuMiddle;

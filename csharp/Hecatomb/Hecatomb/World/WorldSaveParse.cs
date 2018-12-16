@@ -122,19 +122,21 @@ namespace Hecatomb
 			}
 			// *** Player ***
 			
-			Player = (PlayerEntity) Entities[pid];
+			Player = (Creature) Entities[pid];
 			Explored = parsed.GetValue("explored").ToObject<HashSet<Coord>>();
-			Player.HandleVisibility();
+			
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 			// *** Turns ***
 			Turns = parsed.GetValue("turns").ToObject<TurnHandler>();
-			Turns.Queue = Turns.QueueAsActors(parsed["turns"]["Queue"].ToObject<Queue<int>>());
+            
+            Turns.Queue = Turns.QueueAsActors(parsed["turns"]["Queue"].ToObject<Queue<int>>());
 			Turns.Deck = Turns.QueueAsActors(parsed["turns"]["Deck"].ToObject<Queue<int>>());
-//			
-			// *** Event Listeners ***
-			var	events = parsed.GetValue("events").ToObject<Dictionary<string,Dictionary<int, string>>>();
+            TurnHandler.HandleVisibility();
+            //			
+            // *** Event Listeners ***
+            var	events = parsed.GetValue("events").ToObject<Dictionary<string,Dictionary<int, string>>>();
 			foreach (string type in events.Keys)
 			{
 				var listeners = events[type];

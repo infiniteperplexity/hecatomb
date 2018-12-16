@@ -14,10 +14,10 @@ namespace Hecatomb
 
     class StructuralComponent : Component
     {
-        public EntityField<Structure> Structure;
+        public TileEntityField<Structure> Structure;
         public StructuralComponent(): base()
         {
-            Structure = new EntityField<Structure>();
+            Structure = new TileEntityField<Structure>();
         }
     }
 }

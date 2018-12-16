@@ -11,15 +11,22 @@ using System.Diagnostics;
 using System.Collections.Generic;
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of Commands.
-	/// </summary>
-	public class HecatombCommmands
+    using static HecatombAliases;
+
+    public class HecatombCommmands
 	{
+        
+        public void Act()
+        {
+            Turns.PlayerActed = true;
+            Time.Acted();
+        }
+
 		public void Wait()
 		{
-			Game.World.Player.GetComponent<Actor>().Wait();
-			Game.World.Player.Act();
+			Player.GetComponent<Actor>().Wait();
+
+			Act();
 		}
 		public void MoveNorthCommand()
 		{
@@ -47,7 +54,7 @@ namespace Hecatomb
 		}
 		private void moveHorizontalCommand(int dx, int dy)
 		{
-			PlayerEntity p = Game.World.Player;
+			Creature p = Player;
 			int x1 = p.X + dx;
 			int y1 = p.Y + dy;
 			int z1 = p.Z;
@@ -68,7 +75,7 @@ namespace Hecatomb
 				{
 					Game.World.Events.Publish(new TutorialEvent() {Action = (c.Z==z1) ? "Move" : "Climb"});
 				    m.StepTo(c.X, c.Y, c.Z);
-					p.Act();
+					Act();
 					return;
 				}
 				Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
@@ -76,13 +83,13 @@ namespace Hecatomb
 				{
                     Game.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
                     m.Displace(cr);
-					p.Act();
+					Act();
 					return;
 				}
                 else if (cr!=null && p.GetComponent<Actor>().Team.IsHostile(cr))
                 {
                     p.GetComponent<Attacker>().Attack(cr);
-                    p.Act();
+                    Act();
                     return;
                 }
 			}
@@ -90,7 +97,7 @@ namespace Hecatomb
 			
 		private void moveVerticalCommand(int dz)
 		{
-			PlayerEntity p = Game.World.Player;
+			Creature p = Game.World.Player;
 			int x1 = p.X;
 			int y1 = p.Y;
 			int z1 = p.Z + dz;
@@ -104,12 +111,12 @@ namespace Hecatomb
 				{
                     Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
                     m.Displace(cr);
-					p.Act();
+					Act();
 				}
                 else if (cr!=null && p.GetComponent<Actor>().Team.IsHostile(cr))
                 {
                     p.GetComponent<Attacker>().Attack(cr);
-                    p.Act();
+                    Act();
                 }
 
 				return;
@@ -117,7 +124,7 @@ namespace Hecatomb
 			} else {
                 Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
                 m.StepTo(x1, y1, z1);
-			    p.Act();
+			    Act();
 				return;
 			}
 		}
@@ -169,7 +176,7 @@ namespace Hecatomb
 		public void ChooseTask()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
-			Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<TaskMaster>());
+			Game.Controls = new MenuChoiceControls(GetState<TaskHandler>());
 			Game.MenuPanel.Dirty = true;
 		}
 		
@@ -184,7 +191,7 @@ namespace Hecatomb
 		public void AutoWait()
 		{
 			Game.World.Player.GetComponent<Actor>().Wait();
-			Game.World.Player.Act();
+			Act();
 		}
 		
 		public void SaveGameCommand()
@@ -225,7 +232,7 @@ namespace Hecatomb
 			{
 				Game.Controls = Game.DefaultControls;
 			}
-			PlayerEntity p = Game.World.Player;
+			Creature p = Game.World.Player;
 			Game.Camera.Center(p.X, p.Y, p.Z);
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
@@ -243,7 +250,7 @@ namespace Hecatomb
 
         public void ToggleTutorial()
         {
-            var tutorial = Game.World.GetTracker<TutorialHandler>();
+            var tutorial = Game.World.GetState<TutorialHandler>();
             tutorial.Visible = !tutorial.Visible;
             Game.MenuPanel.Dirty = true;
         }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
 	/// <summary>
 	/// Description of Spell.
 	/// </summary>
@@ -69,9 +70,8 @@ namespace Hecatomb
 		}
 		
 		public override int GetCost()
-		{
-			PlayerEntity master = (PlayerEntity) Caster;
-			var minions = master.GetComponent<Minions>();
+        { 
+            var minions = GetState<TaskHandler>().Minions;
 			if (minions.Count==0)
 			{
 				return 10;
@@ -120,8 +120,7 @@ namespace Hecatomb
 				Task emerge = Entity.Spawn<ZombieEmergeTask>();
 				emerge.AssignTo(zombie);
 				emerge.Place(c.X, c.Y, c.Z);
-				Game.World.Player.GetComponent<Minions>().Add(zombie);
-                
+                GetState<TaskHandler>().Minions.Add(zombie);   
 			}
 			else
 			{

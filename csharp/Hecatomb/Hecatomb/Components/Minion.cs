@@ -19,11 +19,11 @@ namespace Hecatomb
 	public class Minion : Component
 	{
 
-        public EntityField<Task> Task;
+        public TaskField Task;
 		
 		public Minion(): base()
 		{
-            Task = new EntityField<Task>();
+            Task = new TaskField();
 			Required = new string[] {"Actor"};
 		}
 		
@@ -49,7 +49,7 @@ namespace Hecatomb
                 if (Game.World.Features[x, y, z + 1]?.TypeName == "Grave")
                 {
                     Game.World.Tasks[x, y, z + 1]?.Cancel();
-                    var task = Hecatomb.Entity.Spawn<ZombieEmergeTask>();
+                    var task = Spawn<ZombieEmergeTask>();
                     task.Place(x, y, z + 1);
                     task.AssignTo(cr);
                 }
@@ -58,14 +58,22 @@ namespace Hecatomb
             {
                 foreach(Task task in Game.World.Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
                 {
+                    Debug.WriteLine("is null?");
+
+                    Debug.WriteLine(task.Worker.EID);
+                    Debug.WriteLine(task.Worker==null);
+                    Debug.WriteLine("can assign?");
+                    Debug.WriteLine(task.CanAssign(cr));
+        
                     if (task.Worker==null && task.CanAssign(cr))
                     {
+                        Debug.WriteLine("right here");
                         task.AssignTo(cr);
                         break;
                     }
                 }
             }
-            Task?.Entity.Act();
+            Task?.Act();
             Actor actor = Entity.GetComponent<Actor>();
             if (!actor.Acted)
             {

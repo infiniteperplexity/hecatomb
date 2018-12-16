@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
     /// <summary>
     /// Description of TutorialTracker.
     /// </summary>
@@ -519,7 +520,7 @@ namespace Hecatomb
                     {
                         if (t.Action == "DigTaskComplete")
                         {
-                            if (Game.World.Player.GetComponent<Minions>().Count>1)
+                            if (GetState<TaskHandler>().Minions.Count>1)
                             {
                                 GotoState("CameraMode");
                             }
