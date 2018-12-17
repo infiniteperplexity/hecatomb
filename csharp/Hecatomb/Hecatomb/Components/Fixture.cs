@@ -15,18 +15,9 @@ namespace Hecatomb
     public class Fixture : Component
     {
         public Dictionary<string, int> Ingredients;
-        public string[] Structures;
-        public string[] Research;
-        public int Labor;
-
-        public Fixture() : base()
-        {
-            Structures = new string[0];
-            Research = new string[0];
-            Labor = 10;
-        }
-
-
+        public string[] Structures = new string[0];
+        public string[] Research = new string[0];
+        public int Labor = 10;
 
         public override void InterpretJSON(string json)
         {

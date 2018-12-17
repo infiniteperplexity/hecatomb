@@ -89,7 +89,7 @@ namespace Hecatomb
         }
         public virtual void AssignTo(Creature c)
         {
-            c.GetComponent<Minion>()._AssignTask(this);
+            c.GetComponent<Minion>().Task = this;
             Worker = c;
             ClaimIngredients();
         }
@@ -100,7 +100,10 @@ namespace Hecatomb
         }
         public void Unassign()
         {
-            Worker?.GetComponent<Minion>()?._Unassign();
+            if (Worker!=null)
+            {
+                Worker.GetComponent<Minion>().Task = null;
+            }
             UnclaimIngredients();
         }
         // ingredients
@@ -122,7 +125,8 @@ namespace Hecatomb
             }
             else
             {
-                return (Worker.GetComponent<Inventory>().Item.HasResources(Ingredients));
+                var item = Worker.GetComponent<Inventory>().Item.Unbox();
+                return (item == null) ? false : item.HasResources(Ingredients);
             }
         }
         public void ClaimIngredients()
@@ -190,9 +194,9 @@ namespace Hecatomb
                 Inventory inv = Worker.GetComponent<Inventory>();
                 if (inv.Item == null)
                 {
-                    inv.Item = Hecatomb.Entity.Spawn<Item>();
+                    inv.Item = Spawn<Item>();
                 }
-                inv.Item.AddResources(Claims[eid]);
+                ((Item) inv.Item).AddResources(Claims[eid]);
                 item.UnclaimResources(Claims[eid]);
                 Claims.Remove(eid);
                 Worker.GetComponent<Actor>().Spend();
@@ -212,7 +216,8 @@ namespace Hecatomb
             {
                 return;
             }
-            Worker.GetComponent<Inventory>().Item.RemoveResources(Ingredients);
+            Item item = (Item)Worker.GetComponent<Inventory>().Item;
+            item.RemoveResources(Ingredients);
         }
         public void UnclaimIngredients()
         {

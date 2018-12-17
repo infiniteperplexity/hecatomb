@@ -15,9 +15,8 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of SpellCaster.
-	/// </summary>
+    using static HecatombAliases;
+
 	public class SpellCaster : Component, IChoiceMenu
 	{
 		List<string> Spells;
@@ -48,7 +47,7 @@ namespace Hecatomb
 				List<IMenuListable> spells = new List<IMenuListable>();
                 // only if we have the prerequisite structures / technologies...
                 var structures = Structure.ListAll();
-                var researched = Game.World.GetState<ResearchHandler>().Researched;
+                var researched = GetState<ResearchHandler>().Researched;
                 foreach (string sp in Spells)
 				{
                     var spell = GetSpell(sp);

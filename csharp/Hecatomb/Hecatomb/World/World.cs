@@ -11,6 +11,8 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Reflection;
+using System.Linq;
 
 
 namespace Hecatomb
@@ -61,7 +63,15 @@ namespace Hecatomb
 		
 		
 		
-		public World(int width, int height, int depth, int seed=0) {
+		public World(int width, int height, int depth, int seed=0)
+        { 
+            // create one of each 
+            var statehandlers = typeof(StateHandler).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(StateHandler))).ToList();
+            foreach (var handler in statehandlers)
+            {
+                Activator.CreateInstance(handler);
+            }
+
 			Random = new StatefulRandom(seed);
             Entity.Reset();
 			Width = width;

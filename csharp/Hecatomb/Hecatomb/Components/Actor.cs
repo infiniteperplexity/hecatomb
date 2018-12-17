@@ -15,20 +15,16 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    /// <summary>
-    /// Description of Actor.
-    /// </summary>
-    /// 
     using static HecatombAliases;
 	
 	public class Actor : Component
 	{
         public TileEntityField<TileEntity> Target;
-		public int ActionPoints;
+		[JsonIgnore] public int ActionPoints;
 		public int CurrentPoints;
 		private string TeamName;
         public bool Acted;
-        public List<Action> Goals;
+        public List<Action> Goals = new List<Action>();
         public Action Alert;
         public Action Fallback;
         // so I guess this doesn't get reconstituted correctly when restoring a game
@@ -58,9 +54,8 @@ namespace Hecatomb
 		public Actor() : base()
 		{
 			ActionPoints = 16;
-            CurrentPoints = (Game.World.Turns.Turn==0) ? ActionPoints : 0;
+            CurrentPoints = (Turns.Turn==0) ? ActionPoints : 0;
             Alert = CheckForHostile;
-            Goals = new List<Action>();
             Fallback = WalkRandom;
         }
 		
@@ -77,17 +72,15 @@ namespace Hecatomb
 			CurrentPoints-=i;
             Acted = true;
 		}
-		public void Spend()
-		{
-			Spend(16);
-		}
+        public void Spend() => Spend(16);
+		
 		public void Act()
 		 {
-			if (Entity == Game.World.Player)
+			if (Entity == Player)
 			{
 				return;
 			}
-			CheckForHostile();
+            Alert();
             if (!Acted)
             {
                 foreach (Action goal in Goals)
@@ -112,9 +105,7 @@ namespace Hecatomb
 		
 		public void Patrol(int x1, int y1, int z1)
 		{
-			int x = Entity.X;
-			int y = Entity.Y;
-			int z = Entity.Z;
+            var (x, y, z) = Entity;
 			int d = (int) Tiles.QuickDistance(x, y, z, x1, y1, z1);
 			if (d>=5)
 			{	
@@ -126,23 +117,15 @@ namespace Hecatomb
 				WalkRandom();
 			}
 		}
-		
-		public void Wander() {
-			WalkRandom();
-		}
-//		public override void OnAddToEntity() {
-//			base.OnAddToEntity();
-//			// nothing for now
-//		}
+
+        public void Wander() => WalkRandom();
+
 		public void WalkToward(int x1, int y1, int z1, bool useLast=false)
 		{
-			int x = Entity.X;
-			int y = Entity.Y;
-			int z = Entity.Z;
+            var (x, y, z) = Entity;
             Movement m = Entity.GetComponent<Movement>();
             var path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast);
 			Coord? target = (path.Count>0) ? path.First.Value : (Coord?) null;
-			//Coord? target = Tiles.FindPath(x, y, z, x1, y1, z1, useLast: useLast);
 			if (target==null)
 			{
 				WalkRandom();
@@ -164,9 +147,7 @@ namespace Hecatomb
 		}
 		public void WalkAway(int x1, int y1, int z1)
 		{
-			int x0 = Entity.X;
-			int y0 = Entity.Y;
-			int z0 = Entity.Z;
+            var (x0, y0, z0) = Entity;
 			List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
 			if (line.Count<=1)
 			{
@@ -227,13 +208,13 @@ namespace Hecatomb
 					x = dir.X+Entity.X;
 					y = dir.Y+Entity.Y;
 					z = dir.Z+Entity.Z;
-					cr = Game.World.Creatures[x, y, z];
+					cr = Creatures[x, y, z];
 					if (m.CanPass(x, y, z))
 					{
 						m.StepTo(x, y, z);
 						return true;
 					}
-					else if (cr!=null && m.CanMove(x, y, z) && Team.IsFriendly(cr) && cr!=Game.World.Player)
+					else if (cr!=null && m.CanMove(x, y, z) && Team!=null && Team.IsFriendly(cr) && cr!=Player)
 					{
 						Minion minion = cr.TryComponent<Minion>();
 						if (minion!=null && minion.Task!=null)
@@ -253,18 +234,11 @@ namespace Hecatomb
 			}
 			return false;
 		}
-		public void Wait()
-		{
-			Spend(ActionPoints);
-		}
+        public void Wait() => Spend(ActionPoints);
 		
 		public void CheckForHostile()
 		{
-			int x = Entity.X;
-			int y = Entity.Y;
-			int z = Entity.Z;
-
-
+            var (x, y, z) = Entity;
             // so...back in the JS version, this totally flogged performance.
             // we could rebuild the hostility matrix every time a team changes...
             if (Target==null && Team!=null)
@@ -272,21 +246,15 @@ namespace Hecatomb
                 List<Creature> enemies;
                 if (Team.Berserk)
                 {
-                    enemies = Game.World.Creatures.Where(cr => cr!=Entity).ToList();
+                    enemies = Creatures.Where(cr => cr!=Entity).ToList();
                 }
                 else
                 {
                     enemies = Team.GetEnemies();
-                    //foreach (var enemy in enemies)
-                    //{
-                    //    Debug.Print("{0} found an enemy in {1}, {2} away.", Entity.Describe(), enemy.Describe(), Tiles.QuickDistance(Entity.X, Entity.Y, Entity.Z, enemy.X, enemy.Y, enemy.Z));
-                    //}
                 }
                 enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
-                //enemies = enemies.OrderBy(cr => Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z)).ToList();
                 if (enemies.Count > 0)
                 {
-                    Debug.WriteLine("found an enemy");
                     Target = enemies[0];
                 }
             }
@@ -302,7 +270,6 @@ namespace Hecatomb
                 // this is poorly thought out
                 if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
                 {
-                    Debug.WriteLine("attacking");
                     a.Attack(cr);
                 }
                 else
@@ -340,13 +307,13 @@ namespace Hecatomb
             if (Target == null)
             {
                 Movement m = Entity.GetComponent<Movement>();
-                if (m.CanReach(Game.World.Player))
+                if (m.CanReach(Player))
                 {
-                    Target = Game.World.Player;
+                    Target = Player;
                 }
                 else
                 {
-                    List<Feature> doors = Game.World.Features.Where(f => (f.TypeName == "Door")).ToList();
+                    List<Feature> doors = Features.Where(f => (f.TypeName == "Door")).ToList();
                     foreach (Feature door in doors)
                     {
                         if (m.CanReach(door))
@@ -357,10 +324,6 @@ namespace Hecatomb
                     }
                 }
             }
-            //else if (Target==Game.World.Player || Target?.TypeName=="Door")
-            //{
-             //   WalkToward(Target.X, Target.Y, Target.Z);
-            //}
         }
 		
 	}

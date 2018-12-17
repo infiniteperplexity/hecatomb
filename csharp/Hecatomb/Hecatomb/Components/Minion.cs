@@ -13,42 +13,22 @@ using System.Linq;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of Minion.
-	/// </summary>
-	public class Minion : Component
-	{
+    using static HecatombAliases;
+    public class Minion : Component
+    {
 
-        public TaskField Task;
+        public TaskField Task = new TaskField();
+        string[] Required = new string[] {"Actor"};
 		
-		public Minion(): base()
-		{
-            Task = new TaskField();
-			Required = new string[] {"Actor"};
-		}
-		
-		// called by Task.AssignEntity
-		public void _AssignTask(Task t)
-		{
-			Task = t;
-		}
-		
-		public void _Unassign()
-		{
-			Task = null;
-		}
-
         public void Act()
         {
-            int x = Entity.X;
-            int y = Entity.Y;
-            int z = Entity.Z;
+            var (x, y, z) = Entity;
             Creature cr = (Creature)Entity;
-            if ( Game.World.Terrains[x, y, z].Solid && Task?.ClassName != "ZombieEmergeTask")
+            if (Terrains[x, y, z].Solid && Task?.ClassName != "ZombieEmergeTask")
             {
-                if (Game.World.Features[x, y, z + 1]?.TypeName == "Grave")
+                if (Features[x, y, z + 1]?.TypeName == "Grave")
                 {
-                    Game.World.Tasks[x, y, z + 1]?.Cancel();
+                    Tasks[x, y, z + 1]?.Cancel();
                     var task = Spawn<ZombieEmergeTask>();
                     task.Place(x, y, z + 1);
                     task.AssignTo(cr);
@@ -56,18 +36,10 @@ namespace Hecatomb
             }
             if (Task==null)
             {
-                foreach(Task task in Game.World.Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
+                foreach(Task task in Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
                 {
-                    Debug.WriteLine("is null?");
-
-                    Debug.WriteLine(task.Worker.EID);
-                    Debug.WriteLine(task.Worker==null);
-                    Debug.WriteLine("can assign?");
-                    Debug.WriteLine(task.CanAssign(cr));
-        
                     if (task.Worker==null && task.CanAssign(cr))
                     {
-                        Debug.WriteLine("right here");
                         task.AssignTo(cr);
                         break;
                     }

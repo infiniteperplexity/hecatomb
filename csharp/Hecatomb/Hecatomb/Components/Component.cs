@@ -14,21 +14,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of Component.
-	/// </summary>
-	/// 
-	
 	public abstract class Component : Entity
 	{
-        public TypedEntityField<TypedEntity> Entity;
-		[JsonIgnore] public string[] Required;
-		
-		public Component() : base()
-		{
-            Entity = new TypedEntityField<TypedEntity>();
-			Required = new string[0];
-		}
+        public TypedEntityField<TypedEntity> Entity = new TypedEntityField<TypedEntity>();
+        [JsonIgnore] public string[] Required = new string[0];
 		
 		public void AddToEntity(TypedEntity e)
 		{
@@ -45,36 +34,23 @@ namespace Hecatomb
 				e.Components[this.GetType().BaseType.Name] = this.EID;
 			}
             Entity = e;
-		}
-		
-//		public virtual GameEvent OnEntityEvent(GameEvent ge)
-//		{
-//			return ge;
-//		}
-				
-		public void OnAddToEntity()
-		{
-		}
+        }
+        
 		public void RemoveFromEntity()
 		{
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))
 			{
-				Entity.Entity.Components.Remove(this.GetType().Name);
+				Entity.Components.Remove(this.GetType().Name);
 			} else {
 				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
-				Entity.Entity.Components.Remove(this.GetType().BaseType.Name);
+				Entity.Components.Remove(this.GetType().BaseType.Name);
 			}
 			Entity.EID = -1;
 		}
-		
-		public virtual void InterpretJSON(string json)
-		{
-		}
 
-        public virtual void AfterSelfPlace(int x, int y, int z)
-        {
-
-        }
+        public virtual void OnAddToEntity() {}
+        public virtual void InterpretJSON(string json) {}
+        public virtual void AfterSelfPlace(int x, int y, int z) {}
 	}
 }

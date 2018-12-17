@@ -90,6 +90,7 @@ namespace Hecatomb
         
         protected void ShowIntro()
         {
+            
         	World = new World(25, 25, 1);
         	WorldBuilder builder = new IntroBuilder();
 			builder.Build(World);
@@ -107,8 +108,9 @@ namespace Hecatomb
         }
         protected  void StartGame()
         {
+            Debug.WriteLine(JsonConvert.SerializeObject(EntityType.Types.Keys));
             //Debug.WriteLine(FlyWeight.Types[typeof(Resource)]["Coal"].ToString());
-			World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
+            World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);
             World.GetState<AchievementHandler>();
@@ -116,12 +118,13 @@ namespace Hecatomb
             Controls = DefaultControls;
 			Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
 			World.Player = p;
-			//p.Initialize();
+            p.GetComponent<Actor>().Team = Team.PlayerTeam;
 			p.Place(
 				World.Width/2,
 				World.Height/2,
 				World.GetGroundLevel(World.Width/2, World.Height/2)
 			);
+
 			Camera.Center(p.X, p.Y, p.Z);
 			var t = Hecatomb.Entity.Spawn<TutorialHandler>();
 			t.Activate();

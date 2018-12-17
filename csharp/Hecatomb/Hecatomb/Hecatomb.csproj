@@ -58,6 +58,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\Defender.cs" />
     <Compile Include="StateHandlers\TaskHandler.cs" />
     <Compile Include="Entities\TaskField.cs" />
     <Compile Include="Entities\TileEntityField.cs" />
@@ -66,7 +67,7 @@
     <Compile Include="FlyWeights\Research.cs" />
     <Compile Include="Structures\BlackMarket.cs" />
     <Compile Include="StateHandlers\AchievementHandler.cs" />
-    <Compile Include="Components\Combat.cs" />
+    <Compile Include="Components\Attacker.cs" />
     <Compile Include="Structures\GuardPost.cs" />
     <Compile Include="Components\Inventory.cs" />
     <Compile Include="Tasks\BuildTask.cs" />

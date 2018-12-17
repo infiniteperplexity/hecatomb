@@ -13,37 +13,31 @@ using System.Diagnostics;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of Senses.
-	/// </summary>
+    using static HecatombAliases;
+
 	public class Senses : Component
 	{
-		public int Range;
+		public int Range = 10;
 		[JsonIgnore] public HashSet<Coord> Visible;
 		[JsonIgnore] private int storedZ;
-		
-		public Senses() : base()
-		{
-			Range = 10;
-		}
-		
+
 		public HashSet<Coord> GetFOV()
 		{
 			resetVisible();
-			int x = Entity.X;
-			int y = Entity.Y;
-			storedZ = Entity.Z;
+            var (x, y, z) = Entity;
+            storedZ = z;
 			ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, addToVisible);
 			return Visible;
 		}
-		
-		public bool CanSeeThrough(int x, int y) {
-			return !cannotSeeThrough(x, y);
-		}
-		
-		private bool cannotSeeThrough(int x, int y) {
-			return Game.World.GetTile(x, y, storedZ).Opaque;
-//			return Game.World.Tiles[x, y, storedZ].Opaque;
+
+        public bool CanSeeThrough(int x, int y)
+        {
+            return cannotSeeThrough(x, y);
+        }
+
+		private bool cannotSeeThrough(int x, int y)
+        {
+            return Game.World.GetTile(x, y, storedZ).Opaque;
 		}
 		private void resetVisible()
 		{

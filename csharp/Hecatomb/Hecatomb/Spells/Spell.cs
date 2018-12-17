@@ -116,6 +116,7 @@ namespace Hecatomb
 				emitter.Place(c.X, c.Y, c.Z);
 //				f.Destroy();
 				Creature zombie = Entity.Spawn<Creature>("Zombie");
+                zombie.GetComponent<Actor>().Team = Team.PlayerTeam;
 				zombie.Place(c.X, c.Y, c.Z-1);
 				Task emerge = Entity.Spawn<ZombieEmergeTask>();
 				emerge.AssignTo(zombie);

@@ -136,5 +136,10 @@ namespace Hecatomb
         {
             return EID.GetHashCode() + Entity.GetHashCode();
         }
+
+        public T Unbox()
+        {
+            return Entity;
+        }
     }
 }

@@ -126,7 +126,7 @@ namespace Hecatomb
 		{
 			Feature incomplete = Game.World.Features[X, Y, Z];
 			incomplete.Despawn();
-			Feature f = Entity.Spawn<Feature>(Makes+"Feature");
+			Feature f = Entity.Spawn<Feature>("StructureFeature");
 			f.Place(X, Y, Z);
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
 			f.Symbol = Structure.Entity.Symbols[FeatureIndex];

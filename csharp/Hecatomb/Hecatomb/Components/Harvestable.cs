@@ -10,19 +10,12 @@ namespace Hecatomb
 {
     public class Harvestable : Component
     {
-        public Dictionary<string, float> Yields;
-        public int Labor;
-
-        public Harvestable() : base()
-        {
-            Labor = 10;
-        }
+        public Dictionary<string, float> Yields = new Dictionary<string, float>();
+        public int Labor = 10;
 
         public void Harvest()
         {
-            int x = Entity.X;
-            int y = Entity.Y;
-            int z = Entity.Z;
+            var (x, y, z) = Entity;
             Dictionary<string, int> resources = new Dictionary<string, int>();
             foreach (string key in Yields.Keys)
             {
@@ -55,6 +48,4 @@ namespace Hecatomb
             Yields = yield.ToObject<Dictionary<string, float>>();
         }
     }
-
-    
 }

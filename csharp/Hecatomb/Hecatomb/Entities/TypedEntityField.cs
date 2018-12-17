@@ -14,7 +14,7 @@ namespace Hecatomb
 
     public class TypedEntityField<T> : TileEntityField<T> where T : TypedEntity
     {
-        [JsonIgnore] Dictionary<string, EntityField<Component>> Components
+        [JsonIgnore] public Dictionary<string, EntityField<Component>> Components
         {
             get
             {

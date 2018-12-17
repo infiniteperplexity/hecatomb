@@ -74,5 +74,12 @@ namespace Hecatomb
         {
             return new TileEntityField<T>() { EID = eid };
         }
+
+        public void Deconstruct(out int X, out int Y, out int Z)
+        {
+            X = Entity.X;
+            Y = Entity.Y;
+            Z = Entity.Z;
+        }
     }
 }
