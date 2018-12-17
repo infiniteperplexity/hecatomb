@@ -55,3 +55,15 @@
 /processorParam:TextureFormat=Compressed
 /build:Cambria.spritefont
 
+#begin necromancer_by_irenhorrors_dc0ujsx-fullview.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:necromancer_by_irenhorrors_dc0ujsx-fullview.jpg
+
