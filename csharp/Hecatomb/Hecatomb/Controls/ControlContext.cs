@@ -35,7 +35,7 @@ namespace Hecatomb
         public Action<int, int> OnMenuClick;
         public Action<int, int> OnStatusClick;
         public Action<int, int> OnStatusHover;
-           
+        public ImageOverride ImageOverride;
         
         public void Set(ControlContext c)
         {
@@ -132,11 +132,14 @@ namespace Hecatomb
         	Nothing(c.X, c.Y);
         }
         
-         public virtual void HoverTile(Coord c)
+        public virtual void HoverTile(Coord c)
         {
-        	Cursor.Place(c.X, c.Y, c.Z);
-        	Game.MainPanel.DirtifyTile(c);
-        	Game.World.ShowTileDetails(c);
+            if (Game.World != null)
+            {
+                Cursor.Place(c.X, c.Y, c.Z);
+                Game.MainPanel.DirtifyTile(c);
+                Game.World.ShowTileDetails(c);
+            }
         }
         
         public virtual void MenuClick(int x, int y)

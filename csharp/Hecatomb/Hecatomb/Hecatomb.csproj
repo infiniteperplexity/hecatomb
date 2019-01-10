@@ -59,6 +59,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\Defender.cs" />
+    <Compile Include="ImageOverride.cs" />
     <Compile Include="StateHandlers\TaskHandler.cs" />
     <Compile Include="Entities\TaskField.cs" />
     <Compile Include="Entities\TileEntityField.cs" />

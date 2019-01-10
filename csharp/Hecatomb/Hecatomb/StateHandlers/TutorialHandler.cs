@@ -44,7 +44,7 @@ namespace Hecatomb
 			MoveCount = 0;
             SlopeCount = 0;
 			CurrentIndex = 0;
-            //Visible = true;
+            Visible = Options.Tutorial;
             OffTutorialText = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Escape to get back on track or ? to hide tutorial messages." };
             OffTutorialCamera = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Tab to get back on track or ? to hide tutorial messages." };
             Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);

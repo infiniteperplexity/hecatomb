@@ -12,17 +12,23 @@ using System.Collections.Generic;
 
 namespace Hecatomb
 {
-	public class StaticMenuControls : ControlContext
+
+    public class StaticMenuControls : ControlContext
 	{
-		public StaticMenuControls(List<Keys> keys, List<ColoredText> names, List<Action> actions): base()
-		{
-			MenuTop = new List<ColoredText>();
-			for (int i=0; i<keys.Count; i++)
-			{
-				KeyMap[keys[i]] = actions[i];
-                // concatenation gets weird here...
-				MenuTop.Add(keys[i].ToString()+ ") "+names[i]);
-			}
-		}
+		public StaticMenuControls(ColoredText header, List<(Keys, ColoredText, Action)> choices) : base()
+        {
+            MenuTop = new List<ColoredText>() {
+                header
+            };
+            for (int i = 0; i < choices.Count; i++)
+            {
+                var key = choices[i].Item1;
+                ColoredText ct = choices[i].Item2;
+                KeyMap[key] = choices[i].Item3;
+                string s = key.ToString();
+                ct.Text = (s + ") " + ct.Text);
+                MenuTop.Add(ct);
+            }
+        }
 	}
 }

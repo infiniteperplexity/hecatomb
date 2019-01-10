@@ -39,7 +39,9 @@ namespace Hecatomb
 		public static HashSet<Coord> Visible;
         GraphicsDeviceManager graphics;
         SpriteBatch sprites;
-        
+
+        public Texture2D startup;
+
         public static global::Hecatomb.Game game;
         
         
@@ -78,37 +80,32 @@ namespace Hecatomb
             Options = new HecatombOptions();
             Colors = new Colors();
 			Time = new TimeHandler();
-			Commands = new HecatombCommmands();
+            Time.Frozen = true;
+            Commands = new HecatombCommmands();
 			DefaultControls = new DefaultControls();
 			CameraControls = new CameraControls();
 			Camera = new Camera();
-            
-			//ShowIntro();
 			base.Initialize();
-            StartGame();
+            if (Options.StartupScreen)
+            {
+                ShowIntro();
+            }
+            else
+            {
+                StartGame();
+            }
         }
         
         protected void ShowIntro()
         {
-            
-        	World = new World(25, 25, 1);
-        	WorldBuilder builder = new IntroBuilder();
-			builder.Build(World);
-        	Controls = DefaultControls;
-//			Controls = new StaticMenuControls(
-//				new List<Keys> {Keys.N},
-//				new List<ColoredText> {"start game"},
-//				new List<Action> {StartGame}
-//			);
-        	Creature p = Entity.Spawn<Creature>("Necromancer");
-			World.Player = p;
-        	//p.Initialize();
-        	p.Place(12, 12, 0);
-        	TurnHandler.HandleVisibility();
+            Controls = new StaticMenuControls("Welcome to Hecatomb", new List<(Keys, ColoredText, Action)>() {
+                (Keys.S, "Start game.", StartGame)
+            });
+            Controls.ImageOverride = new ImageOverride(graphics, sprites);
         }
         protected  void StartGame()
         {
-            Debug.WriteLine(JsonConvert.SerializeObject(EntityType.Types.Keys));
+            Debug.WriteLine("testing");
             //Debug.WriteLine(FlyWeight.Types[typeof(Resource)]["Coal"].ToString());
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
@@ -116,7 +113,8 @@ namespace Hecatomb
             World.GetState<AchievementHandler>();
             World.GetState<HumanTracker>();
             Controls = DefaultControls;
-			Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
+            //ShowIntro();
+            Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
 			World.Player = p;
             p.GetComponent<Actor>().Team = Team.PlayerTeam;
 			p.Place(
@@ -129,13 +127,7 @@ namespace Hecatomb
 			var t = Hecatomb.Entity.Spawn<TutorialHandler>();
 			t.Activate();
 			TurnHandler.HandleVisibility();
-
-            // proved it's possible to deserialize from method names
-
-            //			Debug.WriteLine("check this out...");
-            //			var f = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), World.Player, "OnPlace");
-            //			f(new PlaceEvent() {Entity = World.Player, X = 6, Y = 6, Z = 6});
-
+            Time.Frozen = false;
         }
 
 
@@ -180,52 +172,60 @@ namespace Hecatomb
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-//            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-//                Exit();
-
-           	foreach (Particle p in World.Particles.ToList())
-			{
-				p.Update();
-			}
-           	Time.Update();
-			Controls.HandleInput();
-			if (Game.World.Turns.PlayerActed)
-           	{
-           		World.Turns.AfterPlayerActed();
-           	}
-			World.Turns.Try();
+            if (!Time.Frozen)
+            {
+                foreach (Particle p in World.Particles.ToList())
+                {
+                    p.Update();
+                }
+                Time.Update();
+            }
+            Controls?.HandleInput();
+            if (!Time.Frozen)
+            { 
+                if (World.Turns.PlayerActed)
+                {
+                    World.Turns.AfterPlayerActed();
+                }
+                World.Turns.Try();
+            }
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             ControlContext.Redrawn = true;
         	sprites.Begin();
-        	if (MainPanel.Dirty)
-        	{
-                GraphicsDevice.Clear(Color.Black);
-                
-        		MainPanel.DrawContent();
-        		MainPanel.Dirty = false;
-        	}
-        	else
-        	{
-        		MainPanel.DrawDirty();
-        	}
-        	if (MenuPanel.Dirty)
-        	{
-        		MenuPanel.DrawContent();
-        		MenuPanel.Dirty = false;
-        	}
-        	if (StatusPanel.Dirty)
-        	{
-        		StatusPanel.DrawContent();
-        		StatusPanel.Dirty = false;
-        	}
+            if (Controls?.ImageOverride != null)
+            {
+                Controls.ImageOverride.Draw();
+            }
+            else if (!Time.Frozen)
+            {
+                if (MainPanel.Dirty)
+                {
+                    GraphicsDevice.Clear(Color.Black);
+
+                    MainPanel.DrawContent();
+                    MainPanel.Dirty = false;
+
+
+                }
+                else
+                {
+                    MainPanel.DrawDirty();
+                }
+                if (StatusPanel.Dirty)
+                {
+                    StatusPanel.DrawContent();
+                    StatusPanel.Dirty = false;
+                }
+            }
+            if (MenuPanel.Dirty)
+            {
+                MenuPanel.DrawContent();
+                MenuPanel.Dirty = false;
+            }    
         	sprites.End();
            	base.Draw(gameTime);
         }

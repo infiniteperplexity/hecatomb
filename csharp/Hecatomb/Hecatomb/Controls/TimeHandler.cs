@@ -22,6 +22,7 @@ namespace Hecatomb
 		int SpeedIndex = 3;
 		public bool PausedAfterLoad;
 		public bool AutoPausing;
+        public bool Frozen;
 		DateTime LastUpdate;
 		
 		public TimeHandler()
@@ -50,6 +51,10 @@ namespace Hecatomb
 		
 		public void Update()
 		{
+            if (Frozen)
+            {
+                return;
+            }
 			// this will happen almost continually
 			foreach (ParticleEmitter e in Game.World.Emitters.ToList())
 			{

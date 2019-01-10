@@ -11,12 +11,16 @@ namespace Hecatomb
         public bool Explored;
         public bool Visible;
         public bool NoIngredients;
+        public bool Tutorial;
+        public bool StartupScreen;
 
         public HecatombOptions()
         {
             Explored = false;
             Visible = false;
             NoIngredients = false;
+            Tutorial = true;
+            StartupScreen = true;
         }
     }
     
