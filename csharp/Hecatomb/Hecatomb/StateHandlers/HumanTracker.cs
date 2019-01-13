@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
     class HumanTracker : StateHandler
     {
 
@@ -19,6 +20,10 @@ namespace Hecatomb
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
+            if (!Options.HumanAttacks)
+            {
+                return ge;
+            }
             TurnBeginEvent te = (TurnBeginEvent)ge;
             if (te.Turn==10)
             {

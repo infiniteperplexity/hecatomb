@@ -20,6 +20,13 @@ namespace Hecatomb
             Claims = new Dictionary<string, int>();
         }
 
+        public static Item FromResources(Dictionary<string, int> resources)
+        {
+            Item item = Entity.Spawn<Item>();
+            item.AddResources(resources);
+            return item;
+        }
+
         public ValueTuple<char, string, string> GetGlyph()
         {
             List<string> ordered = Resources.Keys.OrderByDescending(k => Resources[k]).ThenBy(k => k).ToList();

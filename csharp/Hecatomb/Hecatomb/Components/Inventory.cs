@@ -6,6 +6,7 @@
  */
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Hecatomb
 {
@@ -13,6 +14,15 @@ namespace Hecatomb
 	{
         public TileEntityField<Item> Item = new TileEntityField<Item>();
 		
+        public void DropItem()
+        {
+
+        }
+
+        public void DropResources(Dictionary<string, int> resources)
+        {
+
+        }
 		//public Inventory() : base()
 		//{
   //          AddListener<DespawnEvent>(OnItemDespawn);

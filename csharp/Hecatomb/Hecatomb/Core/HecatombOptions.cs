@@ -13,14 +13,16 @@ namespace Hecatomb
         public bool NoIngredients;
         public bool Tutorial;
         public bool StartupScreen;
+        public bool HumanAttacks;
 
         public HecatombOptions()
         {
             Explored = false;
             Visible = false;
-            NoIngredients = false;
-            Tutorial = true;
-            StartupScreen = true;
+            NoIngredients = true;
+            Tutorial = false;
+            StartupScreen = false;
+            HumanAttacks = false;
         }
     }
     

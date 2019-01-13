@@ -6,6 +6,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -44,6 +45,12 @@ namespace Hecatomb
             };
             MenuName = "stockpile";
             Name = "stockpile";
+        }
+
+        public override GameEvent OnTurnBegin(GameEvent ge)
+        {
+            Debug.WriteLine("Testing override for delegates");
+            return ge;
         }
     }
 }

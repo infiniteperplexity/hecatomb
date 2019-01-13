@@ -81,7 +81,7 @@ namespace Hecatomb
             return ingredients;
         }
 
-        public GameEvent OnTurnBegin(GameEvent ge)
+        public virtual GameEvent OnTurnBegin(GameEvent ge)
         {
             if (Researching != null)
             {
