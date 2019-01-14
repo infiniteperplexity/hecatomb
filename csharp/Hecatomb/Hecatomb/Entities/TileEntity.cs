@@ -45,9 +45,16 @@ namespace Hecatomb
 			Z = -1;
 			Placed = false;
 		}
-		
-		
-		public virtual void Place(int x1, int y1, int z1, bool fireEvent=true)
+
+        public void Deconstruct(out int x, out int y, out int z)
+        {
+            x = X;
+            y = Y;
+            z = Z;
+        }
+
+
+        public virtual void Place(int x1, int y1, int z1, bool fireEvent=true)
 		{
 			if (!Spawned)
 			{

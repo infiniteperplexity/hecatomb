@@ -27,6 +27,7 @@ namespace Hecatomb
         public string[] StructurePrereqs;
         public string Researching;
         public int ResearchTurns;
+        public string[] Stores;
 
         public Structure()
         {
@@ -37,6 +38,7 @@ namespace Hecatomb
             AddListener<TurnBeginEvent>(OnTurnBegin);
             ResearchPrereqs = new string[0];
             StructurePrereqs = new string[0];
+            Stores = new string[0];
         }
 
         public static List<string> ListAll()
@@ -83,6 +85,10 @@ namespace Hecatomb
 
         public virtual GameEvent OnTurnBegin(GameEvent ge)
         {
+            if (!Placed)
+            {
+                return ge;
+            }
             if (Researching != null)
             {
                 ResearchTurns -= 1;
@@ -96,7 +102,72 @@ namespace Hecatomb
                     Researching = null;
                 }
             }
+            if (CountTasks()>=Width*Height)
+            {
+                return ge;
+            }
+            if (Stores.Length>0)
+            {
+                foreach(Item item in Items)
+                {   
+                    foreach (string s in Stores)
+                    {
+                        if (item.Resources.ContainsKey(s) && !item.IsStored(s))
+                        {
+                            int unclaimed = item.CountUnclaimed(s);
+                            if (unclaimed > 0)
+                            {
+                                SpawnHaulTask(item, s, unclaimed);
+                                if (CountTasks() >= Width * Height)
+                                {
+                                    return ge;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             return ge;
+        }
+
+        public int CountTasks()
+        {
+            int existing = 0;
+            foreach (Feature f in Features)
+            {
+                var (x, y, z) = f;
+                if (Tasks[x, y, z] != null)
+                {
+                    existing++;
+                }
+            }
+            return existing;
+        }
+        public void SpawnHaulTask(Item item, string resource, int unclaimed)
+        {
+            if (CountTasks()>=Width*Height)
+            {
+                return;
+            }
+            List<int> positions = new List<int>();
+            for (int i=0; i<Height*Width; i++)
+            {
+                positions.Add(i);
+            }
+            positions = positions.OrderBy(s => Game.World.Random.NextDouble()).ToList();
+            foreach (int position in positions)
+            {
+                Feature f = Features[position];
+                var (x, y, z) = f;
+                if (Tasks[x, y, z]==null)
+                {
+                    item.Claims[resource] += unclaimed;
+                    HaulTask haul = Entity.Spawn<HaulTask>();
+                    haul.Claims[item.EID] = new Dictionary<string, int>() { { resource, unclaimed } };
+                    haul.Place(x, y, z);
+                    break;
+                }
+            }
         }
 
         public virtual string MenuHeader

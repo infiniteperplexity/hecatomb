@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
     public class Item : TileEntity
     {
 
@@ -112,6 +113,39 @@ namespace Hecatomb
                 }
             }
         }
+
+        public bool IsStored(string resource)
+        {
+            Feature f = Features[X, Y, Z];
+            StructuralComponent sc = f?.TryComponent<StructuralComponent>();
+            if (sc!=null)
+            {
+                if (sc.Structure.Unbox().Stores.Contains(resource))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public int CountUnclaimed(string resource)
+        {
+            if (!Resources.ContainsKey(resource))
+            {
+                return 0;
+            }
+            else
+            {
+                if (!Claims.ContainsKey(resource))
+                {
+                    return Resources[resource];
+                }
+                else
+                {
+                    return Resources[resource] - Claims[resource];
+                }
+            }
+        }
+
         public void RemoveResources(ValueTuple<string, int>[] resources)
         {
             foreach (var tuple in resources)

@@ -24,7 +24,7 @@ namespace Hecatomb
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
         // instance properties
         public TypedEntityField<Creature> Worker;
-        protected Dictionary<int, Dictionary<string, int>> Claims;
+        public Dictionary<int, Dictionary<string, int>> Claims;
         public string Makes;
         public int Labor;
 

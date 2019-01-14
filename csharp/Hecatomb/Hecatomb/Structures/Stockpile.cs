@@ -45,12 +45,7 @@ namespace Hecatomb
             };
             MenuName = "stockpile";
             Name = "stockpile";
-        }
-
-        public override GameEvent OnTurnBegin(GameEvent ge)
-        {
-            Debug.WriteLine("Testing override for delegates");
-            return ge;
+            Stores = new string[] { "Rock", "Wood"};
         }
     }
 }

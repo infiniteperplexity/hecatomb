@@ -12,10 +12,10 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    class StockpileTask : Task
+    class HaulTask : Task
     {
         public TileEntityField<Item> Item;
-        public StockpileTask() : base()
+        public HaulTask() : base()
         {
             MenuName = "stockpile goods";
         }
