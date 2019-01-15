@@ -46,9 +46,8 @@ namespace Hecatomb
             }
             else
             {
-                throw new InvalidOperationException(String.Format(
-                    "Cannot place {0} at {1} {2} {3} because {4} is already there.", ClassName, x1, y1, z1, e.ClassName
-                ));
+                Game.World.Items[x1, y1, z1].AddResources(this.Resources);
+                Despawn();
             }
         }
         public override void Remove()
@@ -206,6 +205,36 @@ namespace Hecatomb
             foreach (string resource in resources.Keys)
             {
                 UnclaimResource((resource, resources[resource]));
+            }
+        }
+
+        public void ClaimResource(ValueTuple<string, int> resource)
+        {
+            if (!Claims.ContainsKey(resource.Item1))
+            {
+                Claims[resource.Item1] = 0;
+            }
+            Claims[resource.Item1] += resource.Item2;
+        }
+        public void ClaimResources(ValueTuple<string, int>[] resources)
+        {
+            foreach (var tuple in resources)
+            {
+                ClaimResource(tuple);
+            }
+        }
+        public void ClaimResources(List<ValueTuple<string, int>> resources)
+        {
+            foreach (var tuple in resources)
+            {
+                ClaimResource(tuple);
+            }
+        }
+        public void ClaimResources(Dictionary<string, int> resources)
+        {
+            foreach (string resource in resources.Keys)
+            {
+                ClaimResource((resource, resources[resource]));
             }
         }
 

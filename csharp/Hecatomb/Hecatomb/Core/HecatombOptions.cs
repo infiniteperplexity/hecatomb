@@ -14,6 +14,7 @@ namespace Hecatomb
         public bool Tutorial;
         public bool StartupScreen;
         public bool HumanAttacks;
+        public int WorkBonus;
 
         public HecatombOptions()
         {
@@ -23,6 +24,7 @@ namespace Hecatomb
             Tutorial = false;
             StartupScreen = false;
             HumanAttacks = false;
+            WorkBonus = 5;
         }
     }
     

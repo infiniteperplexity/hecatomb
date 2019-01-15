@@ -21,7 +21,9 @@ namespace Hecatomb
 
         public void DropResources(Dictionary<string, int> resources)
         {
-
+            Item.Unbox().RemoveResources(resources);
+            var (x, y, z) = Entity;
+            Hecatomb.Item.FromResources(resources).Place(x, y, z);
         }
 		//public Inventory() : base()
 		//{

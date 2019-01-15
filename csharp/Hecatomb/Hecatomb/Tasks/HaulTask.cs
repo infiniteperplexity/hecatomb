@@ -18,6 +18,7 @@ namespace Hecatomb
         public HaulTask() : base()
         {
             MenuName = "stockpile goods";
+            WorkRange = 0;
         }
 
         public override bool CanAssign(Creature c)
@@ -40,6 +41,11 @@ namespace Hecatomb
             Movement m = c.GetComponent<Movement>();
             // if the Item has been removed...do something...
             return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanReach(Item);
+        }
+
+        public override bool NeedsIngredients()
+        {
+            return true;
         }
 
         public override void AssignTo(Creature c)

@@ -106,10 +106,14 @@ namespace Hecatomb
             }
             UnclaimIngredients();
         }
+        public virtual bool NeedsIngredients()
+        {
+            return !Options.NoIngredients;
+        }
         // ingredients
         public bool HasIngredients()
         {
-            if (Options.NoIngredients)
+            if (!NeedsIngredients())
             {
                 return true;
             }
@@ -118,7 +122,6 @@ namespace Hecatomb
                 return true;
             }
             Inventory inv = Worker.GetComponent<Inventory>();
-            // so...something weird happens here...
             if (inv.Item == null)
             {
                 return false;
@@ -129,9 +132,9 @@ namespace Hecatomb
                 return (item == null) ? false : item.HasResources(Ingredients);
             }
         }
-        public void ClaimIngredients()
+        public virtual void ClaimIngredients()
         {
-            if (Game.Options.NoIngredients)
+            if (!NeedsIngredients())
             {
                 return;
             }
@@ -257,7 +260,7 @@ namespace Hecatomb
             {
                 Start();
             }
-            Labor -= 1;
+            Labor -= (1+Options.WorkBonus);
             Worker.GetComponent<Actor>().Spend();
             if (Labor <= 0)
             {

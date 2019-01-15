@@ -161,8 +161,14 @@ namespace Hecatomb
                 var (x, y, z) = f;
                 if (Tasks[x, y, z]==null)
                 {
+                    if (!item.Claims.ContainsKey(resource))
+                    {
+                        item.Claims[resource] = 0;
+                    }
                     item.Claims[resource] += unclaimed;
                     HaulTask haul = Entity.Spawn<HaulTask>();
+                    haul.Item = item;
+                    haul.Ingredients = new Dictionary<string, int>() { { resource, unclaimed } };
                     haul.Claims[item.EID] = new Dictionary<string, int>() { { resource, unclaimed } };
                     haul.Place(x, y, z);
                     break;
