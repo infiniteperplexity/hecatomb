@@ -18,7 +18,7 @@ namespace Hecatomb
     {
 
         public TaskField Task = new TaskField();
-        string[] Required = new string[] {"Actor"};
+        new string[] Required = new string[] {"Actor"};
 		
         public void Act()
         {

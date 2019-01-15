@@ -89,19 +89,6 @@ namespace Hecatomb
             {
                 return ge;
             }
-            if (Researching != null)
-            {
-                ResearchTurns -= 1;
-                if (ResearchTurns <= 0)
-                {
-                    var researched = Game.World.GetState<ResearchHandler>().Researched;
-                    if (!researched.Contains(Researching))
-                    {
-                        researched.Add(Researching);
-                    }
-                    Researching = null;
-                }
-            }
             if (CountTasks()>=Width*Height)
             {
                 return ge;
@@ -143,6 +130,8 @@ namespace Hecatomb
             }
             return existing;
         }
+
+        // could be a static method...spawn on structure...
         public void SpawnHaulTask(Item item, string resource, int unclaimed)
         {
             if (CountTasks()>=Width*Height)
@@ -189,13 +178,24 @@ namespace Hecatomb
         {
             get
             {
+                if (Tasks[X, Y, Z]!=null)
+                {
+                    // ideally this should have the option to cancel research
+                    return new List<IMenuListable>();
+                }
                 var list = new List<IMenuListable>();
                 var researched = Game.World.GetState<ResearchHandler>().Researched;
                 foreach (string s in Researches)
                 {
                     if (!researched.Contains(s))
                     {
-                        list.Add(new ResearchMenuListing(Research.Types[s], this));
+                        Research research = Hecatomb.Research.Types[s];
+                        ResearchTask rt = Entity.Mock<ResearchTask>();
+                        rt.Makes = research.TypeName;
+                        rt.LaborCost = research.Turns;
+                        rt.Ingredients = research.Ingredients;
+                        rt.Structure = this;
+                        list.Add(rt);
                     }
                 }
                 return list;

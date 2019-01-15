@@ -12,52 +12,6 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class ResearchMenuListing : IMenuListable
-    {
-        Research MyResearch;
-        Structure MyStructure;
-        public ResearchMenuListing(Research r, Structure s)
-        {
-            MyResearch = r;
-            MyStructure = s;
-        }
-
-        public ColoredText ListOnMenu()
-        {
-
-            //you'd want to check for a path between the structure and the ingredients
-            if (MyResearch.Ingredients.Count == 0)
-            {
-                return MyResearch.Name;
-            }
-            else
-            {
-                bool available = false;
-                if (Game.World.Player.GetComponent<Movement>().CanFindResources(MyResearch.Ingredients))
-                {
-                    available = true;
-                }
-                return (((available) ? "{white}" : "{gray}") + MyResearch.Name + " ($: " + Resource.Format(MyResearch.Ingredients) + ")");
-            }
-        }
-
-        public void ChooseFromMenu()
-        {
-            // maybe this object could just be research tasks?
-            if (Game.World.Player.GetComponent<Movement>().CanFindResources(MyResearch.Ingredients))
-            {
-                int x = MyStructure.X;
-                int y = MyStructure.Y;
-                int z = MyStructure.Z;
-                ResearchTask research = new ResearchTask() { Makes = MyResearch.TypeName, Labor = MyResearch.Turns };
-                // actually need to create a task for this...
-                //MyStructure.Researching = MyResearch.TypeName;
-                //MyStructure.ResearchTurns = MyResearch.Turns;
-            }
-            Game.MenuPanel.Dirty = true;
-        }
-    }
-
     public class Research : FlyWeight<Research>
     {
         public string Name;

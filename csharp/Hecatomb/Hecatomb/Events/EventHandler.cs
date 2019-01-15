@@ -80,7 +80,7 @@ namespace Hecatomb
         public void Publish(GameEvent g)
         {
             var listeners = ListenerTypes[g.GetType().Name];
-            foreach (var listener in listeners.Values)
+            foreach (var listener in listeners.Values.ToList())
             {
                 g = listener(g);
             }

@@ -137,11 +137,12 @@ namespace Hecatomb
 
         public virtual void Despawn()
 		{
+            Debug.WriteLine("despawning a thing");
 			Game.World.Events.Publish(new DespawnEvent {Entity = this});
 			Spawned = false;
-			Entities.Remove(EID);
-			EID = -1;
 			Game.World.Events.UnsubscribeAll(this);
-		}
+            Entities.Remove(EID);
+            EID = -1;
+        }
 	}
 }
