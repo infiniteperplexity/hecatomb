@@ -58,6 +58,13 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>() { { "Flint", 1 }, { "Wood", 1 } }
         };
 
+        public static Research CondenseEctoplasm = new Research("CondenseEctoplasm")
+        {
+            Name = "condense ectoplasm",
+            Turns = 25,
+            Ingredients = new Dictionary<string, int>() { { "Flesh", 1 }, { "Bone", 1 } }
+        };
+
 
     }
 }

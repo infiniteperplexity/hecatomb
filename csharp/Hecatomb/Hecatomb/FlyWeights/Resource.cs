@@ -108,8 +108,25 @@ namespace Hecatomb
             fg: "#AAAA44"
         );
 
+        public static readonly Resource Ectoplasm = new Resource(
+            type: "Ectoplasm",
+            name: "ectoplasm",
+            symbol: '\u2697',
+            fg: "magenta"
+        );
 
+        public static readonly Resource Flesh = new Resource(
+            type: "Flesh",
+            name: "flesh",
+            symbol: '%',
+            fg: "brown"
+        );
+
+        public static readonly Resource Bone = new Resource(
+            type: "Bone",
+            name: "bone",
+            symbol: '%',
+            fg: "white"
+        );
     }
-
-
 }
