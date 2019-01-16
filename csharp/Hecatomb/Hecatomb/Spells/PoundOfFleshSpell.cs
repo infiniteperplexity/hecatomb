@@ -12,7 +12,7 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    class PoundOfFleshSpell : Spell
+    public class PoundOfFleshSpell : Spell
     {
         public PoundOfFleshSpell()
         {

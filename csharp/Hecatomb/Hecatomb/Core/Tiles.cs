@@ -394,5 +394,37 @@ namespace Hecatomb
 			Camera Camera = Game.Camera;
 			return new Coord(c.X+Camera.XOffset, c.Y+Camera.YOffset, Camera.Z);
 		}
-	}	
+
+
+        public static Coord NearbyTile(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        {
+            valid = valid ?? ((int x1, int y1, int z1) => true);
+            int tries = 0;
+            int maxTries = 1000;
+            while (tries<maxTries)
+            {
+                int i = Game.World.Random.Next(-max, max + 1);
+                int j = Game.World.Random.Next(-max, max + 1);
+                i += x;
+                j += y;
+                int k = (groundLevel) ? Game.World.GetGroundLevel(x, y) : z;
+                if (valid(i, j, k) && Tiles.QuickDistance(x, y, z, i, j, z) <= max && Tiles.QuickDistance(x, y, z, i, j, z) >= min)
+                {
+                    return new Coord(i, j, k);
+                }
+                tries += 1;
+            }
+            throw new Exception("Didn't find a valid tile!");
+        }
+
+        public static Coord NearbyTile(Coord c, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        {
+            return NearbyTile(c.X, c.Y, c.Z, max: max, min: min, groundLevel: groundLevel, valid: valid);
+        }
+
+        public static Coord NearbyTile(TileEntity t, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        {
+            return NearbyTile(t.X, t.Y, t.Z, max: max, min: min, groundLevel: groundLevel, valid: valid);
+        }
+    }	
 }

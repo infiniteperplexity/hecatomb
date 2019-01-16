@@ -12,7 +12,7 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    class CondenseEctoplasmSpell : Spell
+    public class CondenseEctoplasmSpell : Spell
     {
         public CondenseEctoplasmSpell()
         {
@@ -22,17 +22,16 @@ namespace Hecatomb
             Structures = new[] { "Sanctum"};
         }
 
-        public override void ChooseFromMenu()
-        {
-            Cast();
-        }
-
         public override void Cast()
         {
             Component.Sanity -= GetCost();
             var (x, y, z) = Caster;
+            ParticleEmitter emitter = new ParticleEmitter();
+            emitter.Place(x, y, z);
             Item ectoplasm = Item.FromResources(new Dictionary<string, int>() { { "Ectoplasm", 1 } });
             ectoplasm.Place(x, y, z);
+            Caster.GetComponent<Actor>().Spend();
+            Controls.Reset();
         }
     }
 }

@@ -46,8 +46,7 @@ namespace Hecatomb
 		
 		public virtual void ChooseFromMenu()
 		{
-           
-//			Game.Controls.Set(new SelectTileControls(this));
+            Cast();
 		}
 		
 		

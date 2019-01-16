@@ -25,7 +25,7 @@ namespace Hecatomb
             Tutorial = false;
             StartupScreen = false;
             HumanAttacks = false;
-            AllSpells = false;
+            AllSpells = true;
             WorkBonus = 5;
         }
     }

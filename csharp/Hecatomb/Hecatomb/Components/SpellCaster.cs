@@ -54,14 +54,14 @@ namespace Hecatomb
                     bool valid = true;
                     foreach (string s in spell.Researches)
                     {
-                        if (!researched.Contains(s))
+                        if (!researched.Contains(s) && !Options.AllSpells)
                         {
                             valid = false;
                         }
                     }
                     foreach (string s in spell.Structures)
                     {
-                        if (!structures.Contains(s))
+                        if (!structures.Contains(s) && !Options.AllSpells)
                         {
                             valid = false;
                         }
@@ -81,9 +81,14 @@ namespace Hecatomb
             MaxSanity = 20;
             Sanity = 20;
 			Spells = new List<string>() {
-                "RaiseZombieSpell",
-                "TestGhoulSpell"
+                "RaiseZombieSpell"
             };
+            if (Options.AllSpells)
+            {
+                Spells.Add("CondenseEctoplasmSpell");
+                Spells.Add("PoundOfFleshSpell");
+                Spells.Add("LongShadowSpell");
+            }
             AddListener<TurnBeginEvent>(OnTurnBegin);
 		}
 		

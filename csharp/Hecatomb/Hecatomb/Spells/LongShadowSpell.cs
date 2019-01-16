@@ -12,7 +12,7 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    class LongShadowSpell : Spell
+    public class LongShadowSpell : Spell
     {
         public LongShadowSpell()
         {
@@ -20,6 +20,21 @@ namespace Hecatomb
             cost = 10;
             Researches = new[] { "LongShadow" };
             Structures = new[] { "Sanctum" };
+        }
+
+        public override void Cast()
+        {
+            var (x, y, z) = Caster;
+            ParticleEmitter emitter1 = new ParticleEmitter();
+            emitter1.Place(x, y, z);
+            var m = Caster.GetComponent<Movement>();
+            Coord c = Tiles.NearbyTile(x, y, z, max: 8, min: 3, valid: (int x1, int y1, int z1) => (m.CanStand(x1, y1, z1)));
+            Caster.Place(c.X, c.Y, c.Z);
+            Caster.GetComponent<Actor>().Spend();
+            Game.Camera.Center(c.X, c.Y, c.Z);
+            Controls.Reset();
+            ParticleEmitter emitter2 = new ParticleEmitter();
+            emitter2.Place(c.X, c.Y, c.Z);
         }
     }
 }

@@ -141,7 +141,7 @@
     <Compile Include="Spells\Spell.cs" />
     <Compile Include="Controls\StructureControls.cs" />
     <Compile Include="Display\TileRendering.cs" />
-    <Compile Include="Core\Tile.cs" />
+    <Compile Include="Core\Tiles.cs" />
     <Compile Include="Components\Actor.cs" />
     <Compile Include="Components\Movement.cs" />
     <Compile Include="Components\Senses.cs" />
