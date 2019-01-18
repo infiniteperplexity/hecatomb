@@ -65,7 +65,6 @@ namespace Hecatomb
             {
                 Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
                 Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
-                Component.Sanity -= GetCost();
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 //				f.Destroy();
@@ -76,6 +75,7 @@ namespace Hecatomb
                 emerge.AssignTo(zombie);
                 emerge.Place(c.X, c.Y, c.Z);
                 GetState<TaskHandler>().Minions.Add(zombie);
+                Cast();
             }
             else
             {

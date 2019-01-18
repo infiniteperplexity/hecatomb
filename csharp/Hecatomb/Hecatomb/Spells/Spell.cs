@@ -36,7 +36,13 @@ namespace Hecatomb
 		
 		public virtual void Cast()
 		{
-			
+            Component.Sanity -= GetCost();
+            Caster.GetComponent<Actor>().Spend();
+            if (Caster==Player)
+            {
+                Commands.Act();
+                Controls.Reset();
+            }            
 		}
 		
 		public virtual int GetCost()
@@ -46,7 +52,10 @@ namespace Hecatomb
 		
 		public virtual void ChooseFromMenu()
 		{
-            Cast();
+            if (Component.Sanity >= GetCost())
+            {
+                Cast();
+            }
 		}
 		
 		

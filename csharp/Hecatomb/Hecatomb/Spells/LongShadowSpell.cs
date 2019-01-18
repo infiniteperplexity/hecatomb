@@ -35,6 +35,7 @@ namespace Hecatomb
             Controls.Reset();
             ParticleEmitter emitter2 = new ParticleEmitter();
             emitter2.Place(c.X, c.Y, c.Z);
+            base.Cast();
         }
     }
 }

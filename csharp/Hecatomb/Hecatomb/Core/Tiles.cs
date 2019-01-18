@@ -13,9 +13,9 @@ using System.Linq;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of AStar.
-	public static partial class Tiles
+    /// <summary>
+    using static HecatombAliases;
+    public static partial class Tiles
 	{
 		
 		private static bool defaultStandable(int x1, int y1, int z1)
@@ -403,8 +403,13 @@ namespace Hecatomb
             int maxTries = 1000;
             while (tries<maxTries)
             {
+                tries += 1;
                 int i = Game.World.Random.Next(-max, max + 1);
                 int j = Game.World.Random.Next(-max, max + 1);
+                if (x>Game.World.Width-2 || x<1 || y>Game.World.Height-2 || y<1)
+                {
+                    continue;
+                }
                 i += x;
                 j += y;
                 int k = (groundLevel) ? Game.World.GetGroundLevel(x, y) : z;
@@ -412,7 +417,7 @@ namespace Hecatomb
                 {
                     return new Coord(i, j, k);
                 }
-                tries += 1;
+                
             }
             throw new Exception("Didn't find a valid tile!");
         }
