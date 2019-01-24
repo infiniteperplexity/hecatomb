@@ -62,8 +62,17 @@ namespace Hecatomb
             return et.Entity;
         }
 
+        protected void _validate()
+        {
+            if (!Entities.ContainsKey(EID))
+            {
+                EID = -1;
+            }
+        }
+
         public static implicit operator int(EntityField<T> et)
         {
+            et?._validate();
             if (object.ReferenceEquals(et, null))
             {
                 return -1;
@@ -83,7 +92,8 @@ namespace Hecatomb
 
         public override bool Equals(Object obj)
         {
-            if (object.ReferenceEquals(obj, null))
+            _validate();
+            if (ReferenceEquals(obj, null))
             {
                 return (EID == -1);
             }
@@ -108,6 +118,8 @@ namespace Hecatomb
 
         public static bool operator ==(EntityField<T> one, EntityField<T> two)
         {
+            one?._validate();
+            two?._validate();
             if (object.ReferenceEquals(one, null))
             {
                 if (object.ReferenceEquals(two, null))
@@ -121,6 +133,8 @@ namespace Hecatomb
 
         public static bool operator !=(EntityField<T> one, EntityField<T> two)
         {
+            one?._validate();
+            two?._validate();
             if (object.ReferenceEquals(one, null))
             {
                 if (object.ReferenceEquals(two, null))
@@ -139,6 +153,7 @@ namespace Hecatomb
 
         public T Unbox()
         {
+            _validate();
             return Entity;
         }
     }

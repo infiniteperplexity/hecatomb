@@ -128,6 +128,12 @@ namespace Hecatomb
             }
             else
             {
+                if (inv.Item!=null && inv.Item.Unbox()==null)
+                {
+                    Debug.WriteLine("This wasn't supposed to happen");
+                    Debug.WriteLine(inv.Item.EID);
+                    Debug.WriteLine(inv.Item.Entity);
+                }
                 return Ingredients.ContainsKey(inv.Item.Unbox().Resource);
             }
         }

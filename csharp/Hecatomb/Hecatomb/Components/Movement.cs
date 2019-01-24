@@ -547,15 +547,18 @@ namespace Hecatomb
             }
             Dictionary<string, int> needed = new Dictionary<string, int>(resources);
             List<Item> items = Game.World.Items.Where(
-                it => { return (needed.ContainsKey(it.Resource) && CanReach(it) && (ownedOnly == false || it.Owned)); }
+                it => { return (CanReach(it) && (ownedOnly == false || it.Owned)); }
             ).ToList();
             foreach (Item item in items)
             {
-                int n = (respectClaims) ? item.Unclaimed : item.Quantity;
-                needed[item.Resource] -= n;
-                if (needed[item.Resource]<=0)
+                if (needed.ContainsKey(item.Resource))
                 {
-                    needed.Remove(item.Resource);
+                    int n = (respectClaims) ? item.Unclaimed : item.Quantity;
+                    needed[item.Resource] -= n;
+                    if (needed[item.Resource] <= 0)
+                    {
+                        needed.Remove(item.Resource);
+                    }
                 }
             }
             return (needed.Count == 0);

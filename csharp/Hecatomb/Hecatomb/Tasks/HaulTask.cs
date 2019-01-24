@@ -56,8 +56,8 @@ namespace Hecatomb
 
         public override void Start()
         {
-            var inventory = Worker.GetComponent<Inventory>();
-            inventory.Drop();
+            // this somehow can happen when you're not carrying an item?
+            Worker.GetComponent<Inventory>().Drop();
             Finish();
         }
 
