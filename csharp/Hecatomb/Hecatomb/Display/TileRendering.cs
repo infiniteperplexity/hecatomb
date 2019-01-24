@@ -81,9 +81,9 @@ namespace Hecatomb
             // items
             else if (Items[c] != null)
             {
-                var tuple = 
-                sym = Items[c].Symbol;
-                fg = Items[c].FG;
+                Resource r = Resource.Types[Items[c].Resource];
+                sym = r.Symbol;
+                fg = r.FG;
             }
             // features
             else if (Features[c] != null)
@@ -94,13 +94,15 @@ namespace Hecatomb
             // items above
             else if (zview == +1 && Items[ca] != null)
             {
-                sym = Items[ca].Symbol;
+                Resource r = Resource.Types[Items[ca].Resource];
+                sym = r.Symbol;
                 fg = fg ?? "WALLFG";
             }
             // items below
             else if (zview == -1 && Items[cb] != null)
             {
-                sym = Items[cb].Symbol;
+                Resource r = Resource.Types[Items[cb].Resource];
+                sym = r.Symbol;
                 // submerged item
                 if (coverb.Liquid)
                 {
@@ -255,6 +257,7 @@ namespace Hecatomb
             Feature f = Game.World.Features[x, y, z];
             Item it = Game.World.Items[x, y, z];
             var c = new Coord(x, y, z);
+            Resource res = (it==null) ? null : res = Resource.Types[Game.World.Items[c].Resource];
             Task task = Game.World.Tasks[x, y, z];
             // particle
             if (p != null && p.BG != null)
@@ -278,9 +281,9 @@ namespace Hecatomb
             {
                 return "white";
             }
-            else if (it != null && it.BG != null)
+            else if (it != null && res.BG != null)
             {
-                return it.BG;
+                return res.BG;
             }
             else if (f != null && (f.BG != null || f.Highlight!=null))
             {

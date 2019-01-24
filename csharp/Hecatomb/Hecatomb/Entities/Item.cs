@@ -31,19 +31,6 @@ namespace Hecatomb
             MaxStack = 1;
         }
 
-        public Item(string s) : base()
-        {
-            Resource = s;
-            // get stacksize frmo resource
-        }
-
-        public Item(string s, int n) : this(s)
-        {
-            Resource = s;
-            Quantity = n;
-            // g
-        }
-
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
             Item e = Game.World.Items[x1, y1, z1];
