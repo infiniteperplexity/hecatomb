@@ -99,18 +99,19 @@ namespace Hecatomb
                 {   
                     foreach (string s in Stores)
                     {
-                        if (item.Resources.ContainsKey(s) && !item.IsStored(s))
-                        {
-                            int unclaimed = item.CountUnclaimed(s);
-                            if (unclaimed > 0)
-                            {
-                                SpawnHaulTask(item, s, unclaimed);
-                                if (CountTasks() >= Width * Height)
-                                {
-                                    return ge;
-                                }
-                            }
-                        }
+                        // So...this is going to work much differently...
+                        //if (item.Resources.ContainsKey(s) && !item.IsStored(s))
+                        //{
+                        //    int unclaimed = item.CountUnclaimed(s);
+                        //    if (unclaimed > 0)
+                        //    {
+                        //        SpawnHaulTask(item, s, unclaimed);
+                        //        if (CountTasks() >= Width * Height)
+                        //        {
+                        //            return ge;
+                        //        }
+                        //    }
+                        //}
                     }
                 }
             }

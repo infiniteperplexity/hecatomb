@@ -59,6 +59,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\Defender.cs" />
+    <Compile Include="Entities\Item.cs" />
     <Compile Include="Spells\CondenseEctoplasmSpell.cs" />
     <Compile Include="ImageOverride.cs" />
     <Compile Include="Spells\PoundOfFleshSpell.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="Components\SpearTrapComponent.cs" />
     <Compile Include="Core\HecatombAliases.cs" />
     <Compile Include="StateHandlers\HumanTracker.cs" />
-    <Compile Include="Entities\Item.cs" />
     <Compile Include="Events\GameEvents.cs" />
     <Compile Include="StateHandlers\PathHandler.cs" />
     <Compile Include="Tasks\Task.cs" />

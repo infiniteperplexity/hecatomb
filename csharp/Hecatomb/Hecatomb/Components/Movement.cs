@@ -341,6 +341,7 @@ namespace Hecatomb
             }
             if (Entity.GetComponent<Actor>().Team != Team.PlayerTeam)
             {
+                // doors block non-allied creatures
                 Feature f = Game.World.Features[x1, y1, z1];
                 if (f != null && f.Solid && !Phases)
                 {

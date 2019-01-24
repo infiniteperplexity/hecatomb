@@ -24,7 +24,7 @@ namespace Hecatomb
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
         // instance properties
         public TypedEntityField<Creature> Worker;
-        public Dictionary<int, Dictionary<string, int>> Claims;
+        public Dictionary<int, int> Claims;
         public string Makes;
         public int Labor;
 
@@ -36,7 +36,7 @@ namespace Hecatomb
             LaborCost = 10;
             Labor = LaborCost;
             Ingredients = new Dictionary<string, int>();
-            Claims = new Dictionary<int, Dictionary<string, int>>();
+            Claims = new Dictionary<int,int>();
         }
         // override Place from TileEntity
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
@@ -146,25 +146,18 @@ namespace Hecatomb
             // assume we have verified that there are enough
             foreach (Item item in owned)
             {
-                foreach (string resource in needed.Keys.ToList())
+                // ideally sort this by distance first
+                if (needed.ContainsKey(item.Resource))
                 {
-                    int claimed = (item.Claims.ContainsKey(resource)) ? item.Claims[resource] : 0;
-                    int n = (item.Resources.ContainsKey(resource)) ? item.Resources[resource] : 0;
-                    // if there is at least some
-                    if (n - claimed > 0)
+                    int needs = needed[item.Resource];
+                    int claiming = Math.Min(needs, item.Unclaimed);
+                    item.Claimed += claiming;
+                    needed[item.Resource] -= claiming;
+                    if (needed[item.Resource]<=0)
                     {
-                        item.Claims[resource] = n;
-                        if (!Claims.ContainsKey(item.EID))
-                        {
-                            Claims[item.EID] = new Dictionary<string, int>();
-                        }
-                        Claims[item.EID][resource] = n - claimed;
-                        needed[resource] -= (n - claimed);
-                        if (needed[resource] == 0)
-                        {
-                            needed.Remove(resource);
-                        }
+                        needed.Remove(item.Resource);
                     }
+                    Claims[item.EID] = claiming;
                 }
                 if (needed.Keys.Count == 0)
                 {
@@ -186,14 +179,16 @@ namespace Hecatomb
             int eid = Claims.Keys.ToList()[0];
             Item item = (Item)Entities[eid];
             // now need to do some validation
-            if (!item.Placed || !item.HasResources(Claims[eid]))
+            if (!item.Placed)
             {
                 Claims.Remove(eid);
+                // should we look for more ingredients or just cancel the task?
             }
             // if we're standing on any claimed ingredient
             if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z)
             {
-                item.RemoveResources(Claims[eid]);
+
+                Item i = item.Take(Claims[eid]);
                 Inventory inv = Worker.GetComponent<Inventory>();
                 if (inv.Item == null)
                 {
