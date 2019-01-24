@@ -97,21 +97,9 @@ namespace Hecatomb
             {
                 foreach(Item item in Items)
                 {   
-                    foreach (string s in Stores)
+                    if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed>0)
                     {
-                        // So...this is going to work much differently...
-                        //if (item.Resources.ContainsKey(s) && !item.IsStored(s))
-                        //{
-                        //    int unclaimed = item.CountUnclaimed(s);
-                        //    if (unclaimed > 0)
-                        //    {
-                        //        SpawnHaulTask(item, s, unclaimed);
-                        //        if (CountTasks() >= Width * Height)
-                        //        {
-                        //            return ge;
-                        //        }
-                        //    }
-                        //}
+                        SpawnHaulTask(item);
                     }
                 }
             }
@@ -133,7 +121,7 @@ namespace Hecatomb
         }
 
         // could be a static method...spawn on structure...
-        public void SpawnHaulTask(Item item, string resource, int unclaimed)
+        public void SpawnHaulTask(Item item)
         {
             if (CountTasks()>=Width*Height)
             {
@@ -151,15 +139,9 @@ namespace Hecatomb
                 var (x, y, z) = f;
                 if (Tasks[x, y, z]==null)
                 {
-                    if (!item.Claims.ContainsKey(resource))
-                    {
-                        item.Claims[resource] = 0;
-                    }
-                    item.Claims[resource] += unclaimed;
                     HaulTask haul = Entity.Spawn<HaulTask>();
-                    haul.Item = item;
-                    haul.Ingredients = new Dictionary<string, int>() { { resource, unclaimed } };
-                    haul.Claims[item.EID] = new Dictionary<string, int>() { { resource, unclaimed } };
+                    haul.Ingredients = new Dictionary<string, int>() { { item.Resource, item.Unclaimed } }; ;
+                    haul.Claims = new Dictionary<int, int>() { { item.EID, item.Unclaimed } };
                     haul.Place(x, y, z);
                     break;
                 }

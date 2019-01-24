@@ -111,7 +111,7 @@ namespace Hecatomb
             return !Options.NoIngredients;
         }
         // ingredients
-        public bool HasIngredients()
+        public bool HasIngredient()
         {
             if (!NeedsIngredients())
             {
@@ -128,8 +128,7 @@ namespace Hecatomb
             }
             else
             {
-                var item = Worker.GetComponent<Inventory>().Item.Unbox();
-                return (item == null) ? false : item.HasResources(Ingredients);
+                return Ingredients.ContainsKey(inv.Item.Unbox().Resource);
             }
         }
         public virtual void ClaimIngredients()
@@ -184,18 +183,19 @@ namespace Hecatomb
                 Claims.Remove(eid);
                 // should we look for more ingredients or just cancel the task?
             }
-            // if we're standing on any claimed ingredient
-            if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z)
+            // if we're standing on any claimed ingredient and 
+            if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z && !HasIngredient())
             {
-
-                Item i = item.Take(Claims[eid]);
+                var (x, y, z) = item;
                 Inventory inv = Worker.GetComponent<Inventory>();
-                if (inv.Item == null)
+                Item swap = null;
+                if (inv.Item!=null)
                 {
-                    inv.Item = Spawn<Item>();
+                    swap = inv.Item; 
                 }
-                ((Item) inv.Item).AddResources(Claims[eid]);
-                item.UnclaimResources(Claims[eid]);
+                inv.Item = item.TakeClaimed(Claims[eid]);
+                // this is a weird way to drop it...
+                swap?.Place(x, y, z);
                 Claims.Remove(eid);
                 Worker.GetComponent<Actor>().Spend();
             }
@@ -204,7 +204,7 @@ namespace Hecatomb
                 Worker.GetComponent<Actor>().WalkToward(item.X, item.Y, item.Z, useLast: true);
             }
         }
-        public void SpendIngredients()
+        public void SpendIngredient()
         {
             if (Options.NoIngredients)
             {
@@ -215,33 +215,38 @@ namespace Hecatomb
                 return;
             }
             Item item = (Item)Worker.GetComponent<Inventory>().Item;
-            item.RemoveResources(Ingredients);
+            Ingredients[item.Resource] -= item.Quantity;
+            if (Ingredients[item.Resource]<=0)
+            {
+                Ingredients.Remove(item.Resource);
+            }
+            item.Despawn();
         }
         public void UnclaimIngredients()
         {
             foreach (int eid in Claims.Keys)
             {
-                // need some kind of null check here...or maybe a listener?
+                // need a null check here?
                 Item item = (Item)Entities[eid];
-                var resources = Claims[eid];
-                foreach (string resource in resources.Keys)
-                {
-                    int n = resources[resource];
-                    item.Claims[resource] -= n;
-                }
+                item.Claimed -= Claims[eid];
             }
+            Claims.Clear();
         }
         // work
         public virtual void Act()
         {
-            if (!HasIngredients() && Labor == LaborCost)
+            if (!HasIngredient() && Labor == LaborCost)
             {
                 FetchIngredient();
                 return;
             }
             if ((int)Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, X, Y, Z) <= WorkRange)
             {
-                Work();
+                SpendIngredient();
+                if (Ingredients.Keys.Count == 0)
+                {
+                    Work();
+                }
             }
             else
             {
@@ -255,7 +260,7 @@ namespace Hecatomb
             {
                 Start();
             }
-            Labor -= (1+Options.WorkBonus);
+            Labor -= (1 + Options.WorkBonus);
             Worker.GetComponent<Actor>().Spend();
             if (Labor <= 0)
             {
@@ -265,7 +270,6 @@ namespace Hecatomb
 
         public virtual void Start()
         {
-            SpendIngredients();
             Spawn<Feature>("IncompleteFeature").Place(X, Y, Z);
         }
 

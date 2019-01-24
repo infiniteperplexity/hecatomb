@@ -161,13 +161,13 @@ namespace Hecatomb
         {
             if (this.Mineral!=null)
             {
-                Item.PlaceResource((this.Mineral, 1), x, y, z);
+                Item.PlaceNewResource(this.Mineral, 1, x, y, z);
             }
             else if (this.Solid)
             {
                 if (Game.World.Random.Next(4)==0)
                 {
-                    Item.PlaceResource(("Rock", 1), x, y, z);
+                    Item.PlaceNewResource("Rock", 1, x, y, z);
                 }
             }
         }

@@ -83,7 +83,21 @@ namespace Hecatomb
             }
             return item;
         }
+        public Item TakeClaimed(int n)
+        {
+            Claimed -= n;
+            return Take(n);
+        }
 
+        public static Item PlaceNewResource(string r, int n, int x, int y, int z, bool owned = true)
+        {
+            Item item = Spawn<Item>();
+            item.Resource = r;
+            item.Quantity = n;
+            item.Owned = owned;
+            item.Place(x, y, z);
+            return item;
+        }
 
         public bool IsStored()
         {

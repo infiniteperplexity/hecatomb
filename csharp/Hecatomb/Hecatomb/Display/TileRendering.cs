@@ -81,9 +81,9 @@ namespace Hecatomb
             // items
             else if (Items[c] != null)
             {
-                var tuple = Items[c].GetGlyph();
-                sym = tuple.Item1;
-                fg = tuple.Item2;
+                var tuple = 
+                sym = Items[c].Symbol;
+                fg = Items[c].FG;
             }
             // features
             else if (Features[c] != null)
@@ -94,13 +94,13 @@ namespace Hecatomb
             // items above
             else if (zview == +1 && Items[ca] != null)
             {
-                sym = Items[ca].GetGlyph().Item1;
+                sym = Items[ca].Symbol;
                 fg = fg ?? "WALLFG";
             }
             // items below
             else if (zview == -1 && Items[cb] != null)
             {
-                sym = Items[cb].GetGlyph().Item1;
+                sym = Items[cb].Symbol;
                 // submerged item
                 if (coverb.Liquid)
                 {
@@ -274,13 +274,13 @@ namespace Hecatomb
             {
                 return "black";
             }
-            else if (it != null && it.Claims.Count > 0)
+            else if (it != null && it.Claimed > 0)
             {
                 return "white";
             }
-            else if (it != null && it.GetGlyph().Item3 != null)
+            else if (it != null && it.BG != null)
             {
-                return it.GetGlyph().Item3;
+                return it.BG;
             }
             else if (f != null && (f.BG != null || f.Highlight!=null))
             {

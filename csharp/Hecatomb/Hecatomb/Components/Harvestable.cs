@@ -19,24 +19,19 @@ namespace Hecatomb
             Dictionary<string, int> resources = new Dictionary<string, int>();
             foreach (string key in Yields.Keys)
             {
+                int n = 0;
                 if (Yields[key] < 1)
                 {
                     if (Game.World.Random.NextDouble() < Yields[key])
                     {
-                        resources[key] = 1;
+                        n = 1;
                     }
                 }
                 else
                 {
-                    resources[key] = (int)Yields[key];
+                    n = (int) Yields[key];
                 }
-            }
-            if (resources.Count > 0)
-            {
-                var item = Hecatomb.Entity.Spawn<Item>();
-                item.AddResources(resources);
-                item.Owned = true;
-                item.Place(x, y, z);
+                Item.PlaceNewResource(key, n, Entity.X, Entity.Y, Entity.Z);
             }
             Entity.Despawn();
         }

@@ -545,45 +545,20 @@ namespace Hecatomb
             {
                 return true;
             }
-            Dictionary<string, int> found = new Dictionary<string, int>();
-            foreach (string resource in resources.Keys)
-            {
-                found[resource] = 0;
-            }
-            List<Item> items = Game.World.Items.ToList();
-            items = items.Where(
-                it => { return (ownedOnly == false || it.Owned); }
-            ).ToList();
-            items = items.Where(
-                it => { return CanReach(it); }
+            Dictionary<string, int> needed = new Dictionary<string, int>(resources);
+            List<Item> items = Game.World.Items.Where(
+                it => { return (needed.ContainsKey(it.Resource) && CanReach(it) && (ownedOnly == false || it.Owned)); }
             ).ToList();
             foreach (Item item in items)
             {
-                foreach (string resource in item.Resources.Keys)
+                int n = (respectClaims) ? item.Unclaimed : item.Quantity;
+                needed[item.Resource] -= n;
+                if (needed[item.Resource]<=0)
                 {
-                    if (found.ContainsKey(resource))
-                    {
-                        if (respectClaims)
-                        {
-                            int claimed = (item.Claims.ContainsKey(resource)) ? item.Claims[resource] : 0;
-                            found[resource] += (item.Resources[resource] - claimed);
-                        }
-                        else
-                        {
-                            found[resource] += item.Resources[resource];
-                        }
-                    }
+                    needed.Remove(item.Resource);
                 }
             }
-            foreach (string resource in resources.Keys)
-            {
-                if (found[resource]<resources[resource])
-                {
-                    return false;
-                }
-            }
-            return true;
+            return (needed.Count == 0);
         }
-
     }
 }

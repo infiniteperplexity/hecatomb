@@ -27,8 +27,7 @@ namespace Hecatomb
             var (x, y, z) = Caster;
             ParticleEmitter emitter = new ParticleEmitter();
             emitter.Place(x, y, z);
-            Item ectoplasm = Item.FromResources(new Dictionary<string, int>() { { "Ectoplasm", 1 } });
-            ectoplasm.Place(x, y, z);
+            Item.PlaceNewResource("Ectoplasm", 1, x, y, z);
             base.Cast();
         }
     }

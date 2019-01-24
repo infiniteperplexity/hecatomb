@@ -14,17 +14,13 @@ namespace Hecatomb
 	{
         public TileEntityField<Item> Item = new TileEntityField<Item>();
 		
-        public void DropItem()
+        public void Drop()
         {
-
-        }
-
-        public void DropResources(Dictionary<string, int> resources)
-        {
-            Item.Unbox().RemoveResources(resources);
             var (x, y, z) = Entity;
-            Hecatomb.Item.FromResources(resources).Place(x, y, z);
+            Item.Place(x, y, z);
+            Item = null;
         }
+
 		//public Inventory() : base()
 		//{
   //          AddListener<DespawnEvent>(OnItemDespawn);

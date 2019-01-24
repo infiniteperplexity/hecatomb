@@ -135,9 +135,7 @@ namespace Hecatomb
                 {
                     if (Game.World.Random.Next(2) == 0)
                     {
-                        Item.PlaceResource(("Rock", 1), x1, y1, z1);
-                        Item item = Game.World.Items[x1, y1, z1];
-                        item.Owned = true;
+                        Item.PlaceNewResource("Rock", 1, x1, y1, z1);
                     }
                 }
             }
