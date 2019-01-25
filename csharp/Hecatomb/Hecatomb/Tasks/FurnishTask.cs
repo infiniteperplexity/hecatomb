@@ -24,7 +24,13 @@ namespace Hecatomb
 			}
 			set {}
 		}
-		public List<IMenuListable> MenuChoices
+
+        public override string GetDisplayName()
+        {
+            Feature f = Entity.Mock<Feature>(Makes);
+            return $"furnish {f.Name}";
+        }
+        public List<IMenuListable> MenuChoices
 		{
 			get
 			{

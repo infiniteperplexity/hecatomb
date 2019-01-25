@@ -17,6 +17,11 @@ namespace Hecatomb
             MenuName = "dig or harvest";
         }
 
+        public override string GetDisplayName()
+        {
+            Feature f = Game.World.Features[X, Y, Z];
+            return $"harvest {f.Name}";
+        }
         public override void Start()
         {
         }

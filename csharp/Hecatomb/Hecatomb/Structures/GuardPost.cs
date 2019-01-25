@@ -37,9 +37,9 @@ namespace Hecatomb
 			};
             Ingredients = new Dictionary<string, int>[]
             {
-                null, null, null,
+                new Dictionary<string, int>() {{"Wood", 1}}, null, null,
                 null, new Dictionary<string, int>() {{"Rock", 1}}, null,
-                null, null, null
+                null, null, new Dictionary<string, int>() {{"Wood", 1}}
             };
 			MenuName = "guard post";
 			Name = "guard post";

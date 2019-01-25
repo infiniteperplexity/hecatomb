@@ -14,7 +14,8 @@ namespace Hecatomb
         public int Quantity;
         public int Claimed;
         public string Resource;
-        public int MaxStack;
+        public int StackSize;
+
 
         public int Unclaimed
         {
@@ -28,9 +29,15 @@ namespace Hecatomb
         {
             Quantity = 1;
             Claimed = 0;
-            MaxStack = 1;
+            StackSize = 1;
         }
 
+        public static Item SpawnCorpse()
+        {
+            Item item = Entity.Spawn<Item>();
+            item.Resource = "Corpse";
+            return item;
+        }
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
             Item e = Game.World.Items[x1, y1, z1];
@@ -108,6 +115,16 @@ namespace Hecatomb
         public void Tumble()
         {
 
+        }
+
+        public override string Describe(
+            bool article = true,
+            bool definite = false,
+            bool capitalized = false
+        )
+        {
+            string name = Hecatomb.Resource.Types[Resource].Name;
+            return $"{Quantity} {name}";
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Hecatomb
         // constructor
         public Task() : base()
         {
+            Name = "task";
             Worker = new TypedEntityField<Creature>();
             WorkRange = 1;
             LaborCost = 10;

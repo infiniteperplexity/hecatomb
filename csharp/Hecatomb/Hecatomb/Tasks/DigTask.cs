@@ -16,6 +16,32 @@ namespace Hecatomb
 		{
 			MenuName = "dig or harvest";
 		}
+
+        public override string GetDisplayName()
+        {
+            var tiles = Game.World.Terrains;
+            var covers = Game.World.Covers;
+            Terrain t = tiles[X, Y, Z];
+            Terrain floor = Terrain.FloorTile;
+            Terrain wall = Terrain.WallTile;
+            Terrain up = Terrain.UpSlopeTile;
+            Terrain down = Terrain.DownSlopeTile;
+            Terrain empty = Terrain.EmptyTile;
+            Cover none = Cover.NoCover;
+            if (t == floor)
+            {
+                return "dig pit";
+            }
+            else if (t == up)
+            {
+                return "dig away slope";
+            }
+            else if (t == down)
+            {
+                return "dig away slope";
+            }
+            return "dig corridor";
+        }
 			
 		public override void Start()
 		{
@@ -230,6 +256,7 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
+            var (x, y, z) = c;
             // what about non-harvestable, i.e. owned features?
             // maybe make those the very lowest priority?
             // in order to avoid giving away unexplored terrain, always allow designation
@@ -237,12 +264,26 @@ namespace Hecatomb
             {
                 return true;
             }
-            Terrain t = Game.World.Terrains[c.X, c.Y, c.Z];
-            Terrain tb = Game.World.Terrains[c.X, c.Y, c.Z - 1];
+            Terrain t = Game.World.Terrains[x, y, z];
+            Terrain tb = Game.World.Terrains[x, y, z];
             // can't dig an empty tile no matter what
             if (t==Terrain.EmptyTile)
             {
                 return false;
+            }
+            // I think this is the correct priority for harvesting
+            // oh wait, I made this a separate task...urgh...
+            Feature f = Game.World.Features[x, y, z];
+            if (f!=null)
+            {
+                if (f.TryComponent<Harvestable>()!=null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             // can't dig through the bottom of the level
             if (t==Terrain.FloorTile && tb==Terrain.VoidTile)

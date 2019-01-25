@@ -47,7 +47,11 @@
 				"Name": "grave",
 				"FG" : "WALLFG",
 				"Symbol" : "\u271D",
-				"Components" : {}
+				"Components" : {
+					"Harvestable": {
+						"Yields": {"Corpse": 1}
+					}
+				}
 			},
 			{
 				"Type" : "Ramp",

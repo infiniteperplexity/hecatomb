@@ -105,8 +105,6 @@ namespace Hecatomb
         }
         protected  void StartGame()
         {
-            Debug.WriteLine("testing");
-            //Debug.WriteLine(FlyWeight.Types[typeof(Resource)]["Coal"].ToString());
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
 			WorldBuilder builder = new DefaultBuilder();
 			builder.Build(World);

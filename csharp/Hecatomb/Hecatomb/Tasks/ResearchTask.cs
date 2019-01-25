@@ -14,6 +14,10 @@ namespace Hecatomb
     {
         public TileEntityField<Structure> Structure;
 
+        public override string GetDisplayName()
+        {
+            return $"researching {Research.Types[Makes].Name}";
+        }
         public override ColoredText ListOnMenu()
         {
             Research research = Hecatomb.Research.Types[Makes];

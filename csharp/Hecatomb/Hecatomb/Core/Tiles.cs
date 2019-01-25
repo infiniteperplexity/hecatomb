@@ -95,7 +95,7 @@ namespace Hecatomb
 			}
 			else
 			{
-				Debug.Print(m.Entity.Describe() + " found a path to " + t.Describe());
+				//Debug.Print(m.Entity.Describe() + " found a path to " + t.Describe());
 //				pathHits[m.Entity.EID][t.EID] = 10;
 			}
 			return path;

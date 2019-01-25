@@ -106,6 +106,10 @@ namespace Hecatomb
 
     public class ZombieEmergeTask : Task
     {
+        public ZombieEmergeTask() : base()
+        {
+            Name = "zombie emerging";
+        }
         public override void Start()
         {
             Game.World.Events.Publish(new SensoryEvent() { X = X, Y = Y, Z = Z, Sight = "You hear an ominous stirring from under the ground..." });

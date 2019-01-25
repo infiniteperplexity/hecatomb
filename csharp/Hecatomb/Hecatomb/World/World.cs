@@ -166,6 +166,11 @@ namespace Hecatomb
 				{
 					text.Add("Feature: " + t.Describe());
 				}
+                t = Items[x, y, z];
+                if (t!=null)
+                {
+                    text.Add("Item: " + t.Describe());
+                }
 				t = Tasks[x, y, z];
 				if (t!=null)
 				{
@@ -188,7 +193,12 @@ namespace Hecatomb
 				{
 					text.Add("Feature: " + t.Describe());
 				}
-				t = Tasks[x, y, za];
+                t = Items[x, y, za];
+                if (t != null)
+                {
+                    text.Add("Item: " + t.Describe());
+                }
+                t = Tasks[x, y, za];
 				if (t!=null)
 				{
 					text.Add("Task: " + t.Describe());
@@ -209,10 +219,15 @@ namespace Hecatomb
 				{
 					text.Add("Feature: " + t.Describe());
 				}
-				t = Tasks[x, y, zb];
+                t = Items[x, y, zb];
+                if (t != null)
+                {
+                    text.Add("Item: " + t.Describe());
+                }
+                t = Tasks[x, y, zb];
 				if (t!=null)
 				{
-					text.Add("Task: " +t.Describe());
+					text.Add("Task: " + t.Describe());
 				}
 				text.Add(" ");
 			}

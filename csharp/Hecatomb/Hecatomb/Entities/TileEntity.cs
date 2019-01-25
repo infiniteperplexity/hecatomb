@@ -100,13 +100,18 @@ namespace Hecatomb
             base.Despawn();
         }
 		
+        public virtual string GetDisplayName()
+        {
+            return Name;
+        }
+
 		public virtual string Describe(
 			bool article=true,
 			bool definite=false,
 			bool capitalized=false
 		)
 		{
-			string name = Name;
+			string name = GetDisplayName();
 			bool vowel = false;
 			if (name==null)
 			{

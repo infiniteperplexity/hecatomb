@@ -22,8 +22,23 @@ namespace Hecatomb
 				{"Rock", 1}
 			};
 		}
-			
-		public override void Start()
+
+        public override string GetDisplayName()
+        {
+            var tiles = Game.World.Terrains;
+            Terrain t = tiles[X, Y, Z];
+            Terrain floor = Terrain.FloorTile;
+            Terrain wall = Terrain.WallTile;
+            Terrain up = Terrain.UpSlopeTile;
+            Terrain down = Terrain.DownSlopeTile;
+            Terrain empty = Terrain.EmptyTile;
+            if (t == floor || t == up)
+            {
+                return "build wall";
+            }
+            return "build floor";
+        }
+        public override void Start()
 		{
 			base.Start();
 			Feature f = Game.World.Features[X, Y, Z];

@@ -87,11 +87,16 @@ namespace Hecatomb
         public ConstructTask(): base()
 		{
             Structure = new TileEntityField<Structure>();
-			Structures = new string[]{"GuardPost", "Workshop","Stockpile","BlackMarket","Sanctum"};
+			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket" };
 			MenuName = "construct a structure.";
 		}
-			
-		private Structure Mock()
+
+        public override string GetDisplayName()
+        {
+            return $"construct {Structure.Name}";
+        }
+
+        private Structure Mock()
 		{
 			return (Structure) Hecatomb.Entity.Mock(Type.GetType("Hecatomb."+Makes));
 		}
@@ -176,7 +181,7 @@ namespace Hecatomb
 			if (Makes!=null)
 			{
                 var structure = Mock();
-                if (structure.GetIngredients().Count==0 /*|| Game.Options.NoIngredients*/)
+                if (structure.GetIngredients().Count==0 || Game.Options.NoIngredients)
                 {
                     return Makes;
                 }

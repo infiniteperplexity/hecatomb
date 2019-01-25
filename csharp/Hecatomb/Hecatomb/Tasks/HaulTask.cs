@@ -20,6 +20,23 @@ namespace Hecatomb
             WorkRange = 0;
         }
 
+        public override string GetDisplayName()
+        {
+
+            Item item = (Item) Entity.Entities[Claims.Keys.ToList()[0]];
+            var (x, y, z) = item;
+            string where = null;
+            if (item.Placed)
+            {
+                where = $"from {x} {y} {z}";
+            }
+            else
+            {
+                where = $"carried by {Worker} at {Worker.X} {Worker.Y} {Worker.Z}";
+            }
+            return $"haul {item.Describe()} {where}";
+        }
+
         public override bool CanAssign(Creature c)
         {
             Coord crd = new Coord(X, Y, Z);

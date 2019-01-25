@@ -61,6 +61,7 @@
     <Compile Include="Components\Defender.cs" />
     <Compile Include="Controls\CreatureControls.cs" />
     <Compile Include="Entities\Item.cs" />
+    <Compile Include="Structures\Slaughterhouse.cs" />
     <Compile Include="Spells\CondenseEctoplasmSpell.cs" />
     <Compile Include="ImageOverride.cs" />
     <Compile Include="Spells\PoundOfFleshSpell.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Entities\TypedEntity.cs" />
     <Compile Include="Entities\TypedEntityField.cs" />
     <Compile Include="Spells\LongShadowSpell.cs" />
+    <Compile Include="TextPanel.cs" />
     <Compile Include="Utilities\RecursiveBacktracker.cs" />
     <Compile Include="StateHandlers\ResearchHandler.cs" />
     <Compile Include="FlyWeights\Resource.cs" />

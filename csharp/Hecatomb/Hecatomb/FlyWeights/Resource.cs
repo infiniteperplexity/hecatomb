@@ -13,12 +13,14 @@ namespace Hecatomb
         public char Symbol;
         public string FG;
         public string BG;
+        public int StackSize;
 
         public Resource(
             string type = "",
             string name = "",
             char symbol = ' ',
             string fg = "white",
+            int stack = 5,
             string bg = null
         ) : base(type)
         {
@@ -26,6 +28,7 @@ namespace Hecatomb
             Symbol = symbol;
             FG = fg;
             BG = bg;
+            StackSize = stack;
         }
 
         public static string Format(ValueTuple<string, int> vt)
@@ -119,7 +122,7 @@ namespace Hecatomb
             type: "Flesh",
             name: "flesh",
             symbol: '%',
-            fg: "brown"
+            fg: "red"
         );
 
         public static readonly Resource Bone = new Resource(
@@ -127,6 +130,14 @@ namespace Hecatomb
             name: "bone",
             symbol: '%',
             fg: "white"
+        );
+
+        public static readonly Resource Corpse = new Resource(
+            type: "Corpse",
+            name: "corpse",
+            symbol: '%',
+            fg: "brown",
+            stack: 1
         );
     }
 }

@@ -15,6 +15,14 @@ namespace Hecatomb
     public class TileEntityField<T> : EntityField<T> where T : TileEntity
     {
         [JsonIgnore]
+        public string Name
+        {
+            get
+            {
+                return (Entity as TileEntity).Name;
+            }
+        }
+        [JsonIgnore]
         public int X
         {
             get
