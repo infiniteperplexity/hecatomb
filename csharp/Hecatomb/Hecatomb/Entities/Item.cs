@@ -85,7 +85,7 @@ namespace Hecatomb
 
         public static Item PlaceNewResource(string r, int n, int x, int y, int z, bool owned = true)
         {
-            Item item = Spawn<Item>();
+            Item item = (r=="Corpse") ? SpawnCorpse() : Spawn<Item>();
             item.Resource = r;
             item.Quantity = n;
             item.Owned = owned;

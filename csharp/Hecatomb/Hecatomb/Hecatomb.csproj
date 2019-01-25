@@ -58,9 +58,12 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Tasks\ButcherTask.cs" />
     <Compile Include="Components\Defender.cs" />
     <Compile Include="Controls\CreatureControls.cs" />
     <Compile Include="Entities\Item.cs" />
+    <Compile Include="Tasks\MurderTask.cs" />
+    <Compile Include="Tasks\PatrolTask.cs" />
     <Compile Include="Structures\Slaughterhouse.cs" />
     <Compile Include="Spells\CondenseEctoplasmSpell.cs" />
     <Compile Include="ImageOverride.cs" />
