@@ -56,9 +56,13 @@ namespace Hecatomb
 
         public override void Start()
         {
-            // this somehow can happen when you're not carrying an item?
             Worker.GetComponent<Inventory>().Drop();
             Finish();
+        }
+
+        public override void SpendIngredient()
+        {
+            Ingredients.Clear();
         }
 
     }

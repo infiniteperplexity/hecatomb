@@ -210,7 +210,7 @@ namespace Hecatomb
                 Worker.GetComponent<Actor>().WalkToward(item.X, item.Y, item.Z, useLast: true);
             }
         }
-        public void SpendIngredient()
+        public virtual void SpendIngredient()
         {
             if (Options.NoIngredients)
             {
