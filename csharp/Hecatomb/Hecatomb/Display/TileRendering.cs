@@ -254,6 +254,7 @@ namespace Hecatomb
             Terrain tb = Game.World.Terrains[x, y, z - 1];
             Cover cv = Game.World.Covers[x, y, z];
             Cover cb = Game.World.Covers[x, y, z - 1];
+            Creature cr = Game.World.Creatures[x, y, z];
             Feature f = Game.World.Features[x, y, z];
             Item it = Game.World.Items[x, y, z];
             var c = new Coord(x, y, z);
@@ -277,17 +278,21 @@ namespace Hecatomb
             {
                 return "black";
             }
+            else if (cr != null && (cr.BG != null || cr.Highlight != null))
+            {
+                return cr.Highlight ?? cr.BG;
+            }
             else if (it != null && it.Claimed > 0)
             {
                 return "white";
             }
+            else if (f != null && (f.BG != null || f.Highlight != null))
+            {
+                return f.Highlight ?? f.BG;
+            }
             else if (it != null && res.BG != null)
             {
                 return res.BG;
-            }
-            else if (f != null && (f.BG != null || f.Highlight!=null))
-            {
-                return f.Highlight ?? f.BG;
             }
             else if (cv != Cover.NoCover)
             {

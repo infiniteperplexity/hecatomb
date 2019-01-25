@@ -12,7 +12,7 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class Creature : TypedEntity
+    public class Creature : TypedEntity, IChoiceMenu
     {
 
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
@@ -43,6 +43,30 @@ namespace Hecatomb
             int z0 = Z;
             base.Remove();
             Game.World.Creatures[x0, y0, z0] = null;
+        }
+
+        public virtual string MenuHeader
+        {
+            get
+            {
+                return String.Format("{3} at {0} {1} {2}", X, Y, Z, Describe());
+            }
+            set { }
+        }
+
+        public virtual List<IMenuListable> MenuChoices
+        {
+            get
+            {
+                var list = new List<IMenuListable>();
+                var minion = TryComponent<Minion>();
+                if (minion!=null)
+                {
+                    // not sure we actually want menu choices here?
+                }
+                return list;
+            }
+            set { }
         }
     }
 }

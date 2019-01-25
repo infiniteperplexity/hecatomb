@@ -39,6 +39,7 @@ namespace Hecatomb
             ResearchPrereqs = new string[0];
             StructurePrereqs = new string[0];
             Stores = new string[0];
+            Researches = new string[0];
         }
 
         public static List<string> ListAll()

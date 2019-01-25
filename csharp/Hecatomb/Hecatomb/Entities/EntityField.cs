@@ -59,6 +59,10 @@ namespace Hecatomb
 
         public static implicit operator T(EntityField<T> et)
         {
+            if (ReferenceEquals(et, null))
+            {
+                return null;
+            }
             return et.Entity;
         }
 

@@ -65,7 +65,7 @@ namespace Hecatomb
             bool visible = Game.Visible.Contains(c);
             if (cr!=null && visible)
             {
-
+                Game.Controls = new CreatureControls(cr);
             }
             Feature fr = Game.World.Features[x, y, z];
             if (fr?.TryComponent<StructuralComponent>()!=null)

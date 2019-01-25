@@ -59,6 +59,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\Defender.cs" />
+    <Compile Include="Controls\CreatureControls.cs" />
     <Compile Include="Entities\Item.cs" />
     <Compile Include="Spells\CondenseEctoplasmSpell.cs" />
     <Compile Include="ImageOverride.cs" />
