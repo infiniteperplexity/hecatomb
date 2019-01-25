@@ -19,8 +19,6 @@ namespace Hecatomb
             var (x, y, z) = Entity;
             Item.Place(x, y, z);
             Item = null;
-            Debug.WriteLine(Item.EID);
-            Debug.WriteLine("Item has been dropped");
         }
 
 		//public Inventory() : base()

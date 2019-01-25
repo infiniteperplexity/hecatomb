@@ -143,6 +143,7 @@ namespace Hecatomb
                     haul.Ingredients = new Dictionary<string, int>() { { item.Resource, item.Unclaimed } }; ;
                     haul.Claims = new Dictionary<int, int>() { { item.EID, item.Unclaimed } };
                     haul.Place(x, y, z);
+                    item.Claimed += item.Unclaimed;
                     break;
                 }
             }

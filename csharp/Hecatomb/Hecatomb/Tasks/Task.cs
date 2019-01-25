@@ -249,7 +249,7 @@ namespace Hecatomb
             if ((int)Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, X, Y, Z) <= WorkRange)
             {
                 SpendIngredient();
-                if (Ingredients.Keys.Count == 0)
+                if (Ingredients.Keys.Count == 0 || Options.NoIngredients)
                 {
                     Work();
                 }
@@ -276,6 +276,7 @@ namespace Hecatomb
 
         public virtual void Start()
         {
+            Debug.WriteLine("trying to start");
             Spawn<Feature>("IncompleteFeature").Place(X, Y, Z);
         }
 
