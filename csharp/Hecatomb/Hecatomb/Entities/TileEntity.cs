@@ -72,8 +72,16 @@ namespace Hecatomb
 			{
 				Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
 			}
-            // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about
-            
+            if (Game.World.Terrains[X, Y, Z].Fallable)
+            {
+                Fall();
+            }
+            // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about 
+        }
+
+        public virtual void Fall()
+        {
+
         }
 		
 		public virtual void Remove()

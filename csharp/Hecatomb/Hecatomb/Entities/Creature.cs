@@ -36,6 +36,19 @@ namespace Hecatomb
                 ));
             }
         }
+        public override void Fall()
+        {
+            Movement m = TryComponent<Movement>();
+            if (m == null || !m.Flies)
+            {
+                if (m!=null && Covers[X, Y, Z].Liquid && m.Swims)
+                {
+                    return;
+                }
+                Place(X, Y, Z - 1);
+                base.Fall();
+            }
+        }
         public override void Remove()
         {
             int x0 = X;

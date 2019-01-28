@@ -48,6 +48,7 @@ namespace Hecatomb
             }
             else if (e.Resource==Resource)
             {
+                // should I fire a Place event here?
                 e.AddQuantity(Quantity);
                 Despawn();
             }
@@ -55,6 +56,12 @@ namespace Hecatomb
             {
                 Displace(x1, y1, z1);
             }
+        }
+
+        public override void Fall()
+        {
+            Place(X, Y, Z - 1);
+            base.Fall();
         }
         public override void Remove()
         {
@@ -109,12 +116,15 @@ namespace Hecatomb
 
         public void AddQuantity(int n)
         {
-
+            int leftovers = 0;
+            if (Quantity + n > StackSize)
+            {
+                leftovers = n - (StackSize - Quantity);
+                Quantity = StackSize;
+                PlaceNewResource(Resource, leftovers, X, Y, Z);
+            }   
         }
 
-        // two problems
-        // should it go beyond the inner ring?  if not, this should try all eight in a random order
-        // if not, it needs to recurse somehow
         public void Displace(int x, int y, int z)
         {
             int MaxDistance = 2;
