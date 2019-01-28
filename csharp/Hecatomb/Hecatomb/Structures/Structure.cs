@@ -120,7 +120,7 @@ namespace Hecatomb
             {
                 foreach(Item item in Items)
                 {   
-                    if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed>0)
+                    if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed>0 && GetHaulTask(item.Resource)==null)
                     {
                         SpawnHaulTask(item);
                     }
@@ -143,7 +143,27 @@ namespace Hecatomb
             return existing;
         }
 
-        // could be a static method...spawn on structure...
+        public HaulTask GetHaulTask(string resource)
+        {
+            foreach (Feature f in Features)
+            {
+                var (x, y, z) = f;
+                Task t = Tasks[x, y, z];
+                if (t is HaulTask && t.Ingredients.ContainsKey(resource))
+                {
+                    return t as HaulTask;
+                }
+            }
+            return null;
+        }
+
+//        Ooh boy, this is kinda crazy.So...what's the priority here?
+//1) You could make it so it only spawns one task for each resource at at time, and asks for a full stacksize.  I think this is the answer.
+    // have the task constantly live until it's full...easy visual indicator
+    // have the task be only one at a time, renewing
+//2) You could have fixed slots for different ingredients; e.g.left side holds wood, right side holds stone.  That gets counterintuitive when you want more of one, though.
+//3) You could just have it be kinda greedy and random, like I was planning on doing.That will tend to fill it all with one kind, though.
+//4) You could have it be greedy but with a maximum.
         public void SpawnHaulTask(Item item)
         {
             if (CountTasks()>=Width*Height)
@@ -156,10 +176,30 @@ namespace Hecatomb
                 positions.Add(i);
             }
             positions = positions.OrderBy(s => Game.World.Random.NextDouble()).ToList();
+            // we want to do the tasks first, then the others
             foreach (int position in positions)
             {
                 Feature f = Features[position];
                 var (x, y, z) = f;
+                Task task = Tasks[x, y, z];
+                if (task!=null)
+                {
+                    continue;
+                }
+                Item current = Items[x, y, z];
+                if (current==null)
+                {
+                    continue;
+
+
+                }
+                if (current.Quantity >= StackSize)
+
+            }
+                int size = item.StackSize;
+                
+              
+                
                 if (Tasks[x, y, z]==null)
                 {
                     HaulTask haul = Entity.Spawn<HaulTask>();

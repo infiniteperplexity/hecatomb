@@ -12,7 +12,7 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    class HaulTask : Task
+    public class HaulTask : Task
     {
         public HaulTask() : base()
         {
