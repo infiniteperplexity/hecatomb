@@ -53,7 +53,7 @@ namespace Hecatomb
             }
             else
             {
-                Tumble();
+                Displace(x1, y1, z1);
             }
         }
         public override void Remove()
@@ -112,9 +112,54 @@ namespace Hecatomb
 
         }
 
-        public void Tumble()
+        // two problems
+        // should it go beyond the inner ring?  if not, this should try all eight in a random order
+        // if not, it needs to recurse somehow
+        public void Displace(int x, int y, int z)
         {
-
+            int MaxDistance = 2;
+            List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
+            order = order.OrderBy(s=>Game.World.Random.NextDouble()).ToList();
+            Queue<Coord> queue = new Queue<Coord>();
+            foreach (int i in order)
+            {
+                var (dx, dy, dz) = Movement.Directions8[i];
+                queue.Enqueue(new Coord(x + dx, y + dy, z + dz));
+            }
+            HashSet<Coord> tried = new HashSet<Coord>();
+            while (queue.Count>0)
+            {
+                Coord c = queue.Dequeue();
+                tried.Add(c);
+                if (Terrains[c.X, c.Y, c.Z].Solid)
+                {
+                    continue;
+                }
+                if (Items[c]!=null)
+                {
+                    if (Items[c].Resource!=Resource || Items[c].Quantity>=StackSize)
+                    {
+                        foreach (int i in order)
+                        {
+                            var (dx, dy, dz) = Movement.Directions8[i];
+                            dx += c.X;
+                            dy += c.Y;
+                            dz += c.Z;
+                            Coord d = new Coord(dx, dy, dz);
+                            if (!tried.Contains(d) && Tiles.QuickDistance(x, y, z, dx, dy, dz)<=MaxDistance)
+                            {
+                                queue.Enqueue(d);
+                            }
+                            
+                        }
+                        continue;
+                    }
+                }
+                Status.PushMessage($"{Describe()} got displaced to {c.X} {c.Y} {c.Z}.");
+                Place(c.X, c.Y, c.Z);
+            }
+            Status.PushMessage($"{Describe()} became lost in the clutter.");
+            Despawn();
         }
 
         public override string Describe(
