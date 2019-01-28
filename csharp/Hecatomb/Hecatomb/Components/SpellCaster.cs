@@ -46,7 +46,7 @@ namespace Hecatomb
 			{
 				List<IMenuListable> spells = new List<IMenuListable>();
                 // only if we have the prerequisite structures / technologies...
-                var structures = Structure.ListAll();
+                var structures = Structure.ListAsStrings();
                 var researched = GetState<ResearchHandler>().Researched;
                 foreach (string sp in Spells)
 				{

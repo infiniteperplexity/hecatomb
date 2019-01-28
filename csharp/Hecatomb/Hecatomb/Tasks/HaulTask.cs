@@ -37,6 +37,15 @@ namespace Hecatomb
             return $"haul {item.Describe()} {where}";
         }
 
+        public override void ChooseFromMenu()
+        {
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
+            //			Game.Controls.Set(new SelectTileControls(this));
+            Game.Controls.Set(new SelectZoneControls(this));
+        }
+
+        
+
         public override bool CanAssign(Creature c)
         {
             Coord crd = new Coord(X, Y, Z);

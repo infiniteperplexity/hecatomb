@@ -42,7 +42,7 @@ namespace Hecatomb
             Researches = new string[0];
         }
 
-        public static List<string> ListAll()
+        public static List<string> ListAsStrings()
         {
             List<Entity> list = Entities.Values.Where(((Entity e) =>
             {
@@ -61,6 +61,28 @@ namespace Hecatomb
                 }
             })).ToList();
             List<string> s = list.Select(e => e.ClassName).ToList();
+            return s;
+        }
+
+        public static List<Structure> ListStructures()
+        {
+            List<Entity> list = Entities.Values.Where(((Entity e) =>
+            {
+                if (!(e is Structure))
+                {
+                    return false;
+                }
+                else
+                {
+                    var se = (Structure)e;
+                    if (se.Placed)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            })).ToList();
+            List<Structure> s = list.Select(e => (Structure) e).ToList();
             return s;
         }
 

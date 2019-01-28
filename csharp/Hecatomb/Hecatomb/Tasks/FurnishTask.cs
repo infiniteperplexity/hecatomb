@@ -35,7 +35,7 @@ namespace Hecatomb
 			get
 			{
 				var list = new List<IMenuListable>();
-                var structures = Structure.ListAll();
+                var structures = Structure.ListAsStrings();
                 var researched = Game.World.GetState<ResearchHandler>().Researched;
                 Debug.WriteLine(JsonConvert.SerializeObject(researched));
                 // only if we have the prerequisite structures / technologies...

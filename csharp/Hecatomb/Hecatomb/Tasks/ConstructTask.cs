@@ -52,7 +52,7 @@ namespace Hecatomb
 			get
 			{
 				var list = new List<IMenuListable>();
-                var structures = Hecatomb.Structure.ListAll();
+                var structures = Hecatomb.Structure.ListAsStrings();
                 var researched = Game.World.GetState<ResearchHandler>().Researched;
                 foreach (string st in Structures)
 				{   

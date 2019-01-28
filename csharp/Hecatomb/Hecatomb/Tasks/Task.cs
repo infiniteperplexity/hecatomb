@@ -277,7 +277,6 @@ namespace Hecatomb
 
         public virtual void Start()
         {
-            Debug.WriteLine("trying to start");
             Spawn<Feature>("IncompleteFeature").Place(X, Y, Z);
         }
 
