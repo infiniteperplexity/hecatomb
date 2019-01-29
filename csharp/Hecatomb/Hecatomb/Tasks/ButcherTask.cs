@@ -149,6 +149,3 @@ namespace Hecatomb
 
     }
 }
-
-
-}

@@ -144,7 +144,7 @@ namespace Hecatomb
                 if (task != null && task is HaulTask)
                 {
                     HaulTask ht = (HaulTask)task;
-                    int space = ht.HasSpace();
+                    int space = ht.HasSpace(resource);
                     string res = ht.Ingredients.Keys.ToList()[0];
                     if (res == resource && space > 0)
                     {
@@ -169,7 +169,10 @@ namespace Hecatomb
                 if (task == null)
                 {
                     HaulTask ht = Entity.Spawn<HaulTask>();
-                    int claim = Math.Min(item.Unclaimed, ht.HasSpace());
+                    ht.Place(x, y, z);
+                    ht.Ingredients[resource] = 0;
+                    int claim = Math.Min(item.Unclaimed, ht.HasSpace(resource));
+                    ht.Ingredients[resource] = claim;
                     ht.Claims[item.EID] = claim;
                     item.Claimed += claim;
                     return;

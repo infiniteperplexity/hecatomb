@@ -21,7 +21,7 @@ namespace Hecatomb
         {
             Explored = false;
             Visible = false;
-            NoIngredients = false;
+            NoIngredients = true;
             Tutorial = false;
             StartupScreen = false;
             HumanAttacks = false;

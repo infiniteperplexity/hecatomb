@@ -74,11 +74,18 @@ namespace Hecatomb
             return true;
         }
 
-        public int HasSpace()
+        // do we need to account for it if there is no item and no claims?
+        public int HasSpace(string resource)
         {
+            int size = Resource.Types[resource].StackSize;
             Item item = Items[X, Y, Z];
-            int claimed = Claims.Values.ToList()[0];
-            return item.StackSize - (item.Quantity + claimed);
+            int stack = (item == null) ? 0 : item.Quantity;
+            int claimed = 0;
+            foreach(int value in Claims.Values)
+            {
+                claimed += value;
+            }
+            return size - (stack + claimed);
         }
         public override void AssignTo(Creature c)
         {
