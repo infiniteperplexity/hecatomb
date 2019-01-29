@@ -112,105 +112,71 @@ namespace Hecatomb
             {
                 return ge;
             }
-            if (CountTasks()>=Width*Height)
+            if (Stores.Length > 0)
             {
-                return ge;
-            }
-            if (Stores.Length>0)
-            {
-                foreach(Item item in Items)
-                {   
-                    if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed>0 && GetHaulTask(item.Resource)==null)
+                foreach (Item item in Items)
+                {
+                    if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed > 0)
                     {
-                        SpawnHaulTask(item);
+                        AssignItemToHaulTask(item);
                     }
                 }
             }
             return ge;
         }
 
-        public int CountTasks()
+        public void AssignItemToHaulTask(Item item)
         {
-            int existing = 0;
-            foreach (Feature f in Features)
+            string resource = item.Resource;
+            List<int> order = new List<int>();
+            for (int i=0; i<Width*Height; i++)
             {
-                var (x, y, z) = f;
-                if (Tasks[x, y, z] != null)
-                {
-                    existing++;
-                }
+                order.Add(i);
             }
-            return existing;
-        }
-
-        public HaulTask GetHaulTask(string resource)
-        {
-            foreach (Feature f in Features)
+            order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
+            // if there's an existing task with space left
+            foreach (int i in order)
             {
-                var (x, y, z) = f;
-                Task t = Tasks[x, y, z];
-                if (t is HaulTask && t.Ingredients.ContainsKey(resource))
-                {
-                    return t as HaulTask;
-                }
-            }
-            return null;
-        }
-
-//        Ooh boy, this is kinda crazy.So...what's the priority here?
-//1) You could make it so it only spawns one task for each resource at at time, and asks for a full stacksize.  I think this is the answer.
-    // have the task constantly live until it's full...easy visual indicator
-    // have the task be only one at a time, renewing
-//2) You could have fixed slots for different ingredients; e.g.left side holds wood, right side holds stone.  That gets counterintuitive when you want more of one, though.
-//3) You could just have it be kinda greedy and random, like I was planning on doing.That will tend to fill it all with one kind, though.
-//4) You could have it be greedy but with a maximum.
-        public void SpawnHaulTask(Item item)
-        {
-            if (CountTasks()>=Width*Height)
-            {
-                return;
-            }
-            List<int> positions = new List<int>();
-            for (int i=0; i<Height*Width; i++)
-            {
-                positions.Add(i);
-            }
-            positions = positions.OrderBy(s => Game.World.Random.NextDouble()).ToList();
-            // we want to do the tasks first, then the others
-            foreach (int position in positions)
-            {
-                Feature f = Features[position];
+                Feature f = Features[i];
                 var (x, y, z) = f;
                 Task task = Tasks[x, y, z];
-                if (task!=null)
+                Item pile = Items[x, y, z];
+                if (task != null && task is HaulTask)
                 {
-                    continue;
+                    HaulTask ht = (HaulTask)task;
+                    int space = ht.HasSpace();
+                    string res = ht.Ingredients.Keys.ToList()[0];
+                    if (res == resource && space > 0)
+                    {
+                        int claim = Math.Min(item.Unclaimed, space);
+                        if (!ht.Claims.ContainsKey(item.EID))
+                        {
+                            ht.Claims[item.EID] = 0;
+                        }
+                        ht.Claims[item.EID] += claim;
+                        item.Claimed += claim;
+                        return;
+                    }
                 }
-                Item current = Items[x, y, z];
-                if (current==null)
-                {
-                    continue;
-
-
-                }
-                if (current.Quantity >= StackSize)
-
             }
-                int size = item.StackSize;
-                
-              
-                
-                if (Tasks[x, y, z]==null)
+            // if there isn't an existing task with space left
+            foreach (int i in order)
+            {
+                Feature f = Features[i];
+                var (x, y, z) = f;
+                Task task = Tasks[x, y, z];
+                Item pile = Items[x, y, z];
+                if (task == null)
                 {
-                    HaulTask haul = Entity.Spawn<HaulTask>();
-                    haul.Ingredients = new Dictionary<string, int>() { { item.Resource, item.Unclaimed } }; ;
-                    haul.Claims = new Dictionary<int, int>() { { item.EID, item.Unclaimed } };
-                    haul.Place(x, y, z);
-                    item.Claimed += item.Unclaimed;
-                    break;
+                    HaulTask ht = Entity.Spawn<HaulTask>();
+                    int claim = Math.Min(item.Unclaimed, ht.HasSpace());
+                    ht.Claims[item.EID] = claim;
+                    item.Claimed += claim;
+                    return;
                 }
             }
         }
+       
 
         public virtual string MenuHeader
         {

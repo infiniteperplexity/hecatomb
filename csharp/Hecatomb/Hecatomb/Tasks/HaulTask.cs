@@ -74,6 +74,12 @@ namespace Hecatomb
             return true;
         }
 
+        public int HasSpace()
+        {
+            Item item = Items[X, Y, Z];
+            int claimed = Claims.Values.ToList()[0];
+            return item.StackSize - (item.Quantity + claimed);
+        }
         public override void AssignTo(Creature c)
         {
             c.GetComponent<Minion>().Task = this;
