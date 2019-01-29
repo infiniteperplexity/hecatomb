@@ -124,7 +124,6 @@ namespace Hecatomb
         public override void Start()
 		{
 			base.Start();
-            Debug.WriteLine("here we are");
             Feature f = Game.World.Features[X, Y, Z];
 			f.FG = Structure.Entity.FGs[FeatureIndex];
 		}

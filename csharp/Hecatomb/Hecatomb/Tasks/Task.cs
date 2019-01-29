@@ -177,7 +177,6 @@ namespace Hecatomb
         }
         public void FetchIngredient()
         {
-            Debug.WriteLine("trying to fetch an ingredient");
             if (Claims.Count == 0)
             {
                 return;

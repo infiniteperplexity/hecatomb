@@ -46,9 +46,10 @@ namespace Hecatomb
                 Game.World.Items[x1, y1, z1] = this;
                 base.Place(x1, y1, z1, fireEvent);
             }
-            else if (e.Resource==Resource)
+            else if (e.Resource == Resource && e.Quantity < e.StackSize)
             {
                 // should I fire a Place event here?
+                Debug.WriteLine("adding quantity " + e.Quantity + " " + Quantity);
                 e.AddQuantity(Quantity);
                 Despawn();
             }
@@ -122,11 +123,16 @@ namespace Hecatomb
                 leftovers = n - (StackSize - Quantity);
                 Quantity = StackSize;
                 PlaceNewResource(Resource, leftovers, X, Y, Z);
-            }   
+            }
+            else
+            {
+                Quantity += n;
+            }
         }
 
         public void Displace(int x, int y, int z)
         {
+            Debug.WriteLine("displacing item");
             int MaxDistance = 2;
             List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
             order = order.OrderBy(s=>Game.World.Random.NextDouble()).ToList();

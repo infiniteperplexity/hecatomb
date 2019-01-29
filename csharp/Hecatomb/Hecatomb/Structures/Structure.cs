@@ -118,7 +118,9 @@ namespace Hecatomb
                 {
                     if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed > 0)
                     {
+                        Debug.WriteLine("flag 1");
                         AssignItemToHaulTask(item);
+                        Debug.WriteLine("flag 2");
                     }
                 }
             }
@@ -145,6 +147,7 @@ namespace Hecatomb
                 {
                     HaulTask ht = (HaulTask)task;
                     int space = ht.HasSpace(resource);
+                    Debug.WriteLine("has this much space: " + space);
                     string res = ht.Ingredients.Keys.ToList()[0];
                     if (res == resource && space > 0)
                     {
@@ -160,15 +163,38 @@ namespace Hecatomb
                 }
             }
             // if there isn't an existing task with space left
+            // if there's an existing pile
             foreach (int i in order)
             {
                 Feature f = Features[i];
                 var (x, y, z) = f;
                 Task task = Tasks[x, y, z];
                 Item pile = Items[x, y, z];
+                if (pile != null && pile.Resource == resource && task == null)
+                {
+                    Debug.WriteLine("spawn 3");
+                    HaulTask ht = Entity.Spawn<HaulTask>();
+                    Debug.WriteLine("spawn 4");
+                    ht.Place(x, y, z);
+                    ht.Ingredients[resource] = 0;
+                    int claim = Math.Min(item.Unclaimed, ht.HasSpace(resource));
+                    ht.Ingredients[resource] = claim;
+                    ht.Claims[item.EID] = claim;
+                    item.Claimed += claim;
+                    return;
+                }
+            }
+            // if there's not an existing pile
+            foreach (int i in order)
+            {
+                Feature f = Features[i];
+                var (x, y, z) = f;
+                Task task = Tasks[x, y, z];
                 if (task == null)
                 {
+                    Debug.WriteLine("spawn 5");
                     HaulTask ht = Entity.Spawn<HaulTask>();
+                    Debug.WriteLine("spawn 6");
                     ht.Place(x, y, z);
                     ht.Ingredients[resource] = 0;
                     int claim = Math.Min(item.Unclaimed, ht.HasSpace(resource));
