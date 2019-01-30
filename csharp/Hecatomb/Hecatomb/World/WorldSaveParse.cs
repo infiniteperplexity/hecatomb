@@ -14,10 +14,42 @@ using System.Linq;
 
 namespace Hecatomb
 {
+    public class HecatombConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            if (value is TileEntity /*&& (value as TileEntity).Distinctive*/)
+            {
+                TileEntity e = (TileEntity)value;
+                JObject o = JObject.FromObject(value);
+                o.Add("Symbol", e.Symbol);
+                o.Add("FG", e.FG);
+                o.Add("BG", e.BG);
+                o.Add("Distinctive", true);
+                o.WriteTo(writer);
+            }
+            else
+            {
+                JObject.FromObject(value).WriteTo(writer);
+            }
+        }
 
-	public partial class World
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return (string)reader.Value;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return typeof(Entity).IsAssignableFrom(objectType);
+        }
+    }
+
+    public partial class World
 	{
-		public string Stringify()
+
+        //https://blog.maskalik.com/asp-net/json-net-implement-custom-serialization/
+        public string Stringify()
 		{
 			int[,,] terrainFIDs = new int[Width, Height, Depth];
             int[,,] coverFIDs = new int[Width, Height, Depth];

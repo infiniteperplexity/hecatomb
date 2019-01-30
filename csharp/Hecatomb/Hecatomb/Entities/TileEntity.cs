@@ -27,6 +27,7 @@ namespace Hecatomb
 		[JsonIgnore] public char Symbol;
 		[JsonIgnore] public string FG;
 		[JsonIgnore] public string BG;
+        [JsonIgnore] public bool Distinctive;
 		public int X {get; private set;}
 		public int Y {get; private set;}
 		public int Z {get; private set;}

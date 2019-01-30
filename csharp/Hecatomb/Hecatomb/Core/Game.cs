@@ -103,29 +103,39 @@ namespace Hecatomb
             });
             Controls.ImageOverride = new ImageOverride(graphics, sprites);
         }
-        protected  void StartGame()
+        protected void StartGame()
         {
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
-			WorldBuilder builder = new DefaultBuilder();
-			builder.Build(World);
+            WorldBuilder builder = new DefaultBuilder();
+            builder.Build(World);
             World.GetState<AchievementHandler>();
             World.GetState<HumanTracker>();
             Controls = DefaultControls;
             //ShowIntro();
             Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
-			World.Player = p;
+            World.Player = p;
             p.GetComponent<Actor>().Team = Team.PlayerTeam;
-			p.Place(
-				World.Width/2,
-				World.Height/2,
-				World.GetGroundLevel(World.Width/2, World.Height/2)
-			);
+            p.Place(
+                World.Width / 2,
+                World.Height / 2,
+                World.GetGroundLevel(World.Width / 2, World.Height / 2)
+            );
 
-			Camera.Center(p.X, p.Y, p.Z);
-			var t = Hecatomb.Entity.Spawn<TutorialHandler>();
-			t.Activate();
-			TurnHandler.HandleVisibility();
+            Camera.Center(p.X, p.Y, p.Z);
+            var t = Hecatomb.Entity.Spawn<TutorialHandler>();
+            t.Activate();
+            TurnHandler.HandleVisibility();
             Time.Frozen = false;
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.Converters.Add(new HecatombConverter());
+            settings.Formatting = Formatting.Indented;
+
+            var json = JsonConvert.SerializeObject(p, settings);
+            Debug.WriteLine("The serialized player looks like this:");
+            Debug.WriteLine(json);
+            JObject parsed = (JObject)JsonConvert.DeserializeObject(json);
+            Creature jsontest = parsed.ToObject<Creature>();
+            Debug.WriteLine(jsontest.Symbol);
         }
 
 

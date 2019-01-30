@@ -11,7 +11,8 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-	public abstract class Entity
+    //[JsonConverter(typeof(HecatombSerializer))]
+    public abstract class Entity
 	{
         [JsonIgnore] public static int MaxEID;
         [JsonIgnore]public static Dictionary<int, Entity> Entities;
