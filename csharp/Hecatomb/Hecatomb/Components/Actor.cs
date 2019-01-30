@@ -17,16 +17,17 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 	
-	public class Actor : Component
+	public class Actor : Component, ICallStrings
 	{
         public TileEntityField<TileEntity> Target;
 		[JsonIgnore] public int ActionPoints;
 		public int CurrentPoints;
 		private string TeamName;
         public bool Acted;
-        public List<Action> Goals = new List<Action>();
-        public Action Alert;
-        public Action Fallback;
+        public List<string> Goals = new List<string>();
+        public string Alert;
+        public string Fallback;
+        public void CallString(string s) { }
         // so I guess this doesn't get reconstituted correctly when restoring a game
 		[JsonIgnore] public Team Team
 		{
@@ -55,8 +56,8 @@ namespace Hecatomb
 		{
 			ActionPoints = 16;
             CurrentPoints = (Turns.Turn==0) ? ActionPoints : 0;
-            Alert = CheckForHostile;
-            Fallback = WalkRandom;
+            Alert = "CheckForHostile";
+            Fallback = "WalkRandom";
         }
 		
 		public void Regain()
@@ -80,12 +81,12 @@ namespace Hecatomb
 			{
 				return;
 			}
-            Alert();
+            CallString(Alert);
             if (!Acted)
             {
-                foreach (Action goal in Goals)
+                foreach (string goal in Goals)
                 {
-                    goal();
+                    CallString(goal);
                     if (Acted)
                     {
                         return;
@@ -287,17 +288,17 @@ namespace Hecatomb
 			{
                 this.Team = Team.Types[(string)obj["TeamName"]];
 			}
-            if (obj["Goals"]!=null)
-            {
-                List<string> goals = obj["Goals"].ToObject<List<string>>();
-                foreach (string s in goals)
-                {
-                    if (s=="HuntForPlayer")
-                    {
-                        Goals.Add(HuntForPlayer);
-                    }
-                }
-            }
+            //if (obj["Goals"]!=null)
+            //{
+            //    List<string> goals = obj["Goals"].ToObject<List<string>>();
+            //    foreach (string s in goals)
+            //    {
+            //        if (s=="HuntForPlayer")
+            //        {
+            //            Goals.Add("HuntForPlayer");
+            //        }
+            //    }
+            //}
 		}
 
 

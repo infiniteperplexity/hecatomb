@@ -56,6 +56,16 @@ namespace Hecatomb
             base.Place(x1, y1, z1, fireEvent);
             foreach (Component c in Components.Values)
             {
+                if (c==null)
+                {
+                    Debug.WriteLine("found an error");
+                    Debug.WriteLine("EID was " + EID);
+                    Debug.WriteLine(Components.Count);
+                    Debug.WriteLine(Components.Values.ToList()[0].EID);
+                    Debug.WriteLine(Components.Keys);
+                    Debug.WriteLine(Components.Values);
+                    
+                }
                 c.AfterSelfPlace(x1, y1, z1);
             }
         }
@@ -66,7 +76,11 @@ namespace Hecatomb
             {
                 foreach (int c in Components.Values)
                 {
-                    Entities[c].Despawn();
+                    // does this somehow not get updated if they have already despawned?
+                    if (Entities.ContainsKey(c))
+                    {
+                        Entities[c].Despawn();
+                    }
                 }
             }
             base.Despawn();

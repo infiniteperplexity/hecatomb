@@ -96,30 +96,42 @@ namespace Hecatomb
             // may want to double check that everything has been cleared?
 			int pid = (int) parsed["player"];
 			Entity.MaxEID = -1;
+            Dictionary<int, Coord> Placements = new Dictionary<int, Coord>();
 			foreach (var child in parsed["entities"].Values())
 			{
                 // will this handle Player?  It's such a terrible way I do that...
 				string t = (string) child["ClassName"];
 				Type T = Type.GetType("Hecatomb." + t);
 				Entity ge = (Entity) child.ToObject(T);
+                if (ge is TileEntity)
+                {
+                    Coord c = (Coord) child.ToObject(typeof(Coord));
+                    Placements[ge.EID] = c;
+                }
 				Entities[ge.EID] = ge;
 				Entity.MaxEID = Math.Max(Entity.MaxEID, ge.EID);
 				ge.Spawned = true;
-				if (ge is TileEntity)
-				{
-					Coord c = child.ToObject<Coord>();
-					TypedEntity te = (TypedEntity) ge;
-                    Debug.WriteLine(te.GetType());
-                    Debug.Print(te.TypeName);
-                    EntityType.Types[te.TypeName].Standardize(te);
-					te.Place(c.X, c.Y, c.Z, fireEvent: false);
-				}
-				else if (ge is Task)
-				{
-					Task task = (Task) ge;
-					//task.Standardize();
-				}
 			}
+            // okay, this gets weird...so...
+            foreach (int eid in Placements.Keys.ToList())
+            {
+                Entity e = Entities[eid];
+                if (e is TileEntity)
+                {
+                    TileEntity te = (TileEntity)e;
+                    var (x, y, z) = Placements[eid];
+                    if (te is TypedEntity)
+                    {
+                        TypedEntity tye = (TypedEntity)te;
+                        EntityType.Types[tye.TypeName].Standardize(tye);
+                    }
+                    // don't place it unless it is placed!
+                    if (x != -1 && y != -1 && z != -1)
+                    {
+                        te.Place(x, y, z, fireEvent: false);
+                    }
+                }
+            }
 			// *** Player ***
 			
 			Player = (Creature) Entities[pid];

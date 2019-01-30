@@ -20,7 +20,8 @@ namespace Hecatomb
         public char[] Symbols;
         public string[] FGs;
         public string[] BGs;
-        public Feature[] Features;
+        // problem!
+        public List<TileEntityField<Feature>> Features;
         public Dictionary<string, int>[] Ingredients;
         public string[] Researches;
         public string[] ResearchPrereqs;
@@ -33,7 +34,11 @@ namespace Hecatomb
         {
             Width = 3;
             Height = 3;
-            Features = new Feature[Width * Height];
+            Features = new List<TileEntityField<Feature>>();
+            for (int i = 0; i<Width*Height; i++)
+            {
+                Features.Add(null);
+            }
             Ingredients = new Dictionary<string, int>[Width * Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
             ResearchPrereqs = new string[0];
@@ -205,8 +210,8 @@ namespace Hecatomb
                 }
             }
         }
-       
 
+        [JsonIgnore]
         public virtual string MenuHeader
         {
             get
@@ -216,6 +221,7 @@ namespace Hecatomb
             set { }
         }
 
+        [JsonIgnore]
         public virtual List<IMenuListable> MenuChoices
         {
             get

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -24,8 +25,10 @@ namespace Hecatomb
 	
 	public interface IChoiceMenu
 	{
-		string MenuHeader {get; set;}
-		List<IMenuListable> MenuChoices {get; set;}
+        [JsonIgnore]
+        string MenuHeader {get; set;}
+        [JsonIgnore]
+        List<IMenuListable> MenuChoices {get; set;}
 	}
 		
 	public class MenuChoiceControls : ControlContext

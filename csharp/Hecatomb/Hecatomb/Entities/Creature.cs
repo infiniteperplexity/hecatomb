@@ -17,6 +17,11 @@ namespace Hecatomb
 
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
+            if (x1==-1)
+            {
+                Debug.WriteLine("What on earth just happened?");
+                Debug.WriteLine(this.Describe());
+            }
             Creature e = Game.World.Creatures[x1, y1, z1];
 
             if (e == null)
@@ -58,6 +63,7 @@ namespace Hecatomb
             Game.World.Creatures[x0, y0, z0] = null;
         }
 
+        [JsonIgnore]
         public virtual string MenuHeader
         {
             get
@@ -67,6 +73,7 @@ namespace Hecatomb
             set { }
         }
 
+        [JsonIgnore]
         public virtual List<IMenuListable> MenuChoices
         {
             get

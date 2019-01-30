@@ -42,6 +42,11 @@ namespace Hecatomb
         // override Place from TileEntity
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
+            if (x1==-1)
+            {
+                Debug.WriteLine("what on earth is going on here?");
+                Debug.WriteLine(this);
+            }
             if (Tasks[x1, y1, z1]!=null)
             {
                 throw new InvalidOperationException($"Task placement conflict at {x1} {y1} {z1}");
