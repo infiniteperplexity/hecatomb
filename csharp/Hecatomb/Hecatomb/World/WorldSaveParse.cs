@@ -14,18 +14,33 @@ using System.Linq;
 
 namespace Hecatomb
 {
+    public struct GlyphFields
+    {
+        public char Symbol;
+        public string FG;
+        public string BG;
+    }
     public class HecatombConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            if (value is TileEntity /*&& (value as TileEntity).Distinctive*/)
+            if (value is TypedEntity /*&& (value as TileEntity).Distinctive*/)
             {
-                TileEntity e = (TileEntity)value;
+                TypedEntity te = (TypedEntity)value;
+                EntityType et = EntityType.Types[te.TypeName];
                 JObject o = JObject.FromObject(value);
-                o.Add("Symbol", e.Symbol);
-                o.Add("FG", e.FG);
-                o.Add("BG", e.BG);
-                o.Add("Distinctive", true);
+                if (te.Symbol!=et.Symbol)
+                {
+                    o.Add("Symbol", te.Symbol);
+                }
+                if (te.FG != et.FG)
+                {
+                    o.Add("FG", te.FG);
+                }
+                if (te.BG != et.BG)
+                {
+                    o.Add("BG", te.BG);
+                }
                 o.WriteTo(writer);
             }
             else
@@ -36,7 +51,30 @@ namespace Hecatomb
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            return (string)reader.Value;
+            // Load JObject from stream
+            JObject job = JObject.Load(reader);
+            string t = (string)job["ClassName"];
+            Type T = Type.GetType("Hecatomb." + t);
+            Entity ge = (Entity)job.ToObject(T);
+            if (ge is TypedEntity)
+            {
+                TypedEntity te = (TypedEntity)ge;
+                EntityType.Types[te.TypeName].Standardize(te);
+                GlyphFields gf = job.ToObject<GlyphFields>();
+                if (gf.Symbol!=default(char))
+                {
+                    te.Symbol = gf.Symbol;
+                }
+                if (gf.FG!=null)
+                {
+                    te.FG = gf.FG;
+                }
+                if (gf.BG != null)
+                {
+                    te.BG = gf.BG;
+                }
+            }
+            return ge;
         }
 
         public override bool CanConvert(Type objectType)

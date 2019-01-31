@@ -129,12 +129,12 @@ namespace Hecatomb
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
             settings.Formatting = Formatting.Indented;
-
+            p.Symbol = 'X';
             var json = JsonConvert.SerializeObject(p, settings);
             Debug.WriteLine("The serialized player looks like this:");
             Debug.WriteLine(json);
-            JObject parsed = (JObject)JsonConvert.DeserializeObject(json);
-            Creature jsontest = parsed.ToObject<Creature>();
+            Debug.WriteLine("Here is the deserialized thing.");
+            Creature jsontest = (Creature) JsonConvert.DeserializeObject<Entity>(json, settings);
             Debug.WriteLine(jsontest.Symbol);
         }
 
