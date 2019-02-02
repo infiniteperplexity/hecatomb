@@ -123,6 +123,8 @@ namespace Hecatomb
 
         public override void Start()
 		{
+            Debug.WriteLine("Check while starintg a task");
+            Debug.WriteLine(Structure.Entity.Features.Count);
 			base.Start();
             Feature f = Game.World.Features[X, Y, Z];
 			f.FG = Structure.Entity.FGs[FeatureIndex];
@@ -140,6 +142,7 @@ namespace Hecatomb
             f.BG = Structure.Entity.BG;
 			Structure.Entity.Features[FeatureIndex] = f;
 			bool finished = true;
+            //Somehow the size of the Feature array gets doubled when you restore the game
 			foreach (Feature fr in Structure.Entity.Features)
 			{
 				if (fr==null)

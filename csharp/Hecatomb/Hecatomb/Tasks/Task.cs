@@ -18,7 +18,7 @@ namespace Hecatomb
         [JsonIgnore] public int WorkRange;
         [JsonIgnore] public int LaborCost;
         [JsonIgnore] public string MenuName;
-        [JsonIgnore] public Dictionary<string, int> Ingredients;
+        public Dictionary<string, int> Ingredients;
         // ISelectsBox properties
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
