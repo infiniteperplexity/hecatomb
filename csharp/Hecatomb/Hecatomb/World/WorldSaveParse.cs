@@ -125,8 +125,11 @@ namespace Hecatomb
             //    var j = JsonConvert.SerializeObject(ge, Formatting.Indented, new JsonSerializerSettings
             //    { NullValueHandling = NullValueHandling.Ignore });
             //}
-            var json = JsonConvert.SerializeObject(jsonready, Formatting.Indented, new JsonSerializerSettings
-                { NullValueHandling = NullValueHandling.Ignore});
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.Converters.Add(new HecatombConverter());
+            settings.Formatting = Formatting.Indented;
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            var json = JsonConvert.SerializeObject(jsonready, settings);
             System.IO.File.WriteAllText(@"..\GameWorld.json", json);
 			return json;
 		}
@@ -134,7 +137,9 @@ namespace Hecatomb
 		public void Parse(string json)
 			
 		{
-			JObject parsed = (JObject) JsonConvert.DeserializeObject(json);
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.Converters.Add(new HecatombConverter());
+            JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
 			// *** Random Seed ***
 			Random = parsed["random"].ToObject<StatefulRandom>();
 			Random.Initialize();
@@ -167,7 +172,8 @@ namespace Hecatomb
 			int pid = (int) parsed["player"];
 			Entity.MaxEID = -1;
             Dictionary<int, Coord> Placements = new Dictionary<int, Coord>();
-			foreach (var child in parsed["entities"].Values())
+            Dictionary<int, GlyphFields> Glyphs = new Dictionary<int, GlyphFields>();
+            foreach (var child in parsed["entities"].Values())
 			{
                 // will this handle Player?  It's such a terrible way I do that...
 				string t = (string) child["ClassName"];
@@ -177,6 +183,7 @@ namespace Hecatomb
                 {
                     Coord c = (Coord) child.ToObject(typeof(Coord));
                     Placements[ge.EID] = c;
+                    Glyphs[ge.EID] = child.ToObject<GlyphFields>();
                 }
 				Entities[ge.EID] = ge;
 				Entity.MaxEID = Math.Max(Entity.MaxEID, ge.EID);
@@ -194,6 +201,19 @@ namespace Hecatomb
                     {
                         TypedEntity tye = (TypedEntity)te;
                         EntityType.Types[tye.TypeName].Standardize(tye);
+                        GlyphFields gf = Glyphs[eid];
+                        if (gf.Symbol!=default(char))
+                        {
+                            tye.Symbol = gf.Symbol;
+                        }
+                        if (gf.FG != null)
+                        {
+                            tye.FG = gf.FG;
+                        }
+                        if (gf.BG != null)
+                        {
+                            tye.BG = gf.BG;
+                        }
                     }
                     // don't place it unless it is placed!
                     if (x != -1 && y != -1 && z != -1)
