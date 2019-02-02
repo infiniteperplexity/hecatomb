@@ -22,7 +22,7 @@ namespace Hecatomb
         public TileEntityField<TileEntity> Target;
 		[JsonIgnore] public int ActionPoints;
 		public int CurrentPoints;
-		private string TeamName;
+		public string TeamName;
         public bool Acted;
         public List<string> Goals = new List<string>();
         public string Alert;
