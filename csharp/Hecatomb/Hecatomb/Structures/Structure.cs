@@ -118,6 +118,7 @@ namespace Hecatomb
 
         public virtual GameEvent OnTurnBegin(GameEvent ge)
         {
+            Debug.WriteLine("testing");
             if (!Placed)
             {
                 return ge;

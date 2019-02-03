@@ -222,14 +222,16 @@ namespace Hecatomb
                         Structure s = (Structure)te;
                         int size = s.Width * s.Height;
                         s.Features = s.Features.Skip(size).ToList();
-                        
-
                     }
                     // don't place it unless it is placed!
                     if (x != -1 && y != -1 && z != -1)
                     {
                         te.Place(x, y, z, fireEvent: false);
                     }
+                }
+                else if (e is StateHandler)
+                {
+                    (e as StateHandler).Activate();
                 }
             }
 			// *** Player ***
@@ -251,11 +253,19 @@ namespace Hecatomb
             var	events = parsed.GetValue("events").ToObject<Dictionary<string,Dictionary<int, string>>>();
 			foreach (string type in events.Keys)
 			{
-				var listeners = events[type];
-				listeners.Clear();
+                var listeners = events[type];
+                //listeners.Clear();
+                if (Events.ListenerTypes.ContainsKey(type))
+                {
+                    Events.ListenerTypes[type].Clear();
+                }
+                else
+                {
+                    Events.ListenerTypes[type] = new Dictionary<int, Func<GameEvent, GameEvent>>();
+                }
 				foreach (int eid in listeners.Keys)
 				{
-					Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(Type.GetType("Hecatomb."+type), Entities[eid], listeners[eid]);
+                    Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
 				}
 			}
 		}
