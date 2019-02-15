@@ -9,6 +9,7 @@
 using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 
 namespace Hecatomb
@@ -27,6 +28,17 @@ namespace Hecatomb
             var (x, y, z) = Entity;
             storedZ = z;
 			ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, addToVisible);
+            foreach (Coord c in Visible.ToList())
+            {        
+                if (Terrains[c.X, c.Y, c.Z + 1].ZView==-1)
+                {
+                    Visible.Add(new Coord(c.X, c.Y, c.Z + 1));
+                }
+                if (Terrains[c.X, c.Y, c.Z].ZView == -1)
+                {
+                    Visible.Add(new Coord(c.X, c.Y, c.Z - 1));
+                }
+            }
 			return Visible;
 		}
 

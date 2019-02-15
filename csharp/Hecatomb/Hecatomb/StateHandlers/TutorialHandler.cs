@@ -934,6 +934,7 @@ namespace Hecatomb
 		
 		public GameEvent HandleEvent(GameEvent g)
 		{
+            Activate();
 			TutorialStates[CurrentIndex].HandleEvent((TutorialEvent) g);
 			return g;
 		}
