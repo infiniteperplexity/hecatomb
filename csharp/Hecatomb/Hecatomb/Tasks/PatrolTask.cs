@@ -21,5 +21,11 @@ namespace Hecatomb
         {
             Game.Controls.Set(new SelectTileControls(this));
         }
+
+        public override void Act()
+        {
+            Actor a = Worker.GetComponent<Actor>();
+            a.Patrol(X, Y, Z);
+        }
     }
 }

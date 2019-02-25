@@ -24,6 +24,7 @@ namespace Hecatomb
 		public int CurrentPoints;
 		public string TeamName;
         public bool Acted;
+        public bool DeclaredEnemy;
         public List<string> Goals = new List<string>();
         public string Alert;
         public string Fallback;
@@ -251,7 +252,7 @@ namespace Hecatomb
                 }
                 else
                 {
-                    enemies = Team.GetEnemies();
+                    enemies = Team.GetEnemies().ToList();
                 }
                 enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
                 if (enemies.Count > 0)

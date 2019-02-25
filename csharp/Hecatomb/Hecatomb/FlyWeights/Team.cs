@@ -60,10 +60,18 @@ namespace Hecatomb
         public bool IsHostile(Creature c)
         {
             Actor a = c.GetComponent<Actor>();
+            if (this==PlayerTeam && a.DeclaredEnemy)
+            {
+                return true;
+            }
             return IsHostile(a);
         }
         public bool IsHostile(Actor a)
         {
+            if (this == PlayerTeam && a.DeclaredEnemy)
+            {
+                return true;
+            }
             Team t = a.Team;
             return IsHostile(t);
         }
@@ -88,16 +96,27 @@ namespace Hecatomb
             }
         }
         // I'm not sure whether cacheing is needed here or not.
-        public List<Creature> GetEnemies()
+        public HashSet<Creature> GetEnemies()
         {
             TeamTracker tt = Game.World.GetState<TeamTracker>();
-            List<Creature> enemies = new List<Creature>();
+            HashSet<Creature> enemies = new HashSet<Creature>();
             // this is crap...it's not symmetrical and it ignores berserk
             foreach (string enemy in Enemies)
             {
                 foreach (int eid in tt.Membership[enemy])
                 {
                     enemies.Add((Creature)Entities[eid]);
+                }
+            }
+            if (this==PlayerTeam)
+            {
+                foreach (Creature c in Creatures)
+                {
+                    Actor a = c.GetComponent<Actor>();
+                    if (a.DeclaredEnemy)
+                    {
+                        enemies.Add(c);
+                    }
                 }
             }
             return enemies;
