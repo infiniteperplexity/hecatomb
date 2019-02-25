@@ -10,6 +10,7 @@ using System.Diagnostics;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
 	public class DigTask : Task
 	{
 		public DigTask(): base()
@@ -119,7 +120,7 @@ namespace Hecatomb
 		{
 			var co = Game.Controls;
             co.MenuMiddle.Clear();
-            if (!Game.World.Explored.Contains(c))
+            if (!Game.World.Explored.Contains(c) && !Options.Explored)
             {
                 co.MenuMiddle = new List<ColoredText>() {"{yellow}Unexplored tile."};
             }
@@ -143,7 +144,7 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
-                if (Game.World.Explored.Contains(square))
+                if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
                     if (Game.World.Features[x, y, z]?.TryComponent<Harvestable>()!=null)
                     {
@@ -203,7 +204,7 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
-                if (Game.World.Explored.Contains(square))
+                if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
                     if (Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
                     {
@@ -244,7 +245,7 @@ namespace Hecatomb
                 } else if (    (priority == 4 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
                         || (priority == 3 && t == Terrain.FloorTile)
                         || (priority == 2 && t == Terrain.DownSlopeTile)
-                        || !Game.World.Explored.Contains(square))
+                        || (!Game.World.Explored.Contains(square) && !Options.Explored))
                {
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null)
@@ -260,7 +261,7 @@ namespace Hecatomb
             // what about non-harvestable, i.e. owned features?
             // maybe make those the very lowest priority?
             // in order to avoid giving away unexplored terrain, always allow designation
-            if (!Game.World.Explored.Contains(c))
+            if (!Game.World.Explored.Contains(c) && !Options.Explored)
             {
                 return true;
             }

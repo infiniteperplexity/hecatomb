@@ -17,11 +17,8 @@ namespace Hecatomb
         public void Drop()
         {
             var (x, y, z) = Entity;
-            Debug.WriteLine("about to drop");
             Item.Place(x, y, z);
-            Debug.WriteLine("dropped");
             Item = null;
-            Debug.WriteLine("clearing inventory");
         }
     }
 }

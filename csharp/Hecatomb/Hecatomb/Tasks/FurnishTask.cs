@@ -76,6 +76,7 @@ namespace Hecatomb
 		{
 			MenuName = "build fixtures";
 			Fixtures = new string[] {"Ramp", "Door", "SpearTrap"};
+            PrereqStructures = new List<string> { "Workshop" };
 		}
 			
 		public override void Finish()

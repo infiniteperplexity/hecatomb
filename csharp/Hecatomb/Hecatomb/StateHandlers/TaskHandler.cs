@@ -20,7 +20,7 @@ namespace Hecatomb
         public TaskHandler() : base()
         {
             Minions = new List<TypedEntityField<Creature>>();
-            Tasks = new[] { "DigTask", "BuildTask", "ConstructTask", "FurnishTask", "UndesignateTask" };
+            Tasks = new[] { "DigTask", "BuildTask", "ConstructTask", "FurnishTask", "MurderTask", "PatrolTask", "ButcherTask", "UndesignateTask" };
         }
 
 
@@ -39,9 +39,22 @@ namespace Hecatomb
             get
             {
                 List<IMenuListable> tasks = new List<IMenuListable>();
+                var structures = Structure.ListAsStrings();
                 foreach (string t in Tasks)
                 {
-                    tasks.Add(GetTask(t));
+                    bool valid = true;
+                    Task task = GetTask(t);
+                    foreach (string s in task.PrereqStructures)
+                    {
+                        if (!structures.Contains(s))
+                        {
+                            valid = false;
+                        }
+                    }
+                    if (valid)
+                    {
+                        tasks.Add(GetTask(t));
+                    }
                 }
                 return tasks;
             }

@@ -12,6 +12,7 @@ using System.Diagnostics;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
 	public class BuildTask : Task
 	{
 		public BuildTask(): base()
@@ -98,7 +99,7 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
-                if (Game.World.Explored.Contains(square))
+                if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
                     if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
                     {
@@ -134,7 +135,7 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
-                if (Game.World.Explored.Contains(square))
+                if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
                     if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
                     {
@@ -172,7 +173,7 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            if (!Game.World.Explored.Contains(c))
+            if (!Game.World.Explored.Contains(c) && !Options.Explored)
             {
                 return false;
             }

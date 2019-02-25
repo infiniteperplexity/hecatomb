@@ -19,9 +19,9 @@ namespace Hecatomb
 
         public HecatombOptions()
         {
-            Explored = false;
-            Visible = false;
-            NoIngredients = false;
+            Explored = true;
+            Visible = true;
+            NoIngredients = true;
             Tutorial = false;
             StartupScreen = false;
             HumanAttacks = false;

@@ -49,7 +49,7 @@ namespace Hecatomb
         public override bool CanAssign(Creature c)
         {
             Coord crd = new Coord(X, Y, Z);
-            if (!Explored.Contains(crd))
+            if (!Explored.Contains(crd) && !Options.Explored)
             {
                 return false;
             }

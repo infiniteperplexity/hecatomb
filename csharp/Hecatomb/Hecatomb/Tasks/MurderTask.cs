@@ -9,7 +9,16 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    class MurderTask
+    class MurderTask : Task
     {
+        public MurderTask() : base()
+        {
+            MenuName = "declare hostile";
+        }
+
+        public override void ChooseFromMenu()
+        {
+            Game.Controls.Set(new SelectTileControls(this));
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace Hecatomb
         {
             Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
 
-            if (cr!=null && Game.World.Explored.Contains(c))
+            if (cr!=null && (Game.World.Explored.Contains(c) || Options.Explored))
             {
                 if (cr == Caster)
                 {
@@ -69,7 +69,7 @@ namespace Hecatomb
             int y = c.Y;
             int z = c.Z;
             Creature cr = Creatures[x, y, z];
-            if (!Game.World.Explored.Contains(c))
+            if (!Game.World.Explored.Contains(c) && !Options.Explored)
             {
                 Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }

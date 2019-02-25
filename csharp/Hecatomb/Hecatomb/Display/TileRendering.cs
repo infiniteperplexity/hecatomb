@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
     public partial class Tiles
     {
-
+        
         public static (char, string) GetColoredSymbol(int x, int y, int z, bool useLighting = true)
         {
             var Creatures = Game.World.Creatures;
@@ -139,7 +140,7 @@ namespace Hecatomb
                 // *** Symbol ***
 
                 // explored tunnel below a floor
-                if (terrain == Terrain.FloorTile && Game.World.Explored.Contains(cb) && !Tiles[x, y, z - 1].Solid)
+                if (terrain == Terrain.FloorTile && (Game.World.Explored.Contains(cb) || Options.Explored) && !Tiles[x, y, z - 1].Solid)
                 {
                     sym = '\u25E6';
                 }

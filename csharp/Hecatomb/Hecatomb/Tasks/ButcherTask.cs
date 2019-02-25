@@ -17,6 +17,7 @@ namespace Hecatomb
             MenuName = "butcher corpse";
             WorkRange = 0;
             Ingredients["Corpse"] = 1;
+            PrereqStructures = new List<string>() { "Slaughterhouse" };
         }
 
         public override string GetDisplayName()
@@ -39,7 +40,7 @@ namespace Hecatomb
         {
             var co = Game.Controls;
             co.MenuMiddle.Clear();
-            if (!Game.World.Explored.Contains(c))
+            if (!Game.World.Explored.Contains(c) && !Options.Explored)
             {
                 co.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
@@ -55,12 +56,12 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            if (!Explored.Contains(c))
+            if (!Explored.Contains(c) && !Options.Explored)
             {
                 return false;
             }
             Item corpse = Items[c];
-            if (corpse != null && corpse.Resource == "Corpse" && corpse.Claimed <= 0)
+            if (corpse != null && Claims.ContainsKey(corpse.EID))
             {
                 return true;
             }
@@ -68,6 +69,11 @@ namespace Hecatomb
             {
                 return false;
             }
+        }
+
+        public override void ChooseFromMenu()
+        {
+            Game.Controls.Set(new SelectTileControls(this));
         }
 
         public override void SelectTile(Coord c)
@@ -90,7 +96,7 @@ namespace Hecatomb
         public override bool CanAssign(Creature c)
         {
             Coord crd = new Coord(X, Y, Z);
-            if (!Explored.Contains(crd))
+            if (!Explored.Contains(crd) && !Options.Explored)
             {
                 return false;
             }

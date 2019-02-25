@@ -61,7 +61,7 @@ namespace Hecatomb
         public void SelectTile(Coord c)
         {
             Feature f = Game.World.Features[c.X, c.Y, c.Z];
-            if (Game.World.Explored.Contains(c) && f != null && f.TypeName == "Grave")
+            if ((Game.World.Explored.Contains(c) || Options.Explored) && f != null && f.TypeName == "Grave")
             {
                 Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
                 Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
@@ -89,7 +89,7 @@ namespace Hecatomb
             int y = c.Y;
             int z = c.Z;
             Feature f = Game.World.Features[x, y, z];
-            if (!Game.World.Explored.Contains(c))
+            if (!Game.World.Explored.Contains(c) && !Options.Explored)
             {
                 Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }

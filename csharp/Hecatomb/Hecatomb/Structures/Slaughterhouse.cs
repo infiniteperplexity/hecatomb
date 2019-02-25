@@ -45,7 +45,7 @@ namespace Hecatomb
             };
             MenuName = "slaughterhouse";
             Name = "slaughterhouse";
-            Stores = new string[] { "Meat", "Bone" };
+            Stores = new string[] { "Flesh", "Bone" };
         }
     }
 }

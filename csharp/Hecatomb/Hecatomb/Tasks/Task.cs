@@ -18,6 +18,7 @@ namespace Hecatomb
         [JsonIgnore] public int WorkRange;
         [JsonIgnore] public int LaborCost;
         [JsonIgnore] public string MenuName;
+        [JsonIgnore] public List<string> PrereqStructures;
         public Dictionary<string, int> Ingredients;
         // ISelectsBox properties
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
@@ -31,6 +32,7 @@ namespace Hecatomb
         // constructor
         public Task() : base()
         {
+            MenuName = "default task name";
             Name = "task";
             Worker = new TypedEntityField<Creature>();
             WorkRange = 1;
@@ -38,6 +40,7 @@ namespace Hecatomb
             Labor = LaborCost;
             Ingredients = new Dictionary<string, int>();
             Claims = new Dictionary<int,int>();
+            PrereqStructures = new List<string>();
         }
         // override Place from TileEntity
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
@@ -76,7 +79,7 @@ namespace Hecatomb
         public virtual bool CanAssign(Creature c)
         {
             Coord crd = new Coord(X, Y, Z);
-            if (!Explored.Contains(crd))
+            if (!Explored.Contains(crd) && !Options.Explored)
             {
                 return false;
             }

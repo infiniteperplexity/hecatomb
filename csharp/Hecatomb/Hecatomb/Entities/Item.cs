@@ -132,11 +132,15 @@ namespace Hecatomb
 
         public void Displace(int x, int y, int z)
         {
-            Debug.WriteLine("displacing item");
             int MaxDistance = 2;
             List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
             order = order.OrderBy(s=>Game.World.Random.NextDouble()).ToList();
             Queue<Coord> queue = new Queue<Coord>();
+            if (Terrains[x, y, z] == Terrain.DownSlopeTile)
+            {
+                // first try to roll it down a slope
+                queue.Enqueue(new Coord(x, y, z - 1));
+            }
             foreach (int i in order)
             {
                 var (dx, dy, dz) = Movement.Directions8[i];
@@ -155,6 +159,15 @@ namespace Hecatomb
                 {
                     if (Items[c].Resource!=Resource || Items[c].Quantity>=StackSize)
                     {
+                        if (Terrains[c.X, c.Y, c.Z] == Terrain.DownSlopeTile)
+                        {
+                            queue.Enqueue(new Coord(c.X, c.Y, c.Z-1));
+                        }
+                        foreach (int i in order)
+                        {
+                            var (dx, dy, dz) = Movement.Directions8[i];
+                            queue.Enqueue(new Coord(x + dx, y + dy, z + dz));
+                        }
                         foreach (int i in order)
                         {
                             var (dx, dy, dz) = Movement.Directions8[i];
@@ -173,6 +186,7 @@ namespace Hecatomb
                 }
                 Status.PushMessage($"{Describe()} got displaced to {c.X} {c.Y} {c.Z}.");
                 Place(c.X, c.Y, c.Z);
+                return;
             }
             Status.PushMessage($"{Describe()} became lost in the clutter.");
             Despawn();

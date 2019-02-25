@@ -31,7 +31,17 @@ namespace Hecatomb
             Harvestable h = f.TryComponent<Harvestable>();
             if (h!=null)
             {
+                
+
                 h.Harvest();
+                if (f.TypeName=="Grave")
+                {
+                    Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
+                    Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
+                    Game.World.Covers[X, Y, Z] = Cover.NoCover;
+                    Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
+                    Game.World.ValidateOutdoors();
+                }
             }
             else
             {

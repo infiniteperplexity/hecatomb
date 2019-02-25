@@ -40,16 +40,12 @@ namespace Hecatomb
             {
                 Features.Add(null);
             }
-            Debug.WriteLine("Starts at this length");
-            Debug.WriteLine(Features.Count);
             Ingredients = new Dictionary<string, int>[Width * Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
             ResearchPrereqs = new string[0];
             StructurePrereqs = new string[0];
             Stores = new string[0];
             Researches = new string[0];
-            Debug.WriteLine("end of constructor");
-            Debug.WriteLine(Features.Count);
         }
 
         public static List<string> ListAsStrings()
@@ -118,7 +114,6 @@ namespace Hecatomb
 
         public virtual GameEvent OnTurnBegin(GameEvent ge)
         {
-            Debug.WriteLine("testing");
             if (!Placed)
             {
                 return ge;
@@ -129,9 +124,7 @@ namespace Hecatomb
                 {
                     if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed > 0)
                     {
-                        Debug.WriteLine("flag 1");
                         AssignItemToHaulTask(item);
-                        Debug.WriteLine("flag 2");
                     }
                 }
             }
@@ -158,7 +151,6 @@ namespace Hecatomb
                 {
                     HaulTask ht = (HaulTask)task;
                     int space = ht.HasSpace(resource);
-                    Debug.WriteLine("has this much space: " + space);
                     string res = ht.Ingredients.Keys.ToList()[0];
                     if (res == resource && space > 0)
                     {
@@ -183,9 +175,7 @@ namespace Hecatomb
                 Item pile = Items[x, y, z];
                 if (pile != null && pile.Resource == resource && task == null)
                 {
-                    Debug.WriteLine("spawn 3");
                     HaulTask ht = Entity.Spawn<HaulTask>();
-                    Debug.WriteLine("spawn 4");
                     ht.Place(x, y, z);
                     ht.Ingredients[resource] = 0;
                     int claim = Math.Min(item.Unclaimed, ht.HasSpace(resource));
@@ -203,9 +193,7 @@ namespace Hecatomb
                 Task task = Tasks[x, y, z];
                 if (task == null)
                 {
-                    Debug.WriteLine("spawn 5");
                     HaulTask ht = Entity.Spawn<HaulTask>();
-                    Debug.WriteLine("spawn 6");
                     ht.Place(x, y, z);
                     ht.Ingredients[resource] = 0;
                     int claim = Math.Min(item.Unclaimed, ht.HasSpace(resource));

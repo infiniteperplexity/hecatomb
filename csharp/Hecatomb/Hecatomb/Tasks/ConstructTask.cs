@@ -123,8 +123,6 @@ namespace Hecatomb
 
         public override void Start()
 		{
-            Debug.WriteLine("Check while starintg a task");
-            Debug.WriteLine(Structure.Entity.Features.Count);
 			base.Start();
             Feature f = Game.World.Features[X, Y, Z];
 			f.FG = Structure.Entity.FGs[FeatureIndex];
