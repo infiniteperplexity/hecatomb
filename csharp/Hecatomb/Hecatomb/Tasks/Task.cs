@@ -26,6 +26,7 @@ namespace Hecatomb
         // instance properties
         public TypedEntityField<Creature> Worker;
         public Dictionary<int, int> Claims;
+        public Dictionary<int, int> Fetching;
         public string Makes;
         public int Labor;
 
@@ -40,6 +41,7 @@ namespace Hecatomb
             Labor = LaborCost;
             Ingredients = new Dictionary<string, int>();
             Claims = new Dictionary<int,int>();
+            Fetching = new Dictionary<int, int>();
             PrereqStructures = new List<string>();
         }
         // override Place from TileEntity
@@ -190,6 +192,17 @@ namespace Hecatomb
                 return;
             }
             int eid = Claims.Keys.ToList()[0];
+            // Okay...so here's the issue...
+            if (!Entities.ContainsKey(eid))
+            {
+                Debug.WriteLine("hey we hit that one fetching error");
+                Debug.WriteLine($"the EID was {eid}");
+                Debug.WriteLine("Ingredients were these:");
+                foreach (String s in Ingredients.Keys)
+                {
+                    Debug.WriteLine(s);
+                }
+            }
             Item item = (Item)Entities[eid];
             // now need to do some validation
             if (!item.Placed)
