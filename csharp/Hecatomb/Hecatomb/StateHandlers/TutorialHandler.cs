@@ -44,7 +44,7 @@ namespace Hecatomb
 			MoveCount = 0;
             SlopeCount = 0;
 			CurrentIndex = 0;
-            Visible = Options.Tutorial;
+            Visible = !Options.NoTutorial;
             OffTutorialText = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Escape to get back on track or ? to hide tutorial messages." };
             OffTutorialCamera = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Tab to get back on track or ? to hide tutorial messages." };
             Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);
@@ -782,7 +782,7 @@ namespace Hecatomb
                         "{orange}**Esc: Cancel**.",
                         "{yellow}Choose a task:",
                         "a) dig or harvest",
-                        "{cyan}b) build walls or floors"
+                        "{cyan}b) build walls or floors ($: 1 rock)"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
@@ -934,8 +934,11 @@ namespace Hecatomb
 		
 		public GameEvent HandleEvent(GameEvent g)
 		{
-            Activate();
-			TutorialStates[CurrentIndex].HandleEvent((TutorialEvent) g);
+            if (!Game.World.StateHandlers.ContainsKey("TutorialHandler"))
+            {
+                Activate();
+            }
+            TutorialStates[CurrentIndex].HandleEvent((TutorialEvent) g);
 			return g;
 		}
 		

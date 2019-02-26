@@ -52,15 +52,15 @@ namespace Hecatomb
 		
 		public virtual void ChooseFromMenu()
 		{
-            if (Component.Sanity >= GetCost())
-            {
-                Cast();
-            }
 		}
 		
 		
 		public virtual ColoredText ListOnMenu()
 		{
+            if (GetCost()>Component.Sanity)
+            {
+                return "{gray}" + MenuName;
+            }
 			return MenuName;
 		}
 		

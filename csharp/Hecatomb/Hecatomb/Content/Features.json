@@ -36,6 +36,13 @@
 				}
 			},
 			{
+				"Type" : "Seaweed",
+				"Name": "seaweed",
+				"FG" : "green",
+				"Symbol" : "\u023F",
+				"Components" : {}
+			},
+			{
 				"Type" : "Shrub",
 				"Name": "shrub",
 				"FG" : "green",

@@ -61,7 +61,75 @@ namespace Hecatomb
         public FastNoise ElevationNoise;
 		public FastNoise VegetationNoise;
 		
-		
+		public Creature PlacePlayer()
+        {
+            Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
+            Player = p;
+            p.GetComponent<Actor>().Team = Team.PlayerTeam;
+            bool valid = true;
+            var x = Width / 2;
+            var y = Height / 2;
+            var z = GetGroundLevel(Width / 2, Height / 2);
+            if(Covers[x, y, z].Liquid)
+            {
+                valid = false;
+            }
+            var nearby = 0;
+            var graves = 0;
+            foreach (Feature f in Features)
+            {
+                if (f.TypeName=="Grave" && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<=15)
+                {
+                    graves += 1;
+                    if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 8)
+                    {
+                        nearby += 1;
+                    }
+                }
+            }
+            if (nearby<1 || graves<3)
+            {
+                valid = false;
+            }
+            var failures = 0;
+            while (!valid)
+            {
+                failures += 1;
+                if (failures>=250)
+                {
+                    Debug.WriteLine("had trouble placing player, regenerating world.");
+                    return null;
+                }
+                x += Random.Next(-5, 5);
+                y += Random.Next(-5, 5);
+                z = GetGroundLevel(x, y);
+                valid = true;
+                if (Covers[x, y, z].Liquid)
+                {
+                    valid = false;
+                }
+                nearby = 0;
+                graves = 0;
+                foreach (Feature f in Features)
+                {
+                    if (f.TypeName == "Grave" && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 15)
+                    {
+                        graves += 1;
+                        if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 5 && z==f.Z)
+                        {
+                            nearby += 1;
+                        }
+                    }
+                }
+                if (nearby < 1 || graves < 3)
+                {
+                    valid = false;
+                }
+            }
+            p.Place(x, y, z);
+            Game.Camera.Center(x, y, z);
+            return p;
+        }
 		
 		public World(int width, int height, int depth, int seed=0)
         { 

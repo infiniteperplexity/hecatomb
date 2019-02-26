@@ -342,34 +342,38 @@ namespace Hecatomb
 		    return line;
 		}
 		
-		private static List<Coord> getNeighbors(int x, int y, int z, Coord[] c)
+		private static List<Coord> getNeighbors(int x, int y, int z, Coord[] c, Func<int, int, int, bool> where = null)
 		{
+            where = where ?? ((int xx, int yy, int zz)=>(true));
 			List<Coord> l = new List<Coord>();
 			foreach (Coord d in c)
 			{
-				l.Add(new Coord(d.X+x, d.Y+y, d.Z+z));
+                if (where(d.X, d.Y, d.Z))
+                {
+                    l.Add(new Coord(d.X + x, d.Y + y, d.Z + z));
+                }
 			}
 			return l;
 		}
 		
-		public static List<Coord> GetNeighbors4(int x, int y, int z)
+		public static List<Coord> GetNeighbors4(int x, int y, int z, Func<int, int, int, bool> where = null)
 		{
-			return getNeighbors(x, y, z, Movement.Directions4);
+			return getNeighbors(x, y, z, Movement.Directions4, where: where);
 		}
 		
-		public static List<Coord> GetNeighbors8(int x, int y, int z)
+		public static List<Coord> GetNeighbors8(int x, int y, int z, Func<int, int, int, bool> where = null)
 		{
-			return getNeighbors(x, y, z, Movement.Directions8);
+			return getNeighbors(x, y, z, Movement.Directions8, where: where);
 		}
 		
-		public static List<Coord> GetNeighbors10(int x, int y, int z)
+		public static List<Coord> GetNeighbors10(int x, int y, int z, Func<int, int, int, bool> where = null)
 		{
-			return getNeighbors(x, y, z, Movement.Directions10);
+			return getNeighbors(x, y, z, Movement.Directions10, where: where);
 		}
 		
-		public static List<Coord> GetNeighbors26(int x, int y, int z)
+		public static List<Coord> GetNeighbors26(int x, int y, int z, Func<int, int, int, bool> where = null)
 		{
-			return getNeighbors(x, y, z, Movement.Directions26);
+			return getNeighbors(x, y, z, Movement.Directions26, where: where);
 		}
 		
        

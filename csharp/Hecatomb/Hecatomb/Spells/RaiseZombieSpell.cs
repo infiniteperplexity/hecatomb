@@ -18,10 +18,6 @@ namespace Hecatomb
         {
             MenuName = "Raise zombie.";
         }
-        public override void Cast()
-        {
-
-        }
 
         public override int GetCost()
         {
@@ -46,14 +42,14 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            base.ChooseFromMenu();
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
             if (GetCost() > Component.Sanity)
             {
+                Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
                 Debug.WriteLine("cannot cast spell");
             }
             else
             {
+                Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
                 Game.Controls.Set(new SelectTileControls(this));
             }
         }
@@ -65,9 +61,9 @@ namespace Hecatomb
             {
                 Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
                 Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
+                Cast();
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
-                //				f.Destroy();
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
                 zombie.GetComponent<Actor>().Team = Team.PlayerTeam;
                 zombie.Place(c.X, c.Y, c.Z - 1);
@@ -75,12 +71,24 @@ namespace Hecatomb
                 emerge.AssignTo(zombie);
                 emerge.Place(c.X, c.Y, c.Z);
                 GetState<TaskHandler>().Minions.Add(zombie);
+                return;
+            }
+            Item i = Items[c.X, c.Y, c.Z];
+            if ((Game.World.Explored.Contains(c) || Options.Explored) && i != null && i.Resource=="Corpse")
+            {   
+                Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
+                Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
                 Cast();
+                ParticleEmitter emitter = new ParticleEmitter();
+                emitter.Place(c.X, c.Y, c.Z);
+                Creature zombie = Entity.Spawn<Creature>("Zombie");
+                zombie.GetComponent<Actor>().Team = Team.PlayerTeam;
+                zombie.Place(c.X, c.Y, c.Z);
+                Status.PushMessage("The corpse stirs to obey your commands.");
+                GetState<TaskHandler>().Minions.Add(zombie);
+                return;
             }
-            else
-            {
-                // not sure what to do, if there's no message scroll
-            }
+            // some notification of failure?
         }
 
         public void TileHover(Coord c)

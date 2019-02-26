@@ -43,6 +43,7 @@ namespace Hecatomb
             };
             MenuName = "sanctum";
             Name = "sanctum";
+            Researches = new[] { "CondenseEctoplasm", "LongShadow", "PoundOfFlesh" };
         }
     }
 }

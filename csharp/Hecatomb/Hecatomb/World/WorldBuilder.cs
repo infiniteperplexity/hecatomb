@@ -97,7 +97,11 @@ namespace Hecatomb
 							if (world.Random.Next(2)==1)
 							{
 								Feature tree;
-								if (world.Random.Next(2)==1)
+                                if (world.Covers[i, j, k].Liquid)
+                                {
+                                    tree = Entity.Spawn<Feature>("Seaweed"); ;
+                                }
+								else if (world.Random.Next(2)==1)
 								{
 									tree = Entity.Spawn<Feature>("ClubTree");
 								}
@@ -110,7 +114,8 @@ namespace Hecatomb
 						}
 						else
 						{
-							if (world.Random.Next(50)==0)
+                            Func<int, int, int, bool> downslopes = (int x, int y, int zz) => (world.GetTile(x, y, zz) == Terrain.DownSlopeTile);
+							if (world.Random.Next(50)==0 && !world.Covers[i, j, k].Liquid && Tiles.GetNeighbors8(i, j, k, where: downslopes).Count==0)
 							{
 								Feature grave = Entity.Spawn<Feature>("Grave");
 								grave.Place(i, j, k);

@@ -11,21 +11,23 @@ namespace Hecatomb
         public bool Explored;
         public bool Visible;
         public bool NoIngredients;
-        public bool Tutorial;
-        public bool StartupScreen;
+        public bool NoTutorial;
+        public bool NoStartupScreen;
         public bool HumanAttacks;
         public int WorkBonus;
         public bool AllSpells;
+        public bool NoManaCost;
 
         public HecatombOptions()
         {
-            Explored = true;
-            Visible = true;
-            NoIngredients = true;
-            Tutorial = false;
-            StartupScreen = false;
+            Explored = false;
+            Visible = false;
+            NoIngredients = false;
+            NoTutorial = false;
+            NoStartupScreen = false;
             HumanAttacks = false;
-            AllSpells = true;
+            AllSpells = false;
+            NoManaCost = false;
             WorkBonus = 5;
         }
     }

@@ -86,7 +86,7 @@ namespace Hecatomb
 			CameraControls = new CameraControls();
 			Camera = new Camera();
 			base.Initialize();
-            if (Options.StartupScreen)
+            if (!Options.NoStartupScreen)
             {
                 ShowIntro();
             }
@@ -112,20 +112,16 @@ namespace Hecatomb
             World.GetState<HumanTracker>();
             Controls = DefaultControls;
             //ShowIntro();
-            Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
-            World.Player = p;
-            p.GetComponent<Actor>().Team = Team.PlayerTeam;
-            p.Place(
-                World.Width / 2,
-                World.Height / 2,
-                World.GetGroundLevel(World.Width / 2, World.Height / 2)
-            );
-
-            Camera.Center(p.X, p.Y, p.Z);
+            Creature p = null;
+            while (p==null)
+            {
+                p = World.PlacePlayer();
+            }
             var t = Hecatomb.Entity.Spawn<TutorialHandler>();
             t.Activate();
             TurnHandler.HandleVisibility();
             Time.Frozen = false;
+            Controls.Reset();
         }
 
 

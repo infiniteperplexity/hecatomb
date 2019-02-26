@@ -81,14 +81,11 @@ namespace Hecatomb
             MaxSanity = 20;
             Sanity = 20;
 			Spells = new List<string>() {
-                "RaiseZombieSpell"
+                "RaiseZombieSpell",
+                "CondenseEctoplasmSpell",
+                "PoundOfFleshSpell",
+                "LongShadowSpell"
             };
-            if (Options.AllSpells)
-            {
-                Spells.Add("CondenseEctoplasmSpell");
-                Spells.Add("PoundOfFleshSpell");
-                Spells.Add("LongShadowSpell");
-            }
             AddListener<TurnBeginEvent>(OnTurnBegin);
 		}
 		
@@ -108,16 +105,7 @@ namespace Hecatomb
             spell.Caster = (Creature) Entity;
             return spell;
         }
-		
-//		public List<Spell> GetSpells()
-//		{
-//			List<Spell> spells = new List<Spell>();
-//			foreach (string s in Spells)
-//			{
-//				spells.Add(GetSpell(s));
-//			}
-//			return spells;
-//		}
+
 		public T GetSpell<T>() where T : Spell, new()
 		{
 			T s = new T();

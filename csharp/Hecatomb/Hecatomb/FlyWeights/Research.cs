@@ -65,6 +65,20 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>() { { "Flesh", 1 }, { "Bone", 1 } }
         };
 
+        public static Research LongShadow = new Research("Longshadow")
+        {
+            Name = "long shadow",
+            Turns = 25,
+            Ingredients = new Dictionary<string, int>() { { "Ectoplasm", 2 }}
+        };
+
+        public static Research PoundOfFlesh = new Research("PoundOfFleshm")
+        {
+            Name = "pound of flesh",
+            Turns = 25,
+            Ingredients = new Dictionary<string, int>() { { "Flesh", 2 }, { "Ectoplasm", 1 } }
+        };
+
 
     }
 }
