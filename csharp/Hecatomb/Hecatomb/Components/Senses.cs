@@ -42,6 +42,19 @@ namespace Hecatomb
 			return Visible;
 		}
 
+        public void Explore()
+        {
+            Actor a = Entity.GetComponent<Actor>();
+            if (a.TeamName=="PlayerTeam")
+            {
+                var visible = GetFOV();
+                foreach (Coord c in visible)
+                {
+                    Explored.Add(c);
+                }
+            }
+        }
+
         public bool CanSeeThrough(int x, int y)
         {
             return cannotSeeThrough(x, y);

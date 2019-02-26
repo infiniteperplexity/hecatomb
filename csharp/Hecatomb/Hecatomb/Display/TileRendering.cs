@@ -242,6 +242,10 @@ namespace Hecatomb
                 {
                     lighting = lighting / 2;
                 }
+                if (!visible)
+                {
+                    return (sym, fg);
+                }
                 return (sym, Game.Colors.Shade(fg, lighting));
             }
             return (sym, fg);
@@ -275,10 +279,10 @@ namespace Hecatomb
             {
                 return "black";
             }
-            else if (!Game.Visible.Contains(c) && !Game.Options.Visible)
-            {
-                return "black";
-            }
+            //else if (!Game.Visible.Contains(c) && !Game.Options.Visible)
+            //{
+            //    return "black";
+            //}
             else if (cr != null && (cr.BG != null || cr.Highlight != null))
             {
                 return cr.Highlight ?? cr.BG;

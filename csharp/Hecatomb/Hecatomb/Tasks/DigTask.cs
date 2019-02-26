@@ -83,14 +83,26 @@ namespace Hecatomb
 				{
 					tiles[X, Y, Z] = empty;
                     covers[X, Y, Z] = none;
+                    foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z - 1))
+                    {
+                        Explored.Add(c);
+                    }
                 }
-			}
+                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                {
+                    Explored.Add(c);
+                }
+            }
 			else if (t==up)
 			{
 				tiles[X, Y, Z] = floor;
                 covers[X, Y, Z] = none;
                 tiles[X, Y, Z + 1] = empty;
                 covers[X, Y, Z + 1] = none;
+                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                {
+                    Explored.Add(c);
+                }
             }
 			else if (t==down)
 			{
@@ -98,13 +110,21 @@ namespace Hecatomb
 				tiles[X, Y, Z-1] = floor;
                 covers[X, Y, Z] = none;
                 covers[X, Y, Z-1] = none;
+                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                {
+                    Explored.Add(c);
+                }
             }
 			else if (t==wall)
 			{
 				tiles[X, Y, Z] = floor;
                 covers[X, Y, Z].Mine(X, Y, Z);
                 covers[X, Y, Z] = none;
-            }		
+                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                {
+                    Explored.Add(c);
+                }
+            }
 			base.Finish();
             Game.World.ValidateOutdoors();
 		}

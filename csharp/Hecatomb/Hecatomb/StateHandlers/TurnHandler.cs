@@ -214,6 +214,11 @@ namespace Hecatomb
 				if (checkPoints>0)
 				{
 					actor.Act();
+                    //var senses = actor.Entity.TryComponent<Senses>();
+                    //if (senses!=null)
+                    //{
+                     //   senses.Explore();
+                    //}
 					if (actor.CurrentPoints==checkPoints)
 					{
 						throw new InvalidOperationException(String.Format("{0} somehow avoided using action points.", actor.Entity));

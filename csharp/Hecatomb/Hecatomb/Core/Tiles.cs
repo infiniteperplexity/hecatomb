@@ -348,7 +348,7 @@ namespace Hecatomb
 			List<Coord> l = new List<Coord>();
 			foreach (Coord d in c)
 			{
-                if (where(d.X, d.Y, d.Z))
+                if (where(d.X + x, d.Y + y, d.Z + z))
                 {
                     l.Add(new Coord(d.X + x, d.Y + y, d.Z + z));
                 }
