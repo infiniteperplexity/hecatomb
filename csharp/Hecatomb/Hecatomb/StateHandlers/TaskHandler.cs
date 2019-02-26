@@ -15,7 +15,7 @@ namespace Hecatomb
     class TaskHandler : StateHandler, IChoiceMenu
     {
         public List<TypedEntityField<Creature>> Minions;
-        public string[] Tasks;
+        [JsonIgnore]public string[] Tasks;
 
         public TaskHandler() : base()
         {

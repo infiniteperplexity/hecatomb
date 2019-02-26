@@ -83,12 +83,12 @@ namespace Hecatomb
 				{
 					tiles[X, Y, Z] = empty;
                     covers[X, Y, Z] = none;
-                    foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z - 1))
-                    {
-                        Explored.Add(c);
-                    }
                 }
-                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                foreach (Coord c in Tiles.GetNeighbors8(X, Y, Z - 1))
+                {
+                    Explored.Add(c);
+                }
+                foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {
                     Explored.Add(c);
                 }
@@ -99,7 +99,7 @@ namespace Hecatomb
                 covers[X, Y, Z] = none;
                 tiles[X, Y, Z + 1] = empty;
                 covers[X, Y, Z + 1] = none;
-                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {
                     Explored.Add(c);
                 }
@@ -110,7 +110,7 @@ namespace Hecatomb
 				tiles[X, Y, Z-1] = floor;
                 covers[X, Y, Z] = none;
                 covers[X, Y, Z-1] = none;
-                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z-1))
                 {
                     Explored.Add(c);
                 }
@@ -120,7 +120,7 @@ namespace Hecatomb
 				tiles[X, Y, Z] = floor;
                 covers[X, Y, Z].Mine(X, Y, Z);
                 covers[X, Y, Z] = none;
-                foreach (Coord c in Tiles.GetNeighbors26(X, Y, Z))
+                foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {
                     Explored.Add(c);
                 }
@@ -132,7 +132,6 @@ namespace Hecatomb
 		public override void ChooseFromMenu()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
-//			Game.Controls.Set(new SelectTileControls(this));
 			Game.Controls.Set(new SelectZoneControls(this));
 		}
 		

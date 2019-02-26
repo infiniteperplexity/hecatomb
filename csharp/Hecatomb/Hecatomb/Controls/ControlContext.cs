@@ -25,7 +25,7 @@ namespace Hecatomb
         static Highlight Cursor = new Highlight("cyan");
         public static bool MovingCamera;
         public const int Throttle = 200;
-        public const int StartThrottle = 1000;
+        public const int StartThrottle = 750;
         public static bool Redrawn = false;
         public Dictionary <Keys, Action> KeyMap;
         public List<ColoredText> MenuTop;

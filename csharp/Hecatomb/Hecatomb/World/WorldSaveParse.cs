@@ -188,7 +188,12 @@ namespace Hecatomb
 				Entities[ge.EID] = ge;
 				Entity.MaxEID = Math.Max(Entity.MaxEID, ge.EID);
 				ge.Spawned = true;
-			}
+
+                if (ge is StateHandler)
+                {
+                    (ge as StateHandler).Activate();
+                }
+            }
             // okay, this gets weird...so...
             foreach (int eid in Placements.Keys.ToList())
             {
@@ -228,10 +233,6 @@ namespace Hecatomb
                     {
                         te.Place(x, y, z, fireEvent: false);
                     }
-                }
-                else if (e is StateHandler)
-                {
-                    (e as StateHandler).Activate();
                 }
             }
 			// *** Player ***

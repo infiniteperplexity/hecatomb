@@ -23,7 +23,7 @@ namespace Hecatomb
             Explored = false;
             Visible = false;
             NoIngredients = false;
-            NoIngredients = true;
+            //NoIngredients = true;
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;

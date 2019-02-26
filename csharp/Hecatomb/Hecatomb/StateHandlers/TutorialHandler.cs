@@ -38,18 +38,15 @@ namespace Hecatomb
             }
             set { }
         }
-		
-		public override void Activate()
-		{
-			MoveCount = 0;
+
+        public TutorialHandler()
+        {
+            MoveCount = 0;
             SlopeCount = 0;
-			CurrentIndex = 0;
+            CurrentIndex = 0;
             Visible = !Options.NoTutorial;
             OffTutorialText = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Escape to get back on track or ? to hide tutorial messages." };
             OffTutorialCamera = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Tab to get back on track or ? to hide tutorial messages." };
-            Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);
-			//Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
-			base.Activate();
             TutorialStates = new List<TutorialState>
             {
                 new TutorialState("Welcome")
@@ -74,23 +71,23 @@ namespace Hecatomb
                         "{cyan}Try walking around using the numeric keypad.If your keyboard has no keypad, use the arrow keys.One turn will pass for each step you take."
                     },
                     HandleEvent = (TutorialEvent t) =>
-					{
-						if (t.Action=="Move")
-						{
-							MoveCount+=1;
-							if (MoveCount>=5)
-							{
-								NextState();
-							}
-						}
+                    {
+                        if (t.Action=="Move")
+                        {
+                            MoveCount+=1;
+                            if (MoveCount>=5)
+                            {
+                                NextState();
+                            }
+                        }
                         else if (t.Action=="ShowSpells")
                         {
                             GotoState("ChooseSpell");
                         }
                     }
-				},
-				new TutorialState("Movement")
-				{
+                },
+                new TutorialState("Movement")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -117,23 +114,23 @@ namespace Hecatomb
                         "{cyan}Try walking around using the numeric keypad.  If your keyboard has no keypad, use the arrow keys.  One turn will pass for each step you take."
                     },
                     HandleEvent = (TutorialEvent t) =>
-					{
-						if (t.Action=="Move")
-						{
-							MoveCount+=1;
-							if (MoveCount>=10)
-							{
-								NextState();
-							}
-						}
+                    {
+                        if (t.Action=="Move")
+                        {
+                            MoveCount+=1;
+                            if (MoveCount>=10)
+                            {
+                                NextState();
+                            }
+                        }
                         else if (t.Action=="ShowSpells")
                         {
                             GotoState("ChooseSpell");
                         }
                     }
-				},
-				new TutorialState("Slopes")
-				{
+                },
+                new TutorialState("Slopes")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -177,8 +174,8 @@ namespace Hecatomb
                         }
                     }
                 },
-				new TutorialState("CastSpell")
-				{
+                new TutorialState("CastSpell")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -210,8 +207,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("ChooseSpell")
-				{
+                new TutorialState("ChooseSpell")
+                {
                     RequiresDefaultControls = false,
                     ControlText = new List<ColoredText>()
                     {
@@ -226,7 +223,7 @@ namespace Hecatomb
                         "{lime green}Near where you started, there should be some cross-shaped symbols. These are tombstones.  If you want to know what a symbol represents, hover over it with the mouse and look at the bottom half of the right panel.",
                         " ",
                         "{cyan}Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
-                    },                
+                    },
                     HandleEvent = (TutorialEvent t) =>
                     {
                         if (t.Action =="ChooseRaiseZombie")
@@ -239,8 +236,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("TargetSpell")
-				{
+                new TutorialState("TargetSpell")
+                {
                     RequiresDefaultControls = false,
                     ControlText = new List<ColoredText>()
                     {
@@ -270,8 +267,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("Achievements")
-				{
+                new TutorialState("Achievements")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -307,8 +304,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("WaitForZombie")
-				{
+                new TutorialState("WaitForZombie")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -338,8 +335,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("Unpausing")
-				{
+                new TutorialState("Unpausing")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -386,8 +383,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("AssignJob")
-				{
+                new TutorialState("AssignJob")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -420,8 +417,8 @@ namespace Hecatomb
                         }
                     }
                 },
-				new TutorialState("ChooseJob")
-				{
+                new TutorialState("ChooseJob")
+                {
                     RequiresDefaultControls = false,
                     ControlText = new List<ColoredText>()
                     {
@@ -449,8 +446,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("ChooseDigTiles")
-				{
+                new TutorialState("ChooseDigTiles")
+                {
                     RequiresDefaultControls = false,
                     ControlText = new List<ColoredText>()
                     {
@@ -490,8 +487,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("WaitForDig")
-				{
+                new TutorialState("WaitForDig")
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -527,7 +524,7 @@ namespace Hecatomb
                             else
                             {
                                 NextState();
-                            }                    
+                            }
                         }
                     },
                 },
@@ -626,7 +623,7 @@ namespace Hecatomb
                         }
                     },
                 },
-           
+
                 new TutorialState("WaitForZombie2")
                 {
                     ControlText = new List<ColoredText>()
@@ -665,12 +662,12 @@ namespace Hecatomb
                             else
                             {
                                 GotoState("EndOfTutorial");
-                            }   
+                            }
                         }
                     },
                 },
                 new TutorialState("CameraMode")
-				{
+                {
 
                     ControlText = new List<ColoredText>()
                     {
@@ -705,8 +702,8 @@ namespace Hecatomb
                         }
                     },
                 },
-				new TutorialState("MoveCamera")
-				{
+                new TutorialState("MoveCamera")
+                {
                     RequiresDefaultControls = false,
                     ControlText = new List<ColoredText>()
                     {
@@ -740,7 +737,7 @@ namespace Hecatomb
                             NextState();
                         }
                     },
-                    
+
                 },
                 new TutorialState("AssignJob2")
                 {
@@ -873,7 +870,7 @@ namespace Hecatomb
                 },
                 // Maybe just call it quits at this point
 				new TutorialState("EndOfTutorial")
-				{
+                {
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
@@ -908,8 +905,14 @@ namespace Hecatomb
                         }
                     },
                 }
-			};
-			
+            };
+        }
+		
+		public override void Activate()
+		{
+            Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);
+			//Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
+			base.Activate();	
 		}
 		
 		public void NextState()

@@ -41,11 +41,16 @@ namespace Hecatomb
             else
             {
                 ResearchTask rt = s.Researching;
+                string txt = "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns; Delete to cancel.)";
+                if (rt.Ingredients.Count>0)
+                {
+                    txt = "Researching " + Research.Types[rt.Makes].Name + " (gathering ingredients)";
+                }
                 MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     ("{yellow}Structure: "+char.ToUpper(s.MenuHeader[0]).ToString()+s.MenuHeader.Substring(1)),
                     "Tab) Next structure.",
-                    "Researching "+Research.Types[rt.Makes].Name+" ("+rt.Labor+" turns; Delete to cancel.)"
+                    txt
                 };
             }
             Game.MenuPanel.Dirty = true;
