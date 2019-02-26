@@ -20,10 +20,12 @@ namespace Hecatomb
 		static KeyboardState OldKeyboard;
         static MouseState OldMouse;
         static Coord OldCamera;
+        static ControlContext OldControls;
         static DateTime InputBegan;
         static Highlight Cursor = new Highlight("cyan");
         public static bool MovingCamera;
         public const int Throttle = 200;
+        public const int StartThrottle = 1000;
         public static bool Redrawn = false;
         public Dictionary <Keys, Action> KeyMap;
         public List<ColoredText> MenuTop;
@@ -173,6 +175,10 @@ namespace Hecatomb
 
 		public ControlContext()
 		{
+            if (OldControls==null)
+            {
+                OldControls = this;
+            }
 			KeyMap = new Dictionary<Keys, Action>();
 			MenuTop = new List<ColoredText>();
 			MenuMiddle = new List<ColoredText>();
@@ -206,7 +212,8 @@ namespace Hecatomb
         	}
         	OldCamera = c;
             //if (!Redrawn)
-            if (k.Equals(OldKeyboard) && sinceInputBegan<Throttle && m.LeftButton==OldMouse.LeftButton && m.RightButton==OldMouse.RightButton)
+            int throttle = (OldControls==this) ? Throttle : StartThrottle;
+            if (k.Equals(OldKeyboard) && sinceInputBegan<throttle && m.LeftButton==OldMouse.LeftButton && m.RightButton==OldMouse.RightButton)
             {
                 if (!m.Equals(OldMouse))
 	        	{
@@ -216,6 +223,7 @@ namespace Hecatomb
         	}
             Redrawn = false;
 
+            OldControls = this;
         	OldMouse = m;
         	OldKeyboard = k;
         	InputBegan = now;

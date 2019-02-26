@@ -17,7 +17,7 @@ namespace Hecatomb
         public override void RefreshContent()
         {
             var s = MyStructure;
-            if (MyStructure.Researching == null)
+            if (s.Researching == null)
             {
                 MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
@@ -40,11 +40,12 @@ namespace Hecatomb
             }
             else
             {
+                ResearchTask rt = s.Researching;
                 MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     ("{yellow}Structure: "+char.ToUpper(s.MenuHeader[0]).ToString()+s.MenuHeader.Substring(1)),
                     "Tab) Next structure.",
-                    "Researching "+s.Researching+" ("+s.ResearchTurns+" turns; Delete to cancel.)"
+                    "Researching "+Research.Types[rt.Makes].Name+" ("+rt.Labor+" turns; Delete to cancel.)"
                 };
             }
             Game.MenuPanel.Dirty = true;

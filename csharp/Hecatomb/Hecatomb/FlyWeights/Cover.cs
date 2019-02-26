@@ -42,7 +42,7 @@ namespace Hecatomb
             Name = name;
             FG = fg;
             BG = bg;
-            DarkBG = darkbg ?? "purple";
+            DarkBG = darkbg ?? "red";
             Symbol = symbol;
             Liquid = liquid;
             Solid = solid;

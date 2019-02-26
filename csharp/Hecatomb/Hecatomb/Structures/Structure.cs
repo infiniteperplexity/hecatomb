@@ -26,10 +26,28 @@ namespace Hecatomb
         public string[] Researches;
         public string[] ResearchPrereqs;
         public string[] StructurePrereqs;
-        public string Researching;
-        public int ResearchTurns;
         public string[] Stores;
 
+        public ResearchTask Researching
+        {
+            get
+            {
+                foreach (Feature f in Features)
+                {
+                    var (x, y, z) = f;
+                    Task t = Game.World.Tasks[x, y, z];
+                    if (t is ResearchTask)
+                    {
+                        return (ResearchTask)t;
+                    }
+                }
+                return null;
+            }
+            set
+            {
+
+            }
+        }
         public Structure()
         {
             Width = 3;

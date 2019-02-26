@@ -45,7 +45,9 @@ namespace Hecatomb
 			if (GetType()==typeof(CameraControls))
 			{
 				KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
-			}
+                KeyMap[Keys.J] = Commands.ChooseTask;
+                KeyMap[Keys.Z] = Commands.ChooseSpell;
+            }
 			
 			MenuTop = new List<ColoredText>() {
 				"Esc: System view.",
@@ -67,5 +69,21 @@ namespace Hecatomb
 			    "A: Achievements, /: Toggle tutorial."
 			};
 		}
-	}
+
+        public override void ClickTile(Coord c)
+        {
+            var (x, y, z) = c;
+            Creature cr = Game.World.Creatures[x, y, z];
+            bool visible = Game.Visible.Contains(c);
+            if (cr != null && visible)
+            {
+                Game.Controls = new CreatureControls(cr);
+            }
+            Feature fr = Game.World.Features[x, y, z];
+            if (fr?.TryComponent<StructuralComponent>() != null)
+            {
+                Game.Controls = new StructureControls(fr.GetComponent<StructuralComponent>().Structure);
+            }
+        }
+    }
 }

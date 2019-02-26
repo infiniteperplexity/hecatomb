@@ -89,6 +89,8 @@ namespace Hecatomb
             Structure = new TileEntityField<Structure>();
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket" };
 			MenuName = "construct a structure.";
+            LaborCost = 5;
+            Labor = 5;
 		}
 
         public override string GetDisplayName()
@@ -150,7 +152,11 @@ namespace Hecatomb
 			}
 			if (finished)
 			{
-				Feature fr = Structure.Entity.Features[0];
+                Feature fr = Structure.Entity.Features[0];
+                if (Structure.Entity.Width==3 && Structure.Entity.Height==3)
+                {
+                    fr = Structure.Entity.Features[4];
+                }
                 Status.PushMessage(String.Format("{0} {1} {2}", fr.X, fr.Y, fr.Z));
 				Structure.Entity.Place(fr.X, fr.Y, fr.Z);
                 foreach (Feature feat in Structure.Entity.Features)

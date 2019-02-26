@@ -74,7 +74,7 @@ namespace Hecatomb
             {
                 Type T = Type.GetType("Hecatomb." + t);
                 Component c = (Component)Entity.Mock(Type.GetType("Hecatomb." + t));
-                c.AddToEntity(e);
+                c.AddToMockEntity(e);
                 c.InterpretJSON(Components[t]);
             }
         }

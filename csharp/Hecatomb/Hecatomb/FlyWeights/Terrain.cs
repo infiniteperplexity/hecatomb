@@ -97,7 +97,7 @@ namespace Hecatomb
             name: "upward slope",
 			symbol: '^',
 			fg: "FLOORFG",
-			bg: "GRASSBG",
+			bg: "FLOORBG",
 			zview: +1,
 			zwalk: +1	
 		);

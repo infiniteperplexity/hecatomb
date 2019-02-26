@@ -200,7 +200,6 @@ namespace Hecatomb
 			if (actor.Entity == Player)
 			{
                 HandleVisibility();
-                Game.Camera.Center(Player.X, Player.Y, Player.Z);
                 Game.MainPanel.Dirty = true;
                 Game.MenuPanel.Dirty = true;
                 Game.StatusPanel.Dirty = true;
@@ -271,7 +270,10 @@ namespace Hecatomb
         public static void HandleVisibility()
         {
             Game.World.ValidateLighting();
-            Game.Camera.Center(Player.X, Player.Y, Player.Z);
+            if (!(Controls is CameraControls))
+            {
+                Game.Camera.Center(Player.X, Player.Y, Player.Z);
+            }
             Game.Visible = Game.World.Player.GetComponent<Senses>().GetFOV();
             foreach (Creature c in GetState<TaskHandler>().Minions)
             {

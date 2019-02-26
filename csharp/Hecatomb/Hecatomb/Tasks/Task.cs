@@ -26,7 +26,6 @@ namespace Hecatomb
         // instance properties
         public TypedEntityField<Creature> Worker;
         public Dictionary<int, int> Claims;
-        public Dictionary<int, int> Fetching;
         public string Makes;
         public int Labor;
 
@@ -41,7 +40,6 @@ namespace Hecatomb
             Labor = LaborCost;
             Ingredients = new Dictionary<string, int>();
             Claims = new Dictionary<int,int>();
-            Fetching = new Dictionary<int, int>();
             PrereqStructures = new List<string>();
         }
         // override Place from TileEntity
@@ -159,7 +157,6 @@ namespace Hecatomb
             Movement m = Worker.GetComponent<Movement>();
             owned = owned.Where(it => m.CanReach(it)).ToList();
             owned = owned.OrderBy(it => { return Tiles.QuickDistance(X, Y, Z, it.X, it.Y, it.Z); }).ToList();
-            // assume we have verified that there are enough
             foreach (Item item in owned)
             {
                 // ideally sort this by distance first
@@ -167,6 +164,10 @@ namespace Hecatomb
                 {
                     int needs = needed[item.Resource];
                     int claiming = Math.Min(needs, item.Unclaimed);
+                    if (claiming<=0)
+                    {
+                        continue;
+                    }
                     item.Claimed += claiming;
                     needed[item.Resource] -= claiming;
                     if (needed[item.Resource]<=0)
@@ -192,17 +193,6 @@ namespace Hecatomb
                 return;
             }
             int eid = Claims.Keys.ToList()[0];
-            // Okay...so here's the issue...
-            if (!Entities.ContainsKey(eid))
-            {
-                Debug.WriteLine("hey we hit that one fetching error");
-                Debug.WriteLine($"the EID was {eid}");
-                Debug.WriteLine("Ingredients were these:");
-                foreach (String s in Ingredients.Keys)
-                {
-                    Debug.WriteLine(s);
-                }
-            }
             Item item = (Item)Entities[eid];
             // now need to do some validation
             if (!item.Placed)
@@ -210,7 +200,6 @@ namespace Hecatomb
                 Claims.Remove(eid);
                 // should we look for more ingredients or just cancel the task?
             }
-            // if we're standing on any claimed ingredient and 
             if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z && !HasIngredient())
             {
                 var (x, y, z) = item;
@@ -221,6 +210,7 @@ namespace Hecatomb
                     swap = inv.Item; 
                 }
                 inv.Item = item.TakeClaimed(Claims[eid]);
+                
                 // this is a weird way to drop it...
                 swap?.Place(x, y, z);
                 Claims.Remove(eid);

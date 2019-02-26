@@ -36,7 +36,10 @@ namespace Hecatomb
 		
 		public virtual void Cast()
 		{
-            Component.Sanity -= GetCost();
+            if (!Options.NoManaCost)
+            {
+                Component.Sanity -= GetCost();
+            }
             Caster.GetComponent<Actor>().Spend();
             if (Caster==Player)
             {

@@ -16,7 +16,6 @@ namespace Hecatomb
         public string Resource;
         public int StackSize;
 
-
         public int Unclaimed
         {
             get

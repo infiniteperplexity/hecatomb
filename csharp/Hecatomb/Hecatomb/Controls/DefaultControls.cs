@@ -72,9 +72,6 @@ namespace Hecatomb
             {
                 Game.Controls = new StructureControls(fr.GetComponent<StructuralComponent>().Structure);
             }
-
-           
-            // If we clicked on a workshop, go to workshop view
         }
 	}
 }

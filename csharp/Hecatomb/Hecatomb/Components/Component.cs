@@ -35,8 +35,23 @@ namespace Hecatomb
 			}
             Entity = e;
         }
-        
-		public void RemoveFromEntity()
+
+        public void AddToMockEntity(TypedEntity e)
+        {
+            // if it's a plain old Component subclass, use its own type as the key
+            if (this.GetType().BaseType == typeof(Component))
+            {
+                //e.Components[this.GetType().Name] = this.EID;
+            }
+            else
+            {
+                // if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
+                //e.Components[this.GetType().BaseType.Name] = this.EID;
+            }
+            //Entity = e;
+        }
+
+        public void RemoveFromEntity()
 		{
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))

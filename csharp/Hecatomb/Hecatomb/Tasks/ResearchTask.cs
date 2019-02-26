@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb
 {
     using static HecatombAliases;
-    class ResearchTask : Task
+    public class ResearchTask : Task
     {
         public TileEntityField<Structure> Structure;
 
@@ -53,7 +53,7 @@ namespace Hecatomb
                 rt.Ingredients = Ingredients;
                 rt.Place(x, y, z);
             }
-            Game.MenuPanel.Dirty = true;
+            Controls.Set(new StructureControls(Structure));
         }
 
         public override bool CanAssign(Creature c)

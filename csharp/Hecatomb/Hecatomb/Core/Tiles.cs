@@ -153,9 +153,8 @@ namespace Hecatomb
 			movable = movable ?? defaultMovable;
 			standable = standable ?? defaultStandable;
 			// !should check enclosed right up front
-			// !this doesn't have to be shuffled but it would be nice if it were
+			// should this be dirs10 or dirs26?
 			Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
-			//Coord[] dirs = Game.Random.Shuffled(Movement.Directions26);
 			Coord current = new Coord(x0, y0, z0);
 			// cost for the best known path to each cell
 			Dictionary<Coord, int> gscores = new Dictionary<Coord, int>() {{current, 0}};
@@ -273,9 +272,11 @@ namespace Hecatomb
 								}
 								retrace[neighbor] = current;
 								gscores[neighbor] = newScore;
-							}
-						} else if (!standable(x1,y1,z1))
-						{
+							} 
+						}
+                        // if the square is not standable and it is not the end square
+                        else if (!standable(neighbor.X, neighbor.Y, neighbor.Z) && !(neighbor.X==x1 && neighbor.Y==y1 && neighbor.Z==z1))
+                        {
 							// is the cell imstandable regardless of where we are moving from?
 							closedSet.Add(neighbor);
 						}
