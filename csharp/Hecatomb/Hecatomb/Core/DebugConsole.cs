@@ -5,9 +5,12 @@
  * Time: 11:43 AM
  */
 
-//say which ingredients are getting athered
+//say which ingredients are getting gathered
 //worker can still get distracted somehow
+    // helps to add task to creature selection
 //- dismantle / repairtask?
+    // can we avoid proliferation here?  these are rare tasks and I don't want them to take up a lot of air.
+
 
 
 using System;

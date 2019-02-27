@@ -46,7 +46,7 @@ namespace Hecatomb
                 string txt = "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns; Delete to cancel.)";
                 if (rt.Ingredients.Count>0)
                 {
-                    txt = "Researching " + Research.Types[rt.Makes].Name + " (gathering ingredients)";
+                    txt = "Researching " + Research.Types[rt.Makes].Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
                 }
                 MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
