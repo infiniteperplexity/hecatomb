@@ -131,26 +131,53 @@ namespace Hecatomb
             return ingredients;
         }
 
+        
+
         public virtual GameEvent OnTurnBegin(GameEvent ge)
         {
             if (!Placed)
             {
                 return ge;
             }
+            
             if (Stores.Length > 0)
             {
-                foreach (Item item in Items)
+                List<Item> items = Items.OrderBy((Item item) => (Tiles.QuickDistance(item.X, item.Y, item.Z, X, Y, Z))).ToList();
+                foreach (string resource in Stores)
                 {
-                    if (Stores.Contains(item.Resource) && !item.IsStored() && item.Unclaimed > 0)
+                    // if there is no current haul task for that resource (fetch them one at a time)
+                    if (GetHaulTask(resource)==null)
                     {
-                        AssignItemToHaulTask(item);
+                        // loop through available items in order of distance
+                        foreach (Item item in items)
+                        {
+                            if (item.Resource==resource && !item.IsStored() && item.Unclaimed>0)
+                            {
+                                TryToSpawnHaulTask(item);
+                                // go to next resource
+                                break;
+                            }
+                        }
                     }
                 }
             }
             return ge;
         }
+        public HaulTask GetHaulTask(string resource)
+        {
+            foreach (Feature f in Features)
+            {
+                var (x, y, z) = f;
+                HaulTask ht = Tasks[x, y, z] as HaulTask;
+                if (ht!=null && ht.Ingredients.ContainsKey(resource))
+                {
+                    return ht;
+                }
+            }
+            return null;
+        }
 
-        public void AssignItemToHaulTask(Item item)
+        public void TryToSpawnHaulTask(Item item)
         {
             string resource = item.Resource;
             List<int> order = new List<int>();
@@ -159,63 +186,38 @@ namespace Hecatomb
                 order.Add(i);
             }
             order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
-            // if there's an existing task with space left
+            // if there is an existing pile
             foreach (int i in order)
             {
                 Feature f = Features[i];
                 var (x, y, z) = f;
-                Task task = Tasks[x, y, z];
                 Item pile = Items[x, y, z];
-                if (task != null && task is HaulTask)
-                {
-                    HaulTask ht = (HaulTask)task;
-                    int space = ht.HasSpace(resource);
-                    string res = ht.Ingredients.Keys.ToList()[0];
-                    if (res == resource && space > 0)
-                    {
-                        int claim = Math.Min(item.Unclaimed, space);
-                        if (!ht.Claims.ContainsKey(item.EID))
-                        {
-                            ht.Claims[item.EID] = 0;
-                        }
-                        ht.Claims[item.EID] += claim;
-                        item.Claimed += claim;
-                        return;
-                    }
-                }
-            }
-            // if there isn't an existing task with space left
-            // if there's an existing pile
-            foreach (int i in order)
-            {
-                Feature f = Features[i];
-                var (x, y, z) = f;
-                Task task = Tasks[x, y, z];
-                Item pile = Items[x, y, z];
-                if (pile != null && pile.Resource == resource && task == null)
+                Task task = Tasks[x, y, z]; //unlikely to be a haul task, should be some incidental task
+                if (pile != null && pile.Resource == resource && pile.Quantity < pile.StackSize && task == null)
                 {
                     HaulTask ht = Entity.Spawn<HaulTask>();
                     ht.Place(x, y, z);
-                    ht.Ingredients[resource] = 0;
-                    int claim = Math.Min(item.Unclaimed, ht.HasSpace(resource));
+                    // this logic seems correct
+                    int claim = Math.Min(item.Unclaimed, pile.StackSize-pile.Quantity);
                     ht.Ingredients[resource] = claim;
                     ht.Claims[item.EID] = claim;
                     item.Claimed += claim;
                     return;
                 }
             }
-            // if there's not an existing pile
+            // if there's no existing pile, repeat almost the same loop
             foreach (int i in order)
             {
                 Feature f = Features[i];
                 var (x, y, z) = f;
-                Task task = Tasks[x, y, z];
-                if (task == null)
+                Item pile = Items[x, y, z];
+                Task task = Tasks[x, y, z]; //unlikely to be a haul task, should be some incidental task
+                if (pile == null && task == null)
                 {
                     HaulTask ht = Entity.Spawn<HaulTask>();
                     ht.Place(x, y, z);
-                    ht.Ingredients[resource] = 0;
-                    int claim = Math.Min(item.Unclaimed, ht.HasSpace(resource));
+                    // this logic seems correct
+                    int claim = item.Unclaimed; ;
                     ht.Ingredients[resource] = claim;
                     ht.Claims[item.EID] = claim;
                     item.Claimed += claim;

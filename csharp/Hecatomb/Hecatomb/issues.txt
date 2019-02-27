@@ -1,0 +1,24 @@
+﻿Bugs:
+? Infinite item displacement loops - believed solved.
+? Haul tasks target full piles - possibly solved.
+? Items get displaced even when piles aren't full - seems solved.
+- Workers sometimes abandon tasks and won't go back...need to reproduce and check if they're still assigned.
+
+Misfeatures:
+X We shouldn't claim multiple haulable items at once, should we? - solved
+- Does stockpiling have lowest priority?
+- The hostility check system is kind of a mess; it can only go by team.
+
+Improvements:
+- Tasks should have different background colors.
+- Character spacing looks wrong for menu and status panels.
+- Is there a way to enable multiple fetchers for multi-ingredient tasks?
+- Lots of tasks, structures, and other stuff have names show up badly.
+
+Features:
+- We need some way to dismantle and/or repair, but we don't want tasks to proliferate.
+- Should show more info upon creature selection.
+
+
+
+

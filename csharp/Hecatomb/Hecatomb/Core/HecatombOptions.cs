@@ -23,7 +23,7 @@ namespace Hecatomb
             Explored = false;
             Visible = false;
             NoIngredients = false;
-            //NoIngredients = true;
+            NoIngredients = true;
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
@@ -31,9 +31,10 @@ namespace Hecatomb
             HumanAttacks = false;
             AllSpells = false;
             NoManaCost = false;
-            //NoManaCost = true;
-            WorkBonus = 5;
+            NoManaCost = true;
             WorkBonus = 0;
+            WorkBonus = 5;
+            
         }
     }
     

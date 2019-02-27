@@ -26,6 +26,14 @@ namespace Hecatomb
             Reset();
         }
 
+        public static Entity FromEID(int eid)
+        {
+            if (Entities.ContainsKey(eid))
+            {
+                return Entities[eid];
+            }
+            return null;
+        }
         public static void Reset()
         {
             MaxEID = -1;

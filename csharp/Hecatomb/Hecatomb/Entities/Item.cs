@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -14,7 +15,16 @@ namespace Hecatomb
         public int Quantity;
         public int Claimed;
         public string Resource;
-        public int StackSize;
+        [JsonIgnore]
+        public  int StackSize
+        {
+            get
+            {
+                return Hecatomb.Resource.Types[Resource].StackSize;
+            }
+            set
+            { }
+        }
 
         public int Unclaimed
         {
@@ -54,6 +64,7 @@ namespace Hecatomb
             }
             else
             {
+                Debug.WriteLine($"Quantity was {e.Quantity} and stacksize was {e.StackSize}");
                 Displace(x1, y1, z1);
             }
         }
@@ -142,6 +153,7 @@ namespace Hecatomb
             }
             foreach (int i in order)
             {
+                // add all eight neighbors to the queue
                 var (dx, dy, dz) = Movement.Directions8[i];
                 queue.Enqueue(new Coord(x + dx, y + dy, z + dz));
             }
@@ -160,12 +172,11 @@ namespace Hecatomb
                     {
                         if (Terrains[c.X, c.Y, c.Z] == Terrain.DownSlopeTile)
                         {
-                            queue.Enqueue(new Coord(c.X, c.Y, c.Z-1));
-                        }
-                        foreach (int i in order)
-                        {
-                            var (dx, dy, dz) = Movement.Directions8[i];
-                            queue.Enqueue(new Coord(x + dx, y + dy, z + dz));
+                            Coord d = new Coord(c.X, c.Y, c.Z - 1);
+                            if (!tried.Contains(d))
+                            {
+                                queue.Enqueue(d);
+                            }
                         }
                         foreach (int i in order)
                         {

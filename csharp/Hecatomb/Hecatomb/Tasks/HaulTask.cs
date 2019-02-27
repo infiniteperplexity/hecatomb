@@ -14,6 +14,8 @@ namespace Hecatomb
 
     public class HaulTask : Task
     {
+        public string Resource;
+
         public HaulTask() : base()
         {
             MenuName = "stockpile goods";
@@ -22,8 +24,17 @@ namespace Hecatomb
 
         public override string GetDisplayName()
         {
-
-            Item item = (Item) Entity.Entities[Claims.Keys.ToList()[0]];
+            if (Claims.Count==0)
+            {
+                Debug.WriteLine("I'm not sure why you would try to display the name of a haul task with no claims");
+                Debug.WriteLine($"The ingredient count is {Ingredients.Count}");
+                return "what the heck?";
+            }
+            Item item = Entity.FromEID(Claims.Keys.ToList()[0]) as Item;
+            if (item==null)
+            {
+                return $"haul {Resource}";
+            }
             var (x, y, z) = item;
             string where = null;
             if (item.Placed)
@@ -77,7 +88,7 @@ namespace Hecatomb
         // do we need to account for it if there is no item and no claims?
         public int HasSpace(string resource)
         {
-            int size = Resource.Types[resource].StackSize;
+            int size = Hecatomb.Resource.Types[resource].StackSize;
             Item item = Items[X, Y, Z];
             int stack = (item == null) ? 0 : item.Quantity;
             int claimed = 0;
