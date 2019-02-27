@@ -28,6 +28,7 @@ namespace Hecatomb
         public string[] StructurePrereqs;
         public string[] Stores;
 
+        [JsonIgnore]
         public ResearchTask Researching
         {
             get

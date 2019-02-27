@@ -166,7 +166,7 @@ namespace Hecatomb
                     for (int i=0; z-i>0; i++)
                     {
                         Cover c = layers[i];
-                        if (Game.World.Random.Next(16)==0)
+                        if (Game.World.Random.Next(20)==0)
                         {
                             if (i<soil)
                             {

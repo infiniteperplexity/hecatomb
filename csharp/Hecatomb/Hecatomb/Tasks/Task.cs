@@ -257,7 +257,18 @@ namespace Hecatomb
                 FetchIngredient();
                 return;
             }
-            if ((int)Tiles.QuickDistance(Worker.X, Worker.Y, Worker.Z, X, Y, Z) <= WorkRange)
+            bool canWork = false;
+            Movement m = Worker.GetComponent<Movement>();
+            var (x, y, z) = Worker;
+            if (WorkRange==0 && x==X && y==Y && z==Z)
+            {
+                canWork = true;
+            }
+            else if (WorkRange==1 && m.CanTouch(X, Y, Z))
+            {
+                canWork = true;
+            }
+            if (canWork)
             {
                 SpendIngredient();
                 if (Ingredients.Keys.Count == 0 || Options.NoIngredients)

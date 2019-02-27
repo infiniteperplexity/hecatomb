@@ -5,6 +5,10 @@
  * Time: 11:43 AM
  */
 
+//say which ingredients are getting athered
+//worker can still get distracted somehow
+//- dismantle / repairtask?
+
 
 using System;
 using Microsoft.VisualBasic;

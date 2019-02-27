@@ -35,7 +35,9 @@ namespace Hecatomb
                             choice.ChooseFromMenu();
                             RefreshContent();
                         };
-                    MenuTop.Add(alphabet[i] + ") " + choices[i].ListOnMenu());
+                    ColoredText ct = choices[i].ListOnMenu();
+                    ct.Text = (alphabet[i] + ") " + ct.Text);
+                    MenuTop.Add(ct);
                 }
             }
             else
