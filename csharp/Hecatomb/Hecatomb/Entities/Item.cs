@@ -58,13 +58,11 @@ namespace Hecatomb
             else if (e.Resource == Resource && e.Quantity < e.StackSize)
             {
                 // should I fire a Place event here?
-                Debug.WriteLine("adding quantity " + e.Quantity + " " + Quantity);
                 e.AddQuantity(Quantity);
                 Despawn();
             }
             else
             {
-                Debug.WriteLine($"Quantity was {e.Quantity} and stacksize was {e.StackSize}");
                 Displace(x1, y1, z1);
             }
         }
