@@ -66,7 +66,7 @@ namespace Hecatomb
         {
             
             Creature cr = Creatures[c];
-            if (cr != null || cr != Player)
+            if (cr != null && cr != Player)
             {
                 cr.GetComponent<Actor>().DeclaredEnemy = true;
             }

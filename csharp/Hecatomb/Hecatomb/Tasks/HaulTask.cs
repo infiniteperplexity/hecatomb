@@ -14,12 +14,14 @@ namespace Hecatomb
 
     public class HaulTask : Task
     {
+        public TileEntityField<Structure> Structure;
         public string Resource;
 
         public HaulTask() : base()
         {
             MenuName = "stockpile goods";
             WorkRange = 0;
+            Priority = 10;
         }
 
         public override string GetDisplayName()
@@ -48,14 +50,14 @@ namespace Hecatomb
             return $"haul {item.Describe()} {where}";
         }
 
-        public override void ChooseFromMenu()
+        public override bool ValidTile(Coord c)
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
-            //			Game.Controls.Set(new SelectTileControls(this));
-            Game.Controls.Set(new SelectZoneControls(this));
+            if (Structure.Placed)
+            {
+                return true;
+            }
+            return false;
         }
-
-        
 
         public override bool CanAssign(Creature c)
         {
@@ -98,10 +100,10 @@ namespace Hecatomb
             }
             return size - (stack + claimed);
         }
-        public override void AssignTo(Creature c)
+
+        public override void ClaimIngredients()
         {
-            c.GetComponent<Minion>().Task = this;
-            Worker = c;
+            // do nothing; ingredient claims for haul tasks are hardcoded
         }
 
         public override void Start()

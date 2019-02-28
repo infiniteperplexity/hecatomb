@@ -89,13 +89,20 @@ namespace Hecatomb
             Structure = new TileEntityField<Structure>();
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket" };
 			MenuName = "construct a structure.";
+            Priority = 4;
             LaborCost = 5;
             Labor = 5;
 		}
 
         public override string GetDisplayName()
         {
-            return $"construct {Structure.Name}";
+            //return $"construct {Structure.Name}";
+            if (Claims.Count>0)
+            {
+                return $"claiming {Claims.Keys.ToList()[0]}";
+               
+            }
+            return "nothing claimed";
         }
 
         private Structure Mock()
@@ -157,7 +164,6 @@ namespace Hecatomb
                 {
                     fr = Structure.Entity.Features[4];
                 }
-                Status.PushMessage(String.Format("{0} {1} {2}", fr.X, fr.Y, fr.Z));
 				Structure.Entity.Place(fr.X, fr.Y, fr.Z);
                 foreach (Feature feat in Structure.Entity.Features)
                 {
@@ -216,6 +222,13 @@ namespace Hecatomb
 		
 		public override void SelectBox(Coord c, List<Coord> squares)
 		{
+            foreach (Coord s in squares)
+            {
+                if (!ValidTile(s))
+                {
+                    return;
+                }
+            }
 			Structure str = Spawn<Structure>(Type.GetType("Hecatomb."+Makes));
 			for (int i=0; i<squares.Count; i++)
 			{

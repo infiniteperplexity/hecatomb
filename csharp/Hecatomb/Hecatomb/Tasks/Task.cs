@@ -23,6 +23,7 @@ namespace Hecatomb
         // ISelectsBox properties
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
+        [JsonIgnore] public int Priority;
         // instance properties
         public TypedEntityField<Creature> Worker;
         public Dictionary<int, int> Claims;
@@ -38,6 +39,7 @@ namespace Hecatomb
             WorkRange = 1;
             LaborCost = 10;
             Labor = LaborCost;
+            Priority = 5;
             Ingredients = new Dictionary<string, int>();
             Claims = new Dictionary<int,int>();
             PrereqStructures = new List<string>();
@@ -71,8 +73,23 @@ namespace Hecatomb
             base.Despawn();
         }
 
-        // designation
-        public virtual bool ValidTile(Coord c) {return true;}
+        // designation...by default, allow it only for explored floor tiles
+        public virtual bool ValidTile(Coord c)
+        {
+            if (!Explored.Contains(c) && !Options.Explored)
+            {
+                return false;
+            }
+            if (Features[c]!=null && Features[c].TypeName!="IncompleteFeature") //is this okay or does it need to be more specific?
+            {
+                return false;
+            }
+            if (Terrains[c.X, c.Y, c.Z]==Terrain.FloorTile)
+            {
+                return true;
+            }
+            return false;
+        }
         public virtual void Designate() {}
 
         // assignment
@@ -316,7 +333,7 @@ namespace Hecatomb
         // ISelectsTile
         public virtual void SelectTile(Coord c)
         {
-            if (Tasks[c.X, c.Y, c.Z] == null)
+            if (Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
                 Task task = Spawn<Task>(this.GetType());
                 task.Makes = Makes;
@@ -329,7 +346,7 @@ namespace Hecatomb
         {
             foreach (Coord c in squares)
             {
-                if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+                if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
                 {
                     Task task = Spawn<Task>(this.GetType());
                     task.Makes = Makes;
@@ -341,6 +358,13 @@ namespace Hecatomb
         // ISelectsBox
         public virtual void SelectBox(Coord c, List<Coord> squares)
         {
+            foreach (Coord s in squares)
+            {
+                if (!ValidTile(s))
+                {
+                    return;
+                }
+            }
             foreach (Coord s in squares)
             {
                 if (Tasks[s.X, s.Y, s.Z] == null)

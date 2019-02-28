@@ -81,7 +81,7 @@ namespace Hecatomb
                 if (f.TypeName=="Grave" && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<=15)
                 {
                     graves += 1;
-                    if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 5)
+                    if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 5 && z==f.Z)
                     {
                         nearby += 1;
                     }

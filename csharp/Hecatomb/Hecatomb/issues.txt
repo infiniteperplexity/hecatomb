@@ -3,10 +3,12 @@
 ? Haul tasks target full piles - possibly solved.
 ? Items get displaced even when piles aren't full - seems solved.
 - Workers sometimes abandon tasks and won't go back...need to reproduce and check if they're still assigned.
+? Can assign a contruction task over solid tiles
+? Dropped items are unowned - believed fixed
 
 Misfeatures:
 X We shouldn't claim multiple haulable items at once, should we? - solved
-- Does stockpiling have lowest priority?
+? Does stockpiling have lowest priority? I think it's now fixed.
 - The hostility check system is kind of a mess; it can only go by team.
 
 Improvements:
@@ -15,10 +17,18 @@ Improvements:
 - Is there a way to enable multiple fetchers for multi-ingredient tasks?
 - Lots of tasks, structures, and other stuff have names show up badly.
 - If you hover over a square and someone drops something on the square, it doesn't update the menu.  This can occasionally cause weird crashes.
+- Would be nice if creatures could intelligently displace each other to work on tasks.
+- Need a place to store flint and coal (depot?)
+- Make it so unearthing a corpse with a tunnel below it doesn't modify terrain.
+- Grass should grow outside
+- Some corpses should have trade goods
+- Incomplete features, excavations...what is to be done?
+- Paved floor as feature.
+- Stonemason as structure?
 
 Features:
-- We need some way to dismantle and/or repair, but we don't want tasks to proliferate.
-- Should show more info upon creature selection.
+- We need some way to dismantle and/or repair, but we don't want tasks to proliferate (build/repair the same...unassign/dismantle the same?)
+- Next Structure and Next Minion aren't actually implemented.
 
 
 

@@ -65,14 +65,14 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>() { { "Flesh", 1 }, { "Bone", 1 } }
         };
 
-        public static Research LongShadow = new Research("Longshadow")
+        public static Research LongShadow = new Research("LongShadow")
         {
             Name = "long shadow",
             Turns = 25,
             Ingredients = new Dictionary<string, int>() { { "Ectoplasm", 2 }}
         };
 
-        public static Research PoundOfFlesh = new Research("PoundOfFleshm")
+        public static Research PoundOfFlesh = new Research("PoundOfFlesh")
         {
             Name = "pound of flesh",
             Turns = 25,

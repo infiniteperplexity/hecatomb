@@ -19,21 +19,29 @@ namespace Hecatomb
             var c = MyCreature;
             MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
-                ("{yellow}Structure: "+char.ToUpper(c.MenuHeader[0]).ToString()+c.MenuHeader.Substring(1)),
-                "Tab) Next structure."
+                ("{yellow}Creature: "+char.ToUpper(c.MenuHeader[0]).ToString()+c.MenuHeader.Substring(1)),
+                "Tab) Next minion."
             };
             if (c.TryComponent<Minion>()!=null)
             {
                 Task t = c.GetComponent<Minion>().Task;
-                if (t!=null)
+                if (t==null)
                 {
-                    MenuTop.Add("Working on "+t.Describe());
+                    MenuTop.Add("No task assigned.");
+                }
+                else
+                {
+                    MenuTop.Add($"Working on {t.Describe()} at {t.X} {t.Y} {t.Z}");
                 }  
             }
             if (c.TryComponent<Inventory>() != null)
             {
                 Item item = c.GetComponent<Inventory>().Item;
-                if (item != null)
+                if (item==null)
+                {
+                    MenuTop.Add("Carrying nothing.");
+                }
+                else
                 {
                     MenuTop.Add("Carrying " + item.Describe());
                 }

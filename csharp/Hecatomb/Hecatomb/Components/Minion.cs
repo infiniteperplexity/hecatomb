@@ -36,7 +36,8 @@ namespace Hecatomb
             }
             if (Task==null)
             {
-                foreach(Task task in Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
+                foreach (Task task in Tasks.OrderBy(t=> t.Priority).ThenBy(t => Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
+                //    foreach (Task task in Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
                 {
                     if (task.Worker==null && task.CanAssign(cr))
                     {

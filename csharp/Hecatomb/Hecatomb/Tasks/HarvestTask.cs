@@ -10,6 +10,7 @@ using System.Diagnostics;
 
 namespace Hecatomb
 {
+    using static HecatombAliases;
     public class HarvestTask : Task
     {
         public HarvestTask() : base()
@@ -22,6 +23,20 @@ namespace Hecatomb
             Feature f = Game.World.Features[X, Y, Z];
             return $"harvest {f.Name}";
         }
+
+        public override bool ValidTile(Coord c)
+        {
+            if (!Explored.Contains(c) && !Options.Explored)
+            {
+                return false;
+            }
+            if (Terrains[c.X, c.Y, c.Z] == Terrain.FloorTile)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public override void Start()
         {
         }

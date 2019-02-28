@@ -75,7 +75,8 @@ namespace Hecatomb
         public FurnishTask(): base()
 		{
 			MenuName = "build fixtures";
-			Fixtures = new string[] {"Ramp", "Door", "SpearTrap"};
+            Priority = 4;
+            Fixtures = new string[] {"Door", "Ramp", "SpearTrap" };
             PrereqStructures = new List<string> { "Workshop" };
 		}
 			
@@ -138,7 +139,7 @@ namespace Hecatomb
 
         public override void SelectTile(Coord c)
         {
-            if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+            if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
                 Task task = Entity.Spawn<FurnishTask>();
                 string json = EntityType.Types[Makes].Components["Fixture"];

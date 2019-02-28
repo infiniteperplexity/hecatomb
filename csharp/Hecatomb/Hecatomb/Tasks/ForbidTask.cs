@@ -9,27 +9,22 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-    class PatrolTask : Task
+    class ForbidTask : Task
     {
-        public PatrolTask() : base()
+        public ForbidTask() : base()
         {
-            MenuName = "patrol area";
+            MenuName = "forbid area";
             PrereqStructures = new List<string>() { "GuardPost" };
-        }
-
-        public override void ChooseFromMenu()
-        {
-            Game.Controls.Set(new SelectTileControls(this));
         }
 
         public override bool ValidTile(Coord c)
         {
             return true;
         }
-        public override void Act()
+        public override bool CanAssign(Creature c)
         {
-            Actor a = Worker.GetComponent<Actor>();
-            a.Patrol(X, Y, Z);
+            return false;
         }
     }
 }
+

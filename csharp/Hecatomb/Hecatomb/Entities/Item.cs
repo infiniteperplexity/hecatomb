@@ -87,6 +87,7 @@ namespace Hecatomb
             Item item = Spawn<Item>();
             item.Resource = Resource;
             item.Quantity = n;
+            item.Owned = Owned;
             if (Quantity<=0)
             {
                 Despawn();
@@ -207,7 +208,9 @@ namespace Hecatomb
         )
         {
             string name = Hecatomb.Resource.Types[Resource].Name;
-            return $"{Quantity} {name}";
+            //return $"{Quantity} {name}";
+            var txt = (Owned) ? "" : "not ";
+            return $"{Quantity} {name} ({Claimed} claimed, {txt}owned)";
         }
     }
 }

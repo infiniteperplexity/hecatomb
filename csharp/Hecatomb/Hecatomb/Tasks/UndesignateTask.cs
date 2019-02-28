@@ -38,6 +38,10 @@ namespace Hecatomb
 			co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Undesignate to {0} {1} {2}", c.X, c.Y, c.Z)};
 		}
 		
+        public override bool ValidTile(Coord c)
+        {
+            return true;
+        }
 		public override void SelectZone(List<Coord> squares)
 		{
 			foreach (Coord c in squares)

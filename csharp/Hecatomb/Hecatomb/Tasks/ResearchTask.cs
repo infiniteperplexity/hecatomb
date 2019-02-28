@@ -14,6 +14,10 @@ namespace Hecatomb
     {
         public TileEntityField<Structure> Structure;
 
+        public ResearchTask() : base()
+        {
+            Priority = 3;
+        }
         public override string GetDisplayName()
         {
             return $"researching {Research.Types[Makes].Name}";
@@ -47,6 +51,7 @@ namespace Hecatomb
                 int z = Structure.Z;
                 // could I forceably spawn this rather than just copying it?
                 ResearchTask rt = Entity.Spawn<ResearchTask>();
+                rt.Structure = Structure;
                 rt.Makes = Makes;
                 rt.Labor = LaborCost;
                 rt.LaborCost = LaborCost;
@@ -54,6 +59,15 @@ namespace Hecatomb
                 rt.Place(x, y, z);
             }
             Controls.Set(new StructureControls(Structure));
+        }
+
+        public override bool ValidTile(Coord c)
+        {
+            if (Structure.Placed)
+            {
+                return true;
+            }
+            return false;
         }
 
         public override bool CanAssign(Creature c)

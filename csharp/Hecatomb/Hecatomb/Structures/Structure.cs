@@ -196,6 +196,7 @@ namespace Hecatomb
                 if (pile != null && pile.Resource == resource && pile.Quantity < pile.StackSize && task == null)
                 {
                     HaulTask ht = Entity.Spawn<HaulTask>();
+                    ht.Structure = this;
                     ht.Place(x, y, z);
                     // this logic seems correct
                     int claim = Math.Min(item.Unclaimed, pile.StackSize-pile.Quantity);
@@ -215,6 +216,7 @@ namespace Hecatomb
                 if (pile == null && task == null)
                 {
                     HaulTask ht = Entity.Spawn<HaulTask>();
+                    ht.Structure = this;
                     ht.Place(x, y, z);
                     // this logic seems correct
                     int claim = item.Unclaimed; ;

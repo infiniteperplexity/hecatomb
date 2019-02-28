@@ -16,6 +16,7 @@ namespace Hecatomb
         {
             MenuName = "butcher corpse";
             WorkRange = 0;
+            Priority = 4;
             Ingredients["Corpse"] = 1;
             PrereqStructures = new List<string>() { "Slaughterhouse" };
         }

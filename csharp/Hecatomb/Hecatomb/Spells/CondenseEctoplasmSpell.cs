@@ -22,13 +22,13 @@ namespace Hecatomb
             Structures = new[] { "Sanctum"};
         }
 
-        public override void Cast()
+        public override void ChooseFromMenu()
         {
+            Cast();
             var (x, y, z) = Caster;
             ParticleEmitter emitter = new ParticleEmitter();
             emitter.Place(x, y, z);
             Item.PlaceNewResource("Ectoplasm", 1, x, y, z);
-            base.Cast();
         }
     }
 }
