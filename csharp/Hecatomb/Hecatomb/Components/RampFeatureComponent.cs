@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Hecatomb
 {
     using static HecatombAliases;
-    public class RampComponent : Component
+    public class RampFeatureComponent : Component
     {
         public override void AfterSelfPlace(int x, int y, int z)
         {

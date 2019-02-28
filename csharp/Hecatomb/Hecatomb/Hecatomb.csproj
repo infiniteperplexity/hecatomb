@@ -74,7 +74,7 @@
     <Compile Include="StateHandlers\TaskHandler.cs" />
     <Compile Include="Entities\TaskField.cs" />
     <Compile Include="Entities\TileEntityField.cs" />
-    <Compile Include="Components\RampComponent.cs" />
+    <Compile Include="Components\RampFeatureComponent.cs" />
     <Compile Include="Components\Fixture.cs" />
     <Compile Include="FlyWeights\Research.cs" />
     <Compile Include="Tasks\HaulTask.cs" />

@@ -62,7 +62,6 @@ namespace Hecatomb
 			}
 		}
 
-        // this doesn't work
         public void MockTypify(TypedEntity e)
         {
             e.TypeName = TypeName;
@@ -74,6 +73,7 @@ namespace Hecatomb
             {
                 Type T = Type.GetType("Hecatomb." + t);
                 Component c = (Component)Entity.Mock(Type.GetType("Hecatomb." + t));
+                // questionable...
                 c.AddToMockEntity(e);
                 c.InterpretJSON(Components[t]);
             }

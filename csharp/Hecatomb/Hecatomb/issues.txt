@@ -5,6 +5,7 @@
 - Workers sometimes abandon tasks and won't go back...need to reproduce and check if they're still assigned.
 ? Can assign a contruction task over solid tiles
 ? Dropped items are unowned - believed fixed
+- Building a ramp should clear the cover on teh square above, including mining it if necessary.
 
 Misfeatures:
 X We shouldn't claim multiple haulable items at once, should we? - solved
@@ -25,6 +26,7 @@ Improvements:
 - Incomplete features, excavations...what is to be done?
 - Paved floor as feature.
 - Stonemason as structure?
+- Construct tasks should maybe lists their needed ingredients?  maybe other tasks as well?
 
 Features:
 - We need some way to dismantle and/or repair, but we don't want tasks to proliferate (build/repair the same...unassign/dismantle the same?)
