@@ -48,7 +48,7 @@ namespace Hecatomb
 			LastUpdate = DateTime.Now;
 			PausedAfterLoad = false;
 		}
-		
+
 		public void Update()
 		{
             if (Frozen)

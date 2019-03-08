@@ -138,19 +138,26 @@ namespace Hecatomb
 		}
 		public override void Finish()
 		{
+            Structure s = Structure.Entity;
+            if (s.Features.Count==0)
+            {
+                for (int i = 0; i < s.Width * s.Height; i++)
+                {
+                    s.Features.Add(null);
+                }
+            }
 			Feature incomplete = Game.World.Features[X, Y, Z];
 			incomplete.Despawn();
 			Feature f = Entity.Spawn<Feature>("StructureFeature");
 			f.Place(X, Y, Z);
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
-			f.Symbol = Structure.Entity.Symbols[FeatureIndex];
-			f.FG = Structure.Entity.FGs[FeatureIndex];
+			f.Symbol = s.Symbols[FeatureIndex];
+			f.FG = s.FGs[FeatureIndex];
             //f.BG = sc.BGs[FeatureIndex];
-            f.BG = Structure.Entity.BG;
-			Structure.Entity.Features[FeatureIndex] = f;
+            f.BG = s.BG;
+			s.Features[FeatureIndex] = f;
 			bool finished = true;
-            //Somehow the size of the Feature array gets doubled when you restore the game
-			foreach (Feature fr in Structure.Entity.Features)
+			foreach (Feature fr in s.Features)
 			{
 				if (fr==null)
 				{
@@ -159,13 +166,17 @@ namespace Hecatomb
 			}
 			if (finished)
 			{
-                Feature fr = Structure.Entity.Features[0];
-                if (Structure.Entity.Width==3 && Structure.Entity.Height==3)
+                Feature fr = s.Features[0];
+                if (s.Width==3 && s.Height==3)
                 {
                     fr = Structure.Entity.Features[4];
                 }
+                else if (s.Width==4 && s.Height==4)
+                {
+                    fr = Structure.Entity.Features[5];
+                }
 				Structure.Entity.Place(fr.X, fr.Y, fr.Z);
-                foreach (Feature feat in Structure.Entity.Features)
+                foreach (Feature feat in s.Features)
                 {
                     StructuralComponent st = Spawn<StructuralComponent>();
                     st.Structure = Structure;

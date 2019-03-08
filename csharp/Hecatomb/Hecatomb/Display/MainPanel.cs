@@ -146,7 +146,6 @@ public class MainGamePanel : GamePanel
                     Vector2 v = f.MeasureString(c.ToString());
                     if (Fonts[0].GetGlyphs().ContainsKey(c))
                     {
-
                         fontCache[c] = (new Vector2(v.X, -7), f);
                     }
                     else if (Fonts[1].GetGlyphs().ContainsKey(c))

@@ -34,7 +34,11 @@ namespace Hecatomb
 		{
 			foreach (SpriteFont f in Fonts)
 			{
-				if (f.GetGlyphs().ContainsKey(c))
+                //if (c == '\u2554')
+                //{
+                //    Debug.WriteLine("looking at it now");
+                //}
+                if (f.GetGlyphs().ContainsKey(c))
 				{
 					return f;
 				}
@@ -48,10 +52,11 @@ namespace Hecatomb
 		}
 		
 		public Vector2 MeasureChar(char c)
-		{	
-			if (measureCache.ContainsKey(c))
+		{
+            if (measureCache.ContainsKey(c))
 			{
-				return measureCache[c];
+               
+                return measureCache[c];
 			}
 			string s = c.ToString();
 			foreach (SpriteFont f in Fonts)

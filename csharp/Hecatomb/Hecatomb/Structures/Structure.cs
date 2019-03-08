@@ -54,17 +54,20 @@ namespace Hecatomb
             Width = 3;
             Height = 3;
             Features = new List<TileEntityField<Feature>>();
-            // I think this messes up when repopulating...
-            for (int i = 0; i<Width*Height; i++)
-            {
-                Features.Add(null);
-            }
             Ingredients = new Dictionary<string, int>[Width * Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
             ResearchPrereqs = new string[0];
             StructurePrereqs = new string[0];
             Stores = new string[0];
             Researches = new string[0];
+        }
+
+        public void InitializeFeatures()
+        {
+            for (int i = 0; i < Width * Height; i++)
+            {
+                Features.Add(null);
+            }
         }
 
         public static List<string> ListAsStrings()

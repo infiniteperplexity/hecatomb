@@ -147,7 +147,7 @@
     <Compile Include="Display\MenuPanel.cs" />
     <Compile Include="World\Particles.cs" />
     <Compile Include="Spells\Spell.cs" />
-    <Compile Include="Controls\StructureControls.cs" />
+    <Compile Include="StateHandlers\StructureControls.cs" />
     <Compile Include="Display\TileRendering.cs" />
     <Compile Include="Core\Tiles.cs" />
     <Compile Include="Components\Actor.cs" />

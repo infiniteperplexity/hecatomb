@@ -17,18 +17,32 @@ namespace Hecatomb
     {
         public Stockpile() : base()
         {
-
+            Width = 4;
+            Height = 4;
             Symbols = new char[]
             {
-                '.','.','\u25AD',
-                '\u2234','#','\u2630',
-                '\u25A7','.','\u25AF'
+                '#','-','-','#',
+                '|','.','.','|',
+                '|','.','.','|',
+                '#','-','-','#'
+
+                //'\u2554','\u2550','\u2550','\u2557',
+                //'\u2551','.','.','\u2551',
+                //'\u2551','.','.','\u2551',
+                //'\u255A','\u2550','\u2550','\u255D'
+                //'.','.','\u25AD',
+                //'\u2234','#','\u2630',
+                //'\u25A7','.','\u25AF'
             };
             FGs = new string[]
             {
-                "#BB9922", "FLOORFG","FLOORFG",
-                "#BB9922","FLOORFG", "#BB9922",
-                "FLOORFG","FLOORFG","#BB9922"
+                "FLOORFG","FLOORFG","FLOORFG","FLOORFG",
+                "FLOORFG","FLOORFG","FLOORFG","FLOORFG",
+                "FLOORFG","FLOORFG","FLOORFG","FLOORFG",
+                "FLOORFG","FLOORFG","FLOORFG","FLOORFG"
+                //"#BB9922", "FLOORFG","FLOORFG",
+                //"#BB9922","FLOORFG", "#BB9922",
+                //"FLOORFG","FLOORFG","#BB9922"
             };
             BG = "#444455";
             BGs = new string[]
@@ -39,13 +53,17 @@ namespace Hecatomb
             };
             Ingredients = new Dictionary<string, int>[]
             {
-                new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}},
-                null, new Dictionary<string, int>() {{"Wood", 1}}, null,
-                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}}
+                null, null, null, null,
+                null,new Dictionary<string, int>() {{"Wood", 1}},new Dictionary<string, int>() {{"Rock", 1}},null,
+                null,new Dictionary<string, int>() {{"Rock", 1}},new Dictionary<string, int>() {{"Wood", 1}},null,
+                null,null,null,null
+                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}},
+                //null, new Dictionary<string, int>() {{"Wood", 1}}, null,
+                //new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}}
             };
             MenuName = "stockpile";
             Name = "stockpile";
-            Stores = new string[] { "Rock", "Wood"};
+            Stores = new string[] { "Rock", "Wood", "Flint", "Coal"};
         }
     }
 }

@@ -34,7 +34,8 @@ namespace Hecatomb
 		public static ControlContext DefaultControls;
 		public static ControlContext CameraControls;
 		public static TimeHandler Time;
-		
+        public static DateTime LastDraw;
+
 //		public static GameEventHandler Events;
 		public static HashSet<Coord> Visible;
         GraphicsDeviceManager graphics;
@@ -85,6 +86,7 @@ namespace Hecatomb
 			DefaultControls = new DefaultControls();
 			CameraControls = new CameraControls();
 			Camera = new Camera();
+            LastDraw = DateTime.Now;
 			base.Initialize();
             if (!Options.NoStartupScreen)
             {
@@ -188,13 +190,20 @@ namespace Hecatomb
 
         protected override void Draw(GameTime gameTime)
         {
+            /*TimeSpan sinceDraw = DateTime.Now.Subtract(LastDraw);
+            if (sinceDraw > TimeSpan.FromMilliseconds(500))
+            {
+                MainPanel.Dirty = true;
+                MenuPanel.Dirty = true;
+                StatusPanel.Dirty = true;
+            }*/
             ControlContext.Redrawn = true;
         	sprites.Begin();
             if (Controls?.ImageOverride != null)
             {
                 Controls.ImageOverride.Draw();
             }
-            else if (!Time.Frozen)
+            else if (!Time.Frozen /*|| sinceDraw > TimeSpan.FromMilliseconds(500)*/)
             {
                 if (MainPanel.Dirty)
                 {
