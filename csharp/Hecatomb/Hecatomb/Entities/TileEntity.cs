@@ -105,6 +105,15 @@ namespace Hecatomb
             // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about 
         }
 
+        public Coord FindPlace(int x, int y, int z = -1, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        {
+            return new Coord(1, 1, 1);
+        }
+
+        public static Dictionary<TileEntity,Coord> FindPlaces(List<TileEntity> entities, int x, int y, int z = -1, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        {
+            return new Dictionary<TileEntity, Coord>();
+        }
         public virtual void Fall()
         {
 

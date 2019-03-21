@@ -74,6 +74,23 @@
 					"Attacker": {},
 					"Defender": {}
 				}
+			},
+			{
+				"Type" : "HumanBandit",
+				"Name" : "human bandit",
+				"FG" : "brown",
+				"Symbol" : "@",
+				"Components" : {
+					"Actor": {
+						"TeamName" : "HumanTeam",
+						"Goals": ["HuntForPlayer"]
+					},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
 			}
 		]
 }
