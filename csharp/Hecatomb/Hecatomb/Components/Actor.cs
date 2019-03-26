@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace Hecatomb
 {
@@ -28,7 +29,12 @@ namespace Hecatomb
         public List<string> Goals = new List<string>();
         public string Alert;
         public string Fallback;
-        public void CallString(string s) { }
+        public void CallString(string s)
+        {
+            Type thisType = this.GetType();
+            MethodInfo theMethod = thisType.GetMethod(s);
+            theMethod.Invoke(this, new object[0]);
+        }
         // so I guess this doesn't get reconstituted correctly when restoring a game
 		[JsonIgnore] public Team Team
 		{
@@ -289,18 +295,18 @@ namespace Hecatomb
 			{
                 this.Team = Team.Types[(string)obj["TeamName"]];
 			}
-            //if (obj["Goals"]!=null)
-            //{
-            //    List<string> goals = obj["Goals"].ToObject<List<string>>();
-            //    foreach (string s in goals)
-            //    {
-            //        if (s=="HuntForPlayer")
-            //        {
-            //            Goals.Add("HuntForPlayer");
-            //        }
-            //    }
-            //}
-		}
+            if (obj["Goals"] != null)
+            {
+                List<string> goals = obj["Goals"].ToObject<List<string>>();
+                foreach (string s in goals)
+                {
+                    if (s == "HuntForPlayer")
+                    {
+                        Goals.Add("HuntForPlayer");
+                    }
+                }
+            }
+        }
 
 
         public void HuntForPlayer()

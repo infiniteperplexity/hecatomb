@@ -190,7 +190,8 @@ namespace Hecatomb
 			}
             //
             int tally = 0;
-            int maxtries = 2500;
+            //int maxtries = 2500;
+            int maxtries = 10000;
 			while (queue.Count>0) {
                 tally += 1;
                 if (tally>=maxtries)
@@ -411,7 +412,7 @@ namespace Hecatomb
                 tries += 1;
                 int i = Game.World.Random.Next(-max, max + 1);
                 int j = Game.World.Random.Next(-max, max + 1);
-                if (x>Game.World.Width-2 || x<1 || y>Game.World.Height-2 || y<1)
+                if (i+x>Game.World.Width-2 || i+x<1 || j+y>Game.World.Height-2 || j+y<1)
                 {
                     continue;
                 }

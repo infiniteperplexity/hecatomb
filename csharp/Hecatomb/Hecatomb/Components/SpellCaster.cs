@@ -84,7 +84,8 @@ namespace Hecatomb
                 "RaiseZombieSpell",
                 "CondenseEctoplasmSpell",
                 "PoundOfFleshSpell",
-                "LongShadowSpell"
+                "LongShadowSpell",
+                "SummonBanditsDebugSpell"
             };
             AddListener<TurnBeginEvent>(OnTurnBegin);
 		}

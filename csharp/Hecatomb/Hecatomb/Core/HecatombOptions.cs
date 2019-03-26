@@ -21,7 +21,9 @@ namespace Hecatomb
         public HecatombOptions()
         {
             Explored = false;
+            Explored = true;
             Visible = false;
+            Visible = true;
             NoIngredients = false;
             NoIngredients = true;
             NoTutorial = false;
@@ -30,8 +32,9 @@ namespace Hecatomb
             NoStartupScreen = true;
             HumanAttacks = false;
             AllSpells = false;
+            AllSpells = true;
             NoManaCost = false;
-            //NoManaCost = true;
+            NoManaCost = true;
             WorkBonus = 0;
             WorkBonus = 5;
             

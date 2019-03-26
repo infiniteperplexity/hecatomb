@@ -23,6 +23,8 @@ namespace Hecatomb
         static ControlContext OldControls;
         static DateTime InputBegan;
         static Highlight Cursor = new Highlight("cyan");
+        public static bool ControlDown = false;
+        public static bool ShiftDown = false;
         public static bool MovingCamera;
         public const int Throttle = 200;
         public const int StartThrottle = 750;
@@ -203,7 +205,9 @@ namespace Hecatomb
 			}
         	var m = Mouse.GetState();
         	var k = Keyboard.GetState();
-        	DateTime now = DateTime.Now;
+            ControlDown = (k.IsKeyDown(Keys.LeftControl) || k.IsKeyDown(Keys.RightControl));
+            ShiftDown = (k.IsKeyDown(Keys.LeftShift) || k.IsKeyDown(Keys.RightShift));
+            DateTime now = DateTime.Now;
         	double sinceInputBegan = now.Subtract(InputBegan).TotalMilliseconds;
         	Coord c = new Coord(Game.Camera.XOffset, Game.Camera.YOffset, Game.Camera.Z);
         	if (!m.Equals(OldMouse) || !c.Equals(OldCamera))

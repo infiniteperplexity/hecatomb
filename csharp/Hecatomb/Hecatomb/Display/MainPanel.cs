@@ -102,7 +102,10 @@ public class MainGamePanel : GamePanel
 			Color cbg = (bg==null) ? Color.Red : Game.Colors[bg];
 			var vbg = new Vector2(Padding+(1+i)*(Size+Padding),Padding+(1+j)*(Size+Padding));
 			var vfg = new Vector2(xOffset+Padding+(1+i)*(Size+Padding), yOffset+Padding+(1+j)*(Size+Padding));
-			Sprites.Draw(BG, vbg, cbg);
+            //var vbg = new Vector2(Padding + (i) * (Size + Padding), Padding + (j) * (Size + Padding));
+            //var vfg = new Vector2(xOffset + Padding + (i) * (Size + Padding), yOffset + Padding + (j) * (Size + Padding));
+
+            Sprites.Draw(BG, vbg, cbg);
             if (c == '\u02C7')
             {
                 Sprites.DrawString(Fonts[0], "^", vfg + (new Vector2(-2, 0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);

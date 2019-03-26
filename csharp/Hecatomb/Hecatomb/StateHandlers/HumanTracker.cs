@@ -57,7 +57,7 @@ namespace Hecatomb
             return ge;
         }
 
-        public void BanditAttack()
+        public void BanditAttack(bool debugCloser = false)
         {
             bool xwall = (Game.World.Random.Next(2)==0);
             bool zero = (Game.World.Random.Next(2) == 0);
@@ -65,17 +65,34 @@ namespace Hecatomb
             if (xwall)
             {
                 x0 = (zero) ? 1 : Game.World.Width - 2;
+                
                 y0 = Game.World.Random.Next(Game.World.Height - 2) + 1;
+                if (debugCloser)
+                {
+                    x0 = (zero) ? 75 : 180;
+                    y0 = Game.World.Random.Next(Game.World.Height - 75) + 75;
+                }
             }
             else
             {
                 y0 = (zero) ? 1 : Game.World.Height - 2;
                 x0 = Game.World.Random.Next(Game.World.Width - 2) + 1;
+                if (debugCloser)
+                {
+                    y0 = (zero) ? 75 : 180;
+                    x0 = Game.World.Random.Next(Game.World.Width - 75) + 75;
+                }
             }
-            var bandit = Entity.Spawn<Creature>("Bandit");
-            bandit.PlaceNear(x0, y0, Game.World.GetGroundLevel(x0, y0));
-            var leader = Entity.Spawn<LeaderComponent>();
-            leader.AddToEntity(bandit);
+            for (int i = 0; i < 3; i++)
+            {
+                var bandit = Entity.Spawn<Creature>("HumanBandit");
+                bandit.PlaceNear(x0, y0, 0, max: 5);
+                // do they occasionally get placed one step underground?
+                Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
+            }
+            
+            //var leader = Entity.Spawn<LeaderComponent>();
+            //leader.AddToEntity(bandit);
             //what about "ChainPlace"?  How did that work in JS?
             // in JS you do that on the abstract type.  I think it would be better to have it be a static method on Creature, etc. that acts on a list of creatures.
 

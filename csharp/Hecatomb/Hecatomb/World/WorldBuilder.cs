@@ -33,14 +33,22 @@ namespace Hecatomb
 			var VegetationNoise = new FastNoise(seed: world.Random.Next(1024));
 			for (int i=0; i<world.Width; i++) {
 				for (int j=0; j<world.Height; j++) {
-					for (int k=0; k<world.Depth; k++) {
-						int elev = GroundLevel + (int) (vscale*ElevationNoise.GetSimplexFractal(hscale*i,hscale*j));
-						if (i==0 || i==world.Width-1 || j==0 || j==world.Height-1 || k<elev) {
-							world.Terrains[i,j,k] = Terrain.WallTile;
-                            world.Covers[i,j,k] = Cover.Soil;
-						} else if (k==elev) {
-							world.Terrains[i,j,k] = Terrain.FloorTile;
-                            if (k<=48)
+                    for (int k = 0; k < world.Depth; k++) {
+                        int elev = GroundLevel + (int)(vscale * ElevationNoise.GetSimplexFractal(hscale * i, hscale * j));
+                        if (i == 0 || i == world.Width - 1 || j == 0 || j == world.Height - 1)
+                        {
+                            world.Terrains[i, j, k] = Terrain.VoidTile;
+                            world.Covers[i, j, k] = Cover.NoCover;
+                        }
+                        else if (k < elev)
+                        {
+                            world.Terrains[i, j, k] = Terrain.WallTile;
+                            world.Covers[i, j, k] = Cover.Soil;
+                        }
+                        else if (k == elev)
+                        {
+                            world.Terrains[i, j, k] = Terrain.FloorTile;
+                            if (k <= 48)
                             {
                                 world.Covers[i, j, k] = Cover.Water;
                             }
@@ -48,7 +56,9 @@ namespace Hecatomb
                             {
                                 world.Covers[i, j, k] = Cover.Grass;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             world.Terrains[i, j, k] = Terrain.EmptyTile;
                             if (k <= 48)
                             {

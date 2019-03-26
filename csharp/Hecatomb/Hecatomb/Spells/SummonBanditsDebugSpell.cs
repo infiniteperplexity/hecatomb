@@ -22,8 +22,9 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            base.ChooseFromMenu();
-            GetState<HumanTracker>().BanditAttack();
+            Cast();
+            GetState<HumanTracker>().BanditAttack(debugCloser: true);
+
         }
     }
 }
