@@ -59,7 +59,7 @@ namespace Hecatomb
                             valid = false;
                         }
                     }
-                    if (valid)
+                    if (valid || Game.Options.NoIngredients)
                     {
                         var task = Hecatomb.Entity.Mock<FurnishTask>();
                         task.Makes = f;

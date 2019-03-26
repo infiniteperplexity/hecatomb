@@ -270,7 +270,7 @@ namespace Hecatomb
             {
                 Debug.WriteLine("Somehow ended up targeting itself.");
             }
-            if (Target != null && Target.Entity is Creature && Team.IsHostile((Creature) Target.Entity))
+            if (Target != null && Target.Entity is Creature && Team.IsHostile((Creature)Target.Entity))
             {
                 Creature cr = (Creature)Target;
                 Movement m = Entity.GetComponent<Movement>();
@@ -284,6 +284,12 @@ namespace Hecatomb
                 {
                     WalkToward(Target.X, Target.Y, Target.Z);
                 }
+            }
+            // not sure if this is exactly what we want to do
+            else if (Target != null && Target.Entity is Feature)
+            {
+                Debug.WriteLine("walking toward feature");
+                WalkToward(Target.X, Target.Y, Target.Z);
             }
         }
 		
@@ -317,6 +323,7 @@ namespace Hecatomb
                 Movement m = Entity.GetComponent<Movement>();
                 if (m.CanReach(Player))
                 {
+                    Debug.WriteLine("reached the actual player");
                     Target = Player;
                 }
                 else
@@ -326,6 +333,7 @@ namespace Hecatomb
                     {
                         if (m.CanReach(door))
                         {
+                            Debug.WriteLine("targeting a door");
                             Target = door;
                             break;
                         }

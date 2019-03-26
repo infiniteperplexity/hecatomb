@@ -226,7 +226,11 @@ namespace Hecatomb
 						}
 						path.AddFirst(current);
 					}
-//					return current;
+                    //					return current;
+                    if (tally > 1000)
+                    {
+                        Debug.WriteLine("took " + tally + " tries to find it");
+                    }
 					return path;
 				}
 				// ***************************************************

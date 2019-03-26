@@ -50,8 +50,8 @@ namespace Hecatomb
                         {
                             valid = false;
                         }
-                    }
-                    if (valid)
+                    }            
+                    if (valid || Options.NoIngredients)
                     {
                         tasks.Add(GetTask(t));
                     }
