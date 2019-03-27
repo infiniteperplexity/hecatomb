@@ -84,6 +84,19 @@ namespace Hecatomb
                 }
             }
             base.Despawn();
-        }    
+        } 
+        
+        // developmental
+        public Component AddComponent(Component c)
+        {
+            c.AddToEntity(this);
+            return c;
+        }
+
+        public T AddComponent<T>(Component c) where T: Component
+        {
+            c.AddToEntity(this);
+            return (T) c;
+        }
     }
 }
