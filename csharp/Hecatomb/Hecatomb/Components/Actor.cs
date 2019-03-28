@@ -328,13 +328,11 @@ namespace Hecatomb
 
         public void HuntForPlayer()
         {
-            Debug.WriteLine("hunting for player");
             if (Target == null)
             {
                 Movement m = Entity.GetComponent<Movement>();
                 if (m.CanReach(Player))
                 {
-                    Debug.WriteLine("reached the actual player");
                     Target = Player;
                 }
                 else
@@ -344,7 +342,6 @@ namespace Hecatomb
                     {
                         if (m.CanReach(door, useLast: false))
                         {
-                            Debug.WriteLine("targeting a door");
                             Target = door;
                             break;
                         }

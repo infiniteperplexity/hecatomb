@@ -16,18 +16,23 @@ namespace Hecatomb
 	/// Description of Particles.
 	/// </summary>
 	/// 
-	    public class ParticleEmitter
+	public class ParticleEmitter
     {
         public int X;
         public int Y;
         public int Z;
-        char[] Symbols;
-        string[] FGs;
-        string[] BGs;
-        DateTime T0;
-        int LifeSpan;
+        public char[] Symbols;
+        public string[] FGs;
+        public string[] BGs;
+        public DateTime T0;
+        public int LifeSpan;
         public int Rate;
-        DateTime LastEmit;
+        public DateTime LastEmit;
+        public string FG;
+        public int V;
+        public int A;
+        public int Lifespan;
+        public int D;
         
         public ParticleEmitter()
         {
@@ -47,6 +52,11 @@ namespace Hecatomb
             LifeSpan = 650;
             Game.World.Emitters.Add(this);
             LastEmit = DateTime.Now;
+            FG = "black";
+            V = 16;
+            A = -32;
+            LifeSpan = 250;
+            D = 0;
         }
         
         public virtual void Update()
@@ -81,16 +91,16 @@ namespace Hecatomb
             Particle p = new Particle()
             {
                 Symbol = Symbols[Game.World.Random.Next(Symbols.Length)],
-                FG = "black",
+                FG = FG,
                 X0 = X,
                 Y0 = Y,
                 Z0 = Z,
 //                V = -10,
-                V = 16,
-                A = -32,
-                LifeSpan = 250,
+                V = V,
+                A = A,
+                LifeSpan = LifeSpan,
 //                D = (float) Game.World.Random.Next(1,4),
-                D = 0,
+                D = D,
                 Angle = (float) (Game.World.Random.NextDouble()*2*Math.PI)
             };
             p.Place(X, Y, Z);
@@ -184,5 +194,19 @@ namespace Hecatomb
 			LifeSpan = int.MaxValue;
 		}
 	}
+
+    public class BloodEmitter : ParticleEmitter
+    {
+        public BloodEmitter()
+        {
+            Symbols = new char[] { '\u2022' };
+            Rate = 10;
+            LifeSpan = 50;
+            Game.World.Emitters.Add(this);
+            FG = "red";
+
+        }
+    }
+
 }
 

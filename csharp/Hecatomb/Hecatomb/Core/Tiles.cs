@@ -191,12 +191,12 @@ namespace Hecatomb
             //
             int tally = 0;
             //int maxtries = 2500;
-            int maxtries = 10000;
+            int maxtries = 5000;
 			while (queue.Count>0) {
                 tally += 1;
                 if (tally>=maxtries)
                 {
-                    Debug.Print("failed after {0} tries.",tally);
+                    //Debug.Print("failed after {0} tries.",tally);
                     return new LinkedList<Coord>();
                 }
 				current = queue.First.Value;
@@ -220,17 +220,13 @@ namespace Hecatomb
 					    if (retrace.ContainsKey(previous)) {
 					       	current = previous;
 						} else {
-//							if (useFirst) return previous
-							//return current;
-							return path;
+                            //							if (useFirst) return previous
+                            //return current;
+                            return path;
 						}
 						path.AddFirst(current);
 					}
                     //					return current;
-                    if (tally > 1000)
-                    {
-                        Debug.WriteLine("took " + tally + " tries to find it");
-                    }
 					return path;
 				}
 				// ***************************************************

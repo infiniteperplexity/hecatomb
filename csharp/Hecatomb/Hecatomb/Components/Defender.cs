@@ -37,11 +37,13 @@ namespace Hecatomb
             if (damage >= 20)
             {
                 // critical damage (die)
+                (new BloodEmitter() { LifeSpan = 200 }).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{red}" + $"{ca.Describe()} deals critical damage to {cd.Describe()}" });
                 Wounds = 8;
             }
             else if (damage >= 17)
             {
+                //(new BloodEmitter() { LifeSpan = 100 }).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals severe damage to {cd.Describe()}" });
                 // severe damage
                 if (Wounds < 6)
@@ -55,6 +57,7 @@ namespace Hecatomb
             }
             else if (damage >= 14)
             {
+                //(new BloodEmitter()).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals moderate damage to {cd.Describe()}" });
                 // moderate damage
                 if (Wounds < 4)
@@ -68,6 +71,7 @@ namespace Hecatomb
             }
             else if (damage >= 8)
             {
+                //(new BloodEmitter()).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{yellow}" + $"{ca.Describe()} deals mild damage to {cd.Describe()}" });
                 if (Wounds < 2)
                 {

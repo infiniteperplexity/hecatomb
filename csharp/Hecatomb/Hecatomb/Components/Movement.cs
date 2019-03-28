@@ -345,7 +345,6 @@ namespace Hecatomb
                 Feature f = Game.World.Features[x1, y1, z1];
                 if (f != null && f.Solid && !Phases)
                 {
-                    Debug.WriteLine("hit a door");
                     return false;
                 }
             }

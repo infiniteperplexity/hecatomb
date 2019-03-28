@@ -235,6 +235,8 @@ namespace Hecatomb
                     }
                 }
             }
+
+            ValidateOutdoors();
 			// *** Player ***
 			
 			Player = (Creature) Entities[pid];

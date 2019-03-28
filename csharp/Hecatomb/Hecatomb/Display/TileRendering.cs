@@ -58,6 +58,8 @@ namespace Hecatomb
             {
                 sym = Creatures[c].Symbol;
                 fg = fg ?? Creatures[c].FG;
+
+                //fg = fg ?? Creatures[c].GetCalculatedFG();
             }
             // a visible creature above
             else if (zview == +1 && Creatures[ca] != null && (visible || va))
@@ -283,9 +285,11 @@ namespace Hecatomb
             //{
             //    return "black";
             //}
-            else if (cr != null && (cr.BG != null || cr.Highlight != null))
+            else if (cr != null && (cr.GetCalculatedBG() != null || cr.Highlight != null))
+            //else if (cr != null && (cr.BG != null || cr.Highlight != null))
             {
-                return cr.Highlight ?? cr.BG;
+                //return cr.Highlight ?? cr.BG;
+                return cr.Highlight ?? cr.GetCalculatedBG();
             }
             else if (it != null && it.Claimed > 0)
             {

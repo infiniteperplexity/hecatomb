@@ -98,5 +98,49 @@ namespace Hecatomb
             c.AddToEntity(this);
             return (T) c;
         }
+
+
+        public string GetCalculatedFG()
+        {
+            if (TryComponent<Defender>()!=null)
+            {
+                int Wounds = GetComponent<Defender>().Wounds;
+                if (Wounds>=6)
+                {
+                    return "red";
+                }
+                else if (Wounds>=4)
+                {
+                    return "orange";
+                }
+                else if (Wounds>=2)
+                {
+                    return "yellow";
+                }
+            }
+            return FG;
+        }
+
+
+        public string GetCalculatedBG()
+        {
+            if (TryComponent<Defender>() != null)
+            {
+                int Wounds = GetComponent<Defender>().Wounds;
+                if (Wounds >= 6)
+                {
+                    return "red";
+                }
+                else if (Wounds >= 4)
+                {
+                    return "orange";
+                }
+                else if (Wounds >= 2)
+                {
+                    return "yellow";
+                }
+            }
+            return BG;
+        }
     }
 }
