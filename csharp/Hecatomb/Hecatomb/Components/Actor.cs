@@ -146,8 +146,18 @@ namespace Hecatomb
                     }
                 }
 				Coord t = (Coord) target;
-                // this goes wrong when you're right next to a non-creature target with no other instructions
-				TryStepTo(t.X, t.Y, t.Z);
+                if (Target?.Entity is Feature && Team!=Team.PlayerTeam && (Target.Entity as Feature).Solid)
+                {
+                    if (Tiles.QuickDistance(Entity, Target) <= 1)
+                    {
+                        Debug.WriteLine("would like to attack the door at this point");
+                        WalkRandom();
+                    }
+                }
+                if (!Acted)
+                {
+                    TryStepTo(t.X, t.Y, t.Z);
+                }
 				if (!Acted)
 				{
 					WalkRandom();
@@ -289,7 +299,7 @@ namespace Hecatomb
             // not sure if this is exactly what we want to do
             else if (Target != null && Target.Entity is Feature)
             {
-                Debug.WriteLine("walking toward feature");
+
                 WalkToward(Target.X, Target.Y, Target.Z);
             }
         }

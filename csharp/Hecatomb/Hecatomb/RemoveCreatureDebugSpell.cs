@@ -12,19 +12,18 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class PoundOfFleshSpell : Spell, ISelectsTile
+    public class RemoveCreatureDebugSpell : Spell, ISelectsTile
     {
-        public PoundOfFleshSpell()
+        public RemoveCreatureDebugSpell()
         {
-            MenuName = "pound of flesh";
-            cost = 5;
-            Researches = new[] { "PoundOfFlesh" };
-            Structures = new[] { "Sanctum" };
+            MenuName = "remove creature (debug)";
+            cost = 0;
         }
 
         public override void ChooseFromMenu()
         {
             base.ChooseFromMenu();
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
             if (GetCost() > Component.Sanity)
             {
                 Debug.WriteLine("cannot cast spell");
@@ -39,22 +38,9 @@ namespace Hecatomb
         {
             Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
 
-            if (cr!=null && (Game.World.Explored.Contains(c) || Options.Explored))
+            if (cr != null && (Game.World.Explored.Contains(c) || Options.Explored))
             {
-                if (cr == Caster)
-                {
-                    // can't target caster
-                }
-                else if (cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
-                {
-                    base.Cast();
-                    // heal ally at expense of caster
-                }
-                else
-                {
-                    base.Cast();
-                    // heal caster at expense of target
-                }
+                cr.Despawn();
             }
             else
             {
@@ -74,7 +60,7 @@ namespace Hecatomb
             }
             else if (cr != null)
             {
-                if (cr==Caster)
+                if (cr == Caster)
                 {
                     Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target yourself") };
                 }

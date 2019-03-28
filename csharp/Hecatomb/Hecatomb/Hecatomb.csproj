@@ -61,6 +61,7 @@
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />
     <Compile Include="NewEntity.cs" />
+    <Compile Include="RemoveCreatureDebugSpell.cs" />
     <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
     <Compile Include="Tasks\ForbidTask.cs" />
     <Compile Include="Utilities\ICallStrings.cs" />

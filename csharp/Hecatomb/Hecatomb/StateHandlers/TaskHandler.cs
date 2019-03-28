@@ -21,6 +21,15 @@ namespace Hecatomb
         {
             Minions = new List<TypedEntityField<Creature>>();
             Tasks = new[] { "DigTask", "BuildTask", "ConstructTask", "FurnishTask", "MurderTask", "PatrolTask", "ButcherTask", "UndesignateTask" };
+            AddListener<DespawnEvent>(OnDespawn);
+        }
+
+        public GameEvent OnDespawn(GameEvent ge)
+        {   
+            // I could potentially make these lists a special thing that always listens?
+            DespawnEvent dse = (DespawnEvent)ge;
+            Minions = Minions.Where((TypedEntityField<Creature> c) => c.Entity != dse.Entity).ToList();
+            return ge;
         }
 
 
