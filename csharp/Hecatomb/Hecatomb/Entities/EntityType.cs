@@ -25,6 +25,8 @@ namespace Hecatomb
 		public string FG;
 		public string BG;
 		public char Symbol;
+        public bool Solid;
+
 		public Dictionary<string, string> Components;
 		/// <summary>
 		/// Description of EntityType.
@@ -53,6 +55,10 @@ namespace Hecatomb
 			e.FG = FG;
 			e.BG = BG;
 			e.Symbol = Symbol;
+            if (e is Feature)
+            {
+                (e as Feature).Solid = Solid;
+            }
 			foreach (string t in Components.Keys)
 			{
 				Type T = Type.GetType("Hecatomb." + t);
@@ -69,6 +75,10 @@ namespace Hecatomb
             e.FG = FG;
             e.BG = BG;
             e.Symbol = Symbol;
+            if (e is Feature)
+            {
+                (e as Feature).Solid = Solid;
+            }
             foreach (string t in Components.Keys)
             {
                 Type T = Type.GetType("Hecatomb." + t);
@@ -110,6 +120,10 @@ namespace Hecatomb
 				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
+                if (t["Solid"] != null)
+                {
+                    et.Solid = (bool)t["Solid"];
+                }
 				foreach (JProperty comp in (JToken) t["Components"])
 				{
 					string name = (string) comp.Name;

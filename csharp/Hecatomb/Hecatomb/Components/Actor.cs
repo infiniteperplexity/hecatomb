@@ -146,6 +146,7 @@ namespace Hecatomb
                     }
                 }
 				Coord t = (Coord) target;
+                // this goes wrong when you're right next to a non-creature target with no other instructions
 				TryStepTo(t.X, t.Y, t.Z);
 				if (!Acted)
 				{
@@ -331,7 +332,7 @@ namespace Hecatomb
                     List<Feature> doors = Features.Where(f => (f.TypeName == "Door")).ToList();
                     foreach (Feature door in doors)
                     {
-                        if (m.CanReach(door))
+                        if (m.CanReach(door, useLast: false))
                         {
                             Debug.WriteLine("targeting a door");
                             Target = door;

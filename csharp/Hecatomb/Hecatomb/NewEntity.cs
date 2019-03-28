@@ -142,9 +142,9 @@ namespace Hecatomb
 
         public virtual void Despawn()
         {
-            Game.World.Events.Publish(new DespawnEvent { Entity = this });
+            //sGame.World.Events.Publish(new DespawnEvent { Entity = this });
             Spawned = false;
-            Game.World.Events.UnsubscribeAll(this);
+            //Game.World.Events.UnsubscribeAll(this);
             Entities.Remove(EID);
             EID = -1;
         }
