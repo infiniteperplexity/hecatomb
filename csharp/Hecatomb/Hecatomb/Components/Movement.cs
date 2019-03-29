@@ -305,6 +305,10 @@ namespace Hecatomb
 		// was there a version of this that can push the creature?
 		public void Displace(Creature c)
 		{
+            if (c==this.Entity)
+            {
+                Debug.WriteLine("We're trying to displace ourselves, that's totally illegal.");
+            }
 			Displace(c, Entity.X, Entity.Y, Entity.Z);
 		}
 		public void Displace(Creature cr, int x, int y, int z)

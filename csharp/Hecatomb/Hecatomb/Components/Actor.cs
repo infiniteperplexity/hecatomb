@@ -299,7 +299,7 @@ namespace Hecatomb
             // not sure if this is exactly what we want to do
             else if (Target != null && Target.Entity is Feature)
             {
-
+                // somehow this can end up trigger when we're literally on top of the feature
                 WalkToward(Target.X, Target.Y, Target.Z);
             }
         }
