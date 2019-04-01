@@ -295,9 +295,9 @@ namespace Hecatomb
             {
                 return "white";
             }
-            else if (f != null && (f.BG != null || f.Highlight != null))
+            else if (f != null && (f.GetCalculatedBG() != null || f.Highlight != null))
             {
-                return f.Highlight ?? f.BG;
+                return f.Highlight ?? f.GetCalculatedBG();
             }
             else if (it != null && res.BG != null)
             {

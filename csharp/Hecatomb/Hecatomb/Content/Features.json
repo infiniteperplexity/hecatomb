@@ -83,7 +83,10 @@
 						"Ingredients": {"Wood": 2},
 						"Structures": ["Workshop"]
 					},
-					"Defender": {}
+					"Defender": {
+						"Toughness": 9,
+						"Evasion": -10
+					}
 				}
 			},
 			{

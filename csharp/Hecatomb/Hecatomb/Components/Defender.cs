@@ -32,7 +32,7 @@ namespace Hecatomb
         public void Endure(int damage, AttackEvent attack)
         {
             Creature ca = (Creature)attack.Attacker.Entity;
-            Creature cd = (Creature)Entity;
+            TileEntity cd = (TileEntity)Entity;
             Debug.WriteLine("Total damage is " + damage);
             if (damage >= 20)
             {
@@ -103,6 +103,19 @@ namespace Hecatomb
                     Game.World.Events.Publish(new SensoryEvent() { Sight = $"{cd.Describe()} dies!" });
                     Entity.Entity.Destroy();
                 }
+            }
+        }
+
+        public override void InterpretJSON(string json)
+        {
+            JObject obj = JObject.Parse(json);
+            if (obj["Toughness"] != null)
+            {
+                Toughness = (int)obj["Toughness"];
+            }
+            if (obj["Evasion"] != null)
+            {
+                Evasion = (int)obj["Evasion"];
             }
         }
     }

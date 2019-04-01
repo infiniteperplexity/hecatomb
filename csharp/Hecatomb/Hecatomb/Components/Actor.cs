@@ -151,7 +151,7 @@ namespace Hecatomb
                     if (Tiles.QuickDistance(Entity, Target) <= 1)
                     {
                         Debug.WriteLine("would like to attack the door at this point");
-                        WalkRandom();
+                        //WalkRandom();
                     }
                 }
                 if (!Acted)
@@ -299,8 +299,21 @@ namespace Hecatomb
             // not sure if this is exactly what we want to do
             else if (Target != null && Target.Entity is Feature)
             {
-                // somehow this can end up trigger when we're literally on top of the feature
-                WalkToward(Target.X, Target.Y, Target.Z);
+                Feature fr = (Feature)Target;
+                Movement m = Entity.GetComponent<Movement>();
+                Attacker a = Entity.TryComponent<Attacker>();
+                Defender d = fr.TryComponent<Defender>();
+
+                // this is poorly thought out
+                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null && d!=null)
+                {
+                    Debug.WriteLine("Attacking a door");
+                    a.Attack(fr);
+                }
+                else
+                {
+                    WalkToward(Target.X, Target.Y, Target.Z);
+                }
             }
         }
 		
