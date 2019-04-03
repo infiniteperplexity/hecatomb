@@ -26,6 +26,9 @@ namespace Hecatomb
         {
             Attacker attacker = attack.Attacker;
             int damage = attack.Roll + attacker.Damage - Armor - Toughness;
+            Debug.WriteLine("Evasion is " + Evasion);
+            Debug.WriteLine("Toughness is " + Toughness);
+            Debug.WriteLine("roll plus damage is " + (attack.Roll + attacker.Damage));
             Endure(damage, attack);
         }
         // probably a damage event
