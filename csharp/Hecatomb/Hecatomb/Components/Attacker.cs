@@ -33,11 +33,18 @@ namespace Hecatomb
             int evade = defender.Evasion - defender.Wounds;
             Game.World.Events.Publish(attack);
             // at this point in the JS code, we aggro the defender in most cases
-            Debug.WriteLine("rolled " + attack.Roll);
-            Debug.WriteLine("evade " + evade);
+            Debug.WriteLine(
+$@"
+roll: {attack.Roll}
+roll+accuracy: {attack.Roll+Accuracy}
+11+evade: {11+evade}
+"
+            );
             if (attack.Roll + Accuracy >= 11 + evade)
             {
+                Debug.WriteLine("hit");
                 defender.Defend(attack);
+
             }
             else
             {

@@ -35,15 +35,12 @@ Features:
 
 
 
-
--	Seems like attacking and targeting basically work, and doors work as well.
--	So what are the goals here?
--	We want to make good early game balance, though that’s not what I’m working on right now.
--	We want the zombies to behave intelligently, rather than running out the door.
--	We need to make it so doors can be attacked.
--	There should be some sort of indicator for hits?
--	We want a splash screen notifying of the approaching attack.
--	Traps and such need to work.
--	We want to avoid that lag situation…the splash screen might help.
--	We need diagonal movement.
--	And maybe wounded creatures deserve a background or something?  Or a change in foreground color.
+Specific focus on doors and attacking:
+- We need some way to keep zombies from running out the door.  Probably just allow doors to lock...but then how do we pull zombies back in?
+- We want working traps.
+- We want diagonal movement.
+- The background color thing actually works really well.
+- We need the splash screen to hide lag.
+- We need a "frustration" mechanic, that makes raiders give up.
+- We need intelligent target switching.
+- We need some pathing stuff, so they always let the biggest creature smack the door.

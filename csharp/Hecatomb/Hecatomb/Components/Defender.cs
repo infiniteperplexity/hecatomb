@@ -25,10 +25,17 @@ namespace Hecatomb
         public void Defend(AttackEvent attack)
         {
             Attacker attacker = attack.Attacker;
-            int damage = attack.Roll + attacker.Damage - Armor - Toughness;
-            Debug.WriteLine("Evasion is " + Evasion);
-            Debug.WriteLine("Toughness is " + Toughness);
-            Debug.WriteLine("roll plus damage is " + (attack.Roll + attacker.Damage));
+            int damageRoll = Game.World.Random.Next(20) + 1;
+            // in the JS version the damage roll is separate from the attack roll
+            //int damage = attack.Roll + attacker.Damage - Armor - Toughness;
+            int damage = damageRoll + attacker.Damage - Armor - Toughness;
+            Debug.WriteLine(
+$@"
+damage roll: {damageRoll}
+total damage: {damage}
+current wounds: {Wounds}
+"
+            );
             Endure(damage, attack);
         }
         // probably a damage event
@@ -36,16 +43,17 @@ namespace Hecatomb
         {
             Creature ca = (Creature)attack.Attacker.Entity;
             TileEntity cd = (TileEntity)Entity;
-            Debug.WriteLine("Total damage is " + damage);
             if (damage >= 20)
             {
+                Debug.WriteLine("critical damage (one hit kill)");
                 // critical damage (die)
-                (new BloodEmitter() { LifeSpan = 200 }).Place(Entity.X, Entity.Y, Entity.Z);
+                
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{red}" + $"{ca.Describe()} deals critical damage to {cd.Describe()}" });
                 Wounds = 8;
             }
             else if (damage >= 17)
             {
+                Debug.WriteLine("severe damage (can kill)");
                 //(new BloodEmitter() { LifeSpan = 100 }).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals severe damage to {cd.Describe()}" });
                 // severe damage
@@ -60,6 +68,7 @@ namespace Hecatomb
             }
             else if (damage >= 14)
             {
+                Debug.WriteLine("moderate damage");
                 //(new BloodEmitter()).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals moderate damage to {cd.Describe()}" });
                 // moderate damage
@@ -74,6 +83,7 @@ namespace Hecatomb
             }
             else if (damage >= 8)
             {
+                Debug.WriteLine("mild damage (cannot kill)");
                 //(new BloodEmitter()).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{yellow}" + $"{ca.Describe()} deals mild damage to {cd.Describe()}" });
                 if (Wounds < 2)
@@ -102,7 +112,8 @@ namespace Hecatomb
                 }
                 else
                 {
-                    Debug.WriteLine("This creature should die.");
+                    Debug.WriteLine("This entity should die.");
+                    (new BloodEmitter() { LifeSpan = 200 }).Place(Entity.X, Entity.Y, Entity.Z);
                     Game.World.Events.Publish(new SensoryEvent() { Sight = $"{cd.Describe()} dies!" });
                     Entity.Entity.Destroy();
                 }
