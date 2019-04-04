@@ -63,6 +63,7 @@
     <Compile Include="NewEntity.cs" />
     <Compile Include="RemoveCreatureDebugSpell.cs" />
     <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
+    <Compile Include="SplashControls.cs" />
     <Compile Include="Tasks\ForbidTask.cs" />
     <Compile Include="Utilities\ICallStrings.cs" />
     <Compile Include="Tasks\ButcherTask.cs" />

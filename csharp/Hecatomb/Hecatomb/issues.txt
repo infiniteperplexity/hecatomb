@@ -44,3 +44,4 @@ Specific focus on doors and attacking:
 - We need a "frustration" mechanic, that makes raiders give up.
 - We need intelligent target switching.
 - We need some pathing stuff, so they always let the biggest creature smack the door.
+- Hostility detection is janky.

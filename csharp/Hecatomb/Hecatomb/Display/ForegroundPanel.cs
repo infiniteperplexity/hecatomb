@@ -22,14 +22,16 @@ namespace Hecatomb
 	/// </summary>
 	public class ForegroundPanel : TextPanel
 	{
-		bool Active;
+		public bool Active;
 		List<ColoredText> CurrentText;
 		
 		public ForegroundPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
 			X0 = 0;
 			Y0 = 0;
-			Active = false;
+            Size = 16;
+            Spacing = 8;
+            Active = false;
 		}
 		
 		public void Initialize()
@@ -48,17 +50,16 @@ namespace Hecatomb
 		
 		public override void DrawContent()
 		{
-			if (Active)
-			{
-				// there isn't any...?
-				base.DrawLines(CurrentText);
-			}
+                // there isn't any...?
+            Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            DrawLines(CurrentText);
 		}
 		
 		public void Splash(List<ColoredText> lines)
 		{
             Active = true;
             Dirty = true;
+            Game.Controls.Set(new SplashControls());
             CurrentText = lines;
         }
 		

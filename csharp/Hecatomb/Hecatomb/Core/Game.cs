@@ -28,6 +28,7 @@ namespace Hecatomb
 		public static MainGamePanel MainPanel;
 		public static MenuGamePanel MenuPanel;
 		public static StatusGamePanel StatusPanel;
+        public static ForegroundPanel ForegroundPanel;
 		
 		public static ControlContext LastControls;
 		public static ControlContext Controls;
@@ -138,8 +139,10 @@ namespace Hecatomb
             MainPanel = new MainGamePanel(graphics, sprites);
             MenuPanel = new MenuGamePanel(graphics, sprites);
             StatusPanel = new StatusGamePanel(graphics, sprites);
+            ForegroundPanel = new ForegroundPanel(graphics, sprites);
             MenuPanel.Initialize();
             StatusPanel.Initialize();
+            ForegroundPanel.Initialize();
             int Size = MainPanel.Size;
             int Padding = MainPanel.Padding;
             graphics.PreferredBackBufferWidth = Padding+(2+Camera.Width)*(Size+Padding)+MenuPanel.Width;  // set this value to the desired width of your window
@@ -217,6 +220,7 @@ namespace Hecatomb
                 else
                 {
                     MainPanel.DrawDirty();
+                    ForegroundPanel.Dirty = true;
                 }
                 if (StatusPanel.Dirty)
                 {
@@ -228,7 +232,12 @@ namespace Hecatomb
             {
                 MenuPanel.DrawContent();
                 MenuPanel.Dirty = false;
-            }    
+            }
+            if (ForegroundPanel.Dirty && ForegroundPanel.Active)
+            {
+                ForegroundPanel.DrawContent();
+                ForegroundPanel.Dirty = false;
+            }
         	sprites.End();
            	base.Draw(gameTime);
         }

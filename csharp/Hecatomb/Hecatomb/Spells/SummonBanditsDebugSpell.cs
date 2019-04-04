@@ -23,6 +23,11 @@ namespace Hecatomb
         public override void ChooseFromMenu()
         {
             Cast();
+            Foreground.Splash(new List<ColoredText>{
+                "Testing",
+                "Testing",
+                "Testing"
+            });
             GetState<HumanTracker>().BanditAttack(debugCloser: true);
 
         }

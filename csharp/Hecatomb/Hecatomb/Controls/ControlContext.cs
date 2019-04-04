@@ -60,6 +60,7 @@ namespace Hecatomb
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
+            Game.ForegroundPanel.Active = false;
         }
         
         public virtual void Back()
@@ -71,6 +72,7 @@ namespace Hecatomb
             Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
+            //Game.ForegroundPanel.Active = false;
         }
         
         
@@ -78,7 +80,7 @@ namespace Hecatomb
         
         public void Nothing(Coord c) {}
         
-        public void HandleClick(int x, int y)
+        public virtual void HandleClick(int x, int y)
         {
         	if (x>Game.MainPanel.Size && y>Game.MainPanel.Size && x<Game.MenuPanel.X0-Game.MainPanel.Size && y<Game.StatusPanel.Y0-Game.MainPanel.Size)
         	{
@@ -102,7 +104,7 @@ namespace Hecatomb
         	}
         }
         
-        public void HandleHover(int x, int y)
+        public virtual void HandleHover(int x, int y)
         {
         	if (Cursor.X>-1)
         	{

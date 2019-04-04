@@ -30,6 +30,15 @@ namespace Hecatomb
                 return Game.StatusPanel;
             }
         }
+
+        public static ForegroundPanel Foreground
+        {
+            get
+            {
+                return Game.ForegroundPanel;
+            }
+        }
+
         public static ControlContext Controls
         {
             get
