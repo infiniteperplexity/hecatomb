@@ -54,7 +54,7 @@ namespace Hecatomb
         }
 		public static void Go()
 		{
-			game = new Game();
+            game = new Game();
 			game.Run();
 //			using (game = new Game())
 //                game.Run();
