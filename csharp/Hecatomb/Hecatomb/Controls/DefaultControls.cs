@@ -20,21 +20,28 @@ namespace Hecatomb
 		public DefaultControls() : base()
 		{
 			var Commands = Game.Commands;
+            KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
 			KeyMap[Keys.Up] = Commands.MoveNorthCommand;
 			KeyMap[Keys.Down] = Commands.MoveSouthCommand;
 			KeyMap[Keys.Left] = Commands.MoveWestCommand;
 			KeyMap[Keys.Right] = Commands.MoveEastCommand;
-			KeyMap[Keys.OemComma] = Commands.MoveUpCommand;
+            KeyMap[Keys.W] = Commands.MoveNorthCommand;
+            KeyMap[Keys.S] = Commands.MoveSouthCommand;
+            KeyMap[Keys.A] = Commands.MoveWestCommand;
+            KeyMap[Keys.D] = Commands.MoveEastCommand;
+            KeyMap[Keys.E] = Commands.MoveNorthEastCommand;
+            KeyMap[Keys.Q] = Commands.MoveNorthWestCommand;
+            //KeyMap[Keys.Z] = Commands.MoveSouthWestCommand;
+            KeyMap[Keys.C] = Commands.MoveSouthEastCommand;
+            KeyMap[Keys.OemComma] = Commands.MoveUpCommand;
 			KeyMap[Keys.OemPeriod] = Commands.MoveDownCommand;
 			KeyMap[Keys.Space] = Commands.Wait;
 			KeyMap[Keys.J] = Commands.ChooseTask;
 			KeyMap[Keys.Z] = Commands.ChooseSpell;
-			KeyMap[Keys.S] = Commands.SaveGameCommand;
-			KeyMap[Keys.R] = Commands.RestoreGameCommand;
 			KeyMap[Keys.Enter] = Commands.TogglePause;
 			KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
 			KeyMap[Keys.OemPipe] = Commands.ShowConsole;
-            KeyMap[Keys.A] = Commands.ShowAchievements;
+            //KeyMap[Keys.A] = Commands.ShowAchievements;
             KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
 			
 			MenuTop = new List<ColoredText>() {

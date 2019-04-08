@@ -61,6 +61,7 @@ namespace Hecatomb
         	Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
             Game.ForegroundPanel.Active = false;
+            Game.Time.Frozen = false;
         }
         
         public virtual void Back()

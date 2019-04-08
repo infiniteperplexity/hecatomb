@@ -38,7 +38,16 @@ namespace Hecatomb
 			KeyMap[Keys.Down] = Commands.MoveCameraSouth;
 			KeyMap[Keys.Left] = Commands.MoveCameraWest;
 			KeyMap[Keys.Right] = Commands.MoveCameraEast;
-			KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
+            KeyMap[Keys.W] = Commands.MoveCameraNorth;
+            KeyMap[Keys.S] = Commands.MoveCameraSouth;
+            KeyMap[Keys.A] = Commands.MoveCameraWest;
+            KeyMap[Keys.D] = Commands.MoveCameraEast;
+            KeyMap[Keys.Q] = Commands.MoveCameraNorthWest;
+            KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
+            //KeyMap[Keys.Z] = Commands.MoveCameraSouthWest;
+            KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
+
+            KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
 			KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
 			KeyMap[Keys.Space] = Commands.Wait;
 			// skip for subclasses
@@ -62,8 +71,6 @@ namespace Hecatomb
 			    " ",
 			    "Z: Cast spell, J: Assign job.",
 			    "M: Minions, S: Structures, U: Summary.",
-			    "G: Pick Up, D: Drop.",
-			    "I: Inventory, E: Equip/Unequip.",
 			    " ",
 			    "PageUp/Down: Scroll messages.",
 			    "A: Achievements, /: Toggle tutorial."

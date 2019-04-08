@@ -102,11 +102,13 @@ namespace Hecatomb
         protected void ShowIntro()
         {
             Controls = new StaticMenuControls("Welcome to Hecatomb", new List<(Keys, ColoredText, Action)>() {
-                (Keys.S, "Start game.", StartGame)
+                (Keys.N, "New game.", StartGame),
+                (Keys.R, "Restore game.", RestoreGame),
+                (Keys.Q, "Quit.", QuitGame)
             });
             Controls.ImageOverride = new ImageOverride(graphics, sprites);
         }
-        protected void StartGame()
+        public void StartGame()
         {
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
             WorldBuilder builder = new DefaultBuilder();
@@ -125,6 +127,16 @@ namespace Hecatomb
             TurnHandler.HandleVisibility();
             Time.Frozen = false;
             Controls.Reset();
+        }
+
+        public void RestoreGame()
+        {
+            Commands.RestoreGameCommand();
+        }
+
+        public void QuitGame()
+        {
+            Exit();
         }
 
 

@@ -9,6 +9,9 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+
 namespace Hecatomb
 {
     using static HecatombAliases;
@@ -52,7 +55,23 @@ namespace Hecatomb
 		{
 			moveVerticalCommand(-1);
 		}
-		private void moveHorizontalCommand(int dx, int dy)
+        public void MoveNorthEastCommand()
+        {
+            moveHorizontalCommand(+1, -1);
+        }
+        public void MoveNorthWestCommand()
+        {
+            moveHorizontalCommand(-1, -1);
+        }
+        public void MoveSouthEastCommand()
+        {
+            moveHorizontalCommand(+1, +1);
+        }
+        public void MoveSouthWestCommand()
+        {
+            moveHorizontalCommand(-1, +1);
+        }
+        private void moveHorizontalCommand(int dx, int dy)
 		{
 			Creature p = Player;
 			int x1 = p.X + dx;
@@ -153,8 +172,25 @@ namespace Hecatomb
 		{
 			moveCameraVertical(-1);
 		}
-		
-		private void moveCameraVertical(int dz)
+        public void MoveCameraNorthWest()
+        {
+            moveCameraHorizontal(-1, -1);
+        }
+        public void MoveCameraNorthEast()
+        {
+            moveCameraHorizontal(+1, -1);
+        }
+        public void MoveCameraSouthEast()
+        {
+            moveCameraHorizontal(+1, +1);
+        }
+        public void MoveCameraSouthWest()
+        {
+            moveCameraHorizontal(-1, +1);
+        }
+
+
+        private void moveCameraVertical(int dz)
 		{
             if (ControlContext.ShiftDown)
             {
@@ -208,13 +244,33 @@ namespace Hecatomb
 		public void SaveGameCommand()
 		{
 			Game.World.Stringify();
+            Controls.Reset();
 		}
 		
 		public void RestoreGameCommand()
 		{
 			string json = System.IO.File.ReadAllText(@"..\GameWorld.json");
+            if (Game.World == null)
+            {
+                Game.World = new World(256, 256, 64);
+            }
 			Game.World.Parse(json);
-		}
+            Controls.Reset();
+        }
+
+        public void SystemMenuCommand()
+        {
+            Time.Frozen = true;
+            Game.Controls.Set(new StaticMenuControls(" ", new List<(Keys, ColoredText, Action)>() {
+                (Keys.Escape, "Cancel.", Controls.Reset),
+                (Keys.S, "Save game.", SaveGameCommand),
+                (Keys.A, "Save as...", SaveGameCommand),
+                (Keys.R, "Restore game.", Game.game.RestoreGame),
+                (Keys.D, "Delete game.", Game.game.StartGame),
+                (Keys.N, "New game.", Game.game.StartGame),
+                (Keys.Q, "Quit.", Game.game.QuitGame)
+            }));
+        }
 		
 		public void TogglePause()
 		{
