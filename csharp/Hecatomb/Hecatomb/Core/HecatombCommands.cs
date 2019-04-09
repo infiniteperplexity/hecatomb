@@ -98,14 +98,14 @@ namespace Hecatomb
 					return;
 				}
 				Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
-				if (cr!=null && p.GetComponent<Actor>().Team.IsFriendly(cr))
+				if (cr!=null && p.GetComponent<Actor>().IsFriendly(cr))
 				{
                     Game.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
                     m.Displace(cr);
 					Act();
 					return;
 				}
-                else if (cr!=null && p.GetComponent<Actor>().Team.IsHostile(cr))
+                else if (cr!=null && p.GetComponent<Actor>().IsHostile(cr))
                 {
                     p.GetComponent<Attacker>().Attack(cr);
                     Act();
@@ -126,13 +126,13 @@ namespace Hecatomb
 			}
 			if (!m.CanPass(x1, y1, z1)) {
 				Creature cr = Game.World.Creatures[x1, y1, z1];
-				if (cr!=null && p.GetComponent<Actor>().Team.IsFriendly(cr))
+				if (cr!=null && p.GetComponent<Actor>().IsFriendly(cr))
 				{
                     Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
                     m.Displace(cr);
 					Act();
 				}
-                else if (cr!=null && p.GetComponent<Actor>().Team.IsHostile(cr))
+                else if (cr!=null && p.GetComponent<Actor>().IsHostile(cr))
                 {
                     p.GetComponent<Attacker>().Attack(cr);
                     Act();

@@ -21,7 +21,7 @@ namespace Hecatomb
             if (pe.Entity is Creature && pe.X==Entity.X && pe.Y==Entity.Y && pe.Z==Entity.Z)
             {
                 Debug.WriteLine("stepping on trap");
-                if ((pe.Entity as TypedEntity).GetComponent<Actor>().Team!=Team.PlayerTeam)
+                if ((pe.Entity as TypedEntity).GetComponent<Actor>().Team!="Friendly")
                 {
                     Debug.WriteLine("trap should go off");
                 }

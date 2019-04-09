@@ -65,7 +65,7 @@ namespace Hecatomb
         {
             Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
             Player = p;
-            p.GetComponent<Actor>().Team = Team.PlayerTeam;
+            p.GetComponent<Actor>().Team = "Friendly";
             bool valid = true;
             var x = Width / 2;
             var y = Height / 2;

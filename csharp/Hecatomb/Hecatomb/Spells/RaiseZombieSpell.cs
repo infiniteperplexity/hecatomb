@@ -65,7 +65,7 @@ namespace Hecatomb
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
-                zombie.GetComponent<Actor>().Team = Team.PlayerTeam;
+                zombie.GetComponent<Actor>().Team = "Friendly";
                 zombie.Place(c.X, c.Y, c.Z - 1);
                 Task emerge = Entity.Spawn<ZombieEmergeTask>();
                 emerge.AssignTo(zombie);
@@ -82,7 +82,7 @@ namespace Hecatomb
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
-                zombie.GetComponent<Actor>().Team = Team.PlayerTeam;
+                zombie.GetComponent<Actor>().Team = "Friendly";
                 zombie.Place(c.X, c.Y, c.Z);
                 Status.PushMessage("The corpse stirs to obey your commands.");
                 GetState<TaskHandler>().Minions.Add(zombie);

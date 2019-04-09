@@ -23,7 +23,7 @@ namespace Hecatomb
         public TileEntityField<TileEntity> Target;
 		[JsonIgnore] public int ActionPoints;
 		public int CurrentPoints;
-		public string TeamName;
+		public string Team;
         public bool Acted;
         public bool DeclaredEnemy;
         public List<string> Goals = new List<string>();
@@ -36,29 +36,6 @@ namespace Hecatomb
             theMethod.Invoke(this, new object[0]);
         }
         // so I guess this doesn't get reconstituted correctly when restoring a game
-		[JsonIgnore] public Team Team
-		{
-			get
-			{
-				return (TeamName==null) ? null : Team.Types[TeamName];
-			}
-			set
-			{
-				if (value==null)
-				{
-					if (TeamName!=null)
-					{
-                        Team.Types[TeamName].RemoveMember((Creature) Entity);
-					}
-					TeamName = null;
-				}
-				else
-				{
-					value.AddMember((Creature) Entity);
-					TeamName = value.TypeName;
-				}
-			}
-		}
 		public Actor() : base()
 		{
 			ActionPoints = 16;
@@ -128,6 +105,24 @@ namespace Hecatomb
 
         public void Wander() => WalkRandom();
 
+        public bool IsHostile(Creature c)
+        {
+            return GetState<TeamHandler>().CheckHostile(Team, c);
+        }
+        public bool IsHostile(string team)
+        {
+            return GetState<TeamHandler>().CheckHostile(Team, team);
+        }
+        public bool IsFriendly(Creature c)
+        {
+            return IsFriendly(c.GetComponent<Actor>().Team);
+        }
+        public bool IsFriendly(string team)
+        {
+            return (Team == team);
+        }
+
+
 		public void WalkToward(int x1, int y1, int z1, bool useLast=false)
 		{
             var (x, y, z) = Entity;
@@ -138,7 +133,7 @@ namespace Hecatomb
 			{
 				WalkRandom();
 			} else {
-                if (Target?.Entity is Creature && Team!=null && Team.IsHostile((Creature) Target.Entity))
+                if (Target?.Entity is Creature && IsHostile((Creature) Target.Entity))
                 {
                     if (Tiles.QuickDistance(Entity, Target)<=1)
                     {
@@ -146,7 +141,7 @@ namespace Hecatomb
                     }
                 }
 				Coord t = (Coord) target;
-                if (Target?.Entity is Feature && Team!=Team.PlayerTeam && (Target.Entity as Feature).Solid)
+                if (Target?.Entity is Feature && Team!="Friendly" && (Target.Entity as Feature).Solid)
                 {
                     if (Tiles.QuickDistance(Entity, Target) <= 1)
                     {
@@ -233,7 +228,7 @@ namespace Hecatomb
 						m.StepTo(x, y, z);
 						return true;
 					}
-					else if (cr!=null && m.CanMove(x, y, z) && Team!=null && Team.IsFriendly(cr) && cr!=Player)
+					else if (cr!=null && m.CanMove(x, y, z) && IsFriendly(cr) && cr!=Player)
 					{
 						Minion minion = cr.TryComponent<Minion>();
 						if (minion!=null && minion.Task!=null)
@@ -262,15 +257,7 @@ namespace Hecatomb
             // we could rebuild the hostility matrix every time a team changes...
             if (Target==null && Team!=null)
             {
-                List<Creature> enemies;
-                if (Team.Berserk)
-                {
-                    enemies = Creatures.Where(cr => cr!=Entity).ToList();
-                }
-                else
-                {
-                    enemies = Team.GetEnemies().ToList();
-                }
+                List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
                 enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
                 if (enemies.Count > 0)
                 {
@@ -281,7 +268,7 @@ namespace Hecatomb
             {
                 Debug.WriteLine("Somehow ended up targeting itself.");
             }
-            if (Target != null && Target.Entity is Creature && Team.IsHostile((Creature)Target.Entity))
+            if (Target != null && Target.Entity is Creature && IsHostile((Creature)Target.Entity))
             {
                 Creature cr = (Creature)Target;
                 Movement m = Entity.GetComponent<Movement>();
@@ -321,9 +308,9 @@ namespace Hecatomb
 		public override void InterpretJSON(string json)
 		{
 			JObject obj = JObject.Parse(json);
-			if (obj["TeamName"]!=null)
+			if (obj["Team"]!=null)
 			{
-                this.Team = Team.Types[(string)obj["TeamName"]];
+                this.Team = (string)obj["Team"];
 			}
             if (obj["Goals"] != null)
             {

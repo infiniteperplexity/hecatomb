@@ -45,7 +45,7 @@ namespace Hecatomb
         public void Explore()
         {
             Actor a = Entity.GetComponent<Actor>();
-            if (a.TeamName=="PlayerTeam")
+            if (a.Team=="PlayerTeam")
             {
                 var visible = GetFOV();
                 foreach (Coord c in visible)

@@ -343,7 +343,7 @@ namespace Hecatomb
             if (tile.Fallable && Flies == false) {
                 return false;
             }
-            if (Entity.GetComponent<Actor>().Team != Team.PlayerTeam)
+            if (Entity.GetComponent<Actor>().Team != "Friendly")
             {
                 // doors block non-allied creatures
                 Feature f = Game.World.Features[x1, y1, z1];

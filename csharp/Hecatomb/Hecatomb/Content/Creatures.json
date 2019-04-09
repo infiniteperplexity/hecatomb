@@ -16,6 +16,19 @@
 				}
 			},
 			{
+				"Type" : "Spider",
+				"Name": "spider",
+				"FG" : "white",
+				"Symbol" : "s",
+				"Components" : {
+					"Actor": {"Team": "Neutral"},
+					"Senses": {},
+					"Movement": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			{
 				"Type" : "Zombie",
 				"Name": "zombie",
 				"FG" : "lime green",
@@ -36,7 +49,7 @@
 				"FG" : "brown",
 				"Symbol" : "r",
 				"Components" : {
-					"Actor": {"TeamName" : "NeutralAnimals"},
+					"Actor": {"Team" : "Neutral"},
 					"Senses": {},
 					"Movement": {},
 					"Inventory": {},
@@ -50,7 +63,7 @@
 				"FG" : "red",
 				"Symbol" : "z",
 				"Components" : {
-					"Actor": {"TeamName" : "Berserkers"},
+					"Actor": {"Team" : "Berserk"},
 					"Senses": {},
 					"Movement": {},
 					"Inventory": {},
@@ -65,7 +78,7 @@
 				"Symbol" : "@",
 				"Components" : {
 					"Actor": {
-						"TeamName" : "HumanTeam",
+						"Team" : "Good",
 						"Goals": ["HuntForPlayer"]
 					},
 					"Senses": {},
@@ -82,7 +95,7 @@
 				"Symbol" : "@",
 				"Components" : {
 					"Actor": {
-						"TeamName" : "HumanTeam",
+						"Team" : "Evil",
 						"Goals": ["HuntForPlayer"]
 					},
 					"Senses": {},

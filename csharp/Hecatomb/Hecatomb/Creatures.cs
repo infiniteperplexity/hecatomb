@@ -24,7 +24,7 @@ namespace Hecatomb
             Symbol = '@';
             AddComponent(new Movement());
             AddComponent(new Senses());
-            AddComponent<Actor>(new Actor()).Team = Team.PlayerTeam;
+            AddComponent<Actor>(new Actor()).Team = "Friendly";
             AddComponent(new SpellCaster());
             AddComponent(new Attacker());
             AddComponent(new Defender());

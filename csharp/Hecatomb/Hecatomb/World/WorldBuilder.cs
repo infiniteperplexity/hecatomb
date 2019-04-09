@@ -98,8 +98,7 @@ namespace Hecatomb
 					} else {
 						if (world.Random.Next(250)==1)
 						{
-							//Creature rat = Game.World.Entities.Spawn<Creature>("PackRat");
-							//rat.Place(i, j, k);
+							Entity.Spawn<Creature>("Spider").Place(i, j, k);
 						}
 						float plants = vscale*VegetationNoise.GetSimplexFractal(hscale*i,hscale*j);
 						if (plants>1.0f)

@@ -62,7 +62,7 @@
     <Compile Include="Creatures.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="RemoveCreatureDebugSpell.cs" />
-    <Compile Include="RevisedTeamHandler.cs" />
+    <Compile Include="StateHandlers\TeamHandler.cs" />
     <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
     <Compile Include="SplashControls.cs" />
     <Compile Include="Tasks\ForbidTask.cs" />
@@ -118,7 +118,6 @@
     <Compile Include="Structures\Structure.cs" />
     <Compile Include="Entities\Creature.cs" />
     <Compile Include="Components\StructuralComponent.cs" />
-    <Compile Include="FlyWeights\Team.cs" />
     <Compile Include="Entities\TypedEntity.cs" />
     <Compile Include="Entities\TypedEntityField.cs" />
     <Compile Include="Spells\LongShadowSpell.cs" />
@@ -128,7 +127,6 @@
     <Compile Include="FlyWeights\Resource.cs" />
     <Compile Include="Structures\Sanctum.cs" />
     <Compile Include="Controls\StaticMenuControls.cs" />
-    <Compile Include="StateHandlers\TeamHandler.cs" />
     <Compile Include="Structures\Stockpile.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityType.cs" />
