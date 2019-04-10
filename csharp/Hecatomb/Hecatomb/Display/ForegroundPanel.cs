@@ -27,8 +27,8 @@ namespace Hecatomb
 		
 		public ForegroundPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
-			X0 = 0;
-			Y0 = 0;
+			X0 = 35;
+			Y0 = 150;
             Size = 16;
             Spacing = 8;
             Active = false;
@@ -36,8 +36,8 @@ namespace Hecatomb
 		
 		public void Initialize()
 		{
-			Height = Game.StatusPanel.Y0 + Game.StatusPanel.Height;
-			Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;
+			Height = Size*13;
+			Width = Size*31;
 			BG = new Texture2D(Graphics.GraphicsDevice, Width, Height);
 			Color[] bgdata = new Color[Width*Height];
 			for(int i=0; i<bgdata.Length; ++i)
@@ -50,16 +50,32 @@ namespace Hecatomb
 		
 		public override void DrawContent()
 		{
-                // there isn't any...?
+            // eventually want some kind of brief freeze to keep from instantly closing this
             Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            Vector2 v;
+            v = new Vector2(X0, Y0);
+            Sprites.DrawString(Font, new string('=', 55), v, Game.Colors["yellow"]);
+            for (var i=1; i<=11; i++)
+            {
+                v = new Vector2(X0, Y0 + Size * i);
+                Sprites.DrawString(Font, "#", v, Game.Colors["yellow"]);
+                v = new Vector2(X0+Size*30+7, Y0 + Size * i);
+                Sprites.DrawString(Font, "#", v, Game.Colors["yellow"]);
+            }
+            v = new Vector2(X0, Y0 + Size * 12);
+            Sprites.DrawString(Font, new string('=', 55), v, Game.Colors["yellow"]);
             DrawLines(CurrentText);
-		}
+        }
 		
 		public void Splash(List<ColoredText> lines)
 		{
             Active = true;
             Dirty = true;
             Game.Controls.Set(new SplashControls());
+            for (var i = 0; i<lines.Count; i++)
+            {
+                lines[i] = "  " + lines[i];
+            }
             CurrentText = lines;
         }
 		

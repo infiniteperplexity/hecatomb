@@ -29,7 +29,7 @@ namespace Hecatomb
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
-            //NoStartupScreen = true;
+            NoStartupScreen = true;
             HumanAttacks = false;
             AllSpells = false;
             AllSpells = true;
