@@ -10,13 +10,17 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb
 {
     using static HecatombAliases;
+
     class HumanTracker : StateHandler
     {
         public int PastBanditAttacks;
+        public List<EntityField<Creature>> Bandits;
+        public int Frustration;
 
         public HumanTracker()
         {
             AddListener<TurnBeginEvent>(OnTurnBegin);
+            AddListener<AttackEvent>(OnBanditAttack);
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
@@ -83,28 +87,43 @@ namespace Hecatomb
                     x0 = Game.World.Random.Next(Game.World.Width - 75) + 75;
                 }
             }
+            Bandits = new List<EntityField<Creature>>();
             for (int i = 0; i < 3; i++)
             {
                 var bandit = Entity.Spawn<Creature>("HumanBandit");
                 bandit.PlaceNear(x0, y0, 0, max: 5);
+                Bandits.Add(bandit);
+                bandit.GetComponent<Actor>().EncounterTracker = this;
                 // do they occasionally get placed one step underground?
                 Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
             }
             
-            //var leader = Entity.Spawn<LeaderComponent>();
-            //leader.AddToEntity(bandit);
-            //what about "ChainPlace"?  How did that work in JS?
-            // in JS you do that on the abstract type.  I think it would be better to have it be a static method on Creature, etc. that acts on a list of creatures.
-
-            // figure out where to put it
-            // we'll want a "bandit leader" component
-
-            // Okay there are actually a bunch of things here...
-            // Potentially, we would have bandit leader and bandit follower components...the leader trends toward the player
-            // whereas the followers trend 'round the leader.  Now, if the leader dies, does another one take over?  Yeah...we can make that a part of the Behavior.
-
+            // this would be a good time to calculate all the paths, yes?
 
             PastBanditAttacks += 1;
+        }
+
+        public void Act(Creature c)
+        {
+            //this should attempt to replace the normal AI
+        }
+        
+        public GameEvent OnBanditAttack(GameEvent ge)
+        {
+            AttackEvent ae = (AttackEvent)ge;
+            if (Bandits.Contains((Creature)ae.Attacker.Entity.Unbox()))
+            {
+                if (ae.Defender.Entity.Name == "Door")
+                {
+                    Frustration += 1;
+                }
+            }
+            if (Frustration>=50)
+            {
+                Debug.WriteLine("Bandits tired of attacking, should go home now.");
+            }
+            // this should track the bandits' frustration with pounding on doors, etc?
+            return ge;
         }
     }
 }

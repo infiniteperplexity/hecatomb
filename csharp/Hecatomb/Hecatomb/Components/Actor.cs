@@ -29,6 +29,7 @@ namespace Hecatomb
         public List<string> Goals = new List<string>();
         public string Alert;
         public string Fallback;
+        public EntityField<StateHandler> EncounterTracker;
         public void CallString(string s)
         {
             Type thisType = this.GetType();
