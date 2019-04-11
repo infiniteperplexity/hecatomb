@@ -326,6 +326,24 @@ namespace Hecatomb
             }
         }
 
+        public void Provoke(Creature c)
+        {
+            if (c.GetComponent<Actor>().Team=="Friendly")
+            {
+                Team = "Hostile";
+            }
+            if (IsHostile(c))
+            {
+                if (Target == null)
+                {
+                    Target = c;
+                }
+                else if (Tiles.QuickDistance(Entity, c)<Tiles.QuickDistance(Entity, Target))
+                {
+                    Target = c;
+                }
+            }
+        }
 
         public void HuntForPlayer()
         {

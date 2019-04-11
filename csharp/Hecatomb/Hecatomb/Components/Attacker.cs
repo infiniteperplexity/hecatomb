@@ -51,6 +51,11 @@ roll+accuracy: {attack.Roll+Accuracy}
                 Debug.WriteLine("Miss");
             }
             Entity.GetComponent<Actor>().Spend();
+            // defender switches targets if the attacker is closer
+            if (t is Creature)
+            {
+                t.GetComponent<Actor>().Provoke((Creature) Entity);
+            }
         }
     }
 }
