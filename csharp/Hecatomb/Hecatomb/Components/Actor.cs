@@ -271,8 +271,10 @@ namespace Hecatomb
             {
                 List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
                 enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
+                enemies = enemies.Where(cr => (Entity.GetComponent<Movement>().CanReach(cr))).ToList(); // could limit number of tries, since distance has already been limited
                 if (enemies.Count > 0)
                 {
+                    // should we be able to reach it?
                     Target = enemies[0];
                 }
             }

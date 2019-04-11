@@ -88,6 +88,11 @@ namespace Hecatomb
         public string Action;
     }
 
+    public class PathChangeEvent : GameEvent
+    {
+
+    }
+
     public class SensoryEvent : GameEvent
     {
         public int X;

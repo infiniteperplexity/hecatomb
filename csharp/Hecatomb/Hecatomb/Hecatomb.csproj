@@ -62,6 +62,7 @@
     <Compile Include="Creatures.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="RemoveCreatureDebugSpell.cs" />
+    <Compile Include="RevisedMenuChoiceControls.cs" />
     <Compile Include="StateHandlers\TeamHandler.cs" />
     <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
     <Compile Include="SplashControls.cs" />

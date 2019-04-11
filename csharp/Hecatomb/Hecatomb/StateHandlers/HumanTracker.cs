@@ -57,6 +57,7 @@ namespace Hecatomb
         {
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<AttackEvent>(OnBanditAttack);
+            AddListener<PathChangeEvent>(OnPathChange);
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
@@ -144,8 +145,13 @@ namespace Hecatomb
         public override void Act(Creature c)
         {
             Actor actor = c.GetComponent<Actor>();
-            if (Frustration>=50)
+            if (Frustration>=50 && TargetTile!=null)
             {
+                var (x, y, z) = (Coord) TargetTile;
+                if (Tiles.QuickDistance(c.X, c.Y, c.Z, x, y, z)==0)
+                {
+                    c.Despawn();
+                }
                 actor.TargetTile = TargetTile;
                 actor.Target = null;
                 // problem...this will acquire targets via alert automatically
@@ -172,6 +178,21 @@ namespace Hecatomb
                 Debug.WriteLine("Bandits tired of attacking, should go home now.");
             }
             // this should track the bandits' frustration with pounding on doors, etc?
+            return ge;
+        }
+
+        public GameEvent OnPathChange(GameEvent ge)
+        {
+            foreach (Creature bandit in Bandits)
+            {
+                Actor actor = bandit.GetComponent<Actor>();
+                Movement move = bandit.GetComponent<Movement>();
+                if (Tiles.QuickDistance(bandit, Player)<=25 && move.CanReach(Player))
+                {
+                    actor.Target = Player;
+                }
+
+            }
             return ge;
         }
     }
