@@ -11,7 +11,43 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    class HumanTracker : StateHandler
+    public class EncounterTracker : StateHandler
+    {
+        public Coord? TargetTile;
+
+        public virtual void Act(Creature c)
+        {
+
+        }
+
+
+        public void TargetPlayer(Creature c)
+        {
+            Actor actor = c.GetComponent<Actor>();
+            if (actor.Target == null)
+            {
+                Movement m = c.GetComponent<Movement>();
+                if (m.CanReach(Player))
+                {
+                    actor.Target = Player;
+                }
+                else
+                {
+                    List<Feature> doors = Features.Where(f => (f.TypeName == "Door")).ToList();
+                    foreach (Feature door in doors)
+                    {
+                        if (m.CanReach(door, useLast: false))
+                        {
+                            actor.Target = door;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    class HumanTracker : EncounterTracker
     {
         public int PastBanditAttacks;
         public List<EntityField<Creature>> Bandits;
@@ -88,12 +124,14 @@ namespace Hecatomb
                 }
             }
             Bandits = new List<EntityField<Creature>>();
+            TargetTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
             for (int i = 0; i < 3; i++)
             {
                 var bandit = Entity.Spawn<Creature>("HumanBandit");
                 bandit.PlaceNear(x0, y0, 0, max: 5);
                 Bandits.Add(bandit);
                 bandit.GetComponent<Actor>().EncounterTracker = this;
+                TargetPlayer(bandit);
                 // do they occasionally get placed one step underground?
                 Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
             }
@@ -103,9 +141,20 @@ namespace Hecatomb
             PastBanditAttacks += 1;
         }
 
-        public void Act(Creature c)
+        public override void Act(Creature c)
         {
-            //this should attempt to replace the normal AI
+            Actor actor = c.GetComponent<Actor>();
+            if (Frustration>=50)
+            {
+                actor.TargetTile = TargetTile;
+                actor.Target = null;
+                // problem...this will acquire targets via alert automatically
+            }
+            
+            if (actor.Target==null)
+            {
+                TargetPlayer(c);
+            }
         }
         
         public GameEvent OnBanditAttack(GameEvent ge)

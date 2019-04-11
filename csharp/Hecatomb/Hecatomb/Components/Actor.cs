@@ -21,6 +21,7 @@ namespace Hecatomb
 	public class Actor : Component, ICallStrings
 	{
         public TileEntityField<TileEntity> Target;
+        public Coord? TargetTile;
 		[JsonIgnore] public int ActionPoints;
 		public int CurrentPoints;
 		public string Team;
@@ -29,7 +30,7 @@ namespace Hecatomb
         public List<string> Goals = new List<string>();
         public string Alert;
         public string Fallback;
-        public EntityField<StateHandler> EncounterTracker;
+        public EntityField<EncounterTracker> EncounterTracker;
         public void CallString(string s)
         {
             Type thisType = this.GetType();
@@ -59,14 +60,18 @@ namespace Hecatomb
             Acted = true;
 		}
         public void Spend() => Spend(16);
-		
-		public void Act()
-		 {
-			if (Entity == Player)
-			{
-				return;
-			}
+
+        public void Act()
+        {
+            if (Entity == Player)
+            {
+                return;
+            }
             CallString(Alert);
+            if (!Acted && EncounterTracker != null)
+            {
+                EncounterTracker.Entity.Act((Creature)Entity);
+            }
             if (!Acted)
             {
                 foreach (string goal in Goals)
@@ -81,6 +86,12 @@ namespace Hecatomb
             if (!Acted)
             {
                 Entity.TryComponent<Minion>()?.Act();
+            }
+            if (!Acted && TargetTile != null)
+            {
+                // do we need to check whether it's on that tile?
+                var (x, y, z) = (Coord)TargetTile;
+                WalkToward(x, y, z);
             }
             if (!Acted)
             {
@@ -345,29 +356,7 @@ namespace Hecatomb
             }
         }
 
-        public void HuntForPlayer()
-        {
-            if (Target == null)
-            {
-                Movement m = Entity.GetComponent<Movement>();
-                if (m.CanReach(Player))
-                {
-                    Target = Player;
-                }
-                else
-                {
-                    List<Feature> doors = Features.Where(f => (f.TypeName == "Door")).ToList();
-                    foreach (Feature door in doors)
-                    {
-                        if (m.CanReach(door, useLast: false))
-                        {
-                            Target = door;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        
 		
 	}
 }

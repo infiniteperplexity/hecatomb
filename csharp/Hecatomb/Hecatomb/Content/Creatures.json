@@ -96,7 +96,6 @@
 				"Components" : {
 					"Actor": {
 						"Team" : "Evil",
-						"Goals": ["HuntForPlayer"]
 					},
 					"Senses": {},
 					"Movement": {},
