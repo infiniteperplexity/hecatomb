@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb
 {
@@ -231,26 +231,20 @@ namespace Hecatomb
             }
         }
 
-        [JsonIgnore]
-        public virtual string MenuHeader
+        public void BuildMenu(MenuChoiceControls menu)
         {
-            get
-            {
-                return String.Format("{3} at {0} {1} {2}", X, Y, Z, Name);
-            }
-            set { }
-        }
+            // might want to format htis guy a bit...like add coordinates?
+            menu.Header = "Structure: " + Describe();
+            HighlightSquares();
+            Game.MainPanel.Dirty = true;
 
-        [JsonIgnore]
-        public virtual List<IMenuListable> MenuChoices
-        {
-            get
+            if (Tasks[X, Y, Z] != null)
             {
-                if (Tasks[X, Y, Z]!=null)
-                {
-                    // ideally this should have the option to cancel research
-                    return new List<IMenuListable>();
-                }
+                // ideally this should have the option to cancel research
+                menu.Choices = new List<IMenuListable>();
+            }
+            else
+            {
                 var list = new List<IMenuListable>();
                 var researched = Game.World.GetState<ResearchHandler>().Researched;
                 foreach (string s in Researches)
@@ -266,9 +260,36 @@ namespace Hecatomb
                         list.Add(rt);
                     }
                 }
-                return list;
+                menu.Choices = list;
             }
-            set { }
+        }
+        public void FinishMenu(MenuChoiceControls menu)
+        {
+            menu.MenuTop.Insert(2, "Tab) Next structure.");
+            if (Researching != null)
+            {
+                ResearchTask rt = Researching;
+                string txt = "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns; Delete to cancel.)";
+                if (rt.Ingredients.Count > 0)
+                {
+                    txt = "Researching " + Research.Types[rt.Makes].Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
+                }
+                menu.MenuTop = new List<ColoredText>() {
+                    "{orange}**Esc: Cancel**.",
+                    "{yellow}Structure: "+Describe(),
+                    "Tab) Next structure.",
+                    txt
+                };
+            }
+            Game.MenuPanel.Dirty = true;
+
+            menu.KeyMap[Keys.Escape] =
+                () =>
+                {
+                    Unhighlight();
+                    Reset();
+                };
+            menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
         }
 
         public void HighlightSquares(string s)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb
 {
@@ -17,7 +17,7 @@ namespace Hecatomb
 
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
-            if (x1==-1)
+            if (x1 == -1)
             {
                 Debug.WriteLine("What on earth just happened?");
                 Debug.WriteLine(this.Describe());
@@ -44,7 +44,7 @@ namespace Hecatomb
 
         public void PlaceNear(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
         {
-            valid = valid ?? ((int xx, int yy, int zz)=>(Creatures[xx, yy, zz]==null));
+            valid = valid ?? ((int xx, int yy, int zz) => (Creatures[xx, yy, zz] == null));
             Coord c = Tiles.NearbyTile(x, y, z, max: max, min: min, groundLevel: groundLevel, valid: valid);
             Place(c.X, c.Y, c.Z);
         }
@@ -54,7 +54,7 @@ namespace Hecatomb
             Movement m = TryComponent<Movement>();
             if (m == null || !m.Flies)
             {
-                if (m!=null && Covers[X, Y, Z].Liquid && m.Swims)
+                if (m != null && Covers[X, Y, Z].Liquid && m.Swims)
                 {
                     return;
                 }
@@ -71,30 +71,48 @@ namespace Hecatomb
             Game.World.Creatures[x0, y0, z0] = null;
         }
 
-        [JsonIgnore]
-        public virtual string MenuHeader
+        public void BuildMenu(MenuChoiceControls menu)
         {
-            get
-            {
-                return String.Format("{3} at {0} {1} {2}", X, Y, Z, Describe());
-            }
-            set { }
+            // might want to format htis guy a bit...like add coordinates?
+            menu.Header = "Creature: " + Describe();
+            menu.Choices = new List<IMenuListable>();
+            Highlight = "lime green";
+            Game.MainPanel.Dirty = true;
         }
-
-        [JsonIgnore]
-        public virtual List<IMenuListable> MenuChoices
+        public void FinishMenu(MenuChoiceControls menu)
         {
-            get
+            menu.MenuTop.Insert(2, "Tab) Next minion.");
+            if (TryComponent<Minion>() != null)
             {
-                var list = new List<IMenuListable>();
-                var minion = TryComponent<Minion>();
-                if (minion!=null)
+                Task t = GetComponent<Minion>().Task;
+                if (t == null)
                 {
-                    // not sure we actually want menu choices here?
+                    menu.MenuTop.Add("No task assigned.");
                 }
-                return list;
+                else
+                {
+                    menu.MenuTop.Add($"Working on {t.Describe()} at {t.X} {t.Y} {t.Z}");
+                }
             }
-            set { }
+            if (TryComponent<Inventory>() != null)
+            {
+                Item item = GetComponent<Inventory>().Item;
+                if (item == null)
+                {
+                    menu.MenuTop.Add("Carrying nothing.");
+                }
+                else
+                {
+                    menu.MenuTop.Add("Carrying " + item.Describe());
+                }
+            }
+            menu.KeyMap[Keys.Escape] =
+                () =>
+                {
+                    Highlight = null;
+                    Reset();
+                };
+            menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
         }
     }
 }

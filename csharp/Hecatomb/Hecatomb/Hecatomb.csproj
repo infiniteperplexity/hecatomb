@@ -62,7 +62,6 @@
     <Compile Include="Creatures.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="RemoveCreatureDebugSpell.cs" />
-    <Compile Include="RevisedMenuChoiceControls.cs" />
     <Compile Include="StateHandlers\TeamHandler.cs" />
     <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
     <Compile Include="SplashControls.cs" />
@@ -70,7 +69,6 @@
     <Compile Include="Utilities\ICallStrings.cs" />
     <Compile Include="Tasks\ButcherTask.cs" />
     <Compile Include="Components\Defender.cs" />
-    <Compile Include="Controls\CreatureControls.cs" />
     <Compile Include="Entities\Item.cs" />
     <Compile Include="Tasks\MurderTask.cs" />
     <Compile Include="Tasks\PatrolTask.cs" />
@@ -153,7 +151,6 @@
     <Compile Include="Display\MenuPanel.cs" />
     <Compile Include="World\Particles.cs" />
     <Compile Include="Spells\Spell.cs" />
-    <Compile Include="StateHandlers\StructureControls.cs" />
     <Compile Include="Display\TileRendering.cs" />
     <Compile Include="Core\Tiles.cs" />
     <Compile Include="Components\Actor.cs" />

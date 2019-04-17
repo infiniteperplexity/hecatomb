@@ -33,43 +33,34 @@ namespace Hecatomb
         }
 
 
-        [JsonIgnore]
-        public string MenuHeader
+        public void BuildMenu(MenuChoiceControls menu)
         {
-            get
+            menu.Header = "Choose a task:";
+            List<IMenuListable> tasks = new List<IMenuListable>();
+            var structures = Structure.ListAsStrings();
+            foreach (string t in Tasks)
             {
-                return "Choose a task:";
-            }
-            set { }
-        }
-        [JsonIgnore]
-        public List<IMenuListable> MenuChoices
-        {
-            get
-            {
-                List<IMenuListable> tasks = new List<IMenuListable>();
-                var structures = Structure.ListAsStrings();
-                foreach (string t in Tasks)
+                bool valid = true;
+                Task task = GetTask(t);
+                foreach (string s in task.PrereqStructures)
                 {
-                    bool valid = true;
-                    Task task = GetTask(t);
-                    foreach (string s in task.PrereqStructures)
+                    if (!structures.Contains(s))
                     {
-                        if (!structures.Contains(s))
-                        {
-                            valid = false;
-                        }
-                    }            
-                    if (valid || Options.NoIngredients)
-                    {
-                        tasks.Add(GetTask(t));
+                        valid = false;
                     }
                 }
-                return tasks;
+                if (valid || Options.NoIngredients)
+                {
+                    tasks.Add(GetTask(t));
+                }
             }
-            set { }
+            menu.Choices = tasks;
         }
+        public void FinishMenu(MenuChoiceControls menu)
+        {
 
+        }
+        
         public Task GetTask(Type t)
         {
             return (Task)Activator.CreateInstance(t);

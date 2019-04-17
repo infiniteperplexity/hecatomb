@@ -16,61 +16,55 @@ namespace Hecatomb
 	public class FurnishTask : Task, IChoiceMenu, IMenuListable
 	{
 		string [] Fixtures;
-		public string MenuHeader
-		{
-			get
-			{
-				return "Choose a fixture:";
-			}
-			set {}
-		}
 
         public override string GetDisplayName()
         {
             Feature f = Entity.Mock<Feature>(Makes);
             return $"furnish {f.Name}";
         }
-        public List<IMenuListable> MenuChoices
-		{
-			get
-			{
-				var list = new List<IMenuListable>();
-                var structures = Structure.ListAsStrings();
-                var researched = Game.World.GetState<ResearchHandler>().Researched;
-                Debug.WriteLine(JsonConvert.SerializeObject(researched));
-                // only if we have the prerequisite structures / technologies...
-                foreach (string f in Fixtures)
-				{
-                    var fixture = Hecatomb.Entity.Mock<Fixture>();
-                    fixture.InterpretJSON(EntityType.Types[f].Components["Fixture"]);
-                    bool valid = true;
-                    
-                    foreach (string s in fixture.Research)
+
+        public void BuildMenu(MenuChoiceControls menu)
+        {
+            menu.Header = "Choose a fixture:";
+            var list = new List<IMenuListable>();
+            var structures = Structure.ListAsStrings();
+            var researched = Game.World.GetState<ResearchHandler>().Researched;
+            Debug.WriteLine(JsonConvert.SerializeObject(researched));
+            // only if we have the prerequisite structures / technologies...
+            foreach (string f in Fixtures)
+            {
+                var fixture = Hecatomb.Entity.Mock<Fixture>();
+                fixture.InterpretJSON(EntityType.Types[f].Components["Fixture"]);
+                bool valid = true;
+
+                foreach (string s in fixture.Research)
+                {
+                    if (!researched.Contains(s))
                     {
-                        if (!researched.Contains(s))
-                        {
-                            valid = false;
-                        }
+                        valid = false;
                     }
-                    foreach (string s in fixture.Structures)
+                }
+                foreach (string s in fixture.Structures)
+                {
+                    if (!structures.Contains(s))
                     {
-                        if (!structures.Contains(s))
-                        {
-                            valid = false;
-                        }
+                        valid = false;
                     }
-                    if (valid || Game.Options.NoIngredients)
-                    {
-                        var task = Hecatomb.Entity.Mock<FurnishTask>();
-                        task.Makes = f;
-                        list.Add(task);
-                    }
-				}
-				return list;
-			}
-			set {}
-		}
-        //		public static 
+                }
+                if (valid || Game.Options.NoIngredients)
+                {
+                    var task = Hecatomb.Entity.Mock<FurnishTask>();
+                    task.Makes = f;
+                    list.Add(task);
+                }
+            }
+            menu.Choices = list;
+        }
+        public void FinishMenu(MenuChoiceControls menu)
+        {
+
+        }
+       
 
         public FurnishTask(): base()
 		{

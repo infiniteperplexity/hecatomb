@@ -22,14 +22,42 @@ namespace Hecatomb
 		List<string> Spells;
         public int MaxSanity;
         public int Sanity;
-		[JsonIgnore] public string MenuHeader
-		{
-			get
-			{
-				return "Choose a spell:";
-			}
-			set {}
-		}
+        public void BuildMenu(MenuChoiceControls menu)
+        {
+            menu.Header = "Choose a spell:";
+            List<IMenuListable> spells = new List<IMenuListable>();
+            // only if we have the prerequisite structures / technologies...
+            var structures = Structure.ListAsStrings();
+            var researched = GetState<ResearchHandler>().Researched;
+            foreach (string sp in Spells)
+            {
+                var spell = GetSpell(sp);
+                bool valid = true;
+                foreach (string s in spell.Researches)
+                {
+                    if (!researched.Contains(s) && !Options.AllSpells)
+                    {
+                        valid = false;
+                    }
+                }
+                foreach (string s in spell.Structures)
+                {
+                    if (!structures.Contains(s) && !Options.AllSpells)
+                    {
+                        valid = false;
+                    }
+                }
+                if (valid)
+                {
+                    spells.Add(spell);
+                }
+            }
+            menu.Choices = spells;
+        }
+        public void FinishMenu(MenuChoiceControls menu)
+        {
+
+        }
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
@@ -39,43 +67,7 @@ namespace Hecatomb
             }
             return ge;
         }
-        [JsonIgnore]
-        public List<IMenuListable> MenuChoices
-		{
-			get
-			{
-				List<IMenuListable> spells = new List<IMenuListable>();
-                // only if we have the prerequisite structures / technologies...
-                var structures = Structure.ListAsStrings();
-                var researched = GetState<ResearchHandler>().Researched;
-                foreach (string sp in Spells)
-				{
-                    var spell = GetSpell(sp);
-                    bool valid = true;
-                    foreach (string s in spell.Researches)
-                    {
-                        if (!researched.Contains(s) && !Options.AllSpells)
-                        {
-                            valid = false;
-                        }
-                    }
-                    foreach (string s in spell.Structures)
-                    {
-                        if (!structures.Contains(s) && !Options.AllSpells)
-                        {
-                            valid = false;
-                        }
-                    }
-                    if (valid)
-                    {
-                        spells.Add(spell);
-                    }
-				}
-				return spells;
-			}
-			set {}
-		}  
-		
+        
 		public SpellCaster() : base()
 		{
             MaxSanity = 20;

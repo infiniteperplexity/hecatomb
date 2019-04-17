@@ -25,14 +25,15 @@ namespace Hecatomb
 	
 	public interface IChoiceMenu
 	{
-        [JsonIgnore]
-        string MenuHeader {get; set;}
-        [JsonIgnore]
-        List<IMenuListable> MenuChoices {get; set;}
+        void BuildMenu(MenuChoiceControls menu);
+        void FinishMenu(MenuChoiceControls menu);
 	}
 		
 	public class MenuChoiceControls : ControlContext
 	{
+        public string Header;
+        public IChoiceMenu Chooser;
+        public List<IMenuListable> Choices;
 		public static List<Keys> Alphabet = new List<Keys> {
 			Keys.A,
 			Keys.B,
@@ -63,42 +64,48 @@ namespace Hecatomb
 		};
 		
 		public static string alphabet = "abcdefghijklmnopqrstuvwxyz";
-		public List<string> Choices;
 		
-		public MenuChoiceControls(IChoiceMenu menu): base()
+		public MenuChoiceControls(IChoiceMenu chooser): base()
 		{
-            if (menu is Structure)
-            {
-                Structure s = (Structure)menu;
-                s.HighlightSquares();
-                Game.MainPanel.Dirty = true;
-            }
-			var Commands = Game.Commands;
-			KeyMap[Keys.Space] = Commands.Wait;
+            Chooser = chooser;
+            RefreshContent();
+		}
+
+        public override void RefreshContent()
+        {
+            //if (menu is Structure)
+            //{
+            //    Structure s = (Structure)menu;
+            //    s.HighlightSquares();
+            //    Game.MainPanel.Dirty = true;
+            //}
+            Chooser.BuildMenu(this);
+            var Commands = Game.Commands;
+            KeyMap[Keys.Space] = Commands.Wait;
             KeyMap[Keys.Escape] =
                 () =>
                 {
-                    if (menu is Structure)
-                    {
-                        Structure s = (Structure)menu;
-                        s.Unhighlight();
-                    }
+                    //if (menu is Structure)
+                    //{
+                    //    Structure s = (Structure)menu;
+                    //    s.Unhighlight();
+                    //}
                     Reset();
                 };
-			MenuTop = new List<ColoredText>() {
+            MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
-                ("{yellow}"+menu.MenuHeader)
-		    };
-			var choices = menu.MenuChoices;
+                ("{yellow}"+Header)
+            };
             // not the real thing to do...
-			for (int i=0; i<choices.Count; i++)
-			{
-				KeyMap[Alphabet[i]] = choices[i].ChooseFromMenu;
-                ColoredText ct = choices[i].ListOnMenu();
+            for (int i = 0; i < Choices.Count; i++)
+            {
+                KeyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
+                ColoredText ct = Choices[i].ListOnMenu();
                 ct.Text = (alphabet[i] + ") " + ct.Text);
                 MenuTop.Add(ct);
-			}
-		}
+            }
+            Chooser.FinishMenu(this);
+        }
 
 
 	}

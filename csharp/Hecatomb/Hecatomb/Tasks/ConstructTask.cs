@@ -37,52 +37,42 @@ namespace Hecatomb
 		}
         public TileEntityField<Structure> Structure;
 		public string[] Structures;
-        [JsonIgnore]
-        public string MenuHeader
-		{
-			get
-			{
-				return "Choose a structure:";
-			}
-			set {}
-		}
-        [JsonIgnore]
-        public List<IMenuListable> MenuChoices
-		{
-			get
-			{
-				var list = new List<IMenuListable>();
-                var structures = Hecatomb.Structure.ListAsStrings();
-                var researched = Game.World.GetState<ResearchHandler>().Researched;
-                foreach (string st in Structures)
-				{   
-                    var structure = (Structure) Hecatomb.Entity.Mock(Type.GetType("Hecatomb."+st));
-                    bool valid = true;
-                    foreach (string s in structure.ResearchPrereqs)
+        public void BuildMenu(MenuChoiceControls menu)
+        {
+            var list = new List<IMenuListable>();
+            var structures = Hecatomb.Structure.ListAsStrings();
+            var researched = Game.World.GetState<ResearchHandler>().Researched;
+            foreach (string st in Structures)
+            {
+                var structure = (Structure)Hecatomb.Entity.Mock(Type.GetType("Hecatomb." + st));
+                bool valid = true;
+                foreach (string s in structure.ResearchPrereqs)
+                {
+                    if (!researched.Contains(s))
                     {
-                        if (!researched.Contains(s))
-                        {
-                            valid = false;
-                        }
+                        valid = false;
                     }
-                    foreach (string s in structure.StructurePrereqs)
+                }
+                foreach (string s in structure.StructurePrereqs)
+                {
+                    if (!structures.Contains(s))
                     {
-                        if (!structures.Contains(s))
-                        {
-                            valid = false;
-                        }
+                        valid = false;
                     }
-                    if (valid)
-                    {
-                        var task = Hecatomb.Entity.Mock<ConstructTask>();
-                        task.Makes = st;
-                        list.Add(task);
-                    }
-				}
-				return list;
-			}
-			set {}
-		}
+                }
+                if (valid)
+                {
+                    var task = Hecatomb.Entity.Mock<ConstructTask>();
+                    task.Makes = st;
+                    list.Add(task);
+                }
+            }
+            menu.Choices = list;
+        }
+        public void FinishMenu(MenuChoiceControls menu)
+        {
+
+        }
 
         public ConstructTask(): base()
 		{

@@ -58,7 +58,7 @@ namespace Hecatomb
                 rt.Ingredients = Ingredients;
                 rt.Place(x, y, z);
             }
-            Controls.Set(new StructureControls(Structure));
+            Controls.Set(new MenuChoiceControls(Structure.Unbox()));
         }
 
         public override bool ValidTile(Coord c)

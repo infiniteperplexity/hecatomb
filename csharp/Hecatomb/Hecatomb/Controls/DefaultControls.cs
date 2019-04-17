@@ -72,12 +72,12 @@ namespace Hecatomb
             bool visible = Game.Visible.Contains(c);
             if (cr!=null && visible)
             {
-                Game.Controls = new CreatureControls(cr);
+                Game.Controls.Set(new MenuChoiceControls(cr));
             }
             Feature fr = Game.World.Features[x, y, z];
             if (fr?.TryComponent<StructuralComponent>()!=null)
             {
-                Game.Controls = new StructureControls(fr.GetComponent<StructuralComponent>().Structure);
+                Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
             }
         }
 	}
