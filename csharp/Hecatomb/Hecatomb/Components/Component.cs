@@ -25,6 +25,10 @@ namespace Hecatomb
 			{
 				throw new InvalidOperationException(String.Format("Cannot add {0} that has not been spawned.",this));
 			}
+            if (EID==-1)
+            {
+                Debug.WriteLine("This should not be happening!");
+            }
 			// if it's a plain old Component subclass, use its own type as the key
 			if (this.GetType().BaseType==typeof(Component))
 			{

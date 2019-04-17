@@ -126,6 +126,10 @@ namespace Hecatomb
                     valid = false;
                 }
             }
+            if (Creatures[x,y,z]!=null)
+            {
+                Creatures[x, y, z].Despawn();
+            }
             p.Place(x, y, z);
             Game.Camera.Center(x, y, z);
             return p;

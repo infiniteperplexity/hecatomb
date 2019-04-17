@@ -77,7 +77,6 @@ namespace Hecatomb
             menu.Header = "Creature: " + Describe();
             menu.Choices = new List<IMenuListable>();
             Highlight = "lime green";
-            Game.MainPanel.Dirty = true;
         }
         public void FinishMenu(MenuChoiceControls menu)
         {
@@ -110,7 +109,7 @@ namespace Hecatomb
                 () =>
                 {
                     Highlight = null;
-                    Reset();
+                    Game.Controls.Reset();
                 };
             menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
         }

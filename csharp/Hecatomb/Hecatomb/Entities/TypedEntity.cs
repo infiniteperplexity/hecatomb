@@ -43,6 +43,15 @@ namespace Hecatomb
             if (Components.ContainsKey(t))
             {
                 int eid = Components[t];
+                if (eid==-1)
+                {
+                    foreach (string key in Components.Keys)
+                    {
+                        Debug.WriteLine(key);
+                        Debug.WriteLine(Components[key].EID);
+
+                    }
+                }
                 return (T)Entities[eid];
             }
             else
@@ -102,6 +111,7 @@ namespace Hecatomb
 
         public string GetCalculatedFG()
         {
+            // unused
             if (TryComponent<Defender>()!=null)
             {
                 int Wounds = GetComponent<Defender>().Wounds;

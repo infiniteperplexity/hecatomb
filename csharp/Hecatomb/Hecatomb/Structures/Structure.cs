@@ -236,8 +236,6 @@ namespace Hecatomb
             // might want to format htis guy a bit...like add coordinates?
             menu.Header = "Structure: " + Describe();
             HighlightSquares();
-            Game.MainPanel.Dirty = true;
-
             if (Tasks[X, Y, Z] != null)
             {
                 // ideally this should have the option to cancel research
@@ -287,7 +285,7 @@ namespace Hecatomb
                 () =>
                 {
                     Unhighlight();
-                    Reset();
+                    Game.Controls.Reset();
                 };
             menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
         }

@@ -73,25 +73,10 @@ namespace Hecatomb
 
         public override void RefreshContent()
         {
-            //if (menu is Structure)
-            //{
-            //    Structure s = (Structure)menu;
-            //    s.HighlightSquares();
-            //    Game.MainPanel.Dirty = true;
-            //}
             Chooser.BuildMenu(this);
             var Commands = Game.Commands;
             KeyMap[Keys.Space] = Commands.Wait;
-            KeyMap[Keys.Escape] =
-                () =>
-                {
-                    //if (menu is Structure)
-                    //{
-                    //    Structure s = (Structure)menu;
-                    //    s.Unhighlight();
-                    //}
-                    Reset();
-                };
+            KeyMap[Keys.Escape] = Reset;
             MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
                 ("{yellow}"+Header)
@@ -105,6 +90,7 @@ namespace Hecatomb
                 MenuTop.Add(ct);
             }
             Chooser.FinishMenu(this);
+            //Game.MenuPanel.Dirty = true;
         }
 
 
