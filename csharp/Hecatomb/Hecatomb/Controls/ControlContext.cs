@@ -43,6 +43,7 @@ namespace Hecatomb
         
         public void Set(ControlContext c)
         {
+            Game.Controls.CleanUp();
         	Game.LastControls = Game.Controls;
         	Game.Controls = c;
         	Game.MenuPanel.Dirty = true;
@@ -52,8 +53,9 @@ namespace Hecatomb
         
         public void Reset()
         {
-            var old = Game.Controls;         
-        	Game.Controls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
+            var old = Game.Controls;
+            Game.Controls.CleanUp();
+            Game.Controls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
             Game.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Game.Controls });
             Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             Game.LastControls = Game.Controls;	
@@ -132,13 +134,23 @@ namespace Hecatomb
         		Nothing(x, y);
         	}
         }
-        
+
         public virtual void ClickTile(Coord c)
         {
-        	Debug.Print("Clicked on tile at {0} {1}", c.X, c.Y);
-        	Nothing(c.X, c.Y);
+            var (x, y, z) = c;
+            Creature cr = Game.World.Creatures[x, y, z];
+            bool visible = Game.Visible.Contains(c);
+            if (cr != null && visible)
+            {
+                Game.Controls.Set(new MenuChoiceControls(cr));
+            }
+            Feature fr = Game.World.Features[x, y, z];
+            if (fr?.TryComponent<StructuralComponent>() != null)
+            {
+                Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+            }
         }
-        
+
         public virtual void HoverTile(Coord c)
         {
             if (Game.World != null)
@@ -252,6 +264,11 @@ namespace Hecatomb
 		}
 
         public virtual void RefreshContent()
+        {
+
+        }
+
+        public virtual void CleanUp()
         {
 
         }

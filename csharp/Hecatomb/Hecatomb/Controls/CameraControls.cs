@@ -76,21 +76,5 @@ namespace Hecatomb
 			    "A: Achievements, /: Toggle tutorial."
 			};
 		}
-
-        public override void ClickTile(Coord c)
-        {
-            var (x, y, z) = c;
-            Creature cr = Game.World.Creatures[x, y, z];
-            bool visible = Game.Visible.Contains(c);
-            if (cr != null && visible)
-            {
-                Game.Controls.Set(new MenuChoiceControls(cr));
-            }
-            Feature fr = Game.World.Features[x, y, z];
-            if (fr?.TryComponent<StructuralComponent>() != null)
-            {
-                Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
-            }
-        }
     }
 }

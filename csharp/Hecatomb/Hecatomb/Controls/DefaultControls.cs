@@ -79,6 +79,10 @@ namespace Hecatomb
             {
                 Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
             }
+            else if (fr?.TryComponent<DoorFeatureComponent>()!=null)
+            {
+                Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<DoorFeatureComponent>()));
+            }
         }
 	}
 }

@@ -86,7 +86,8 @@
 					"Defender": {
 						"Toughness": 9,
 						"Evasion": -10
-					}
+					},
+					"DoorFeatureComponent": {}
 				}
 			},
 			{
