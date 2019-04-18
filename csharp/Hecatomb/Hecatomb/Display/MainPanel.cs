@@ -79,6 +79,17 @@ public class MainGamePanel : GamePanel
 
 		public override void DrawContent()
 		{
+            if (Game.World == null)
+            {
+                for (int i = 0; i < 25; i++)
+                {
+                    for (int j = 0; j < 25; j++)
+                    {
+                        Sprites.Draw(BG, new Vector2(Padding + (1 + i) * (Size + Padding), Padding + (1 + j) * (Size + Padding)), Color.Black);
+                    }
+                }
+                return;
+            }
 			Camera Camera = Game.Camera;
 			var grid = Game.World.Terrains;
 			int z = Camera.Z;

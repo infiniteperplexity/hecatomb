@@ -108,25 +108,66 @@ namespace Hecatomb
             });
             Controls.ImageOverride = new ImageOverride(graphics, sprites);
         }
-        public void StartGame()
+
+        public Queue<Action> UpdateActions = new Queue<Action>();
+
+        public void Test()
         {
+            Debug.WriteLine("this is a test of our update trigger");
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
             WorldBuilder builder = new DefaultBuilder();
             builder.Build(World);
+            Debug.WriteLine("flag 3");
             World.GetState<AchievementHandler>();
             World.GetState<HumanTracker>();
-            Controls = DefaultControls;
             //ShowIntro();
             Creature p = null;
-            while (p==null)
+            while (p == null)
             {
                 p = World.PlacePlayer();
             }
             var t = Hecatomb.Entity.Spawn<TutorialHandler>();
             t.Activate();
+            Debug.WriteLine("flag 3.5");
             TurnHandler.HandleVisibility();
+            Debug.WriteLine("flag 4");
             Time.Frozen = false;
             Controls.Reset();
+            Debug.WriteLine("flag 5");
+            ForegroundPanel.Splash(new List<ColoredText>{
+                "{yellow}Welcome to Hecatomb!",
+                " ",
+                "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                " ",
+                "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                " ",
+                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \" to turn off the messages.",
+                " ",
+                "{orange}(Press Space Bar to continue.)"
+            });
+        }
+        public void StartGame()
+        {
+            Debug.WriteLine("flag 1");
+            Controls.Reset();
+            ForegroundPanel.Splash(new List<ColoredText>{
+                "{yellow}Welcome to Hecatomb!",
+                " ",
+                "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                " ",
+                "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                " ",
+                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \" to turn off the messages.",
+                " ",
+                "(Building world...please wait.)"
+            });
+            MainPanel.Dirty = true;
+
+            Debug.WriteLine("flag 2");
+            Time.Frozen = false;
+            Controls.ImageOverride = null;
+            UpdateActions.Enqueue(Test);
+            
         }
 
         public void RestoreGame()
@@ -185,22 +226,29 @@ namespace Hecatomb
         {
             if (!Time.Frozen)
             {
-                foreach (Particle p in World.Particles.ToList())
+                if (World != null)
                 {
-                    p.Update();
+                    foreach (Particle p in World.Particles.ToList())
+                    {
+                        p.Update();
+                    }
+                    Time.Update();
                 }
-                Time.Update();
             }
             Controls?.HandleInput();
             if (!Time.Frozen)
-            { 
-                if (World.Turns.PlayerActed)
+            {
+                if (World != null)
                 {
-                    World.Turns.AfterPlayerActed();
+                    if (World.Turns.PlayerActed)
+                    {
+                        World.Turns.AfterPlayerActed();
+                    }
+                    World.Turns.Try();
                 }
-                World.Turns.Try();
             }
             base.Update(gameTime);
+
         }
 
         protected override void Draw(GameTime gameTime)
@@ -252,6 +300,11 @@ namespace Hecatomb
             }
         	sprites.End();
            	base.Draw(gameTime);
+            while (UpdateActions.Count > 0)
+            {
+                Action action = UpdateActions.Dequeue();
+                action();
+            }
         }
     }
 }

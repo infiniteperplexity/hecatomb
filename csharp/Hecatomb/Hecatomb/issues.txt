@@ -45,3 +45,24 @@ Specific focus on doors and attacking:
 - We need intelligent target switching.
 - We need some pathing stuff, so they always let the biggest creature smack the door.
 - Hostility detection is janky.
+
+
+What are some of the “big rocks”?
+-	Make saving and restoring games works sensibly.  Basically, names and loading screens.
+o	Also applies to startup.
+-	Make lighting work in a coherent way.
+o	Indoor lighting.
+o	Structures.
+o	Structures offscreen?
+-	Look out for pathing and task-related problems.
+o	Mostly convenience-of-work stuff.
+-	Some content things.
+o	Have the bandits carry trade goods?
+-	Declare hostility task.
+-	Make corpses work in a coherent way, and decay.
+-	Did I ever test the frustration mechanic?  Or did I give up on that?
+-	Make all keyboard commands work coherently.
+-	Get dismantle/repair working.
+-	Implement next structure / next minion.
+-	Paved floor as a cover, plus grass spawning.
+-	Fix various name display issues.
