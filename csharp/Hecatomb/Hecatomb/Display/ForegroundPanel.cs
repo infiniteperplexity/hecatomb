@@ -50,6 +50,7 @@ namespace Hecatomb
 		
 		public override void DrawContent()
 		{
+            Debug.WriteLine("drawing foreground panel");
             // eventually want some kind of brief freeze to keep from instantly closing this
             Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             Vector2 v;

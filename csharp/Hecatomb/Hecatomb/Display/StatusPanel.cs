@@ -48,15 +48,24 @@ namespace Hecatomb
         public override void DrawContent()
         {
             Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-            Creature p = Game.World.Player;
-            TurnHandler t = Game.World.Turns;
-            string sanity = Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3, '0') + '/' + Game.World.Player.GetComponent<SpellCaster>().MaxSanity.ToString().PadLeft(3, '0');
-            string x = p.X.ToString().PadLeft(3, '0');
-            string y = p.Y.ToString().PadLeft(3, '0');
-            string z = p.Z.ToString().PadLeft(3, '0');
-            string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "{yellow}Paused" : "      ";
-            string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
-            string txt = $"Sanity:{sanity}  X:{x} Y:{y} Z:{z} {time}   {paused}";
+            string txt;
+            if (Game.World != null)
+            {
+                Creature p = Game.World.Player;
+                TurnHandler t = Game.World.Turns;
+                string sanity = Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3, '0') + '/' + Game.World.Player.GetComponent<SpellCaster>().MaxSanity.ToString().PadLeft(3, '0');
+                string x = p.X.ToString().PadLeft(3, '0');
+                string y = p.Y.ToString().PadLeft(3, '0');
+                string z = p.Z.ToString().PadLeft(3, '0');
+                string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "{yellow}Paused" : "      ";
+                string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
+                txt = $"Sanity:{sanity}  X:{x} Y:{y} Z:{z} {time}   {paused}";
+            }
+            else
+            {
+                txt = " ";
+            }
+
             int MaxVisible = 4;
             List<ColoredText> list = new List<ColoredText> { txt };
             list = list.Concat(MessageHistory.Take(MaxVisible)).ToList();
