@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Content;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace Hecatomb
 {
@@ -164,9 +165,10 @@ namespace Hecatomb
             MainPanel.Dirty = true;
 
             Debug.WriteLine("flag 2");
-            Time.Frozen = false;
-            Controls.ImageOverride = null;
-            UpdateActions.Enqueue(Test);
+            //Time.Frozen = false;
+            //Controls.ImageOverride = null;
+            Thread thread = new Thread(Test);
+            thread.Start();
             
         }
 
@@ -300,11 +302,6 @@ namespace Hecatomb
             }
         	sprites.End();
            	base.Draw(gameTime);
-            while (UpdateActions.Count > 0)
-            {
-                Action action = UpdateActions.Dequeue();
-                action();
-            }
         }
     }
 }
