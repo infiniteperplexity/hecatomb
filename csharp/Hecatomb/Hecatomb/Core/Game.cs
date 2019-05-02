@@ -29,6 +29,7 @@ namespace Hecatomb
 		public static MainGamePanel MainPanel;
 		public static MenuGamePanel MenuPanel;
 		public static StatusGamePanel StatusPanel;
+        public static SplashPanel SplashPanel;
         public static ForegroundPanel ForegroundPanel;
 		
 		public static ControlContext LastControls;
@@ -145,7 +146,7 @@ namespace Hecatomb
                 "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \" to turn off the messages.",
                 " ",
                 "{orange}(Press Space Bar to continue.)"
-            });
+            }, frozen: false);
         }
         public void StartGame()
         {
@@ -161,7 +162,7 @@ namespace Hecatomb
                 "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \" to turn off the messages.",
                 " ",
                 "(Building world...please wait.)"
-            });
+            }, frozen: true);
             MainPanel.Dirty = true;
 
             Debug.WriteLine("flag 2");
@@ -194,9 +195,12 @@ namespace Hecatomb
             MainPanel = new MainGamePanel(graphics, sprites);
             MenuPanel = new MenuGamePanel(graphics, sprites);
             StatusPanel = new StatusGamePanel(graphics, sprites);
+            SplashPanel = new SplashPanel(graphics, sprites);
             ForegroundPanel = new ForegroundPanel(graphics, sprites);
+            // why don't I initialize main panel??
             MenuPanel.Initialize();
             StatusPanel.Initialize();
+            SplashPanel.Initialize();
             ForegroundPanel.Initialize();
             int Size = MainPanel.Size;
             int Padding = MainPanel.Padding;
@@ -282,7 +286,7 @@ namespace Hecatomb
                 else
                 {
                     MainPanel.DrawDirty();
-                    ForegroundPanel.Dirty = true;
+                    SplashPanel.Dirty = true;
                 }
                 if (StatusPanel.Dirty)
                 {
@@ -295,12 +299,17 @@ namespace Hecatomb
                 MenuPanel.DrawContent();
                 MenuPanel.Dirty = false;
             }
+            if (SplashPanel.Dirty && SplashPanel.Active)
+            {
+                SplashPanel.DrawContent();
+                SplashPanel.Dirty = false;
+            }
             if (ForegroundPanel.Dirty && ForegroundPanel.Active)
             {
                 ForegroundPanel.DrawContent();
                 ForegroundPanel.Dirty = false;
             }
-        	sprites.End();
+            sprites.End();
            	base.Draw(gameTime);
         }
     }

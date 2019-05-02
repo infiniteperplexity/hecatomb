@@ -31,11 +31,11 @@ namespace Hecatomb
             }
         }
 
-        public static ForegroundPanel Foreground
+        public static SplashPanel Foreground
         {
             get
             {
-                return Game.ForegroundPanel;
+                return Game.SplashPanel;
             }
         }
 

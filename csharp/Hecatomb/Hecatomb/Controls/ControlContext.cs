@@ -40,6 +40,7 @@ namespace Hecatomb
         public Action<int, int> OnStatusClick;
         public Action<int, int> OnStatusHover;
         public ImageOverride ImageOverride;
+        public bool UseKeyFallback;
         
         public void Set(ControlContext c)
         {
@@ -65,7 +66,7 @@ namespace Hecatomb
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
-            Game.ForegroundPanel.Active = false;
+            Game.SplashPanel.Active = false;
             Game.Time.Frozen = false;
         }
         
@@ -140,6 +141,10 @@ namespace Hecatomb
 
         public virtual void ClickTile(Coord c)
         {
+            if (Game.World==null)
+            {
+                return;
+            }
             var (x, y, z) = c;
             Creature cr = Game.World.Creatures[x, y, z];
             bool visible = Game.Visible.Contains(c);
@@ -253,6 +258,12 @@ namespace Hecatomb
         	bool gotKey = false;
         	foreach (Keys key in keys)
         	{
+                if (UseKeyFallback)
+                {
+                    HandleKeyFallback();
+                    gotKey = true;
+                    break;
+                }
         		if (KeyMap.ContainsKey(key))
         		{
         			HandleKeyDown(key);
@@ -265,6 +276,11 @@ namespace Hecatomb
         		HandleClick(m.X, m.Y);
         	}
 		}
+
+        public virtual void HandleKeyFallback()
+        {
+
+        }
 
         public virtual void RefreshContent()
         {

@@ -20,12 +20,12 @@ namespace Hecatomb
 	/// <summary>
 	/// Description of ForegroundPanel.
 	/// </summary>
-	public class ForegroundPanel : TextPanel
+	public class SplashPanel : TextPanel
 	{
 		public bool Active;
 		List<ColoredText> CurrentText;
 		
-		public ForegroundPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
+		public SplashPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
 		{
 			X0 = 35;
 			Y0 = 150;
@@ -68,11 +68,19 @@ namespace Hecatomb
             DrawLines(CurrentText);
         }
 		
-		public void Splash(List<ColoredText> lines)
+		public void Splash(List<ColoredText> lines, bool frozen = false)
 		{
             Active = true;
             Dirty = true;
-            Game.Controls.Set(new SplashControls());
+            if (!frozen)
+            {
+                Game.Controls.Set(new SplashControls());
+            }
+            else
+            {
+                Game.Controls.Set(new FrozenControls());
+            }
+
             for (var i = 0; i<lines.Count; i++)
             {
                 lines[i] = "  " + lines[i];

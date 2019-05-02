@@ -61,6 +61,8 @@
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />
     <Compile Include="DoorFeatureComponent.cs" />
+    <Compile Include="ForegroundPanel.cs" />
+    <Compile Include="FrozenControls.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="Spells\RemoveCreatureDebugSpell.cs" />
     <Compile Include="StateHandlers\TeamHandler.cs" />
@@ -103,7 +105,7 @@
     <Compile Include="StateHandlers\TutorialHandler.cs" />
     <Compile Include="Entities\EntityField.cs" />
     <Compile Include="Core\HecatombOptions.cs" />
-    <Compile Include="Display\ForegroundPanel.cs" />
+    <Compile Include="Display\SplashPanel.cs" />
     <Compile Include="Display\StatusPanel.cs" />
     <Compile Include="Components\Harvestable.cs" />
     <Compile Include="Tasks\HarvestTask.cs" />

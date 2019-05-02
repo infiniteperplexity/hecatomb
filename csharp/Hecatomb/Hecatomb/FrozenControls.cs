@@ -17,23 +17,17 @@ namespace Hecatomb
     /// Description of MenuChoiceContext.
     /// </summary>
     /// 
-   
-    public class SplashControls : ControlContext
+
+    public class FrozenControls : ControlContext
     {
-        public SplashControls()
-        { 
-            UseKeyFallback = true;
-        }
         public override void HandleClick(int x, int y)
         {
-            Reset();
         }
         public override void HandleHover(int x, int y)
         {
         }
-        public override void HandleKeyFallback()
+        public override void HandleKeyDown(Keys key)
         {
-            Reset();
         }
 
     }
