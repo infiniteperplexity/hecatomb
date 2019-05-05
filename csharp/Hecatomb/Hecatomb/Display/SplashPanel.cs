@@ -30,6 +30,7 @@ namespace Hecatomb
 			X0 = 35;
 			Y0 = 150;
             Size = 16;
+            LeftMargin = 2 * Size;
             Spacing = 8;
             Active = false;
 		}
@@ -79,11 +80,6 @@ namespace Hecatomb
             else
             {
                 Game.Controls.Set(new FrozenControls());
-            }
-
-            for (var i = 0; i<lines.Count; i++)
-            {
-                lines[i] = "  " + lines[i];
             }
             CurrentText = lines;
         }

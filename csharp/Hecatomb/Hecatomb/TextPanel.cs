@@ -17,6 +17,8 @@ namespace Hecatomb
         public SpriteFont Font;
         public int Width;
         public int Height;
+        public int LeftMargin;
+        public int TopMargin;
         public int Size;
         public int Spacing;
         public TextPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
@@ -69,7 +71,7 @@ namespace Hecatomb
 
                         } 
                         // what on earth is going on with the spacing??
-                        v = new Vector2(X0 + x * Spacing - spaces, Y0 + y * Size);
+                        v = new Vector2(X0 + LeftMargin + x * Spacing - spaces, Y0 + TopMargin + y * Size);
                         Sprites.DrawString(Font, text.Substring(p, j - p), v, Game.Colors[fg]);
                         spaces += 1;
                         x += (j - p) + 1;
@@ -78,7 +80,7 @@ namespace Hecatomb
                     }
                     else if (j == text.Length - 1)
                     {
-                        v = new Vector2(X0 + x * Spacing - spaces, Y0 + y * Size);
+                        v = new Vector2(X0 + LeftMargin + x * Spacing - spaces, Y0 + TopMargin + y * Size);
                         Sprites.DrawString(Font, text.Substring(p), v, Game.Colors[fg]);
                     }
                 }
