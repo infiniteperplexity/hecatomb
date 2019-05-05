@@ -38,6 +38,7 @@ namespace Hecatomb
 		public static ControlContext CameraControls;
 		public static TimeHandler Time;
         public static DateTime LastDraw;
+        public static String GameName;
 
 //		public static GameEventHandler Events;
 		public static HashSet<Coord> Visible;
@@ -113,13 +114,12 @@ namespace Hecatomb
 
         public Queue<Action> UpdateActions = new Queue<Action>();
 
-        public void Test()
+        public void StartupThread()
         {
-            Debug.WriteLine("this is a test of our update trigger");
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
             WorldBuilder builder = new DefaultBuilder();
             builder.Build(World);
-            Debug.WriteLine("flag 3");
+  
             World.GetState<AchievementHandler>();
             World.GetState<HumanTracker>();
             //ShowIntro();
@@ -130,12 +130,9 @@ namespace Hecatomb
             }
             var t = Hecatomb.Entity.Spawn<TutorialHandler>();
             t.Activate();
-            Debug.WriteLine("flag 3.5");
             TurnHandler.HandleVisibility();
-            Debug.WriteLine("flag 4");
             Time.Frozen = false;
             Controls.Reset();
-            Debug.WriteLine("flag 5");
             ForegroundPanel.Splash(new List<ColoredText>{
                 "{yellow}Welcome to Hecatomb!",
                 " ",
@@ -150,7 +147,6 @@ namespace Hecatomb
         }
         public void StartGame()
         {
-            Debug.WriteLine("flag 1");
             Controls.Reset();
             ForegroundPanel.Splash(new List<ColoredText>{
                 "{yellow}Welcome to Hecatomb!",
@@ -164,11 +160,9 @@ namespace Hecatomb
                 "(Building world...please wait.)"
             }, frozen: true);
             MainPanel.Dirty = true;
-
-            Debug.WriteLine("flag 2");
             //Time.Frozen = false;
             //Controls.ImageOverride = null;
-            Thread thread = new Thread(Test);
+            Thread thread = new Thread(StartupThread);
             thread.Start();
             
         }

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 namespace Hecatomb
 {
@@ -243,19 +244,41 @@ namespace Hecatomb
 		
 		public void SaveGameCommand()
 		{
-			Game.World.Stringify();
-            Controls.Reset();
+            Game.SplashPanel.Splash(new List<ColoredText>()
+            {
+                "Saving the game..."
+            }, frozen: true);
+            Debug.WriteLine("saving the game");
+            Thread thread = new Thread(SaveGameProcess);
+            thread.Start();
 		}
+
+        public void SaveGameProcess()
+        {
+            Game.World.Stringify();
+            Controls.Reset();
+        }
 		
-		public void RestoreGameCommand()
-		{
-			string json = System.IO.File.ReadAllText(@"..\GameWorld.json");
+        public void RestoreGameProcess()
+        {
+            string json = System.IO.File.ReadAllText(@"..\GameWorld.json");
             if (Game.World == null)
             {
                 Game.World = new World(256, 256, 64);
             }
-			Game.World.Parse(json);
+            Game.World.Parse(json);
             Controls.Reset();
+        }
+		public void RestoreGameCommand()
+		{
+            Game.SplashPanel.Splash(new List<ColoredText>()
+            {
+                "Restoring a game..."
+            }, frozen: true);
+            Debug.WriteLine("restoring the game");
+            Controls.Set(new FrozenControls());
+            Thread thread = new Thread(RestoreGameProcess);
+            thread.Start();
         }
 
         public void SystemMenuCommand()
@@ -264,12 +287,17 @@ namespace Hecatomb
             Game.Controls.Set(new StaticMenuControls(" ", new List<(Keys, ColoredText, Action)>() {
                 (Keys.Escape, "Cancel.", Controls.Reset),
                 (Keys.S, "Save game.", SaveGameCommand),
-                (Keys.A, "Save as...", SaveGameCommand),
+                (Keys.A, "Save as...", SaveGameAsCommand),
                 (Keys.R, "Restore game.", Game.game.RestoreGame),
                 (Keys.D, "Delete game.", Game.game.StartGame),
                 (Keys.N, "New game.", Game.game.StartGame),
                 (Keys.Q, "Quit.", Game.game.QuitGame)
             }));
+        }
+
+        public void SaveGameAsCommand()
+        {
+
         }
 		
 		public void TogglePause()
