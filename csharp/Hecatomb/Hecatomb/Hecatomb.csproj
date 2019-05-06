@@ -60,17 +60,17 @@
   <ItemGroup>
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />
-    <Compile Include="DoorFeatureComponent.cs" />
-    <Compile Include="ForegroundPanel.cs" />
-    <Compile Include="FrozenControls.cs" />
+    <Compile Include="Components\DoorFeatureComponent.cs" />
+    <Compile Include="Controls\ForegroundPanel.cs" />
+    <Compile Include="Controls\FrozenControls.cs" />
     <Compile Include="NewEntity.cs" />
-    <Compile Include="SaveGameFile.cs" />
+    <Compile Include="Core\SaveGameFile.cs" />
     <Compile Include="Spells\RemoveCreatureDebugSpell.cs" />
     <Compile Include="StateHandlers\TeamHandler.cs" />
     <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
-    <Compile Include="SplashControls.cs" />
+    <Compile Include="Controls\SplashControls.cs" />
     <Compile Include="Tasks\ForbidTask.cs" />
-    <Compile Include="TextEntryControls.cs" />
+    <Compile Include="Controls\TextEntryControls.cs" />
     <Compile Include="Utilities\ICallStrings.cs" />
     <Compile Include="Tasks\ButcherTask.cs" />
     <Compile Include="Components\Defender.cs" />
@@ -79,7 +79,7 @@
     <Compile Include="Tasks\PatrolTask.cs" />
     <Compile Include="Structures\Slaughterhouse.cs" />
     <Compile Include="Spells\CondenseEctoplasmSpell.cs" />
-    <Compile Include="ImageOverride.cs" />
+    <Compile Include="Display\ImageOverride.cs" />
     <Compile Include="Spells\PoundOfFleshSpell.cs" />
     <Compile Include="Spells\RaiseZombieSpell.cs" />
     <Compile Include="StateHandlers\TaskHandler.cs" />
@@ -125,7 +125,7 @@
     <Compile Include="Entities\TypedEntity.cs" />
     <Compile Include="Entities\TypedEntityField.cs" />
     <Compile Include="Spells\LongShadowSpell.cs" />
-    <Compile Include="TextPanel.cs" />
+    <Compile Include="Display\TextPanel.cs" />
     <Compile Include="Utilities\RecursiveBacktracker.cs" />
     <Compile Include="StateHandlers\ResearchHandler.cs" />
     <Compile Include="FlyWeights\Resource.cs" />

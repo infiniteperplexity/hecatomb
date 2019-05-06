@@ -83,11 +83,11 @@ namespace Hecatomb
                 // check if shift is down
                 if (ControlContext.ShiftDown)
                 {
-                    CurrentText += s.ToLower();
+                    CurrentText += s;
                 }
                 else
                 {
-                    CurrentText += s;
+                    CurrentText += s.ToLower();
                 }
                 RefreshContent();
                 // do I need to make the panel dirty?

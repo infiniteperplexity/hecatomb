@@ -66,3 +66,9 @@ o	Have the bandits carry trade goods?
 -	Implement next structure / next minion.
 -	Paved floor as a cover, plus grass spawning.
 -	Fix various name display issues.
+
+
+- Canceling restore game goes back to the wrong menu, on startup
+- Lighting is a good next task
+- Grass spawning is a nice quick win.
+- Check to see whether bandits give up correctly.
