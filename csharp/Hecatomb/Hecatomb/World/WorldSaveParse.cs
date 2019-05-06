@@ -130,7 +130,7 @@ namespace Hecatomb
             settings.Formatting = Formatting.Indented;
             settings.NullValueHandling = NullValueHandling.Ignore;
             var json = JsonConvert.SerializeObject(jsonready, settings);
-            System.IO.File.WriteAllText(@"..\GameWorld.json", json);
+            System.IO.File.WriteAllText(@"..\" + Game.GameName + ".json", json);
 			return json;
 		}
 		

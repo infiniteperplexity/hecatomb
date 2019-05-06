@@ -45,6 +45,7 @@ namespace Hecatomb
         GraphicsDeviceManager graphics;
         SpriteBatch sprites;
 
+        public static string DefaultGameName;
         public Texture2D startup;
 
         public static global::Hecatomb.Game game;
@@ -79,7 +80,9 @@ namespace Hecatomb
         protected override void Initialize()
         {
             game.Window.Title = "Hecatomb";
-        	IsMouseVisible = true;
+            DefaultGameName = "GameWorld";
+            GameName = DefaultGameName;
+            IsMouseVisible = true;
             EntityType.LoadEntities();
             MyContentManager = Content;
             Options = new HecatombOptions();

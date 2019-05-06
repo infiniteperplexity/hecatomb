@@ -64,11 +64,13 @@
     <Compile Include="ForegroundPanel.cs" />
     <Compile Include="FrozenControls.cs" />
     <Compile Include="NewEntity.cs" />
+    <Compile Include="SaveGameFile.cs" />
     <Compile Include="Spells\RemoveCreatureDebugSpell.cs" />
     <Compile Include="StateHandlers\TeamHandler.cs" />
     <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
     <Compile Include="SplashControls.cs" />
     <Compile Include="Tasks\ForbidTask.cs" />
+    <Compile Include="TextEntryControls.cs" />
     <Compile Include="Utilities\ICallStrings.cs" />
     <Compile Include="Tasks\ButcherTask.cs" />
     <Compile Include="Components\Defender.cs" />

@@ -261,24 +261,19 @@ namespace Hecatomb
 		
         public void RestoreGameProcess()
         {
-            string json = System.IO.File.ReadAllText(@"..\GameWorld.json");
+            string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
             if (Game.World == null)
             {
                 Game.World = new World(256, 256, 64);
             }
             Game.World.Parse(json);
+            // we need some kind of failure handling...
             Controls.Reset();
         }
 		public void RestoreGameCommand()
 		{
-            Game.SplashPanel.Splash(new List<ColoredText>()
-            {
-                "Restoring a game..."
-            }, frozen: true);
-            Debug.WriteLine("restoring the game");
-            Controls.Set(new FrozenControls());
-            Thread thread = new Thread(RestoreGameProcess);
-            thread.Start();
+            // I guess maybe a Save File should have an object representation?
+            Controls.Set(new MenuChoiceControls(new SaveGameChooser()));
         }
 
         public void SystemMenuCommand()
@@ -297,7 +292,13 @@ namespace Hecatomb
 
         public void SaveGameAsCommand()
         {
-
+            Action<string> saveGameAs = (string name) => {
+                //could check legality of name here?
+                Game.GameName = name;
+                SaveGameCommand();
+            };
+            Controls.Set(new TextEntryControls("Type a name for your saved game.", saveGameAs));
+            (Controls as TextEntryControls).CurrentText = Game.GameName;
         }
 		
 		public void TogglePause()
