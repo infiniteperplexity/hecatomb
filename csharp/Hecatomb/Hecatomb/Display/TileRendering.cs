@@ -234,16 +234,7 @@ namespace Hecatomb
             }
             if (useLighting)
             {
-                int lighting = Game.World.Turns.LightLevel;
-                int outdoors = Game.World.Outdoors[x, y, z];
-                if (outdoors==0)
-                {
-                    lighting = 0;
-                }
-                else if (outdoors==1)
-                {
-                    lighting = lighting / 2;
-                }
+                int lighting = Game.World.GetLighting(x, y, z);
                 if (!visible)
                 {
                     return (sym, fg);
@@ -343,7 +334,18 @@ namespace Hecatomb
 
         public static (char, string, string) GetGlyph(int x, int y, int z)
         {
-            var tuple = GetColoredSymbol(x, y, z);
+            bool useLighting = true;
+            Creature c = Creatures[x, y, z];
+            if (c!=null && (c==Player || c.GetComponent<Actor>().Team=="Friendly"))
+            {
+                useLighting = false;
+            }
+            Feature f = Features[x, y, z];
+            if (f!=null && f.TryComponent<StructuralComponent>()!=null)
+            {
+                useLighting = false;
+            }
+            var tuple = GetColoredSymbol(x, y, z, useLighting: useLighting);
             return (tuple.Item1, tuple.Item2, GetBackground(x, y, z));
             //return (GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
         }

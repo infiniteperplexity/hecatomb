@@ -68,7 +68,7 @@ o	Have the bandits carry trade goods?
 -	Fix various name display issues.
 
 
-- Canceling restore game goes back to the wrong menu, on startup
-- Lighting is a good next task
+* Canceling restore game goes back to the wrong menu, on startup
+* Lighting is a good next task
 - Grass spawning is a nice quick win.
 - Check to see whether bandits give up correctly.

@@ -26,10 +26,10 @@ namespace Hecatomb
 
             if (e == null)
             {
-                if (!fireEvent)
-                {
-                    Debug.Print("about to try placing {0} at {1} {2} {3} without firing an event", this, x1, y1, z1);
-                }
+                //if (!fireEvent)
+                //{
+                //    Debug.Print("about to try placing {0} at {1} {2} {3} without firing an event", this, x1, y1, z1);
+                //}
                 Game.World.Creatures[x1, y1, z1] = this;
                 base.Place(x1, y1, z1, fireEvent);
 

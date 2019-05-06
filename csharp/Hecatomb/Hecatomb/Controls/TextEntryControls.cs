@@ -74,6 +74,7 @@ namespace Hecatomb
 
         public Action LetterClosure(Keys key)
         {
+            // this guy doesn't throttle very well
             return () => {
                 if (CurrentText.Length>=MaxTextLength)
                 {

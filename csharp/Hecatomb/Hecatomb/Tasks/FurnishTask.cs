@@ -70,7 +70,7 @@ namespace Hecatomb
 		{
 			MenuName = "build fixtures";
             Priority = 4;
-            Fixtures = new string[] {"Door", "Ramp", "SpearTrap" };
+            Fixtures = new string[] {"Door", "TiledFloor", "Ramp", "SpearTrap" };
             PrereqStructures = new List<string> { "Workshop" };
 		}
 			
@@ -139,7 +139,8 @@ namespace Hecatomb
                 string json = EntityType.Types[Makes].Components["Fixture"];
                 JObject obj = JObject.Parse(json);
                 var ingredients = obj["Ingredients"];
-                task.Ingredients = ingredients.ToObject<Dictionary<string, int>>();
+
+                task.Ingredients = (ingredients==null) ? new Dictionary<string, int>() : ingredients.ToObject<Dictionary<string, int>>();
                 task.Makes = Makes;
                 task.Place(c.X, c.Y, c.Z);
                 

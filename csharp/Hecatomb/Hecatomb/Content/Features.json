@@ -67,9 +67,23 @@
 				"Symbol" : "^",
 				"Components" : {
 					"Fixture":	{
-						"Ingredients": {"Rock": 1}
+						"Ingredients": {"Rock": 1},
+						"Structures": ["Workshop"]
 					},
 					"RampFeatureComponent": {}
+				}
+			},
+			{
+				"Type" : "TiledFloor",
+				"Name": "tiled stone floor",
+				"FG" : "FLOORFG",
+				"Symbol" : ".",
+				"Components" : {
+					"Fixture":	{
+						"Labor": 1,
+						"Structures": ["Workshop"]
+					},
+					"TiledFloorFeatureComponent": {}
 				}
 			},
 			{

@@ -61,7 +61,7 @@ namespace Hecatomb
 
         public void FinishMenu(MenuChoiceControls menu)
         {
-
+            menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = Controls.Back;
         }
     }
 }

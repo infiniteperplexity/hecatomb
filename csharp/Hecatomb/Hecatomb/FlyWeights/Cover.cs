@@ -77,6 +77,8 @@ namespace Hecatomb
             darkbg: "DARKGRASS"
         );
 
+
+
         public static readonly Cover Water = new Cover(
             type: "Water",
             symbol: '~',
@@ -157,6 +159,14 @@ namespace Hecatomb
             mineral: "Flint"
         );
 
+        public static readonly Cover TiledStone = new Cover(
+            type: "TiledStone",
+            symbol: '"',
+            name: "tiled stone",
+            fg: "FLOORFG",
+            bg: "FLOORBG",
+            darkbg: "BELOWFG"
+        );
         public void Mine(int x, int y, int z)
         {
             if (this.Mineral!=null)

@@ -14,7 +14,7 @@ namespace Hecatomb
 
     public class Fixture : Component
     {
-        public Dictionary<string, int> Ingredients;
+        public Dictionary<string, int> Ingredients = new Dictionary<string, int>();
         public string[] Structures = new string[0];
         public string[] Research = new string[0];
         public int Labor = 10;

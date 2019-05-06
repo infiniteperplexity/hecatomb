@@ -74,9 +74,12 @@ namespace Hecatomb
         {
             var old = Game.Controls;
             Game.Controls = Game.LastControls;
-            Game.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Game.Controls });
-            Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
-            Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
+            if (Game.World!=null)
+            {
+                Game.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Game.Controls });
+                Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
+            }  
+            Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;          
             Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
             //Game.ForegroundPanel.Active = false;

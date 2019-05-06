@@ -230,6 +230,7 @@ namespace Hecatomb
 			{
 				text.Add("Terrain: " + Terrains[x, y, z].Name);
                 text.Add("Cover: " + Covers[x, y, z].Name);
+                text.Add("Lighting: " + GetLighting(x, y, z));
 				t = Creatures[x, y, z];
 				if (t!=null)
 				{
@@ -257,6 +258,7 @@ namespace Hecatomb
 			{
 				text.Add("Above: " + Terrains[x, y, za].Name);
                 text.Add("Cover: " + Covers[x, y, za].Name);
+                text.Add("Lighting: " + GetLighting(x, y, za));
                 t = Creatures[x, y, za];
 				if (t!=null)
 				{
@@ -283,6 +285,7 @@ namespace Hecatomb
 			{
 				text.Add("Below: " + Terrains[x, y, zb].Name);
                 text.Add("Cover: " + Covers[x, y, zb].Name);
+                text.Add("Lighting: " + GetLighting(x, y, zb));
                 t = Creatures[x, y, zb];
 				if (t!=null)
 				{
@@ -328,6 +331,7 @@ namespace Hecatomb
         {
             GetState<PathHandler>().ResetPaths();
             Outdoors = new int[Width, Height, Depth];
+            // by default it's full of 0s (indoors)
             for (int x = 1; x < Width - 1; x++)
             {
                 for (int y = 1; y < Height - 1; y++)
@@ -335,19 +339,25 @@ namespace Hecatomb
 
                     for (int z = Depth - 1; z > 0; z--)
                     {
+
+                        // everything above ground is outdoors (2)
                         Outdoors[x, y, z] = 2;
                         foreach (Coord dir in Movement.Directions8)
                         {
                             var (dx, dy, _) = dir;
-                            if (Outdoors[x+dx, y+dy, z]==0)
+                            // this gets really weird because it tags walls as shaded.  This may change in the future.
+                            if (Outdoors[x + dx, y + dy, z] == 0)
                             {
+                                // if this square is outdoors, tag adjacent indoor squares as shaded (1)                      
                                 Outdoors[x + dx, y + dy, z] = 1;
                             }
                         }
-                        if (Terrains[x, y, z].Solid)
+                        if (Terrains[x, y, z].ZView!=-1)
                         {
+                            //Debug.WriteLine("breaking off at " + z);
+                            //Debug.WriteLine(Outdoors[x, y, z]);
                             break;
-                        }
+                        } 
                     }
                 }
             }
@@ -355,6 +365,20 @@ namespace Hecatomb
         public void ValidateLighting()
         {
           
+        }
+        public int GetLighting(int x, int y, int z)
+        {
+            int lighting = Game.World.Turns.LightLevel;
+            int outdoors = Game.World.Outdoors[x, y, z];
+            if (outdoors == 0)
+            {
+                lighting = 0;
+            }
+            else if (outdoors == 1)
+            {
+                lighting = lighting / 2;
+            }
+            return lighting;
         }
 	}
 }
