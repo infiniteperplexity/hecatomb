@@ -72,15 +72,15 @@ namespace Hecatomb
             AvailableTrades = new List<TradeTask>();
             Symbols = new char[]
             {
-                '\u00A3','.','.',
-                '.','\u2696','$',
-                '\u00A2','\u20AA','\u00A4'
+                '\u00A3','.','\u20AA',
+                '.','.','$',
+                '\u00A2','.','\u00A4'
             };
             FGs = new string[]
             {
-                "#552222", "FLOORFG","FLOORFG",
+                "#552222", "FLOORFG","#333333",
                 "FLOORFG", "#888844","#888844",
-                "#225522","#333333","#222266"
+                "#225522","FLOORFG","#222266"
             };
             BG = "#555544";
             BGs = new string[]
@@ -164,10 +164,10 @@ namespace Hecatomb
             if (Trading != null)
             {
                 TradeTask t = Trading;
-                string txt = "Trading " + t.Describe() + " (" + t.Labor + " turns; Delete to cancel.)";
-                if (t.Ingredients.Count > 0)
+                string txt = t.Describe() + " (" + t.Labor + " turns; Delete to cancel.)";
+                if (t.Ingredients.Count > 0 && !Game.Options.NoIngredients)
                 {
-                    txt = "Trading " + t.Describe() + " ($: " + Resource.Format(t.Ingredients) + ")";
+                    txt = t.Describe() + " ($: " + Resource.Format(t.Ingredients) + ")";
                 }
                 menu.MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",

@@ -18,6 +18,8 @@ namespace Hecatomb
         public TradeTask() : base()
         {
             Priority = 3;
+            Labor = 50;
+            LaborCost = 50;
             Trading = new Dictionary<string, int>();
 
         }
