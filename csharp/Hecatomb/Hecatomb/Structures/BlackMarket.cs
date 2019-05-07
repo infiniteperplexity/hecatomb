@@ -16,12 +16,60 @@ namespace Hecatomb
     /// </summary>
     public class BlackMarket : Structure
     {
+        public static List<TradeTask> PotentialTrades;
 
-        public List<TradeTask> Trades;
+        public List<TradeTask> AvailableTrades;
 
+
+        public void AddTrade()
+        {
+            Debug.WriteLine("adding a trade");
+            // should I call this several times upon Placement?
+            int MaxTrades = 4;
+            int r = Game.World.Random.Next(PotentialTrades.Count);
+            TradeTask newTrade = Entity.Mock<TradeTask>();
+            newTrade.Ingredients = PotentialTrades[r].Ingredients;
+            newTrade.Trading = PotentialTrades[r].Trading;
+            newTrade.Structure = this;
+
+            if (AvailableTrades.Count >= MaxTrades)
+            {
+                AvailableTrades.RemoveAt(MaxTrades-1);
+            }
+            AvailableTrades.Insert(0,newTrade);
+
+        }
+        public override GameEvent OnTurnBegin(GameEvent ge)
+        {
+            TurnBeginEvent turn = (TurnBeginEvent)ge;
+            if (Game.World.Random.Next(100)==0)
+            {
+                AddTrade();
+            }
+            return ge;
+        }
+
+        static BlackMarket()
+        {
+            PotentialTrades = new List<TradeTask>();
+            TradeTask t;
+            t = Entity.Mock<TradeTask>();
+            t.Ingredients["Rock"] = 3;
+            t.Trading["TradeGoods"] = 1;
+            PotentialTrades.Add(t);
+            t = Entity.Mock<TradeTask>();
+            t.Ingredients["Wood"] = 3;
+            t.Trading["TradeGoods"] = 1;
+            PotentialTrades.Add(t);
+            t = Entity.Mock<TradeTask>();
+            t.Ingredients["TradeGoods"] = 1;
+            t.Trading["Rock"] = 1;
+            t.Trading["Wood"] = 1;
+            PotentialTrades.Add(t);
+        }
         public BlackMarket() : base()
         {
-            Trades = new List<TradeTask>();
+            AvailableTrades = new List<TradeTask>();
             Symbols = new char[]
             {
                 '\u00A3','.','.',
@@ -49,6 +97,20 @@ namespace Hecatomb
             };
             MenuName = "black market";
             Name = "black market";
+            AddListener<PlaceEvent>(OnPlace);
+
+
+        }
+
+        public GameEvent OnPlace(GameEvent ge)
+        {
+            PlaceEvent pe = (PlaceEvent)ge;
+            if (pe.Entity==this)
+            {
+                AddTrade();
+                AddTrade();
+            }
+            return ge;
         }
 
         [JsonIgnore]
@@ -87,20 +149,25 @@ namespace Hecatomb
             {
                 var list = new List<IMenuListable>();
                 // somehow we need to decide what trades are on offer
+                foreach (TradeTask t in AvailableTrades)
+                {
+                    list.Add(t);
+                }
                 menu.Choices = list;
+
             }
         }
 
         public override void FinishMenu(MenuChoiceControls menu)
         {
             menu.MenuTop.Insert(2, "Tab) Next structure.");
-            if (Researching != null)
+            if (Trading != null)
             {
                 TradeTask t = Trading;
                 string txt = "Trading " + t.Describe() + " (" + t.Labor + " turns; Delete to cancel.)";
                 if (t.Ingredients.Count > 0)
                 {
-                    txt = "Trading " + t.Describe() + " ($: " + t.Ingredients + ")";
+                    txt = "Trading " + t.Describe() + " ($: " + Resource.Format(t.Ingredients) + ")";
                 }
                 menu.MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
@@ -108,6 +175,10 @@ namespace Hecatomb
                     "Tab) Next structure.",
                     txt
                 };
+            }
+            else
+            {
+
             }
             Game.MenuPanel.Dirty = true;
 

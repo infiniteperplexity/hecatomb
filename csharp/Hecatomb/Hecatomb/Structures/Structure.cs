@@ -231,7 +231,7 @@ namespace Hecatomb
             }
         }
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public virtual void BuildMenu(MenuChoiceControls menu)
         {
             // might want to format htis guy a bit...like add coordinates?
             menu.Header = "Structure: " + Describe();
@@ -261,7 +261,7 @@ namespace Hecatomb
                 menu.Choices = list;
             }
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public virtual void FinishMenu(MenuChoiceControls menu)
         {
             menu.MenuTop.Insert(2, "Tab) Next structure.");
             if (Researching != null)

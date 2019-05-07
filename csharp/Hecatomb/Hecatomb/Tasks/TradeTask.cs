@@ -18,6 +18,8 @@ namespace Hecatomb
         public TradeTask() : base()
         {
             Priority = 3;
+            Trading = new Dictionary<string, int>();
+
         }
         public override string GetDisplayName()
         {
@@ -43,8 +45,10 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
+            // wait is this actuall a condition we want?
             if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients))
             {
+                (Structure.Unbox() as BlackMarket).AvailableTrades.Remove(this);
                 int x = Structure.X;
                 int y = Structure.Y;
                 int z = Structure.Z;

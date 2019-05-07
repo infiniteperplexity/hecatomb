@@ -73,6 +73,7 @@
     <Compile Include="Tasks\ForbidTask.cs" />
     <Compile Include="Controls\TextEntryControls.cs" />
     <Compile Include="TiledFloorFeatureComponent.cs" />
+    <Compile Include="Tasks\TradeTask.cs" />
     <Compile Include="Utilities\ICallStrings.cs" />
     <Compile Include="Tasks\ButcherTask.cs" />
     <Compile Include="Components\Defender.cs" />
