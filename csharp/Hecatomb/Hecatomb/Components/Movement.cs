@@ -440,35 +440,37 @@ namespace Hecatomb
 
 		// arguably this belongs on Actor, as it reflect a "choice"
 		// in the JS version, displacing other creatures is handled here as well		
-		public Coord? TryStep(int x1, int y1, int z1)
-		{
-			int x = x1-Entity.X;
-			int y = y1-Entity.Y;
-			int z = z1-Entity.Z;
-			Coord c = new Coord(x, y, z);
-			if (CanPass(x, y, z))
-			{
-				return c;
-			}
-			if (Fallbacks.ContainsKey(c))
-			{
-				var fallbacks = Fallbacks[c];
-				foreach (var row in fallbacks)
-				{
-					foreach (Coord dir in row)
-					{
-						x = dir.X;
-						y = dir.Y;
-						z = dir.Z;
-						if (CanPass(Entity.X+x, Entity.Y+y, Entity.Z+z))
-						{
-							return new Coord(Entity.X+x, Entity.Y+y, Entity.Z+z);
-						}
-					}
-				}
-			}
-			return null;
-		}
+		//public Coord? TryStep(int x1, int y1, int z1)
+		//{
+  //          // wtf is this actually used?  or is only the one in Actor used?
+  //          Debug.WriteLine("Do we actually use the TryStep code in Movement?");
+		//	int x = x1-Entity.X;
+		//	int y = y1-Entity.Y;
+		//	int z = z1-Entity.Z;
+		//	Coord c = new Coord(x, y, z);
+		//	if (CanPass(x, y, z))
+		//	{
+		//		return c;
+		//	}
+		//	if (Fallbacks.ContainsKey(c))
+		//	{
+		//		var fallbacks = Fallbacks[c];
+		//		foreach (var row in fallbacks)
+		//		{
+		//			foreach (Coord dir in row)
+		//			{
+		//				x = dir.X;
+		//				y = dir.Y;
+		//				z = dir.Z;
+		//				if (CanPass(Entity.X+x, Entity.Y+y, Entity.Z+z))
+		//				{
+		//					return new Coord(Entity.X+x, Entity.Y+y, Entity.Z+z);
+		//				}
+		//			}
+		//		}
+		//	}
+		//	return null;
+		//}
 		public void StepTo(int x1, int y1, int z1)
 		{
 			Entity.Entity.Place(x1, y1, z1);

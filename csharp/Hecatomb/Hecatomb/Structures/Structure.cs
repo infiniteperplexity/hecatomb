@@ -287,7 +287,31 @@ namespace Hecatomb
                     Unhighlight();
                     Game.Controls.Reset();
                 };
-            menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
+            menu.KeyMap[Keys.Tab] = NextStructure;
+        }
+
+        public void NextStructure()
+        {
+            var structures = ListStructures();
+            if (structures.Count>0)
+            {
+                int n = -1;
+                for (int i=0; i<structures.Count; i++)
+                {
+                    if (structures[i]==this)
+                    {
+                        n = i;
+                    }
+                }
+                if (n==-1 || n==structures.Count-1)
+                {
+                    Controls.Set(new MenuChoiceControls((Structure)structures[0]));
+                }
+                else
+                {
+                    Controls.Set(new MenuChoiceControls((Structure)structures[n+1]));
+                }
+            }
         }
 
         public void HighlightSquares(string s)

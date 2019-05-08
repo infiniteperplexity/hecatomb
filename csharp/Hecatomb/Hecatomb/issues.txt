@@ -64,7 +64,7 @@ o	Have the bandits carry trade goods?
 -	Did I ever test the frustration mechanic?  Or did I give up on that?
 -	Make all keyboard commands work coherently.
 -	Get dismantle/repair working.
--	Implement next structure / next minion.
+*	Implement next structure / next minion.
 *	Paved floor as a cover, plus grass spawning.
 -	Fix various name display issues.
 
@@ -78,3 +78,6 @@ o	Have the bandits carry trade goods?
 
 - Friendly displacement among workers.
 - Repair/dismantle stuff.
+
+...how do I want repair and dismantle to work?
+...harvesting incomplete structures could dismantle them, but that doesn't help with completed ones.

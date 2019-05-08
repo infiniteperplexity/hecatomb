@@ -170,6 +170,10 @@ namespace Hecatomb
 				}
 			}
 		}
+
+
+
+
 		public void WalkAway(int x1, int y1, int z1)
 		{
             var (x0, y0, z0) = Entity;
@@ -244,10 +248,38 @@ namespace Hecatomb
 						Minion minion = cr.TryComponent<Minion>();
 						if (minion!=null && minion.Task!=null)
 						{
-							// for now, make working creatures unpushable
-							// eventually, try to push creature into a neighboring square where it can still work
-							
-							continue;
+                            // for now, skip the remaining logic until we can verify it a bit
+                            // do we have "CanWork" or something?
+
+                            //if (WorkRange == 0 && x == X && y == Y && z == Z)
+                            //{
+                            //    canWork = true;
+                            //}
+                            //else if (WorkRange == 1 && m.CanTouch(X, Y, Z))
+                            //{
+                            //    canWork = true;
+                            //}
+
+                            continue;
+                            Movement move = cr.GetComponent<Movement>();
+                            Task task = minion.Task;
+                            // reluctant to displace a creature if it is standing next to its task
+                            if (move.CanTouch(task.X, task.Y, task.Z))
+                            {
+                                // note that it may seem intuitive to try swapping first, in practice it looks really odd and jarring
+                                // "where" should be a combination of being about to walk there and being able to work there
+                                var squares = Tiles.GetNeighbors26(cr.X, cr.Y, cr.Z, where: null);
+                                if (squares.Count>0)
+                                {
+                                    //shuffle it
+                                    var s = squares[0];
+                                    Entity.GetComponent<Movement>().Displace(cr, s.X, s.Y, s.Z);
+                                }
+                                else // if you can still work after swapping places, do that
+                                {
+                                    Entity.GetComponent<Movement>().Displace(cr);
+                                }
+                            }	
 						}
 						if (Game.World.Random.NextDouble()<0.5)
 						{
@@ -259,6 +291,71 @@ namespace Hecatomb
 			}
 			return false;
 		}
+
+
+        //    // much more reluctant to displace a creature if it is "working"
+        //    if (t && HTomb.Tiles.isTouchableFrom(t.x, t.y, t.z, cr.x, cr.y, cr.z))
+        //    {
+        //        // try to push the creature into a space from which it can still work
+        //        let squares = HTomb.Tiles.getNeighborsWhere(cr.x, cr.y, cr.z, function(x0, y0, z0) {
+        //            if (cr.movement && cr.movement.canPass(x0, y0, z0) !== true)
+        //            {
+        //                return false;
+        //            }
+        //            else
+        //            {
+        //                return HTomb.Tiles.isTouchableFrom(t.x, t.y, t.z, x0, y0, z0);
+        //            }
+        //        });
+        //        if (squares.length > 0)
+        //        {
+        //            squares = HTomb.Utils.shuffle(squares);
+        //            let s = squares[0];
+        //            this.entity.movement.displaceCreature(cr, s[0], s[1], s[2]);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            // if the creature can work after trading places, do that
+        //            if (HTomb.Tiles.isTouchableFrom(t.x, t.y, t.z, x, y, z))
+        //            {
+        //                ;
+        //                this.entity.movement.displaceCreature(cr);
+        //            }
+        //            // will not push a working creature away from its task
+        //            return false;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (ROT.RNG.getUniform() <= 0.5)
+        //        {
+        //            this.entity.movement.displaceCreature(cr);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            continue;
+        //        }
+        //    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public void Wait() => Spend(ActionPoints);
 		
 		public void CheckForHostile()

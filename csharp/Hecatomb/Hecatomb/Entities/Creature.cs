@@ -118,7 +118,44 @@ namespace Hecatomb
                     Highlight = null;
                     Game.Controls.Reset();
                 };
-            menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
+            menu.KeyMap[Keys.Tab] = NextMinion;
         }
+
+        public void NextMinion()
+        {
+            var minions = GetState<TaskHandler>().Minions;
+            if (this==Player)
+            {
+                if (minions.Count>0)
+                {
+                    Game.Controls.Set(new MenuChoiceControls((Creature) minions[0]));
+                }
+            }
+            else if (TryComponent<Minion>()==null)
+            {
+                Game.Controls.Set(new MenuChoiceControls(Player));
+            }
+            else
+            {
+                int n = -1;
+                
+                for (int i=0; i<minions.Count; i++)
+                {
+                    if (minions[i]==this)
+                    {
+                        n = i;
+                    }
+                }
+                if (n==-1 || n==minions.Count-1)
+                {
+                    Game.Controls.Set(new MenuChoiceControls(Player));
+                }
+                else
+                {
+                    Game.Controls.Set(new MenuChoiceControls((Creature)minions[n+1]));
+                }
+            }
+        }
+       
     }
 }
