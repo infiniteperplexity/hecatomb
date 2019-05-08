@@ -5,13 +5,13 @@
 - Workers sometimes abandon tasks and won't go back...need to reproduce and check if they're still assigned.
 ? Can assign a contruction task over solid tiles
 ? Dropped items are unowned - believed fixed
-- Building a ramp should clear the cover on teh square above, including mining it if necessary.
+? Building a ramp should clear the cover on teh square above, including mining it if necessary.
 - Something weird goes on with fonts and box-drawing characters.
 
 Misfeatures:
 X We shouldn't claim multiple haulable items at once, should we? - solved
 ? Does stockpiling have lowest priority? I think it's now fixed.
-- The hostility check system is kind of a mess; it can only go by team.
+* The hostility check system is kind of a mess; it can only go by team.
 
 Improvements:
 - Tasks should have different background colors.

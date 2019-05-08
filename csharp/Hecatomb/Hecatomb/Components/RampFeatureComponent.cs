@@ -16,6 +16,7 @@ namespace Hecatomb
             Terrains[x, y, z] = Terrain.UpSlopeTile;
             Covers[x, y, z + 1].Mine(x, y, z + 1);
             Terrains[x, y, z + 1] = Terrain.DownSlopeTile;
+            Game.World.ValidateOutdoors();
         }
     }
 }

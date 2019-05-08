@@ -58,6 +58,7 @@ namespace Hecatomb
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<AttackEvent>(OnBanditAttack);
             AddListener<PathChangeEvent>(OnPathChange);
+            Bandits = new List<EntityField<Creature>>();
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
@@ -166,7 +167,9 @@ namespace Hecatomb
         public GameEvent OnBanditAttack(GameEvent ge)
         {
             AttackEvent ae = (AttackEvent)ge;
-            if (Bandits.Contains((Creature)ae.Attacker.Entity.Unbox()))
+            Attacker att = ae.Attacker;
+            Creature cr = (Creature) att.Entity.Unbox();
+            if (Bandits.Contains(cr))
             {
                 if (ae.Defender.Entity.Name == "Door")
                 {

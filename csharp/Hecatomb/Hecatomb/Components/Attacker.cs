@@ -43,19 +43,19 @@ roll+accuracy: {attack.Roll+Accuracy}
             if (attack.Roll + Accuracy >= 11 + evade)
             {
                 Debug.WriteLine("hit");
+                // defender switches targets if the attacker is closer
+                if (t is Creature)
+                {
+                    t.GetComponent<Actor>().Provoke((Creature)Entity);
+                }
                 defender.Defend(attack);
-
             }
             else
             {
                 Debug.WriteLine("Miss");
             }
             Entity.GetComponent<Actor>().Spend();
-            // defender switches targets if the attacker is closer
-            if (t is Creature)
-            {
-                t.GetComponent<Actor>().Provoke((Creature) Entity);
-            }
+            
         }
     }
 }

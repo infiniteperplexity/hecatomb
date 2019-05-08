@@ -64,11 +64,20 @@ namespace Hecatomb
 
         public override void SelectTile(Coord c)
         {
-            
+
             Creature cr = Creatures[c];
             if (cr != null && cr != Player)
             {
-                cr.GetComponent<Actor>().DeclaredEnemy = true;
+                Actor actor = cr.GetComponent<Actor>();
+                if (actor.Team == "Friendly")
+                {
+                    actor.Team = "Berserk";
+                }
+                else if (actor.Team == "Neutral")
+                {
+                    // arguably all nearby neutrals should turn hostile?
+                    actor.Team = "Hostile";
+                }
             }
         }
     }

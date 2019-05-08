@@ -63,7 +63,7 @@
     <Compile Include="Components\DoorFeatureComponent.cs" />
     <Compile Include="Controls\ForegroundPanel.cs" />
     <Compile Include="Controls\FrozenControls.cs" />
-    <Compile Include="GrowthHandler.cs" />
+    <Compile Include="StateHandlers\GrowthHandler.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="Core\SaveGameFile.cs" />
     <Compile Include="Spells\RemoveCreatureDebugSpell.cs" />

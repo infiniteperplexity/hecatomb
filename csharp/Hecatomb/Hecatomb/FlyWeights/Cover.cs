@@ -180,6 +180,10 @@ namespace Hecatomb
                     Item.PlaceNewResource("Rock", 1, x, y, z);
                 }
             }
+            if (!Game.World.Covers[x, y, z].Liquid) // not sure how to deal with liquids here
+            {
+                Game.World.Covers[x, y, z] = Cover.NoCover;
+            }
         }
 
     }

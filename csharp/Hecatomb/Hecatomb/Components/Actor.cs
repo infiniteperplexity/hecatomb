@@ -26,7 +26,6 @@ namespace Hecatomb
 		public int CurrentPoints;
 		public string Team;
         public bool Acted;
-        public bool DeclaredEnemy;
         public List<string> Goals = new List<string>();
         public string Alert;
         public string Fallback;
