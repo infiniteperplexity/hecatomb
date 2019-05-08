@@ -31,7 +31,14 @@ namespace Hecatomb
                 {
                     n = (int) Yields[key];
                 }
-                Item.PlaceNewResource(key, n, Entity.X, Entity.Y, Entity.Z);
+                if (key == "Corpse")
+                {
+                    Item.SpawnCorpse().Place(Entity.X, Entity.Y, Entity.Z);
+                }
+                else
+                {
+                    Item.PlaceNewResource(key, n, Entity.X, Entity.Y, Entity.Z);
+                }
             }
             Entity.Despawn();
         }

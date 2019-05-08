@@ -22,10 +22,11 @@ Improvements:
 - Would be nice if creatures could intelligently displace each other to work on tasks.
 - Need a place to store flint and coal (depot?)
 - Make it so unearthing a corpse with a tunnel below it doesn't modify terrain.
-- Grass should grow outside
-- Some corpses should have trade goods
+* Grass should grow outside
+* Some corpses should have trade goods
+* Bandits should sometimes drop trade goods.
 - Incomplete features, excavations...what is to be done?
-- Paved floor as feature.
+* Paved floor as feature.
 - Stonemason as structure?
 - Construct tasks should maybe lists their needed ingredients?  maybe other tasks as well?
 
@@ -37,20 +38,20 @@ Features:
 
 Specific focus on doors and attacking:
 - We need some way to keep zombies from running out the door.  Probably just allow doors to lock...but then how do we pull zombies back in?
-- We want working traps.
-- We want diagonal movement.
+* We want working traps.
+* We want diagonal movement.
 - The background color thing actually works really well.
 - We need the splash screen to hide lag.
-- We need a "frustration" mechanic, that makes raiders give up.
-- We need intelligent target switching.
+? We need a "frustration" mechanic, that makes raiders give up.
+* We need intelligent target switching.
 - We need some pathing stuff, so they always let the biggest creature smack the door.
-- Hostility detection is janky.
+* Hostility detection is janky.
 
 
 What are some of the “big rocks”?
--	Make saving and restoring games works sensibly.  Basically, names and loading screens.
+*	Make saving and restoring games works sensibly.  Basically, names and loading screens.
 o	Also applies to startup.
--	Make lighting work in a coherent way.
+*	Make lighting work in a coherent way.
 o	Indoor lighting.
 o	Structures.
 o	Structures offscreen?
@@ -58,17 +59,22 @@ o	Structures offscreen?
 o	Mostly convenience-of-work stuff.
 -	Some content things.
 o	Have the bandits carry trade goods?
--	Declare hostility task.
--	Make corpses work in a coherent way, and decay.
+*	Declare hostility task.
+*	Make corpses work in a coherent way, and decay.
 -	Did I ever test the frustration mechanic?  Or did I give up on that?
 -	Make all keyboard commands work coherently.
 -	Get dismantle/repair working.
 -	Implement next structure / next minion.
--	Paved floor as a cover, plus grass spawning.
+*	Paved floor as a cover, plus grass spawning.
 -	Fix various name display issues.
 
 
 * Canceling restore game goes back to the wrong menu, on startup
 * Lighting is a good next task
-- Grass spawning is a nice quick win.
+* Grass spawning is a nice quick win.
 - Check to see whether bandits give up correctly.
+
+
+
+- Friendly displacement among workers.
+- Repair/dismantle stuff.

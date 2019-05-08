@@ -84,8 +84,11 @@ namespace Hecatomb
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
                 zombie.GetComponent<Actor>().Team = "Friendly";
                 zombie.Place(c.X, c.Y, c.Z);
+                zombie.GetComponent<Decaying>().Decay = 4 * i.Decay;
+                i.Despawn();
                 Status.PushMessage("The corpse stirs to obey your commands.");
                 GetState<TaskHandler>().Minions.Add(zombie);
+                
                 return;
             }
             // some notification of failure?
@@ -154,6 +157,16 @@ namespace Hecatomb
                     {
                         Item.PlaceNewResource("Rock", 1, x1, y1, z1);
                     }
+                }
+            }
+            // randomly place trade goods if we aren't too close to the center
+            int goodsBounds = 12;
+            int half = Game.World.Width / 2;
+            if ((X < half-goodsBounds || X > half+goodsBounds) && (Y < half - goodsBounds || Y > half + goodsBounds))
+            {
+                if (Game.World.Random.Next(10)==0)
+                {
+                    Item.PlaceNewResource("TradeGoods", 1, X, Y, Z - 1);
                 }
             }
             Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;

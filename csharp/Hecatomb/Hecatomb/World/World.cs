@@ -131,6 +131,20 @@ namespace Hecatomb
                 Creatures[x, y, z].Despawn();
             }
             p.Place(x, y, z);
+            //***** This logic absolutely should not go here
+            int goodsBounds = 12;
+            for (int i = x-goodsBounds; i<=x+goodsBounds; i++)
+            {
+                for (int j = y-goodsBounds; j<=y+goodsBounds; j++)
+                {
+                    Feature f = Features[i, j, GetGroundLevel(i, j)];
+                    if (f!=null && f.TypeName=="Grave")
+                    {
+                        f.GetComponent<Harvestable>().Yields.Remove("TradeGoods");
+                    }
+                }
+            }
+            //*****
             Game.Camera.Center(x, y, z);
             return p;
         }
@@ -202,10 +216,14 @@ namespace Hecatomb
 			}
 			int elev = Depth-1;
 			for (int i=Depth-1; i>0; i--) {
-				if (Terrains[x,y,i].Solid)
-				{
-					return i+1;
-				}
+                if (Terrains[x,y,i]==Terrain.FloorTile || Terrains[x,y,i]==Terrain.UpSlopeTile)
+                {
+                    return i;
+                }
+				//if (Terrains[x,y,i].Solid)
+				//{
+				//	return i+1;
+				//}
 			}
 			return 1;
 		}

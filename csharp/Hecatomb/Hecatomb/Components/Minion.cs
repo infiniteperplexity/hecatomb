@@ -46,7 +46,11 @@ namespace Hecatomb
                     }
                 }
             }
-            Task?.Act();
+            if (Task!=null)
+            {
+                Task.Act();
+            }
+            //Task?.Act();
             Actor actor = Entity.GetComponent<Actor>();
             if (!actor.Acted)
             {

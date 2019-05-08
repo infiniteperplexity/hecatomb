@@ -44,7 +44,7 @@ roll+accuracy: {attack.Roll+Accuracy}
             {
                 Debug.WriteLine("hit");
                 // defender switches targets if the attacker is closer
-                if (t is Creature)
+                if (t is Creature && Entity.Unbox() is Creature)
                 {
                     t.GetComponent<Actor>().Provoke((Creature)Entity);
                 }
@@ -54,8 +54,10 @@ roll+accuracy: {attack.Roll+Accuracy}
             {
                 Debug.WriteLine("Miss");
             }
-            Entity.GetComponent<Actor>().Spend();
-            
+            if (Entity.Unbox() is Creature)
+            {
+                Entity.GetComponent<Actor>().Spend();
+            }
         }
     }
 }

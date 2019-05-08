@@ -40,7 +40,8 @@
 					"Minion": {},
 					"Inventory": {},
 					"Attacker": {},
-					"Defender": {}
+					"Defender": {},
+					"Decaying": {}
 				}
 			},
 			{

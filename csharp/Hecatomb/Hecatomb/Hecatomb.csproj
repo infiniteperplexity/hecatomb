@@ -63,6 +63,7 @@
     <Compile Include="Components\DoorFeatureComponent.cs" />
     <Compile Include="Controls\ForegroundPanel.cs" />
     <Compile Include="Controls\FrozenControls.cs" />
+    <Compile Include="DecayingComponent.cs" />
     <Compile Include="StateHandlers\GrowthHandler.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="Core\SaveGameFile.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="Controls\SplashControls.cs" />
     <Compile Include="Tasks\ForbidTask.cs" />
     <Compile Include="Controls\TextEntryControls.cs" />
-    <Compile Include="TiledFloorFeatureComponent.cs" />
+    <Compile Include="Components\TiledFloorFeatureComponent.cs" />
     <Compile Include="Tasks\TradeTask.cs" />
     <Compile Include="Utilities\ICallStrings.cs" />
     <Compile Include="Tasks\ButcherTask.cs" />

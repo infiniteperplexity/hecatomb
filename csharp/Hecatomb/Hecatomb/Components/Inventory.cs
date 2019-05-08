@@ -14,6 +14,20 @@ namespace Hecatomb
 	{
         public TileEntityField<Item> Item = new TileEntityField<Item>();
 		
+        public Inventory()
+        {
+            AddListener<DespawnEvent>(OnDespawn);
+        }
+
+        public GameEvent OnDespawn(GameEvent ge)
+        {
+            DespawnEvent de = (DespawnEvent)ge;
+            if (de.Entity==this)
+            {
+                Drop();
+            }
+            return ge;
+        }
         public void Drop()
         {
             var (x, y, z) = Entity;

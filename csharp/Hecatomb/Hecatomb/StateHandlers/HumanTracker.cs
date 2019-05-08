@@ -136,6 +136,11 @@ namespace Hecatomb
                 TargetPlayer(bandit);
                 // do they occasionally get placed one step underground?
                 Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
+                if (i==0)
+                {
+                    Item loot = Item.SpawnNewResource("TradeGoods", 1);
+                    bandit.GetComponent<Inventory>().Item = loot;
+                }
             }
             
             // this would be a good time to calculate all the paths, yes?

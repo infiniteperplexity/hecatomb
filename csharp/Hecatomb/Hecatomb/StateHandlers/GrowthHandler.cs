@@ -21,7 +21,8 @@ namespace Hecatomb
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnBeginEvent te = (TurnBeginEvent)ge;
-            int nTurns = 2;
+            int nTurns = 10;
+            int chance = 5;
             if (te.Turn%nTurns==0)
             {
                 for (int x=1; x<Game.World.Width-1; x++)
@@ -31,10 +32,8 @@ namespace Hecatomb
                         int z = Game.World.GetGroundLevel(x, y);
                         if (Game.World.Outdoors[x, y, z]==2 && (Game.World.Terrains[x, y, z] == Terrain.FloorTile || Game.World.Terrains[x, y, z] == Terrain.UpSlopeTile) && Game.World.Covers[x, y, z] == Cover.NoCover && Game.World.Features[x, y, z]==null)
                         {
-                            Debug.WriteLine("flag 2");
-                            if (Game.World.Random.Next(1)==0)
+                            if (Game.World.Random.Next(chance)==0)
                             {
-                                Debug.WriteLine("flag 3");
                                 Game.World.Covers[x, y, z] = Cover.Grass;
                             }
                         }

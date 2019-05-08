@@ -15,6 +15,8 @@ namespace Hecatomb
         public int Quantity;
         public int Claimed;
         public string Resource;
+        public string CorpseType;
+        public int Decay;
         [JsonIgnore]
         public  int StackSize
         {
@@ -43,9 +45,28 @@ namespace Hecatomb
 
         public static Item SpawnCorpse()
         {
+            return SpawnCorpse("Human");
+        }
+
+        public static Item SpawnCorpse(string creatureType)
+        {
+            // when you harvest a tombstone, it creatures a human corpse?
             Item item = Entity.Spawn<Item>();
             item.Resource = "Corpse";
+            item.CorpseType = creatureType;
+            item.Decay = 250;
+            Game.World.Events.Subscribe<TurnBeginEvent>(item, item.CorpseDecays);
             return item;
+        }
+
+        public GameEvent CorpseDecays(GameEvent ge)
+        {
+            Decay -= 1;
+            if (Decay==0)
+            {
+                Destroy();
+            }
+            return ge;
         }
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
@@ -100,6 +121,13 @@ namespace Hecatomb
             return Take(n);
         }
 
+        public static Item SpawnNewResource(string r, int n)
+        {
+            Item item = (r == "Corpse") ? SpawnCorpse() : Spawn<Item>();
+            item.Resource = r;
+            item.Quantity = n;
+            return item;
+        }
         public static Item PlaceNewResource(string r, int n, int x, int y, int z, bool owned = true)
         {
             Item item = (r=="Corpse") ? SpawnCorpse() : Spawn<Item>();

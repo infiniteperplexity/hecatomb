@@ -71,6 +71,13 @@ namespace Hecatomb
             Game.World.Creatures[x0, y0, z0] = null;
         }
 
+        public override void Destroy()
+        {
+            Item.SpawnCorpse().Place(X, Y, Z);
+            Remove();
+            Despawn();
+        }
+
         public void BuildMenu(MenuChoiceControls menu)
         {
             // might want to format htis guy a bit...like add coordinates?

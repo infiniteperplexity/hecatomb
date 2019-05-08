@@ -56,7 +56,7 @@
 				"Symbol" : "\u271D",
 				"Components" : {
 					"Harvestable": {
-						"Yields": {"Corpse": 1}
+						"Yields": {"Corpse": 1, "TradeGoods": 0.1}
 					}
 				}
 			},
@@ -115,6 +115,7 @@
 						"Structures": ["Workshop"],
 						"Research": ["SpearTrap"]
 					},
+					"Attacker": {},
 					"SpearTrapFeatureComponent": {}
 				}
 			}
