@@ -27,6 +27,7 @@ namespace Hecatomb
         public string[] ResearchPrereqs;
         public string[] StructurePrereqs;
         public string[] Stores;
+        public List<Coord> Squares;
 
         [JsonIgnore]
         public ResearchTask Researching
@@ -56,6 +57,7 @@ namespace Hecatomb
             Features = new List<TileEntityField<Feature>>();
             Ingredients = new Dictionary<string, int>[Width * Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
+            AddListener<DespawnEvent>(OnDespawn);
             ResearchPrereqs = new string[0];
             StructurePrereqs = new string[0];
             Stores = new string[0];
@@ -313,6 +315,39 @@ namespace Hecatomb
                 }
             }
         }
+        public void BuildInSquares(List<Coord> squares)
+        {
+            Squares = squares;
+            BuildInSquares();
+        }
+        public void BuildInSquares()
+        {
+            for (int i = 0; i < Squares.Count; i++)
+            {
+                Coord s = Squares[i];
+                if (Game.World.Tasks[s.X, s.Y, s.Z] == null)
+                {
+                    Feature f = Game.World.Features[s.X, s.Y, s.Z];
+                    if (f == null || f.TypeName=="IncompleteFeature")
+                    {
+                        ConstructTask tc = Entity.Spawn<ConstructTask>();
+                        tc.Makes = ClassName;
+                        tc.Structure = this;
+                        tc.FeatureIndex = i;
+                        tc.Ingredients = Ingredients[i] ?? new Dictionary<string, int>();
+                        tc.Place(s.X, s.Y, s.Z);
+                    }
+                    else if (f.TryComponent<StructuralComponent>()!=null)
+                    {
+                        StructuralComponent sc = f.GetComponent<StructuralComponent>();
+                        if (sc.Structure!=this)
+                        {
+                            throw (new InvalidOperationException("You're trying to build one structure on top of another!"));
+                        }
+                    }
+                }
+            }
+        }
 
         public void HighlightSquares(string s)
         {
@@ -334,5 +369,88 @@ namespace Hecatomb
             }
         }
 
+
+        // check to see if all traces of this building have been wiped out
+        public bool AtLeastPartiallyExists(TileEntity despawning)
+        {
+            if (Placed)
+            {
+                return true;
+            }
+            else
+            {
+                bool exists = false;
+                foreach (Coord s in Squares)
+                {
+                    Feature f = Game.World.Features[s.X, s.Y, s.Z];
+                    if (f != null && f != despawning)
+                    {
+                        var sc = f.TryComponent<StructuralComponent>();
+                        if (sc != null)
+                        {
+                            if (sc.Structure == this)
+                            {
+                                exists = true;
+                            }
+                        }
+                        var ifc = f.TryComponent<IncompleteFixtureComponent>();
+                        if (ifc != null)
+                        {
+                            if (ifc.Structure == this)
+                            {
+                                exists = true;
+                            }
+                        }
+                    }
+                    Task t = Game.World.Tasks[s.X, s.Y, s.Z];
+                    if (t!=null && t!=despawning && t is ConstructTask)
+                    {
+                        if (t.Makes==this.ClassName)
+                        {
+                            exists = true;
+                        }
+                    }
+                }
+                return exists;
+            }
+        }
+        public GameEvent OnDespawn(GameEvent ge)
+        {
+            DespawnEvent de = (DespawnEvent)ge;
+            if (de.Entity is Feature)
+            {
+                Feature f = (Feature)de.Entity;
+                if (Placed && Features.Contains(f))
+                {
+                    Remove();
+                    Features = new List<TileEntityField<Feature>>();
+                    if (!AtLeastPartiallyExists(f))
+                    {
+                        Despawn();
+                    }
+                }
+                if (!Placed)
+                {
+                    var ifc = f.TryComponent<IncompleteFixtureComponent>();
+                    if (ifc!=null && ifc.Structure==this && !AtLeastPartiallyExists(f))
+                    {
+                        Despawn();
+                    }
+                    var sc = f.TryComponent<StructuralComponent>();
+                    if (sc != null && sc.Structure == this && !AtLeastPartiallyExists(f))
+                    {
+                        Despawn();
+                    }
+                }
+            }
+            if (de.Entity is ConstructTask)
+            {
+                if (!AtLeastPartiallyExists((ConstructTask) de.Entity))
+                {
+                    Despawn();
+                }
+            }
+            return ge;
+        }
     }
 }

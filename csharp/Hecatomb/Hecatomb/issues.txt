@@ -1,81 +1,18 @@
-﻿Bugs:
-? Infinite item displacement loops - believed solved.
-? Haul tasks target full piles - possibly solved.
-? Items get displaced even when piles aren't full - seems solved.
-- Workers sometimes abandon tasks and won't go back...need to reproduce and check if they're still assigned.
-? Can assign a contruction task over solid tiles
-? Dropped items are unowned - believed fixed
-? Building a ramp should clear the cover on teh square above, including mining it if necessary.
-- Something weird goes on with fonts and box-drawing characters.
-
-Misfeatures:
-X We shouldn't claim multiple haulable items at once, should we? - solved
-? Does stockpiling have lowest priority? I think it's now fixed.
-* The hostility check system is kind of a mess; it can only go by team.
-
-Improvements:
+﻿Interface issues:
+- Something weird is going on with the fonts and box-drawing characters.
+- Text panels don't do spacing correctly.
+- Many of the names show up wrong.
 - Tasks should have different background colors.
-- Character spacing looks wrong for menu and status panels.
-- Is there a way to enable multiple fetchers for multi-ingredient tasks?
-- Lots of tasks, structures, and other stuff have names show up badly.
-- If you hover over a square and someone drops something on the square, it doesn't update the menu.  This can occasionally cause weird crashes.
-* Would be nice if creatures could intelligently displace each other to work on tasks.
-- Need a place to store flint and coal (depot?)
-- Make it so unearthing a corpse with a tunnel below it doesn't modify terrain.
-* Grass should grow outside
-* Some corpses should have trade goods
-* Bandits should sometimes drop trade goods.
-- Incomplete features, excavations...what is to be done?
-* Paved floor as feature.
-- Stonemason as structure?
-- Construct tasks should maybe lists their needed ingredients?  maybe other tasks as well?
+- Does the hover menu update as it should?
 
-Features:
-- We need some way to dismantle and/or repair, but we don't want tasks to proliferate (build/repair the same...unassign/dismantle the same?)
-* Next Structure and Next Minion aren't actually implemented.
+Gameplay issues:
+- Workers sometimes abandon tasks.
 
 
+Needs testing:
+- Does friendly displacement of workers do what's intended?
+- Do we fetch ingredients for multi-ingredient tasks in a reasonable way?
+- Has the frustration mechanic been fully implemented?
 
-Specific focus on doors and attacking:
-- We need some way to keep zombies from running out the door.  Probably just allow doors to lock...but then how do we pull zombies back in?
-* We want working traps.
-* We want diagonal movement.
-- The background color thing actually works really well.
-- We need the splash screen to hide lag.
-? We need a "frustration" mechanic, that makes raiders give up.
-* We need intelligent target switching.
-- We need some pathing stuff, so they always let the biggest creature smack the door.
-* Hostility detection is janky.
-
-
-What are some of the “big rocks”?
-*	Make saving and restoring games works sensibly.  Basically, names and loading screens.
-o	Also applies to startup.
-*	Make lighting work in a coherent way.
-o	Indoor lighting.
-o	Structures.
-o	Structures offscreen?
--	Look out for pathing and task-related problems.
-o	Mostly convenience-of-work stuff.
--	Some content things.
-o	Have the bandits carry trade goods?
-*	Declare hostility task.
-*	Make corpses work in a coherent way, and decay.
--	Did I ever test the frustration mechanic?  Or did I give up on that?
--	Make all keyboard commands work coherently.
--	Get dismantle/repair working.
-*	Implement next structure / next minion.
-*	Paved floor as a cover, plus grass spawning.
--	Fix various name display issues.
-
-
-* Canceling restore game goes back to the wrong menu, on startup
-* Lighting is a good next task
-* Grass spawning is a nice quick win.
-- Check to see whether bandits give up correctly.
-
-
-- Dismantle is now a low-priority effect of DigTask.
-	- need to make some removal logic for structures.
-
-- Still need to deal with repairs.
+New Features:
+- Better ways to control zombie behavior.

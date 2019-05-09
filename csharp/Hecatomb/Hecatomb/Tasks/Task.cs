@@ -341,7 +341,8 @@ namespace Hecatomb
 
         public virtual void Start()
         {
-            Spawn<Feature>("IncompleteFeature").Place(X, Y, Z);
+            Feature f = Spawn<Feature>("IncompleteFeature");
+            f.Place(X, Y, Z);
         }
 
         public virtual void Finish()

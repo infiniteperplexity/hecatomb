@@ -67,6 +67,9 @@ namespace Hecatomb
                     list.Add(task);
                 }
             }
+            var repair = Hecatomb.Entity.Mock<RepairTask>();
+            repair.MenuName = "repair or complete structure";
+            list.Add(repair);
             menu.Choices = list;
         }
         public void FinishMenu(MenuChoiceControls menu)
@@ -125,7 +128,8 @@ namespace Hecatomb
 			base.Start();
             Feature f = Game.World.Features[X, Y, Z];
 			f.FG = Structure.Entity.FGs[FeatureIndex];
-		}
+            f.GetComponent<IncompleteFixtureComponent>().Structure = Structure;
+        }
 		public override void Finish()
 		{
             Structure s = Structure.Entity;
@@ -137,7 +141,11 @@ namespace Hecatomb
                 }
             }
 			Feature incomplete = Game.World.Features[X, Y, Z];
-			incomplete.Despawn();
+            Debug.WriteLine("check something....");
+            var x = incomplete.GetComponent<IncompleteFixtureComponent>();
+            Debug.WriteLine(x.EID);
+
+            incomplete.Despawn();
 			Feature f = Entity.Spawn<Feature>("StructureFeature");
 			f.Place(X, Y, Z);
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
@@ -231,19 +239,7 @@ namespace Hecatomb
                 }
             }
 			Structure str = Spawn<Structure>(Type.GetType("Hecatomb."+Makes));
-			for (int i=0; i<squares.Count; i++)
-			{
-				Coord s = squares[i];
-				if (Game.World.Tasks[s.X, s.Y, s.Z]==null) 
-				{
-					ConstructTask tc = Entity.Spawn<ConstructTask>();
-					tc.Makes = Makes;
-					tc.Structure = str;
-					tc.FeatureIndex = i;
-                    tc.Ingredients = str.Ingredients[i] ?? new Dictionary<string, int>();
-                    tc.Place(s.X, s.Y, s.Z);
-				}
-			}
+            str.BuildInSquares(squares);
 		}
 	}
 

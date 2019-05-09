@@ -62,6 +62,10 @@ namespace Hecatomb
 			foreach (string t in Components.Keys)
 			{
 				Type T = Type.GetType("Hecatomb." + t);
+                if (Type.GetType("Hecatomb." + t)==null)
+                {
+                    Debug.WriteLine($"Type {t} doesn't exist.");
+                }
 				Component c = (Component)Hecatomb.Entity.Spawn(Type.GetType("Hecatomb." + t));	
 				c.AddToEntity(e);
 				c.InterpretJSON(Components[t]);

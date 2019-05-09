@@ -49,8 +49,9 @@ namespace Hecatomb
                     {
                         Debug.WriteLine(key);
                         Debug.WriteLine(Components[key].EID);
-
                     }
+                    // maybe this can happen when despawns trigger other despawns?
+                    return null;
                 }
                 return (T)Entities[eid];
             }

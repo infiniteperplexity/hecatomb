@@ -59,7 +59,13 @@ namespace Hecatomb
 
         public static Entity Spawn(Type t)
         {
-            Entity ge = (Entity)Activator.CreateInstance(t);
+            var catchNull = Activator.CreateInstance(t);
+            if (catchNull==null)
+            {
+                Debug.WriteLine($"Spawning an entity of type {t} failed");
+                Debug.WriteLine("This usually produces cryptic error messages, and the problem is usually in the constructor.");
+            }
+            Entity ge = (Entity) catchNull;
             ge.EID = MaxEID + 1;
             MaxEID = ge.EID;
             Entities[ge.EID] = ge;

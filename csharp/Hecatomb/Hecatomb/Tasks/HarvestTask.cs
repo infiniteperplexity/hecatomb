@@ -67,11 +67,15 @@ namespace Hecatomb
                 h.Harvest();
                 if (f.TypeName=="Grave")
                 {
-                    Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
-                    Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
-                    Game.World.Covers[X, Y, Z] = Cover.NoCover;
-                    Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
-                    Game.World.ValidateOutdoors();
+                    // basically, if there's an explored tunnel underneath, it's more convenient if we don't dig a hole
+                    if (Game.World.Terrains[X, Y, Z - 1] == Terrain.WallTile || !Game.World.Explored.Contains(new Coord(X, Y, Z)))
+                    {
+                        Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
+                        Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
+                        Game.World.Covers[X, Y, Z] = Cover.NoCover;
+                        Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
+                        Game.World.ValidateOutdoors();
+                    }
                 }
             }
             else

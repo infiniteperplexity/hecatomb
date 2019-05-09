@@ -58,6 +58,7 @@ namespace Hecatomb
                     list.Add(task);
                 }
             }
+            list.Add(Hecatomb.Entity.Mock<RepairTask>());
             menu.Choices = list;
         }
         public void FinishMenu(MenuChoiceControls menu)

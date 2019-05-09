@@ -5,7 +5,9 @@
 				"Type" : "IncompleteFeature",
 				"FG" : "brown",
 				"Symbol" : "\u25AB",
-				"Components" : {}
+				"Components" : {
+					"IncompleteFixtureComponent": {}
+				}
 			},
 			{
 				"Type" : "StructureFeature",

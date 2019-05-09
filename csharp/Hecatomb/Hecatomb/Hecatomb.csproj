@@ -64,6 +64,8 @@
     <Compile Include="Controls\ForegroundPanel.cs" />
     <Compile Include="Controls\FrozenControls.cs" />
     <Compile Include="Components\Decaying.cs" />
+    <Compile Include="IncompleteFixture.cs" />
+    <Compile Include="RepairTask.cs" />
     <Compile Include="StateHandlers\GrowthHandler.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="Core\SaveGameFile.cs" />
