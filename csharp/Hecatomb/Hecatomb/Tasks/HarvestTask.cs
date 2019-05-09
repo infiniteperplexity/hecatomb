@@ -21,7 +21,23 @@ namespace Hecatomb
         public override string GetDisplayName()
         {
             Feature f = Game.World.Features[X, Y, Z];
-            return $"harvest {f.Name}";
+            if (f?.TryComponent<Harvestable>() != null)
+            {
+                return $"harvest {f.Name}";
+            }
+            else if (f?.TypeName=="IncompleteFeature")
+            {
+                return "remove incomplete fixture";
+            }
+            else if (f?.TryComponent<Fixture>()!=null)
+            {
+                return $"remove {f.Name}";
+            }
+            else if (f?.TryComponent<StructuralComponent>() != null)
+            {
+                return $"remove {f.Name}";
+            }
+            return "an orphaned harvest task...wtf...";
         }
 
         public override bool ValidTile(Coord c)

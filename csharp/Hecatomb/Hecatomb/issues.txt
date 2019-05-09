@@ -75,19 +75,7 @@ o	Have the bandits carry trade goods?
 - Check to see whether bandits give up correctly.
 
 
-- Repair/dismantle stuff.
+- Dismantle is now a low-priority effect of DigTask.
+	- need to make some removal logic for structures.
 
-...how do I want repair and dismantle to work?
-...harvesting incomplete structures could dismantle them, but that doesn't help with completed ones.
-What are the situations that need handling?
-- building structure interrupted with completed features...want to complete it.
-- building features interrupted with incomplete feature...want to complete it.
-- the same, but you want to remove it.
-- completed feature that you want to remove.
-Ideas:
-- Use construct/furnish tasks for finishing.
-- Use harvest task for removing incomplete.
-- Use harvest task for removing complete(!)
-- Use cancel task for removing complete(!)
-- Use a special furnish task for dismantling, and a special construct task for dismantling buildings.
-- But, that does mean everything's decided except for one case.
+- Still need to deal with repairs.

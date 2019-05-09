@@ -15,7 +15,7 @@ namespace Hecatomb
 	{
 		public DigTask(): base()
 		{
-			MenuName = "dig or harvest";
+			MenuName = "dig, harvest, or dismantle";
 		}
 
         public override string GetDisplayName()
@@ -145,11 +145,11 @@ namespace Hecatomb
             }
             else if (ValidTile(c))
             {
-                co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Dig or harvest from {0} {1} {2}.", c.X, c.Y, c.Z) };
+                co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Dig, harvest, or dismantle from {0} {1} {2}.", c.X, c.Y, c.Z) };
             }
             else
             {
-                co.MenuMiddle = new List<ColoredText>() {"{orange}Can't dig or harvest here."};
+                co.MenuMiddle = new List<ColoredText>() {"{orange}Can't dig, harvest, or dismantle here."};
             }
 		}
 		public override void TileHover(Coord c, List<Coord> squares)
@@ -163,24 +163,29 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
+                Feature f = Game.World.Features[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
-                    if (Game.World.Features[x, y, z]?.TryComponent<Harvestable>()!=null)
+                    if (f?.TryComponent<Harvestable>()!=null)
                     {
-                        priority = 5;
+                        priority = 6;
                     }
-                    else if (t == Terrain.WallTile || t == Terrain.UpSlopeTile)
-                    {
-                        priority = Math.Max(priority, 4);
-                    }
-                    else if (t == Terrain.FloorTile)
-                    {
-                        priority = Math.Max(priority, 3);
-                    }
-                    else if (t == Terrain.DownSlopeTile)
+                    else if (f?.TypeName == "IncompleteFeature" || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null)
                     {
                         priority = Math.Max(priority, 2);
                     }
+                    else if (t == Terrain.WallTile || t == Terrain.UpSlopeTile)
+                    {
+                        priority = Math.Max(priority, 5);
+                    }
+                    else if (t == Terrain.FloorTile)
+                    {
+                        priority = Math.Max(priority, 4);
+                    }
+                    else if (t == Terrain.DownSlopeTile)
+                    {
+                        priority = Math.Max(priority, 3);
+                    }        
                 }
                 else
                 {
@@ -188,29 +193,33 @@ namespace Hecatomb
                 }
             }
             string txt;
-            if (priority==5)
+            if (priority==6)
             {
                 txt = "{green}Harvest area.";
             }
-            else if (priority==4)
+            else if (priority==5)
             {
                 txt = "{green}Dig corridors and remove slopes in this area.";
             }
-            else if (priority==3)
+            else if (priority==4)
             {
                 txt = "{green}Dig through floors in this area.";
             }
-            else if (priority==2)
+            else if (priority==3)
             {
                 txt = "{green}Remove slopes below this area.";
             }
-            else if (priority==1)
+            else if (priority==2)
             {
-                txt = "{orange}Dig or harvest unexplored area.";
+                txt = "{orange}Remove fixtures and structures in this area.";
+            }
+            else if (priority == 1)
+            {
+                txt = "{orange}Dig unexplored area.";
             }
             else
             {
-                txt = "{orange}Cannot dig or harvest area.";
+                txt = "{orange}Cannot dig, harvest, or dismantle area.";
             } 
 			co.MenuMiddle = new List<ColoredText>() {txt};
         }
@@ -223,24 +232,29 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
+                Feature f = Game.World.Features[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
-                    if (Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
+                    if (f?.TryComponent<Harvestable>() != null)
                     {
-                        priority = 5;
+                        priority = 6;
                     }
-                    else if (t == Terrain.WallTile || t == Terrain.UpSlopeTile)
-                    {
-                        priority = Math.Max(priority, 4);
-                    }
-                    else if (t == Terrain.FloorTile)
-                    {
-                        priority = Math.Max(priority, 3);
-                    }
-                    else if (t == Terrain.DownSlopeTile)
+                    else if (f?.TypeName == "IncompleteFeature" || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null)
                     {
                         priority = Math.Max(priority, 2);
                     }
+                    else if (t == Terrain.WallTile || t == Terrain.UpSlopeTile)
+                    {
+                        priority = Math.Max(priority, 5);
+                    }
+                    else if (t == Terrain.FloorTile)
+                    {
+                        priority = Math.Max(priority, 4);
+                    }
+                    else if (t == Terrain.DownSlopeTile)
+                    {
+                        priority = Math.Max(priority, 3);
+                    }           
                 }
                 else
                 {
@@ -257,22 +271,29 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
-                if (priority == 5 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
+                Feature f = Game.World.Features[x, y, z];
+                if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
                 {
                     Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
                     Entity.Spawn<HarvestTask>().Place(x, y, z);
-                } else if (    (priority == 4 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
-                        || (priority == 3 && t == Terrain.FloorTile)
-                        || (priority == 2 && t == Terrain.DownSlopeTile)
-                        || (!Game.World.Explored.Contains(square) && !Options.Explored))
-               {
+                }
+                else if (priority == 2 && (f?.TypeName=="IncompleteFeature" || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null))
+                {
+                    // this arguably needs to be a differently named task, although I think this currently does the job
+                    Entity.Spawn<HarvestTask>().Place(x, y, z);
+                }
+                else if ((priority == 5 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
+                     || (priority == 4 && t == Terrain.FloorTile)
+                     || (priority == 3 && t == Terrain.DownSlopeTile)
+                     || (!Game.World.Explored.Contains(square) && !Options.Explored))
+                {
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null)
                         Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
-                        Entity.Spawn<DigTask>().Place(x, y, z);
-                    }
-               }
+                    Entity.Spawn<DigTask>().Place(x, y, z);
+                }
             }
+        }
 
         public override bool ValidTile(Coord c)
         {
@@ -297,6 +318,18 @@ namespace Hecatomb
             if (f!=null)
             {
                 if (f.TryComponent<Harvestable>()!=null)
+                {
+                    return true;
+                }
+                else if (f.TypeName=="IncompleteFeature")
+                {
+                    return true;
+                }
+                else if (f.TryComponent<Fixture>() != null)
+                {
+                    return true;
+                }
+                else if (f.TryComponent<StructuralComponent>() != null)
                 {
                     return true;
                 }

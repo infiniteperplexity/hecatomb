@@ -36,7 +36,7 @@ namespace Hecatomb
             NoManaCost = false;
             NoManaCost = true;
             WorkBonus = 0;
-            WorkBonus = 0;
+            WorkBonus = 5;
             
         }
     }
