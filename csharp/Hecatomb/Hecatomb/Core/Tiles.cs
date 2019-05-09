@@ -74,7 +74,7 @@ namespace Hecatomb
             {
                 condition = (int x, int y, int z, int xx, int yy, int zz) =>
                 {
-                    return m.CanTouch(x, y, z, xx, yy, zz);
+                    return m.CouldTouch(x, y, z, xx, yy, zz);
                 };
             }
             var path = FindPath(
@@ -124,7 +124,7 @@ namespace Hecatomb
             {
                 condition = (int x, int y, int z, int xx, int yy, int zz) =>
                 { 
-                    return m.CanTouch(x, y, z, xx, yy, zz);
+                    return m.CouldTouch(x, y, z, xx, yy, zz);
                 };
             }
             return FindPath(

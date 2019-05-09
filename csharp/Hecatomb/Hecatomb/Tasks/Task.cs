@@ -267,6 +267,43 @@ namespace Hecatomb
             Claims.Clear();
         }
         // work
+
+        public bool CouldWorkFrom(int x, int y, int z)
+        {
+            return CouldWorkFrom(Worker, x, y, z);
+        }
+        public bool CouldWorkFrom(Creature c, int x, int y, int z)
+        {
+            if (WorkRange == 0 && x == X && y == Y && z == Z)
+            {
+                return true;
+            }
+            else if (WorkRange == 1 && c.GetComponent<Movement>().CouldTouch(x, y, z, X, Y, Z))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool CanWork()
+        {
+            return CanWork(Worker);
+        }
+        public bool CanWork(Creature c)
+        {
+            var (x, y, z) = c;
+            if (WorkRange == 0 && x == X && y == Y && z == Z)
+            {
+                return true;
+            }
+            else if (WorkRange == 1 && c.GetComponent<Movement>().CanTouch(X, Y, Z))
+            {
+                return true;
+            }
+            return false;
+        }
+
+
         public virtual void Act()
         {
             if (!HasIngredient() && Labor == LaborCost)
@@ -274,18 +311,7 @@ namespace Hecatomb
                 FetchIngredient();
                 return;
             }
-            bool canWork = false;
-            Movement m = Worker.GetComponent<Movement>();
-            var (x, y, z) = Worker;
-            if (WorkRange==0 && x==X && y==Y && z==Z)
-            {
-                canWork = true;
-            }
-            else if (WorkRange==1 && m.CanTouch(X, Y, Z))
-            {
-                canWork = true;
-            }
-            if (canWork)
+            if (CanWork())
             {
                 SpendIngredient();
                 if (Ingredients.Keys.Count == 0 || Options.NoIngredients)

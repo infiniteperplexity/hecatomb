@@ -479,7 +479,7 @@ namespace Hecatomb
 		}
 
         // tentative...this does not allow (1) diagonal work/attacks or (2) digging upward...could handle the latter with ramps
-        public bool CanTouch(int x0, int y0, int z0, int x1, int y1, int z1)
+        public bool CouldTouch(int x0, int y0, int z0, int x1, int y1, int z1)
         {
             int dz = z1 - z0;
             int dx = x1 - x0;
@@ -504,7 +504,7 @@ namespace Hecatomb
 
         public bool CanTouch(int x1, int y1, int z1)
         {
-            return CanTouch(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
+            return CouldTouch(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
         }
 		
 		

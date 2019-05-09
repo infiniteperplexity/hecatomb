@@ -248,36 +248,31 @@ namespace Hecatomb
 						Minion minion = cr.TryComponent<Minion>();
 						if (minion!=null && minion.Task!=null)
 						{
-                            // for now, skip the remaining logic until we can verify it a bit
-                            // do we have "CanWork" or something?
-
-                            //if (WorkRange == 0 && x == X && y == Y && z == Z)
-                            //{
-                            //    canWork = true;
-                            //}
-                            //else if (WorkRange == 1 && m.CanTouch(X, Y, Z))
-                            //{
-                            //    canWork = true;
-                            //}
-
-                            continue;
                             Movement move = cr.GetComponent<Movement>();
                             Task task = minion.Task;
                             // reluctant to displace a creature if it is standing next to its task
-                            if (move.CanTouch(task.X, task.Y, task.Z))
+                            if (task.CanWork())
                             {
+                                
                                 // note that it may seem intuitive to try swapping first, in practice it looks really odd and jarring
-                                // "where" should be a combination of being about to walk there and being able to work there
-                                var squares = Tiles.GetNeighbors26(cr.X, cr.Y, cr.Z, where: null);
+                                var squares = Tiles.GetNeighbors26(cr.X, cr.Y, cr.Z, where: (xd, yd, zd)=>
+                                {
+                                    // gather all squares you could displace the creature to and still have it work
+                                    return (task.CouldWorkFrom(xd, yd, zd) & move.CanMove(xd, yd, zd));
+                                });
                                 if (squares.Count>0)
                                 {
-                                    //shuffle it
-                                    var s = squares[0];
+                                    // choose a square randomly from that list
+                                    int r = Game.World.Random.Next(squares.Count);
+                                    var s = squares[r];
                                     Entity.GetComponent<Movement>().Displace(cr, s.X, s.Y, s.Z);
+                                    return true;
                                 }
-                                else // if you can still work after swapping places, do that
+                                else if (task.CouldWorkFrom(Entity.X, Entity.Y, Entity.Z))
                                 {
+                                    // should we do this anyway?  arguable...
                                     Entity.GetComponent<Movement>().Displace(cr);
+                                    return true;
                                 }
                             }	
 						}
