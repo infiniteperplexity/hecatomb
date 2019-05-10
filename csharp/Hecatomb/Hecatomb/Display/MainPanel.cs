@@ -81,7 +81,6 @@ public class MainGamePanel : GamePanel
 		{
             if (Game.World == null)
             {
-                Debug.WriteLine("Drawing a plain black background");
                 for (int i = 0; i < 25; i++)
                 {
                     for (int j = 0; j < 25; j++)

@@ -29,9 +29,7 @@ namespace Hecatomb
 		{
 			X0 = 35;
 			Y0 = 150;
-            Size = 16;
             LeftMargin = 2 * Size;
-            Spacing = 8;
             Active = false;
 		}
 		

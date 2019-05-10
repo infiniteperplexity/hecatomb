@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -24,8 +25,6 @@ namespace Hecatomb
         public StatusGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
         {
             Height = 100;
-            Size = 16;
-            Spacing = 8;
             Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;
             int size = Game.MainPanel.Size;
             int padding = Game.MainPanel.Padding;

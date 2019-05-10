@@ -27,8 +27,6 @@ namespace Hecatomb
         public MenuGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
         {
             Width = 400;
-            Size = 16;
-            Spacing = 8;
             int size = Game.MainPanel.Size;
             int padding = Game.MainPanel.Padding;
             X0 = padding + (2 + Game.Camera.Width) * (size + padding);
@@ -76,7 +74,15 @@ namespace Hecatomb
                     MenuMiddle = tutorial.OffTutorialText;
                 }
             }
-            var text = MenuTop.Concat(middleLines).ToList();
+            List<ColoredText> text;
+            if (Game.World == null)
+            {
+                text = MenuTop.ToList();
+            }
+            else
+            {
+                text = MenuTop.Concat(middleLines).ToList();
+            }
 			if (MenuMiddle.Count>0)
 			{
 				text.Add(" ");

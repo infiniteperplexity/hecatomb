@@ -144,7 +144,7 @@ namespace Hecatomb
                 " ",
                 "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
                 " ",
-                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \" to turn off the messages.",
+                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"\\\" to turn off the messages.",
                 " ",
                 "{orange}(Press Space Bar to continue.)"
             }, frozen: false);
@@ -159,7 +159,7 @@ namespace Hecatomb
                 " ",
                 "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
                 " ",
-                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \" to turn off the messages.",
+                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"\\\" to turn off the messages.",
                 " ",
                 "(Building world...please wait.)"
             }, frozen: true);

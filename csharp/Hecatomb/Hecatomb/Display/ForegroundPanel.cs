@@ -29,9 +29,7 @@ namespace Hecatomb
         {
             X0 = 0;
             Y0 = 0;
-            Size = 16;
-            Spacing = 8;
-            LeftMargin = 3 * Size;
+            LeftMargin = 3 * Spacing;
             TopMargin = 3 * Size;
             Active = false;
         }
@@ -39,9 +37,10 @@ namespace Hecatomb
         public void Initialize()
         {
             Height = Game.StatusPanel.Y0 + Game.StatusPanel.Height;
+            // is this an arbitrary width?
             Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;
             BG = new Texture2D(Graphics.GraphicsDevice, Width, Height);
-            Color[] bgdata = new Color[Width * Height];
+            Color[] bgdata = new Color[(Width * Height)];
             for (int i = 0; i < bgdata.Length; ++i)
             {
                 bgdata[i] = Color.White;
@@ -52,7 +51,6 @@ namespace Hecatomb
 
         public override void DrawContent()
         {
-            Debug.WriteLine("drawing foreground panel1");
             // eventually want some kind of brief freeze to keep from instantly closing this
             Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             DrawLines(CurrentText);

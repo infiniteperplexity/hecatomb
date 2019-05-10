@@ -46,24 +46,6 @@ namespace Hecatomb
             set { }
         }
 
-        //public ColoredText ColoredSubstring(int i)
-        //{
-        //    List<int> indexes = Colors.Keys.ToList();
-        //    indexes.Sort();
-        //    for (int j=indexes.Count; j--; j>=0)
-        //    {
-        //        if (indexes[j]<i)
-        //        {
-        //            return new ColoredText(Text.Substring(i), Colors[indexes[j]]);
-        //        }
-        //    }
-            
-        //}
-        //public ColoredText ColoredSubstring(int i, int j)
-        //{
-
-        //}
-
         public static implicit operator string(ColoredText ct)
         {
             return ct.Text;

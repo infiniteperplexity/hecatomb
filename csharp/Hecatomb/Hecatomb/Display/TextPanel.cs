@@ -24,8 +24,70 @@ namespace Hecatomb
         public TextPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
         {
             Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
+            Size = 16;
+            Spacing = 9;
         }
         public void DrawLines(List<ColoredText> lines)
+        {
+            Vector2 v;
+            // ouput column
+            int x = 0;
+            // output row
+            int y = 0;
+            string fg = "white";
+            string text = "";
+            SortedList<int, string> colors;
+
+            //if (this is StatusGamePanel)
+            //{
+            //    foreach (var key in lines[0].Colors.Keys)
+            //    {
+            //        Debug.WriteLine(key);
+            //        Debug.WriteLine(lines[0].Colors[key]);
+            //    }
+            //}
+
+            // input row
+            for (int i = 0; i < lines.Count; i++)
+            {
+                text = lines[i].Text;
+                colors = lines[i].Colors;
+                // advance by one line for every new line of input
+                y++;
+                // return to left margin
+                x = 0;
+                // initialize to white
+                fg = "white";
+                // input column
+                for (int j = 0; j < text.Length; j++)
+                {
+                    if (text.Substring(j,1)==" ")
+                    {
+                        for (int k=1; k<text.Length-j; k++)
+                        {
+                            if (text.Substring(j+k,1)!=" ")
+                            {
+                                // I have no idea if this spacing is even right
+                                if (x >= (Width / Spacing) - 8)
+                                {
+                                    j += k;
+                                    x = 0;
+                                    y++;
+                                }
+                            }
+                        }
+                    }
+                    if (colors.ContainsKey(j))
+                    {
+                        fg = colors[j];
+                    }
+                    v = new Vector2(X0 + LeftMargin + x * Spacing, Y0 + TopMargin + y * Size);
+                    Sprites.DrawString(Font, text.Substring(j, 1), v, Game.Colors[fg]);
+                    x += 1;
+                }
+            }
+        }
+        public void OldDrawLines(List<ColoredText> lines)
         {
             Vector2 v;
             int x = 0;
@@ -35,6 +97,7 @@ namespace Hecatomb
             string fg = "white";
             string text = "";
             SortedList<int, string> colors;
+            
             //int spaces = 0;
             for (int i = 0; i < lines.Count; i++)
             {
@@ -70,7 +133,6 @@ namespace Hecatomb
                         {
 
                         } 
-                        // what on earth is going on with the spacing??
                         v = new Vector2(X0 + LeftMargin + x * Spacing - spaces, Y0 + TopMargin + y * Size);
                         Sprites.DrawString(Font, text.Substring(p, j - p), v, Game.Colors[fg]);
                         spaces += 1;
