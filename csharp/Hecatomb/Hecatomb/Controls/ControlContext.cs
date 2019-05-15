@@ -117,8 +117,8 @@ namespace Hecatomb
 
         public virtual void CameraHover()
         {
-            Coord tile = new Coord(Cursor.X, Cursor.Y, Game.Camera.Z);
-            OnTileHover(tile);
+            var m = Mouse.GetState();
+            HandleHover(m.X, m.Y);
         }
         public virtual void HandleHover(int x, int y)
         {

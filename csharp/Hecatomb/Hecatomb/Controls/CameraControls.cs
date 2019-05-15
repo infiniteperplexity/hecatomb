@@ -76,5 +76,14 @@ namespace Hecatomb
 			    "A: Achievements, /: Toggle tutorial."
 			};
 		}
+
+        public override void CameraHover()
+        {
+            if (Cursor.X > -1)
+            {
+                Coord tile = new Coord(Cursor.X, Cursor.Y, Game.Camera.Z);
+                OnTileHover(tile);
+            }
+        }
     }
 }
