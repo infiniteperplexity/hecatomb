@@ -68,7 +68,7 @@ namespace Hecatomb
                 return ge;
             }
             TurnBeginEvent te = (TurnBeginEvent)ge;
-            if (te.Turn==10)
+            if (te.Turn==25)
             {
                 int side = Game.World.Random.Next(4);
                 int x, y;
@@ -92,15 +92,18 @@ namespace Hecatomb
                     y = 254;
                     x = Game.World.Random.Next(1, 254);
                 }
-                Creature peasant = Entity.Spawn<Creature>("AngryPeasant");
-                Debug.WriteLine("spawning a peasant at "+x + " "+y);
-                peasant.Place(x, y, Game.World.GetGroundLevel(x, y));
+                //Creature peasant = Entity.Spawn<Creature>("AngryPeasant");
+                //Debug.WriteLine("spawning a peasant at "+x + " "+y);
+                //peasant.Place(x, y, Game.World.GetGroundLevel(x, y));
+                BanditAttack();
             }
             return ge;
         }
 
         public void BanditAttack(bool debugCloser = false)
         {
+            Game.SplashPanel.Splash(new List<ColoredText> { "testing"});
+            Debug.WriteLine("So did this not splash?");
             bool xwall = (Game.World.Random.Next(2)==0);
             bool zero = (Game.World.Random.Next(2) == 0);
             int x0, y0;

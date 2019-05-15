@@ -30,6 +30,7 @@ namespace Hecatomb
 		{
 			Selector = i;
 			KeyMap[Keys.Escape] = Back;
+            KeyMap[Keys.Space] = SelectTile;
 			MenuTop = new List<ColoredText>() {
      			"{orange}**Esc: Cancel.**",
       			"{yellow}Select a tile with keys or mouse.",
@@ -52,7 +53,7 @@ namespace Hecatomb
 		
 		public override void ClickTile(Coord c)
 		{
-			Selector.SelectTile(c);
+            Selector.SelectTile(c);
 			Reset();
 		}
 	}

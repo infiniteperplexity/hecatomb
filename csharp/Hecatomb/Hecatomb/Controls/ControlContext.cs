@@ -22,7 +22,7 @@ namespace Hecatomb
         static Coord OldCamera;
         static ControlContext OldControls;
         static DateTime InputBegan;
-        static Highlight Cursor = new Highlight("cyan");
+        public static Highlight Cursor = new Highlight("cyan");
         public static bool ControlDown = false;
         public static bool ShiftDown = false;
         public static bool MovingCamera;
@@ -114,6 +114,12 @@ namespace Hecatomb
         	}
         }
         
+
+        public virtual void CameraHover()
+        {
+            Coord tile = new Coord(Cursor.X, Cursor.Y, Game.Camera.Z);
+            OnTileHover(tile);
+        }
         public virtual void HandleHover(int x, int y)
         {
         	if (Cursor.X>-1)
@@ -236,10 +242,15 @@ namespace Hecatomb
             DateTime now = DateTime.Now;
         	double sinceInputBegan = now.Subtract(InputBegan).TotalMilliseconds;
         	Coord c = new Coord(Game.Camera.XOffset, Game.Camera.YOffset, Game.Camera.Z);
-        	if (!m.Equals(OldMouse) || !c.Equals(OldCamera))
+        	if (!m.Equals(OldMouse))
         	{
         		HandleHover(m.X, m.Y);
         	}
+            // might handle these two cases separately
+            else if (!c.Equals(OldCamera))
+            {
+                CameraHover();
+            }
         	OldCamera = c;
             //if (!Redrawn)
             int throttle = (OldControls==this) ? Throttle : StartThrottle;
@@ -294,5 +305,18 @@ namespace Hecatomb
         {
 
         }
-	}	
+
+        public static void CenterCursor()
+        {
+            Cursor.Place(Game.Camera.XOffset + 13, Game.Camera.YOffset + 13, Game.Camera.Z);
+
+        }
+
+        public virtual void SelectTile()
+        {
+            Camera Camera = Game.Camera;
+            Coord tile = new Coord(Cursor.X, Cursor.Y, Camera.Z);   
+            ClickTile(tile);
+        }
+    }	
 }

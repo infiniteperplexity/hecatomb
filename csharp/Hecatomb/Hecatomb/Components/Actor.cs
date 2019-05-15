@@ -33,6 +33,7 @@ namespace Hecatomb
         public void CallString(string s)
         {
             Type thisType = this.GetType();
+            //Debug.WriteLine("invoking method " + s);
             MethodInfo theMethod = thisType.GetMethod(s);
             theMethod.Invoke(this, new object[0]);
         }
@@ -286,70 +287,6 @@ namespace Hecatomb
 			}
 			return false;
 		}
-
-
-        //    // much more reluctant to displace a creature if it is "working"
-        //    if (t && HTomb.Tiles.isTouchableFrom(t.x, t.y, t.z, cr.x, cr.y, cr.z))
-        //    {
-        //        // try to push the creature into a space from which it can still work
-        //        let squares = HTomb.Tiles.getNeighborsWhere(cr.x, cr.y, cr.z, function(x0, y0, z0) {
-        //            if (cr.movement && cr.movement.canPass(x0, y0, z0) !== true)
-        //            {
-        //                return false;
-        //            }
-        //            else
-        //            {
-        //                return HTomb.Tiles.isTouchableFrom(t.x, t.y, t.z, x0, y0, z0);
-        //            }
-        //        });
-        //        if (squares.length > 0)
-        //        {
-        //            squares = HTomb.Utils.shuffle(squares);
-        //            let s = squares[0];
-        //            this.entity.movement.displaceCreature(cr, s[0], s[1], s[2]);
-        //            return true;
-        //        }
-        //        else
-        //        {
-        //            // if the creature can work after trading places, do that
-        //            if (HTomb.Tiles.isTouchableFrom(t.x, t.y, t.z, x, y, z))
-        //            {
-        //                ;
-        //                this.entity.movement.displaceCreature(cr);
-        //            }
-        //            // will not push a working creature away from its task
-        //            return false;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (ROT.RNG.getUniform() <= 0.5)
-        //        {
-        //            this.entity.movement.displaceCreature(cr);
-        //            return true;
-        //        }
-        //        else
-        //        {
-        //            continue;
-        //        }
-        //    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public void Wait() => Spend(ActionPoints);
 		

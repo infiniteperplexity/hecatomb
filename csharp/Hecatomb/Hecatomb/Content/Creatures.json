@@ -79,8 +79,7 @@
 				"Symbol" : "@",
 				"Components" : {
 					"Actor": {
-						"Team" : "Good",
-						"Goals": ["HuntForPlayer"]
+						"Team" : "Good"
 					},
 					"Senses": {},
 					"Movement": {},

@@ -198,7 +198,8 @@ namespace Hecatomb
                 dz *= 10;
             }
             Game.Camera.Z = Math.Max(Math.Min(Game.Camera.Z+dz, Game.World.Depth-2),1);
-			Game.MainPanel.Dirty = true;
+            ControlContext.CenterCursor();
+            Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 		}
@@ -212,10 +213,11 @@ namespace Hecatomb
 			Camera c = Game.Camera;
 			int xhalf = c.Width/2;
 			int yhalf = c.Height/2;
-			c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Game.World.Width-c.Width);
-			c.YOffset = Math.Min(Math.Max(0, c.YOffset+dy), Game.World.Height-c.Height);
+			//c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Game.World.Width-c.Width);
+			//c.YOffset = Math.Min(Math.Max(0, c.YOffset+dy), Game.World.Height-c.Height);
             c.XOffset = Math.Min(Math.Max(1, c.XOffset + dx), Game.World.Width - c.Width - 1);
             c.YOffset = Math.Min(Math.Max(1, c.YOffset + dy), Game.World.Height - c.Height - 1);
+            ControlContext.CenterCursor();
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;

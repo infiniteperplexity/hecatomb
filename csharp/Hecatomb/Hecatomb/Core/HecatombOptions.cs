@@ -31,6 +31,7 @@ namespace Hecatomb
             NoStartupScreen = false;
             //NoStartupScreen = true;
             HumanAttacks = false;
+            HumanAttacks = true;
             AllSpells = false;
             AllSpells = true;
             NoManaCost = false;

@@ -13,6 +13,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 
 namespace Hecatomb
@@ -49,7 +50,6 @@ namespace Hecatomb
 		
 		public override void DrawContent()
 		{
-            Debug.WriteLine("drawing foreground panel");
             // eventually want some kind of brief freeze to keep from instantly closing this
             Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             Vector2 v;
@@ -73,7 +73,13 @@ namespace Hecatomb
             Dirty = true;
             if (!frozen)
             {
-                Game.Controls.Set(new SplashControls());
+                Game.Controls.Set(new FrozenControls());
+                Thread thread = new Thread(()=>
+                {
+                    Thread.Sleep(2000);
+                    Game.Controls.Set(new SplashControls());
+                });
+                thread.Start();
             }
             else
             {

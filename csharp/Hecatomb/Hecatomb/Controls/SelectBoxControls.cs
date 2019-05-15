@@ -34,7 +34,8 @@ namespace Hecatomb
 			Selector = i;
 			Squares = new List<Coord>();
 			Highlights = new List<Particle>();
-			KeyMap[Keys.Escape] = ()=>{
+            KeyMap[Keys.Space] = SelectTile;
+            KeyMap[Keys.Escape] = ()=>{
 				Clean();
 				Back();
 			};

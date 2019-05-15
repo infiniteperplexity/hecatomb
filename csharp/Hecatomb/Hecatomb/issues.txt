@@ -16,3 +16,8 @@ Needs testing:
 
 New Features:
 - Better ways to control zombie behavior.
+
+Working on:
+ - The humantracker OnTurnBegin has only a tenuous connection to actually starting bandit attacks.
+ - We need some kind of forced delay for splash screens.
+ * We now can use space to select things, but the way the cursor works with the mouse is counterintuitive.  Check the old game.

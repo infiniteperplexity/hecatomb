@@ -32,6 +32,7 @@ namespace Hecatomb
 		public SelectZoneControls(ISelectsZone i)
 		{
 			Selector = i;
+            KeyMap[Keys.Space] = SelectTile;
 			KeyMap[Keys.Escape] = ()=>{
 				Clean();
 				Back();
