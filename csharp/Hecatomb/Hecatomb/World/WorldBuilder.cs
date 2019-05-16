@@ -96,11 +96,14 @@ namespace Hecatomb
 							world.Terrains[i, j, k+1] = Terrain.DownSlopeTile;
 						}
 					} else {
-						if (world.Random.Next(250)==1)
-						{
-                            var s = Entity.Spawn<Creature>("Spider");
-                            s.Place(i, j, k);
-						}
+                        if (!Game.Options.NoSpiders)
+                        {
+                            if (world.Random.Next(250) == 1)
+                            {
+                                var s = Entity.Spawn<Creature>("Spider");
+                                s.Place(i, j, k);
+                            }
+                        }
 						float plants = vscale*VegetationNoise.GetSimplexFractal(hscale*i,hscale*j);
 						if (plants>1.0f)
 						{

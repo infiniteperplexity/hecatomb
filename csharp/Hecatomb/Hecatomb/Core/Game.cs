@@ -101,7 +101,8 @@ namespace Hecatomb
             }
             else
             {
-                StartGame();
+                StartupThread();
+                //StartGame();
             }
         }
         
@@ -122,7 +123,7 @@ namespace Hecatomb
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
             WorldBuilder builder = new DefaultBuilder();
             builder.Build(World);
-  
+
             World.GetState<AchievementHandler>();
             World.GetState<HumanTracker>();
             World.GetState<GrowthHandler>();
@@ -136,18 +137,25 @@ namespace Hecatomb
             t.Activate();
             TurnHandler.HandleVisibility();
             Time.Frozen = false;
-            Controls.Reset();
-            ForegroundPanel.Splash(new List<ColoredText>{
-                "{yellow}Welcome to Hecatomb!",
-                " ",
-                "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
-                " ",
-                "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
-                " ",
-                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"\\\" to turn off the messages.",
-                " ",
-                "{orange}(Press Space Bar to continue.)"
-            }, frozen: false);
+            if (!Options.NoStartupScreen)
+            {
+                Controls.Reset();
+                ForegroundPanel.Splash(new List<ColoredText>{
+                    "{yellow}Welcome to Hecatomb!",
+                    " ",
+                    "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                    " ",
+                    "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                    " ",
+                    "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"\\\" to turn off the messages.",
+                    " ",
+                    "{orange}(Press Space Bar to continue.)"
+                }, frozen: false);
+            }
+            else
+            {
+                Controls = new DefaultControls();
+            }
         }
         public void StartGame()
         {

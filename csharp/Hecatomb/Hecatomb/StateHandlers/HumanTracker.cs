@@ -68,7 +68,7 @@ namespace Hecatomb
                 return ge;
             }
             TurnBeginEvent te = (TurnBeginEvent)ge;
-            if (te.Turn==25)
+            if (te.Turn==10)
             {
                 int side = Game.World.Random.Next(4);
                 int x, y;
@@ -102,8 +102,10 @@ namespace Hecatomb
 
         public void BanditAttack(bool debugCloser = false)
         {
-            Game.SplashPanel.Splash(new List<ColoredText> { "testing"});
-            Debug.WriteLine("So did this not splash?");
+            Game.SplashPanel.Splash(new List<ColoredText> {
+                "Your ravens report a gang of bandits near the border of your domain.",
+                "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
+            });
             bool xwall = (Game.World.Random.Next(2)==0);
             bool zero = (Game.World.Random.Next(2) == 0);
             int x0, y0;
@@ -141,8 +143,8 @@ namespace Hecatomb
                 Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
                 if (i==0)
                 {
-                    Item loot = Item.SpawnNewResource("TradeGoods", 1);
-                    bandit.GetComponent<Inventory>().Item = loot;
+                    //Item loot = Item.SpawnNewResource("TradeGoods", 1);
+                    //bandit.GetComponent<Inventory>().Item = loot;
                 }
             }
             
@@ -153,9 +155,11 @@ namespace Hecatomb
 
         public override void Act(Creature c)
         {
+            Debug.WriteLine("flag 1");
             Actor actor = c.GetComponent<Actor>();
             if (Frustration>=50 && TargetTile!=null)
             {
+                Debug.WriteLine("flag2");
                 var (x, y, z) = (Coord) TargetTile;
                 if (Tiles.QuickDistance(c.X, c.Y, c.Z, x, y, z)==0)
                 {
@@ -169,6 +173,8 @@ namespace Hecatomb
             if (actor.Target==null)
             {
                 TargetPlayer(c);
+                Debug.WriteLine("flag 3");
+                Debug.WriteLine($"target is {actor.Target}");
             }
         }
         
