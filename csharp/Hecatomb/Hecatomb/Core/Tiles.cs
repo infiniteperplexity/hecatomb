@@ -78,11 +78,13 @@ namespace Hecatomb
                 };
             }
             var path = FindPath(
-				x0, y0, z0, x1, y1, z1,
-				condition: condition,
-				movable: movable,
-				standable: standable,
-                useLast: useLast
+                x0, y0, z0, x1, y1, z1,
+                condition: condition,
+                movable: movable,
+                standable: standable,
+                useLast: useLast,
+                fromEntity: m.Entity,
+                toEntity: t
 			);
 			if (path.Count==0)
 			{
@@ -132,7 +134,8 @@ namespace Hecatomb
                 useLast: useLast,
 				condition: condition,
 				movable: movable,
-				standable: standable
+				standable: standable,
+                fromEntity: m.Entity
 			);
 		}
 		public static LinkedList<Coord> FindPath(
@@ -143,7 +146,9 @@ namespace Hecatomb
 			Func<int, int, int, int, int, int, double> heuristic = null,
             Func<int, int, int, int, int, int, bool> condition = null,
             Func<int, int, int, int, int, int, bool> movable = null,
-			Func<int, int, int, bool> standable = null
+			Func<int, int, int, bool> standable = null,
+            TileEntity fromEntity = null,
+            TileEntity toEntity = null
 		) {
 //			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
 			// default value for the cost estimation heuristic
@@ -186,7 +191,8 @@ namespace Hecatomb
 			}
 			if (!accessible)
 			{
-				return new LinkedList<Coord>();
+                Debug.WriteLine("Due to accessibility, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1);
+                return new LinkedList<Coord>();
 			}
             //
             int tally = 0;
@@ -196,7 +202,7 @@ namespace Hecatomb
                 tally += 1;
                 if (tally>=maxtries)
                 {
-                    //Debug.Print("failed after {0} tries.",tally);
+                    Debug.WriteLine("After {6} tries, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1, tally);
                     return new LinkedList<Coord>();
                 }
 				current = queue.First.Value;

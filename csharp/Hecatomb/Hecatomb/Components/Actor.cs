@@ -135,11 +135,24 @@ namespace Hecatomb
         }
 
 
-		public void WalkToward(int x1, int y1, int z1, bool useLast=false)
+        public void WalkToward(TileEntity t, bool useLast = false)
+        {
+            WalkToward(t.X, t.Y, t.Z, useLast: useLast, targetEntity: t);
+        }
+
+		public void WalkToward(int x1, int y1, int z1, bool useLast=false, TileEntity targetEntity=null)
 		{
             var (x, y, z) = Entity;
             Movement m = Entity.GetComponent<Movement>();
-            var path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast);
+            LinkedList<Coord> path;
+            if (targetEntity==null)
+            {
+                path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast);
+            }
+            else
+            {
+                path = Tiles.FindPath(m, targetEntity, useLast: useLast);
+            }
 			Coord? target = (path.Count>0) ? path.First.Value : (Coord?) null;
 			if (target==null)
 			{
@@ -298,7 +311,6 @@ namespace Hecatomb
             if (Target==null && Team!=null)
             {
                 List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
-                Debug.WriteLine($"{Entity.Unbox().Describe()} has {enemies.Count} enemies.");
                 enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
                 enemies = enemies.Where(cr => (Entity.GetComponent<Movement>().CanReach(cr))).ToList(); // could limit number of tries, since distance has already been limited
                 if (enemies.Count > 0)
@@ -323,7 +335,8 @@ namespace Hecatomb
                 }
                 else
                 {
-                    Debug.WriteLine($"{Entity.Describe()} is walking toward {Target.Describe()}");
+                    // doing it this way makes it so you don't know what the target is...
+                    // aha!  this can't cache path misses
                     WalkToward(Target.X, Target.Y, Target.Z);
                 }
             }

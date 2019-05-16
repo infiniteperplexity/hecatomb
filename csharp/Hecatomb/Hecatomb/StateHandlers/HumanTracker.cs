@@ -155,11 +155,9 @@ namespace Hecatomb
 
         public override void Act(Creature c)
         {
-            Debug.WriteLine("flag 1");
             Actor actor = c.GetComponent<Actor>();
             if (Frustration>=50 && TargetTile!=null)
             {
-                Debug.WriteLine("flag2");
                 var (x, y, z) = (Coord) TargetTile;
                 if (Tiles.QuickDistance(c.X, c.Y, c.Z, x, y, z)==0)
                 {
@@ -173,8 +171,6 @@ namespace Hecatomb
             if (actor.Target==null)
             {
                 TargetPlayer(c);
-                Debug.WriteLine("flag 3");
-                Debug.WriteLine($"target is {actor.Target}");
             }
         }
         

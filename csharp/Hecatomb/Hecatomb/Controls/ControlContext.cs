@@ -44,12 +44,17 @@ namespace Hecatomb
         
         public void Set(ControlContext c)
         {
-            Game.Controls.CleanUp();
-        	Game.LastControls = Game.Controls;
-        	Game.Controls = c;
+            SetWithoutRedraw(c);
         	Game.MenuPanel.Dirty = true;
         	Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
+        }
+
+        public void SetWithoutRedraw(ControlContext c)
+        {
+            Game.Controls.CleanUp();
+            Game.LastControls = Game.Controls;
+            Game.Controls = c;
         }
 
         public void Reset()
