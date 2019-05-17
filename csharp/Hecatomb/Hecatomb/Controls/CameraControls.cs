@@ -34,7 +34,8 @@ namespace Hecatomb
 		public CameraControls() : base()
 		{
 			var Commands = Game.Commands;
-			KeyMap[Keys.Up] = Commands.MoveCameraNorth;
+            KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
+            KeyMap[Keys.Up] = Commands.MoveCameraNorth;
 			KeyMap[Keys.Down] = Commands.MoveCameraSouth;
 			KeyMap[Keys.Left] = Commands.MoveCameraWest;
 			KeyMap[Keys.Right] = Commands.MoveCameraEast;

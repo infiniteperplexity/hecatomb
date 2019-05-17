@@ -76,7 +76,7 @@ namespace Hecatomb
                 Game.Controls.Set(new FrozenControls());
                 Thread thread = new Thread(()=>
                 {
-                    Thread.Sleep(2000);
+                    Thread.Sleep(500);
                     Game.Controls.SetWithoutRedraw(new SplashControls());
                 });
                 thread.Start();

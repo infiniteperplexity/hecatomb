@@ -68,7 +68,7 @@ namespace Hecatomb
                 return ge;
             }
             TurnBeginEvent te = (TurnBeginEvent)ge;
-            if (te.Turn==1)
+            if (te.Turn==1000)
             {
                 int side = Game.World.Random.Next(4);
                 int x, y;
@@ -102,10 +102,10 @@ namespace Hecatomb
 
         public void BanditAttack(bool debugCloser = false)
         {
-            //Game.SplashPanel.Splash(new List<ColoredText> {
-            //   "Your ravens report a gang of bandits near the border of your domain.",
-            //    "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
-            //});
+            Game.SplashPanel.Splash(new List<ColoredText> {
+               "Your ravens report a gang of bandits near the border of your domain.",
+                "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
+            });
             bool xwall = (Game.World.Random.Next(2)==0);
             bool zero = (Game.World.Random.Next(2) == 0);
             int x0, y0;
@@ -143,8 +143,8 @@ namespace Hecatomb
                 Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
                 if (i==0)
                 {
-                    //Item loot = Item.SpawnNewResource("TradeGoods", 1);
-                    //bandit.GetComponent<Inventory>().Item = loot;
+                    Item loot = Item.SpawnNewResource("TradeGoods", 1);
+                    bandit.GetComponent<Inventory>().Item = loot;
                 }
             }
             
@@ -181,8 +181,9 @@ namespace Hecatomb
             Creature cr = (Creature) att.Entity.Unbox();
             if (Bandits.Contains(cr))
             {
-                if (ae.Defender.Entity.Name == "Door")
+                if (ae.Defender.Entity.Unbox().TypeName == "Door")
                 {
+                    Debug.WriteLine($"Frustration level is now {Frustration}");
                     Frustration += 1;
                 }
             }

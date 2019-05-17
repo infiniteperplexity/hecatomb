@@ -31,8 +31,11 @@ namespace Hecatomb
         public void Drop()
         {
             var (x, y, z) = Entity;
-            Item.Place(x, y, z);
-            Item = null;
+            if (Item != null)
+            {
+                Item.Place(x, y, z);
+                Item = null;
+            }
         }
     }
 }

@@ -22,9 +22,9 @@ namespace Hecatomb
         public HecatombOptions()
         {
             Explored = false;
-            //Explored = true;
+            Explored = true;
             Visible = false;
-            //Visible = true;
+            Visible = true;
             NoIngredients = false;
             NoIngredients = true;
             NoTutorial = false;
@@ -40,7 +40,7 @@ namespace Hecatomb
             WorkBonus = 0;
             WorkBonus = 5;
             NoSpiders = false;
-            NoSpiders = true;
+            //NoSpiders = true;
             
         }
     }

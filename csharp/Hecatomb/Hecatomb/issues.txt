@@ -4,6 +4,7 @@
 - Many of the names show up wrong.
 - Tasks should have different background colors.
 - Does the hover menu update as it should?
+- Should I rethink what happens in the menu panel on splash screens?
 
 Gameplay issues:
 - Workers sometimes abandon tasks.
@@ -18,8 +19,4 @@ New Features:
 - Better ways to control zombie behavior.
 
 Working on:
-- The splash panel flickers a bit.
-X Spiders absolutely flog the performance, presumably due to hostility checks?
-X Nope, it's not the spiders, it's something else.
-- It's not related to the splash panel.
-- The most likely culprit would seem to be long-distance pathfinding.
+- Add system menu to camera view.
