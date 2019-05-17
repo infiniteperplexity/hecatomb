@@ -20,28 +20,28 @@ namespace Hecatomb
     public class Game : Microsoft.Xna.Framework.Game
     {
         public static HecatombOptions Options;
-    	public static World World;
-		public static HecatombCommmands Commands;
-		public static Colors Colors;
-		public static Camera Camera;
-		public static ContentManager MyContentManager;
-		public static Dictionary<string, object> Caches;
-		public static MainGamePanel MainPanel;
-		public static MenuGamePanel MenuPanel;
-		public static StatusGamePanel StatusPanel;
+        public static World World;
+        public static HecatombCommmands Commands;
+        public static Colors Colors;
+        public static Camera Camera;
+        public static ContentManager MyContentManager;
+        public static Dictionary<string, object> Caches;
+        public static MainGamePanel MainPanel;
+        public static MenuGamePanel MenuPanel;
+        public static StatusGamePanel StatusPanel;
         public static SplashPanel SplashPanel;
         public static ForegroundPanel ForegroundPanel;
-		
-		public static ControlContext LastControls;
-		public static ControlContext Controls;
-		public static ControlContext DefaultControls;
-		public static ControlContext CameraControls;
-		public static TimeHandler Time;
+
+        public static ControlContext LastControls;
+        public static ControlContext Controls;
+        public static ControlContext DefaultControls;
+        public static ControlContext CameraControls;
+        public static TimeHandler Time;
         public static DateTime LastDraw;
         public static String GameName;
 
-//		public static GameEventHandler Events;
-		public static HashSet<Coord> Visible;
+        //		public static GameEventHandler Events;
+        public static HashSet<Coord> Visible;
         GraphicsDeviceManager graphics;
         SpriteBatch sprites;
 
@@ -49,22 +49,22 @@ namespace Hecatomb
         public Texture2D startup;
 
         public static global::Hecatomb.Game game;
-        
-        
+
+
         [STAThread]
         static void Main()
         {
-        	Go();
+            Go();
         }
-		public static void Go()
-		{
+        public static void Go()
+        {
 
             game = new Game();
-			game.Run();
+            game.Run();
 
-//			using (game = new Game())
-//                game.Run();
-		}
+            //			using (game = new Game())
+            //                game.Run();
+        }
 
         public Game()
         {
@@ -89,14 +89,14 @@ namespace Hecatomb
             MyContentManager = Content;
             Options = new HecatombOptions();
             Colors = new Colors();
-			Time = new TimeHandler();
+            Time = new TimeHandler();
             Time.Frozen = true;
             Commands = new HecatombCommmands();
-			DefaultControls = new DefaultControls();
-			CameraControls = new CameraControls();
-			Camera = new Camera();
+            DefaultControls = new DefaultControls();
+            CameraControls = new CameraControls();
+            Camera = new Camera();
             LastDraw = DateTime.Now;
-			base.Initialize();
+            base.Initialize();
             if (!Options.NoStartupScreen)
             {
                 ShowIntro();
@@ -107,7 +107,7 @@ namespace Hecatomb
                 //StartGame();
             }
         }
-        
+
         protected void ShowIntro()
         {
             Controls = new StaticMenuControls("Welcome to Hecatomb", new List<(Keys, ColoredText, Action)>() {
@@ -178,7 +178,7 @@ namespace Hecatomb
             //Controls.ImageOverride = null;
             Thread thread = new Thread(StartupThread);
             thread.Start();
-            
+
         }
 
         public void RestoreGame()
@@ -212,12 +212,12 @@ namespace Hecatomb
             ForegroundPanel.Initialize();
             int Size = MainPanel.Size;
             int Padding = MainPanel.Padding;
-            graphics.PreferredBackBufferWidth = Padding+(2+Camera.Width)*(Size+Padding)+MenuPanel.Width;  // set this value to the desired width of your window
-			graphics.PreferredBackBufferHeight = Padding+(2+Camera.Height)*(Size+Padding)+StatusPanel.Height;   // set this value to the desired height of your window
+            graphics.PreferredBackBufferWidth = Padding + (2 + Camera.Width) * (Size + Padding) + MenuPanel.Width;  // set this value to the desired width of your window
+            graphics.PreferredBackBufferHeight = Padding + (2 + Camera.Height) * (Size + Padding) + StatusPanel.Height;   // set this value to the desired height of your window
             //graphics.ToggleFullScreen();
             graphics.ApplyChanges();
 
-    
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -275,7 +275,7 @@ namespace Hecatomb
                 StatusPanel.Dirty = true;
             }*/
             ControlContext.Redrawn = true;
-        	sprites.Begin();
+            sprites.Begin();
             if (Controls?.ImageOverride != null)
             {
                 Controls.ImageOverride.Draw();
@@ -318,7 +318,13 @@ namespace Hecatomb
                 ForegroundPanel.Dirty = false;
             }
             sprites.End();
-           	base.Draw(gameTime);
+            base.Draw(gameTime);
+        }
+
+        protected override void OnExiting(Object sender, EventArgs args)
+        {
+            Debug.WriteLine("Sayonara!");
+            base.OnExiting(sender, args);
         }
     }
 }

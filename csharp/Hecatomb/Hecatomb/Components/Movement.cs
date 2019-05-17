@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -28,8 +29,29 @@ namespace Hecatomb
 			Y = _y;
 			Z = _z;
 		}
-		
-		public Coord Rotate(int n)
+
+        public Coord(int n)
+        {
+            int m = n;
+            int w = Game.World.Width;
+            int h = Game.World.Height;
+            X = 0;
+            Y = 0;
+            Z = 0;
+            while (m - w * h >= 0)
+            {
+                m -= w * h;
+                Z += 1;
+            }
+            while (m - h >= 0)
+            {
+                m -= h;
+                X += 1;
+            }
+            Y = m;
+        }
+ 
+        public Coord Rotate(int n)
 		{
 			if (n==0)
 			{
@@ -58,6 +80,18 @@ namespace Hecatomb
             y = Y;
             z = Z;
         }
+
+        public static int Numberize(int x, int y, int z)
+        {
+            int w = Game.World.Width;
+            int h = Game.World.Height;
+            return h * w * z + h * x + y;
+        }
+
+        public int Numberize()
+        {
+            return Numberize(X, Y, Z);
+        }
     }
 	
 	public class Movement : Component
@@ -67,6 +101,21 @@ namespace Hecatomb
 		public bool Flies;
 		public bool Swims;
 		public bool Phases;
+        // used to avoid performance bottlenecks
+        [JsonIgnore]
+        Actor cachedActor;
+        [JsonIgnore]
+        Actor CachedActor
+        {
+            get
+            {
+                if (cachedActor == null)
+                {
+                    cachedActor = Entity.Unbox().GetComponent<Actor>();
+                }
+                return cachedActor;
+            }
+        }
 		
 		public readonly static Coord North = new Coord(+0,-1,+0);
 		public readonly static Coord South = new Coord(+0,+1,+0);
@@ -221,7 +270,7 @@ namespace Hecatomb
 				}
 				else
 				{
-					Coord c = dir;;
+					Coord c = dir;
 					int rotate = 0;
 					bool flip = false;
 					bool z = (c.Z!=0);
@@ -343,7 +392,9 @@ namespace Hecatomb
             if (tile.Fallable && Flies == false) {
                 return false;
             }
-            if (Entity.GetComponent<Actor>().Team != "Friendly")
+            // !!! this turns out to actually be a huge bottleneck!
+            //if (Entity.GetComponent<Actor>().Team != "Friendly")
+            if (CachedActor.Team != "Friendly")
             {
                 // doors block non-allied creatures
                 Feature f = Game.World.Features[x1, y1, z1];
@@ -474,8 +525,9 @@ namespace Hecatomb
 		public void StepTo(int x1, int y1, int z1)
 		{
 			Entity.Entity.Place(x1, y1, z1);
-			Actor a = Entity.GetComponent<Actor>();
-			a.Spend(16);
+            //Actor a = Entity.GetComponent<Actor>();
+            //a.Spend(16);
+            CachedActor.Spend(16);
 		}
 
         // tentative...this does not allow (1) diagonal work/attacks or (2) digging upward...could handle the latter with ramps

@@ -150,9 +150,9 @@ namespace Hecatomb
             TileEntity fromEntity = null,
             TileEntity toEntity = null
 		) {
-//			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
-			// default value for the cost estimation heuristic
-			heuristic = heuristic ?? QuickDistance;
+            //			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
+            // default value for the cost estimation heuristic
+            heuristic = heuristic ?? QuickDistance;
             // default value for allowable movement
             condition = condition ?? sameSquare;
 			movable = movable ?? defaultMovable;
@@ -160,18 +160,29 @@ namespace Hecatomb
 			// !should check enclosed right up front
 			// should this be dirs10 or dirs26?
 			Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
-			Coord current = new Coord(x0, y0, z0);
-			// cost for the best known path to each cell
-			Dictionary<Coord, int> gscores = new Dictionary<Coord, int>() {{current, 0}};
-			// estimated cost to destination cell
-			Dictionary<Coord, int> fscores = new Dictionary<Coord, int>() {{current, 0}};
-			// cells we know can't be on the path
-			HashSet<Coord> closedSet = new HashSet<Coord>();
-			// trace for the best known path to each cell
-			Dictionary<Coord, Coord> retrace = new Dictionary<Coord, Coord>();
-			// queue sorted by fscore of coordinates that need checking
-			LinkedList<Coord> queue = new LinkedList<Coord>();
-			queue.AddFirst(current);
+            //Coord current = new Coord(x0, y0, z0);
+            int current = Coord.Numberize(x0, y0, z0);
+            // cost for the best known path to each cell
+            // !!!! Can these be optimized by numberizing the scores?
+            //Dictionary<Coord, int> gscores = new Dictionary<Coord, int>() {{current, 0}};
+            //// estimated cost to destination cell
+            //Dictionary<Coord, int> fscores = new Dictionary<Coord, int>() {{current, 0}};
+            //// cells we know can't be on the path
+            //HashSet<Coord> closedSet = new HashSet<Coord>();
+            //// trace for the best known path to each cell
+            //Dictionary<Coord, Coord> retrace = new Dictionary<Coord, Coord>();
+            //// queue sorted by fscore of coordinates that need checking
+            //LinkedList<Coord> queue = new LinkedList<Coord>();
+            Dictionary<int, int> gscores = new Dictionary<int, int>() { { current, 0 } };
+            // estimated cost to destination cell
+            Dictionary<int, int> fscores = new Dictionary<int, int>() { { current, 0 } };
+            // cells we know can't be on the path
+            HashSet<int> closedSet = new HashSet<int>();
+            // trace for the best known path to each cell
+            Dictionary<int, int> retrace = new Dictionary<int, int>();
+            // queue sorted by fscore of coordinates that need checking
+            LinkedList<int> queue = new LinkedList<int>();
+            queue.AddFirst(current);
 			// next coordinate to check
 			int newScore, cost, fscore;
 			bool success = false;
@@ -207,8 +218,10 @@ namespace Hecatomb
                 }
 				current = queue.First.Value;
 				queue.RemoveFirst();
-				// ***** if we found the goal, retrace our steps ****
-				if (condition(current.X, current.Y, current.Z, x1, y1, z1))
+                // ***** if we found the goal, retrace our steps ****
+                //if (condition(current.X, current.Y, current.Z, x1, y1, z1))
+                var (X, Y, Z) = new Coord(current);
+                if (condition(X, Y, Z, x1, y1, z1))
 				{
 			        success = true;
 				}
@@ -216,10 +229,11 @@ namespace Hecatomb
 				{
                     //Debug.Print("Found path after {0} loops.", tally);
 					LinkedList<Coord> path = new LinkedList<Coord> {};
-					path.AddFirst(current);
+					path.AddFirst(new Coord(current));
 					// ***trace backwards
-					Coord previous = current;
-					while (retrace.ContainsKey(current))
+					//Coord previous = current;
+                    int previous = current;
+                    while (retrace.ContainsKey(current))
 					{		
 						previous = retrace[current];
 						
@@ -230,30 +244,41 @@ namespace Hecatomb
                             //return current;
                             return path;
 						}
-						path.AddFirst(current);
+						path.AddFirst(new Coord(current));
 					}
                     //					return current;
 					return path;
 				}
 				// ***************************************************
-				Coord neighbor;
-				LinkedListNode<Coord> node;
-				// ***** check passability and scores for neighbors **
-				foreach (Coord dir in dirs)
+				//Coord neighbor;
+                int neighbor;
+                //LinkedListNode<Coord> node;
+                LinkedListNode<int> node;
+                // ***** check passability and scores for neighbors **
+                foreach (Coord dir in dirs)
 				{
-					neighbor = new Coord(current.X+dir.X, current.Y + dir.Y, current.Z + dir.Z);
-					if (!closedSet.Contains(neighbor)) {
-						if (movable(current.X, current.Y, current.Z, neighbor.X, neighbor.Y, neighbor.Z))
-						{
+                    //neighbor = new Coord(current.X+dir.X, current.Y + dir.Y, current.Z + dir.Z);
+                    int Xn = X + dir.X;
+                    int Yn = Y + dir.Y;
+                    int Zn = Z + dir.Z;
+                    neighbor = Coord.Numberize(Xn, Yn, Zn);
+                    
+                    if (!closedSet.Contains(neighbor)) {
+                        // !!!! I think there's a performance bottleneck here, specifically when getting the Movement component.
+                        //if (movable(current.X, current.Y, current.Z, neighbor.X, neighbor.Y, neighbor.Z))
+                        if (movable(X, Y, Z, Xn, Yn, Zn))
+                        {
 							// cost of taking this step
 							cost = 1;
 							// actual score along this path	
 							// !!! somehow I ran into a situation where this key was missing?							
 							newScore = gscores[current] + cost;
 							// if this is the best known path to the cell...
+                            // !!! I've seen hints that this is a potential place for optimization
 							if (!gscores.ContainsKey(neighbor) || gscores[neighbor] > newScore) {
-								fscore = newScore + (int) Math.Ceiling(heuristic(neighbor.X, neighbor.Y, neighbor.Z, x1, y1, z1));
-								fscores[neighbor] = fscore;
+                                //fscore = newScore + (int) Math.Ceiling(heuristic(neighbor.X, neighbor.Y, neighbor.Z, x1, y1, z1));
+                                fscore = newScore + (int)Math.Ceiling(heuristic(Xn, Yn, Zn, x1, y1, z1));
+                                fscores[neighbor] = fscore;
 								// loop through the queue to insert in sorted order
 								node = queue.First;
 								
@@ -282,9 +307,10 @@ namespace Hecatomb
 							} 
 						}
                         // if the square is not standable and it is not the end square
-                        else if (!standable(neighbor.X, neighbor.Y, neighbor.Z) && !(neighbor.X==x1 && neighbor.Y==y1 && neighbor.Z==z1))
+                        //else if (!standable(neighbor.X, neighbor.Y, neighbor.Z) && !(neighbor.X==x1 && neighbor.Y==y1 && neighbor.Z==z1))
+                        else if (!standable(Xn, Yn, Zn) && !(Xn == x1 && Yn == y1 && Zn == z1))
                         {
-							// is the cell imstandable regardless of where we are moving from?
+							// is the cell non-standable regardless of where we are moving from?
 							closedSet.Add(neighbor);
 						}
 					}

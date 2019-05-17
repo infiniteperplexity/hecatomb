@@ -68,7 +68,7 @@ namespace Hecatomb
                 return ge;
             }
             TurnBeginEvent te = (TurnBeginEvent)ge;
-            if (te.Turn==10)
+            if (te.Turn==1)
             {
                 int side = Game.World.Random.Next(4);
                 int x, y;
@@ -102,10 +102,10 @@ namespace Hecatomb
 
         public void BanditAttack(bool debugCloser = false)
         {
-            Game.SplashPanel.Splash(new List<ColoredText> {
-                "Your ravens report a gang of bandits near the border of your domain.",
-                "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
-            });
+            //Game.SplashPanel.Splash(new List<ColoredText> {
+            //   "Your ravens report a gang of bandits near the border of your domain.",
+            //    "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
+            //});
             bool xwall = (Game.World.Random.Next(2)==0);
             bool zero = (Game.World.Random.Next(2) == 0);
             int x0, y0;
