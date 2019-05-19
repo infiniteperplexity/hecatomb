@@ -18,6 +18,10 @@ namespace Hecatomb
     public static partial class Tiles
 	{
 		
+        private static float uniformCost(int x0, int y0, int z0, int x1, int y1, int z1)
+        {
+            return 1;
+        }
 		private static bool defaultStandable(int x1, int y1, int z1)
 		{
 			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth)
@@ -43,7 +47,13 @@ namespace Hecatomb
 		}
 		
 		public static LinkedList<Coord> FindPath(
-			Movement m, TileEntity t, bool useLast=true)
+			Movement m, TileEntity t, bool useLast=true,
+            Func<int, int, int, int, int, int, float> cost=null,
+            int maxTries = 5000,
+            int cacheMissesFor = 10,
+            Func<int, int, int, bool> standable = null,
+            Func<int, int, int, int, int, int, bool> movable = null
+            )
 		{
 			var misses = Game.World.GetState<PathHandler>().PathMisses;
 			if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
@@ -56,16 +66,9 @@ namespace Hecatomb
 			int x1 = t.X;
 			int y1 = t.Y;
 			int z1 = t.Z;
-			Func<int, int, int, int, int, int, bool> movable = (int x, int y, int z, int xx, int yy, int zz)=>
-			{
-				return m.CouldMove(x, y, z, xx, yy, zz);
-			};
-			Func<int, int, int, bool> standable = (int x, int y, int z)=>
-			{
-				return m.CanStand(x, y, z);
-			};
+            movable = movable ?? m.CouldMove;
+            standable = standable ?? m.CanStand;
             Func<int, int, int, int, int, int, bool> condition;
-
             if (useLast)
             {
                 condition = sameSquare;
@@ -77,6 +80,7 @@ namespace Hecatomb
                     return m.CouldTouch(x, y, z, xx, yy, zz);
                 };
             }
+            cost = cost ?? m.MovementCost;
             var path = FindPath(
                 x0, y0, z0, x1, y1, z1,
                 condition: condition,
@@ -84,16 +88,18 @@ namespace Hecatomb
                 standable: standable,
                 useLast: useLast,
                 fromEntity: m.Entity,
-                toEntity: t
+                toEntity: t,
+                cost: cost,
+                maxTries: maxTries
 			);
-			if (path.Count==0)
+			if (path.Count==0 && cacheMissesFor > 0)
 			{
 				Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.Entity.Describe(),t.Describe(), t.X, t.Y, t.Z);
 				if (!misses.ContainsKey(m.Entity.EID))
 				{
 					misses[m.Entity.EID] = new Dictionary<int, int>();
 				}
-				misses[m.Entity.EID][t.EID] = 10;
+				misses[m.Entity.EID][t.EID] = cacheMissesFor;
 			}
 			else
 			{
@@ -104,19 +110,18 @@ namespace Hecatomb
 		}
 		
 		public static LinkedList<Coord> FindPath(
-			Movement m, int x1, int y1, int z1, bool useLast = true)
-		{
+			Movement m, int x1, int y1, int z1, bool useLast = true,
+            Func<int, int, int, int, int, int, float> cost = null,
+            int maxTries = 5000,
+            Func<int, int, int, bool> standable = null,
+            Func<int, int, int, int, int, int, bool> movable = null)
+		{           
 			int x0 = m.Entity.X;
 			int y0 = m.Entity.Y;
 			int z0 = m.Entity.Z;
-			Func<int, int, int, int, int, int, bool> movable = (int x, int y, int z, int xx, int yy, int zz)=>
-			{
-				return m.CouldMove(x, y, z, xx, yy, zz);
-			};
-			Func<int, int, int, bool> standable = (int x, int y, int z)=>
-			{
-				return m.CanStand(x, y, z);
-			};
+            movable = movable ?? m.CouldMove;
+            standable = standable ?? m.CanStand;
+            cost = cost ?? m.MovementCost;
             Func<int, int, int, int, int, int, bool> condition;
             if (useLast)
             {
@@ -135,7 +140,9 @@ namespace Hecatomb
 				condition: condition,
 				movable: movable,
 				standable: standable,
-                fromEntity: m.Entity
+                fromEntity: m.Entity,
+                cost: cost,
+                maxTries: maxTries
 			);
 		}
 		public static LinkedList<Coord> FindPath(
@@ -146,7 +153,9 @@ namespace Hecatomb
 			Func<int, int, int, int, int, int, double> heuristic = null,
             Func<int, int, int, int, int, int, bool> condition = null,
             Func<int, int, int, int, int, int, bool> movable = null,
+            Func<int, int, int, int, int, int, float> cost = null,
 			Func<int, int, int, bool> standable = null,
+            int maxTries = 5000,
             TileEntity fromEntity = null,
             TileEntity toEntity = null
 		) {
@@ -157,25 +166,16 @@ namespace Hecatomb
             condition = condition ?? sameSquare;
 			movable = movable ?? defaultMovable;
 			standable = standable ?? defaultStandable;
+            cost = cost ?? uniformCost;
 			// !should check enclosed right up front
 			// should this be dirs10 or dirs26?
 			Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
             //Coord current = new Coord(x0, y0, z0);
             int current = Coord.Numberize(x0, y0, z0);
             // cost for the best known path to each cell
-            // !!!! Can these be optimized by numberizing the scores?
-            //Dictionary<Coord, int> gscores = new Dictionary<Coord, int>() {{current, 0}};
-            //// estimated cost to destination cell
-            //Dictionary<Coord, int> fscores = new Dictionary<Coord, int>() {{current, 0}};
-            //// cells we know can't be on the path
-            //HashSet<Coord> closedSet = new HashSet<Coord>();
-            //// trace for the best known path to each cell
-            //Dictionary<Coord, Coord> retrace = new Dictionary<Coord, Coord>();
-            //// queue sorted by fscore of coordinates that need checking
-            //LinkedList<Coord> queue = new LinkedList<Coord>();
-            Dictionary<int, int> gscores = new Dictionary<int, int>() { { current, 0 } };
+            Dictionary<int, float> gscores = new Dictionary<int, float>() { { current, 0 } };
             // estimated cost to destination cell
-            Dictionary<int, int> fscores = new Dictionary<int, int>() { { current, 0 } };
+            Dictionary<int, float> fscores = new Dictionary<int, float>() { { current, 0 } };
             // cells we know can't be on the path
             HashSet<int> closedSet = new HashSet<int>();
             // trace for the best known path to each cell
@@ -184,7 +184,7 @@ namespace Hecatomb
             LinkedList<int> queue = new LinkedList<int>();
             queue.AddFirst(current);
 			// next coordinate to check
-			int newScore, cost, fscore;
+			float newScore, stepCost, fscore;
 			bool success = false;
 			// check for complete enclosure, which is a common late failure condition
 			bool accessible = false;
@@ -208,10 +208,9 @@ namespace Hecatomb
             //
             int tally = 0;
             //int maxtries = 2500;
-            int maxtries = 5000;
 			while (queue.Count>0) {
                 tally += 1;
-                if (tally>=maxtries)
+                if (tally>=maxTries)
                 {
                     Debug.WriteLine("After {6} tries, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1, tally);
                     return new LinkedList<Coord>();
@@ -269,10 +268,11 @@ namespace Hecatomb
                         if (movable(X, Y, Z, Xn, Yn, Zn))
                         {
 							// cost of taking this step
-							cost = 1;
+                            // this should be something more like cost(X, Y, Z, Xn, Yn, Zn)
+							stepCost = 1;
 							// actual score along this path	
 							// !!! somehow I ran into a situation where this key was missing?							
-							newScore = gscores[current] + cost;
+							newScore = gscores[current] + stepCost;
 							// if this is the best known path to the cell...
                             // !!! I've seen hints that this is a potential place for optimization
 							if (!gscores.ContainsKey(neighbor) || gscores[neighbor] > newScore) {
