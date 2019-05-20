@@ -23,3 +23,9 @@ Working on:
 - The WalkToward / attacking code is a huge mess
 - Make sure death and despawning are separate, don't drop items when just despawning
 - Need to account for siege creatures that can't even reach the player through doors?
+- look up passing through default arguments
+- shuld path around water
+- Make typing save game names less sensitive
+
+Sieges:
+- Current status...i need to rethink the order of checks for frustration and hostility

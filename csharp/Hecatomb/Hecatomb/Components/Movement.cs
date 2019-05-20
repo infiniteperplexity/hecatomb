@@ -409,7 +409,6 @@ namespace Hecatomb
                     return false;
                 }
             }
-
             int dx = x1 - Entity.X;
             int dy = y1 - Entity.Y;
             int dz = z1 - Entity.Z;
@@ -446,7 +445,7 @@ namespace Hecatomb
 
         public bool CouldMove(int x0, int y0, int z0, int x1, int y1, int z1, bool ignoreDoors = false)
         {
-            if (!CanStand(x1, y1, z1, ignoreDoors: false))
+            if (!CanStand(x1, y1, z1, ignoreDoors: ignoreDoors))
             {
                 return false;
             }
@@ -508,7 +507,9 @@ namespace Hecatomb
             Feature f = Game.World.Features[x1, y1, z1];
             if (f != null || f.Solid || CachedActor.Team!="Friendly")
             {
+                Debug.WriteLine("Movement cost for door");
                 return 12;
+                //return 1;
             }
             return 1;
         }
@@ -567,15 +568,18 @@ namespace Hecatomb
 			int y0 = Entity.Y;
 			int z0 = Entity.Z;
             Func<int, int, int, int, int, int, bool> movable;
+            Func<int, int, int, bool> standable;
             if (ignoreDoors)
             {
                 movable = CouldMoveIgnoreDoors;
+                standable = CanStandIgnoreDoors;
             }
             else
             {
                 movable = CouldMove;
+                standable = CanStand;
             }
-			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast, movable: movable);
+			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast, movable: movable, standable: standable);
 			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;		
 			return (c==null) ? false : true;
 		}
@@ -584,15 +588,18 @@ namespace Hecatomb
         public bool CanReach(TileEntity t, bool useLast = true, bool ignoreDoors = false)
         {
             Func<int, int, int, int, int, int, bool> movable;
+            Func<int, int, int, bool> standable;
             if (ignoreDoors)
             {
                 movable = CouldMoveIgnoreDoors;
+                standable = CanStandIgnoreDoors;
             }
             else
             {
                 movable = CouldMove;
+                standable = CanStand;
             }
-            var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable);
+            var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable);
             Coord? c = (path.Count > 0) ? path.First.Value : (Coord?)null;
             return (c == null) ? false : true;
         }

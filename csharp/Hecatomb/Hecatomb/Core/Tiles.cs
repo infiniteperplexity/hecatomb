@@ -49,7 +49,7 @@ namespace Hecatomb
 		public static LinkedList<Coord> FindPath(
 			Movement m, TileEntity t, bool useLast=true,
             Func<int, int, int, int, int, int, float> cost=null,
-            int maxTries = 5000,
+            int maxTries = 25000,
             int cacheMissesFor = 10,
             Func<int, int, int, bool> standable = null,
             Func<int, int, int, int, int, int, bool> movable = null
@@ -112,7 +112,7 @@ namespace Hecatomb
 		public static LinkedList<Coord> FindPath(
 			Movement m, int x1, int y1, int z1, bool useLast = true,
             Func<int, int, int, int, int, int, float> cost = null,
-            int maxTries = 5000,
+            int maxTries = 25000,
             Func<int, int, int, bool> standable = null,
             Func<int, int, int, int, int, int, bool> movable = null)
 		{           
@@ -155,7 +155,7 @@ namespace Hecatomb
             Func<int, int, int, int, int, int, bool> movable = null,
             Func<int, int, int, int, int, int, float> cost = null,
 			Func<int, int, int, bool> standable = null,
-            int maxTries = 5000,
+            int maxTries = 25000,
             TileEntity fromEntity = null,
             TileEntity toEntity = null
 		) {

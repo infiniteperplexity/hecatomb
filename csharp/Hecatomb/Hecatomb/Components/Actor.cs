@@ -152,6 +152,7 @@ namespace Hecatomb
 			{
 				WalkRandom();
 			} else {
+                // this way of doing it makes it hard to attack things that are in the way...
                 if (Target?.Entity is Creature && IsHostile((Creature) Target.Entity))
                 {
                     if (Tiles.QuickDistance(Entity, Target)<=1)
@@ -160,13 +161,6 @@ namespace Hecatomb
                     }
                 }
 				Coord t = (Coord) target;
-                if (Target?.Entity is Feature && Team!="Friendly" && (Target.Entity as Feature).Solid)
-                {
-                    if (Tiles.QuickDistance(Entity, Target) <= 1)
-                    {
-                        Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Feature);
-                    }
-                }
                 if (!Acted)
                 {
                     TryStepTo(t.X, t.Y, t.Z);
@@ -245,50 +239,71 @@ namespace Hecatomb
 					y = dir.Y+Entity.Y;
 					z = dir.Z+Entity.Z;
 					cr = Creatures[x, y, z];
+                    // so...this logic is weird...they will route around hostile creatures rather than attacking them
 					if (m.CanPass(x, y, z))
 					{
 						m.StepTo(x, y, z);
 						return true;
 					}
-					else if (cr!=null && m.CanMove(x, y, z) && IsFriendly(cr) && cr!=Player)
+                    // it *will* displace friendly creatures....
+					else if (cr!=null && m.CanMove(x, y, z))
 					{
-						Minion minion = cr.TryComponent<Minion>();
-						if (minion!=null && minion.Task!=null)
-						{
-                            Movement move = cr.GetComponent<Movement>();
-                            Task task = minion.Task;
-                            // reluctant to displace a creature if it is standing next to its task
-                            if (task.CanWork())
+                        if (IsFriendly(cr) && cr != Player)
+                        { 
+						    Minion minion = cr.TryComponent<Minion>();
+                            if (minion != null && minion.Task != null)
                             {
-                                
-                                // note that it may seem intuitive to try swapping first, in practice it looks really odd and jarring
-                                var squares = Tiles.GetNeighbors26(cr.X, cr.Y, cr.Z, where: (xd, yd, zd)=>
+                                Movement move = cr.GetComponent<Movement>();
+                                Task task = minion.Task;
+                                // reluctant to displace a creature if it is standing next to its task
+                                if (task.CanWork())
                                 {
-                                    // gather all squares you could displace the creature to and still have it work
-                                    return (task.CouldWorkFrom(xd, yd, zd) & move.CanMove(xd, yd, zd));
-                                });
-                                if (squares.Count>0)
-                                {
-                                    // choose a square randomly from that list
-                                    int r = Game.World.Random.Next(squares.Count);
-                                    var s = squares[r];
-                                    Entity.GetComponent<Movement>().Displace(cr, s.X, s.Y, s.Z);
-                                    return true;
+
+                                    // note that it may seem intuitive to try swapping first, in practice it looks really odd and jarring
+                                    var squares = Tiles.GetNeighbors26(cr.X, cr.Y, cr.Z, where: (xd, yd, zd) =>
+                                    {
+                                        // gather all squares you could displace the creature to and still have it work
+                                        return (task.CouldWorkFrom(xd, yd, zd) & move.CanMove(xd, yd, zd));
+                                    });
+                                    if (squares.Count > 0)
+                                    {
+                                        // choose a square randomly from that list
+                                        int r = Game.World.Random.Next(squares.Count);
+                                        var s = squares[r];
+                                        Entity.GetComponent<Movement>().Displace(cr, s.X, s.Y, s.Z);
+                                        return true;
+                                    }
+                                    else if (task.CouldWorkFrom(Entity.X, Entity.Y, Entity.Z))
+                                    {
+                                        // should we do this anyway?  arguable...
+                                        Entity.GetComponent<Movement>().Displace(cr);
+                                        return true;
+                                    }
                                 }
-                                else if (task.CouldWorkFrom(Entity.X, Entity.Y, Entity.Z))
-                                {
-                                    // should we do this anyway?  arguable...
-                                    Entity.GetComponent<Movement>().Displace(cr);
-                                    return true;
-                                }
-                            }	
-						}
-						if (Game.World.Random.NextDouble()<0.5)
-						{
-							m.Displace(cr);
-							return true;
-						}
+
+                            }
+                            if (Game.World.Random.NextDouble() < 0.5)
+                            {
+                                m.Displace(cr);
+                                return true;
+                            }
+                        }
+                        else if (IsHostile(cr))
+                        {
+                            Attacker a = Entity.GetComponent<Attacker>();
+                            a.Attack(cr);
+                        }
+						
 					}
+                    else if (Features[x, y, z]!=null && IsHostile(Player))
+                    {
+                        Feature f = Features[x, y, z];
+                        if (f.Solid)
+                        {
+                            Attacker a = Entity.GetComponent<Attacker>();
+                            a.Attack(f);
+                        }
+                    }
 				}
 			}
 			return false;
