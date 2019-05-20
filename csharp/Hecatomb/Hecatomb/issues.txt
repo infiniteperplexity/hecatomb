@@ -19,4 +19,7 @@ New Features:
 - Better ways to control zombie behavior.
 
 Working on:
-- Add system menu to camera view.
+- Should make it so WalkToward caches misses
+- The WalkToward / attacking code is a huge mess
+- Make sure death and despawning are separate, don't drop items when just despawning
+- Need to account for siege creatures that can't even reach the player through doors?

@@ -13,7 +13,8 @@ namespace Hecatomb
 
     public class EncounterTracker : StateHandler
     {
-        public Coord? TargetTile;
+        //public TileEntityField<DummyTile> EntryTile;
+        public Coord EntryTile;
 
         public virtual void Act(Creature c)
         {
@@ -27,21 +28,9 @@ namespace Hecatomb
             if (actor.Target == null)
             {
                 Movement m = c.GetComponent<Movement>();
-                if (m.CanReach(Player))
+                if (m.CanReach(Player, ignoreDoors: true))
                 {
                     actor.Target = Player;
-                }
-                else
-                {
-                    List<Feature> doors = Features.Where(f => (f.TypeName == "Door")).ToList();
-                    foreach (Feature door in doors)
-                    {
-                        if (m.CanReach(door, useLast: false))
-                        {
-                            actor.Target = door;
-                            break;
-                        }
-                    }
                 }
             }
         }
@@ -57,7 +46,6 @@ namespace Hecatomb
         {
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<AttackEvent>(OnBanditAttack);
-            AddListener<PathChangeEvent>(OnPathChange);
             Bandits = new List<EntityField<Creature>>();
         }
 
@@ -130,8 +118,7 @@ namespace Hecatomb
                     x0 = Game.World.Random.Next(Game.World.Width - 75) + 75;
                 }
             }
-            Bandits = new List<EntityField<Creature>>();
-            TargetTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
+            EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
             for (int i = 0; i < 3; i++)
             {
                 var bandit = Entity.Spawn<Creature>("HumanBandit");
@@ -156,19 +143,34 @@ namespace Hecatomb
         public override void Act(Creature c)
         {
             Actor actor = c.GetComponent<Actor>();
-            if (Frustration>=50 && TargetTile!=null)
+            // if you have already attacked a door a bunch of times, you stop ignoring doors when seeking targets
+            if (Frustration>=50)
             {
-                var (x, y, z) = (Coord) TargetTile;
-                if (Tiles.QuickDistance(c.X, c.Y, c.Z, x, y, z)==0)
+                //...if you can reach the player without passing a door, and the player is within a certain distance, go after the player
+                if (c.GetComponent<Movement>().CanReach(Player) && Tiles.QuickDistance(c.X, c.Y, c.Z, Player.X, Player.Y, Player.Z)<=20)
                 {
-                    c.Despawn();
+                    TargetPlayer(c);
+                    return;
                 }
-                actor.TargetTile = TargetTile;
-                actor.Target = null;
-                // problem...this will acquire targets via alert automatically
+                // if there's something hostile nearby, alert to it as usual
+                actor.CheckForHostile();
+                // if there's nothing hostile and you can't easily reach the player, head back to where you entered the map
+                if (!actor.Acted)
+                {
+                    var (x, y, z) = EntryTile;
+                    // if you're right near where you entered the map, despawn
+                    if (Tiles.QuickDistance(c.X, c.Y, c.Z, x, y, z) <= 1)
+                    {
+                        c.Despawn(); // this should be without dying, so you don't drop lot
+                    }
+                    else
+                    { 
+                        actor.WalkToward(x, y, z);
+                    }
+                }
             }
-            
-            if (actor.Target==null)
+            // if you got distracted on the way to the player, try to target the player again
+            else if (actor.Target==null)
             {
                 TargetPlayer(c);
             }
@@ -195,19 +197,19 @@ namespace Hecatomb
             return ge;
         }
 
-        public GameEvent OnPathChange(GameEvent ge)
-        {
-            foreach (Creature bandit in Bandits)
-            {
-                Actor actor = bandit.GetComponent<Actor>();
-                Movement move = bandit.GetComponent<Movement>();
-                if (Tiles.QuickDistance(bandit, Player)<=25 && move.CanReach(Player))
-                {
-                    actor.Target = Player;
-                }
+        //public GameEvent OnPathChange(GameEvent ge)
+        //{
+        //    foreach (Creature bandit in Bandits)
+        //    {
+        //        Actor actor = bandit.GetComponent<Actor>();
+        //        Movement move = bandit.GetComponent<Movement>();
+        //        if (Tiles.QuickDistance(bandit, Player)<=25 && move.CanReach(Player))
+        //        {
+        //            actor.Target = Player;
+        //        }
 
-            }
-            return ge;
-        }
+        //    }
+        //    return ge;
+        //}
     }
 }

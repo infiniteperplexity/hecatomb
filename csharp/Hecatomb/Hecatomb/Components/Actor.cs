@@ -87,12 +87,6 @@ namespace Hecatomb
             {
                 Entity.TryComponent<Minion>()?.Act();
             }
-            if (!Acted && TargetTile != null)
-            {
-                // do we need to check whether it's on that tile?
-                var (x, y, z) = (Coord)TargetTile;
-                WalkToward(x, y, z);
-            }
             if (!Acted)
             {
                 Wander();
@@ -147,11 +141,11 @@ namespace Hecatomb
             LinkedList<Coord> path;
             if (targetEntity==null)
             {
-                path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast);
+                path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast, movable: m.CouldMoveIgnoreDoors, standable: m.CanStandIgnoreDoors);
             }
             else
             {
-                path = Tiles.FindPath(m, targetEntity, useLast: useLast);
+                path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMoveIgnoreDoors, standable: m.CanStandIgnoreDoors);
             }
 			Coord? target = (path.Count>0) ? path.First.Value : (Coord?) null;
 			if (target==null)
@@ -162,7 +156,7 @@ namespace Hecatomb
                 {
                     if (Tiles.QuickDistance(Entity, Target)<=1)
                     {
-                        Debug.WriteLine("Trying to attack!!!");
+                        Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Creature);
                     }
                 }
 				Coord t = (Coord) target;
@@ -170,8 +164,7 @@ namespace Hecatomb
                 {
                     if (Tiles.QuickDistance(Entity, Target) <= 1)
                     {
-                        Debug.WriteLine("would like to attack the door at this point");
-                        //WalkRandom();
+                        Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Feature);
                     }
                 }
                 if (!Acted)

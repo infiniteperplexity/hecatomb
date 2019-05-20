@@ -382,7 +382,7 @@ namespace Hecatomb
         {
             return CanStand(x1, y1, z1, ignoreDoors: false);
         }
-        public bool CanStandIngoreDoors(int x1, int y1, int z1)
+        public bool CanStandIgnoreDoors(int x1, int y1, int z1)
         {
             return CanStand(x1, y1, z1, ignoreDoors: true);
         }
