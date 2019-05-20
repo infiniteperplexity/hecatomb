@@ -17,14 +17,14 @@ using System.Reflection;
 namespace Hecatomb
 {
     using static HecatombAliases;
-	
-	public class Actor : Component, ICallStrings
-	{
+
+    public class Actor : Component, ICallStrings
+    {
         public TileEntityField<TileEntity> Target;
         public Coord? TargetTile;
-		[JsonIgnore] public int ActionPoints;
-		public int CurrentPoints;
-		public string Team;
+        [JsonIgnore] public int ActionPoints;
+        public int CurrentPoints;
+        public string Team;
         public bool Acted;
         public List<string> Goals = new List<string>();
         public string Alert;
@@ -38,29 +38,50 @@ namespace Hecatomb
             theMethod.Invoke(this, new object[0]);
         }
         // so I guess this doesn't get reconstituted correctly when restoring a game
-		public Actor() : base()
-		{
-			ActionPoints = 16;
-            CurrentPoints = (Turns.Turn==0) ? ActionPoints : 0;
+        public Actor() : base()
+        {
+            ActionPoints = 16;
+            CurrentPoints = (Turns.Turn == 0) ? ActionPoints : 0;
             Alert = "CheckForHostile";
             Fallback = "WalkRandom";
         }
-		
-		public void Regain()
-		{
-			while (CurrentPoints<=0)
-			{
-				CurrentPoints+=16;
-			}
+
+        public void Regain()
+        {
+            while (CurrentPoints <= 0)
+            {
+                CurrentPoints += 16;
+            }
             Acted = false;
-		}
-		public void Spend(int i)
-		{
-			CurrentPoints-=i;
+        }
+        public void Spend(int i)
+        {
+            CurrentPoints -= i;
             Acted = true;
-		}
+        }
         public void Spend() => Spend(16);
 
+        public Entity ActOverrider;
+        public void AlternateAct()
+        {
+            if (Entity == Player)
+                return;
+            //ActOverrider.Act();
+            CallString(Alert);
+
+        }
+        public void StandardActions()
+        {
+            if (!Acted)
+                CallString(Alert);
+
+            if (!Acted)
+                Entity.TryComponent<Minion>()?.Act();
+
+            if (!Acted)
+                Wander();           
+
+        }
         public void Act()
         {
             if (Entity == Player)

@@ -19,6 +19,23 @@ namespace Hecatomb
 
         public TaskField Task = new TaskField();
         new string[] Required = new string[] {"Actor"};
+
+        public Minion()
+        {
+            AddListener<ActEvent>(OnAct);
+        }
+
+        public GameEvent OnAct(GameEvent ge)
+        {
+            ActEvent ae = (ActEvent)ge;
+            if (ae.Entity == Entity.Unbox())
+            {
+                // ae.Alert();
+                // Act();
+                // Wander();
+            }
+            return ge;
+        }
 		
         public void Act()
         {

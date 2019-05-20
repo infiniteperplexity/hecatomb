@@ -107,4 +107,10 @@ namespace Hecatomb
             Game.StatusPanel.PushMessage(Sight);
         }
     }
+
+    public class ActEvent: GameEvent
+    {
+        public Actor Actor;
+        public Entity Entity;
+    }
 }

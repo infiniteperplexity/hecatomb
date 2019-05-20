@@ -212,6 +212,8 @@ namespace Hecatomb
 				int checkPoints = actor.CurrentPoints;
 				if (checkPoints>0)
 				{
+                    Game.World.Events.Publish(new ActEvent() { Actor = actor, Entity = actor.Entity});
+                    // should I do this with Fire?  Eh...
 					actor.Act();
                     //var senses = actor.Entity.TryComponent<Senses>();
                     //if (senses!=null)

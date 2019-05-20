@@ -46,7 +46,23 @@ namespace Hecatomb
         {
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<AttackEvent>(OnBanditAttack);
+            AddListener<ActEvent>(OnAct);
             Bandits = new List<EntityField<Creature>>();
+        }
+
+        public GameEvent OnAct(GameEvent ge)
+        {
+            ActEvent ae = (ActEvent)ge;
+            Actor actor = ae.Actor;
+            if (ae.Entity is Creature && Bandits.Contains(ae.Entity as Creature))
+            {
+                //check frustration and un-target player
+                //actor.Alert();
+                //then check if player can be reached at all, and if not, max out frustration?
+                //then check frustration and check if player can be reached without doors
+                // then wander?
+            }
+            return ge;
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
