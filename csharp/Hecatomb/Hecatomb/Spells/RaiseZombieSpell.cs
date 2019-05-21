@@ -58,7 +58,7 @@ namespace Hecatomb
         {
             Feature f = Game.World.Features[c.X, c.Y, c.Z];
             if ((Game.World.Explored.Contains(c) || Options.Explored) && f != null && f.TypeName == "Grave")
-            {
+            { 
                 Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
                 Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
                 Cast();
@@ -67,9 +67,17 @@ namespace Hecatomb
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
                 zombie.GetComponent<Actor>().Team = "Friendly";
                 zombie.Place(c.X, c.Y, c.Z - 1);
-                Task emerge = Entity.Spawn<ZombieEmergeTask>();
-                emerge.AssignTo(zombie);
-                emerge.Place(c.X, c.Y, c.Z);
+                if (!Game.World.Terrains[c.X, c.Y, c.Z - 1].Solid && Game.World.Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)))
+                {
+                    Status.PushMessage("The zombie burrows downward into the space below.");
+                    BreakTombstone(f);
+                }
+                else
+                {
+                    Task emerge = Entity.Spawn<ZombieEmergeTask>();
+                    emerge.AssignTo(zombie);
+                    emerge.Place(c.X, c.Y, c.Z);
+                }
                 GetState<TaskHandler>().Minions.Add(zombie);
                 return;
             }
@@ -113,6 +121,36 @@ namespace Hecatomb
                 Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
             }
         }
+
+        public static void BreakTombstone(Feature f)
+        {
+            var (x, y, z) = f;
+            f.Destroy();
+            foreach (Coord c in Tiles.GetNeighbors8(x, y, z))
+            {
+                int x1 = c.X;
+                int y1 = c.Y;
+                int z1 = c.Z;
+                f = Game.World.Features[x1, y1, z1];
+                if (Game.World.Features[x1, y1, z1] == null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
+                {
+                    if (Game.World.Random.Next(2) == 0)
+                    {
+                        Item.PlaceNewResource("Rock", 1, x1, y1, z1);
+                    }
+                }
+            }
+            // randomly place trade goods if we aren't too close to the center
+            int goodsBounds = 12;
+            int half = Game.World.Width / 2;
+            if ((x < half - goodsBounds || x > half + goodsBounds) && (y < half - goodsBounds || y > half + goodsBounds))
+            {
+                if (Game.World.Random.Next(10) == 0)
+                {
+                    Item.PlaceNewResource("TradeGoods", 1, x, y, z - 1);
+                }
+            }
+        }
     }
 
     public class ZombieEmergeTask : Task
@@ -144,37 +182,14 @@ namespace Hecatomb
             Game.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
             Game.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = X, Y = Y, Z = Z });
             Feature f = Game.World.Features[X, Y, Z];
-            f.Destroy();
-            foreach (Coord c in Tiles.GetNeighbors8(X, Y, Z))
-            {
-                int x1 = c.X;
-                int y1 = c.Y;
-                int z1 = c.Z;
-                f = Game.World.Features[x1, y1, z1];
-                if (Game.World.Features[x1, y1, z1] == null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
-                {
-                    if (Game.World.Random.Next(2) == 0)
-                    {
-                        Item.PlaceNewResource("Rock", 1, x1, y1, z1);
-                    }
-                }
-            }
-            // randomly place trade goods if we aren't too close to the center
-            int goodsBounds = 12;
-            int half = Game.World.Width / 2;
-            if ((X < half-goodsBounds || X > half+goodsBounds) && (Y < half - goodsBounds || Y > half + goodsBounds))
-            {
-                if (Game.World.Random.Next(10)==0)
-                {
-                    Item.PlaceNewResource("TradeGoods", 1, X, Y, Z - 1);
-                }
-            }
+            RaiseZombieSpell.BreakTombstone(f);    
             Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
             Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
             Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
             base.Finish();
             Game.World.ValidateOutdoors();
-        }
+        } 
     }
+  
 }

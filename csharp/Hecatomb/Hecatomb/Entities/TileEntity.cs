@@ -105,6 +105,20 @@ namespace Hecatomb
             // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about 
         }
 
+        public void PlaceNear(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        {
+            if (this is Creature)
+                valid = valid ?? ((int xx, int yy, int zz) => (Game.World.Creatures[xx, yy, zz] == null));
+            else if (this is Feature)
+                valid = valid ?? ((int xx, int yy, int zz) => (Game.World.Features[xx, yy, zz] == null));
+            else
+                valid = (int xx, int yy, int zz) => true;
+
+            Coord c = Tiles.NearbyTile(x, y, z, max: max, min: min, groundLevel: groundLevel, valid: valid);
+            Place(c.X, c.Y, c.Z);
+        }
+
+
         public Coord FindPlace(int x, int y, int z = -1, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
         {
             return new Coord(1, 1, 1);
@@ -130,8 +144,11 @@ namespace Hecatomb
 		
 		public virtual void Destroy()
 		{
-			Remove();
+            Debug.WriteLine("about to fire a destroy event");
+            Game.World.Events.Publish(new DestroyEvent() { Entity = this});
+            Remove();
 			Despawn();
+
 		}
 
         public override void Despawn()
@@ -143,6 +160,10 @@ namespace Hecatomb
             base.Despawn();
         }
 		
+        public virtual void Leave()
+        {
+            Despawn();
+        }
         public virtual string GetDisplayName()
         {
             return Name;

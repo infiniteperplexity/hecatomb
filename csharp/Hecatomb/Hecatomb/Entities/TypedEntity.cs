@@ -153,5 +153,14 @@ namespace Hecatomb
             }
             return BG;
         }
+
+        public override void Leave()
+        {
+            if (TryComponent<Actor>()!=null)
+            {
+                GetComponent<Actor>().Spend();
+            }
+            base.Leave();
+        }
     }
 }

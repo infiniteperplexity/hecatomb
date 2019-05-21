@@ -108,9 +108,14 @@ namespace Hecatomb
         }
     }
 
-    public class ActEvent: GameEvent
+    public class ActEvent : GameEvent
     {
         public Actor Actor;
+        public Entity Entity;
+    }
+
+    public class DestroyEvent : GameEvent
+    {
         public Entity Entity;
     }
 }

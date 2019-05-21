@@ -17,12 +17,23 @@ namespace Hecatomb
         public Inventory()
         {
             AddListener<DespawnEvent>(OnDespawn);
+            AddListener<DestroyEvent>(OnDestroy);
         }
 
         public GameEvent OnDespawn(GameEvent ge)
         {
             DespawnEvent de = (DespawnEvent)ge;
-            if (de.Entity==this)
+            if (de.Entity==this && Item!=null)
+            {
+                Item.Despawn();
+            }
+            return ge;
+        }
+
+        public GameEvent OnDestroy(GameEvent ge)
+        {
+            DestroyEvent de = (DestroyEvent)ge;
+            if (de.Entity == this.Entity.Unbox())
             {
                 Drop();
             }

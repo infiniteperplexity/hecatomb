@@ -26,8 +26,8 @@ namespace Hecatomb
         public static bool ControlDown = false;
         public static bool ShiftDown = false;
         public static bool MovingCamera;
-        public const int Throttle = 200;
-        public const int StartThrottle = 750;
+        public int Throttle;
+        public int StartThrottle = 750;
         public static bool Redrawn = false;
         public Dictionary <Keys, Action> KeyMap;
         public List<ColoredText> MenuTop;
@@ -214,6 +214,7 @@ namespace Hecatomb
 
 		public ControlContext()
 		{
+            Throttle = 200;
             if (OldControls==null)
             {
                 OldControls = this;
@@ -313,7 +314,7 @@ namespace Hecatomb
 
         public static void CenterCursor()
         {
-            Cursor.Place(Game.Camera.XOffset + 13, Game.Camera.YOffset + 13, Game.Camera.Z);
+            Cursor.Place(Game.Camera.XOffset + 12, Game.Camera.YOffset + 12, Game.Camera.Z);
 
         }
 

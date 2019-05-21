@@ -450,7 +450,7 @@ namespace Hecatomb
                 }
                 i += x;
                 j += y;
-                int k = (groundLevel) ? Game.World.GetGroundLevel(x, y) : z;
+                int k = (groundLevel) ? Game.World.GetGroundLevel(i, j) : z;
                 if (valid(i, j, k) && Tiles.QuickDistance(x, y, z, i, j, z) <= max && Tiles.QuickDistance(x, y, z, i, j, z) >= min)
                 {
                     return new Coord(i, j, k);

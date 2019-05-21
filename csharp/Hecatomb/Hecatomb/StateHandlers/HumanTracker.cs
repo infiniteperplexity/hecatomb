@@ -41,6 +41,7 @@ namespace Hecatomb
         public int PastBanditAttacks;
         public List<EntityField<Creature>> Bandits;
         public int Frustration;
+        public int FrustrationLimit = 25;
 
         public HumanTracker()
         {
@@ -60,25 +61,39 @@ namespace Hecatomb
                 if (Bandits.Contains(cr))
                 {
                     // if this is one of our bandits acting...
-                    Debug.WriteLine("flag 1");
-                    Debug.WriteLine($"Frustration level: {Frustration}");
+                    //Debug.WriteLine($"Frustration level: {Frustration}");
                     Movement m = cr.GetComponent<Movement>();
                     // if you've been banging on the door a while, de-target the player if you can't easily reach the player
-                    if (Frustration >= 50 && (!m.CanReach(Player, ignoreDoors: false) || Tiles.QuickDistance(Player, (ae.Entity as Creature)) > 20))
+                    if (Frustration >= FrustrationLimit)
                     {
-                        Debug.WriteLine("flag 2");
+                        if (m.CanReach(Player, ignoreDoors: false))
+                        {
+                            if (actor.Target == null)
+                            {
+                                actor.Target = Player;
+                            }
+                        }
+                        else
+                        {
+                            // should this only be if the player is the target?
+                            actor.Target = null;
+                        }
+                    }
+                    // regardless of frustration, if there is no way to reach the player even through doors
+                    if (!m.CanReach(Player, ignoreDoors: true))
+                    {
+                        // should this only be if the player is the target?
                         actor.Target = null;
                     }
                     // then take a look around for nearby hostiles
                     if (!actor.Acted)
                     {
-                        Debug.WriteLine("flag 3");
                         actor.Alert();
+                        //Debug.WriteLine($"Target after Alert() is {actor.Target}");
+                        //Debug.WriteLine($"Actor acted is {actor.Acted}");
                     }
-
                     if (!actor.Acted)
                     {
-                        Debug.WriteLine("flag 4");
                         // if you are frustrated or you cannot reached the player walk back to the entry tile 
                         if (Frustration >= 50 || actor.Target == null) // !!! is this sufficient, or do we need to run CanReach?
                         {
@@ -86,11 +101,8 @@ namespace Hecatomb
                             // if you're right near where you entered the map, despawn
                             if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
                             {
-                                Debug.WriteLine("despawning now");
-                                actor.Acted = true;
-                                actor.Spend();
-                                cr.Despawn(); // this should be without dying, so you don't drop lot
-                                return ge;
+                                Debug.WriteLine("Screw you guys, I'm going home.");
+                                cr.Leave();
                             }
                             else
                             {
@@ -194,43 +206,6 @@ namespace Hecatomb
 
             PastBanditAttacks += 1;
         }
-
-        public override void Act(Creature c)
-        {
-            Actor actor = c.GetComponent<Actor>();
-            // if you have already attacked a door a bunch of times, you stop ignoring doors when seeking targets
-            if (Frustration>=50)
-            {
-                //...if you can reach the player without passing a door, and the player is within a certain distance, go after the player
-                if (c.GetComponent<Movement>().CanReach(Player) && Tiles.QuickDistance(c.X, c.Y, c.Z, Player.X, Player.Y, Player.Z)<=20)
-                {
-                    TargetPlayer(c);
-                    return;
-                }
-                // if there's something hostile nearby, alert to it as usual
-                actor.Alert();
-                // if there's nothing hostile and you can't easily reach the player, head back to where you entered the map
-                if (!actor.Acted)
-                {
-                    var (x, y, z) = EntryTile;
-                    // if you're right near where you entered the map, despawn
-                    if (Tiles.QuickDistance(c.X, c.Y, c.Z, x, y, z) <= 1)
-                    {
-                        Debug.WriteLine("despawning now!");
-                        c.Despawn(); // this should be without dying, so you don't drop lot
-                    }
-                    else
-                    { 
-                        actor.WalkToward(x, y, z);
-                    }
-                }
-            }
-            // if you got distracted on the way to the player, try to target the player again
-            else if (actor.Target==null)
-            {
-                TargetPlayer(c);
-            }
-        }
         
         public GameEvent OnBanditAttack(GameEvent ge)
         {
@@ -239,16 +214,10 @@ namespace Hecatomb
             Creature cr = (Creature) att.Entity.Unbox();
             if (Bandits.Contains(cr))
             {
-                Debug.WriteLine("flag X");
                 if (ae.Defender.Entity.Unbox().TypeName == "Door")
                 {
-                    Debug.WriteLine($"Frustration level is now {Frustration}");
                     Frustration += 1;
                 }
-            }
-            if (Frustration>=50)
-            {
-                Debug.WriteLine("Bandits tired of attacking, should go home now.");
             }
             // this should track the bandits' frustration with pounding on doors, etc?
             return ge;

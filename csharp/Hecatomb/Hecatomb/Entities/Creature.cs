@@ -42,13 +42,6 @@ namespace Hecatomb
             }
         }
 
-        public void PlaceNear(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
-        {
-            valid = valid ?? ((int xx, int yy, int zz) => (Creatures[xx, yy, zz] == null));
-            Coord c = Tiles.NearbyTile(x, y, z, max: max, min: min, groundLevel: groundLevel, valid: valid);
-            Place(c.X, c.Y, c.Z);
-        }
-
         public override void Fall()
         {
             Movement m = TryComponent<Movement>();
@@ -73,9 +66,11 @@ namespace Hecatomb
 
         public override void Destroy()
         {
-            Item.SpawnCorpse().Place(X, Y, Z);
-            Remove();
-            Despawn();
+            int x = X;
+            int y = Y;
+            int z = Z;
+            base.Destroy();
+            Item.SpawnCorpse().Place(x, y, z);
         }
 
         public void BuildMenu(MenuChoiceControls menu)

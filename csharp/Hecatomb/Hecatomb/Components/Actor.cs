@@ -57,8 +57,7 @@ namespace Hecatomb
 
         public void Act()
         {
-            /// !!! shouldn't we be able to check whether this is spawned not just placed??
-            if (Entity==null || !Entity.Placed)
+            if (Entity==null || !Entity.Unbox().Spawned || !Entity.Placed)
             {
                 return;
             }
@@ -134,7 +133,8 @@ namespace Hecatomb
                 // this way of doing it makes it hard to attack things that are in the way...
                 if (Target?.Entity is Creature && IsHostile((Creature) Target.Entity))
                 {
-                    if (Tiles.QuickDistance(Entity, Target)<=1)
+                    if (m.CanTouch(Target.X, Target.Y, Target.Z))
+                    //if (Tiles.QuickDistance(Entity, Target)<=1)
                     {
                         Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Creature);
                     }
@@ -276,6 +276,7 @@ namespace Hecatomb
 					}
                     else if (Features[x, y, z]!=null && IsHostile(Player))
                     {
+                        // Do I need to check CanTouch here?
                         Feature f = Features[x, y, z];
                         if (f.Solid)
                         {
@@ -322,12 +323,11 @@ namespace Hecatomb
                 }
                 else
                 {
-                    // doing it this way makes it so you don't know what the target is...
-                    // aha!  this can't cache path misses
+                    // doesn't matter that this can't cache misses; a miss at this point would throw and error
                     WalkToward(Target.X, Target.Y, Target.Z);
                 }
             }
-            // not sure if this is exactly what we want to do
+            // I think this code is now obsolete
             else if (Target != null && Target.Entity is Feature)
             {
                 Feature fr = (Feature)Target;

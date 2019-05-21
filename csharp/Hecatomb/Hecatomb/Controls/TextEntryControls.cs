@@ -23,7 +23,6 @@ namespace Hecatomb
         public string Header;
         public string CurrentText;
         public int MaxTextLength;
-
         public static List<Keys> Alphabet = new List<Keys> {
             Keys.A,
             Keys.B,
@@ -61,6 +60,7 @@ namespace Hecatomb
             CurrentText = "";
             Header = header;
             MaxTextLength = 25;
+            Throttle = 1000;
             var Commands = Game.Commands;
             KeyMap[Keys.Escape] = Reset;
             KeyMap[Keys.Enter] = ()=> { submit(CurrentText); };

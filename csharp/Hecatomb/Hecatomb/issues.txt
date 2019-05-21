@@ -5,28 +5,26 @@
 - Tasks should have different background colors.
 - Does the hover menu update as it should?
 - Should I rethink what happens in the menu panel on splash screens?
+- Need confirmation for saved games
+- The background color for severe wounds can clash with the foreground color.
+- Make typing save game names less sensitive
+- Lifting up the shift key before the letter key triggers a new keystroke.
 
 Gameplay issues:
+- The WalkToward / attacking code is a huge mess
 - Workers sometimes abandon tasks.
+- Should prefer paths around water and slopes.
+- CanReach doesn't respect cached misses; perhaps we should refactor it.
+* Bandits sometimes spawn underground (believed fixed)
+* Bandits can attack me through the ceiling (believed fixed)
+* Creatures that despawn without dying drop items (believed fixed)
 
 
 Needs testing:
 - Does friendly displacement of workers do what's intended?
 - Do we fetch ingredients for multi-ingredient tasks in a reasonable way?
-- Has the frustration mechanic been fully implemented?
 
 New Features:
 - Better ways to control zombie behavior.
 
 Working on:
-- Should make it so WalkToward caches misses
-- The WalkToward / attacking code is a huge mess
-- Make sure death and despawning are separate, don't drop items when just despawning
-- Need to account for siege creatures that can't even reach the player through doors?
-- look up passing through default arguments
-- shuld path around water
-- Make typing save game names less sensitive
-
-Sieges:
-- They failed to reacquire the player when I left the building
- - need a cleaner way to handle despawned actors
