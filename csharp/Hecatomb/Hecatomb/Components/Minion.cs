@@ -30,9 +30,14 @@ namespace Hecatomb
             ActEvent ae = (ActEvent)ge;
             if (ae.Entity == Entity.Unbox())
             {
-                // ae.Alert();
-                // Act();
-                // Wander();
+                if (!ae.Actor.Acted)
+                    ae.Actor.Alert();
+
+                if (!ae.Actor.Acted)
+                    Act();
+
+                if (!ae.Actor.Acted)
+                    ae.Actor.Wander();
             }
             return ge;
         }

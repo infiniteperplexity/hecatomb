@@ -29,13 +29,13 @@ namespace Hecatomb
             // in the JS version the damage roll is separate from the attack roll
             //int damage = attack.Roll + attacker.Damage - Armor - Toughness;
             int damage = damageRoll + attacker.Damage - Armor - Toughness;
-            Debug.WriteLine(
-$@"
-damage roll: {damageRoll}
-total damage: {damage}
-current wounds: {Wounds}
-"
-            );
+//            Debug.WriteLine(
+//$@"
+//damage roll: {damageRoll}
+//total damage: {damage}
+//current wounds: {Wounds}
+//"
+//            );
             Endure(damage, attack);
         }
         // probably a damage event
@@ -45,7 +45,7 @@ current wounds: {Wounds}
             TileEntity cd = (TileEntity)Entity;
             if (damage >= 20)
             {
-                Debug.WriteLine("critical damage (one hit kill)");
+                //Debug.WriteLine("critical damage (one hit kill)");
                 // critical damage (die)
                 
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{red}" + $"{ca.Describe()} deals critical damage to {cd.Describe()}" });
@@ -53,7 +53,7 @@ current wounds: {Wounds}
             }
             else if (damage >= 17)
             {
-                Debug.WriteLine("severe damage (can kill)");
+                //Debug.WriteLine("severe damage (can kill)");
                 //(new BloodEmitter() { LifeSpan = 100 }).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals severe damage to {cd.Describe()}" });
                 // severe damage
@@ -68,7 +68,7 @@ current wounds: {Wounds}
             }
             else if (damage >= 14)
             {
-                Debug.WriteLine("moderate damage");
+                //Debug.WriteLine("moderate damage");
                 //(new BloodEmitter()).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{orange}" + $"{ca.Describe()} deals moderate damage to {cd.Describe()}" });
                 // moderate damage
@@ -83,7 +83,7 @@ current wounds: {Wounds}
             }
             else if (damage >= 8)
             {
-                Debug.WriteLine("mild damage (cannot kill)");
+                //Debug.WriteLine("mild damage (cannot kill)");
                 //(new BloodEmitter()).Place(Entity.X, Entity.Y, Entity.Z);
                 Game.World.Events.Publish(new SensoryEvent() { Sight = "{yellow}" + $"{ca.Describe()} deals mild damage to {cd.Describe()}" });
                 if (Wounds < 2)
@@ -102,7 +102,7 @@ current wounds: {Wounds}
                     Sight = $"{ca.Describe()} hits {cd.Describe()} but deals no damage."
                 });
             }
-            Debug.Print("Total wounds for {0} are {1}", Entity.Describe(), Wounds);
+            //Debug.Print("Total wounds for {0} are {1}", Entity.Describe(), Wounds);
             // now tally wounds
             if (Wounds >= 8)
             {

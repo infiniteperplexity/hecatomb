@@ -26,10 +26,6 @@ namespace Hecatomb
         public int CurrentPoints;
         public string Team;
         public bool Acted;
-        public List<string> Goals = new List<string>();
-        public string Alert;
-        public string Fallback;
-        public EntityField<EncounterTracker> EncounterTracker;
         public void CallString(string s)
         {
             Type thisType = this.GetType();
@@ -42,8 +38,6 @@ namespace Hecatomb
         {
             ActionPoints = 16;
             CurrentPoints = (Turns.Turn == 0) ? ActionPoints : 0;
-            Alert = "CheckForHostile";
-            Fallback = "WalkRandom";
         }
 
         public void Regain()
@@ -61,58 +55,22 @@ namespace Hecatomb
         }
         public void Spend() => Spend(16);
 
-        public Entity ActOverrider;
-        public void AlternateAct()
-        {
-            if (Entity == Player)
-                return;
-            //ActOverrider.Act();
-            CallString(Alert);
-
-        }
-        public void StandardActions()
-        {
-            if (!Acted)
-                CallString(Alert);
-
-            if (!Acted)
-                Entity.TryComponent<Minion>()?.Act();
-
-            if (!Acted)
-                Wander();           
-
-        }
         public void Act()
         {
+            /// !!! shouldn't we be able to check whether this is spawned not just placed??
+            if (Entity==null || !Entity.Placed)
+            {
+                return;
+            }
             if (Entity == Player)
             {
                 return;
             }
-            CallString(Alert);
-            if (!Acted && EncounterTracker != null)
-            {
-                EncounterTracker.Entity.Act((Creature)Entity);
-            }
             if (!Acted)
-            {
-                foreach (string goal in Goals)
-                {
-                    CallString(goal);
-                    if (Acted)
-                    {
-                        return;
-                    }
-                }
-            }
+                Alert();
+
             if (!Acted)
-            {
-                Entity.TryComponent<Minion>()?.Act();
-            }
-            if (!Acted)
-            {
                 Wander();
-            }
-			
 		}
 		
 		public void Patrol(int x1, int y1, int z1)
@@ -332,7 +290,7 @@ namespace Hecatomb
 
         public void Wait() => Spend(ActionPoints);
 		
-		public void CheckForHostile()
+		public void Alert()
 		{
             var (x, y, z) = Entity;
             // so...back in the JS version, this totally flogged performance.
@@ -398,17 +356,6 @@ namespace Hecatomb
 			{
                 this.Team = (string)obj["Team"];
 			}
-            if (obj["Goals"] != null)
-            {
-                List<string> goals = obj["Goals"].ToObject<List<string>>();
-                foreach (string s in goals)
-                {
-                    if (s == "HuntForPlayer")
-                    {
-                        Goals.Add("HuntForPlayer");
-                    }
-                }
-            }
         }
 
         public void Provoke(Creature c)

@@ -28,22 +28,5 @@ Working on:
 - Make typing save game names less sensitive
 
 Sieges:
-- Current status...i need to rethink the order of checks for frustration and hostility
-
-
-Alright, so let's take a look at the script..
-- We could completely override act, by having a field that override stuff.
-- We could have an event chain that overrides stuff.
-- Is "Goals" ever actually a thing?  Not yet.
-- I could give these things simpler names...Alert(); Serve(); Wander();
-- I could also incorporate the !Acted stuff into the beginning of those things.
-
-What about an event-based framework?  I think it would be OnAct...and you'd pass the Event as an argument, which would tell you whether
-it had been...eh.  Okay, actually, you'd simply know based on "Acted" whether you still have to do anything.  So...the
-main problem with the Event framework, is that you'd need to introduce a system for priorities.
-
-So...you could have Minion components listen to OnAct, and the same for HumanTracker components.
-
-If the only two standard actions are Alert() and Wander(), then there are really only two possible places to do those things,
-could we viably make this two events, before and after alert?  That way, Minion can be a thing that kicks in after alert, whereas
-HumanTracker kicks in before?  Eh...let's just get something working for now and move forward.
+- They failed to reacquire the player when I left the building
+ - need a cleaner way to handle despawned actors

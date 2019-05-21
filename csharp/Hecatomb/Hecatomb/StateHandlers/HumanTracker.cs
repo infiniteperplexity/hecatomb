@@ -54,13 +54,53 @@ namespace Hecatomb
         {
             ActEvent ae = (ActEvent)ge;
             Actor actor = ae.Actor;
-            if (ae.Entity is Creature && Bandits.Contains(ae.Entity as Creature))
+            if (actor.Entity.Unbox() is Creature)
             {
-                //check frustration and un-target player
-                //actor.Alert();
-                //then check if player can be reached at all, and if not, max out frustration?
-                //then check frustration and check if player can be reached without doors
-                // then wander?
+;                Creature cr = (Creature)actor.Entity.Unbox();
+                if (Bandits.Contains(cr))
+                {
+                    // if this is one of our bandits acting...
+                    Debug.WriteLine("flag 1");
+                    Debug.WriteLine($"Frustration level: {Frustration}");
+                    Movement m = cr.GetComponent<Movement>();
+                    // if you've been banging on the door a while, de-target the player if you can't easily reach the player
+                    if (Frustration >= 50 && (!m.CanReach(Player, ignoreDoors: false) || Tiles.QuickDistance(Player, (ae.Entity as Creature)) > 20))
+                    {
+                        Debug.WriteLine("flag 2");
+                        actor.Target = null;
+                    }
+                    // then take a look around for nearby hostiles
+                    if (!actor.Acted)
+                    {
+                        Debug.WriteLine("flag 3");
+                        actor.Alert();
+                    }
+
+                    if (!actor.Acted)
+                    {
+                        Debug.WriteLine("flag 4");
+                        // if you are frustrated or you cannot reached the player walk back to the entry tile 
+                        if (Frustration >= 50 || actor.Target == null) // !!! is this sufficient, or do we need to run CanReach?
+                        {
+                            var (x, y, z) = EntryTile;
+                            // if you're right near where you entered the map, despawn
+                            if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
+                            {
+                                Debug.WriteLine("despawning now");
+                                actor.Acted = true;
+                                actor.Spend();
+                                cr.Despawn(); // this should be without dying, so you don't drop lot
+                                return ge;
+                            }
+                            else
+                            {
+                                actor.WalkToward(x, y, z);
+                            }
+                        }
+                    }
+                    if (!actor.Acted)
+                        actor.Wander();
+                }
             }
             return ge;
         }
@@ -140,7 +180,6 @@ namespace Hecatomb
                 var bandit = Entity.Spawn<Creature>("HumanBandit");
                 bandit.PlaceNear(x0, y0, 0, max: 5);
                 Bandits.Add(bandit);
-                bandit.GetComponent<Actor>().EncounterTracker = this;
                 TargetPlayer(bandit);
                 // do they occasionally get placed one step underground?
                 Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
@@ -169,7 +208,7 @@ namespace Hecatomb
                     return;
                 }
                 // if there's something hostile nearby, alert to it as usual
-                actor.CheckForHostile();
+                actor.Alert();
                 // if there's nothing hostile and you can't easily reach the player, head back to where you entered the map
                 if (!actor.Acted)
                 {
@@ -177,6 +216,7 @@ namespace Hecatomb
                     // if you're right near where you entered the map, despawn
                     if (Tiles.QuickDistance(c.X, c.Y, c.Z, x, y, z) <= 1)
                     {
+                        Debug.WriteLine("despawning now!");
                         c.Despawn(); // this should be without dying, so you don't drop lot
                     }
                     else
@@ -199,6 +239,7 @@ namespace Hecatomb
             Creature cr = (Creature) att.Entity.Unbox();
             if (Bandits.Contains(cr))
             {
+                Debug.WriteLine("flag X");
                 if (ae.Defender.Entity.Unbox().TypeName == "Door")
                 {
                     Debug.WriteLine($"Frustration level is now {Frustration}");
