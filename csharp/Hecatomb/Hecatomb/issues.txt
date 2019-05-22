@@ -1,14 +1,12 @@
 ﻿Interface issues:
 - Something weird is going on with the fonts and box-drawing characters.
-- Text panels don't do spacing correctly.
 - Many of the names show up wrong.
 - Tasks should have different background colors.
 - Does the hover menu update as it should?
 - Should I rethink what happens in the menu panel on splash screens?
 - Need confirmation for saved games
 - The background color for severe wounds can clash with the foreground color.
-- Make typing save game names less sensitive
-- Lifting up the shift key before the letter key triggers a new keystroke.
+- TextEntry feels gross.
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess

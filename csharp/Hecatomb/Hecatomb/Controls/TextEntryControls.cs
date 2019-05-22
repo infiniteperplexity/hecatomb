@@ -50,7 +50,6 @@ namespace Hecatomb
             Keys.X,
             Keys.Y,
             Keys.Z,
-            Keys.Space
         };
 
         public static string alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -60,7 +59,7 @@ namespace Hecatomb
             CurrentText = "";
             Header = header;
             MaxTextLength = 25;
-            Throttle = 1000;
+            Throttle = 500;
             var Commands = Game.Commands;
             KeyMap[Keys.Escape] = Reset;
             KeyMap[Keys.Enter] = ()=> { submit(CurrentText); };

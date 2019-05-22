@@ -260,7 +260,9 @@ namespace Hecatomb
         	OldCamera = c;
             //if (!Redrawn)
             int throttle = (OldControls==this) ? Throttle : StartThrottle;
-            if (k.Equals(OldKeyboard) && sinceInputBegan<throttle && m.LeftButton==OldMouse.LeftButton && m.RightButton==OldMouse.RightButton)
+            // we need to make it so unpressing one key does not trigger this
+            if (IsKeyboardSubset(k) && sinceInputBegan < throttle && m.LeftButton == OldMouse.LeftButton && m.RightButton == OldMouse.RightButton)
+            //if (k.Equals(OldKeyboard) && sinceInputBegan<throttle && m.LeftButton==OldMouse.LeftButton && m.RightButton==OldMouse.RightButton)
             {
                 if (!m.Equals(OldMouse))
 	        	{
@@ -323,6 +325,20 @@ namespace Hecatomb
             Camera Camera = Game.Camera;
             Coord tile = new Coord(Cursor.X, Cursor.Y, Camera.Z);   
             ClickTile(tile);
+        }
+
+
+        public static bool IsKeyboardSubset(KeyboardState k)
+        {
+            var oldKeys = OldKeyboard.GetPressedKeys();
+            foreach(var key in k.GetPressedKeys())
+            {
+                if (Array.IndexOf(oldKeys, key) == -1)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }	
 }
