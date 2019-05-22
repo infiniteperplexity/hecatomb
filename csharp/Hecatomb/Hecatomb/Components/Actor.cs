@@ -57,9 +57,17 @@ namespace Hecatomb
 
         public void Act()
         {
+            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
+            {
+                Debug.WriteLine("flag 0");
+            }
             if (Entity==null || !Entity.Unbox().Spawned || !Entity.Placed)
             {
                 return;
+            }
+            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
+            {
+                Debug.WriteLine("flag 1");
             }
             if (Entity == Player)
             {
@@ -68,9 +76,19 @@ namespace Hecatomb
             if (!Acted)
                 Alert();
 
+            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
+            {
+                Debug.WriteLine(Acted);
+            }
+
             if (!Acted)
                 Wander();
-		}
+
+            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
+            {
+                Debug.WriteLine(Acted);
+            }
+        }
 		
 		public void Patrol(int x1, int y1, int z1)
 		{
@@ -149,6 +167,10 @@ namespace Hecatomb
 					WalkRandom();
 				}
 			}
+            if (!Acted)
+            {
+                WalkRandom();
+            }
 		}
 
 

@@ -40,7 +40,7 @@ namespace Hecatomb
             WorkBonus = 0;
             WorkBonus = 5;
             NoSpiders = false;
-            NoSpiders = true;
+            //NoSpiders = true;
             
         }
     }

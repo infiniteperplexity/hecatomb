@@ -6,7 +6,7 @@
 - Should I rethink what happens in the menu panel on splash screens?
 - Need confirmation for saved games
 - The background color for severe wounds can clash with the foreground color.
-- TextEntry feels gross.
+- TextEntry keystroke responsiveness feels horrible.
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess
@@ -23,6 +23,6 @@ Needs testing:
 - Do we fetch ingredients for multi-ingredient tasks in a reasonable way?
 
 New Features:
-- Better ways to control zombie behavior.
+- We need good ways to keep zombies indoors during sieges.
 
 Working on:

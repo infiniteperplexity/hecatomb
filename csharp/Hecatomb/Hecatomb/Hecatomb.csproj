@@ -65,6 +65,7 @@
     <Compile Include="Controls\FrozenControls.cs" />
     <Compile Include="Components\Decaying.cs" />
     <Compile Include="DummyTile.cs" />
+    <Compile Include="GhoulTracker.cs" />
     <Compile Include="IncompleteFixture.cs" />
     <Compile Include="RepairTask.cs" />
     <Compile Include="StateHandlers\GrowthHandler.cs" />
