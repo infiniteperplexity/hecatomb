@@ -26,6 +26,7 @@ namespace Hecatomb
         public int CurrentPoints;
         public string Team;
         public bool Acted;
+        public bool Asleep;
         public void CallString(string s)
         {
             Type thisType = this.GetType();
@@ -57,17 +58,14 @@ namespace Hecatomb
 
         public void Act()
         {
-            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
+            if (Asleep)
             {
-                Debug.WriteLine("flag 0");
+                Spend();
+                return;
             }
             if (Entity==null || !Entity.Unbox().Spawned || !Entity.Placed)
             {
                 return;
-            }
-            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
-            {
-                Debug.WriteLine("flag 1");
             }
             if (Entity == Player)
             {
@@ -76,18 +74,9 @@ namespace Hecatomb
             if (!Acted)
                 Alert();
 
-            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
-            {
-                Debug.WriteLine(Acted);
-            }
 
             if (!Acted)
                 Wander();
-
-            if ((Entity.Unbox() as Creature).TypeName == "HungryGhoul")
-            {
-                Debug.WriteLine(Acted);
-            }
         }
 		
 		public void Patrol(int x1, int y1, int z1)

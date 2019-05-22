@@ -64,7 +64,7 @@
 				"FG" : "red",
 				"Symbol" : "z",
 				"Components" : {
-					"Actor": {"Team" : "Berserk"},
+					"Actor": {"Team" : "Evil"},
 					"Senses": {},
 					"Movement": {},
 					"Inventory": {},
@@ -103,6 +103,20 @@
 					"Attacker": {},
 					"Defender": {}
 				}
-			}
+			},
+			{
+				"Type" : "VampireBat",
+				"Name" : "vampire bat",
+				"FG" : "gray",
+				"Symbol" : "b",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
 		]
 }

@@ -16,6 +16,7 @@ Gameplay issues:
 * Bandits sometimes spawn underground (believed fixed)
 * Bandits can attack me through the ceiling (believed fixed)
 * Creatures that despawn without dying drop items (believed fixed)
+- Balance ghoul attacks
 
 
 Needs testing:
@@ -26,3 +27,4 @@ New Features:
 - We need good ways to keep zombies indoors during sieges.
 
 Working on:
+- Adding vampire bat caves
