@@ -71,6 +71,7 @@ namespace Hecatomb
                         }
                     }
                 }
+                
             }
             placeSoils();
             placeOres();
@@ -139,6 +140,7 @@ namespace Hecatomb
                 }
             }
             //placeBatCaves();
+            world.GetState<CaveVaultTracker>().PlaceBatCaves();
         }
 
 
@@ -248,45 +250,6 @@ namespace Hecatomb
                             y0 = y1;
                         }
                     }
-                }
-            }
-        }
-
-        protected void placeBatCaves()
-        {
-            placeBatCaves(64);
-        }
-
-        protected void placeBatCaves(int n)
-        {
-            int ncaves = n;
-            int border = 2;
-            for (int z = 1; z < 45; z++)
-            {
-                for (int i = 0; i < ncaves; i++)
-                {
-                    int x0 = Game.World.Random.Next(1+border, Game.World.Width - 2 - border);
-                    int y0 = Game.World.Random.Next(1+border, Game.World.Height - 2 - border);
-                    for (int dx = -1; dx<=1; dx++)
-                    {
-                        for (int dy = -1; dy<=1; dy++)
-                        {
-                            int x1 = x0 + dx;
-                            int y1 = y0 + dy;
-                            if (Tiles.QuickDistance(x1, y1, z, x0, y0, z)<=1)
-                            {
-                                Game.World.Terrains[x1, y1, z] = Terrain.FloorTile;
-                                Game.World.Covers[x1, y1, z] = Cover.NoCover;
-                                if (Game.World.Creatures[x1, y1, z] == null)
-                                {
-                                    Creature bat = Entity.Spawn<Creature>("VampireBat");
-                                    bat.Place(x1, y1, z);
-                                    bat.GetComponent<Actor>().Asleep = true;
-                                }
-                            } 
-                        }
-                    }
-                    
                 }
             }
         }

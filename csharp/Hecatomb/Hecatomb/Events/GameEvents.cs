@@ -118,4 +118,11 @@ namespace Hecatomb
     {
         public Entity Entity;
     }
+
+    public class DigEvent : GameEvent
+    {
+        public int X;
+        public int Y;
+        public int Z;
+    }
 }

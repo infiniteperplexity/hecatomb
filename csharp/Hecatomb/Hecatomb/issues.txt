@@ -7,6 +7,7 @@
 - Need confirmation for saved games
 - The background color for severe wounds can clash with the foreground color.
 - TextEntry keystroke responsiveness feels horrible.
+- Maybe vampire bats should be cave shrikes or something.
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess
@@ -18,6 +19,8 @@ Gameplay issues:
 * Creatures that despawn without dying drop items (believed fixed)
 - Balance ghoul attacks
 
+Other issues:
+- Arguably should use iteration rather than recursion for NextActor.
 
 Needs testing:
 - Does friendly displacement of workers do what's intended?

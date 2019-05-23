@@ -74,10 +74,12 @@ namespace Hecatomb
                     covers[X, Y, Z] = none;
                     covers[X, Y, Z - 1].Mine(X, Y, Z - 1);
                     covers[X, Y, Z-1] = none;
+                    Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z-1 });
                 } else if (tb==up)
 				{
 					tiles[X, Y, Z] = down;
                     covers[X, Y, Z] = none;
+                    Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z });
                 }
 				else if (tb==empty || tb==down || tb==floor)
 				{
@@ -120,11 +122,13 @@ namespace Hecatomb
 				tiles[X, Y, Z] = floor;
                 covers[X, Y, Z].Mine(X, Y, Z);
                 covers[X, Y, Z] = none;
+                Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z });
                 foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {
                     Explored.Add(c);
                 }
             }
+
 			base.Finish();
             Game.World.ValidateOutdoors();
 		}

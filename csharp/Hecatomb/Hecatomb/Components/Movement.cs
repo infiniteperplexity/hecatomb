@@ -92,6 +92,9 @@ namespace Hecatomb
         {
             return Numberize(X, Y, Z);
         }
+
+        public bool Equals(Coord c)
+            => X == c.X && Y == c.Y && Z == c.Z;
     }
 
     public class Movement : Component

@@ -19,6 +19,10 @@ namespace Hecatomb
 
         public GameEvent OnStep(GameEvent ge)
         {
+            if (Game.Options.NoGhouls)
+            {
+                return ge;
+            }
             PlaceEvent pe = (PlaceEvent)ge;
             if (pe.Entity is Creature)
             {

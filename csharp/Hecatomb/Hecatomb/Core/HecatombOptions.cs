@@ -18,6 +18,7 @@ namespace Hecatomb
         public bool AllSpells;
         public bool NoManaCost;
         public bool NoSpiders;
+        public bool NoGhouls;
 
         public HecatombOptions()
         {
@@ -41,6 +42,8 @@ namespace Hecatomb
             WorkBonus = 5;
             NoSpiders = false;
             //NoSpiders = true;
+            NoGhouls = false;
+            NoGhouls = true;
             
         }
     }
