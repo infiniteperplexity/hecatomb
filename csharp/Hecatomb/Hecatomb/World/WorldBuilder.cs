@@ -139,8 +139,14 @@ namespace Hecatomb
                     }
                 }
             }
-            //placeBatCaves();
-            world.GetState<CaveVaultTracker>().PlaceBatCaves();
+            if (!Game.Options.NoBatCaves)
+            {
+                world.GetState<CaveVaultTracker>().PlaceBatCaves();
+            }
+            if (!Game.Options.NoDwarfLairs)
+            {
+                world.GetState<LairHandler>().PlaceDwarfLair();
+            }
         }
 
 

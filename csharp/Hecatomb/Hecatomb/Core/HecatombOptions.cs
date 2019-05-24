@@ -19,6 +19,8 @@ namespace Hecatomb
         public bool NoManaCost;
         public bool NoSpiders;
         public bool NoGhouls;
+        public bool NoBatCaves;
+        public bool NoDwarfLairs;
 
         public HecatombOptions()
         {
@@ -44,7 +46,10 @@ namespace Hecatomb
             //NoSpiders = true;
             NoGhouls = false;
             NoGhouls = true;
-            
+            NoBatCaves = false;
+            NoBatCaves = true;
+            NoDwarfLairs = false;
+            //NoDwarfLairs = true;
         }
     }
     
