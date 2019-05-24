@@ -17,6 +17,7 @@ Gameplay issues:
 * Bandits sometimes spawn underground (believed fixed)
 * Bandits can attack me through the ceiling (believed fixed)
 * Creatures that despawn without dying drop items (believed fixed)
+- Dwarf lair is sometimes fully buried
 - Balance ghoul attacks
 
 Other issues:

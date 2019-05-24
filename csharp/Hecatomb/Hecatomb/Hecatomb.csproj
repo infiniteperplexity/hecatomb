@@ -66,6 +66,7 @@
     <Compile Include="Controls\FrozenControls.cs" />
     <Compile Include="Components\Decaying.cs" />
     <Compile Include="DummyTile.cs" />
+    <Compile Include="EllerMaze.cs" />
     <Compile Include="GhoulTracker.cs" />
     <Compile Include="IncompleteFixture.cs" />
     <Compile Include="LairHandler.cs" />
