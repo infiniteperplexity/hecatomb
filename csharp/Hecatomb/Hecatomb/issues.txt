@@ -23,6 +23,8 @@ Gameplay issues:
 - You can't set up triggers to breach multiple caverns at once.
 - Need to go through and make breaching work the way we really want it.
 - Need to make it so liquids can flood.
+- Hmmm...we could add the Creatures but not the Actors, for underground stuff.
+- Should I add a simple raid?  This actually can't be done without refactoring how the Entity list works.
 
 Other issues:
 - Arguably should use iteration rather than recursion for NextActor.

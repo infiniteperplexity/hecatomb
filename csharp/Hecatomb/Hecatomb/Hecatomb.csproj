@@ -72,6 +72,8 @@
     <Compile Include="GhoulTracker.cs" />
     <Compile Include="IncompleteFixture.cs" />
     <Compile Include="LairHandler.cs" />
+    <Compile Include="LaunchRaidSpell.cs" />
+    <Compile Include="RaidHandler.cs" />
     <Compile Include="RepairTask.cs" />
     <Compile Include="StateHandlers\GrowthHandler.cs" />
     <Compile Include="NewEntity.cs" />

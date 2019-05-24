@@ -72,9 +72,13 @@ namespace Hecatomb
                     Debug.WriteLine("EID was " + EID);
                     Debug.WriteLine(Components.Count);
                     Debug.WriteLine(Components.Values.ToList()[0].EID);
-                    Debug.WriteLine(Components.Keys);
-                    Debug.WriteLine(Components.Values);
-                    
+                    foreach (var key in Components.Keys)
+                        Debug.WriteLine(key);
+
+                    foreach (var key in Components.Values)
+                        Debug.WriteLine(key.EID);
+
+
                 }
                 c.AfterSelfPlace(x1, y1, z1);
             }

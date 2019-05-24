@@ -78,7 +78,8 @@ namespace Hecatomb
                 "PoundOfFleshSpell",
                 "LongShadowSpell",
                 "SummonBanditsDebugSpell",
-                "RemoveCreatureDebugSpell"
+                "RemoveCreatureDebugSpell",
+                "LaunchRaidDebugSpell"
             };
             AddListener<TurnBeginEvent>(OnTurnBegin);
 		}

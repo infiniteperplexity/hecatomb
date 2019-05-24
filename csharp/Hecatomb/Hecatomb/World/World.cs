@@ -159,7 +159,6 @@ namespace Hecatomb
             {
                 Activator.CreateInstance(handler);
             }
-
 			Random = new StatefulRandom(seed);
             Entity.Reset();
 			Width = width;
