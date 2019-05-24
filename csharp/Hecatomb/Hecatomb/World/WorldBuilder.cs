@@ -147,6 +147,10 @@ namespace Hecatomb
             {
                 world.GetState<LairHandler>().PlaceDwarfLair();
             }
+            if (!Game.Options.NoCaverns)
+            {
+                world.GetState<CavernHandler>().DigCaverns(40);
+            }
         }
 
 

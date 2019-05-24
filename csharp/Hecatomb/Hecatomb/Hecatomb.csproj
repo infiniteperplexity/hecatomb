@@ -58,7 +58,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CaveHandler.cs" />
     <Compile Include="CaveVaultTracker.cs" />
+    <Compile Include="CellularAutomata.cs" />
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />
     <Compile Include="Components\DoorFeatureComponent.cs" />
