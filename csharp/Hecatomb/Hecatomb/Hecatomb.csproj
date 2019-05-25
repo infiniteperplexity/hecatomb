@@ -58,23 +58,22 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CaveHandler.cs" />
-    <Compile Include="CaveVaultTracker.cs" />
-    <Compile Include="CellularAutomata.cs" />
+    <Compile Include="StateHandlers\CavernHandler.cs" />
+    <Compile Include="StateHandlers\CaveVaultTracker.cs" />
+    <Compile Include="Utilities\CellularAutomaton.cs" />
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />
     <Compile Include="Components\DoorFeatureComponent.cs" />
     <Compile Include="Display\ForegroundPanel.cs" />
     <Compile Include="Controls\FrozenControls.cs" />
     <Compile Include="Components\Decaying.cs" />
-    <Compile Include="DummyTile.cs" />
-    <Compile Include="EllerMaze.cs" />
-    <Compile Include="GhoulTracker.cs" />
+    <Compile Include="Utilities\Maze.cs" />
+    <Compile Include="StateHandlers\GhoulTracker.cs" />
     <Compile Include="IncompleteFixture.cs" />
-    <Compile Include="LairHandler.cs" />
-    <Compile Include="LaunchRaidSpell.cs" />
-    <Compile Include="RaidHandler.cs" />
-    <Compile Include="RepairTask.cs" />
+    <Compile Include="StateHandlers\LairHandler.cs" />
+    <Compile Include="Spells\LaunchRaidSpell.cs" />
+    <Compile Include="StateHandlers\RaidHandler.cs" />
+    <Compile Include="Tasks\RepairTask.cs" />
     <Compile Include="StateHandlers\GrowthHandler.cs" />
     <Compile Include="NewEntity.cs" />
     <Compile Include="Core\SaveGameFile.cs" />

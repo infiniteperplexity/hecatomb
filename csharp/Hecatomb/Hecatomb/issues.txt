@@ -8,6 +8,7 @@
 - The background color for severe wounds can clash with the foreground color.
 - TextEntry keystroke responsiveness feels horrible.
 - Maybe vampire bats should be cave shrikes or something.
+- Weird things happen when you hover over the squares right near the edge of the screen.
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess
@@ -37,3 +38,4 @@ New Features:
 - We need good ways to keep zombies indoors during sieges.
 
 Working on:
+- Test repair task on doors
