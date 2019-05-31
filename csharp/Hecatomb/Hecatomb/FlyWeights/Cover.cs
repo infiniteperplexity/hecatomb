@@ -145,7 +145,8 @@ namespace Hecatomb
             fg: "#222222",
             bg: Soil.BG,
             solid: true,
-            mineral: "Coal"
+            mineral: "Coal",
+            hardness: 0
         );
 
         public static readonly Cover FlintCluster = new Cover(
@@ -156,7 +157,107 @@ namespace Hecatomb
             fg: "#DDDDDD",
             bg: Soil.BG,
             solid: true,
-            mineral: "Flint"
+            mineral: "Flint",
+            hardness: 0
+        );
+
+        public static readonly Cover CopperVein = new Cover(
+            symbol: '\u26EC',
+            type: "CopperVein",
+            name: "copper vein",
+            fg: "#FF9900",
+            bg: Limestone.BG,
+            solid: true,
+            mineral: "CopperOre",
+            hardness: 1
+        );
+
+        public static readonly Cover TinVein = new Cover(
+            symbol: '\u26EC',
+            type: "TinVein",
+            name: "tin vein",
+            fg: "#99FF00",
+            bg: Limestone.BG,
+            solid: true,
+            mineral: "TinOre",
+            hardness: 1
+        );
+
+        public static readonly Cover IronVein = new Cover(
+            symbol: '\u26EC',
+            type: "IronVein",
+            name: "iron vein",
+            fg: "#FF3300",
+            bg: Basalt.BG,
+            solid: true,
+            mineral: "IronOre",
+            hardness: 2
+        );
+
+        public static readonly Cover SilverVein = new Cover(
+            symbol: '\u26EC',
+            type: "SilverVein",
+            name: "silver vein",
+            fg: "#99BBFF",
+            bg: Basalt.BG,
+            solid: true,
+            mineral: "SilverOre",
+            hardness: 2
+        );
+
+        public static readonly Cover GoldVein = new Cover(
+            symbol: '\u26EC',
+            type: "GoldVein",
+            name: "gold vein",
+            fg: "#EEDD00",
+            bg: Granite.BG,
+            solid: true,
+            mineral: "GoldOre",
+            hardness: 3
+        );
+
+        public static readonly Cover TitaniumVein = new Cover(
+            symbol: '\u26EC',
+            type: "TitaniumVein",
+            name: "titanium vein",
+            fg: "#00BB66",
+            bg: Granite.BG,
+            solid: true,
+            mineral: "TitaniumOre",
+            hardness: 3
+        );
+
+        public static readonly Cover CobaltVein = new Cover(
+            symbol: '\u26EC',
+            type: "CobaltVein",
+            name: "cobalt vein",
+            fg: "#4444FF",
+            bg: Granite.BG,
+            solid: true,
+            mineral: "CobaltOre",
+            hardness: 3
+        );
+
+        public static readonly Cover AdamantVein = new Cover(
+            symbol: '\u26EC',
+            type: "AdamantVein",
+            name: "adamant vein",
+            fg: "#FF00FF",
+            bg: Bedrock.BG,
+            solid: true,
+            mineral: "AdamantOre",
+            hardness: 4
+        );
+
+        public static readonly Cover ThoriumVein = new Cover(
+            symbol: '\u26EC',
+            type: "ThoriumVein",
+            name: "thorium vein",
+            fg: "#FFFFFF",
+            bg: Bedrock.BG,
+            solid: true,
+            mineral: "ThoriumOre",
+            hardness: 4
         );
 
         public static readonly Cover TiledStone = new Cover(

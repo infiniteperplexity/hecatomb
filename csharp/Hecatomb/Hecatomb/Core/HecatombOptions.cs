@@ -52,7 +52,7 @@ namespace Hecatomb
             NoDwarfLairs = false;
             NoDwarfLairs = true;
             NoCaverns = false;
-            //NoCaverns = true;
+            NoCaverns = true;
         }
     }
     

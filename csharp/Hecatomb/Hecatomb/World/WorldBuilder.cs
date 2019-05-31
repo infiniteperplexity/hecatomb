@@ -226,6 +226,12 @@ namespace Hecatomb
             int segmax = 5;
             int segmin = 2;
             int seglen = 3;
+            Dictionary<Cover, List<Cover>> ores = new Dictionary<Cover, List<Cover>>();
+            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.CoalSeam };
+            ores[Cover.Limestone] = new List<Cover>() { Cover.CopperVein, Cover.CopperVein, Cover.CopperVein, Cover.TinVein, Cover.CoalSeam, Cover.CoalSeam };
+            ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.IronVein, Cover.IronVein };
+            ores[Cover.Granite] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.GoldVein, Cover.IronVein, Cover.SilverVein };
+            ores[Cover.Bedrock] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.AdamantVein, Cover.ThoriumVein };
             for (int z = 1; z < Game.World.Depth - 1; z++)
             {
                 for (int i = 0; i < nveins; i++)
@@ -233,10 +239,10 @@ namespace Hecatomb
                     int x0 = Game.World.Random.Next(1, Game.World.Width - 2);
                     int y0 = Game.World.Random.Next(1, Game.World.Height - 2);
                     Cover c = Game.World.Covers[x0, y0, z];
-                    if (c.Solid)
+                    if (ores.ContainsKey(c))
                     {
-                        Cover[] choices = new Cover[] { Cover.FlintCluster, Cover.FlintCluster, Cover.FlintCluster, Cover.CoalSeam, Cover.CoalSeam };
-                        Cover choice = choices[Game.World.Random.Next(choices.Length)];
+                        var choices = ores[c];
+                        Cover choice = choices[Game.World.Random.Next(choices.Count)];
                         double displace = Game.World.Random.NextDouble() * 256;
                         double angle = Game.World.Random.NextDouble() * 2 * Math.PI;
                         int segs = Game.World.Random.Next(segmin, segmax);
