@@ -111,7 +111,9 @@ namespace Hecatomb
         public List<Creature> GetEnemies(Creature cr1)
         {
             Actor a1 = cr1.GetComponent<Actor>();
-            return Creatures.Where((Creature cr)=>(HostilityMatrix[a1.Team][cr.GetComponent<Actor>().Team])).ToList();
+            List<Entity> actors = Entities.Values.Where((Entity e) => (e is Actor && !(e as Actor).Asleep)).ToList();
+            List<Creature> creatures = actors.Select((Entity e) => ((e as Actor).Entity.Unbox() as Creature)).ToList();
+            return creatures.Where((Creature cr)=>(HostilityMatrix[a1.Team][cr.GetComponent<Actor>().Team])).ToList();
         }
     }
 }

@@ -141,7 +141,8 @@ namespace Hecatomb
             }
             if (!Game.Options.NoBatCaves)
             {
-                world.GetState<CaveVaultTracker>().PlaceBatCaves();
+                //world.GetState<CaveVaultTracker>().PlaceBatCaves();
+                world.GetState<VaultHandler>().PlaceBatCaves();
             }
             if (!Game.Options.NoDwarfLairs)
             {
@@ -149,7 +150,8 @@ namespace Hecatomb
             }
             if (!Game.Options.NoCaverns)
             {
-                world.GetState<CavernHandler>().DigCaverns(40);
+                //world.GetState<CavernHandler>().DigCaverns(40);
+                world.GetState<VaultHandler>().DigCaverns(40);
             }
         }
 

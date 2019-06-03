@@ -161,6 +161,10 @@ namespace Hecatomb
 				if (e is Actor)
 				{
 					Actor actor = (Actor) e;
+                    if (actor.Asleep)
+                    {
+                        continue;
+                    }
 					actor.Regain();
 					Queue.Enqueue(actor);
 				}

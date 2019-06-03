@@ -57,16 +57,18 @@ namespace Hecatomb
 			Game.World.Features[X, Y, Z].Despawn();
 			var tiles = Game.World.Terrains;
             var covers = Game.World.Covers;
-			Terrain t = tiles[X, Y, Z];	
-			Terrain floor = Terrain.FloorTile;
+			Terrain t = tiles[X, Y, Z];
+            Terrain tb = Game.World.GetTile(X, Y, Z - 1);
+            Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;
 			Terrain up = Terrain.UpSlopeTile;
 			Terrain down = Terrain.DownSlopeTile;
 			Terrain empty = Terrain.EmptyTile;
             Cover none = Cover.NoCover;
+            string evnt = "None";
 			if (t==floor)
 			{
-				Terrain tb = Game.World.GetTile(X, Y, Z-1);
+                // dig a pit
 				if (tb==wall)
 				{
 					tiles[X, Y, Z] = down;
@@ -74,17 +76,22 @@ namespace Hecatomb
                     covers[X, Y, Z] = none;
                     covers[X, Y, Z - 1].Mine(X, Y, Z - 1);
                     covers[X, Y, Z-1] = none;
-                    Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z-1 });
+                    evnt = "Pit";
+                    
                 } else if (tb==up)
 				{
-					tiles[X, Y, Z] = down;
+                // dig a hole in the floor
+                    tiles[X, Y, Z] = down;
                     covers[X, Y, Z] = none;
-                    Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z });
+                    evnt = "Hole";
+                    
                 }
+                // dig a hole in the floor
 				else if (tb==empty || tb==down || tb==floor)
 				{
 					tiles[X, Y, Z] = empty;
                     covers[X, Y, Z] = none;
+                    evnt = "Hole";
                 }
                 foreach (Coord c in Tiles.GetNeighbors8(X, Y, Z - 1))
                 {
@@ -97,10 +104,12 @@ namespace Hecatomb
             }
 			else if (t==up)
 			{
+                // level a slope
 				tiles[X, Y, Z] = floor;
                 covers[X, Y, Z] = none;
                 tiles[X, Y, Z + 1] = empty;
                 covers[X, Y, Z + 1] = none;
+                evnt = "Level";
                 foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {
                     Explored.Add(c);
@@ -108,10 +117,12 @@ namespace Hecatomb
             }
 			else if (t==down)
 			{
+                // level the bottom of a pit
 				tiles[X, Y, Z] = empty;
 				tiles[X, Y, Z-1] = floor;
                 covers[X, Y, Z] = none;
                 covers[X, Y, Z-1] = none;
+                evnt = "LevelPit";
                 foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z-1))
                 {
                     Explored.Add(c);
@@ -119,17 +130,18 @@ namespace Hecatomb
             }
 			else if (t==wall)
 			{
-				tiles[X, Y, Z] = floor;
+                // dig a corridor
+                tiles[X, Y, Z] = floor;
                 covers[X, Y, Z].Mine(X, Y, Z);
                 covers[X, Y, Z] = none;
-                Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z });
+                evnt = "Corridor";
                 foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {
                     Explored.Add(c);
                 }
             }
-
-			base.Finish();
+            Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z, EventType = evnt});
+            base.Finish();
             Game.World.ValidateOutdoors();
 		}
 		

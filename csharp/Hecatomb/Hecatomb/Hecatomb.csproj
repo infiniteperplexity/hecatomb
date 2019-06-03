@@ -58,8 +58,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="StateHandlers\CavernHandler.cs" />
-    <Compile Include="StateHandlers\CaveVaultTracker.cs" />
     <Compile Include="Utilities\CellularAutomaton.cs" />
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />
@@ -149,6 +147,7 @@
     <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\EntityType.cs" />
     <Compile Include="Entities\TileEntity.cs" />
+    <Compile Include="StateHandlers\VaultHandler.cs" />
     <Compile Include="World\StatefulRandom.cs" />
     <Compile Include="World\WorldSaveParse.cs" />
     <Compile Include="Components\SpellCaster.cs" />
