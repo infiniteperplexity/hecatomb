@@ -15,12 +15,19 @@ namespace Hecatomb
             Game.World.Covers[x, y, z].Mine(x, y, z);
             Terrains[x, y, z] = Terrain.UpSlopeTile;
 
-            int hardness = (Game.Options.IgnoreHardness) ? 0 : Game.World.Covers[x, y, z + 1].Hardness;
-            if (hardness == 0 || Game.World.GetState<ResearchHandler>().Researched.Contains("FlintTools"))
+            int hardness = Game.World.Covers[x, y, z + 1].Hardness;
+            if (Game.Options.IgnoreHardness || Game.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
             {
                 Game.World.Covers[x, y, z + 1].Mine(x, y, z + 1);
                 Terrains[x, y, z + 1] = Terrain.DownSlopeTile;
                 Game.World.Events.Publish(new DigEvent() { X = x, Y = y, Z = z, EventType = "Ramp" });
+            }
+            else
+            {
+                if (Terrains[x, y, z + 1].Solid)
+                {
+                    Game.StatusPanel.PushMessage("A ramp was placed but the ceiling was too hard to dig into.");
+                }
             }
             Game.World.ValidateOutdoors();
         }

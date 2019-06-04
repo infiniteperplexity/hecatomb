@@ -359,17 +359,12 @@ namespace Hecatomb
             {
                 return false;
             }
-            // there's a whole song and dance about hardness, but let's hold off on that
-            if (Game.Options.IgnoreHardness)
+            int hardness = Game.World.Covers[c.X, c.Y, c.Z].Hardness;
+            if (Game.Options.IgnoreHardness || Game.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
             {
                 return true;
             }
-            int hardness = Game.World.Covers[c.X, c.Y, c.Z].Hardness;
-            if (hardness>0 && !Game.World.GetState<ResearchHandler>().Researched.Contains("FlintTools"))
-            {
-                return false;
-            }
-            return true;
+            return false;
         }
 	}
 }

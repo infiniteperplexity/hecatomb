@@ -58,6 +58,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Structures\Chirurgeon.cs" />
+    <Compile Include="Structures\Forge.cs" />
+    <Compile Include="Structures\Library.cs" />
+    <Compile Include="Structures\StoneMason.cs" />
+    <Compile Include="Structures\Treasury.cs" />
     <Compile Include="Utilities\CellularAutomaton.cs" />
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />

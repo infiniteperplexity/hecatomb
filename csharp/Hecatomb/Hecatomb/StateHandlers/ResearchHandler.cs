@@ -19,5 +19,29 @@ namespace Hecatomb
         {
             base.Activate();
         }
+
+        public int GetToolHardness()
+        {
+            if (Researched.Contains("AlloyTools"))
+            {
+                return 4;
+            }
+            else if (Researched.Contains("SteelTools"))
+            {
+                return 3;
+            }
+            else if (Researched.Contains("BronzeTools"))
+            {
+                return 2;
+            }
+            else if (Researched.Contains("FlintTools"))
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
 }

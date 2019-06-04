@@ -57,8 +57,8 @@ namespace Hecatomb
         {
             Name = "bronze tools",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } },
-            Prerequisites = new List<string>() { "FlintTools" }
+            Ingredients = new Dictionary<string, int>() { { "BronzeIngots", 2 }, { "Wood", 2 }, { "Flint", 2 } },
+            Prerequisites = new List<string>() { "FlintTools", "Bronzeworking" }
         };
 
         // hardness 3
@@ -66,8 +66,8 @@ namespace Hecatomb
         {
             Name = "steel tools",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } },
-            Prerequisites = new List<string>() { "BronzeTools" }
+            Ingredients = new Dictionary<string, int>() { { "SteelIngots", 2 }, { "Wood", 2 }, { "BronzeIngots", 2 } },
+            Prerequisites = new List<string>() { "BronzeTools", "Steelworking" }
         };
 
         // hardness 4
@@ -75,8 +75,8 @@ namespace Hecatomb
         {
             Name = "alloy tools",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } },
-            Prerequisites = new List<string>() { "SteelTools" }
+            Ingredients = new Dictionary<string, int>() { { "AlloyIngots", 2 }, { "Wood", 2 }, { "SteelIngots", 2 } },
+            Prerequisites = new List<string>() { "SteelTools", "AlloySteel" }
         };
 
         public static Research SpearTrap = new Research("SpearTrap")
@@ -86,25 +86,44 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>() { { "Flint", 1 }, { "Wood", 1 } }
         };
 
-        public static Research BronzeWorking = new Research("BronzeWorks")
+        public static Research BronzeWorking = new Research("Bronzeworking")
         {
             Name = "bronzeworks",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } }
+            Ingredients = new Dictionary<string, int>() { { "BronzeOre", 2 }, { "Coal", 2 }, { "Stone", 2 } },
+            Prerequisites = new List<string>() { "FlintTools" }
         };
 
-        public static Research IronWorking = new Research("IronWorks")
+        public static Research IronWorking = new Research("Steelworking")
         {
             Name = "ironworks",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } }
+            Ingredients = new Dictionary<string, int>() { { "IronOre", 4 }, { "Coal", 4 }, { "BronzeIngots", 2 } },
+            Prerequisites = new List<string>() { "BronzeTools" }
         };
 
         public static Research AlloySteel = new Research("AlloySteel")
         {
             Name = "alloy steel",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } }
+            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } },
+            Prerequisites = new List<string>() { "SteelTools" }
+        };
+
+        public static Research Chirurgy = new Research("Chirurgy")
+        {
+            Name = "chirurgy",
+            Turns = 25,
+            Ingredients = new Dictionary<string, int>() { { "Flesh", 2 }, { "Bone", 2 }, { "Flint", 2 } },
+            Prerequisites = new List<string>() { "BronzeTools" }
+        };
+
+        public static Research Masonry = new Research("Masonry")
+        {
+            Name = "masonry",
+            Turns = 25,
+            Ingredients = new Dictionary<string, int>() { { "Rock", 2 }, { "Flint", 2 }, { "Wood", 2 } },
+            Prerequisites = new List<string>() { "BronzeTools" }
         };
 
         // or should this be palladium / iridium?

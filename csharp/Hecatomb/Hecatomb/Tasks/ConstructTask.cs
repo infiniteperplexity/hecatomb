@@ -80,7 +80,7 @@ namespace Hecatomb
         public ConstructTask(): base()
 		{
             Structure = new TileEntityField<Structure>();
-			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket" };
+			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket", "StoneMason", "Forge", "Chirurgeon", "Library", "Treasury"};
 			MenuName = "construct a structure.";
             Priority = 4;
             LaborCost = 5;

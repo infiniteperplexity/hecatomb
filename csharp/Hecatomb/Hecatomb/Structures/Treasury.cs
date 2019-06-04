@@ -1,21 +1,21 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 10:24 AM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace Hecatomb
 {
     /// <summary>
     /// Description of GuardPost.
     /// </summary>
-    public class Stockpile : Structure
+    public class Treasury : Structure
     {
-        public Stockpile() : base()
+        public Treasury() : base()
         {
             Width = 4;
             Height = 4;
@@ -53,17 +53,15 @@ namespace Hecatomb
             };
             Ingredients = new Dictionary<string, int>[]
             {
-                null, null, null, null,
+                new Dictionary<string, int>() {{"BronzeIngots", 1}}, null, null, new Dictionary<string, int>() {{"Flint", 1}},
                 null,new Dictionary<string, int>() {{"Wood", 1}},new Dictionary<string, int>() {{"Rock", 1}},null,
                 null,new Dictionary<string, int>() {{"Rock", 1}},new Dictionary<string, int>() {{"Wood", 1}},null,
-                null,null,null,null
-                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}},
-                //null, new Dictionary<string, int>() {{"Wood", 1}}, null,
-                //new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}}
+                new Dictionary<string, int>() {{"Flint", 1}},null,null,new Dictionary<string, int>() {{"BronzeIngots", 1}}
             };
-            MenuName = "stockpile";
-            Name = "stockpile";
-            Stores = new string[] { "Rock", "Wood", "Flint", "Coal", "IronOre", "TinOre", "CopperOre"};
+            MenuName = "treasury";
+            Name = "treasury";
+            Stores = new string[] { "TradeGoods", "BronzeIngots", "SteelIngots", "AlloyIngots", "ThoriumIngots", "AdamantIngots"};
+            StructurePrereqs = new[] { "Stockpile", "BlackMarket" };
         }
     }
 }

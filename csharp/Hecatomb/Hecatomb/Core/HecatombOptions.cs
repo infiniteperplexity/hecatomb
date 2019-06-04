@@ -27,35 +27,35 @@ namespace Hecatomb
         public HecatombOptions()
         {
             Explored = false;
-            Explored = true;
+            //Explored = true;
             Visible = false;
-            Visible = true;
+            //Visible = true;
             NoIngredients = false;
-            NoIngredients = true;
+            //NoIngredients = true;
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
             NoStartupScreen = true;
             HumanAttacks = false;
-            HumanAttacks = true;
+            //HumanAttacks = true;
             AllSpells = false;
-            AllSpells = true;
+            //AllSpells = true;
             NoManaCost = false;
-            NoManaCost = true;
+            //NoManaCost = true;
             WorkBonus = 0;
-            WorkBonus = 5;
+            //WorkBonus = 5;
             NoSpiders = false;
             //NoSpiders = true;
             NoGhouls = false;
             NoGhouls = true;
             NoBatCaves = false;
-            //NoBatCaves = true;
+            NoBatCaves = true;
             NoDwarfLairs = false;
             NoDwarfLairs = true;
             NoCaverns = false;
-            //NoCaverns = true;
+            NoCaverns = true;
             IgnoreHardness = false;
-            IgnoreHardness = true;
+            //IgnoreHardness = true;
         }
     }
     
