@@ -19,6 +19,7 @@ namespace Hecatomb
         public Vault()
         {
             Triggers = new HashSet<Coord>();
+            VaultTiles = new HashSet<Coord>();
         }
        
         public void Listen(Coord c)
@@ -43,7 +44,10 @@ namespace Hecatomb
                     cr.GetComponent<Actor>().Asleep = false;
                 }
             }
-            Game.StatusPanel.PushMessage(Message);
+            if (Message != null)
+            {
+                Game.StatusPanel.PushMessage(Message);
+            }
         }
 
         public void AcquireTriggers()
@@ -163,6 +167,7 @@ namespace Hecatomb
             foreach (Vault v in vaults)
             {
                 v.AcquireTriggers();
+                v.Message = "You breach a cavern";
                 Vaults.Add(v);
             }
         }
@@ -184,7 +189,7 @@ namespace Hecatomb
                     int y0 = Game.World.Random.Next(1 + border, Game.World.Height - 2 - border);
                     Coord c = new Coord(x0, y0, z);
                     // a marker for now
-                    Game.World.Covers[x0, y0, z] = Cover.Bedrock;
+                    //Game.World.Covers[x0, y0, z] = Cover.Bedrock;
                     // if these overlap we should merge them
                     Vault v = new Vault();
                     for (int dx = -2; dx <= 2; dx++)
@@ -193,13 +198,19 @@ namespace Hecatomb
                         {
                             int x1 = x0 + dx;
                             int y1 = y0 + dy;
-                            if (Tiles.QuickDistance(x1, y1, z, x0, y0, z) <= 2)
+                            if (Tiles.QuickDistance(x1, y1, z, x0, y0, z) <= 2 && Game.World.Terrains[x1, y1, z].Solid)
                             {
+                                Game.World.Terrains[x1, y1, z] = Terrain.FloorTile;
+                                Game.World.Covers[x1, y1, z] = Cover.NoCover;
+                                var bat = Entity.Spawn<Creature>("VampireBat");
+                                bat.GetComponent<Actor>().Asleep = true;
+                                bat.Place(x1, y1, z);
                                 v.VaultTiles.Add(new Coord(x1, y1, z));
                             }
                         }
                     }
                     v.AcquireTriggers();
+                    v.Message = "You breach a cavern and a cloud of ravenous bats issues forth!";
                     Vaults.Add(v);
                 }
             }

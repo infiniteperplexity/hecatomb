@@ -104,9 +104,9 @@ namespace Hecatomb
 		{
 			if (FirstCorner.Equals(default(Coord)))
 			{
-
 				SelectFirstCorner(c);
-			}
+                DrawSquareZone(c);
+            }
 			else
 			{
 				SelectSecondCorner(c);
