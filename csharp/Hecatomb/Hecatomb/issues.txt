@@ -9,6 +9,7 @@
 - TextEntry keystroke responsiveness feels horrible.
 - Maybe vampire bats should be cave shrikes or something.
 - Weird things happen when you hover over the squares right near the edge of the screen.
+- Additional spacebar selection clicks register too quickly
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess

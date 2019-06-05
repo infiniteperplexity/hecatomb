@@ -34,6 +34,10 @@ namespace Hecatomb
         public static string Format(ValueTuple<string, int> vt)
         {
             var (s, i) = vt;
+            if (!Resource.Types.ContainsKey(s))
+            {
+                throw new InvalidOperationException($"No such resource type as {s}");
+            }
             return (i + " " + Resource.Types[s].Name);
         }
         public static string Format(ValueTuple<string, int>[] vts)
@@ -138,6 +142,81 @@ namespace Hecatomb
             symbol: '%',
             fg: "brown",
             stack: 1
+        );
+
+        public static readonly Resource TinOre = new Resource(
+            type: "TinOre",
+            name: "tin ore",
+            symbol: '\u2022',
+            fg: "#99FF00"
+        );
+        public static readonly Resource CopperOre = new Resource(
+            type: "CopperOre",
+            name: "copper ore",
+            symbol: '\u2022',
+            fg: "##FF9900"
+        );
+        public static readonly Resource IronOre = new Resource(
+            type: "IronOre",
+            name: "iron ore",
+            symbol: '\u2022',
+            fg: "#FF3300"
+        );
+        public static readonly Resource SilverOre = new Resource(
+            type: "SilverOre",
+            name: "silver ore",
+            symbol: '\u2022',
+            fg: "#99BBFF"
+        );
+        public static readonly Resource GoldOre = new Resource(
+            type: "GoldOre",
+            name: "gold ore",
+            symbol: '\u2022',
+            fg: "#EEDD00"
+        );
+        public static readonly Resource TitaniumOre = new Resource(
+            type: "TitaniumOre",
+            name: "titanium ore",
+            symbol: '\u2022',
+            fg: "#00BB66"
+        );
+        public static readonly Resource CobaltOre = new Resource(
+            type: "CobaltOre",
+            name: "cobalt ore",
+            symbol: '\u2022',
+            fg: "#4444FF"
+        );
+        public static readonly Resource ThoriumOre = new Resource(
+            type: "ThoriumOre",
+            name: "thorium ore",
+            symbol: '\u2022',
+            fg: "#FFFFFF"
+        );
+        public static readonly Resource AdamantOre = new Resource(
+            type: "Adamant Ore",
+            name: "adamant ore",
+            symbol: '\u2022',
+            fg: "#FF00FF"
+        );
+
+
+        public static readonly Resource BronzeIngots = new Resource(
+            type: "BronzeIngots",
+            name: "bronze ingots",
+            symbol: '\u2022',
+            fg: "##FF9900"
+        );
+        public static readonly Resource SteelIngots = new Resource(
+            type: "SteelIngots",
+            name: "steel ingots",
+            symbol: '\u2022',
+            fg: "#FF3300"
+        );
+        public static readonly Resource AlloyIngots = new Resource(
+            type: "AlloyIngots",
+            name: "alloy ingots",
+            symbol: '\u2022',
+            fg: "#99BBFF"
         );
     }
 }
