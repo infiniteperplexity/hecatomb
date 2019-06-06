@@ -10,6 +10,7 @@
 - Maybe vampire bats should be cave shrikes or something.
 - Weird things happen when you hover over the squares right near the edge of the screen.
 - Additional spacebar selection clicks register too quickly
+- Selecting unexplored tiles to dig handles taks priorities in weird ways
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess
@@ -27,6 +28,8 @@ Gameplay issues:
 - Need to make it so liquids can flood.
 - Hmmm...we could add the Creatures but not the Actors, for underground stuff.
 - Should I add a simple raid?  This actually can't be done without refactoring how the Entity list works.
+- should test decaying stuff
+- Currently we can't handle it if a claimed item gets moved.
 
 Other issues:
 - Arguably should use iteration rather than recursion for NextActor.

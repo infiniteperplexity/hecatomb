@@ -203,19 +203,19 @@ namespace Hecatomb
         public static readonly Resource BronzeIngots = new Resource(
             type: "BronzeIngots",
             name: "bronze ingots",
-            symbol: '\u2022',
+            symbol: '=',
             fg: "##FF9900"
         );
         public static readonly Resource SteelIngots = new Resource(
             type: "SteelIngots",
             name: "steel ingots",
-            symbol: '\u2022',
+            symbol: '=',
             fg: "#FF3300"
         );
         public static readonly Resource AlloyIngots = new Resource(
             type: "AlloyIngots",
             name: "alloy ingots",
-            symbol: '\u2022',
+            symbol: '=',
             fg: "#99BBFF"
         );
     }
