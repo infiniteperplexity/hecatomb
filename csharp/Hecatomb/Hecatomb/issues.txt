@@ -11,6 +11,18 @@
 - Weird things happen when you hover over the squares right near the edge of the screen.
 - Additional spacebar selection clicks register too quickly
 - Selecting unexplored tiles to dig handles taks priorities in weird ways
+- NextMinion doesn't move the screen
+- It's really hard to tell what ingredients are needed for partial structures.
+- Should I cancel tasks when you can't find the ingredients, or unassign them?  I think unassign.
+- Can I scrol up or down the message bar?
+- Did saving the game destroy all my zombies?  Or did they rot away?
+- Bandits showed up uninvited.
+- Particle effects seemed to show wrong z level?
+- exhumed corpses are not owned, nor are dropped trade goods
+- zombies have no warning when they rot away
+- dropped items should get unclaimed...is that an issue?
+- can't overlay partial black market
+- can't remove partial black market either; placed task gets canceled.
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess
