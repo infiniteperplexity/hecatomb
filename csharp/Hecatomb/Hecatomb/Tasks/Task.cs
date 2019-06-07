@@ -170,6 +170,21 @@ namespace Hecatomb
                 return;
             }
             Dictionary<string, int> needed = new Dictionary<string, int>(Ingredients);
+            // if there are already existing claims
+            foreach (int eid in Claims.Keys)
+            {
+                // this should always have been validated by now
+                //if (Entities.ContainsKey(eid))
+                Item item = (Item)Entities[eid];
+                if (needed.ContainsKey(item.Resource))
+                {
+                    needed[item.Resource] -= Claims[eid];
+                    if (needed[item.Resource] <=0 )
+                    {
+                        needed.Remove(item.Resource);
+                    }
+                }
+            }
             List<Item> owned = Game.World.Items.Where(i => i.Owned).ToList();
             Movement m = Worker.GetComponent<Movement>();
             owned = owned.Where(it => m.CanReach(it)).ToList();
@@ -198,25 +213,53 @@ namespace Hecatomb
                     return;
                 }
             }
+            // this is no longer impossible, due to reclaiming
             if (needed.Keys.Count > 0)
             {
-                throw new InvalidOperationException("Apparently there weren't enough items to claim");
+                Debug.WriteLine("Zombie couldn't find needed keys");
+                // hard to tell whether we should wait for ingredients to arrive, or cancel the task entirely
+                Cancel();
+                //throw new InvalidOperationException("Apparently there weren't enough items to claim");
+            }
+        }
+
+        public void ValidateClaims()
+        {
+            int claims = Claims.Keys.Count;
+            foreach (int eid in Claims.Keys.ToList())
+            {
+                // if it has despawned
+                if (!Entities.ContainsKey(eid))
+                {
+                    Claims.Remove(eid);
+                }
+                else
+                {
+                    Item item = (Item)Entities[eid];
+                    if (!item.Placed)
+                    {
+                        Claims.Remove(eid);
+                    }
+                }
+            }
+            // if any were removed, look for new ingredients
+            if (Claims.Keys.Count<claims)
+            {
+                ClaimIngredients();
             }
         }
         public void FetchIngredient()
         {
+            // make sure the claims are still valid
+            ValidateClaims();
             if (Claims.Count == 0)
             {
                 return;
             }
+            // this will throw an error if the item has despawned
             int eid = Claims.Keys.ToList()[0];
             Item item = (Item)Entities[eid];
             // now need to do some validation
-            if (!item.Placed)
-            {
-                Claims.Remove(eid);
-                // should we look for more ingredients or just cancel the task?
-            }
             if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z && !HasIngredient())
             {
                 var (x, y, z) = item;
