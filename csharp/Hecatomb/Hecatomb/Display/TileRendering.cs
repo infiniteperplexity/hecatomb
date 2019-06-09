@@ -57,9 +57,7 @@ namespace Hecatomb
             if (Creatures[c] != null && visible)
             {
                 sym = Creatures[c].Symbol;
-                fg = fg ?? Creatures[c].FG;
-
-                //fg = fg ?? Creatures[c].GetCalculatedFG();
+                fg = fg ?? Creatures[c].GetCalculatedFG();
             }
             // a visible creature above
             else if (zview == +1 && Creatures[ca] != null && (visible || va))

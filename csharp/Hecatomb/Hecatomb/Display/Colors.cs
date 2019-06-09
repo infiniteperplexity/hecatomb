@@ -102,7 +102,17 @@ namespace Hecatomb
         {
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
-
+        public string Interpolate(string s1, string s2, double r=0.5)
+        {
+            Color c1 = this[s1];
+            Color c2 = this[s2];
+            Color c = new Color();
+            double r1 = 1 - r;
+            c.R = (byte) (r1 * c1.R + r * c2.R);
+            c.G = (byte) (r1 * c1.G + r * c2.G);
+            c.B = (byte) (r1 * c1.B + r * c2.B);
+            return Stringify(c);
+        }
         public string Shade(string s, int light)
         {
             Color c = this[s];

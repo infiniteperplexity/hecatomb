@@ -80,7 +80,7 @@ namespace Hecatomb
                 "SummonBanditsDebugSpell",
                 "RemoveCreatureDebugSpell",
                 "SevereDamageDebugSpell",
-                "LaunchRaidDebugSpell"
+                "ParticleTestDebugSpell"
             };
             AddListener<TurnBeginEvent>(OnTurnBegin);
 		}

@@ -64,12 +64,17 @@ public class MainGamePanel : GamePanel
 		
 		public void DrawDirty()
 		{
-			OldDirtyTiles.UnionWith(NextDirtyTiles);
+            OldDirtyTiles.UnionWith(NextDirtyTiles);
 			foreach (Coord c in OldDirtyTiles)
         	{
-				var glyph = Tiles.GetGlyph(c.X, c.Y, c.Z);
-				Coord cc = Tiles.ToCamera(c);
-				DrawGlyph(cc.X, cc.Y, glyph.Item1, glyph.Item2, glyph.Item3);
+                var glyph = Tiles.GetGlyph(c.X, c.Y, Game.Camera.Z);
+
+                int x = c.X - Game.Camera.XOffset;
+                int y = c.Y - Game.Camera.YOffset;
+                if (x >= 0 && x < Game.Camera.Width && y >= 0 &&  y < Game.Camera.Height)
+                {
+                    DrawGlyph(x, y, glyph.Item1, glyph.Item2, glyph.Item3);
+                }
         	}
 			var swap = OldDirtyTiles;
 			OldDirtyTiles = NextDirtyTiles;
@@ -115,7 +120,6 @@ public class MainGamePanel : GamePanel
 			var vfg = new Vector2(xOffset+Padding+(1+i)*(Size+Padding), yOffset+Padding+(1+j)*(Size+Padding));
             //var vbg = new Vector2(Padding + (i) * (Size + Padding), Padding + (j) * (Size + Padding));
             //var vfg = new Vector2(xOffset + Padding + (i) * (Size + Padding), yOffset + Padding + (j) * (Size + Padding));
-
             Sprites.Draw(BG, vbg, cbg);
             if (c == '\u02C7')
             {

@@ -99,7 +99,7 @@ namespace Hecatomb
                 V = V,
                 A = A,
                 LifeSpan = LifeSpan,
-//                D = (float) Game.World.Random.Next(1,4),
+//              D = (float) Game.World.Random.Next(1,4),
                 D = D,
                 Angle = (float) (Game.World.Random.NextDouble()*2*Math.PI)
             };

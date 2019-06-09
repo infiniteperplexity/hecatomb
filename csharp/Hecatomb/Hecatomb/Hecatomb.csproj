@@ -58,6 +58,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Spells\ParticleTestDebugSpell.cs" />
     <Compile Include="Spells\SevereDamageSpellDebug.cs" />
     <Compile Include="Tasks\ClaimTask.cs" />
     <Compile Include="Structures\Chirurgeon.cs" />

@@ -117,22 +117,13 @@ namespace Hecatomb
 
         public string GetCalculatedFG()
         {
+            string rotten = "#774422";
             // unused
-            if (TryComponent<Defender>()!=null)
+            if (TryComponent<Decaying>()!=null)
             {
-                int Wounds = GetComponent<Defender>().Wounds;
-                if (Wounds>=6)
-                {
-                    return "red";
-                }
-                else if (Wounds>=4)
-                {
-                    return "orange";
-                }
-                else if (Wounds>=2)
-                {
-                    return "yellow";
-                }
+                Decaying d = GetComponent<Decaying>();
+                double decay = (double) d.Decay / (double) d.TotalDecay;
+                return Game.Colors.Interpolate(rotten, FG, decay);
             }
             return FG;
         }

@@ -17,11 +17,13 @@ namespace Hecatomb
     /// </summary>
     public class Decaying : Component
     {
+        public int TotalDecay;
         public int Decay;
     
         public Decaying() : base()
         {
-            Decay = 1000;
+            TotalDecay = 2500;
+            Decay = TotalDecay;
             AddListener<TurnBeginEvent>(DecayTurn);
         }
        
