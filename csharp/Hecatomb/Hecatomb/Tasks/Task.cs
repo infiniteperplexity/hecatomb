@@ -80,9 +80,10 @@ namespace Hecatomb
             {
                 return false;
             }
-            if (Features[c]!=null && Features[c].TypeName!="IncompleteFeature") //is this okay or does it need to be more specific?
+            if (Features[c]!=null && Features[c].TryComponent<IncompleteFixtureComponent>() != null) //is this okay or does it need to be more specific?
             {
-                return false;
+                return Features[c].GetComponent<IncompleteFixtureComponent>().Makes == Makes;
+                //return false;
             }
             if (Terrains[c.X, c.Y, c.Z]==Terrain.FloorTile)
             {
@@ -218,7 +219,8 @@ namespace Hecatomb
             {
                 Debug.WriteLine("Zombie couldn't find needed keys");
                 // hard to tell whether we should wait for ingredients to arrive, or cancel the task entirely
-                Cancel();
+                //Cancel();
+                Unassign();
                 //throw new InvalidOperationException("Apparently there weren't enough items to claim");
             }
         }
@@ -384,7 +386,22 @@ namespace Hecatomb
 
         public virtual void Start()
         {
-            Feature f = Spawn<Feature>("IncompleteFeature");
+            Feature f = Game.World.Features[X, Y, Z];
+            if (f != null)
+            {
+                if (f.TryComponent<IncompleteFixtureComponent>() != null)
+                {
+                    var ifc = f.GetComponent<IncompleteFixtureComponent>();
+                    if (ifc.Makes == Makes)
+                    {
+                        return;
+                    }
+                    Debug.WriteLine($"But it makes {ifc.Makes} instead of {Makes}");
+                }
+                Debug.WriteLine("somehow trying to start building where a feature already exists"); 
+            }
+            f = Spawn<Feature>("IncompleteFeature");
+            f.GetComponent<IncompleteFixtureComponent>().Makes = Makes;
             f.Place(X, Y, Z);
         }
 

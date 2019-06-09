@@ -13,7 +13,7 @@ namespace Hecatomb
         public bool NoIngredients;
         public bool NoTutorial;
         public bool NoStartupScreen;
-        public bool HumanAttacks;
+        public bool NoHumanAttacks;
         public int WorkBonus;
         public bool AllSpells;
         public bool NoManaCost;
@@ -31,13 +31,13 @@ namespace Hecatomb
             Visible = false;
             //Visible = true;
             NoIngredients = false;
-            //NoIngredients = true;
+            NoIngredients = true;
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
             NoStartupScreen = true;
-            HumanAttacks = false;
-            //HumanAttacks = true;
+            NoHumanAttacks = false;
+            NoHumanAttacks = true;
             AllSpells = false;
             //AllSpells = true;
             NoManaCost = false;

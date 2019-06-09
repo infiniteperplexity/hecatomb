@@ -47,6 +47,7 @@ namespace Hecatomb
                 {
                     foreach (string key in Components.Keys)
                     {
+                        Debug.WriteLine("trying look at despawned components?");
                         Debug.WriteLine(key);
                         Debug.WriteLine(Components[key].EID);
                     }

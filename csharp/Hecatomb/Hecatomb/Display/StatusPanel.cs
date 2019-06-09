@@ -20,6 +20,7 @@ namespace Hecatomb
     /// </summary>
     public class StatusGamePanel : TextPanel
     {
+        public int SelectedMessage;
         public List<ColoredText> MessageHistory;
 
         public StatusGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
@@ -72,9 +73,9 @@ namespace Hecatomb
                 txt = " ";
             }
 
-            int MaxVisible = 4;
+            int MaxVisible = Math.Min(MessageHistory.Count, 4);
             List<ColoredText> list = new List<ColoredText> { txt };
-            list = list.Concat(MessageHistory.Take(MaxVisible)).ToList();
+            list = list.Concat(MessageHistory.GetRange(SelectedMessage, MaxVisible)).ToList();
             if (list.Count>1 && list[1].Colors.Count==0)
             {
                 list[1] = new ColoredText(list[1].Text, "cyan");
@@ -90,6 +91,26 @@ namespace Hecatomb
             {
                 MessageHistory.RemoveAt(MaxArchive);
             }
+            SelectedMessage = 0;
+        }
+
+        public void ScrollUp()
+        {
+            if (SelectedMessage > 0)
+            {
+                SelectedMessage -= 1;
+            }
+            Dirty = true;
+        }
+
+        public void ScrollDown()
+        {
+            int maxVisible = 4;
+            if (SelectedMessage < MessageHistory.Count - maxVisible)
+            {
+                SelectedMessage += 1;
+            }
+            Dirty = true;
         }
     }
 }

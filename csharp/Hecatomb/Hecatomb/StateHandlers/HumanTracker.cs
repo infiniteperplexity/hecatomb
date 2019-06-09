@@ -119,7 +119,7 @@ namespace Hecatomb
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
-            if (!Options.HumanAttacks)
+            if (Options.NoHumanAttacks)
             {
                 return ge;
             }
@@ -149,7 +149,7 @@ namespace Hecatomb
                     x = Game.World.Random.Next(1, 254);
                 }
                 //Creature peasant = Entity.Spawn<Creature>("AngryPeasant");
-                //Debug.WriteLine("spawning a peasant at "+x + " "+y);
+                Debug.WriteLine("spawning a peasants");
                 //peasant.Place(x, y, Game.World.GetGroundLevel(x, y));
                 BanditAttack();
             }

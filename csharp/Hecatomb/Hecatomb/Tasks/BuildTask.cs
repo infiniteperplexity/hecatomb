@@ -153,6 +153,16 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
+                Feature f = Game.World.Features[x, y, z];
+                if (f != null)
+                {
+                    if (f.TryComponent<IncompleteFixtureComponent>() != null)
+                    {
+                        if (f.GetComponent<IncompleteFixtureComponent>().Makes == "????")
+                            Entity.Spawn<BuildTask>().Place(x, y, z);
+                    }
+                    continue;
+                }
                 if ((priority == 2 && (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile))
                       || (priority == 1 && t == Terrain.FloorTile || t == Terrain.UpSlopeTile))
                 {

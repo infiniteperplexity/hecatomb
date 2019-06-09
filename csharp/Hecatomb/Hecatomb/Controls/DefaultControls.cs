@@ -43,6 +43,8 @@ namespace Hecatomb
 			KeyMap[Keys.OemPipe] = Commands.ShowConsole;
             //KeyMap[Keys.A] = Commands.ShowAchievements;
             KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
+            KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
+            KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
 			
 			MenuTop = new List<ColoredText>() {
 				"Esc: System view.",

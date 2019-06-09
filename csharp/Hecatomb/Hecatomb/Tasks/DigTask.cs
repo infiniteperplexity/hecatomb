@@ -288,20 +288,32 @@ namespace Hecatomb
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
                 Feature f = Game.World.Features[x, y, z];
-                if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
+                if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
-                    Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
-                    Entity.Spawn<HarvestTask>().Place(x, y, z);
+                    if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
+                    {
+                        Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
+                        Entity.Spawn<HarvestTask>().Place(x, y, z);
+                    }
+                    else if (priority == 2 && (f?.TypeName == "IncompleteFeature" || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null))
+                    {
+                        // this arguably needs to be a differently named task, although I think this currently does the job
+                        Entity.Spawn<HarvestTask>().Place(x, y, z);
+                    }
+                    else if ((priority == 5 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
+                         || (priority == 4 && t == Terrain.FloorTile)
+                         || (priority == 3 && t == Terrain.DownSlopeTile))
+                    {
+                        if (f == null)
+                        {
+                            // should I cancel existing tasks?
+                            if (Game.World.Tasks[x, y, z] == null)
+                                Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
+                            Entity.Spawn<DigTask>().Place(x, y, z);
+                        }
+                    }
                 }
-                else if (priority == 2 && (f?.TypeName=="IncompleteFeature" || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null))
-                {
-                    // this arguably needs to be a differently named task, although I think this currently does the job
-                    Entity.Spawn<HarvestTask>().Place(x, y, z);
-                }
-                else if ((priority == 5 && (t == Terrain.WallTile || t == Terrain.UpSlopeTile))
-                     || (priority == 4 && t == Terrain.FloorTile)
-                     || (priority == 3 && t == Terrain.DownSlopeTile)
-                     || (!Game.World.Explored.Contains(square) && !Options.Explored))
+                else if (priority == 5)
                 {
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null)

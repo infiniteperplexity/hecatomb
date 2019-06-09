@@ -141,10 +141,7 @@ namespace Hecatomb
                 }
             }
 			Feature incomplete = Game.World.Features[X, Y, Z];
-            Debug.WriteLine("check something....");
             var x = incomplete.GetComponent<IncompleteFixtureComponent>();
-            Debug.WriteLine(x.EID);
-
             incomplete.Despawn();
 			Feature f = Entity.Spawn<Feature>("StructureFeature");
 			f.Place(X, Y, Z);
@@ -154,7 +151,10 @@ namespace Hecatomb
             //f.BG = sc.BGs[FeatureIndex];
             f.BG = s.BG;
 			s.Features[FeatureIndex] = f;
-			bool finished = true;
+            StructuralComponent st = Spawn<StructuralComponent>();
+            st.Structure = Structure;
+            st.AddToEntity(f);
+            bool finished = true;
 			foreach (Feature fr in s.Features)
 			{
 				if (fr==null)
@@ -174,12 +174,12 @@ namespace Hecatomb
                     fr = Structure.Entity.Features[5];
                 }
 				Structure.Entity.Place(fr.X, fr.Y, fr.Z);
-                foreach (Feature feat in s.Features)
-                {
-                    StructuralComponent st = Spawn<StructuralComponent>();
-                    st.Structure = Structure;
-                    st.AddToEntity(feat);
-                }
+                //foreach (Feature feat in s.Features)
+                //{
+                 //   StructuralComponent st = Spawn<StructuralComponent>();
+                 //   st.Structure = Structure;
+                 //   st.AddToEntity(feat);
+                //}
 			}
 			base.Finish();
 		}

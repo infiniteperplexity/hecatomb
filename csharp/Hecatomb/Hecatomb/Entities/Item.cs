@@ -41,6 +41,7 @@ namespace Hecatomb
             Quantity = 1;
             Claimed = 0;
             StackSize = 1;
+            Owned = true;
         }
 
         public static Item SpawnCorpse()
@@ -237,8 +238,9 @@ namespace Hecatomb
         {
             string name = Hecatomb.Resource.Types[Resource].Name;
             //return $"{Quantity} {name}";
-            var txt = (Owned) ? "" : "not ";
-            return $"{Quantity} {name} ({Claimed} claimed, {txt}owned)";
+            var unowned = (Owned) ? "" : "(unclaimed)";
+            // return $"{Quantity} {name} ({Claimed} claimed, {txt}owned)";
+            return $"{Quantity} {name} {unowned}";
         }
     }
 }

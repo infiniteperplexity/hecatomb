@@ -352,5 +352,15 @@ namespace Hecatomb
             tutorial.Visible = !tutorial.Visible;
             Game.MenuPanel.Dirty = true;
         }
-	}
+
+        public void ScrollUpCommand()
+        {
+            Game.StatusPanel.ScrollUp();
+        }
+
+        public void ScrollDownCommand()
+        {
+            Game.StatusPanel.ScrollDown();
+        }
+    }
 }

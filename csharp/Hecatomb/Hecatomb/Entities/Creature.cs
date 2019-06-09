@@ -114,10 +114,12 @@ namespace Hecatomb
                     Game.Controls.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextMinion;
+            Game.Camera.Center(X, Y, Z);
         }
 
         public void NextMinion()
         {
+            Highlight = null;
             var minions = GetState<TaskHandler>().Minions;
             if (this==Player)
             {

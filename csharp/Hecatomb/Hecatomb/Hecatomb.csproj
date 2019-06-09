@@ -58,11 +58,14 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Spells\SevereDamageSpellDebug.cs" />
+    <Compile Include="Tasks\ClaimTask.cs" />
     <Compile Include="Structures\Chirurgeon.cs" />
     <Compile Include="Structures\Forge.cs" />
     <Compile Include="Structures\Library.cs" />
     <Compile Include="Structures\StoneMason.cs" />
     <Compile Include="Structures\Treasury.cs" />
+    <Compile Include="Tasks\UnclaimTask.cs" />
     <Compile Include="Utilities\CellularAutomaton.cs" />
     <Compile Include="Components\LeaderComponent.cs" />
     <Compile Include="Creatures.cs" />
@@ -72,7 +75,7 @@
     <Compile Include="Components\Decaying.cs" />
     <Compile Include="Utilities\Maze.cs" />
     <Compile Include="StateHandlers\GhoulTracker.cs" />
-    <Compile Include="IncompleteFixture.cs" />
+    <Compile Include="Components\IncompleteFixtureComponent.cs" />
     <Compile Include="StateHandlers\LairHandler.cs" />
     <Compile Include="Spells\LaunchRaidSpell.cs" />
     <Compile Include="StateHandlers\RaidHandler.cs" />

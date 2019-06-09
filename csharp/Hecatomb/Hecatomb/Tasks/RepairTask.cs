@@ -22,14 +22,18 @@ namespace Hecatomb
             PrereqStructures = new List<string> { "Workshop" };
         }
 
+        public override void Start()
+        {
+            // don't place a new feature
+        }
         public override void Finish()
         {
             Feature f = Game.World.Features[X, Y, Z];
-            if ("this feature"=="is damaged")
+            if (f != null && f.TryComponent<Defender>() != null)
             {
-                // repair it
+                f.GetComponent<Defender>().Wounds = 0;
             }
-            
+            Complete();
         }
 
         public override void ChooseFromMenu()
@@ -48,13 +52,17 @@ namespace Hecatomb
                 return false;
             }
             Feature f = Game.World.Features[x, y, z];
-            if (f.TypeName == "IncompleteFeature")
+            if (f == null)
+            {
+                return false;
+            }
+            if (f.TryComponent<IncompleteFixtureComponent>() != null)
             {
                 return true;
             }
-            // not quite sure how to test this yet
-            else if ("this feature " == "is damaged")
+            else if (f.TryComponent<Defender>() != null && f.GetComponent<Defender>().Wounds > 0)
             {
+                Debug.WriteLine("Yep, totally tamaged");
                 return true;
             }
             // a structure that wasn't completely finished
@@ -80,12 +88,17 @@ namespace Hecatomb
             }
         }
 
+        public Dictionary<string, int> GetRepairIngredients(Feature f)
+        {
+            // charge full cost for repairs for now
+            return f.GetComponent<Fixture>().Ingredients;
+        }
         public override void SelectTile(Coord c)
         {
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
                 Feature f = Game.World.Features[c.X, c.Y, c.Z];
-                if (f.TypeName == "IncompleteFeature")
+                if (f.TryComponent<IncompleteFixtureComponent>() != null)
                 {
                     var ifc = f.GetComponent<IncompleteFixtureComponent>();
                     string makes = ifc.Makes;
@@ -98,7 +111,7 @@ namespace Hecatomb
                     else
                     {
                         Task task = Entity.Spawn<FurnishTask>();
-                        task.Makes = Makes;
+                        task.Makes = makes;
                         task.Place(c.X, c.Y, c.Z);
                     }
                     // what the heck is this for?
@@ -107,13 +120,17 @@ namespace Hecatomb
 
                 }
                 // not quite sure how to test this yet
-                else if ("this thing" == "is damaged")
+                else if (f.TryComponent<Defender>() != null && f.GetComponent<Defender>().Wounds > 0)
                 {
                     base.SelectTile(c);
+                    Debug.WriteLine("tried to place a repair task");
+                    Task task = Game.World.Tasks[c.X, c.Y, c.Z];
+                    task.Ingredients = GetRepairIngredients(f);
                 }
                 // a structure that wasn't completely finished
                 else if (f.TryComponent<StructuralComponent>() != null)
                 {
+                    Debug.WriteLine("flag 2");
                     Structure s = f.GetComponent<StructuralComponent>().Structure;
                     s.BuildInSquares();
                 }

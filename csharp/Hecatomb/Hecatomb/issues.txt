@@ -10,23 +10,26 @@
 - Maybe vampire bats should be cave shrikes or something.
 - Weird things happen when you hover over the squares right near the edge of the screen.
 - Additional spacebar selection clicks register too quickly
-- Selecting unexplored tiles to dig handles taks priorities in weird ways
-- NextMinion doesn't move the screen
+
+* NextMinion doesn't move the screen.  Fixed.
 - It's really hard to tell what ingredients are needed for partial structures.
-- Should I cancel tasks when you can't find the ingredients, or unassign them?  I think unassign.
-- Can I scrol up or down the message bar?
-- Did saving the game destroy all my zombies?  Or did they rot away?
-- Bandits showed up uninvited.
+* Should I cancel tasks when you can't find the ingredients, or unassign them?  I think unassign.
+* Can I scroll up or down the message bar?
+* Did saving the game destroy all my zombies?  Or did they rot away?  I think they rotted away.
+* Bandits showed up uninvited.  Ithink I just cast the spell accidentally...but then why no splash?
 - Particle effects seemed to show wrong z level?
-- exhumed corpses are not owned, nor are dropped trade goods
+* exhumed corpses are not owned, nor are dropped trade goods (believed fixed)
 - zombies have no warning when they rot away
 - dropped items should get unclaimed...is that an issue?
-- can't overlay partial black market
-- can't remove partial black market either; placed task gets canceled.
+* can't overlay partial black market (mostly fixed)
+- should be able to overlay partial construct using same building
+* Selecting unexplored tiles to dig handles taks priorities in weird ways (believed fixed)
+* can't remove partial black market either; placed task gets canceled (believed fixed)
+- Right now there's really weird treatment of abandoned build or dig tasks
 
 Gameplay issues:
 - The WalkToward / attacking code is a huge mess
-- Workers sometimes abandon tasks.
+- Workers sometimes abandon tasks...maybe put in some debugging code to catch tasks that just sit there...
 - Should prefer paths around water and slopes.
 - CanReach doesn't respect cached misses; perhaps we should refactor it.
 * Bandits sometimes spawn underground (believed fixed)
@@ -36,19 +39,22 @@ Gameplay issues:
 - Dwarf lairs can overlap with bat caves
 - Balance ghoul attacks
 - You can't set up triggers to breach multiple caverns at once.
-- Need to go through and make breaching work the way we really want it.
+* Need to go through and make breaching work the way we really want it.
 - Need to make it so liquids can flood.
-- Hmmm...we could add the Creatures but not the Actors, for underground stuff.
+* Hmmm...we could add the Creatures but not the Actors, for underground stuff.
 - Should I add a simple raid?  This actually can't be done without refactoring how the Entity list works.
 - should test decaying stuff
-- Currently we can't handle it if a claimed item gets moved.
+* Currently we can't handle it if a claimed item gets moved.  Believed fixed.
+* The repair code doesn't actually exist.
+- Can't order repairs via overlay
 
 Other issues:
 - Arguably should use iteration rather than recursion for NextActor.
 
 Needs testing:
-- Does friendly displacement of workers do what's intended?
-- Do we fetch ingredients for multi-ingredient tasks in a reasonable way?
+* Does friendly displacement of workers do what's intended?  Seems to.
+- Do we fetch ingredients for multi-ingredient tasks in a reasonable way?  It's very slow, that's for sure.
+
 
 New Features:
 - We need good ways to keep zombies indoors during sieges.

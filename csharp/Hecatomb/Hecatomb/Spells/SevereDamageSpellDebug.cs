@@ -12,11 +12,11 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class RemoveCreatureDebugSpell : Spell, ISelectsTile
+    public class SevereDamageDebugSpell : Spell, ISelectsTile
     {
-        public RemoveCreatureDebugSpell()
+        public SevereDamageDebugSpell()
         {
-            MenuName = "remove creature (debug)";
+            MenuName = "severe damage (debug)";
             cost = 0;
         }
 
@@ -36,9 +36,15 @@ namespace Hecatomb
         public void SelectTile(Coord c)
         {
             Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
+            Feature f = Game.World.Features[c.X, c.Y, c.Z];
             if (cr != null && (Game.World.Explored.Contains(c) || Options.Explored))
             {
-                cr.Despawn() ;
+                cr.GetComponent<Defender>().Wounds = 6;
+            }
+            else if (f != null && f.TryComponent<Defender>() != null)
+            {
+                f.GetComponent<Defender>().Wounds = 6;
+                // not sure what to do, if there's no message scroll
             }
         }
 
