@@ -22,24 +22,24 @@ namespace Hecatomb
         {
             return $"researching {Research.Types[Makes].Name}";
         }
-        public override ColoredText ListOnMenu()
-        {
-            Research research = Hecatomb.Research.Types[Makes];
-            //you'd want to check for a path between the structure and the ingredients
-            if (research.Ingredients.Count == 0)
-            {
-                return research.Name;
-            }
-            else
-            {
-                bool available = false;
-                if (Game.World.Player.GetComponent<Movement>().CanFindResources(research.Ingredients))
-                {
-                    available = true;
-                }
-                return (((available) ? "{white}" : "{gray}") + research.Name + " ($: " + Resource.Format(research.Ingredients) + ")");
-            }
-        }
+        //public override ColoredText ListOnMenu()
+        //{
+        //    Research research = Hecatomb.Research.Types[Makes];
+        //    you'd want to check for a path between the structure and the ingredients
+        //    if (research.Ingredients.Count == 0)
+        //    {
+        //        return research.Name;
+        //    }
+        //    else
+        //    {
+        //        bool available = false;
+        //        if (Game.World.Player.GetComponent<Movement>().CanFindResources(research.Ingredients))
+        //        {
+        //            available = true;
+        //        }
+        //        return (((available) ? "{white}" : "{gray}") + research.Name + " ($: " + Resource.Format(research.Ingredients) + ")");
+        //    }
+        //}
 
         public override void ChooseFromMenu()
         {

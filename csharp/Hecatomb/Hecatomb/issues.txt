@@ -10,6 +10,7 @@
 - Maybe vampire bats should be cave shrikes or something.
 * Weird things happen when you hover over the squares right near the edge of the screen.
 - Additional spacebar selection clicks register too quickly
+- Should I make it so ColoredText overrides +?
 
 * NextMinion doesn't move the screen.  Fixed.
 - It's really hard to tell what ingredients are needed for partial structures.
@@ -47,7 +48,12 @@ Gameplay issues:
 * Currently we can't handle it if a claimed item gets moved.  Believed fixed.
 * The repair code doesn't actually exist.
 - Can't order repairs via overlay
-- Decay isn't fully thought out
+- Decay isn't fully thoughts out
+- No guaranteed trees (or flint) near start
+- Construct and research tasks names are horribly wrong
+- Display research tasks don't highlight missing ingredients
+- Tasks should probably list ingredients on hover
+* Displacement can cause creature overlap (believed fixed)
 
 Other issues:
 - Arguably should use iteration rather than recursion for NextActor.

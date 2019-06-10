@@ -85,8 +85,9 @@ namespace Hecatomb
             for (int i = 0; i < Choices.Count; i++)
             {
                 KeyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
-                ColoredText ct = Choices[i].ListOnMenu();
-                ct.Text = (alphabet[i] + ") " + ct.Text);
+                ColoredText ct = new ColoredText(alphabet[i] + ") ") + Choices[i].ListOnMenu();
+                //ct = new ColoredText()
+                //ct.Text = (alphabet[i] + ") " + ct.Text);
                 MenuTop.Add(ct);
             }
             Chooser.FinishMenu(this);

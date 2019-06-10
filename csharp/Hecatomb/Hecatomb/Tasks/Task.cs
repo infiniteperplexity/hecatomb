@@ -478,11 +478,34 @@ namespace Hecatomb
             {
                 return (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
             }
-            else
+            string ingredients = "{gray}" + MenuName + " ($: ";
+            var keys = Ingredients.Keys.ToList();
+            for (int i=0; i<keys.Count; i++)
             {
-                return ("{gray}" + MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+                string resource = keys[i];
+                if (Player.GetComponent<Movement>().CanFindResource(resource, Ingredients[resource]))
+                {
+                    ingredients += ("{white}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                else
+                {
+                    ingredients += ("{gray}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                if (i < keys.Count - 1)
+                {
+                    ingredients += ", ";
+                }
             }
-
+            ingredients += "{gray})";
+            return ingredients;
+            //else if (Player.GetComponent<Movement>().CanFindResources(Ingredients))
+            //{
+            //    return (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+            //}
+            //else
+            //{
+            //    return ("{gray}" + MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+            //}
         }
     }
 }

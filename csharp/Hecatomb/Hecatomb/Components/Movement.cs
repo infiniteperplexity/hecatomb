@@ -640,5 +640,23 @@ namespace Hecatomb
             }
             return (needed.Count == 0);
         }
+
+        public bool CanFindResource(string resource, int need, bool respectClaims = true, bool ownedOnly = true)
+        {
+            if (Game.Options.NoIngredients)
+            {
+                return true;
+            }
+            List<Item> items = Game.World.Items.Where(
+                it => { return (it.Resource == resource && CanReach(it) && (ownedOnly == false || it.Owned)); }
+            ).ToList();
+            int needed = need;
+            foreach (Item item in items)
+            {
+                int n = (respectClaims) ? item.Unclaimed : item.Quantity;
+                needed -= n;
+            }
+            return (needed <= 0);
+        }
     }
 }

@@ -253,7 +253,7 @@ namespace Hecatomb
                                     var squares = Tiles.GetNeighbors26(cr.X, cr.Y, cr.Z, where: (xd, yd, zd) =>
                                     {
                                         // gather all squares you could displace the creature to and still have it work
-                                        return (task.CouldWorkFrom(xd, yd, zd) & move.CanMove(xd, yd, zd));
+                                        return (task.CouldWorkFrom(xd, yd, zd) & move.CanPass(xd, yd, zd));
                                     });
                                     if (squares.Count > 0)
                                     {
