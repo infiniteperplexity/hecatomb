@@ -154,6 +154,15 @@ namespace Hecatomb
             West
         };
 
+        public static Coord[] Directions6 = new Coord[] {
+            North,
+            South,
+            East,
+            West,
+            Up,
+            Down
+        };
+
         public static Coord[] Directions8 = new Coord[] {
             North,
             South,

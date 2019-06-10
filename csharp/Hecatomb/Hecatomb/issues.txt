@@ -40,14 +40,14 @@ Gameplay issues:
 - Balance ghoul attacks
 - You can't set up triggers to breach multiple caverns at once.
 * Need to go through and make breaching work the way we really want it.
-- Need to make it so liquids can flood.
+* Need to make it so liquids can flood (simple flooding now exists)
 * Hmmm...we could add the Creatures but not the Actors, for underground stuff.
 - Should I add a simple raid?  This actually can't be done without refactoring how the Entity list works.
 - should test decaying stuff
 * Currently we can't handle it if a claimed item gets moved.  Believed fixed.
 * The repair code doesn't actually exist.
 - Can't order repairs via overlay
-- Decay isn'y fully though out
+- Decay isn't fully thought out
 
 Other issues:
 - Arguably should use iteration rather than recursion for NextActor.

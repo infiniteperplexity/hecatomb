@@ -130,6 +130,7 @@ namespace Hecatomb
             World.GetState<HumanTracker>();
             World.GetState<GrowthHandler>();
             World.GetState<GhoulTracker>();
+            World.GetState<LiquidHandler>();
             //ShowIntro();
             Creature p = null;
             while (p == null)

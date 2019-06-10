@@ -286,6 +286,5 @@ namespace Hecatomb
                 Game.World.Covers[x, y, z] = Cover.NoCover;
             }
         }
-
     }
 }

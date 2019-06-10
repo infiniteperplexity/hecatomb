@@ -399,8 +399,13 @@ namespace Hecatomb
 		{
 			return getNeighbors(x, y, z, Movement.Directions8, where: where);
 		}
-		
-		public static List<Coord> GetNeighbors10(int x, int y, int z, Func<int, int, int, bool> where = null)
+
+        public static List<Coord> GetNeighbors6(int x, int y, int z, Func<int, int, int, bool> where = null)
+        {
+            return getNeighbors(x, y, z, Movement.Directions6, where: where);
+        }
+
+        public static List<Coord> GetNeighbors10(int x, int y, int z, Func<int, int, int, bool> where = null)
 		{
 			return getNeighbors(x, y, z, Movement.Directions10, where: where);
 		}
