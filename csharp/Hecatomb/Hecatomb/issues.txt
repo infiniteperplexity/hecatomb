@@ -28,6 +28,7 @@ Gameplay issues:
 - No guaranteed trees (or flint) near start
 - There can be pathfinding delays when finding ingredients just to display the menu
 - Pathfinding now avoids high movement costs, but wandering doesn't.
+- Bandits sometimes slam performance
 
 Other issues:
 - Arguably should use iteration rather than recursion for NextActor.

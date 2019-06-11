@@ -335,7 +335,7 @@ namespace Hecatomb
                         }
                     }
                 }
-                else if (priority == 5)
+                else if (priority == 1 || priority == 5)
                 {
                     // should I cancel existing tasks?
                     if (Game.World.Tasks[x, y, z] == null)

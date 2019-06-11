@@ -23,6 +23,7 @@ namespace Hecatomb
         public bool NoDwarfLairs;
         public bool NoCaverns;
         public bool IgnoreHardness;
+        public bool Invincible;
 
         public HecatombOptions()
         {
@@ -31,13 +32,13 @@ namespace Hecatomb
             Visible = false;
             //Visible = true;
             NoIngredients = false;
-            NoIngredients = true;
+            //NoIngredients = true;
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
             NoStartupScreen = true;
             NoHumanAttacks = false;
-            NoHumanAttacks = true;
+            //NoHumanAttacks = true;
             AllSpells = false;
             //AllSpells = true;
             NoManaCost = false;
@@ -47,15 +48,17 @@ namespace Hecatomb
             NoSpiders = false;
             //NoSpiders = true;
             NoGhouls = false;
-            NoGhouls = true;
+            //NoGhouls = true;
             NoBatCaves = false;
-            NoBatCaves = true;
+            //NoBatCaves = true;
             NoDwarfLairs = false;
-            NoDwarfLairs = true;
+            //NoDwarfLairs = true;
             NoCaverns = false;
-            NoCaverns = true;
+            //NoCaverns = true;
             IgnoreHardness = false;
             //IgnoreHardness = true;
+            Invincible = false;
+            Invincible = true;
         }
     }
     

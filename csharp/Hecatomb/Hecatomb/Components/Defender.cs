@@ -41,6 +41,20 @@ namespace Hecatomb
         // probably a damage event
         public void Endure(int damage, AttackEvent attack)
         {
+            if (Game.Options.Invincible)
+            {
+                if (Entity.Unbox() is Creature)
+                {
+                    if (Entity.Unbox() == Game.World.Player)
+                    {
+                        return;
+                    }
+                    if (Entity.GetComponent<Actor>().Team == "Friendly")
+                    {
+                        return;
+                    }
+                }
+            }
             Creature ca = (Creature)attack.Attacker.Entity;
             TileEntity cd = (TileEntity)Entity;
             if (damage >= 20)
