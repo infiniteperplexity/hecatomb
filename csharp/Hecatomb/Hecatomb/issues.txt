@@ -9,13 +9,13 @@
 - TextEntry keystroke responsiveness feels horrible.
 - Maybe vampire bats should be cave shrikes or something.
 - Additional spacebar selection clicks register too quickly
-- should be able to overlay partial construct using same building
-- Right now there's really weird treatment of abandoned build or dig tasks
+* should be able to overlay partial construct using same building (fixed I think)
+* Right now there's really weird treatment of abandoned build or dig tasks (probably fixed)
 
 Gameplay issues:
 * dropped items should get unclaimed...is that an issue?  I don't think it is, I think we unclaim upon pickup.
 - The WalkToward / attacking code is a huge mess
-- Workers sometimes abandon tasks...maybe put in some debugging code to catch tasks that just sit there...
+- Workers sometimes abandon tasks...maybe put in some debugging code to catch tasks that just sit there...should be testable using interface and locals
 * Should prefer paths around water and slopes.
 * CanReach doesn't respect cached misses; perhaps we should refactor it (I'm not sure this is true)
 - Dwarf lairs have no dwarves in them
@@ -24,7 +24,6 @@ Gameplay issues:
 - You can't set up triggers to breach multiple caverns at once.
 - Should I add a simple raid?  This actually can't be done without refactoring how the Entity list works.
 - should test decaying stuff
-- Can't order repairs via overlay
 - Decay isn't fully thought out
 - No guaranteed trees (or flint) near start
 - There can be pathfinding delays when finding ingredients just to display the menu

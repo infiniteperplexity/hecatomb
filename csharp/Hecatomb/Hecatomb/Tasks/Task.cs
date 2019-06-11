@@ -90,10 +90,14 @@ namespace Hecatomb
             {
                 return false;
             }
-            if (Features[c]!=null && Features[c].TryComponent<IncompleteFixtureComponent>() != null) //is this okay or does it need to be more specific?
+            if (Features[c] != null && Features[c].TryComponent<IncompleteFixtureComponent>() != null) //is this okay or does it need to be more specific?
             {
                 return Features[c].GetComponent<IncompleteFixtureComponent>().Makes == Makes;
                 //return false;
+            }
+            else if (Features[c] != null)
+            {
+                return false;
             }
             if (Terrains[c.X, c.Y, c.Z]==Terrain.FloorTile)
             {

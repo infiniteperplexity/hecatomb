@@ -221,13 +221,14 @@ namespace Hecatomb
                             tye.BG = gf.BG;
                         }
                     }
-                    if (te is Structure)
-                    {
+                    //if (te is Structure)
+                    //{
                         // structures need some cleaning up
-                        Structure s = (Structure)te;
-                        int size = s.Width * s.Height;
-                        s.Features = s.Features.Skip(size).ToList();
-                    }
+                        //Structure s = (Structure)te;
+                        // why did I do this again?
+                        //int size = s.Width * s.Height;
+                        //s.Features = s.Features.Skip(size).ToList();
+                    //}
                     // don't place it unless it is placed!
                     if (x != -1 && y != -1 && z != -1)
                     {
