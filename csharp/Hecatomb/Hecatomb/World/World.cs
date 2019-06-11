@@ -178,8 +178,8 @@ namespace Hecatomb
             Emitters = new List<ParticleEmitter>();
 			Explored = new HashSet<Coord>();
 			Turns = new TurnHandler();
-            
-		}
+            InitializeHandlers();
+        }
 		
 		public void Reset()
 		{
@@ -196,8 +196,12 @@ namespace Hecatomb
             Particles = new SparseJaggedArray3D<Particle>(Width, Height, Depth);
             Emitters = new List<ParticleEmitter>();
             Explored = new HashSet<Coord>();
-			Turns = new TurnHandler(); 
-		}
+			Turns = new TurnHandler();
+            InitializeHandlers();
+            
+        }
+
+
 		
 		public Terrain GetTile(int x, int y, int z)
 		{
@@ -344,6 +348,35 @@ namespace Hecatomb
 			}
 			return (T) StateHandlers[s];
 		}
+
+        // this violates every principle of OO programming but it prevents me from having to manually initialize every statehandler
+        public void InitializeHandlers()
+        {
+            List<Type> handlers = typeof(StateHandler).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(StateHandler))).ToList();
+            foreach (var type in handlers)
+            {
+                InitializeHandler(type);
+            }
+        }
+        public StateHandler InitializeHandler(Type t)
+        {
+            string s = t.Name;
+            if (!StateHandlers.ContainsKey(s))
+            {
+                StateHandler sh = (StateHandler)Activator.CreateInstance(t);
+                sh.EID = Entity.MaxEID + 1;
+                Entity.MaxEID = sh.EID;
+                Entities[sh.EID] = sh;
+                sh.Spawned = true;
+                StateHandlers[s] = sh;
+                foreach (Type type in sh.Listeners.Keys)
+                {
+                    Events.Subscribe(type, sh, sh.Listeners[type]);
+                }   
+            }
+            return StateHandlers[s];
+        }
+
 
         public void ValidateOutdoors()
         {

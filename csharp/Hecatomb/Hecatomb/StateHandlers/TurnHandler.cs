@@ -81,7 +81,6 @@ namespace Hecatomb
 		}
         public void NextTurn()
         {
-
             Creature p = Game.World.Player;
             PlayerActed = false;
             Turn += 1;

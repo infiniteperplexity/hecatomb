@@ -58,6 +58,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DebuggingListener.cs" />
     <Compile Include="StateHandlers\LiquidHandler.cs" />
     <Compile Include="Spells\ParticleTestDebugSpell.cs" />
     <Compile Include="Spells\SevereDamageSpellDebug.cs" />

@@ -58,6 +58,7 @@ namespace Hecatomb
 			var misses = Game.World.GetState<PathHandler>().PathMisses;
 			if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
 			{
+                Debug.WriteLine("respected cached pathfinding failure");
 				return new LinkedList<Coord>();
 			}
 			int x0 = m.Entity.X;

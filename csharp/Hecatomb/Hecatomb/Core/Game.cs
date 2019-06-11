@@ -125,20 +125,12 @@ namespace Hecatomb
             World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
             WorldBuilder builder = new DefaultBuilder();
             builder.Build(World);
-
-            World.GetState<AchievementHandler>();
-            World.GetState<HumanTracker>();
-            World.GetState<GrowthHandler>();
-            World.GetState<GhoulTracker>();
-            World.GetState<LiquidHandler>();
             //ShowIntro();
             Creature p = null;
             while (p == null)
             {
                 p = World.PlacePlayer();
             }
-            var t = Hecatomb.Entity.Spawn<TutorialHandler>();
-            t.Activate();
             TurnHandler.HandleVisibility();
             Time.Frozen = false;
             if (!Options.NoStartupScreen)
