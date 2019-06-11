@@ -15,11 +15,6 @@ namespace Hecatomb
             Researched = new List<string>();
         }
 
-        public override void Activate()
-        {
-            base.Activate();
-        }
-
         public int GetToolHardness()
         {
             if (Researched.Contains("AlloyTools"))

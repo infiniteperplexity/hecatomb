@@ -27,7 +27,7 @@ namespace Hecatomb
             }
             else if (f?.TypeName=="IncompleteFeature")
             {
-                return "remove incomplete fixture";
+                return $"remove {f.Name}";
             }
             else if (f?.TryComponent<Fixture>()!=null)
             {

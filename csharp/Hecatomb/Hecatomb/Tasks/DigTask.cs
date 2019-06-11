@@ -16,6 +16,7 @@ namespace Hecatomb
 		public DigTask(): base()
 		{
 			MenuName = "dig, harvest, or dismantle";
+            Makes = "Excavation";
 		}
 
         public override string GetDisplayName()
@@ -49,6 +50,7 @@ namespace Hecatomb
 			base.Start();
 			Feature f = Game.World.Features[X, Y, Z];
             f.Name = "incomplete excavation";
+            f.GetComponent<IncompleteFixtureComponent>().Makes = "Excavation";
 			f.Symbol = '\u2717';
 			f.FG = "white";
 		}
@@ -181,9 +183,14 @@ namespace Hecatomb
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
                 Feature f = Game.World.Features[x, y, z];
+                Task ta = Game.World.Tasks[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
-                    if (f?.TryComponent<Harvestable>()!=null)
+                    if (f?.TypeName == "IncompleteFeature" && ta == null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
+                    {
+                        priority = 7;
+                    }
+                    else if (f?.TryComponent<Harvestable>()!=null)
                     {
                         priority = 6;
                     }
@@ -210,23 +217,27 @@ namespace Hecatomb
                 }
             }
             string txt;
-            if (priority==6)
+            if (priority == 7)
+            {
+                txt = "{green}Finish dig task.";
+            }
+            else if (priority == 6)
             {
                 txt = "{green}Harvest area.";
             }
-            else if (priority==5)
+            else if (priority == 5)
             {
                 txt = "{green}Dig corridors and remove slopes in this area.";
             }
-            else if (priority==4)
+            else if (priority == 4)
             {
                 txt = "{green}Dig through floors in this area.";
             }
-            else if (priority==3)
+            else if (priority == 3)
             {
                 txt = "{green}Remove slopes below this area.";
             }
-            else if (priority==2)
+            else if (priority == 2)
             {
                 txt = "{orange}Remove fixtures and structures in this area.";
             }
@@ -250,8 +261,13 @@ namespace Hecatomb
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
                 Feature f = Game.World.Features[x, y, z];
+                Task ta = Game.World.Tasks[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
+                    if (f?.TypeName == "IncompleteFeature" && ta == null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
+                    {
+                        priority = 7;
+                    }
                     if (f?.TryComponent<Harvestable>() != null)
                     {
                         priority = 6;
@@ -291,12 +307,17 @@ namespace Hecatomb
                 Feature f = Game.World.Features[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
-                    if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
+                    // complete existing dig task
+                    if (priority == 7 && f?.TypeName == "IncompleteFeature" && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
+                    {
+                        Entity.Spawn<DigTask>().Place(x, y, z);
+                    }
+                    else if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
                     {
                         Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
                         Entity.Spawn<HarvestTask>().Place(x, y, z);
                     }
-                    else if (priority == 2 && (f?.TypeName == "IncompleteFeature" || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null))
+                    else if (priority == 2 && ((f?.TryComponent<IncompleteFixtureComponent>() != null && f?.GetComponent<IncompleteFixtureComponent>().Makes != "Excavation") || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null))
                     {
                         // this arguably needs to be a differently named task, although I think this currently does the job
                         Entity.Spawn<HarvestTask>().Place(x, y, z);

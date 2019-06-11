@@ -60,7 +60,7 @@ namespace Hecatomb
                     list.Add(task);
                 }
             }
-            list.Add(Hecatomb.Entity.Mock<RepairTask>());
+            //list.Add(Hecatomb.Entity.Mock<RepairTask>());
             menu.Choices = list;
         }
         public void FinishMenu(MenuChoiceControls menu)
@@ -71,7 +71,7 @@ namespace Hecatomb
 
         public FurnishTask(): base()
 		{
-			MenuName = "build fixtures";
+			MenuName = "build or repair a fixture";
             Priority = 4;
             Fixtures = new string[] {"Door", "TiledFloor", "Ramp", "SpearTrap" };
             PrereqStructures = new List<string> { "Workshop" };

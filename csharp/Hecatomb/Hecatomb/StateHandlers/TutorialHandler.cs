@@ -45,6 +45,7 @@ namespace Hecatomb
             SlopeCount = 0;
             CurrentIndex = 0;
             Visible = !Options.NoTutorial;
+            AddListener<TutorialEvent>(HandleEvent);
             OffTutorialText = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Escape to get back on track or ? to hide tutorial messages." };
             OffTutorialCamera = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Tab to get back on track or ? to hide tutorial messages." };
             TutorialStates = new List<TutorialState>
@@ -907,13 +908,6 @@ namespace Hecatomb
                 }
             };
         }
-		
-		public override void Activate()
-		{
-            Game.World.Events.Subscribe<TutorialEvent>(this, HandleEvent);
-			//Game.World.Events.Subscribe<GameEvent>(this, HandleEvent);
-			base.Activate();	
-		}
 		
 		public void NextState()
 		{

@@ -18,6 +18,7 @@ namespace Hecatomb
 		public BuildTask(): base()
 		{
 			MenuName = "build floors or walls";
+            Makes = "Construction";
 			Ingredients = new Dictionary<string, int>
 			{
 				{"Rock", 1}
@@ -44,7 +45,8 @@ namespace Hecatomb
 			base.Start();
 			Feature f = Game.World.Features[X, Y, Z];
             f.Name = "incomplete construction";
-			f.Symbol = '\u2692';
+            f.GetComponent<IncompleteFixtureComponent>().Makes = "Construction";
+            f.Symbol = '\u2692';
 			f.FG = "white";
 		}
 		public override void Finish()
@@ -100,9 +102,14 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
+                Feature f = Game.World.Features[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
-                    if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
+                    if (f != null && f.TryComponent<IncompleteFixtureComponent>()!=null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
+                    {
+                        priority = Math.Max(priority, 3);
+                    }
+                    else if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
                     {
                         priority = Math.Max(priority, 2);
                     }
@@ -113,7 +120,11 @@ namespace Hecatomb
                 }
             }
             string txt;
-            if (priority == 2)
+            if (priority == 3)
+            {
+                txt = "{green}Undo digging in this area.";
+            }
+            else if (priority == 2)
             {
                 txt = "{green}Build floors in this area.";
             }
@@ -136,9 +147,14 @@ namespace Hecatomb
                 int y = square.Y;
                 int z = square.Z;
                 Terrain t = Game.World.Terrains[x, y, z];
+                Feature f = Game.World.Features[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
-                    if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
+                    if (f != null && f.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
+                    {
+                        priority = Math.Max(priority, 3);
+                    }
+                    else if (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile)
                     {
                         priority = Math.Max(priority, 2);
                     }
@@ -153,18 +169,22 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Terrains[x, y, z];
-                Feature f = Game.World.Features[x, y, z];
-                if (f != null)
+                if (Game.World.Tasks[x, y, z] != null)
                 {
-                    if (f.TryComponent<IncompleteFixtureComponent>() != null)
-                    {
-                        if (f.GetComponent<IncompleteFixtureComponent>().Makes == "????")
-                            Entity.Spawn<BuildTask>().Place(x, y, z);
-                    }
                     continue;
                 }
-                if ((priority == 2 && (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile))
+                Terrain t = Game.World.Terrains[x, y, z];
+                Feature f = Game.World.Features[x, y, z];
+                if (f?.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Construction")
+                {
+                    Entity.Spawn<BuildTask>().Place(x, y, z);
+                }
+                // filling in a prior excavation
+                else if (priority == 3 && f?.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
+                {
+                    Entity.Spawn<HarvestTask>().Place(x, y, z);
+                }
+                else if ((priority == 2 && (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile))
                       || (priority == 1 && t == Terrain.FloorTile || t == Terrain.UpSlopeTile))
                 {
                     // should I cancel existing tasks?
@@ -184,6 +204,7 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
+            Feature f = Game.World.Features[c.X, c.Y, c.Z];
             if (!Game.World.Explored.Contains(c) && !Options.Explored)
             {
                 return false;
@@ -193,9 +214,13 @@ namespace Hecatomb
             {
                 return false;
             }
-            // can't build on a feature
-            else if (Game.World.Features[c.X, c.Y, c.Z]!=null)
+            // can't build on most features
+            else if (f != null)
             {
+                if (f.TryComponent<IncompleteFixtureComponent>() != null && (f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation" || f.GetComponent<IncompleteFixtureComponent>().Makes == "Construction"))
+                {
+                    return true;
+                }
                 return false;
             }
             return true;

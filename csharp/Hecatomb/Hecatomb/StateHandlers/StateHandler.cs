@@ -16,7 +16,7 @@ namespace Hecatomb
 	/// </summary>
 	public class StateHandler: Entity
 	{
-		public virtual void Activate()
+		public void Activate()
 		{
 			if (Game.World.StateHandlers.ContainsKey(GetType().Name))
 			{

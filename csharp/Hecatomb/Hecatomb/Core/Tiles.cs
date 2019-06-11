@@ -268,12 +268,13 @@ namespace Hecatomb
                         //if (movable(current.X, current.Y, current.Z, neighbor.X, neighbor.Y, neighbor.Z))
                         if (movable(X, Y, Z, Xn, Yn, Zn))
                         {
-							// cost of taking this step
-                            // this should be something more like cost(X, Y, Z, Xn, Yn, Zn)
-							stepCost = 1;
-							// actual score along this path	
-							// !!! somehow I ran into a situation where this key was missing?							
-							newScore = gscores[current] + stepCost;
+                            // cost of taking this step
+                            //stepCost = 1;
+                            // this seems to have absolutely no effect
+                            stepCost = cost(X, Y, Z, Xn, Yn, Zn);
+                            // actual score along this path	
+                            // !!! somehow I ran into a situation where this key was missing?							
+                            newScore = gscores[current] + stepCost;
 							// if this is the best known path to the cell...
                             // !!! I've seen hints that this is a potential place for optimization
 							if (!gscores.ContainsKey(neighbor) || gscores[neighbor] > newScore) {
@@ -286,10 +287,9 @@ namespace Hecatomb
 								// somehow in here it's possible to add the node without setting the gscore?
 								if (node==null) {
 									queue.AddFirst(neighbor);
-									
 								} else while (node!=null)
 								{
-									if (fscores[node.Value]>fscore)
+									if (fscores[node.Value] > fscore)
 									{
 										queue.AddBefore(node, neighbor);
 										node = null;

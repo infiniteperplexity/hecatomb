@@ -517,11 +517,23 @@ namespace Hecatomb
         public float MovementCost(int x0, int y0, int z0, int x1, int y1, int z1)
         {
             Feature f = Game.World.Features[x1, y1, z1];
-            if (f != null || f.Solid || CachedActor.Team!="Friendly")
+            if (f != null && f.Solid && CachedActor.Team!="Friendly")
             {
-                Debug.WriteLine("Movement cost for door");
                 return 12;
-                //return 1;
+            }
+            Cover cv = Game.World.Covers[x1, y1, z1];
+            if (cv.Liquid)
+            {
+                return 2;
+            }
+            Terrain t = Game.World.Terrains[x1, y1, z1];
+            if (t == Terrain.UpSlopeTile || t == Terrain.DownSlopeTile)
+            {
+                return 2;
+            }
+            if (z1 > z0)
+            {
+                return 3;
             }
             return 1;
         }

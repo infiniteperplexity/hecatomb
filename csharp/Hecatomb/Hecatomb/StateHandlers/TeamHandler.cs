@@ -31,16 +31,6 @@ namespace Hecatomb
 
         public TeamHandler() : base()
         {
-            //Membership = new Dictionary<string, List<int>>();
-            //foreach (Team t in Team.Enumerated)
-            //{
-            //    Membership[t.TypeName] = new List<int>();
-            //}
-        }
-
-        public override void Activate()
-        {
-            base.Activate();
             HostilityMatrix = new Dictionary<string, Dictionary<string, bool>>();
             var m = HostilityMatrix;
             // "Friendly" is the player and minions

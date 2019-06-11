@@ -69,9 +69,9 @@ namespace Hecatomb
                     list.Add(task);
                 }
             }
-            var repair = Hecatomb.Entity.Mock<RepairTask>();
-            repair.MenuName = "repair or complete structure";
-            list.Add(repair);
+            //var repair = Hecatomb.Entity.Mock<RepairTask>();
+            //repair.MenuName = "repair or complete structure";
+            //list.Add(repair);
             menu.Choices = list;
         }
         public void FinishMenu(MenuChoiceControls menu)
@@ -83,7 +83,7 @@ namespace Hecatomb
 		{
             Structure = new TileEntityField<Structure>();
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket", "StoneMason", "Forge", "Chirurgeon", "Library", "Treasury"};
-			MenuName = "construct a structure.";
+			MenuName = "construct or repair a structure";
             Priority = 4;
             LaborCost = 5;
             Labor = 5;
@@ -205,6 +205,26 @@ namespace Hecatomb
 		{
             foreach (Coord s in squares)
             {
+                Feature f = Game.World.Features[s.X, s.Y, s.Z];
+                Task t = Game.World.Tasks[s.X, s.Y, s.Z];
+                if (t == null && f != null)
+                {
+                    if (f.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == Makes)
+                    {
+                        Structure st = f.GetComponent<IncompleteFixtureComponent>().Structure;
+                        st.BuildInSquares(st.Squares);
+                        return;
+                    }
+                    else if (f.TryComponent<StructuralComponent>() != null)
+                    {
+                        Structure st = f.GetComponent<StructuralComponent>().Structure;
+                        if (st.GetType().Name == Makes && !st.Placed)
+                        {
+                            st.BuildInSquares(st.Squares);
+                            return;
+                        }
+                    }
+                }
                 if (!ValidTile(s))
                 {
                     return;
