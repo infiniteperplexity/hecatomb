@@ -254,6 +254,7 @@ namespace Hecatomb
                         Research research = Hecatomb.Research.Types[s];
                         ResearchTask rt = Entity.Mock<ResearchTask>();
                         rt.Makes = research.TypeName;
+                        rt.MenuName = "research " + research.Name;
                         rt.LaborCost = research.Turns;
                         rt.Ingredients = research.Ingredients;
                         rt.Structure = this;

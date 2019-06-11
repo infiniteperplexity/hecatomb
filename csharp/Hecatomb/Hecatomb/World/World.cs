@@ -266,8 +266,9 @@ namespace Hecatomb
 				t = Tasks[x, y, z];
 				if (t!=null)
 				{
-					text.Add("Task: " + t.Describe());
-				}
+                    //text.Add("Task: " + t.Describe(article: false));
+                    text.Add("Task: " + (t as Task).GetHoverName());
+                }
 				text.Add(" ");
 			}
 			change = text.Count;
@@ -294,7 +295,7 @@ namespace Hecatomb
                 t = Tasks[x, y, za];
 				if (t!=null)
 				{
-					text.Add("Task: " + t.Describe());
+					text.Add("Task: " + (t as Task).GetHoverName());
 				}
 				text.Add(" ");
 			}
@@ -321,7 +322,7 @@ namespace Hecatomb
                 t = Tasks[x, y, zb];
 				if (t!=null)
 				{
-					text.Add("Task: " + t.Describe());
+					text.Add("Task: " + (t as Task).GetHoverName());
 				}
 				text.Add(" ");
 			}

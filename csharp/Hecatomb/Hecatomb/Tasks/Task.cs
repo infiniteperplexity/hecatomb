@@ -44,6 +44,16 @@ namespace Hecatomb
             Claims = new Dictionary<int,int>();
             PrereqStructures = new List<string>();
         }
+
+
+        public string GetHoverName()
+        {
+            if (Ingredients.Count == 0)
+            {
+                return Describe(article: false);
+            }
+            return (Describe(article: false) + " ($: " + Resource.Format(Ingredients) + ")");
+        }
         // override Place from TileEntity
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
@@ -401,6 +411,11 @@ namespace Hecatomb
                 Debug.WriteLine("somehow trying to start building where a feature already exists"); 
             }
             f = Spawn<Feature>("IncompleteFeature");
+            if (Makes != null && EntityType.Types.ContainsKey(Makes))
+            {
+                Feature mock = Entity.Mock<Feature>(Makes);
+                f.Name = "incomplete " + mock.Name;
+            }
             f.GetComponent<IncompleteFixtureComponent>().Makes = Makes;
             f.Place(X, Y, Z);
         }
@@ -468,6 +483,8 @@ namespace Hecatomb
         {
             Game.Controls.Set(new SelectZoneControls(this));
         }
+
+
         public virtual ColoredText ListOnMenu()
         {
             if (Ingredients.Count == 0)
@@ -498,14 +515,6 @@ namespace Hecatomb
             }
             ingredients += "{gray})";
             return ingredients;
-            //else if (Player.GetComponent<Movement>().CanFindResources(Ingredients))
-            //{
-            //    return (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
-            //}
-            //else
-            //{
-            //    return ("{gray}" + MenuName + " ($: " + Resource.Format(Ingredients) + ")");
-            //}
         }
     }
 }

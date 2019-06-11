@@ -118,7 +118,7 @@
 						"Research": ["SpearTrap"]
 					},
 					"Attacker": {},
-					"SpearTrapFeatureComponent": {}
+					"SpearTrapComponent": {}
 				}
 			}
 

@@ -54,7 +54,9 @@ namespace Hecatomb
                 if (valid || Game.Options.NoIngredients)
                 {
                     var task = Hecatomb.Entity.Mock<FurnishTask>();
+                    var feat = Entity.Mock<Feature>(f);
                     task.Makes = f;
+                    task.MenuName = "furnish " + feat.Name;
                     list.Add(task);
                 }
             }
@@ -99,31 +101,31 @@ namespace Hecatomb
 
 
 
-        public override ColoredText ListOnMenu()
-		{
+  //      public override ColoredText ListOnMenu()
+		//{
             
-			if (Makes!=null)
-			{
-                var fixture = Hecatomb.Entity.Mock<Fixture>();
-                fixture.InterpretJSON(EntityType.Types[Makes].Components["Fixture"]);
-                if (fixture.Ingredients.Count == 0)
-                {
-                    return Makes;
-                }
-                else if (Game.World.Player.GetComponent<Movement>().CanFindResources(fixture.Ingredients))
-                {
-                    return (Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
-                }
-                else
-                {
-                    return ("{gray}" + Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
-                }
-			}
-			else
-			{
-				return base.ListOnMenu();
-			}
-		}
+		//	if (Makes!=null)
+		//	{
+  //              var fixture = Hecatomb.Entity.Mock<Fixture>();
+  //              fixture.InterpretJSON(EntityType.Types[Makes].Components["Fixture"]);
+  //              if (fixture.Ingredients.Count == 0)
+  //              {
+  //                  return Makes;
+  //              }
+  //              else if (Game.World.Player.GetComponent<Movement>().CanFindResources(fixture.Ingredients))
+  //              {
+  //                  return (Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
+  //              }
+  //              else
+  //              {
+  //                  return ("{gray}" + Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
+  //              }
+		//	}
+		//	else
+		//	{
+		//		return base.ListOnMenu();
+		//	}
+		//}
 		
 		public override void TileHover(Coord c)
 		{

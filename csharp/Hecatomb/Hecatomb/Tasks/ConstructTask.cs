@@ -64,6 +64,7 @@ namespace Hecatomb
                 {
                     var task = Hecatomb.Entity.Mock<ConstructTask>();
                     task.Makes = st;
+                    task.MenuName = "construct " + structure.Describe();
                     task.Ingredients = structure.GetIngredients();
                     list.Add(task);
                 }
@@ -90,13 +91,7 @@ namespace Hecatomb
 
         public override string GetDisplayName()
         {
-            //return $"construct {Structure.Name}";
-            if (Claims.Count>0)
-            {
-                return $"claiming {Claims.Keys.ToList()[0]}";
-               
-            }
-            return "nothing claimed";
+            return $"construct {Structure.Name}";
         }
 
         private Structure Mock()
@@ -129,6 +124,7 @@ namespace Hecatomb
 			base.Start();
             Feature f = Game.World.Features[X, Y, Z];
 			f.FG = Structure.Entity.FGs[FeatureIndex];
+            f.Name = "incomplete " + Structure.Name;
             f.GetComponent<IncompleteFixtureComponent>().Structure = Structure;
         }
 		public override void Finish()
@@ -148,6 +144,7 @@ namespace Hecatomb
 			f.Place(X, Y, Z);
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
 			f.Symbol = s.Symbols[FeatureIndex];
+            f.Name = Structure.Name;
 			f.FG = s.FGs[FeatureIndex];
             //f.BG = sc.BGs[FeatureIndex];
             f.BG = s.BG;
@@ -196,55 +193,6 @@ namespace Hecatomb
 				Game.Controls.Set(new SelectBoxControls(this));
 			}
 		}
-
-        //public override ColoredText ListOnMenu()
-        //{
-
-        //    if (Makes != null)
-        //    {
-        //        var structure = Mock();
-        //        if (structure.GetIngredients().Count == 0 || Game.Options.NoIngredients)
-        //        {
-        //            return Makes;
-        //        }
-        //        else if (Game.World.Player.GetComponent<Movement>().CanFindResources(structure.GetIngredients()))
-        //        {
-        //            return (Makes + " ($: " + Resource.Format(structure.GetIngredients()) + ")");
-        //        }
-        //        else
-        //        {
-        //            var allIngredients = structure.GetIngredients();
-        //            string ingredients = "{gray}" + Makes + " ($: ";
-        //            var keys = allIngredients.Keys.ToList();
-        //            for (int i = 0; i < keys.Count; i++)
-        //            {
-        //                string resource = keys[i];
-        //                if (Player.GetComponent<Movement>().CanFindResource(resource, allIngredients[resource]))
-        //                {
-        //                    ingredients += ("{white}" + Resource.Format((resource, allIngredients[resource])));
-        //                }
-        //                else
-        //                {
-        //                    ingredients += ("{gray}" + Resource.Format((resource, Ingredients[resource])));
-        //                }
-        //                if (i < keys.Count - 1)
-        //                {
-        //                    ingredients += ", ";
-        //                }
-        //            }
-        //            ingredients += "{gray})";
-        //            Debug.WriteLine(ingredients);
-        //            return ingredients;
-
-        //            //return ("{gray}" + Makes + " ($: " + Resource.Format(structure.GetIngredients()) + ")");
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        return base.ListOnMenu();
-        //    }
-        //}
 
         public override void TileHover(Coord c)
 		{

@@ -48,6 +48,7 @@ namespace Hecatomb
 		{
 			base.Start();
 			Feature f = Game.World.Features[X, Y, Z];
+            f.Name = "incomplete excavation";
 			f.Symbol = '\u2717';
 			f.FG = "white";
 		}
