@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
-
+    // is this going to handle all setpieces?
     public class Vault
     {
         public HashSet<Coord> Triggers;

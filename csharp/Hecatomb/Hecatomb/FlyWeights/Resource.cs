@@ -198,25 +198,5 @@ namespace Hecatomb
             symbol: '\u2022',
             fg: "#FF00FF"
         );
-
-
-        public static readonly Resource BronzeIngots = new Resource(
-            type: "BronzeIngots",
-            name: "bronze ingots",
-            symbol: '=',
-            fg: "##FF9900"
-        );
-        public static readonly Resource SteelIngots = new Resource(
-            type: "SteelIngots",
-            name: "steel ingots",
-            symbol: '=',
-            fg: "#FF3300"
-        );
-        public static readonly Resource AlloyIngots = new Resource(
-            type: "AlloyIngots",
-            name: "alloy ingots",
-            symbol: '=',
-            fg: "#99BBFF"
-        );
     }
 }

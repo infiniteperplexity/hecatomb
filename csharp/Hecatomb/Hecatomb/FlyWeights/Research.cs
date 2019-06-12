@@ -57,7 +57,7 @@ namespace Hecatomb
         {
             Name = "bronze tools",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "BronzeIngots", 2 }, { "Wood", 2 }, { "Flint", 2 } },
+            Ingredients = new Dictionary<string, int>() { { "CopperOre", 2 }, { "TinOre", 2 }, { "Coal", 2 }, { "Wood", 2 }, { "Flint", 2 } },
             Prerequisites = new List<string>() { "FlintTools", "Bronzeworking" }
         };
 
@@ -66,7 +66,7 @@ namespace Hecatomb
         {
             Name = "steel tools",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "SteelIngots", 2 }, { "Wood", 2 }, { "BronzeIngots", 2 } },
+            Ingredients = new Dictionary<string, int>() { { "IronOre", 2 }, { "Coal", 2 }, { "Wood", 4 }, { "CopperOre", 2 }, { "TinOre", 2 } },
             Prerequisites = new List<string>() { "BronzeTools", "Steelworking" }
         };
 
@@ -75,7 +75,7 @@ namespace Hecatomb
         {
             Name = "alloy tools",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "AlloyIngots", 2 }, { "Wood", 2 }, { "SteelIngots", 2 } },
+            Ingredients = new Dictionary<string, int>() { { "Titanium", 2 }, { "Cobalt", 2 }, { "Wood", 2 }, { "IronOre", 2 }, { "Coal", 6 } },
             Prerequisites = new List<string>() { "SteelTools", "AlloySteel" }
         };
 
@@ -90,7 +90,7 @@ namespace Hecatomb
         {
             Name = "bronzeworks",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "BronzeOre", 2 }, { "Coal", 2 }, { "Stone", 2 } },
+            Ingredients = new Dictionary<string, int>() { { "CopperOre", 2 }, { "TinOre", 2 }, { "Coal", 2 }, { "Stone", 2 } },
             Prerequisites = new List<string>() { "FlintTools" }
         };
 
@@ -98,7 +98,7 @@ namespace Hecatomb
         {
             Name = "ironworks",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "IronOre", 4 }, { "Coal", 4 }, { "BronzeIngots", 2 } },
+            Ingredients = new Dictionary<string, int>() { { "IronOre", 4 }, { "Coal", 4 }, { "CopperOre", 2 }, { "TinOre", 2 } },
             Prerequisites = new List<string>() { "BronzeTools" }
         };
 
@@ -106,7 +106,7 @@ namespace Hecatomb
         {
             Name = "alloy steel",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } },
+            Ingredients = new Dictionary<string, int>() { { "TitaniumOre", 2 }, { "CobaltOre", 2 }, { "Coal", 6 }, { "IronOre", 4 } },
             Prerequisites = new List<string>() { "SteelTools" }
         };
 

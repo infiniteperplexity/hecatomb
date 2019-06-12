@@ -58,10 +58,13 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="StateHandlers\LongCreatureComponent.cs" />
+    <Compile Include="StateHandlers\FootprintManager.cs" />
     <Compile Include="StateHandlers\DebuggingListener.cs" />
     <Compile Include="StateHandlers\LiquidHandler.cs" />
     <Compile Include="Spells\ParticleTestDebugSpell.cs" />
     <Compile Include="Spells\SevereDamageSpellDebug.cs" />
+    <Compile Include="StateHandlers\NatureHandler.cs" />
     <Compile Include="Tasks\ClaimTask.cs" />
     <Compile Include="Structures\Chirurgeon.cs" />
     <Compile Include="Structures\Forge.cs" />
