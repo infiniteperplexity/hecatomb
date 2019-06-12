@@ -326,6 +326,31 @@ namespace Hecatomb
             for (int i = 0; i < Squares.Count; i++)
             {
                 Coord s = Squares[i];
+                Feature f = Game.World.Features[s.X, s.Y, s.Z];
+                if (Game.World.Tasks[s.X, s.Y, s.Z] != null)
+                {
+                    return;
+                }
+                else if (f != null)
+                {
+                    if (f.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Structure == this)
+                    {
+                        // this is okay, go ahead
+                    }
+                    else if (f.TryComponent<StructuralComponent>() != null && f.GetComponent<StructuralComponent>().Structure == this)
+                    {
+                        // this is okay, go ahead
+                    }
+                    else
+                    {
+                        // this is not okay, cancel building
+                        return;
+                    }
+                }
+            }
+            for (int i = 0; i < Squares.Count; i++)
+            {
+                Coord s = Squares[i];
                 if (Game.World.Tasks[s.X, s.Y, s.Z] == null)
                 {
                     Feature f = Game.World.Features[s.X, s.Y, s.Z];
