@@ -202,7 +202,23 @@ namespace Hecatomb
                             {
                                 Game.World.Terrains[x1, y1, z] = Terrain.FloorTile;
                                 Game.World.Covers[x1, y1, z] = Cover.NoCover;
-                                var bat = Entity.Spawn<Creature>("VampireBat");
+                                string creature;
+                                if (z >= 43)
+                                    creature = "VampireBat";
+                                else if (z >= 37)
+                                    creature = "FlourescentJelly";
+                                else if (z >= 31)
+                                    creature = "TroglodyteWarrior";
+                                else if (z >= 25)
+                                    creature = "BasaltElemental";
+                                else if (z >= 19)
+                                    creature = "NoctilucantOoze";
+                                else if (z >= 13)
+                                    creature = "TrollChampion";
+                                else
+                                    creature = "BasaltElemental";
+
+                                var bat = Entity.Spawn<Creature>(creature);
                                 bat.GetComponent<Actor>().Asleep = true;
                                 bat.Place(x1, y1, z);
                                 v.VaultTiles.Add(new Coord(x1, y1, z));

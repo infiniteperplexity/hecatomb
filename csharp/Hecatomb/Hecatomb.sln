@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2003
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hecatomb", "Hecatomb\Hecatomb.csproj", "{F2602397-F701-46BE-8F94-96480ED7D3A8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B8FEA69-5353-4947-8825-34D30A5E5922}"
 	ProjectSection(SolutionItems) = preProject
+		glyphs.txt = glyphs.txt
 		Performance1.psess = Performance1.psess
 		Performance2.psess = Performance2.psess
 	EndProjectSection

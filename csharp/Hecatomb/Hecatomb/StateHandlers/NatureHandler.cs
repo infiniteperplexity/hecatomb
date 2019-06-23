@@ -27,7 +27,7 @@ namespace Hecatomb
         public GameEvent OnDestroy(GameEvent ge)
         {
             DestroyEvent de = (DestroyEvent)ge;
-            if (de.Entity is Feature)
+            if (de.Entity is Feature && Game.Options.NoNatureAttacks == false)
             {
                 Feature f = (Feature)de.Entity;
                 if (f.TypeName == "ClubTree" || f.TypeName == "SpadeTree")
@@ -35,7 +35,7 @@ namespace Hecatomb
                     TreesKilled += 1;
                     if (TreesKilled > 25 && Game.World.Random.Next(25) == 0)
                     {
-                        NatureAttack();
+                        NatureAttack(f.X, f.Y, f.Z);
                     }
                 }
             }
@@ -47,12 +47,29 @@ namespace Hecatomb
             return ge;
         }
 
-        public void NatureAttack()
+        public void NatureAttack(int x, int y, int z)
         {
             Game.SplashPanel.Splash(new List<ColoredText> {
                "Your wanton deforestation has attracted the attention of nature's defenders!"
             });
-            
+
+            var trees = Features.Where((Feature f) => ((f.TypeName == "ClubTree" || f.TypeName == "SpadeTree") && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<25)).ToList();
+            trees.Sort((f1, f2) => (Game.World.Random.NextDouble().CompareTo(Game.World.Random.NextDouble())));
+            for (int i = 0; i<PastNatureAttacks+2; i++)
+            {
+                if (i>trees.Count-1)
+                {
+                    break;
+                }
+                Feature f = trees[i];
+                
+                if (Creatures[f.X, f.Y, f.Z]==null)
+                {
+                    var dryad = Entity.Spawn<Creature>("RagingDryad");
+                    ParticleEmitter emitter = new ParticleEmitter();
+                    emitter.Place(c.X, c.Y, c.Z);
+                    dryad.Place(f.X, f.Y, f.Z);
+            }
             PastNatureAttacks += 1;
         }
     }

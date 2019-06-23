@@ -219,6 +219,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="glyphs.txt" />
     <Content Include="Icon.ico" />
     <Content Include="issues.txt" />
   </ItemGroup>

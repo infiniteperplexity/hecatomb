@@ -118,5 +118,104 @@
 					"Defender": {}
 				}
 			},
+			{
+				"Type" : "FlourescentJelly",
+				"Name" : "flourescent jelly",
+				"FG" : "green",
+				"Symbol" : "o",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			{
+				"Type" : "NoctilucantOoze",
+				"Name" : "noctilucant ooze",
+				"FG" : "green",
+				"Symbol" : "O",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			{
+				"Type" : "TroglodyteWarrior",
+				"Name" : "troglodyte warrior",
+				"FG" : "brown",
+				"Symbol" : "t",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			{
+				"Type" : "TrollChampion",
+				"Name" : "troll champion",
+				"FG" : "brown",
+				"Symbol" : "T",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			{
+				"Type" : "BasaltElemental",
+				"Name" : "basalt elemental",
+				"FG" : "gray",
+				"Symbol" : "e",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			{
+				"Type" : "BedrockElemental",
+				"Name" : "bedrock elemental",
+				"FG" : "gray",
+				"Symbol" : "E",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			,
+			{
+				"Type" : "RagingDryad",
+				"Name" : "raging dryad",
+				"FG" : "green",
+				"Symbol" : "n",
+				"Components" : {
+					"Actor": {"Team" : "Hostile"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			}
 		]
 }

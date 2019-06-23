@@ -14,6 +14,7 @@ namespace Hecatomb
         public bool NoTutorial;
         public bool NoStartupScreen;
         public bool NoHumanAttacks;
+        public bool NoNatureAttacks;
         public int WorkBonus;
         public bool AllSpells;
         public bool NoManaCost;
@@ -39,6 +40,8 @@ namespace Hecatomb
             NoStartupScreen = true;
             NoHumanAttacks = false;
             //NoHumanAttacks = true;
+            NoNatureAttacks = false;
+            //NoNatureAttacks = true;
             AllSpells = false;
             //AllSpells = true;
             NoManaCost = false;
