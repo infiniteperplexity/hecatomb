@@ -39,7 +39,7 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>[]
             {
                 new Dictionary<string, int>() {{"TradeGoods", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
-                null, new Dictionary<string, int>() {{"Ectopasm", 1}}, null,
+                null, new Dictionary<string, int>() {{"Ectoplasm", 1}}, null,
                 new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"TradeGoods", 1}}
             };
             MenuName = "library";

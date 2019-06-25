@@ -12,6 +12,8 @@
 * should be able to overlay partial construct using same building (fixed I think)
 * Right now there's really weird treatment of abandoned build or dig tasks (probably fixed)
 - We need Particle emitter constructors that can do colors and stuff
+- Maybe research tasks should show turns when there are no ingredients
+- Zombies somehow can get stuck highlighted, so can structures.
 
 Gameplay issues:
 * dropped items should get unclaimed...is that an issue?  I don't think it is, I think we unclaim upon pickup.
@@ -31,12 +33,29 @@ Gameplay issues:
 - Pathfinding now avoids high movement costs, but wandering doesn't.
 - Bandits sometimes slam performance
 - Want to add in some LongCreatures somewhere.
-- too hard to find flint in early game
+* too hard to find flint in early game - arguably fixed
 - crashed with OutOfMemory error when saving
 - The abandoned tasks appear to occur when the Minion loses its task but the task still has the Minion.
+	- Are there times when we assign a task and it overwrites another?
+	- Should I look for every occurrence of task = null or unassign?  or overwriting?
+	- I could also just write something to clean up automatically.
+- I'm getting "what the heck?" as the name for a haul task...maybe that's after it's been picked up?
 
-Other issues:
+- ForbidTask appears to do nothing and also have no name
+- Ghoul radius is too small
+- Notification for canceling dig task for hard walls?
+- Should nighttime be a bit more dangerous?
+- I can't seem to furnish a door on top of a damaged door.
+- I saw a grave occur next to a slope...first time I've seen that in ages
+- Oh, we finally have a listener priority issue...Minion (patrolling around the player) versus RallyTask (rallying around the task)
+
+Performance Issues:
+- Don't need to serialize hostility matrix
+- The VaultHandler takes up about a sixth of the line count, and has many redundant messages.
+- We serialize a lot of unnecessary stuff in general.
+- Is it that bandits at long distance flog performance?
 - Arguably should use iteration rather than recursion for NextActor.
+- WalkToward should probably use cache.
 
 Needs testing:
 * Does friendly displacement of workers do what's intended?  Seems to.
@@ -45,3 +64,4 @@ Needs testing:
 
 New Features:
 - We need good ways to keep zombies indoors during sieges.
+- A rally point would work for this for now.
