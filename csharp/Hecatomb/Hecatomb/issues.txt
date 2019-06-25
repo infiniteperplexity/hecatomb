@@ -33,6 +33,7 @@ Gameplay issues:
 - Want to add in some LongCreatures somewhere.
 - too hard to find flint in early game
 - crashed with OutOfMemory error when saving
+- The abandoned tasks appear to occur when the Minion loses its task but the task still has the Minion.
 
 Other issues:
 - Arguably should use iteration rather than recursion for NextActor.

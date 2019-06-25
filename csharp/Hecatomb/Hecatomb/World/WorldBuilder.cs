@@ -212,6 +212,10 @@ namespace Hecatomb
                             }
                         }
                         Game.World.Covers[x, y, z - i] = c;
+                        if (c == Cover.Soil && Game.World.Random.Next(16)==0)
+                        {
+                            c = Cover.FlintCluster;
+                        }
                     }
 
                 }
@@ -229,7 +233,7 @@ namespace Hecatomb
             int segmin = 2;
             int seglen = 3;
             Dictionary<Cover, List<Cover>> ores = new Dictionary<Cover, List<Cover>>();
-            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.CoalSeam };
+            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.FlintCluster, Cover.CoalSeam };
             ores[Cover.Limestone] = new List<Cover>() { Cover.CopperVein, Cover.CopperVein, Cover.CopperVein, Cover.TinVein, Cover.CoalSeam, Cover.CoalSeam };
             ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.IronVein, Cover.IronVein };
             ores[Cover.Granite] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.GoldVein, Cover.IronVein, Cover.SilverVein };
