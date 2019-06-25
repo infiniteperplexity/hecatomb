@@ -62,13 +62,14 @@ namespace Hecatomb
                     break;
                 }
                 Feature f = trees[i];
-                
-                if (Creatures[f.X, f.Y, f.Z]==null)
+
+                if (Creatures[f.X, f.Y, f.Z] == null)
                 {
                     var dryad = Entity.Spawn<Creature>("RagingDryad");
                     ParticleEmitter emitter = new ParticleEmitter();
-                    emitter.Place(c.X, c.Y, c.Z);
+                    emitter.Place(f.X, f.Y, f.Z);
                     dryad.Place(f.X, f.Y, f.Z);
+                }
             }
             PastNatureAttacks += 1;
         }

@@ -75,7 +75,7 @@ namespace Hecatomb
         {
             Name = "alloy tools",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Titanium", 2 }, { "Cobalt", 2 }, { "Wood", 2 }, { "IronOre", 2 }, { "Coal", 6 } },
+            Ingredients = new Dictionary<string, int>() { { "TitaniumOre", 2 }, { "CobaltOre", 2 }, { "Wood", 2 }, { "IronOre", 2 }, { "Coal", 6 } },
             Prerequisites = new List<string>() { "SteelTools", "AlloySteel" }
         };
 
