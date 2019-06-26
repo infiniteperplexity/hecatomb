@@ -6,6 +6,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -133,38 +134,91 @@ namespace Hecatomb
             System.IO.File.WriteAllText(@"..\" + Game.GameName + ".json", json);
 			return json;
 		}
-		
-		public void Parse(string json)
-			
+
+        //public static void SerializeToStream(MyObject obj, Stream stream)
+        //{
+        //    var settings = GetJsonSerializerSettings();
+        //    settings.Formatting = Formatting.Indented;
+        //    var serializer = JsonSerializer.Create(settings);
+
+        //    using (var sw = new StreamWriter(stream))
+        //    using (var jsonTextWriter = new JsonTextWriter(sw))
+        //    {
+        //        serializer.Serialize(jsonTextWriter, obj);
+        //    }
+        //}
+
+
+        //public static object DeserializeFromStream(Stream stream)
+        //{
+        //    var serializer = new JsonSerializer();
+
+        //    using (var sr = new StreamReader(stream))
+        //    using (var jsonTextReader = new JsonTextReader(sr))
+        //    {
+        //        return serializer.Deserialize(jsonTextReader);
+        //    }
+        //}
+
+
+    //public void Parse(string json)
+    public void Parse(string filename)	
 		{
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
-            JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
-			// *** Random Seed ***
-			Random = parsed["random"].ToObject<StatefulRandom>();
+            JObject parsed;
+            //JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
+            Debug.WriteLine("flag 1");
+            using (StreamReader stream = File.OpenText(filename))
+            using (JsonTextReader reader = new JsonTextReader(stream))
+            {
+                JsonSerializer serializer = JsonSerializer.Create(settings);
+                parsed = (JObject)serializer.Deserialize(reader);
+            }
+            Debug.WriteLine("flag 2");
+            //var serializer = new JsonSerializer();
+            // *** Random Seed ***
+            Random = parsed["random"].ToObject<StatefulRandom>();
 			Random.Initialize();
-			// *** Terrains and Covers ***
-			int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
-            int[,,] covers = parsed["covers"].ToObject<int[,,]>();
+            // *** Terrains and Covers ***
+            int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
+            //int[,,] covers = parsed["covers"].ToObject<int[,,]>();
             for (int i=0; i<tiles.GetLength(0); i++)
 			{
 				for (int j=0; j<tiles.GetLength(1); j++)
 				{
 					for (int k=0; k<tiles.GetLength(2); k++)
 					{
-//						 piggyback covers in here too
 						Terrains[i,j,k] = Terrain.Enumerated[tiles[i,j,k]];
-                        Covers[i, j, k] = Cover.Enumerated[covers[i, j, k]];
                     }
 				}
 			}
-			// *** Entities ***
-			
-			foreach (int eid in Entities.Keys.ToList())
+            Debug.WriteLine("flag 2.5");
+            //int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
+            int[,,] covers = parsed["covers"].ToObject<int[,,]>();
+            for (int i = 0; i < covers.GetLength(0); i++)
+            {
+                for (int j = 0; j < covers.GetLength(1); j++)
+                {
+                    for (int k = 0; k < covers.GetLength(2); k++)
+                    {
+                        Covers[i, j, k] = Cover.Enumerated[covers[i, j, k]];
+                    }
+                }
+            }
+            Debug.WriteLine("flag 3");
+            // *** Entities ***
+            int tally = 0;
+            foreach (int eid in Entities.Keys.ToList())
 			{
                 // this process can trigger recursive despawning
                 if (Entities.ContainsKey(eid))
                 {
+                    tally += 1;
+                    if (tally%250==0)
+                    {
+                        Debug.WriteLine("Despawned items: " + tally);
+                    }
                     Entities[eid].Despawn();
                 }
 			}
@@ -173,6 +227,7 @@ namespace Hecatomb
 			Entity.MaxEID = -1;
             Dictionary<int, Coord> Placements = new Dictionary<int, Coord>();
             Dictionary<int, GlyphFields> Glyphs = new Dictionary<int, GlyphFields>();
+            Debug.WriteLine("flag 4");
             foreach (var child in parsed["entities"].Values())
 			{
                 // will this handle Player?  It's such a terrible way I do that...
@@ -194,6 +249,7 @@ namespace Hecatomb
                     (ge as StateHandler).Activate();
                 }
             }
+            Debug.WriteLine("flag 5");
             // okay, this gets weird...so...
             foreach (int eid in Placements.Keys.ToList())
             {
@@ -236,7 +292,7 @@ namespace Hecatomb
                     }
                 }
             }
-
+            Debug.WriteLine("flag 6");
             ValidateOutdoors();
 			// *** Player ***
 			
@@ -252,7 +308,7 @@ namespace Hecatomb
             Turns.Queue = Turns.QueueAsActors(parsed["turns"]["Queue"].ToObject<Queue<int>>());
 			Turns.Deck = Turns.QueueAsActors(parsed["turns"]["Deck"].ToObject<Queue<int>>());
             TurnHandler.HandleVisibility();
-            //			
+            Debug.WriteLine("flag 7");
             // *** Event Listeners ***
             var	events = parsed.GetValue("events").ToObject<Dictionary<string,Dictionary<int, string>>>();
 			foreach (string type in events.Keys)
@@ -272,6 +328,7 @@ namespace Hecatomb
                     Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
 				}
 			}
-		}
+            Debug.WriteLine("flag 8");
+        }
 	}
 }

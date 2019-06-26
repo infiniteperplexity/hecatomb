@@ -263,12 +263,13 @@ namespace Hecatomb
 		
         public void RestoreGameProcess()
         {
-            string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
+            //string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
             if (Game.World == null)
             {
                 Game.World = new World(256, 256, 64);
             }
-            Game.World.Parse(json);
+            //Game.World.Parse(json);
+            Game.World.Parse(@"..\" + Game.GameName + ".json");
             // we need some kind of failure handling...
             Controls.Reset();
         }

@@ -40,7 +40,7 @@ Gameplay issues:
 	- Should I look for every occurrence of task = null or unassign?  or overwriting?
 	- I could also just write something to clean up automatically.
 - I'm getting "what the heck?" as the name for a haul task...maybe that's after it's been picked up?
-
+* Unclear why Deck and Queue from TurnHandler appear as serialized fields (resolved, I handle them in a customized way)
 - ForbidTask appears to do nothing and also have no name
 - Ghoul radius is too small
 - Notification for canceling dig task for hard walls?

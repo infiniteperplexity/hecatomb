@@ -15,16 +15,28 @@ namespace Hecatomb
         public HashSet<Coord> Triggers;
         public HashSet<Coord> VaultTiles;
         public bool Awakened;
-        public string Message;
+        public int MessageId;
+        [JsonIgnore]
+        public static List<string> Messages;
+
+        static Vault()
+        {
+            Messages = new List<string>
+            {
+                "You breach a cavern.",
+                "You breach a vault full of monsters!"
+            };
+        }
         public Vault()
         {
             Triggers = new HashSet<Coord>();
             VaultTiles = new HashSet<Coord>();
+            MessageId = -1;
         }
        
         public void Listen(Coord c)
         {
-            if (Triggers.Contains(c))
+            if (Triggers.Contains(c) || VaultTiles.Contains(c))
             {
                 Awaken();
             }
@@ -44,10 +56,7 @@ namespace Hecatomb
                     cr.GetComponent<Actor>().Asleep = false;
                 }
             }
-            if (Message != null)
-            {
-                Game.StatusPanel.PushMessage(Message);
-            }
+            Game.StatusPanel.PushMessage(Messages[MessageId]);
         }
 
         public void AcquireTriggers()
@@ -57,7 +66,10 @@ namespace Hecatomb
                 var neighbors = Tiles.GetNeighbors8(c.X, c.Y, c.Z);
                 foreach (Coord n in neighbors)
                 {
-                    Triggers.Add(n);
+                    if (!VaultTiles.Contains(n))
+                    {
+                        Triggers.Add(n);
+                    }
                 }
             }
         }
@@ -167,7 +179,7 @@ namespace Hecatomb
             foreach (Vault v in vaults)
             {
                 v.AcquireTriggers();
-                v.Message = "You breach a cavern";
+                v.MessageId = 0;
                 Vaults.Add(v);
             }
         }
@@ -226,7 +238,7 @@ namespace Hecatomb
                         }
                     }
                     v.AcquireTriggers();
-                    v.Message = "You breach a cavern and a cloud of ravenous bats issues forth!";
+                    v.MessageId = 1;
                     Vaults.Add(v);
                 }
             }

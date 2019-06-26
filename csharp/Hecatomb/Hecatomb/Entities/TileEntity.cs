@@ -56,7 +56,8 @@ namespace Hecatomb
             }
         }
 
-        public bool Blinking; // should this be ignored?
+        [JsonIgnore]
+        public bool Blinking;
 		[JsonIgnore] public bool Placed {get; private set;}
 
         

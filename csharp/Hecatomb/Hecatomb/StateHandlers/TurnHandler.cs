@@ -55,9 +55,11 @@ namespace Hecatomb
         public bool PlayerActed;
 
 		// already acted, but still have points to act again
-		[JsonIgnore] public Queue<Actor> Deck;
+		[JsonIgnore]
+        public Queue<Actor> Deck;
         // have not yet acted and have points remaining
-		[JsonIgnore] public Queue<Actor> Queue;
+		[JsonIgnore]
+        public Queue<Actor> Queue;
 		
 		public TurnHandler()
 		{

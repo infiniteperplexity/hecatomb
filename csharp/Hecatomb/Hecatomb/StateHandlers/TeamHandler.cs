@@ -26,7 +26,7 @@ namespace Hecatomb
     {
         //public Dictionary<string, List<int>> Membership;
         //private Dictionary<int, Dictionary<int, bool>> hostilityMatrix;
-
+        [JsonIgnore]
         public Dictionary<string, Dictionary<string, bool>> HostilityMatrix;
 
         public TeamHandler() : base()

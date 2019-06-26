@@ -21,7 +21,6 @@ namespace Hecatomb
     public class Actor : Component, ICallStrings
     {
         public TileEntityField<TileEntity> Target;
-        public Coord? TargetTile;
         [JsonIgnore] public int ActionPoints;
         public int CurrentPoints;
         public string Team;
