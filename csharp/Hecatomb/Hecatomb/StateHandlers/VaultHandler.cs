@@ -15,7 +15,24 @@ namespace Hecatomb
         public HashSet<Coord> Triggers;
         public HashSet<Coord> VaultTiles;
         public bool Awakened;
+        public bool Populated;
         public int MessageId;
+        public int Z
+        {
+            get
+            {
+                if (VaultTiles.Count==0)
+                {
+                    return -1;
+                }
+                return VaultTiles.ToList()[0].Z;
+            }
+            set
+            {
+
+            }
+
+        }
         [JsonIgnore]
         public static List<string> Messages;
 
@@ -59,6 +76,34 @@ namespace Hecatomb
             Game.StatusPanel.PushMessage(Messages[MessageId]);
         }
 
+        public void Populate()
+        {
+            Populated = true;
+            foreach (Coord tile in VaultTiles)
+            {
+                var (x, y, z) = tile;
+                string creature;
+                if (z >= 43)
+                    creature = "VampireBat";
+                else if (z >= 37)
+                    creature = "FlourescentJelly";
+                else if (z >= 31)
+                    creature = "TroglodyteWarrior";
+                else if (z >= 25)
+                    creature = "BasaltElemental";
+                else if (z >= 19)
+                    creature = "NoctilucantOoze";
+                else if (z >= 13)
+                    creature = "TrollChampion";
+                else
+                    creature = "BasaltElemental";
+
+                var bat = Entity.Spawn<Creature>(creature);
+                bat.GetComponent<Actor>().Asleep = true;
+                bat.Place(x, y, z);
+            }
+        }
+
         public void AcquireTriggers()
         {
             foreach (Coord c in VaultTiles)
@@ -78,6 +123,7 @@ namespace Hecatomb
 
     public class VaultHandler : StateHandler
     {
+        public int Deepest;
         public List<Vault> Vaults;
 
         public VaultHandler()
@@ -91,6 +137,17 @@ namespace Hecatomb
             DigEvent de = (DigEvent)ge;
             // this is not the actual conditional triggering logic
             Coord c = new Coord(de.X, de.Y, de.Z);
+            if (de.Z < Deepest)
+            {
+                Deepest = de.Z;
+                foreach (Vault v in Vaults)
+                {
+                    if (!v.Populated && v.Z >= Deepest - 3)
+                    {
+                        v.Populate();
+                    }
+                }
+            }
             foreach (Vault v in Vaults)
             {
                 v.Listen(c);
@@ -214,25 +271,6 @@ namespace Hecatomb
                             {
                                 Game.World.Terrains[x1, y1, z] = Terrain.FloorTile;
                                 Game.World.Covers[x1, y1, z] = Cover.NoCover;
-                                string creature;
-                                if (z >= 43)
-                                    creature = "VampireBat";
-                                else if (z >= 37)
-                                    creature = "FlourescentJelly";
-                                else if (z >= 31)
-                                    creature = "TroglodyteWarrior";
-                                else if (z >= 25)
-                                    creature = "BasaltElemental";
-                                else if (z >= 19)
-                                    creature = "NoctilucantOoze";
-                                else if (z >= 13)
-                                    creature = "TrollChampion";
-                                else
-                                    creature = "BasaltElemental";
-
-                                var bat = Entity.Spawn<Creature>(creature);
-                                bat.GetComponent<Actor>().Asleep = true;
-                                bat.Place(x1, y1, z);
                                 v.VaultTiles.Add(new Coord(x1, y1, z));
                             }
                         }
@@ -240,6 +278,14 @@ namespace Hecatomb
                     v.AcquireTriggers();
                     v.MessageId = 1;
                     Vaults.Add(v);
+                }
+            }
+            Deepest = 46;
+            foreach (Vault v in Vaults)
+            {
+                if (v.Z >= Deepest - 3)
+                {
+                    v.Populate();
                 }
             }
         }

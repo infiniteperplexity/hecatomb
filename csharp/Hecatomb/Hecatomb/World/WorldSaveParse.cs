@@ -166,15 +166,17 @@ namespace Hecatomb
 		{
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
-            JObject parsed;
-            //JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
+            //JObject parsed;
+            string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
             Debug.WriteLine("flag 1");
-            using (StreamReader stream = File.OpenText(filename))
-            using (JsonTextReader reader = new JsonTextReader(stream))
-            {
-                JsonSerializer serializer = JsonSerializer.Create(settings);
-                parsed = (JObject)serializer.Deserialize(reader);
-            }
+            JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
+            
+            //using (StreamReader stream = File.OpenText(filename))
+            //using (JsonTextReader reader = new JsonTextReader(stream))
+            //{
+             //   JsonSerializer serializer = JsonSerializer.Create(settings);
+              //  parsed = (JObject)serializer.Deserialize(reader);
+            //}
             Debug.WriteLine("flag 2");
             //var serializer = new JsonSerializer();
             // *** Random Seed ***
