@@ -277,7 +277,10 @@ namespace Hecatomb
                     }
                     v.AcquireTriggers();
                     v.MessageId = 1;
-                    Vaults.Add(v);
+                    if (v.VaultTiles.Count > 0)
+                    {
+                        Vaults.Add(v);
+                    }
                 }
             }
             Deepest = 46;
