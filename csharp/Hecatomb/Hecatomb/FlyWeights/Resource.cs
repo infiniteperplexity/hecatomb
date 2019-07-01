@@ -154,7 +154,7 @@ namespace Hecatomb
             type: "CopperOre",
             name: "copper ore",
             symbol: '\u2022',
-            fg: "##FF9900"
+            fg: "#FF9900"
         );
         public static readonly Resource IronOre = new Resource(
             type: "IronOre",

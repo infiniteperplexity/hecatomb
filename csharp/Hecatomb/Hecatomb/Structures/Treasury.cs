@@ -53,10 +53,10 @@ namespace Hecatomb
             };
             Ingredients = new Dictionary<string, int>[]
             {
-                new Dictionary<string, int>() {{"BronzeIngots", 1}}, null, null, new Dictionary<string, int>() {{"Flint", 1}},
+                new Dictionary<string, int>() {{"CopperOre", 1}}, null, null, new Dictionary<string, int>() {{"Flint", 1}},
                 null,new Dictionary<string, int>() {{"Wood", 1}},new Dictionary<string, int>() {{"Rock", 1}},null,
                 null,new Dictionary<string, int>() {{"Rock", 1}},new Dictionary<string, int>() {{"Wood", 1}},null,
-                new Dictionary<string, int>() {{"Flint", 1}},null,null,new Dictionary<string, int>() {{"BronzeIngots", 1}}
+                new Dictionary<string, int>() {{"Flint", 1}},null,null,new Dictionary<string, int>() {{"TinOre", 1}}
             };
             MenuName = "treasury";
             Name = "treasury";

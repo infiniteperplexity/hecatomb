@@ -103,7 +103,6 @@ namespace Hecatomb
                             {
                                 var s = Entity.Spawn<Creature>("Spider");
                                 s.Place(i, j, k);
-                                s.GetComponent<Actor>().Asleep = true;
                             }
                         }
                         float plants = vscale * VegetationNoise.GetSimplexFractal(hscale * i, hscale * j);

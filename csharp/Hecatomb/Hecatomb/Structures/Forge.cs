@@ -37,9 +37,9 @@ namespace Hecatomb
             };
             Ingredients = new Dictionary<string, int>[]
             {
-                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"IronOre", 1}},
+                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"TinOre", 1}},
                 new Dictionary<string, int>() {{"Wood", 1}}, new Dictionary<string, int>() {{"Coal", 2}}, new Dictionary<string, int>() {{"Wood", 1}},
-                new Dictionary<string, int>() {{"IronOre", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
+                new Dictionary<string, int>() {{"CopperOre", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
             };
             MenuName = "forge";
             Name = "forge";
