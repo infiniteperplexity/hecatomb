@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="a7042f56-f8fd-4517-b6bb-8f4093ce7bda" Name="Hecatomb.Installer" Language="1033" Version="1.0.0.0" Manufacturer="None" UpgradeCode="bc366b1f-1cdf-4899-b6e5-d6595c785223">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Hecatomb.Installer" />
+      </Directory>
+    </Directory>
+    
+	</Product>
+
+
+
+
+</Wix>

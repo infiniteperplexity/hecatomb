@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="Hecatomb.Installer3" Language="1033" Version="1.0.0.0" Manufacturer="Kaiser Permanente" UpgradeCode="b9201435-d6ee-4df8-934e-71fa486e55c6">
+		<Package Id="*" InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="Hecatomb.Installer3" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ProductContent" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Hecatomb.Installer3">
+          <Directory Id="CONTENTFOLDER" Name="Content" />
+        </Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<Component Id="Hecatomb.exe" Guid="{332A8EA6-9690-4DA7-91D1-E92DC35D8BA8}">
+        <File Source="$(var.Hecatomb.TargetPath)" KeyPath="yes" />
+			</Component>
+
+
+    </ComponentGroup>
+    <ComponentGroup Id="ProductContent" Directory="CONTENTFOLDER">
+      <Component Id="Cambria.xnb" Guid="{207371EE-0D35-4316-91D1-6F5B029F62BF}">
+        <File Source="$(var.Hecatomb.TargetDir)Content\Cambria.xnb" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+	</Fragment>
+</Wix>
