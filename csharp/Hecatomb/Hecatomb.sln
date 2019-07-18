@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Performance2.psess = Performance2.psess
 	EndProjectSection
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Hecatomb.Installer3", "Hecatomb.Installer3\Hecatomb.Installer3.wixproj", "{B6C8833C-1DFF-4E8E-9B87-0DCEE30CAB83}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Hecatomb.Installer", "Hecatomb.Installer3\Hecatomb.Installer.wixproj", "{B6C8833C-1DFF-4E8E-9B87-0DCEE30CAB83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

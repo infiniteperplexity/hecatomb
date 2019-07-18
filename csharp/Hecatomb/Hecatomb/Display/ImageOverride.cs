@@ -23,7 +23,7 @@ namespace Hecatomb
 
         public ImageOverride(GraphicsDeviceManager graphics, SpriteBatch sprites)
         {
-            image = Game.MyContentManager.Load<Texture2D>("necromancer_by_irenhorrors_dc0ujsx-fullview");
+            image = Game.MyContentManager.Load<Texture2D>("necromancer");
             Graphics = graphics;
             Sprites = sprites;
         }
