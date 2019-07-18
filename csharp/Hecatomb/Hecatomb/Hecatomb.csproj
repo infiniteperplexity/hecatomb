@@ -234,7 +234,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\necromancer_by_irenhorrors_dc0ujsx-fullview.jpg">
+    <Content Include="Content\necromancer.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="glyphs.txt" />

@@ -57,18 +57,6 @@ namespace Hecatomb
 
         public void Act()
         {
-            Debug.WriteLine("testing");
-            if (Entity.Unbox() is Creature)
-            {
-                Debug.WriteLine((Entity.Unbox() as Creature).TypeName);
-
-                if ((Entity.Unbox() as Creature).TypeName == "Spider")
-                {
-                    Debug.WriteLine("Am I asleep?");
-                    Debug.WriteLine(Asleep);
-
-                }
-            }
             if (Asleep)
             {
                 Spend();

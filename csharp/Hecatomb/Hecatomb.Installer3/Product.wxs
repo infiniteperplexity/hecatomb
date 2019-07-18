@@ -25,7 +25,7 @@
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
 			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-			<Component Id="Hecatomb.exe" Guid="{332A8EA6-9690-4DA7-91D1-E92DC35D8BA8}">
+			<Component Id="Hecatomb.exe" Guid="{5095E9BE-4585-4CF1-BEBE-C0D7AADE6763}">
         <File Source="$(var.Hecatomb.TargetPath)" KeyPath="yes" />
 			</Component>
       <Component Id="Icon.ico" Guid="{CC08CA0C-9FCC-4468-B053-1ABC3D753378}">
@@ -41,13 +41,13 @@
         <File Source="$(var.Hecatomb.TargetDir)ShadowCaster.dll" KeyPath="yes" />
       </Component>
       <Component Id="SharpDX.Direct2D1.dll" Guid="{E3A37150-2546-4F4F-B7EC-8F3D1C94568D}">
-        <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct2D1" KeyPath="yes" />
+        <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct2D1.dll" KeyPath="yes" />
       </Component>
       <Component Id="SharpDX.Direct3D9.dll" Guid="{9EEB02D6-A5DC-4824-9A90-81B1CC847E06}">
-        <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct3D9" KeyPath="yes" />
+        <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct3D9.dll" KeyPath="yes" />
       </Component>
       <Component Id="SharpDX.Direct3D11.dll" Guid="{1E6ED9C3-C231-4E84-BEEA-AF9E63CA6B85}">
-        <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct3D11" KeyPath="yes" />
+        <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct3D11.dll" KeyPath="yes" />
       </Component>
       <Component Id="SharpDX.dll" Guid="{8525F0DE-92D1-45DA-97EB-6C00984EBF8A}">
         <File Source="$(var.Hecatomb.TargetDir)SharpDX.dll" KeyPath="yes" />
@@ -64,8 +64,8 @@
       <Component Id="SharpDX.XInput.dll" Guid="{08E282A8-A8D9-48A7-BDFB-B9FE0A53A588}">
         <File Source="$(var.Hecatomb.TargetDir)SharpDX.XInput.dll" KeyPath="yes" />
       </Component>
-      <Component Id="System.Value.Tuple.dll" Guid="{83AFEFB8-BAE7-40CF-9929-3A6E7DF9C382}">
-        <File Source="$(var.Hecatomb.TargetDir)System.Value.Tuple.dll" KeyPath="yes" />
+      <Component Id="System.ValueTuple.dll" Guid="{83AFEFB8-BAE7-40CF-9929-3A6E7DF9C382}">
+        <File Source="$(var.Hecatomb.TargetDir)System.ValueTuple.dll" KeyPath="yes" />
       </Component>
 
     </ComponentGroup>
@@ -85,11 +85,11 @@
       <Component Id="Items.json" Guid="{15CD2B27-10AD-4B85-BD75-B886992538EE}">
         <File Source="$(var.Hecatomb.TargetDir)Content\Items.json" KeyPath="yes" />
       </Component>
-      <Component Id="necromancer.xnb" Guid="{4E857EA6-B623-4F24-B899-A80A933B0E74}">
+      <Component Id="necromancer.xnb" Guid="{27EAA12D-F035-49D4-8464-71DD749E3929}">
         <File Source="$(var.Hecatomb.TargetDir)Content\necromancer.xnb" KeyPath="yes" />
       </Component>
       <Component Id="NotoSans.xnb" Guid="{1FF41B28-0ADC-447E-86C6-D6B161F77388}">
-        <File Source="$(var.Hecatomb.TargetDir)Content\NotoSansxnb" KeyPath="yes" />
+        <File Source="$(var.Hecatomb.TargetDir)Content\NotoSans.xnb" KeyPath="yes" />
       </Component>
       <Component Id="NotoSansSymbol.xnb" Guid="{78A9D083-E09E-4430-8E41-B7F8DA0E6C1F}">
         <File Source="$(var.Hecatomb.TargetDir)Content\NotoSansSymbol.xnb" KeyPath="yes" />
