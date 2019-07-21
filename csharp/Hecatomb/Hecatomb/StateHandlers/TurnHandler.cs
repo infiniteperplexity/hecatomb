@@ -83,7 +83,6 @@ namespace Hecatomb
 		}
         public void NextTurn()
         {
-            Debug.WriteLine("Are we starting a turn now?");
             Creature p = Game.World.Player;
             PlayerActed = false;
             Turn += 1;
@@ -188,7 +187,6 @@ namespace Hecatomb
                     Game.MenuPanel.Dirty = true;
                     Game.StatusPanel.Dirty = true;
                     PlayerActed = false;
-                    // set player acted to false
                     return;
                 }
                 else
@@ -229,7 +227,6 @@ namespace Hecatomb
 
         public void AfterPlayerActed()
         {
-            Debug.WriteLine("does this actually happen?");
             Actor actor = Game.World.Player.GetComponent<Actor>();
             if (actor.CurrentPoints > 0)
             {
@@ -239,84 +236,6 @@ namespace Hecatomb
             PlayerActed = true;
             ProcessActorQueue();
         }
-
-        public void NextActorBackup()
-		{	
-			// maybe not a real method
-			if (Queue.Count==0)
-			{
-				if (Deck.Count==0)
-				{
-					Game.World.Events.Publish(new TurnEndEvent() {Turn=Turn});
-					// publish turn end event
-					NextTurn();
-					return;
-				}
-				else
-				{
-					while (Deck.Count>0)
-					{
-						Queue.Enqueue(Deck.Dequeue());
-					}
-					Queue.OrderBy(a=>a.CurrentPoints).ThenBy(a=>a.EID);
-				}
-			}
-			Actor actor = Queue.Dequeue();
-            // need to check if it's been despawned
-            if (!actor.Spawned)
-            {
-                NextActorBackup();
-                return;
-            }
-			if (actor.Entity == Player)
-			{
-                HandleVisibility();
-                Game.MainPanel.Dirty = true;
-                Game.MenuPanel.Dirty = true;
-                Game.StatusPanel.Dirty = true;
-                PlayerActed = false;
-				// set player acted to false
-				return;
-			}
-			else
-			{
-				int checkPoints = actor.CurrentPoints;
-				if (checkPoints>0)
-				{
-                    Game.World.Events.Publish(new ActEvent() { Actor = actor, Entity = actor.Entity});
-                    // should I do this with Fire?  Eh...
-					actor.Act();
-                    //var senses = actor.Entity.TryComponent<Senses>();
-                    //if (senses!=null)
-                    //{
-                     //   senses.Explore();
-                    //}
-					if (actor.CurrentPoints==checkPoints)
-					{
-						throw new InvalidOperationException(String.Format("{0} somehow avoided using action points.", actor.Entity));
-					}
-				}
-				if (actor.CurrentPoints>0)
-				{
-                    Debug.Print("Replacing {0} on the queue.", actor.Entity.Entity.Describe());
-                    actor.Acted = false;
-					Deck.Enqueue(actor);
-				}
-				NextActorBackup();
-			}
-		}
-		
-		public void AfterPlayerActedBackup()
-		{
-			//Game.Time.Acted();
-			Actor actor = Game.World.Player.GetComponent<Actor>();
-			if (actor.CurrentPoints>0)
-			{
-				Deck.Enqueue(actor);
-			}
-			// bunch of time and interface-handling stuff
-			NextActorBackup();
-		}
 		
 		public Queue<int> QueueAsIDs(Queue<Actor> q)
 		{

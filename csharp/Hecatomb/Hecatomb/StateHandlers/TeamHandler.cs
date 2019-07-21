@@ -97,6 +97,48 @@ namespace Hecatomb
             return HostilityMatrix[cr1.GetComponent<Actor>().Team][t2];
         }
 
+
+        public Creature GetClosestEnemy(Creature cr, int minDist = 12)
+        {
+            Actor actor = cr.GetComponent<Actor>();
+            Actor a;
+            double dist = minDist;
+            double d;
+            Creature enemy = null;
+            foreach (Creature c in Creatures)
+            {
+                a = c.GetComponent<Actor>();
+                if (HostilityMatrix[actor.Team][a.Team])
+                {
+                    d = Tiles.QuickDistance(cr.X, cr.Y, cr.Z, c.X, c.Y, c.Z);
+                    if (d < dist && d < minDist)
+                    {
+                        enemy = c;
+                        dist = d;
+                    }
+                }
+            }
+            //foreach (Entity e in Entities.Values)
+            //{
+            //    if (e is Actor)
+            //    {
+            //        a = (Actor)e;
+            //        // seriously?  Unbox() is what takes so long?
+            //        //c = (Creature)a.Entity.Unbox();
+            //        c = (Creature)a.Entity;
+            //        if (HostilityMatrix[actor.Team][a.Team])
+            //        {
+            //            d = Tiles.QuickDistance(cr.X, cr.Y, cr.Z, c.X, c.Y, c.Z);
+            //            if (d < dist && d < minDist)
+            //            {
+            //                enemy = c;
+            //                dist = d;
+            //            }
+            //        }
+            //    }
+            //}
+            return enemy;
+        }
         // this isn't currently even state-based
         public List<Creature> GetEnemies(Creature cr1)
         {

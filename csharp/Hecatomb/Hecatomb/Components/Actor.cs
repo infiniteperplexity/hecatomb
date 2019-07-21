@@ -308,13 +308,19 @@ namespace Hecatomb
             // we could rebuild the hostility matrix every time a team changes...
             if (Target==null && Team!=null)
             {
-                List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
-                enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
-                enemies = enemies.Where(cr => (Entity.GetComponent<Movement>().CanReach(cr))).ToList(); // could limit number of tries, since distance has already been limited
-                if (enemies.Count > 0)
+                //List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
+                //enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
+                //enemies = enemies.Where(cr => (Entity.GetComponent<Movement>().CanReach(cr))).ToList(); // could limit number of tries, since distance has already been limited
+                //if (enemies.Count > 0)
+                //{
+                // should we be able to reach it?
+                //Target = enemies[0];
+                //}
+                //Target = GetState<TeamHandler>().GetClosestEnemy(Entity.Unbox() as Creature);
+                TileEntity te = GetState<TeamHandler>().GetClosestEnemy((Creature)Entity.Unbox());
+                if (te != null)
                 {
-                    // should we be able to reach it?
-                    Target = enemies[0];
+                    Target = te;
                 }
             }
             if (Target==Entity)

@@ -65,6 +65,8 @@ Performance Issues:
 * Is it that bandits at long distance flog performance?
 - Arguably should use iteration rather than recursion for NextActor.
 - WalkToward should probably use cache.
+- For some reason, setting a TileEntityField = null causes an error; I thought I fixed that.
+- So...spiders awake still slams performance.
 
 Other issue
 
