@@ -334,7 +334,7 @@ namespace Hecatomb
         {
             bool useLighting = true;
             Creature c = Creatures[x, y, z];
-            if (c!=null && (c==Player || c.GetComponent<Actor>().Team=="Friendly"))
+            if (c!=null && (c==Player || c.GetComponent<Actor>().Team == Teams.Friendly))
             {
                 useLighting = false;
             }

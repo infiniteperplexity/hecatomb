@@ -412,7 +412,7 @@ namespace Hecatomb
             if (tile.Fallable && Flies == false) {
                 return false;
             }
-            if (ignoreDoors == false && CachedActor.Team != "Friendly")
+            if (ignoreDoors == false && CachedActor.Team != Teams.Friendly)
             {
                 // doors block non-allied creatures
                 Feature f = Game.World.Features[x1, y1, z1];
@@ -517,7 +517,7 @@ namespace Hecatomb
         public float MovementCost(int x0, int y0, int z0, int x1, int y1, int z1)
         {
             Feature f = Game.World.Features[x1, y1, z1];
-            if (f != null && f.Solid && CachedActor.Team!="Friendly")
+            if (f != null && f.Solid && CachedActor.Team != Teams.Friendly)
             {
                 return 12;
             }

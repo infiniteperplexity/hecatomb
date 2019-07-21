@@ -49,7 +49,7 @@ namespace Hecatomb
                     {
                         return;
                     }
-                    if (Entity.GetComponent<Actor>().Team == "Friendly")
+                    if (Entity.GetComponent<Actor>().Team == Teams.Friendly)
                     {
                         return;
                     }

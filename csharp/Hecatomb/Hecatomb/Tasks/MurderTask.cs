@@ -69,14 +69,14 @@ namespace Hecatomb
             if (cr != null && cr != Player)
             {
                 Actor actor = cr.GetComponent<Actor>();
-                if (actor.Team == "Friendly")
+                if (actor.Team == Teams.Friendly)
                 {
-                    actor.Team = "Berserk";
+                    actor.Team = Teams.Berserk;
                 }
-                else if (actor.Team == "Neutral")
+                else if (actor.Team == Teams.Neutral)
                 {
                     // arguably all nearby neutrals should turn hostile?
-                    actor.Team = "Hostile";
+                    actor.Team = Teams.Hostile;
                 }
             }
         }

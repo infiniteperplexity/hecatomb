@@ -65,7 +65,7 @@ namespace Hecatomb
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
-                zombie.GetComponent<Actor>().Team = "Friendly";
+                zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z - 1);
                 if (!Game.World.Terrains[c.X, c.Y, c.Z - 1].Solid && Game.World.Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)))
                 {
@@ -90,7 +90,7 @@ namespace Hecatomb
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
-                zombie.GetComponent<Actor>().Team = "Friendly";
+                zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z);
                 zombie.GetComponent<Decaying>().Decay = 4 * i.Decay;
                 i.Despawn();

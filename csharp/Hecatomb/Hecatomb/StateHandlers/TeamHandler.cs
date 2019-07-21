@@ -10,8 +10,16 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb
 {
     using static HecatombAliases;
-    
 
+    public enum Teams
+    {
+        Friendly = 0,
+        Neutral = 1,
+        Berserk = 2,
+        Hostile = 3,
+        Good = 4,
+        Evil = 5
+    }
     /*
         Teams:
             - Player (player and minions)
@@ -24,77 +32,71 @@ namespace Hecatomb
     */
     public class TeamHandler : StateHandler
     {
-        //public Dictionary<string, List<int>> Membership;
-        //private Dictionary<int, Dictionary<int, bool>> hostilityMatrix;
+
         [JsonIgnore]
-        public Dictionary<string, Dictionary<string, bool>> HostilityMatrix;
+        //public Dictionary<string, Dictionary<string, bool>> HostilityMatrix;
+        public Dictionary<(Teams, Teams), bool> HostilityMatrix;
 
         public TeamHandler() : base()
         {
-            HostilityMatrix = new Dictionary<string, Dictionary<string, bool>>();
+            HostilityMatrix = new Dictionary<(Teams, Teams), bool>();
             var m = HostilityMatrix;
             // "Friendly" is the player and minions
-            m["Friendly"] = new Dictionary<string, bool>();
-            m["Friendly"]["Friendly"] = false;
-            m["Friendly"]["Neutral"] = false;
-            m["Friendly"]["Berserk"] = true;
-            m["Friendly"]["Hostile"] = true;
-            m["Friendly"]["Good"] = true;
-            m["Friendly"]["Evil"] = true;
+            m[(Teams.Friendly, Teams.Friendly)] = false;
+            m[(Teams.Friendly, Teams.Neutral)] = false;
+            m[(Teams.Friendly, Teams.Berserk)] = true;
+            m[(Teams.Friendly, Teams.Hostile)] = true;
+            m[(Teams.Friendly, Teams.Good)] = true;
+            m[(Teams.Friendly, Teams.Evil)] = true;
             // "Neutral" is peaceful animals
-            m["Neutral"] = new Dictionary<string, bool>();
-            m["Neutral"]["Friendly"] = false;
-            m["Neutral"]["Neutral"] = false;
-            m["Neutral"]["Berserk"] = true;
-            m["Neutral"]["Hostile"] = false;
-            m["Neutral"]["Good"] = false;
-            m["Neutral"]["Evil"] = false;
+            m[(Teams.Neutral, Teams.Friendly)] = false;
+            m[(Teams.Neutral, Teams.Neutral)] = false;
+            m[(Teams.Neutral, Teams.Berserk)] = true;
+            m[(Teams.Neutral, Teams.Hostile)] = false;
+            m[(Teams.Neutral, Teams.Good)] = false;
+            m[(Teams.Neutral, Teams.Evil)] = false;
             // "Berserk" is renegade zombies and hungry predators
-            m["Berserk"] = new Dictionary<string, bool>();
-            m["Berserk"]["Friendly"] = true;
-            m["Berserk"]["Neutral"] = true;
-            m["Berserk"]["Berserk"] = false;
-            m["Berserk"]["Hostile"] = true;
-            m["Berserk"]["Good"] = true;
-            m["Berserk"]["Evil"] = true;
+            m[(Teams.Berserk, Teams.Friendly)] = true;
+            m[(Teams.Berserk, Teams.Neutral)] = true;
+            m[(Teams.Berserk, Teams.Berserk)] = false;
+            m[(Teams.Berserk, Teams.Hostile)] = true;
+            m[(Teams.Berserk, Teams.Good)] = true;
+            m[(Teams.Berserk, Teams.Evil)] = true;
             // "Hostile" is formerly peaceful animals that have been angered
-            m["Hostile"] = new Dictionary<string, bool>();
-            m["Hostile"]["Friendly"] = true;
-            m["Hostile"]["Neutral"] = false;
-            m["Hostile"]["Berserk"] = true;
-            m["Hostile"]["Hostile"] = false;
-            m["Hostile"]["Good"] = false;
-            m["Hostile"]["Evil"] = false;
+            m[(Teams.Hostile, Teams.Friendly)] = true;
+            m[(Teams.Hostile, Teams.Neutral)] = false;
+            m[(Teams.Hostile, Teams.Berserk)] = true;
+            m[(Teams.Hostile, Teams.Hostile)] = false;
+            m[(Teams.Hostile, Teams.Good)] = false;
+            m[(Teams.Hostile, Teams.Evil)] = false;
             // "Good" includes humans, elves, and dwarves
-            m["Good"] = new Dictionary<string, bool>();
-            m["Good"]["Friendly"] = true;
-            m["Good"]["Neutral"] = false;
-            m["Good"]["Berserk"] = true;
-            m["Good"]["Hostile"] = false;
-            m["Good"]["Good"] = false;
-            m["Good"]["Evil"] = true;
+            m[(Teams.Good, Teams.Friendly)] = true;
+            m[(Teams.Good, Teams.Neutral)] = false;
+            m[(Teams.Good, Teams.Berserk)] = true;
+            m[(Teams.Good, Teams.Hostile)] = false;
+            m[(Teams.Good, Teams.Good)] = false;
+            m[(Teams.Good, Teams.Evil)] = true;
             // "Evil" includes necromancers and goblins
-            m["Evil"] = new Dictionary<string, bool>();
-            m["Evil"]["Friendly"] = true;
-            m["Evil"]["Neutral"] = false;
-            m["Evil"]["Berserk"] = true;
-            m["Evil"]["Hostile"] = false;
-            m["Evil"]["Good"] = true;
-            m["Evil"]["Evil"] = false;
+            m[(Teams.Evil, Teams.Friendly)] = true;
+            m[(Teams.Evil, Teams.Neutral)] = false;
+            m[(Teams.Evil, Teams.Berserk)] = true;
+            m[(Teams.Evil, Teams.Hostile)] = false;
+            m[(Teams.Evil, Teams.Good)] = true;
+            m[(Teams.Evil, Teams.Evil)] = false;
             //Game.World.Events.Subscribe<DespawnEvent>(this, OnDespawn);  
         } 
         
-        public bool CheckHostile(string t1, string t2)
+        public bool CheckHostile(Teams t1, Teams t2)
         {
-            return HostilityMatrix[t1][t2];
+            return HostilityMatrix[(t1, t2)];
         }
-        public bool CheckHostile(string t1, Creature cr2)
+        public bool CheckHostile(Teams t1, Creature cr2)
         {
-            return HostilityMatrix[t1][cr2.GetComponent<Actor>().Team];
+            return HostilityMatrix[(t1, cr2.GetComponent<Actor>().Team)];
         }
-        public bool CheckHostile(Creature cr1, string t2)
+        public bool CheckHostile(Creature cr1, Teams t2)
         {
-            return HostilityMatrix[cr1.GetComponent<Actor>().Team][t2];
+            return HostilityMatrix[(cr1.GetComponent<Actor>().Team, t2)];
         }
 
 
@@ -109,7 +111,7 @@ namespace Hecatomb
             {
                 a = c.GetCachedActor();
                 //a = c.GetComponent<Actor>();
-                if (HostilityMatrix[actor.Team][a.Team])
+                if (HostilityMatrix[(actor.Team, a.Team)])
                 {
                     d = Tiles.QuickDistance(cr.X, cr.Y, cr.Z, c.X, c.Y, c.Z);
                     if (d < dist && d < minDist)
@@ -146,7 +148,7 @@ namespace Hecatomb
             Actor a1 = cr1.GetComponent<Actor>();
             List<Entity> actors = Entities.Values.Where((Entity e) => (e is Actor && !(e as Actor).Asleep)).ToList();
             List<Creature> creatures = actors.Select((Entity e) => ((e as Actor).Entity.Unbox() as Creature)).ToList();
-            return creatures.Where((Creature cr)=>(HostilityMatrix[a1.Team][cr.GetComponent<Actor>().Team])).ToList();
+            return creatures.Where((Creature cr)=>HostilityMatrix[(a1.Team, cr.GetComponent<Actor>().Team)]).ToList();
         }
     }
 }

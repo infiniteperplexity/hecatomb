@@ -23,7 +23,7 @@ namespace Hecatomb
         public TileEntityField<TileEntity> Target;
         [JsonIgnore] public int ActionPoints;
         public int CurrentPoints;
-        public string Team;
+        public Teams Team;
         public bool Acted;
         public bool Asleep;
         public void CallString(string s)
@@ -99,7 +99,7 @@ namespace Hecatomb
         {
             return GetState<TeamHandler>().CheckHostile(Team, c);
         }
-        public bool IsHostile(string team)
+        public bool IsHostile(Teams team)
         {
             return GetState<TeamHandler>().CheckHostile(Team, team);
         }
@@ -107,7 +107,7 @@ namespace Hecatomb
         {
             return IsFriendly(c.GetComponent<Actor>().Team);
         }
-        public bool IsFriendly(string team)
+        public bool IsFriendly(Teams team)
         {
             return (Team == team);
         }
@@ -368,17 +368,17 @@ namespace Hecatomb
 		public override void InterpretJSON(string json)
 		{
 			JObject obj = JObject.Parse(json);
-			if (obj["Team"]!=null)
-			{
-                this.Team = (string)obj["Team"];
-			}
+            if (obj["Team"] != null)
+            {
+                this.Team = (Teams)Enum.Parse(typeof(Teams), (string)obj["Team"]);
+            }
         }
 
         public void Provoke(Creature c)
-        {
-            if (c.GetComponent<Actor>().Team=="Friendly")
+        { 
+            if (c.GetComponent<Actor>().Team == Teams.Friendly)
             {
-                Team = "Hostile";
+                Team = Teams.Hostile;
             }
             if (IsHostile(c))
             {
