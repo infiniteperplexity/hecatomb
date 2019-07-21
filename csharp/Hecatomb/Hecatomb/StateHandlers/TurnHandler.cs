@@ -83,6 +83,7 @@ namespace Hecatomb
 		}
         public void NextTurn()
         {
+            Debug.WriteLine("Are we starting a turn now?");
             Creature p = Game.World.Player;
             PlayerActed = false;
             Turn += 1;
@@ -154,7 +155,6 @@ namespace Hecatomb
 			Game.MenuPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 			Creature[] actors = Game.World.Creatures.ToArray();
-			// ***
 			Queue.Clear();
 			Deck.Clear();
 			foreach (Entity e in Entities.Values)
@@ -172,10 +172,75 @@ namespace Hecatomb
 				}
 			}
 			Queue.OrderBy(a=>a.CurrentPoints).ThenBy(a=>a.EID);
-			NextActor();
+			ProcessActorQueue();
 		}
-		
-		public void NextActor()
+
+        // let's try modifying this to use a loop
+        public void ProcessActorQueue()
+        {
+            while (Queue.Count > 0)
+            {
+                Actor actor = Queue.Dequeue();
+                if (actor.Entity == Player)
+                {
+                    HandleVisibility();
+                    Game.MainPanel.Dirty = true;
+                    Game.MenuPanel.Dirty = true;
+                    Game.StatusPanel.Dirty = true;
+                    PlayerActed = false;
+                    // set player acted to false
+                    return;
+                }
+                else
+                {
+                    int checkPoints = actor.CurrentPoints;
+                    if (checkPoints > 0)
+                    {
+                        Game.World.Events.Publish(new ActEvent() { Actor = actor, Entity = actor.Entity });
+                        actor.Act();
+                        if (actor.CurrentPoints == checkPoints)
+                        {
+                            throw new InvalidOperationException(String.Format("{0} somehow avoided using action points.", actor.Entity));
+                        }
+                    }
+                    if (actor.CurrentPoints > 0)
+                    {
+                        Debug.Print("Replacing {0} on the queue.", actor.Entity.Entity.Describe());
+                        actor.Acted = false;
+                        Deck.Enqueue(actor);
+                    }
+                }
+            }
+            while (Deck.Count > 0)
+            {
+                Queue.Enqueue(Deck.Dequeue());
+            }
+            Queue.OrderBy(a => a.CurrentPoints).ThenBy(a => a.EID);
+            if (Queue.Count > 0)
+            {
+                ProcessActorQueue();
+            }
+            else
+            {
+                Game.World.Events.Publish(new TurnEndEvent() { Turn = Turn });
+                NextTurn();
+            }
+        }
+
+        public void AfterPlayerActed()
+        {
+            Debug.WriteLine("does this actually happen?");
+            Actor actor = Game.World.Player.GetComponent<Actor>();
+            if (actor.CurrentPoints > 0)
+            {
+                Deck.Enqueue(actor);
+            }
+            // bunch of time and interface-handling stuff
+            PlayerActed = true;
+            ProcessActorQueue();
+        }
+
+        public void NextActorBackup()
 		{	
 			// maybe not a real method
 			if (Queue.Count==0)
@@ -200,7 +265,7 @@ namespace Hecatomb
             // need to check if it's been despawned
             if (!actor.Spawned)
             {
-                NextActor();
+                NextActorBackup();
                 return;
             }
 			if (actor.Entity == Player)
@@ -237,11 +302,11 @@ namespace Hecatomb
                     actor.Acted = false;
 					Deck.Enqueue(actor);
 				}
-				NextActor();
+				NextActorBackup();
 			}
 		}
 		
-		public void AfterPlayerActed()
+		public void AfterPlayerActedBackup()
 		{
 			//Game.Time.Acted();
 			Actor actor = Game.World.Player.GetComponent<Actor>();
@@ -250,7 +315,7 @@ namespace Hecatomb
 				Deck.Enqueue(actor);
 			}
 			// bunch of time and interface-handling stuff
-			NextActor();
+			NextActorBackup();
 		}
 		
 		public Queue<int> QueueAsIDs(Queue<Actor> q)
