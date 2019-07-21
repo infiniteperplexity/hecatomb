@@ -107,7 +107,8 @@ namespace Hecatomb
             Creature enemy = null;
             foreach (Creature c in Creatures)
             {
-                a = c.GetComponent<Actor>();
+                a = c.GetCachedActor();
+                //a = c.GetComponent<Actor>();
                 if (HostilityMatrix[actor.Team][a.Team])
                 {
                     d = Tiles.QuickDistance(cr.X, cr.Y, cr.Z, c.X, c.Y, c.Z);

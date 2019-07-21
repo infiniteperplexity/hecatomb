@@ -14,6 +14,7 @@ namespace Hecatomb
 
     public partial class Creature : TypedEntity, IChoiceMenu
     {
+        private Actor cachedActor;
 
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
@@ -115,6 +116,15 @@ namespace Hecatomb
                 };
             menu.KeyMap[Keys.Tab] = NextMinion;
             Game.Camera.Center(X, Y, Z);
+        }
+
+        public Actor GetCachedActor()
+        {
+            if (cachedActor == null)
+            {
+                cachedActor = GetComponent<Actor>();
+            }
+            return cachedActor;
         }
 
         public void NextMinion()

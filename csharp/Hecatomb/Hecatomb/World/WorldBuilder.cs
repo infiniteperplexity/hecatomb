@@ -102,7 +102,7 @@ namespace Hecatomb
                             if (world.Random.Next(250) == 1)
                             {
                                 var s = Entity.Spawn<Creature>("Spider");
-                                s.GetComponent<Actor>().Asleep = true;
+                                //s.GetComponent<Actor>().Asleep = true;
                                 s.Place(i, j, k);
                             }
                         }
