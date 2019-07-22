@@ -305,8 +305,8 @@ namespace Hecatomb
 		{
             var (x, y, z) = Entity;
             // so...back in the JS version, this totally flogged performance.
-            // we could rebuild the hostility matrix every time a team changes...
-            if (Target==null && Team!=null)
+            // for now, let's try making it so neutral creatures don't alert to enemies
+            if (Target==null && Team!=null && Team!=Teams.Neutral)
             {
                 //List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
                 //enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();

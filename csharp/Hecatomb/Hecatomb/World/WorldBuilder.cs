@@ -103,6 +103,8 @@ namespace Hecatomb
                             {
                                 var s = Entity.Spawn<Creature>("Spider");
                                 //s.GetComponent<Actor>().Asleep = true;
+                                //preload this
+                                s.GetCachedActor();
                                 s.Place(i, j, k);
                             }
                         }
