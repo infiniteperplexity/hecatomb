@@ -84,7 +84,7 @@ namespace Hecatomb
             storedCreature = null;
             storedActor = Entity.GetComponent<Actor>();
             storedMovement = Entity.GetComponent<Movement>();
-            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, addToVisible);
+            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, checkForEnemy);
             return storedCreature;
         }
         private void checkForEnemy(int x, int y)
