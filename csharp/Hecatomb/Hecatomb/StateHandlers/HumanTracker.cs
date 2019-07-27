@@ -57,61 +57,33 @@ namespace Hecatomb
             Actor actor = ae.Actor;
             if (actor.Entity.Unbox() is Creature)
             {
-;                Creature cr = (Creature)actor.Entity.Unbox();
+;               Creature cr = (Creature)actor.Entity.Unbox();
+                Movement m = cr.GetComponent<Movement>();
                 if (Bandits.Contains(cr))
                 {
-                    // if this is one of our bandits acting...
-                    //Debug.WriteLine($"Frustration level: {Frustration}");
-                    Movement m = cr.GetComponent<Movement>();
-                    // if you've been banging on the door a while, de-target the player if you can't easily reach the player
-                    if (Frustration >= FrustrationLimit)
-                    {
-                        if (m.CanReach(Player, ignoreDoors: false))
-                        {
-                            if (actor.Target == null)
-                            {
-                                actor.Target = Player;
-                            }
-                        }
-                        else
-                        {
-                            // should this only be if the player is the target?
-                            actor.Target = null;
-                        }
-                    }
-                    // regardless of frustration, if there is no way to reach the player even through doors
-                    if (!m.CanReach(Player, ignoreDoors: true))
-                    {
-                        // should this only be if the player is the target?
-                        actor.Target = null;
-                    }
-                    // then take a look around for nearby hostiles
                     if (!actor.Acted)
                     {
                         actor.Alert();
-                        //Debug.WriteLine($"Target after Alert() is {actor.Target}");
-                        //Debug.WriteLine($"Actor acted is {actor.Acted}");
                     }
-                    if (!actor.Acted)
+                    // if you're frustrated, can't reach the player easily, and don't have something to fight, go home
+                    if (!actor.Acted && Frustration >= FrustrationLimit && !m.CanReach(Player, ignoreDoors: false))
                     {
-                        // if you are frustrated or you cannot reached the player walk back to the entry tile 
-                        if (Frustration >= 50 || actor.Target == null) // !!! is this sufficient, or do we need to run CanReach?
+                        var (x, y, z) = EntryTile;
+                        // if you're right near where you entered the map, despawn
+                        if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
                         {
-                            var (x, y, z) = EntryTile;
-                            // if you're right near where you entered the map, despawn
-                            if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
-                            {
-                                Debug.WriteLine("Screw you guys, I'm going home.");
-                                cr.Leave();
-                            }
-                            else
-                            {
-                                actor.WalkToward(x, y, z);
-                            }
+                            Debug.WriteLine("Screw you guys, I'm going home.");
+                            cr.Leave();
+                        }
+                        else
+                        {
+                            actor.WalkToward(x, y, z);
                         }
                     }
                     if (!actor.Acted)
-                        actor.Wander();
+                    {
+                        TargetPlayer(cr);
+                    }                   
                 }
             }
             return ge;
@@ -127,31 +99,6 @@ namespace Hecatomb
             if (te.Turn == 5)
             //if (te.Turn==1000)
             {
-                int side = Game.World.Random.Next(4);
-                int x, y;
-                if (side==0)
-                {
-                    x = 1;
-                    y = Game.World.Random.Next(1, 254);
-                }
-                else if (side==1)
-                {
-                    x = 254;
-                    y = Game.World.Random.Next(1, 254);
-                }
-                else if (side==2)
-                {
-                    y = 1;
-                    x = Game.World.Random.Next(1, 254);
-                }
-                else
-                {
-                    y = 254;
-                    x = Game.World.Random.Next(1, 254);
-                }
-                //Creature peasant = Entity.Spawn<Creature>("AngryPeasant");
-                Debug.WriteLine("spawning a peasants");
-                //peasant.Place(x, y, Game.World.GetGroundLevel(x, y));
                 BanditAttack();
             }
             return ge;
@@ -187,6 +134,9 @@ namespace Hecatomb
                     x0 = Game.World.Random.Next(Game.World.Width - 75) + 75;
                 }
             }
+            // for repeatable testing
+            x0 = 12;
+            y0 = 12;
             EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
             for (int i = 0; i < 3; i++)
             {
