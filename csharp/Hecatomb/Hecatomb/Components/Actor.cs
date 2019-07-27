@@ -26,6 +26,7 @@ namespace Hecatomb
         public Teams Team;
         public bool Acted;
         public bool Asleep;
+
         public void CallString(string s)
         {
             Type thisType = this.GetType();
@@ -62,7 +63,7 @@ namespace Hecatomb
                 Spend();
                 return;
             }
-            if (Entity==null || !Entity.Unbox().Spawned || !Entity.Placed)
+            if (Entity == null || !Entity.Unbox().Spawned || !Entity.Placed)
             {
                 return;
             }
@@ -77,21 +78,21 @@ namespace Hecatomb
             if (!Acted)
                 Wander();
         }
-		
-		public void Patrol(int x1, int y1, int z1)
-		{
+
+        public void Patrol(int x1, int y1, int z1)
+        {
             var (x, y, z) = Entity;
-			int d = (int) Tiles.QuickDistance(x, y, z, x1, y1, z1);
-			if (d>=5)
-			{	
-				WalkToward(x1, y1, z1);
-			} else if (d<=2) 
-			{
-				WalkAway(x1, y1, z1);
-			} else {
-				WalkRandom();
-			}
-		}
+            int d = (int)Tiles.QuickDistance(x, y, z, x1, y1, z1);
+            if (d >= 5)
+            {
+                WalkToward(x1, y1, z1);
+            } else if (d <= 2)
+            {
+                WalkAway(x1, y1, z1);
+            } else {
+                WalkRandom();
+            }
+        }
 
         public void Wander() => WalkRandom();
 
@@ -118,12 +119,12 @@ namespace Hecatomb
             WalkToward(t.X, t.Y, t.Z, useLast: useLast, targetEntity: t);
         }
 
-		public void WalkToward(int x1, int y1, int z1, bool useLast=false, TileEntity targetEntity=null)
-		{
+        public void WalkToward(int x1, int y1, int z1, bool useLast = false, TileEntity targetEntity = null)
+        {
             var (x, y, z) = Entity;
             Movement m = Entity.GetComponent<Movement>();
             LinkedList<Coord> path;
-            if (targetEntity==null)
+            if (targetEntity == null)
             {
                 path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast, movable: m.CouldMoveIgnoreDoors, standable: m.CanStandIgnoreDoors);
             }
@@ -131,13 +132,13 @@ namespace Hecatomb
             {
                 path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMoveIgnoreDoors, standable: m.CanStandIgnoreDoors);
             }
-			Coord? target = (path.Count>0) ? path.First.Value : (Coord?) null;
-			if (target==null)
-			{
-				WalkRandom();
-			} else {
+            Coord? target = (path.Count > 0) ? path.First.Value : (Coord?)null;
+            if (target == null)
+            {
+                WalkRandom();
+            } else {
                 // this way of doing it makes it hard to attack things that are in the way...
-                if (Target?.Entity is Creature && IsHostile((Creature) Target.Entity))
+                if (Target?.Entity is Creature && IsHostile((Creature)Target.Entity))
                 {
                     if (m.CanTouch(Target.X, Target.Y, Target.Z))
                     //if (Tiles.QuickDistance(Entity, Target)<=1)
@@ -145,101 +146,101 @@ namespace Hecatomb
                         Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Creature);
                     }
                 }
-				Coord t = (Coord) target;
+                Coord t = (Coord)target;
                 if (!Acted)
                 {
                     TryStepTo(t.X, t.Y, t.Z);
                 }
-				if (!Acted)
-				{
-					WalkRandom();
-				}
-			}
+                if (!Acted)
+                {
+                    WalkRandom();
+                }
+            }
             if (!Acted)
             {
                 WalkRandom();
             }
-		}
+        }
 
 
 
 
-		public void WalkAway(int x1, int y1, int z1)
-		{
+        public void WalkAway(int x1, int y1, int z1)
+        {
             var (x0, y0, z0) = Entity;
-			List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
-			if (line.Count<=1)
-			{
-				WalkRandom();
-			} else
-			{
-				Movement m = Entity.GetComponent<Movement>();
-				int x = line[0].X-x0;
-				int y = line[0].Y-y0;
-				int z = z0;
-				bool acted = TryStepTo(x, y, z);
-				if (!acted)
-				{
-					WalkRandom();
-				}
-			}
-		}
-		public void WalkRandom()
-		{
-			int r = Game.World.Random.Next(4);
-			Coord d = Movement.Directions4[r];
-			int x1 = Entity.X + d.X;
-			int y1 = Entity.Y + d.Y;
-			int z1 = Entity.Z + d.Z;
-			bool acted = TryStepTo(x1, y1, z1);
-			if (!acted)
-			{
-				Wait();
-			}
-		}
-		
-		
-		public bool TryStepTo(int x1, int y1, int z1)
-		{
-			Movement m = Entity.GetComponent<Movement>();
-			// okay what's up here?
-			int x = x1-Entity.X;
-			int y = y1-Entity.Y;
-			int z = z1-Entity.Z;
-			Coord c = new Coord(x, y, z);
-			Creature cr;
-			// we want to loop through the base
-			Coord[][] fallbacks;
-			// use fallbacks for ordinary, directional movement
-			if (Movement.Fallbacks.ContainsKey(c))
-			{
-				fallbacks = Movement.Fallbacks[c];
-			}
-			else
-			{
-				// otherwise mock up an array with only one row
-				fallbacks = new Coord[][] {new Coord[] {c}};
-			}
-			foreach (var row in fallbacks)
-			{
-				foreach (Coord dir in row)
-				{
-					x = dir.X+Entity.X;
-					y = dir.Y+Entity.Y;
-					z = dir.Z+Entity.Z;
-					cr = Creatures[x, y, z];
+            List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
+            if (line.Count <= 1)
+            {
+                WalkRandom();
+            } else
+            {
+                Movement m = Entity.GetComponent<Movement>();
+                int x = line[0].X - x0;
+                int y = line[0].Y - y0;
+                int z = z0;
+                bool acted = TryStepTo(x, y, z);
+                if (!acted)
+                {
+                    WalkRandom();
+                }
+            }
+        }
+        public void WalkRandom()
+        {
+            int r = Game.World.Random.Next(4);
+            Coord d = Movement.Directions4[r];
+            int x1 = Entity.X + d.X;
+            int y1 = Entity.Y + d.Y;
+            int z1 = Entity.Z + d.Z;
+            bool acted = TryStepTo(x1, y1, z1);
+            if (!acted)
+            {
+                Wait();
+            }
+        }
+
+
+        public bool TryStepTo(int x1, int y1, int z1)
+        {
+            Movement m = Entity.GetComponent<Movement>();
+            // okay what's up here?
+            int x = x1 - Entity.X;
+            int y = y1 - Entity.Y;
+            int z = z1 - Entity.Z;
+            Coord c = new Coord(x, y, z);
+            Creature cr;
+            // we want to loop through the base
+            Coord[][] fallbacks;
+            // use fallbacks for ordinary, directional movement
+            if (Movement.Fallbacks.ContainsKey(c))
+            {
+                fallbacks = Movement.Fallbacks[c];
+            }
+            else
+            {
+                // otherwise mock up an array with only one row
+                fallbacks = new Coord[][] { new Coord[] { c } };
+            }
+            foreach (var row in fallbacks)
+            {
+                foreach (Coord dir in row)
+                {
+                    x = dir.X + Entity.X;
+                    y = dir.Y + Entity.Y;
+                    z = dir.Z + Entity.Z;
+                    cr = Creatures[x, y, z];
                     // so...this logic is weird...they will route around hostile creatures rather than attacking them
-					if (m.CanPass(x, y, z))
-					{
-						m.StepTo(x, y, z);
-						return true;
-					}
+                    if (m.CanPass(x, y, z))
+                    {
+                        m.StepTo(x, y, z);
+                        return true;
+                    }
                     // it *will* displace friendly creatures....
-					else if (cr!=null && m.CanMove(x, y, z))
-					{
+                    else if (cr != null && m.CanMove(x, y, z))
+                    {
                         if (IsFriendly(cr) && cr != Player)
-                        { 
-						    Minion minion = cr.TryComponent<Minion>();
+                        {
+                            Minion minion = cr.TryComponent<Minion>();
                             if (minion != null && minion.Task != null)
                             {
                                 Movement move = cr.GetComponent<Movement>();
@@ -282,9 +283,9 @@ namespace Hecatomb
                             Attacker a = Entity.GetComponent<Attacker>();
                             a.Attack(cr);
                         }
-						
-					}
-                    else if (Features[x, y, z]!=null && IsHostile(Player))
+
+                    }
+                    else if (Features[x, y, z] != null && IsHostile(Player))
                     {
                         // Do I need to check CanTouch here?
                         Feature f = Features[x, y, z];
@@ -294,19 +295,19 @@ namespace Hecatomb
                             a.Attack(f);
                         }
                     }
-				}
-			}
-			return false;
-		}
+                }
+            }
+            return false;
+        }
 
         public void Wait() => Spend(ActionPoints);
-		
-		public void Alert()
-		{
+
+        public void Alert()
+        {
             var (x, y, z) = Entity;
             // so...back in the JS version, this totally flogged performance.
             // for now, let's try making it so neutral creatures don't alert to enemies
-            if (Target==null && Team!=null && Team!=Teams.Neutral)
+            if (Target == null && Team != null && Team != Teams.Neutral)
             {
                 //List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
                 //enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
@@ -317,13 +318,14 @@ namespace Hecatomb
                 //Target = enemies[0];
                 //}
                 //Target = GetState<TeamHandler>().GetClosestEnemy(Entity.Unbox() as Creature);
-                TileEntity te = GetState<TeamHandler>().GetClosestEnemy((Creature)Entity.Unbox());
+                //TileEntity te = GetState<TeamHandler>().GetClosestEnemy((Creature)Entity.Unbox());
+                TileEntity te = Entity.GetComponent<Senses>().GetVisibleEnemy();
                 if (te != null)
                 {
                     Target = te;
                 }
             }
-            if (Target==Entity)
+            if (Target == Entity)
             {
                 Debug.WriteLine("Somehow ended up targeting itself.");
             }
@@ -352,7 +354,7 @@ namespace Hecatomb
                 Defender d = fr.TryComponent<Defender>();
 
                 // this is poorly thought out
-                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null && d!=null)
+                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null && d != null)
                 {
                     Debug.WriteLine("Attacking a door");
                     a.Attack(fr);
@@ -363,9 +365,8 @@ namespace Hecatomb
                 }
             }
         }
-		
 
-		public override void InterpretJSON(string json)
+        public override void InterpretJSON(string json)
 		{
 			JObject obj = JObject.Parse(json);
             if (obj["Team"] != null)

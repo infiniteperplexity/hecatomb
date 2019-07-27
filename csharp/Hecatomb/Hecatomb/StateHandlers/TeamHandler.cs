@@ -99,7 +99,7 @@ namespace Hecatomb
             return HostilityMatrix[(cr1.GetComponent<Actor>().Team, t2)];
         }
 
-
+        // got rid of this sucker and used a Shadowcasting approach instead
         public Creature GetClosestEnemy(Creature cr, int minDist = 12)
         {
             Actor actor = cr.GetComponent<Actor>();
