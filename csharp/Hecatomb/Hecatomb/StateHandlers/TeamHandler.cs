@@ -103,6 +103,7 @@ namespace Hecatomb
         public Creature GetClosestEnemy(Creature cr, int minDist = 12)
         {
             Actor actor = cr.GetComponent<Actor>();
+            Movement move = cr.GetComponent<Movement>();
             Actor a;
             double dist = minDist;
             double d;
@@ -116,8 +117,11 @@ namespace Hecatomb
                     d = Tiles.QuickDistance(cr.X, cr.Y, cr.Z, c.X, c.Y, c.Z);
                     if (d < dist && d < minDist)
                     {
-                        enemy = c;
-                        dist = d;
+                        if (move.CanReach(c))
+                        {
+                            enemy = c;
+                            dist = d;
+                        }
                     }
                 }
             }

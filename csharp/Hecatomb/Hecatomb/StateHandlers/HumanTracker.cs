@@ -96,8 +96,8 @@ namespace Hecatomb
                 return ge;
             }
             TurnBeginEvent te = (TurnBeginEvent)ge;
-            if (te.Turn == 5)
-            //if (te.Turn==1000)
+            //if (te.Turn == 5)
+            if (te.Turn==1000)
             {
                 BanditAttack();
             }
