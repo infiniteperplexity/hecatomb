@@ -59,7 +59,7 @@ namespace Hecatomb
             CurrentText = "";
             Header = header;
             MaxTextLength = 25;
-            Throttle = 500;
+            Throttle = 250;
             var Commands = Game.Commands;
             KeyMap[Keys.Escape] = Reset;
             KeyMap[Keys.Enter] = ()=> { submit(CurrentText); };

@@ -274,25 +274,44 @@ namespace Hecatomb
 
             OldControls = this;
         	OldMouse = m;
+			Keys[] oldKeys = OldKeyboard.GetPressedKeys();
         	OldKeyboard = k;
         	InputBegan = now;
         	Keys[] keys = k.GetPressedKeys();
         	bool gotKey = false;
-        	foreach (Keys key in keys)
-        	{
-                if (UseKeyFallback)
-                {
-                    HandleKeyFallback();
-                    gotKey = true;
-                    break;
-                }
-        		if (KeyMap.ContainsKey(key))
-        		{
-        			HandleKeyDown(key);
-        			gotKey = true;
-        			break;
-        		}
-        	}
+			// a splash screen escapes on any key...this may not be a good way to handle it
+			if (UseKeyFallback)
+			{
+				HandleKeyFallback();
+				gotKey = true;
+			}
+			// prioritize newly pressed keys
+			if (!gotKey)
+			{
+				foreach (Keys key in keys)
+				{
+					if (KeyMap.ContainsKey(key) && !Array.Exists(oldKeys, ky => ky==key))
+					{
+						HandleKeyDown(key);
+						gotKey = true;
+						break;
+					}
+				}
+			}
+			// then check already-pressed keys
+			if (!gotKey)
+			{
+				foreach (Keys key in keys)
+				{
+					if (KeyMap.ContainsKey(key))
+					{
+						HandleKeyDown(key);
+						gotKey = true;
+						break;
+					}
+				}
+			}
+			
         	if(!gotKey && m.LeftButton == ButtonState.Pressed)
         	{
         		HandleClick(m.X, m.Y);

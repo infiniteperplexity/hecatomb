@@ -6,7 +6,7 @@
 - Should I rethink what happens in the menu panel on splash screens?
 - Need confirmation for saved games
 - The background color for severe wounds can clash with the foreground color.
-- TextEntry keystroke responsiveness feels horrible.
+* TextEntry keystroke responsiveness feels horrible.
 - Maybe vampire bats should be cave shrikes or something.
 - Additional spacebar selection clicks register too quickly
 * should be able to overlay partial construct using same building (fixed I think)
@@ -16,7 +16,8 @@
 - Zombies somehow can get stuck highlighted, so can structures.
 - Easy way to count zombies?
 - Call things "rotten" when they are decaying?
-
+- Can we cancel haultasks to allow construction?
+- Got the "managed to avoid spending action points" error during a fight...maybe something got killed partway through?
 
 Gameplay issues:
 * dropped items should get unclaimed...is that an issue?  I don't think it is, I think we unclaim upon pickup.
@@ -56,17 +57,20 @@ Gameplay issues:
 * Spiders not moving...solved, that was leftover test code
 - Should add spider silk and a use thereof
 - Need a way to cycle trades
-
+- There's a whole lot of flint now
+- Do we describe decay on zombies?
+- Do multiple layers of doors prevent sieges?
+- Should almost certainly guarantee visible trees.
 
 Performance Issues:
 * Don't need to serialize hostility matrix
 * The VaultHandler takes up about a sixth of the line count, and has many redundant messages.
 - We serialize a lot of unnecessary stuff in general.
 * Is it that bandits at long distance flog performance?
-- Arguably should use iteration rather than recursion for NextActor.
+* Arguably should use iteration rather than recursion for NextActor.
 - WalkToward should probably use cache.
 - For some reason, setting a TileEntityField = null causes an error; I thought I fixed that.
-- So...spiders awake still slams performance.
+* So...spiders awake still slams performance.
 
 Other issue
 
