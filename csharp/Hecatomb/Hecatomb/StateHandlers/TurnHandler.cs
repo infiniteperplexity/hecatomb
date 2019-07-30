@@ -191,21 +191,28 @@ namespace Hecatomb
                 }
                 else
                 {
-                    int checkPoints = actor.CurrentPoints;
-                    if (checkPoints > 0)
+                    if (actor.Spawned)
                     {
-                        Game.World.Events.Publish(new ActEvent() { Actor = actor, Entity = actor.Entity });
-                        actor.Act();
-                        if (actor.CurrentPoints == checkPoints)
+                        int checkPoints = actor.CurrentPoints;
+                        if (checkPoints > 0)
                         {
-                            throw new InvalidOperationException(String.Format("{0} somehow avoided using action points.", actor.Entity));
+                            Game.World.Events.Publish(new ActEvent() { Actor = actor, Entity = actor.Entity });
+                            actor.Act();
+                            if (actor.CurrentPoints == checkPoints)
+                            {
+                                throw new InvalidOperationException(String.Format("{0} somehow avoided using action points.", actor.Entity));
+                            }
+                        }
+                        if (actor.CurrentPoints > 0)
+                        {
+                            Debug.Print("Replacing {0} on the queue.", actor.Entity.Entity.Describe());
+                            actor.Acted = false;
+                            Deck.Enqueue(actor);
                         }
                     }
-                    if (actor.CurrentPoints > 0)
+                    else
                     {
-                        Debug.Print("Replacing {0} on the queue.", actor.Entity.Entity.Describe());
-                        actor.Acted = false;
-                        Deck.Enqueue(actor);
+                        Debug.WriteLine("Removing despawned actor from queue");
                     }
                 }
             }

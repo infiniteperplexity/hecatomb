@@ -17,7 +17,10 @@
 - Easy way to count zombies?
 - Call things "rotten" when they are decaying?
 - Can we cancel haultasks to allow construction?
-- Got the "managed to avoid spending action points" error during a fight...maybe something got killed partway through?
+* Got the "managed to avoid spending action points" error during a fight...maybe something got killed partway through?
+- Z is both diagonal key and also spells
+- Can't "build" to unassign digging in walls, only floors
+- Should "wait" recenter on the player, or on the selected creature?
 
 Gameplay issues:
 * dropped items should get unclaimed...is that an issue?  I don't think it is, I think we unclaim upon pickup.
@@ -38,7 +41,7 @@ Gameplay issues:
 * Bandits sometimes slam performance...I think this was solved by filling vaults on-the-fly
 - Want to add in some LongCreatures somewhere.
 * too hard to find flint in early game - arguably fixed
-- crashed with OutOfMemory error when saving
+- crashed with OutOfMemory error when saving (did we fix this?)
 - The abandoned tasks appear to occur when the Minion loses its task but the task still has the Minion.
 	- Are there times when we assign a task and it overwrites another?
 	- Should I look for every occurrence of task = null or unassign?  or overwriting?
@@ -61,6 +64,10 @@ Gameplay issues:
 - Do we describe decay on zombies?
 - Do multiple layers of doors prevent sieges?
 - Should almost certainly guarantee visible trees.
+- Maybe I should manually handle the rotting zombie color gradient	
+- N of zombies seems like something maybe we should show prominently.
+- Still sometimes takes forever to find flint, and sometimes there's so much!
+- Do a sweep of all task creation, to see if we missed an double-placement issues.
 
 Performance Issues:
 * Don't need to serialize hostility matrix
@@ -71,6 +78,7 @@ Performance Issues:
 - WalkToward should probably use cache.
 - For some reason, setting a TileEntityField = null causes an error; I thought I fixed that.
 * So...spiders awake still slams performance.
+- Redraw goes very slowly when we're looking at a screen that has ingredients
 
 Other issue
 

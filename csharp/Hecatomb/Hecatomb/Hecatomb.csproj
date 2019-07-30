@@ -237,6 +237,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="agenda.txt" />
     <Content Include="Content\necromancer.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

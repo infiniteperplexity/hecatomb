@@ -79,14 +79,19 @@ namespace Hecatomb
 
         public override void SelectTile(Coord c)
         {
-            
-            // i think validity has been guaranteed at this point?
-            
             var structures = Structure.ListStructures().Where(s=>s is Slaughterhouse).ToList();
             var (x, y, z) = structures[0];
+            Item corpse = Items[c];
+            if (corpse == null || corpse.Resource != "Corpse")
+            {
+                return;
+            }
+            if (Tasks[x, y, z] != null)
+            {
+                Tasks[x, y, z].Cancel();
+            }
             ButcherTask task = Spawn<ButcherTask>();
             task.Place(c.X, c.Y, c.Z);
-            Item corpse = Items[c];
             task.Claims[corpse.EID] = 1;
             corpse.Claimed = 1;
 

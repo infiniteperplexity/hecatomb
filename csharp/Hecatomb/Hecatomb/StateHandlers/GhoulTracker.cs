@@ -40,7 +40,7 @@ namespace Hecatomb
                     int y0 = Game.World.Height / 2;
                     int z0 = Game.World.GetGroundLevel(x0, y0);
                     // only if you're far from the center
-                    if (Tiles.QuickDistance(x, y, z, x0, y0, z0)>=20)
+                    if (Tiles.QuickDistance(x, y, z, x0, y0, z0)>=25)
                     {
                         foreach (Feature f in Game.World.Features.ToList())
                         {
