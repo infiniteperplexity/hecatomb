@@ -19,6 +19,7 @@ namespace Hecatomb
             Priority = 4;
             Ingredients["Corpse"] = 1;
             PrereqStructures = new List<string>() { "Slaughterhouse" };
+            BG = "pink";
         }
 
         public override string GetDisplayName()

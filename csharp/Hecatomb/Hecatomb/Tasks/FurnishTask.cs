@@ -75,6 +75,7 @@ namespace Hecatomb
             Priority = 4;
             Fixtures = new string[] {"Door", "TiledFloor", "Ramp", "SpearTrap" };
             PrereqStructures = new List<string> { "Workshop" };
+            BG = "yellow";
 		}
 			
 		public override void Finish()
@@ -98,34 +99,6 @@ namespace Hecatomb
 				Game.Controls.Set(new SelectTileControls(this));
 			}
 		}
-
-
-
-  //      public override ColoredText ListOnMenu()
-		//{
-            
-		//	if (Makes!=null)
-		//	{
-  //              var fixture = Hecatomb.Entity.Mock<Fixture>();
-  //              fixture.InterpretJSON(EntityType.Types[Makes].Components["Fixture"]);
-  //              if (fixture.Ingredients.Count == 0)
-  //              {
-  //                  return Makes;
-  //              }
-  //              else if (Game.World.Player.GetComponent<Movement>().CanFindResources(fixture.Ingredients))
-  //              {
-  //                  return (Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
-  //              }
-  //              else
-  //              {
-  //                  return ("{gray}" + Makes + " ($: " + Resource.Format(fixture.Ingredients) + ")");
-  //              }
-		//	}
-		//	else
-		//	{
-		//		return base.ListOnMenu();
-		//	}
-		//}
 		
 		public override void TileHover(Coord c)
 		{

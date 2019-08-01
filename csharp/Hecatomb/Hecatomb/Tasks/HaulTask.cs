@@ -22,6 +22,7 @@ namespace Hecatomb
             MenuName = "stockpile goods";
             WorkRange = 0;
             Priority = 10;
+            BG = "white";
         }
 
         public override string GetDisplayName()

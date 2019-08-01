@@ -15,6 +15,7 @@ namespace Hecatomb
         {
             MenuName = "forbid area";
             PrereqStructures = new List<string>() { "GuardPost" };
+            BG = "red";
         }
 
         public override bool ValidTile(Coord c)

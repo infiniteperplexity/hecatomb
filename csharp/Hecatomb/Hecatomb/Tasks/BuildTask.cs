@@ -23,6 +23,7 @@ namespace Hecatomb
 			{
 				{"Rock", 1}
 			};
+            BG = "purple";
 		}
 
         public override string GetDisplayName()
@@ -182,7 +183,9 @@ namespace Hecatomb
                 // filling in a prior excavation
                 else if (priority == 3 && f?.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
                 {
-                    Entity.Spawn<HarvestTask>().Place(x, y, z);
+                    HarvestTask ht = Entity.Spawn<HarvestTask>();
+                    ht.Place(x, y, z);
+                    ht.Ingredients = new Dictionary<string, int>() { { "Rock", 1 } };
                 }
                 else if ((priority == 2 && (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile))
                       || (priority == 1 && t == Terrain.FloorTile || t == Terrain.UpSlopeTile))
@@ -209,18 +212,18 @@ namespace Hecatomb
             {
                 return false;
             }
-            // can't build on a wall tile
-            if (Game.World.Terrains[c.X, c.Y, c.Z] == Terrain.WallTile)
-            {
-                return false;
-            }
             // can't build on most features
-            else if (f != null)
+            if (f != null)
             {
                 if (f.TryComponent<IncompleteFixtureComponent>() != null && (f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation" || f.GetComponent<IncompleteFixtureComponent>().Makes == "Construction"))
                 {
                     return true;
                 }
+                return false;
+            }
+            // can't build on a wall tile
+            if (Game.World.Terrains[c.X, c.Y, c.Z] == Terrain.WallTile)
+            {
                 return false;
             }
             return true;

@@ -23,6 +23,7 @@ namespace Hecatomb
         static ControlContext OldControls;
         static DateTime InputBegan;
         public static Highlight Cursor = new Highlight("cyan");
+        public static TileEntity Selection = null;
         public static bool ControlDown = false;
         public static bool ShiftDown = false;
         public static bool MovingCamera;

@@ -11,13 +11,14 @@ namespace Hecatomb
 {
     using static HecatombAliases;
     /// <summary>
-    /// Description of UndesignateTask.
+    /// Stupid name, this actually means declare ownership
     /// </summary>
     public class ClaimTask : Task, ISelectsZone, IMenuListable
     {
         public ClaimTask() : base()
         {
             MenuName = "claim items";
+            BG = "pink";
         }
 
         public override void ChooseFromMenu()

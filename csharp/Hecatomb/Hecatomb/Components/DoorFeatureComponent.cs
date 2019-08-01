@@ -11,9 +11,10 @@ namespace Hecatomb
     {
         public void BuildMenu(MenuChoiceControls menu)
         {
+            // *** Do we still use this?
             menu.Header = "Door";
             menu.Choices = new List<IMenuListable>();
-            Entity.Unbox().Highlight = "lime green";
+            //Entity.Unbox().Highlight = "lime green";
         }
 
         public void FinishMenu(MenuChoiceControls menu)
@@ -32,7 +33,7 @@ namespace Hecatomb
             menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] =
                 () =>
                 {
-                    Entity.Unbox().Highlight = null;
+                    ControlContext.Selection = null;
                     Game.Controls.Reset();
                 };
         }

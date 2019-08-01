@@ -412,6 +412,14 @@ namespace Hecatomb
             if (tile.Fallable && Flies == false) {
                 return false;
             }
+            if (CachedActor.Team == Teams.Friendly)
+            {
+                Task t = Game.World.Tasks[x1, y1, z1];
+                if (t != null && t is ForbidTask)
+                {
+                    return false;
+                }
+            }
             if (ignoreDoors == false && CachedActor.Team != Teams.Friendly)
             {
                 // doors block non-allied creatures

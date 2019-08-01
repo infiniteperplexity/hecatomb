@@ -17,6 +17,7 @@ namespace Hecatomb
             MenuName = "declare hostile";
             // should a guard post be required to declare things hostile?
             //PrereqStructures = new List<string>() { "GuardPost" };
+            BG = "red";
         }
 
         public override void ChooseFromMenu()

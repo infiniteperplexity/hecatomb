@@ -21,18 +21,26 @@ namespace Hecatomb
             Labor = 50;
             LaborCost = 50;
             Trading = new Dictionary<string, int>();
+            BG = "#FFFF88";
 
         }
         public override string GetDisplayName()
         {
             return $"trading for {Resource.Format(Trading) }";
         }
+
+        private ColoredText cachedMenuListing;
         public override ColoredText ListOnMenu()
         {
+            if (cachedMenuListing != null)
+            {
+                return cachedMenuListing;
+            }
             // should never happen
             if (Ingredients.Count == 0)
             {
-                return $"Trade for {Resource.Format(Trading)}";
+                cachedMenuListing = $"Trade for {Resource.Format(Trading)}";
+                return cachedMenuListing;
             }
             else
             {
@@ -41,7 +49,8 @@ namespace Hecatomb
                 {
                     available = true;
                 }
-                return (((available) ? "{white}" : "{gray}") + Resource.Format(Ingredients) + " for " + " ($: " + Resource.Format(Trading) + ")");
+                cachedMenuListing = (((available) ? "{white}" : "{gray}") + Resource.Format(Ingredients) + " for " + " ($: " + Resource.Format(Trading) + ")");
+                return cachedMenuListing;
             }
         }
 

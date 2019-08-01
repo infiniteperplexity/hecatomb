@@ -16,6 +16,7 @@ namespace Hecatomb
         public HarvestTask() : base()
         {
             MenuName = "dig or harvest";
+            BG = "orange";
         }
 
         public override string GetDisplayName()
@@ -46,11 +47,16 @@ namespace Hecatomb
             {
                 return false;
             }
-            if (Terrains[c.X, c.Y, c.Z] == Terrain.FloorTile)
+            if (Features[c] == null)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
+            //if (Terrains[c.X, c.Y, c.Z] == Terrain.FloorTile)
+            //{
+            //    return true;
+            //}
+            //return false;
         }
 
         public override void Start()

@@ -43,10 +43,11 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>();
             Claims = new Dictionary<int,int>();
             PrereqStructures = new List<string>();
+            BG = "red";
         }
 
 
-        public string GetHoverName()
+        public virtual string GetHoverName()
         {
             if (Ingredients.Count == 0)
             {
@@ -489,15 +490,22 @@ namespace Hecatomb
         }
 
 
+        private ColoredText cachedMenuListing;
         public virtual ColoredText ListOnMenu()
         {
+            if (cachedMenuListing != null)
+            {
+                return cachedMenuListing;
+            }
             if (Ingredients.Count == 0)
             {
-                return MenuName;
+                cachedMenuListing = MenuName;
+                return cachedMenuListing;
             }
             else if (Player.GetComponent<Movement>().CanFindResources(Ingredients))
             {
-                return (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+                cachedMenuListing = (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+                return cachedMenuListing;
             }
             string ingredients = "{gray}" + MenuName + " ($: ";
             var keys = Ingredients.Keys.ToList();
@@ -518,7 +526,13 @@ namespace Hecatomb
                 }
             }
             ingredients += "{gray})";
-            return ingredients;
+            cachedMenuListing = ingredients;
+            return cachedMenuListing;
+        }
+
+        public virtual string GetHighlightColor()
+        {
+            return BG;
         }
     }
 }

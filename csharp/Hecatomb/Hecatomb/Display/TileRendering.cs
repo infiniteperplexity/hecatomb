@@ -264,7 +264,7 @@ namespace Hecatomb
             // this should event
             else if (task != null)
             {
-                return (task.BG ?? "orange");
+                return (task.BG ?? task.BG);
             }
             else if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
             {
@@ -274,19 +274,17 @@ namespace Hecatomb
             //{
             //    return "black";
             //}
-            else if (cr != null && (cr.GetCalculatedBG() != null || cr.Highlight != null))
-            //else if (cr != null && (cr.BG != null || cr.Highlight != null))
+            else if (cr != null && (cr.GetCalculatedBG() != null))
             {
-                //return cr.Highlight ?? cr.BG;
-                return cr.Highlight ?? cr.GetCalculatedBG();
+                return cr.GetCalculatedBG();
             }
             else if (it != null && it.Claimed > 0)
             {
                 return "white";
             }
-            else if (f != null && (f.GetCalculatedBG() != null || f.Highlight != null))
+            else if (f != null && (f.GetCalculatedBG() != null))
             {
-                return f.Highlight ?? f.GetCalculatedBG();
+                return f.GetCalculatedBG();
             }
             else if (it != null && res.BG != null)
             {

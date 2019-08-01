@@ -20,7 +20,8 @@ namespace Hecatomb
 	{
 		void SelectTile(Coord c);
 		void TileHover(Coord c);
-	}
+        string GetHighlightColor();
+    }
 		
 	public class SelectTileControls : CameraControls
 	{

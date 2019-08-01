@@ -158,6 +158,7 @@ namespace Hecatomb
         public ZombieEmergeTask() : base()
         {
             Name = "zombie emerging";
+            BG = "orange";
         }
         public override void Act()
         {

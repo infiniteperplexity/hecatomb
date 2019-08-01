@@ -31,33 +31,6 @@ namespace Hecatomb
 		public int X {get; private set;}
 		public int Y {get; private set;}
 		public int Z {get; private set;}
-        protected string highlight;
-        [JsonIgnore]
-        public string Highlight
-        {
-            get
-            {
-                if (!Blinking)
-                {
-                    return highlight;
-                }
-                else if (DateTime.Now.Millisecond >= 500)
-                {
-                    return highlight;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set
-            {
-                highlight = value;
-            }
-        }
-
-        [JsonIgnore]
-        public bool Blinking;
 		[JsonIgnore] public bool Placed {get; private set;}
 
         

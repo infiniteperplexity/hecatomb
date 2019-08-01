@@ -17,6 +17,7 @@ namespace Hecatomb
 		{
 			MenuName = "dig, harvest, or dismantle";
             Makes = "Excavation";
+            BG = "orange";
 		}
 
         public override string GetDisplayName()
@@ -393,11 +394,23 @@ namespace Hecatomb
             {
                 return false;
             }
-            int hardness = Game.World.Covers[c.X, c.Y, c.Z].Hardness;
+            // **** We need a more sophisticated hardness check
+
+            Terrain tn = Game.World.Terrains[c.X, c.Y, c.Z];
+            int hardness;
+            if (tn == Terrain.WallTile || tn == Terrain.UpSlopeTile)
+            {
+                hardness = Game.World.Covers[c.X, c.Y, c.Z].Hardness;
+            }
+            else
+            {
+                hardness = Game.World.Covers[c.X, c.Y, c.Z - 1].Hardness;
+            }
             if (Game.Options.IgnoreHardness || Game.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
             {
                 return true;
             }
+            Status.PushMessage("Assigned material is too hard to dig through.");
             return false;
         }
 	}

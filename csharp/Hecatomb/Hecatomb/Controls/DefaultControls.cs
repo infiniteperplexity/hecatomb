@@ -31,7 +31,7 @@ namespace Hecatomb
             KeyMap[Keys.D] = Commands.MoveEastCommand;
             KeyMap[Keys.E] = Commands.MoveNorthEastCommand;
             KeyMap[Keys.Q] = Commands.MoveNorthWestCommand;
-            //KeyMap[Keys.Z] = Commands.MoveSouthWestCommand;
+            KeyMap[Keys.X] = Commands.MoveSouthWestCommand;
             KeyMap[Keys.C] = Commands.MoveSouthEastCommand;
             KeyMap[Keys.OemComma] = Commands.MoveUpCommand;
 			KeyMap[Keys.OemPeriod] = Commands.MoveDownCommand;

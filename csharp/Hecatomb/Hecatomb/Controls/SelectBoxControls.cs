@@ -21,7 +21,8 @@ namespace Hecatomb
 		int BoxHeight {get; set;}
 		void SelectBox(Coord c, List<Coord> squares);
 		void BoxHover(Coord c, List<Coord> squares);
-	}
+        string GetHighlightColor();
+    }
 		
 	public class SelectBoxControls : CameraControls
 	{
@@ -68,7 +69,7 @@ namespace Hecatomb
 			foreach (Coord s in Squares)
 			{
 				Game.MainPanel.DirtifyTile(s);
-				Highlight h = new Highlight("orange");
+				Highlight h = new Highlight(Selector.GetHighlightColor());
 				h.Place(s.X, s.Y, s.Z);
 				Highlights.Add(h);
 			}

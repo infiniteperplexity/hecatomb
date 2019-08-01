@@ -15,6 +15,7 @@ namespace Hecatomb
         {
             MenuName = "patrol area";
             PrereqStructures = new List<string>() { "GuardPost" };
+            BG = "#009999";
         }
 
         public override void ChooseFromMenu()

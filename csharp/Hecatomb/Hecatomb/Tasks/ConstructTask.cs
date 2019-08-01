@@ -87,6 +87,7 @@ namespace Hecatomb
             Priority = 4;
             LaborCost = 5;
             Labor = 5;
+            BG = "yellow";
 		}
 
         public override string GetDisplayName()

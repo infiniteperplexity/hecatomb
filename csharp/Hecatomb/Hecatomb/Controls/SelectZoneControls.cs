@@ -21,6 +21,7 @@ namespace Hecatomb
 		void SelectZone(List<Coord> squares);
 		void TileHover(Coord c);
 		void TileHover(Coord c, List<Coord> squares);
+        string GetHighlightColor();
 	}
 	public class SelectZoneControls : CameraControls
 	{
@@ -93,7 +94,7 @@ namespace Hecatomb
 					Coord s = new Coord(x, y, z);
 					Squares.Add(s);
 					Game.MainPanel.DirtifyTile(s);
-					Highlight h = new Highlight("orange");
+					Highlight h = new Highlight(Selector.GetHighlightColor());
 					h.Place(s.X, s.Y, s.Z);
 					Highlights.Add(h);
 				}

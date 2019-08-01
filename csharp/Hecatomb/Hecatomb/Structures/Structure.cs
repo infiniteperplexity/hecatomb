@@ -237,7 +237,7 @@ namespace Hecatomb
         {
             // might want to format htis guy a bit...like add coordinates?
             menu.Header = "Structure: " + Describe();
-            HighlightSquares();
+            ControlContext.Selection = this;
             if (Tasks[X, Y, Z] != null)
             {
                 // ideally this should have the option to cancel research
@@ -287,7 +287,7 @@ namespace Hecatomb
             menu.KeyMap[Keys.Escape] =
                 () =>
                 {
-                    Unhighlight();
+                    ControlContext.Selection = null;
                     Game.Controls.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextStructure;
@@ -374,27 +374,6 @@ namespace Hecatomb
                 }
             }
         }
-
-        public void HighlightSquares(string s)
-        {
-            foreach (Feature fr in Features)
-            {
-                fr.Highlight = s;
-            }
-        }
-
-        public void HighlightSquares()
-        {
-            HighlightSquares("lime green");
-        }
-        public void Unhighlight()
-        {
-            foreach (Feature fr in Features)
-            {
-                fr.Highlight = null;
-            }
-        }
-
 
         // check to see if all traces of this building have been wiped out
         public bool AtLeastPartiallyExists(TileEntity despawning)

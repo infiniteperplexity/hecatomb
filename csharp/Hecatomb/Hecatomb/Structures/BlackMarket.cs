@@ -139,7 +139,7 @@ namespace Hecatomb
         {
             // might want to format htis guy a bit...like add coordinates?
             menu.Header = "Structure: " + Describe();
-            HighlightSquares();
+            ControlContext.Selection = this;
             if (Game.World.Tasks[X, Y, Z] != null)
             {
                 // maybe give the option to cancel the trade?
@@ -185,7 +185,7 @@ namespace Hecatomb
             menu.KeyMap[Keys.Escape] =
                () =>
                {
-                    Unhighlight();
+                   ControlContext.Selection = null;
                     Game.Controls.Reset();
                 };
             menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};

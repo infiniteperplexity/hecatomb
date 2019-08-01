@@ -40,5 +40,18 @@ namespace Hecatomb
             base.Remove();
             Features[x0, y0, z0] = null;
         }
+
+        public override string GetCalculatedBG()
+        {
+            if (ControlContext.Selection is Structure)
+            {
+                var str = TryComponent<StructuralComponent>();
+                if (str != null && str.Structure.Unbox() == ControlContext.Selection)
+                {
+                    return "lime green";
+                }
+            }
+            return base.GetCalculatedBG();
+        }
     }
 }

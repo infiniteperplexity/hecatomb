@@ -79,7 +79,7 @@ namespace Hecatomb
             // might want to format htis guy a bit...like add coordinates?
             menu.Header = "Creature: " + Describe();
             menu.Choices = new List<IMenuListable>();
-            Highlight = "lime green";
+            ControlContext.Selection = this;
         }
         public void FinishMenu(MenuChoiceControls menu)
         {
@@ -111,7 +111,7 @@ namespace Hecatomb
             menu.KeyMap[Keys.Escape] =
                 () =>
                 {
-                    Highlight = null;
+                    ControlContext.Selection = null;
                     Game.Controls.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextMinion;
@@ -129,7 +129,7 @@ namespace Hecatomb
 
         public void NextMinion()
         {
-            Highlight = null;
+            ControlContext.Selection = null;
             var minions = GetState<TaskHandler>().Minions;
             if (this==Player)
             {

@@ -18,6 +18,7 @@ namespace Hecatomb
         public UnclaimTask() : base()
         {
             MenuName = "unclaim items";
+            BG = "pink";
         }
 
         public override void ChooseFromMenu()

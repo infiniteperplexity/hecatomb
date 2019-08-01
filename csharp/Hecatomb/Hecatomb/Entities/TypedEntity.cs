@@ -114,23 +114,75 @@ namespace Hecatomb
             return (T) c;
         }
 
+        public override string GetDisplayName()
+        {
+            var defend = TryComponent<Defender>();
+            int wounds = (defend == null) ? 0 : defend.Wounds;
+            var decay = TryComponent<Decaying>();
+            double rotten = (decay == null) ? 1.0 : decay.GetFraction(); 
+            if (wounds >= 6)
+            {
+                return ("severely wounded " + base.GetDisplayName());
+            }
+            else if (rotten < 0.25)
+            {
+                return ("severely rotted " + base.GetDisplayName());
+            }
+            else if (wounds >= 4)
+            {
+                return ("wounded " + base.GetDisplayName());
+            }
+            else if (rotten < 0.5)
+            {
+                return ("rotted " + base.GetDisplayName());
+            }
+            else if (wounds >= 2)
+            {
+                return ("slightly wounded " + base.GetDisplayName());
+            }
+            else if (rotten < 0.75)
+            {
+                return ("slightly rotted " + base.GetDisplayName());
+            }
+            return base.GetDisplayName();
+        }
 
         public string GetCalculatedFG()
         {
-            string rotten = "#774422";
+            //string rotten = "#774422";
             // unused
             if (TryComponent<Decaying>()!=null)
             {
-                Decaying d = GetComponent<Decaying>();
-                double decay = (double) d.Decay / (double) d.TotalDecay;
-                return Game.Colors.Interpolate(rotten, FG, decay);
+                var d = GetComponent<Decaying>();
+                double decay = d.GetFraction();
+                if (decay >= 0.75)
+                {
+                    return FG;
+                }
+                else if (decay >= 0.5)
+                {
+                    return d.SlightColor;
+                }
+                else if (decay >= 0.25)
+                {
+                    return d.MediumColor;
+                }
+                else
+                {
+                    return d.SevereColor;
+                }
+                //return Game.Colors.Interpolate(rotten, FG, decay);
             }
             return FG;
         }
 
 
-        public string GetCalculatedBG()
+        public virtual string GetCalculatedBG()
         {
+            if (ControlContext.Selection == this)
+            {
+                return "lime green";
+            }
             if (TryComponent<Defender>() != null)
             {
                 int Wounds = GetComponent<Defender>().Wounds;

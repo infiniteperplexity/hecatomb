@@ -18,6 +18,7 @@ namespace Hecatomb
 		public UndesignateTask() : base()
 		{
 			MenuName = "cancel tasks";
+            BG = "#6699EE";
 		}
 		
 		public override void ChooseFromMenu()

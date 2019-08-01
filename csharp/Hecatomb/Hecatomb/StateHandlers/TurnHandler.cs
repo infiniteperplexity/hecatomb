@@ -271,7 +271,16 @@ namespace Hecatomb
             Game.World.ValidateLighting();
             if (!(Controls is CameraControls))
             {
-                Game.Camera.Center(Player.X, Player.Y, Player.Z);
+                if (ControlContext.Selection is Creature)
+                {
+                    Creature c = (Creature)ControlContext.Selection;
+                    Game.Camera.Center(c.X, c.Y, c.Z);
+                }
+                else
+                {
+                    Game.Camera.Center(Player.X, Player.Y, Player.Z);
+                }
+                
             }
             Game.Visible = Game.World.Player.GetComponent<Senses>().GetFOV();
             foreach (Creature c in GetState<TaskHandler>().Minions)

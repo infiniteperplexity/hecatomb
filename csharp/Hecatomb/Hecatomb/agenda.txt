@@ -5,24 +5,37 @@
 
 
 Nice bite-sized chunks:
-- colorize the tasks
-- deal with the ingredient menu slam.
-- show turns on research tasks
-- no more "stuck highlights"...maybe make that a singleton state
-- better naming and colors for rotten stuff, check that corpses rot
-- deal with double-use of Z
-- fix build to unassign dig in walls
-- "wait" recenters on selection
+* deal with the ingredient menu slam.
+* show turns on research tasks
+* no more "stuck highlights"...maybe make that a singleton state
+* deal with double-use of Z
+* fix build to unassign dig in walls
+* "wait" recenters on selection
+* implement forbidtask
+* notify on hard walls cancel dig
+* add a way to cycle trades
+* colorize the tasks
+* better naming and colors for rotten stuff, check that corpses rot
+- Make it so corpses show signs of rot I guess.
 - revise code for guaranteeing starting area
 - keep an eye out for the unassigned tasks...or did we solve that?
-- implement forbidtask
-- notify on hard walls cancel dig
 - test furnishing door on top of damaged door to repair
+- Is there any way to repair a damaged structural feature?
 - check priority stuff for event-based action overrides
-- add a way to cycle trades
+
 
 
 finalizing
 - set all options correctly
 - remove debugger spells
+- Make sure all the documentation and tutorials are correct.
 
+starting area:
+- a grave within sight on the same level
+- trees within a certain distance
+- possibly, flint
+
+rotting stuff:
+- so far I've been doing a slight, somewhat, severely, critically thing.
+- Severely rotted, rotted, slightly rotted
+- brown, olive, green

@@ -66,8 +66,13 @@ namespace Hecatomb
             }
 			return MenuName;
 		}
-		
-	}
+
+        public string GetHighlightColor()
+        {
+            return "magenta";
+        }
+
+    }
 	
 	
 
@@ -99,6 +104,8 @@ namespace Hecatomb
             int z = c.Z;
             Game.Controls.MenuMiddle = new List<ColoredText>() { "Spawn a test ghoul here." };
         }
+
+
     }
 }
 

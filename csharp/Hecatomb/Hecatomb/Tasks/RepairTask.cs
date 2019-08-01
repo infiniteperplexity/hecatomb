@@ -20,6 +20,7 @@ namespace Hecatomb
             MenuName = "repair or complete fixture";
             Priority = 4;
             PrereqStructures = new List<string> { "Workshop" };
+            BG = "yellow";
         }
 
         public override void Start()

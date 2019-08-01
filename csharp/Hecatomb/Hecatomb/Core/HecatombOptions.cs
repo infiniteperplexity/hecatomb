@@ -33,7 +33,7 @@ namespace Hecatomb
             Visible = false;
             //Visible = true;
             NoIngredients = false;
-            //NoIngredients = true;
+            NoIngredients = true;
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
