@@ -370,6 +370,16 @@ namespace Hecatomb
                         {
                             throw (new InvalidOperationException("You're trying to build one structure on top of another!"));
                         }
+                        else
+                        {
+                            Defender d = f.GetComponent<Defender>();
+                            if (d.Wounds > 0)
+                            {
+                                RepairTask rt = Entity.Spawn<RepairTask>();
+                                rt.Ingredients = Ingredients[i] ?? new Dictionary<string, int>();
+                                rt.Place(s.X, s.Y, s.Z);
+                            }
+                        }
                     }
                 }
             }

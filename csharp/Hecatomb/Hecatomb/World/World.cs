@@ -61,11 +61,9 @@ namespace Hecatomb
         public FastNoise ElevationNoise;
 		public FastNoise VegetationNoise;
 		
+        // shouldn't this be in WorldBuilder, not world?
 		public Creature PlacePlayer()
         {
-            Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
-            Player = p;
-            p.GetComponent<Actor>().Team = Teams.Friendly;
             bool valid = true;
             var x = Width / 2;
             var y = Height / 2;
@@ -74,8 +72,9 @@ namespace Hecatomb
             {
                 valid = false;
             }
-            var nearby = 0;
+            var nearbyGraves = 0;
             var graves = 0;
+            var trees = 0;
             foreach (Feature f in Features)
             {
                 if (f.TypeName=="Grave" && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<=15)
@@ -83,11 +82,15 @@ namespace Hecatomb
                     graves += 1;
                     if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 5 && z==f.Z)
                     {
-                        nearby += 1;
+                        nearbyGraves += 1;
                     }
                 }
+                else if ((f.TypeName == "ClubTree" || f.TypeName == "SpadeTree") && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 15)
+                {
+                    trees += 1;
+                }
             }
-            if (nearby<1 || graves<3)
+            if (nearbyGraves<1 || graves<3 || trees < 5)
             {
                 valid = false;
             }
@@ -108,7 +111,7 @@ namespace Hecatomb
                 {
                     valid = false;
                 }
-                nearby = 0;
+                nearbyGraves = 0;
                 graves = 0;
                 foreach (Feature f in Features)
                 {
@@ -117,11 +120,15 @@ namespace Hecatomb
                         graves += 1;
                         if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 5 && z==f.Z)
                         {
-                            nearby += 1;
+                            nearbyGraves += 1;
                         }
                     }
+                    else if ((f.TypeName == "ClubTree" || f.TypeName == "SpadeTree") && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 15)
+                    {
+                        trees += 1;
+                    }
                 }
-                if (nearby < 1 || graves < 3)
+                if (nearbyGraves < 1 || graves < 3 || trees < 5)
                 {
                     valid = false;
                 }
@@ -130,6 +137,9 @@ namespace Hecatomb
             {
                 Creatures[x, y, z].Despawn();
             }
+            Creature p = Hecatomb.Entity.Spawn<Creature>("Necromancer");
+            Player = p;
+            p.GetComponent<Actor>().Team = Teams.Friendly;
             p.Place(x, y, z);
             //***** This logic absolutely should not go here
             int goodsBounds = 12;

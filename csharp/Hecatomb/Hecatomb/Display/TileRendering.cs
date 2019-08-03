@@ -84,7 +84,7 @@ namespace Hecatomb
             {
                 Resource r = Resource.Types[Items[c].Resource];
                 sym = r.Symbol;
-                fg = r.FG;
+                fg = Items[c].GetCalculatedFG();
             }
             // features
             else if (Features[c] != null)

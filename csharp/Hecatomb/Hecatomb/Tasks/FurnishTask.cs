@@ -111,16 +111,40 @@ namespace Hecatomb
         {
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
-                Task task = Entity.Spawn<FurnishTask>();
-                string json = EntityType.Types[Makes].Components["Fixture"];
-                JObject obj = JObject.Parse(json);
-                var ingredients = obj["Ingredients"];
+                Feature f = Game.World.Features[c];
+                Defender d = f?.TryComponent<Defender>();
+                if (f != null && d != null && f.TypeName == Makes && d.Wounds > 0)
+                {
+                    Task task = Entity.Spawn<RepairTask>();
+                    string json = EntityType.Types[Makes].Components["Fixture"];
+                    JObject obj = JObject.Parse(json);
+                    var ingredients = obj["Ingredients"];
+                    task.Ingredients = (ingredients == null) ? new Dictionary<string, int>() : ingredients.ToObject<Dictionary<string, int>>();
+                    task.Place(c.X, c.Y, c.Z);
+                }
+                else
+                {
+                    Task task = Entity.Spawn<FurnishTask>();
+                    string json = EntityType.Types[Makes].Components["Fixture"];
+                    JObject obj = JObject.Parse(json);
+                    var ingredients = obj["Ingredients"];
 
-                task.Ingredients = (ingredients==null) ? new Dictionary<string, int>() : ingredients.ToObject<Dictionary<string, int>>();
-                task.Makes = Makes;
-                task.Place(c.X, c.Y, c.Z);
-                
+                    task.Ingredients = (ingredients == null) ? new Dictionary<string, int>() : ingredients.ToObject<Dictionary<string, int>>();
+                    task.Makes = Makes;
+                    task.Place(c.X, c.Y, c.Z);
+                }       
             }
+        }
+
+        public override bool ValidTile(Coord c)
+        {
+            Feature f = Game.World.Features[c];
+           Defender d = f?.TryComponent<Defender>();
+            if (f != null && d != null && f.TypeName == Makes && d.Wounds > 0)
+            {
+                return true;
+            }
+            return base.ValidTile(c);
         }
     }
 

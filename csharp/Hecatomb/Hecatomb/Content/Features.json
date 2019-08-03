@@ -13,7 +13,12 @@
 				"Type" : "StructureFeature",
 				"FG" : "brown",
 				"Symbol" : "\u25AB",
-				"Components" : {}
+				"Components" : {
+					"Defender": {
+						"Toughness": 9,
+						"Evasion": -10
+					}
+				}
 			},
 			{
 				"Type" : "ClubTree",

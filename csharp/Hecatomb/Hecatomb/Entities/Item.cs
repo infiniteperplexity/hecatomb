@@ -17,6 +17,7 @@ namespace Hecatomb
         public string Resource;
         public string CorpseType;
         public int Decay;
+        public int TotalDecay;
         [JsonIgnore]
         public  int StackSize
         {
@@ -55,11 +56,45 @@ namespace Hecatomb
             Item item = Entity.Spawn<Item>();
             item.Resource = "Corpse";
             item.CorpseType = creatureType;
-            item.Decay = 250;
+            item.TotalDecay = 250;
+            item.Decay = item.TotalDecay;
             Game.World.Events.Subscribe<TurnBeginEvent>(item, item.CorpseDecays);
             return item;
         }
 
+        public string GetCalculatedFG()
+        {
+            if (TotalDecay > 0)
+            {
+                double frac = (double)Decay / (double)TotalDecay;
+                if (frac < 0.25)
+                {
+                    return "purple";
+                }
+                else if (frac < 0.5)
+                {
+                    return "olive";
+                }
+            }
+            return Hecatomb.Resource.Types[Resource].FG;
+        }
+
+        public override string GetDisplayName()
+        {
+            if (TotalDecay > 0)
+            {
+                double frac = (double)Decay / (double)TotalDecay;
+                if (frac < 0.25)
+                {
+                    return "severely rotted " + Name;
+                }
+                else if (frac < 0.5)
+                {
+                    return "rotted " + Name;
+                }
+            }
+            return Name;
+        }
         public GameEvent CorpseDecays(GameEvent ge)
         {
             Decay -= 1;

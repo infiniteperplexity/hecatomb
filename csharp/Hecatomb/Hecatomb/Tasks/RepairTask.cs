@@ -23,6 +23,12 @@ namespace Hecatomb
             BG = "yellow";
         }
 
+        public override string GetDisplayName()
+        {
+            Feature f = Game.World.Features[X, Y, Z];
+            return "repair " + f.Describe();
+        }
+
         public override void Start()
         {
             // don't place a new feature
@@ -57,6 +63,7 @@ namespace Hecatomb
             {
                 return false;
             }
+            // wait does this actually work?
             if (f.TryComponent<IncompleteFixtureComponent>() != null)
             {
                 return true;

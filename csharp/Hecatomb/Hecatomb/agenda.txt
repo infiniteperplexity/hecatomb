@@ -16,13 +16,13 @@ Nice bite-sized chunks:
 * add a way to cycle trades
 * colorize the tasks
 * better naming and colors for rotten stuff, check that corpses rot
-- Make it so corpses show signs of rot I guess.
-- revise code for guaranteeing starting area
+* Make it so corpses show signs of rot I guess.
+* revise code for guaranteeing starting area
+* test furnishing door on top of damaged door to repair
+* Is there any way to repair a damaged structural feature?
 - keep an eye out for the unassigned tasks...or did we solve that?
-- test furnishing door on top of damaged door to repair
-- Is there any way to repair a damaged structural feature?
 - check priority stuff for event-based action overrides
-
+- keep an eye out for bad task names
 
 
 finalizing

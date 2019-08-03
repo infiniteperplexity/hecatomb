@@ -224,6 +224,12 @@ namespace Hecatomb
                             st.BuildInSquares(st.Squares);
                             return;
                         }
+                        if (st.Placed && st.GetType().Name == Makes)
+                        {
+                            // call up repairs if need be
+                            st.BuildInSquares(st.Squares);
+                            return;
+                        }
                     }
                 }
                 if (!ValidTile(s))
