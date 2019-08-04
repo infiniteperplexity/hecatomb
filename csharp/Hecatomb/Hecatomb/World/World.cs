@@ -133,6 +133,45 @@ namespace Hecatomb
                     valid = false;
                 }
             }
+            int surfaceFlint = 0;
+            int surfaceCoal = 0;
+            for (int i = -15; i <= 15; i++)
+            {
+                for (int j = -15; j <= 15; j++)
+                {
+                    int k = GetGroundLevel(x + i, y + j);
+                    if (Covers[x + i, y + j, k - 1] == Cover.FlintCluster)
+                    {
+                        surfaceFlint += 1;
+                    }
+                    else if (Covers[x + i, y + j, k - 1] == Cover.CoalSeam)
+                    {
+                        surfaceCoal += 1;
+                    }
+                }
+            }
+            Debug.WriteLine("nearby surface flint: " + surfaceFlint);
+            Debug.WriteLine("nearby surface coal: " + surfaceCoal);
+            while (surfaceFlint < 15)
+            {
+                int rx = x - 15 + Game.World.Random.Next(31);
+                int ry = y - 15 + Game.World.Random.Next(31);
+                if (Covers[rx, ry, GetGroundLevel(rx, ry) - 1] == Cover.Soil)
+                {
+                    Covers[rx, ry, GetGroundLevel(rx, ry) - 1] = Cover.FlintCluster;
+                    surfaceFlint += 1;
+                }
+            }
+            while (surfaceCoal < 15)
+            {
+                int rx = x - 15 + Game.World.Random.Next(31);
+                int ry = y - 15 + Game.World.Random.Next(31);
+                if (Covers[rx, ry, GetGroundLevel(rx, ry) - 1] == Cover.Soil)
+                {
+                    Covers[rx, ry, GetGroundLevel(rx, ry) - 1] = Cover.CoalSeam;
+                    surfaceCoal += 1;
+                }
+            }
             if (Creatures[x,y,z]!=null)
             {
                 Creatures[x, y, z].Despawn();

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Hecatomb.Installer3" Language="1033" Version="1.0.0.0" Manufacturer="Kaiser Permanente" UpgradeCode="b9201435-d6ee-4df8-934e-71fa486e55c6">
-		<Package Id="*" InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
+  <!-- Do we need separate product IDs for 32 and 64 bit?  I'm not sure why...S-->
+	<Product Id="*" Name="Hecatomb.Installer3" Language="1033" Version="1.0.0.0" Manufacturer="Glenn Wright" UpgradeCode="b9201435-d6ee-4df8-934e-71fa486e55c6">
+		<Package Id="*" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Manufacturer="Glenn Wright" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate EmbedCab="yes"/>
 
+    <Icon Id="icon.ico" SourceFile="$(var.Hecatomb.TargetDir)Icon.ico"/>
+    <UIRef Id="WixUI_Minimal" />
 		<Feature Id="ProductFeature" Title="Hecatomb.Installer3" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
       <ComponentGroupRef Id="ProductContent" />
@@ -24,7 +27,6 @@
 
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
 			<Component Id="Hecatomb.exe" Guid="{5095E9BE-4585-4CF1-BEBE-C0D7AADE6763}">
         <File Source="$(var.Hecatomb.TargetPath)" KeyPath="yes" />
 			</Component>
@@ -43,9 +45,9 @@
       <Component Id="SharpDX.Direct2D1.dll" Guid="{E3A37150-2546-4F4F-B7EC-8F3D1C94568D}">
         <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct2D1.dll" KeyPath="yes" />
       </Component>
-      <Component Id="SharpDX.Direct3D9.dll" Guid="{9EEB02D6-A5DC-4824-9A90-81B1CC847E06}">
-        <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct3D9.dll" KeyPath="yes" />
-      </Component>
+      <!-- Component Id="SharpDX.Direct3D9.dll" Guid="{9EEB02D6-A5DC-4824-9A90-81B1CC847E06}" -->
+      <!-- File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct3D9.dll" KeyPath="yes" / -->
+      <!-- /Component-->
       <Component Id="SharpDX.Direct3D11.dll" Guid="{1E6ED9C3-C231-4E84-BEEA-AF9E63CA6B85}">
         <File Source="$(var.Hecatomb.TargetDir)SharpDX.Direct3D11.dll" KeyPath="yes" />
       </Component>
