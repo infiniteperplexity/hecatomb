@@ -155,6 +155,7 @@ namespace Hecatomb
         }
         public void StartGame()
         {
+            TheFixer.Purge();
             Controls.Reset();
             ForegroundPanel.Splash(new List<ColoredText>{
                 "{yellow}Welcome to Hecatomb!",
@@ -177,6 +178,7 @@ namespace Hecatomb
 
         public void RestoreGame()
         {
+            TheFixer.Purge();
             Commands.RestoreGameCommand();
         }
 
@@ -317,7 +319,7 @@ namespace Hecatomb
 
         protected override void OnExiting(Object sender, EventArgs args)
         {
-            Debug.WriteLine("Sayonara!");
+            TheFixer.Dump();
             base.OnExiting(sender, args);
         }
     }

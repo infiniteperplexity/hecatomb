@@ -164,11 +164,11 @@ namespace Hecatomb
     //public void Parse(string json)
     public void Parse(string filename)	
 		{
+            TheFixer.Purge();
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
             //JObject parsed;
             string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
-            Debug.WriteLine("flag 1");
             JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
             
             //using (StreamReader stream = File.OpenText(filename))

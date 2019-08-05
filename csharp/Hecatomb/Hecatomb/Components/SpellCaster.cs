@@ -63,7 +63,7 @@ namespace Hecatomb
         {
             if (Game.World.Random.Next(10)==0)
             {
-                Sanity = Math.Min(MaxSanity, Sanity + 1);
+                Sanity = Math.Min(GetCalculatedMaxSanity(), Sanity + 1);
             }
             return ge;
         }
@@ -84,6 +84,16 @@ namespace Hecatomb
             };
             AddListener<TurnBeginEvent>(OnTurnBegin);
 		}
+
+        public int GetCalculatedMaxSanity()
+        {
+            int calcMax = MaxSanity;
+            if (Structure.ListAsStrings().Contains("Sanctum"))
+            {
+                calcMax += 5;
+            }
+            return calcMax;
+        }
 		
 		public Spell GetSpell(Type t)
 		{

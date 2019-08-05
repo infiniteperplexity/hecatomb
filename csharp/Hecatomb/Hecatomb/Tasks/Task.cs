@@ -19,6 +19,7 @@ namespace Hecatomb
         [JsonIgnore] public int LaborCost;
         [JsonIgnore] public string MenuName;
         [JsonIgnore] public List<string> PrereqStructures;
+        [JsonIgnore] public bool ShowIngredients;
         public Dictionary<string, int> Ingredients;
         // ISelectsBox properties
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
@@ -44,12 +45,13 @@ namespace Hecatomb
             Claims = new Dictionary<int,int>();
             PrereqStructures = new List<string>();
             BG = "red";
+            ShowIngredients = true;
         }
 
 
         public virtual string GetHoverName()
         {
-            if (Ingredients.Count == 0)
+            if (Ingredients.Count == 0 || !ShowIngredients)
             {
                 return Describe(article: false);
             }
@@ -232,7 +234,7 @@ namespace Hecatomb
             // this is no longer impossible, due to reclaiming
             if (needed.Keys.Count > 0)
             {
-                Debug.WriteLine("Zombie couldn't find needed keys");
+                Debug.WriteLine("Unassigned task because ingredients can no longer be found.");
                 // hard to tell whether we should wait for ingredients to arrive, or cancel the task entirely
                 //Cancel();
                 Unassign();

@@ -34,9 +34,13 @@ namespace Hecatomb
             {
                 return 20;
             }
-            else
+            else if (minions.Count == 3)
             {
                 return 25;
+            }
+            else
+            {
+                return 30;
             }
         }
 
@@ -67,6 +71,9 @@ namespace Hecatomb
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z - 1);
+                int randomDecay = Game.World.Random.Next(500);
+                zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
+                zombie.GetComponent<Decaying>().Decay += randomDecay;
                 if (!Game.World.Terrains[c.X, c.Y, c.Z - 1].Solid && Game.World.Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)))
                 {
                     Status.PushMessage("The zombie burrows downward into the space below.");
@@ -92,7 +99,9 @@ namespace Hecatomb
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z);
-                zombie.GetComponent<Decaying>().Decay = 4 * i.Decay;
+                int randomDecay = Game.World.Random.Next(500);
+                zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
+                zombie.GetComponent<Decaying>().Decay = 4 * i.Decay + randomDecay;
                 i.Despawn();
                 Status.PushMessage("The corpse stirs to obey your commands.");
                 GetState<TaskHandler>().Minions.Add(zombie);

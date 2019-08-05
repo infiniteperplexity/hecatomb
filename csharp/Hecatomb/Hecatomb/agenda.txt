@@ -20,28 +20,24 @@ Nice bite-sized chunks:
 * revise code for guaranteeing starting area
 * test furnishing door on top of damaged door to repair
 * Is there any way to repair a damaged structural feature?
-- keep an eye out for the unassigned tasks...or did we solve that?
+* I don't think the corpse names showed up correctly?
+* zombies arguably rot too fast
+* don't need to show ingredients for haul tasks or butcher tasks
+* sanctum should allow +1 zombie
+* clicking creature should prioritize over clicking structure
+* maybe randomize starting decay?
+? graphics for chirurgeon are a bit repetitive to sanctum
+? number of turns left doesn't update correctly while waiting (believed fixed)
+? trade task display name should tell me turns left.
+? trade task in building description has badly formatted name
+* rotten zombies shouldn't leave corpses
+* keep an eye out for bad task names
+* "zombie couldn't find needed keys"?   wtf?
+* I got a "what the heck?" haul one rock message...so this is when a haul tasks has no claims, which means it's invalid.
+* got a crash from hovering over a butcher tasks whose corpse had decayed out from under it
+* keep an eye out for the desynced tasks...or did we solve that?  I think I saw one recently.
 - check priority stuff for event-based action overrides
-- keep an eye out for bad task names
-- trade task display name should tell me turns left.
-- trade task in building description has badly formatted name
-- I don't think the corpse names showed up correctly?
-- list number of zombies somewhere!
-- number of turns left doesn't update correctly while waiting
-- zombies arguably rot too fast
-- don't need to show ingredients for haul tasks or butcher tasks
-- should flesh rot when it's not stored?
-- sanctum should allow +1 zombie
 - should add unclaim task soon
-- clicking creature should prioritize over clicking structure
-- maybe randomize starting decay?
-- graphics for chirurgeon are a bit repetitive to sanctum
-- I got a "what the heck?" haul one rock message
-- I think I got an abandoned task finally
-- rotten zombies shouldn't leave corpses
-- "zombie couldn't find needed keys"?   wtf?
-- we're getting the "haul task with no claims" message sometimes
-- got a crash from hovering over a butcher tasks whose corpse had decayed out from under it
 
 finalizing
 - set all options correctly

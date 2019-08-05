@@ -97,7 +97,7 @@ namespace Hecatomb
         {
             if (Ingredients.Count == 0)
             {
-                return Describe(article: false) + "(" + Labor + " turns)";
+                return Describe(article: false) + " (" + Labor + " turns)";
             }
             return (Describe(article: false) + " ($: " + Resource.Format(Ingredients) + ")");
         }

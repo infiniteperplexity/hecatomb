@@ -70,8 +70,16 @@ namespace Hecatomb
             int x = X;
             int y = Y;
             int z = Z;
+            bool decaying = (TryComponent<Decaying>() != null);
             base.Destroy();
-            Item.SpawnCorpse().Place(x, y, z);
+            if (!decaying)
+            {
+                Item.SpawnCorpse().Place(x, y, z);
+            }
+            else
+            {
+                Item.PlaceNewResource("Bone", 1, x, y, z);
+            }
         }
 
         public void BuildMenu(MenuChoiceControls menu)
@@ -83,7 +91,15 @@ namespace Hecatomb
         }
         public void FinishMenu(MenuChoiceControls menu)
         {
-            menu.MenuTop.Insert(2, "Tab) Next minion.");
+            if (this == Player)
+            {
+                menu.MenuTop.Insert(2, $"Controls {GetState<TaskHandler>().Minions.Count} minions.");
+                menu.MenuTop.Insert(3, "Tab) First minion.");
+            }
+            else
+            {
+                menu.MenuTop.Insert(2, "Tab) View minions.");
+            }
             if (TryComponent<Minion>() != null)
             {
                 Task t = GetComponent<Minion>().Task;

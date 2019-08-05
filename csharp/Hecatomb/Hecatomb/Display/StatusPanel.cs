@@ -60,7 +60,7 @@ namespace Hecatomb
                     Z = Game.Camera.Z;
                 }
                 TurnHandler t = Game.World.Turns;
-                string sanity = Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3, '0') + '/' + Game.World.Player.GetComponent<SpellCaster>().MaxSanity.ToString().PadLeft(3, '0');
+                string sanity = Game.World.Player.GetComponent<SpellCaster>().Sanity.ToString().PadLeft(3, '0') + '/' + Game.World.Player.GetComponent<SpellCaster>().GetCalculatedMaxSanity().ToString().PadLeft(3, '0');
                 string x = X.ToString().PadLeft(3, '0');
                 string y = Y.ToString().PadLeft(3, '0');
                 string z = Z.ToString().PadLeft(3, '0');

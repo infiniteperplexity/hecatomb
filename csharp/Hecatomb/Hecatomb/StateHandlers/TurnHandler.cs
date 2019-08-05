@@ -268,6 +268,10 @@ namespace Hecatomb
 
         public static void HandleVisibility()
         {
+            Game.MainPanel.Dirty = true;
+            Game.MenuPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
+            TheFixer.CheckStates();
             Game.World.ValidateLighting();
             if (!(Controls is CameraControls))
             {

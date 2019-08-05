@@ -79,22 +79,6 @@ namespace Hecatomb
             return Hecatomb.Resource.Types[Resource].FG;
         }
 
-        public override string GetDisplayName()
-        {
-            if (TotalDecay > 0)
-            {
-                double frac = (double)Decay / (double)TotalDecay;
-                if (frac < 0.25)
-                {
-                    return "severely rotted " + Name;
-                }
-                else if (frac < 0.5)
-                {
-                    return "rotted " + Name;
-                }
-            }
-            return Name;
-        }
         public GameEvent CorpseDecays(GameEvent ge)
         {
             Decay -= 1;
@@ -272,6 +256,23 @@ namespace Hecatomb
         )
         {
             string name = Hecatomb.Resource.Types[Resource].Name;
+
+            if (Resource == "Corpse")
+            {
+                if (TotalDecay > 0)
+                {
+                    double frac = (double)Decay / (double)TotalDecay;
+                    if (frac < 0.25)
+                    {
+                        return "a severely rotted corpse";
+                    }
+                    else if (frac < 0.5)
+                    {
+                        return "a rotted corpse";
+                    }
+                    else return "a corpse";
+                }
+            }
             //return $"{Quantity} {name}";
             var unowned = (Owned) ? "" : "(unclaimed)";
             // return $"{Quantity} {name} ({Claimed} claimed, {txt}owned)";

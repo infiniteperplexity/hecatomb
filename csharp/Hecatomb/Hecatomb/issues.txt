@@ -68,6 +68,8 @@ Gameplay issues:
 - N of zombies seems like something maybe we should show prominently.
 - Still sometimes takes forever to find flint, and sometimes there's so much!
 - Do a sweep of all task creation, to see if we missed an double-placement issues.
+- should flesh rot when it's not stored?  we'll add this eventually.
+- should implement corpse types
 
 Performance Issues:
 * Don't need to serialize hostility matrix

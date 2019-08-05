@@ -23,6 +23,7 @@ namespace Hecatomb
             WorkRange = 0;
             Priority = 10;
             BG = "white";
+            ShowIngredients = false;
         }
 
         public override string GetDisplayName()

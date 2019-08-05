@@ -20,6 +20,7 @@ namespace Hecatomb
             Ingredients["Corpse"] = 1;
             PrereqStructures = new List<string>() { "Slaughterhouse" };
             BG = "pink";
+            ShowIngredients = false;
         }
 
         public override string GetDisplayName()
