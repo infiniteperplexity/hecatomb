@@ -81,6 +81,11 @@ namespace Hecatomb
             }
             Movement m = c.GetComponent<Movement>();
             // if the Item has been removed...do something...
+            if (Claims.Count == 0)
+            {
+                Cancel();
+                return false;
+            }
             Item item = (Item)Entities[Claims.Keys.ToList()[0]];
             return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanReach(item);
         }
