@@ -30,9 +30,14 @@ namespace Hecatomb
         {
             if (Claims.Count==0)
             {
-                Debug.WriteLine("I'm not sure why you would try to display the name of a haul task with no claims");
-                Debug.WriteLine($"The ingredient count is {Ingredients.Count}");
-                return "what the heck?";
+                // okay I think I had this logic worked out wrong but it's fixed now
+                if (Worker == null)
+                {
+                    Debug.WriteLine("okay this is genuinely strange");
+                    return "messed up haul task";
+                }
+                var carried = $"carried by {Worker} at {Worker.X} {Worker.Y} {Worker.Z}";
+                return $"haul {Resource} "+carried;
             }
             Item item = Entity.FromEID(Claims.Keys.ToList()[0]) as Item;
             if (item==null)
@@ -44,10 +49,6 @@ namespace Hecatomb
             if (item.Placed)
             {
                 where = $"from {x} {y} {z}";
-            }
-            else
-            {
-                where = $"carried by {Worker} at {Worker.X} {Worker.Y} {Worker.Z}";
             }
             return $"haul {item.Describe()} {where}";
         }

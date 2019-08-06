@@ -25,6 +25,11 @@ namespace Hecatomb
 
         public override string GetDisplayName()
         {
+            // **** Okay we get out of range errors here ****
+            if (Claims.Count == 0)
+            {
+                return "butcher task";
+            }
             Item item = (Item)Entity.Entities[Claims.Keys.ToList()[0]];
             var (x, y, z) = item;
             string where = null;
@@ -137,28 +142,37 @@ namespace Hecatomb
 
         public override void Start()
         {
+            Debug.WriteLine("are we reaching this? 3");
             Worker.GetComponent<Inventory>().Drop();
         }
 
         public override void Finish()
         {
+            Debug.WriteLine("are we reaching this? 1");
             Item corpse = Items[X, Y, Z];
             if (corpse.Resource == "Corpse")
             {
-                corpse.Despawn();
                 Item.PlaceNewResource("Flesh", 1, X, Y, Z);
                 Item.PlaceNewResource("Bone", 1, X, Y, Z);
                 base.Finish();
+                corpse.Despawn();
             }
             else
             {
                 Cancel();
             }
         }
-
-        public override void SpendIngredient()
+        public override void Act()
         {
-            Ingredients.Clear();
+            if (CanWork())
+            {
+                Ingredients.Clear();
+                Work();
+            }
+            else
+            {
+                Worker.GetComponent<Actor>().WalkToward(X, Y, Z, useLast: (WorkRange == 0));
+            }
         }
 
     }

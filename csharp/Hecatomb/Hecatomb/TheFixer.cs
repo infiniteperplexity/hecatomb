@@ -33,7 +33,11 @@ namespace Hecatomb
                 return;
             }
             string timestamp = DateTime.Now.ToString("yyyy’-‘MM’-‘dd’T’HH’:’mm’:’ss.fffffffK");
-            System.IO.File.WriteAllLines(@"..\"+Game.GameName+timestamp + ".txt", Log);
+            foreach (var str in Log)
+            {
+                System.Diagnostics.Debug.WriteLine(str);
+            }
+            //System.IO.File.WriteAllLines(@"..\"+Game.GameName+timestamp + ".txt", Log);
         }
 
         public static void CheckStates()
@@ -53,7 +57,7 @@ namespace Hecatomb
                     }
                 }
             }
-            foreach (Task t in Game.World.Tasks)
+            foreach (Task t in Game.World.Tasks.ToList())
             {
                 if (!t.ValidTile(new Coord(t.X, t.Y, t.Z)))
                 {
@@ -71,8 +75,9 @@ namespace Hecatomb
                 {
                     if (t.Claims.Count == 0)
                     {
-                        PushMessage($"Canceling a haul task with no claims; {t.Describe()}");
-                        t.Cancel();
+                        // There actually may not be a problem here
+                        //PushMessage($"Canceling a haul task with no claims; {t.Describe()}");
+                        //t.Cancel();
                     }
                 }
             }

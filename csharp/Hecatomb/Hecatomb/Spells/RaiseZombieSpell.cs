@@ -174,6 +174,19 @@ namespace Hecatomb
             Work();
         }
 
+        public override bool ValidTile(Coord c)
+        {
+            Feature f = Game.World.Features[c];
+            if (f == null)
+            {
+                return false;
+            }
+            if (f.TypeName != "Grave")
+            {
+                return false;
+            }
+            return true;
+        }
         public override void Start()
         {
             Game.World.Events.Publish(new SensoryEvent() { X = X, Y = Y, Z = Z, Sight = "You hear an ominous stirring from under the ground..." });

@@ -38,6 +38,7 @@ Nice bite-sized chunks:
 * keep an eye out for the desynced tasks...or did we solve that?  I think I saw one recently.
 - check priority stuff for event-based action overrides
 - should add unclaim task soon
+- updating research turns on men doesn't work still
 
 finalizing
 - set all options correctly

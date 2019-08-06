@@ -44,6 +44,7 @@ namespace Hecatomb
                 {"cyan", Color.Cyan},
                 {"brown", Color.Brown},
                 {"purple", Color.Purple },
+                {"pink", Color.Pink },
                 {"GRASSFG", new Color(0x66, 0x88, 0x44)},
                 {"GRASSBG", new Color(0x33, 0x44, 0x22)},
                 {"WALLFG", new Color(0xAA, 0xAA, 0xAA)},
