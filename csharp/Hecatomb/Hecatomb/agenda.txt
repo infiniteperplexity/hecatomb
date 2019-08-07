@@ -38,11 +38,11 @@ Nice bite-sized chunks:
 * keep an eye out for the desynced tasks...or did we solve that?  I think I saw one recently.
 - check priority stuff for event-based action overrides
 - should add unclaim task soon
-- updating research turns on men doesn't work still
+* updating research turns on menu doesn't work still
 - change slaughterhouse to meat locker
-- message when zombie expires
+* message when zombie expires
 - I don't think task priority is working?
-- haul task carried by uses wrong name
+* haul task carried by uses wrong name
 
 finalizing
 - set all options correctly

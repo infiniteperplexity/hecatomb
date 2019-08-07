@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb
 {
@@ -271,6 +272,8 @@ namespace Hecatomb
             Game.MainPanel.Dirty = true;
             Game.MenuPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
+            var m = Mouse.GetState();
+            Controls?.HandleHover(m.X, m.Y);
             TheFixer.CheckStates();
             Game.World.ValidateLighting();
             if (!(Controls is CameraControls))

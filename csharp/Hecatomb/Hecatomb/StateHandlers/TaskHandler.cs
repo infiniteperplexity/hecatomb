@@ -21,7 +21,22 @@ namespace Hecatomb
         {
             Minions = new List<TypedEntityField<Creature>>();
             Tasks = new[] { "DigTask", "BuildTask", "ConstructTask", "FurnishTask", "MurderTask", "PatrolTask", "RallyTask", "ForbidTask", "ButcherTask", "UndesignateTask" };
+            AddListener<DestroyEvent>(OnDestroy);
             AddListener<DespawnEvent>(OnDespawn);
+        }
+
+        public GameEvent OnDestroy(GameEvent ge)
+        {
+            DestroyEvent dse = (DestroyEvent)ge;
+            // I'm not sure if lists of TypedEntityFields can use Contains...
+            foreach (var m in Minions)
+            {
+                if (m.Unbox() == dse.Entity)
+                {
+                    Game.StatusPanel.PushMessage("{orange}" + (dse.Entity as Creature).Describe() + " has perished!");
+                }
+            }
+            return ge;
         }
 
         public GameEvent OnDespawn(GameEvent ge)

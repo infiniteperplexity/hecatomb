@@ -90,12 +90,13 @@ namespace Hecatomb
             {
                 researched.Add(Makes);
             }
+            Game.StatusPanel.PushMessage("{blue}Research on " + Describe(article: false) + " completed!");
             Complete();
         }
 
         public override string GetHoverName()
         {
-            if (Ingredients.Count == 0)
+            if (Ingredients.Count == 0 || Options.NoIngredients)
             {
                 return Describe(article: false) + " (" + Labor + " turns)";
             }

@@ -235,6 +235,7 @@ namespace Hecatomb
 
         public virtual void BuildMenu(MenuChoiceControls menu)
         {
+            
             // might want to format htis guy a bit...like add coordinates?
             menu.Header = "Structure: " + Describe();
             ControlContext.Selection = this;
@@ -266,12 +267,13 @@ namespace Hecatomb
         }
         public virtual void FinishMenu(MenuChoiceControls menu)
         {
+            Debug.WriteLine("rebuilding structure menu content");
             menu.MenuTop.Insert(2, "Tab) Next structure.");
             if (Researching != null)
             {
                 ResearchTask rt = Researching;
                 string txt = "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns; Delete to cancel.)";
-                if (rt.Ingredients.Count > 0)
+                if (rt.Ingredients.Count > 0 && !Options.NoIngredients)
                 {
                     txt = "Researching " + Research.Types[rt.Makes].Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
                 }

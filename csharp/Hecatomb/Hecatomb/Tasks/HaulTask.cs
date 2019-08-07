@@ -36,7 +36,7 @@ namespace Hecatomb
                     Debug.WriteLine("okay this is genuinely strange");
                     return "messed up haul task";
                 }
-                var carried = $"carried by {Worker} at {Worker.X} {Worker.Y} {Worker.Z}";
+                var carried = $"carried by {Worker.Describe()} at {Worker.X} {Worker.Y} {Worker.Z}";
                 return $"haul {Resource} "+carried;
             }
             Item item = Entity.FromEID(Claims.Keys.ToList()[0]) as Item;

@@ -30,16 +30,17 @@ namespace Hecatomb
         }
 
         private ColoredText cachedMenuListing;
+        private int cachedTurn;
         public override ColoredText ListOnMenu()
         {
-            if (cachedMenuListing != null)
+            if (cachedMenuListing != null && cachedTurn == Game.World.Turns.Turn)
             {
                 return cachedMenuListing;
             }
-            // should never happen
-            if (Ingredients.Count == 0)
+            if (Ingredients.Count == 0 || Options.NoIngredients)
             {
                 cachedMenuListing = $"Trade for {Resource.Format(Trading)}";
+                cachedTurn = Game.World.Turns.Turn;
                 return cachedMenuListing;
             }
             else
@@ -50,6 +51,7 @@ namespace Hecatomb
                     available = true;
                 }
                 cachedMenuListing = (((available) ? "{white}" : "{gray}") + Resource.Format(Ingredients) + " for " + " ($: " + Resource.Format(Trading) + ")");
+                cachedTurn = Game.World.Turns.Turn;
                 return cachedMenuListing;
             }
         }
