@@ -54,17 +54,17 @@ namespace Hecatomb
             PotentialTrades = new List<TradeTask>();
             TradeTask t;
             t = Entity.Mock<TradeTask>();
-            t.Ingredients["Rock"] = 3;
+            t.Ingredients["Flint"] = 2;
             t.Trading["TradeGoods"] = 1;
             PotentialTrades.Add(t);
             t = Entity.Mock<TradeTask>();
             t.Ingredients["Wood"] = 3;
-            t.Trading["TradeGoods"] = 1;
+            t.Trading["Coal"] = 1;
             PotentialTrades.Add(t);
             t = Entity.Mock<TradeTask>();
             t.Ingredients["TradeGoods"] = 1;
-            t.Trading["Rock"] = 1;
             t.Trading["Wood"] = 1;
+            t.Trading["Flint"] = 1;
             PotentialTrades.Add(t);
         }
         public BlackMarket() : base()
