@@ -63,8 +63,7 @@ namespace Hecatomb
             PotentialTrades.Add(t);
             t = Entity.Mock<TradeTask>();
             t.Ingredients["TradeGoods"] = 1;
-            t.Trading["Wood"] = 1;
-            t.Trading["Flint"] = 1;
+            t.Trading["Flint"] = 2;
             PotentialTrades.Add(t);
         }
         public BlackMarket() : base()
@@ -164,11 +163,7 @@ namespace Hecatomb
             if (Trading != null)
             {
                 TradeTask t = Trading;
-                string txt = t.Describe() + " (" + t.Labor + " turns; Delete to cancel.)";
-                if (t.Ingredients.Count > 0 && !Game.Options.NoIngredients)
-                {
-                    txt = t.Describe() + " ($: " + Resource.Format(t.Ingredients) + ")";
-                }
+                string txt = t.GetHoverName();
                 menu.MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     "{yellow}Structure: "+Describe(),

@@ -302,7 +302,7 @@ namespace Hecatomb
         }
         public virtual void SpendIngredient()
         {
-            if (Options.NoIngredients)
+            if (!NeedsIngredients())
             {
                 return;
             }

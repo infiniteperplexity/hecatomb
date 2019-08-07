@@ -17,6 +17,8 @@ namespace Hecatomb
             MenuName = "butcher corpse";
             WorkRange = 0;
             Priority = 4;
+            LaborCost = 5;
+            Labor = LaborCost;
             Ingredients["Corpse"] = 1;
             PrereqStructures = new List<string>() { "Slaughterhouse" };
             BG = "pink";
@@ -32,16 +34,7 @@ namespace Hecatomb
             }
             Item item = (Item)Entity.Entities[Claims.Keys.ToList()[0]];
             var (x, y, z) = item;
-            string where = null;
-            if (item.Placed)
-            {
-                where = $"from {x} {y} {z}";
-            }
-            else
-            {
-                where = $"carried by {Worker} at {Worker.X} {Worker.Y} {Worker.Z}";
-            }
-            return $"butcher {item.Describe()} {where}";
+            return $"butcher {item.Describe()}";
         }
 
         public override void TileHover(Coord c)

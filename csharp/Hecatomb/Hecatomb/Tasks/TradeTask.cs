@@ -29,6 +29,12 @@ namespace Hecatomb
             return $"trading for {Resource.Format(Trading) }";
         }
 
+        public override bool NeedsIngredients()
+        {
+            return true;
+        }
+
+
         private ColoredText cachedMenuListing;
         private int cachedTurn;
         public override ColoredText ListOnMenu()
@@ -37,7 +43,7 @@ namespace Hecatomb
             {
                 return cachedMenuListing;
             }
-            if (Ingredients.Count == 0 || Options.NoIngredients)
+            if (Ingredients.Count == 0)
             {
                 cachedMenuListing = $"Trade for {Resource.Format(Trading)}";
                 cachedTurn = Game.World.Turns.Turn;

@@ -45,12 +45,6 @@ namespace Hecatomb
                 int eid = Components[t];
                 if (eid==-1)
                 {
-                    foreach (string key in Components.Keys)
-                    {
-                        Debug.WriteLine("trying look at despawned components?");
-                        Debug.WriteLine(key);
-                        Debug.WriteLine(Components[key].EID);
-                    }
                     // maybe this can happen when despawns trigger other despawns?
                     return null;
                 }
