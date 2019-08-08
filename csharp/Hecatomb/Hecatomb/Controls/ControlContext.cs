@@ -60,6 +60,7 @@ namespace Hecatomb
 
         public void Reset()
         {
+            //Debug.WriteLine("Resetting");
             var old = Game.Controls;
             Game.Controls.CleanUp();
             Game.Controls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
@@ -281,7 +282,7 @@ namespace Hecatomb
         	Keys[] keys = k.GetPressedKeys();
         	bool gotKey = false;
 			// a splash screen escapes on any key...this may not be a good way to handle it
-			if (UseKeyFallback)
+			if (UseKeyFallback && keys.Length > 0)
 			{
 				HandleKeyFallback();
 				gotKey = true;

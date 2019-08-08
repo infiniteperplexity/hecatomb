@@ -269,11 +269,14 @@ namespace Hecatomb
 
         public static void HandleVisibility()
         {
-            Game.MainPanel.Dirty = true;
-            Game.MenuPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
-            var m = Mouse.GetState();
-            Controls?.HandleHover(m.X, m.Y);
+            //if (Game.World.Turns.Turn > 1)
+            //{
+                Game.MainPanel.Dirty = true;
+                Game.MenuPanel.Dirty = true;
+                Game.StatusPanel.Dirty = true;
+                var m = Mouse.GetState();
+                Controls?.HandleHover(m.X, m.Y);
+            //}
             TheFixer.CheckStates();
             Game.World.ValidateLighting();
             if (!(Controls is CameraControls))

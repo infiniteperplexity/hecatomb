@@ -47,14 +47,17 @@ Nice bite-sized chunks:
 - should add deconstruction of workshop for flint?
 - need to think entire way of handling pathfinding for sieges...they won't attack outdoor structures.
 * let's get rid of this message "trying look at despawned components?"
-- "butcher a corpse from" makes no sense when it's on the hovered task...actually it never makes sense
+* "butcher a corpse from" makes no sense when it's on the hovered task...actually it never makes sense
 * butcher tasks should go faster
 * add better trades...coal, etc.
-- get rid of article name in black market, and it should have ingredients listed; it seems like we aren't fulfilling the ingredients in the normal way? 
+* get rid of article name in black market, and it should have ingredients listed; it seems like we aren't fulfilling the ingredients in the normal way? 
 - bake coal in furnace?
 - do we have speed adjustment?
 * weird stuff going on newly generated trade tasks
 - need a place to put trade goods for storage
+* I think there's a race condition when you kick off a new game (I think this is now fixed)
+* Why are we skipping the "click any button" stage?
+- got no message when zombie rotted away
 
 finalizing
 - set all options correctly

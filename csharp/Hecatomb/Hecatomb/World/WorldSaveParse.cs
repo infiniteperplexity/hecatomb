@@ -319,6 +319,7 @@ namespace Hecatomb
                     Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
 				}
 			}
+            World.WorldSafeToDraw = true;
         }
 	}
 }

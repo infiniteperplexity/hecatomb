@@ -50,7 +50,8 @@ namespace Hecatomb
                 {
                     if (task.Unbox().Worker.Unbox() != minion.Entity.Unbox())
                     {
-                        PushMessage($"Unassigned desynched task and minion; {task.Unbox().Describe()}");
+                        // actually I think it always happens the other way around
+                        PushMessage($"Unassigned desynched minion from task; {task.Unbox().Describe()}");
                        
                         task.Unbox().Unassign();
                         minion.Task = null;
@@ -59,7 +60,23 @@ namespace Hecatomb
             }
             foreach (Task t in Game.World.Tasks.ToList())
             {
-                if (!t.ValidTile(new Coord(t.X, t.Y, t.Z)))
+                if (t.Worker != null)
+                {
+                    if (t.Worker.GetComponent<Minion>().Task != t)
+                    {
+                        if (t.Worker.Unbox().Spawned && t.CanAssign(t.Worker))
+                        {
+                            PushMessage($"Reassigning desynched task to minion");
+                            t.AssignTo(t.Worker);
+                        }
+                        else
+                        {
+                            PushMessage($"Canceling desynchned task with no minion; { t.Describe()})");
+                            t.Cancel();
+                        }
+                    }
+                }
+                else if (!t.ValidTile(new Coord(t.X, t.Y, t.Z)))
                 {
                     if (t is DigTask)
                     {

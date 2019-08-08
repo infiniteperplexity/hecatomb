@@ -64,6 +64,10 @@ public class MainGamePanel : GamePanel
 		
 		public void DrawDirty()
 		{
+            if (Game.World == null || !World.WorldSafeToDraw)
+            {
+                return;
+            }
             OldDirtyTiles.UnionWith(NextDirtyTiles);
 			foreach (Coord c in OldDirtyTiles)
         	{
@@ -84,7 +88,8 @@ public class MainGamePanel : GamePanel
 
 		public override void DrawContent()
 		{
-            if (Game.World == null)
+
+            if (Game.World == null || !World.WorldSafeToDraw)
             {
                 for (int i = 0; i < 25; i++)
                 {

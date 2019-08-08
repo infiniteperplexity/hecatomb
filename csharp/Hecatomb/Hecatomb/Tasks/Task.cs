@@ -323,6 +323,11 @@ namespace Hecatomb
             foreach (int eid in Claims.Keys)
             {
                 // need a null check here?
+                if (Entities == null)
+                {
+                    // I think this happens sometimes while saving or restoring
+                    return;
+                }
                 Item item = (Item)Entities[eid];
                 item.Claimed -= Claims[eid];
             }
@@ -376,7 +381,7 @@ namespace Hecatomb
             if (CanWork())
             {
                 SpendIngredient();
-                if (Ingredients.Keys.Count == 0 || Options.NoIngredients)
+                if (Ingredients.Keys.Count == 0 || (Options.NoIngredients && !NeedsIngredients()))
                 {
                     Work();
                 }

@@ -102,6 +102,7 @@ namespace Hecatomb
         }
         public override void Work()
         {
+            Debug.WriteLine("worked a trade task");
             Labor -= (1 + Options.WorkBonus);
             Unassign();
             Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);

@@ -241,7 +241,7 @@ namespace Hecatomb
                         continue;
                     }
                 }
-                Status.PushMessage($"{Describe()} got displaced to {c.X} {c.Y} {c.Z}.");
+                Status.PushMessage($"{Describe()}got displaced to {c.X} {c.Y} {c.Z}.");
                 Place(c.X, c.Y, c.Z);
                 return;
             }

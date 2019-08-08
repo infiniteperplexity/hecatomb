@@ -60,7 +60,7 @@ namespace Hecatomb
         // should these attach to builder?
         public FastNoise ElevationNoise;
 		public FastNoise VegetationNoise;
-		
+        public static bool WorldSafeToDraw;
         // shouldn't this be in WorldBuilder, not world?
 		public Creature PlacePlayer()
         {
@@ -201,16 +201,17 @@ namespace Hecatomb
 
 
 		public World(int width, int height, int depth, int seed=0)
-        { 
+        {
+            WorldSafeToDraw = false;
             // create one of each 
             var statehandlers = typeof(StateHandler).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(StateHandler))).ToList();
             foreach (var handler in statehandlers)
             {
                 Activator.CreateInstance(handler);
             }
-			Random = new StatefulRandom(seed);
+            Random = new StatefulRandom(seed);
             Entity.Reset();
-			Width = width;
+            Width = width;
 			Height = height;
 			Depth = depth;
 			Events = new EventHandler();
@@ -232,6 +233,7 @@ namespace Hecatomb
 		
 		public void Reset()
 		{
+            WorldSafeToDraw = false;
             // Random = new GameRandom(Random.Seed);
             Entity.Reset();
 			Events = new EventHandler();
@@ -247,7 +249,6 @@ namespace Hecatomb
             Explored = new HashSet<Coord>();
 			Turns = new TurnHandler();
             InitializeHandlers();
-            
         }
 
 

@@ -155,6 +155,7 @@ namespace Hecatomb
                 //world.GetState<CavernHandler>().DigCaverns(40);
                 world.GetState<VaultHandler>().DigCaverns(40);
             }
+            World.WorldSafeToDraw = true;
         }
 
 

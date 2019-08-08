@@ -95,6 +95,7 @@ namespace Hecatomb
             DefaultControls = new DefaultControls();
             CameraControls = new CameraControls();
             Camera = new Camera();
+            Visible = new HashSet<Coord>();
             LastDraw = DateTime.Now;
             base.Initialize();
             if (!Options.NoStartupScreen)
@@ -155,6 +156,7 @@ namespace Hecatomb
         }
         public void StartGame()
         {
+            Game.GameName = "GameWorld";
             TheFixer.Purge();
             Controls.Reset();
             ForegroundPanel.Splash(new List<ColoredText>{
@@ -168,12 +170,21 @@ namespace Hecatomb
                 " ",
                 "(Building world...please wait.)"
             }, frozen: true);
+            //Controls.Set(new FrozenControls());
             MainPanel.Dirty = true;
-            //Time.Frozen = false;
-            //Controls.ImageOverride = null;
             Thread thread = new Thread(StartupThread);
             thread.Start();
+        }
 
+        //not currently used
+        public void RestartGame()
+        {
+            Game.GameName = "GameWorld";
+            Game.SplashPanel.Splash(new List<ColoredText>()
+            {
+                $"Starting new game..."
+            }, frozen: true);
+            Controls.Set(new FrozenControls());
         }
 
         public void RestoreGame()

@@ -13,6 +13,10 @@ namespace Hecatomb
         
         public static (char, string) GetColoredSymbol(int x, int y, int z, bool useLighting = true)
         {
+            if (!World.WorldSafeToDraw)
+            {
+                return (' ', "black");
+            }
             var Creatures = Game.World.Creatures;
             var Items = Game.World.Items;
             var Features = Game.World.Features;
@@ -330,6 +334,10 @@ namespace Hecatomb
 
         public static (char, string, string) GetGlyph(int x, int y, int z)
         {
+            if (!World.WorldSafeToDraw)
+            {
+                return (' ', "black", "black");
+            }
             bool useLighting = true;
             Creature c = Creatures[x, y, z];
             if (c!=null && (c==Player || c.GetComponent<Actor>().Team == Teams.Friendly))
