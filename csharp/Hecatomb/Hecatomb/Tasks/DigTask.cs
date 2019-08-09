@@ -396,6 +396,16 @@ namespace Hecatomb
             }
             // **** We need a more sophisticated hardness check
 
+            if (TooHard(c))
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        public bool TooHard(Coord c)
+        {
             Terrain tn = Game.World.Terrains[c.X, c.Y, c.Z];
             int hardness;
             if (tn == Terrain.WallTile || tn == Terrain.UpSlopeTile)
@@ -408,13 +418,37 @@ namespace Hecatomb
             }
             if (Game.Options.IgnoreHardness || Game.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
             {
-                return true;
+                return false;
             }
-            if (Spawned)
-            {
-                Status.PushMessage("Assigned material is too hard to dig through.");
-            }
-            return false;
+            return true;
         }
-	}
+
+        public override bool CanAssign(Creature c)
+        {
+            Coord crd = new Coord(X, Y, Z);
+            if (!Explored.Contains(crd) && !Options.Explored)
+            {
+                return false;
+            }
+            if (!Placed)
+            {
+                return false;
+            }
+            if (!ValidTile(crd))
+            {
+                if (TooHard(crd))
+                {
+                    Status.PushMessage("Canceling dig task; material too hard.");
+                }
+                else
+                {
+                    Status.PushMessage("Canceling invalid task.");
+                }
+                Cancel();
+                return false;
+            }
+            Movement m = c.GetComponent<Movement>();
+            return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients);
+        }
+    }
 }
