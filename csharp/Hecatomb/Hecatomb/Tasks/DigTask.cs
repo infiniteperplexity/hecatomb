@@ -410,7 +410,10 @@ namespace Hecatomb
             {
                 return true;
             }
-            Status.PushMessage("Assigned material is too hard to dig through.");
+            if (Spawned)
+            {
+                Status.PushMessage("Assigned material is too hard to dig through.");
+            }
             return false;
         }
 	}

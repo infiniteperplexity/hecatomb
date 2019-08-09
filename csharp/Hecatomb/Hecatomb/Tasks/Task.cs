@@ -148,6 +148,7 @@ namespace Hecatomb
             {
                 Worker.GetComponent<Minion>().Task = null;
             }
+            Worker = null;
             UnclaimIngredients();
         }
         public virtual bool NeedsIngredients()
@@ -373,6 +374,10 @@ namespace Hecatomb
 
         public virtual void Act()
         {
+            if (!Spawned)
+            {
+                Debug.WriteLine("Why are we trying to act with a despawned task");
+            }
             if (!HasIngredient() && Labor == LaborCost)
             {
                 FetchIngredient();

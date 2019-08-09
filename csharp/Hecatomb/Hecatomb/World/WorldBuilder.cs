@@ -225,11 +225,70 @@ namespace Hecatomb
             }
             Game.World.ValidateOutdoors();
         }
+        protected void oldPlaceOres()
+        {
+            //placeOres(512);
+        }
+
         protected void placeOres()
         {
-            placeOres(512);
+            int segmax = 5;
+            int segmin = 2;
+            int seglen = 3;
+            int chunk = 16;
+            int nper = 5;
+            Dictionary<Cover, List<Cover>> ores = new Dictionary<Cover, List<Cover>>();
+            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.FlintCluster, Cover.CoalSeam };
+            ores[Cover.Limestone] = new List<Cover>() { Cover.CopperVein, Cover.TinVein, Cover.CoalSeam };
+            ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.IronVein };
+            ores[Cover.Granite] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.GoldVein, Cover.SilverVein };
+            ores[Cover.Bedrock] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.AdamantVein, Cover.ThoriumVein };
+            for (int z = 1; z < Game.World.Depth - 1; z++)
+            {
+                for (int x = 0; x < Game.World.Width; x += chunk)
+                {
+                    for (int y = 0; y < Game.World.Height; y += chunk)
+                    {
+                        for (int i = 0; i < nper; i++)
+                        {
+                            int x0 = x + Game.World.Random.Next(16);
+                            int y0 = y + Game.World.Random.Next(16);
+                            Cover c = Game.World.Covers[x0, y0, z];
+                            if (ores.ContainsKey(c))
+                            {
+                                int rj = Game.World.Random.Next(ores[c].Count);
+                                Cover choice = ores[c][rj];
+                                double displace = Game.World.Random.NextDouble() * 256;
+                                double angle = Game.World.Random.NextDouble() * 2 * Math.PI;
+                                int segs = Game.World.Random.Next(segmin, segmax);
+                                for (int j = 0; j < segs; j++)
+                                {
+                                    int x1 = x0 + (int)(Math.Cos(angle) * seglen);
+                                    int y1 = y0 + (int)(Math.Sin(angle) * seglen);
+                                    List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
+                                    foreach (var coord in line)
+                                    {
+                                        (int _x, int _y, int _) = coord;
+                                        if (_x > 0 && _x < Game.World.Width - 2 && _y > 0 && _y < Game.World.Height - 2)
+                                        {
+                                            if (Game.World.Random.Next(3) > 0 && Game.World.Covers[_x, _y, z].Solid)
+                                            {
+                                                Game.World.Covers[_x, _y, z] = choice;
+                                            }
+                                        }
+                                    }
+                                    x0 = x1;
+                                    y0 = y1;
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
         }
-        protected void placeOres(int n)
+
+        protected void oldPlaceOres(int n)
         {
             int nveins = n;
             int segmax = 5;

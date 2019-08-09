@@ -58,6 +58,14 @@ Nice bite-sized chunks:
 * I think there's a race condition when you kick off a new game (I think this is now fixed)
 * Why are we skipping the "click any button" stage?
 - got no message when zombie rotted away
+- too many "assigned material too hard status bar messages
+- Oh wow, Unassign was asymmetrical...that's probably been the culprit all along
+- Should we lose message history when we save/restore?
+- wtf "ravens"
+- diagonal grave digging should also not dig a hole
+- Forge also looks like Sanctum
+
+
 
 finalizing
 - set all options correctly

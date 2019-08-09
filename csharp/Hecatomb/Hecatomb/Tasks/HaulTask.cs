@@ -114,7 +114,7 @@ namespace Hecatomb
             // do nothing; ingredient claims for haul tasks are hardcoded
         }
 
-        public override void Start()
+        public override void Work()
         {
             Worker.GetComponent<Inventory>().Drop();
             Finish();
