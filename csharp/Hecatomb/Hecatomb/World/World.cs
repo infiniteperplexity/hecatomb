@@ -195,6 +195,10 @@ namespace Hecatomb
             }
             //*****
             Game.Camera.Center(x, y, z);
+            foreach (var res in Game.Options.FreeStuff)
+            {
+                Item.PlaceNewResource(res.Item1, res.Item2, x, y, z);
+            }
             return p;
         }
 		

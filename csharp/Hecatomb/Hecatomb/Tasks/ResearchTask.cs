@@ -39,7 +39,7 @@ namespace Hecatomb
                 rt.Makes = Makes;
                 rt.Labor = LaborCost;
                 rt.LaborCost = LaborCost;
-                rt.Ingredients = Ingredients;
+                rt.Ingredients = new Dictionary<string, int>(Ingredients);
                 rt.Place(x, y, z);
             }
             Controls.Set(new MenuChoiceControls(Structure.Unbox()));

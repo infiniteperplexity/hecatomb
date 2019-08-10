@@ -74,7 +74,7 @@ namespace Hecatomb
                 // could I forceably spawn this rather than just copying it?
                 TradeTask t = Entity.Spawn<TradeTask>();
                 t.Structure = Structure;
-                t.Ingredients = Ingredients;
+                t.Ingredients = new Dictionary<string, int>(Ingredients);
                 t.Trading = Trading;
                 t.Labor = Labor;
                 t.LaborCost = LaborCost;

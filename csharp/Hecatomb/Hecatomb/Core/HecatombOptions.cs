@@ -25,6 +25,7 @@ namespace Hecatomb
         public bool NoCaverns;
         public bool IgnoreHardness;
         public bool Invincible;
+        public List<(string, int)> FreeStuff;
 
         public HecatombOptions()
         {
@@ -62,6 +63,12 @@ namespace Hecatomb
             //IgnoreHardness = true;
             Invincible = false;
             Invincible = true;
+            FreeStuff = new List<(string, int)>();
+            FreeStuff.Add(("TradeGoods", 4));
+            FreeStuff.Add(("Wood", 4));
+            FreeStuff.Add(("Rock", 4));
+            FreeStuff.Add(("Coal", 4));
+            FreeStuff.Add(("Flint", 4));
         }
     }
     

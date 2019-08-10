@@ -23,7 +23,6 @@ namespace Hecatomb
 
         public void AddTrade()
         {
-            Debug.WriteLine("adding a trade");
             // should I call this several times upon Placement?
             int MaxTrades = 4;
             int r = Game.World.Random.Next(PotentialTrades.Count);
@@ -139,7 +138,7 @@ namespace Hecatomb
             // might want to format htis guy a bit...like add coordinates?
             menu.Header = "Structure: " + Describe();
             ControlContext.Selection = this;
-            if (Game.World.Tasks[X, Y, Z] != null)
+            if (Trading != null)
             {
                 // maybe give the option to cancel the trade?
                 menu.Choices = new List<IMenuListable>();
