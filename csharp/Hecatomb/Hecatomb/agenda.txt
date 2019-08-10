@@ -44,7 +44,7 @@ Nice bite-sized chunks:
 * I don't think task priority is working? no, it is.
 * haul task carried by uses wrong name
 - should I require starting trees on the same z level, or 1 lower?
-- should add deconstruction of workshop for flint?
+
 - need to think entire way of handling pathfinding for sieges...they won't attack outdoor structures.
 * let's get rid of this message "trying look at despawned components?"
 * "butcher a corpse from" makes no sense when it's on the hovered task...actually it never makes sense
@@ -52,20 +52,31 @@ Nice bite-sized chunks:
 * add better trades...coal, etc.
 * get rid of article name in black market, and it should have ingredients listed; it seems like we aren't fulfilling the ingredients in the normal way? 
 - bake coal in furnace?
-- do we have speed adjustment?
+* do we have speed adjustment?
 * weird stuff going on newly generated trade tasks
 - need a place to put trade goods for storage
 * I think there's a race condition when you kick off a new game (I think this is now fixed)
 * Why are we skipping the "click any button" stage?
-- got no message when zombie rotted away
+* got no message when zombie rotted away
 * too many "assigned material too hard status bar messages
 * Oh wow, Unassign was asymmetrical...that's probably been the culprit all along
 - Should we lose message history when we save/restore?
 - wtf "ravens"
-- diagonal grave digging should also not dig a hole
-- Forge also looks like Sanctum
-
-
+* diagonal grave digging should also not dig a hole...eh...
+* Forge also looks like Sanctum
+- should add deconstruction of workshop for flint?
+- need a way to send messages along with destroying something; e.g. this is how it died.
+- separate furnace from forge, for coal?
+- should make the guard post do stuff
+- can we convert the FlyWeight strings to Enums so they can't crash?
+- I don't like pale yellow background for research tasks
+- treasury should look a little different from stockpile
+- stockpile should show contents
+- claimed items should maybe say so?
+- way to dispose of rotted zombies?
+- need busy-work tasks?
+- got a "Trade for 1 trade goods" task on the menu somehow...
+- library also looks exactly like sanctum
 
 finalizing
 - set all options correctly

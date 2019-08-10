@@ -20,13 +20,13 @@ namespace Hecatomb
             Height = 2;
             Symbols = new char[]
             {
-                '\u2625','.',
-                '.','\u2135'
+                '\u2625','%',
+                '.','\u2694'
             };
             FGs = new string[]
             {
-                "magenta", "FLOORFG",
-                "FLOORFG", "green"
+                "white", "pink",
+                "FLOORFG", "#444499"
             };
             BG = "#777799";
             BGs = new string[]

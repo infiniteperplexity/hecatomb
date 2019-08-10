@@ -90,7 +90,7 @@ namespace Hecatomb
         {
             Name = "bronzeworks",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "CopperOre", 2 }, { "TinOre", 2 }, { "Coal", 2 }, { "Stone", 2 } },
+            Ingredients = new Dictionary<string, int>() { { "CopperOre", 2 }, { "TinOre", 2 }, { "Coal", 2 }, { "Rock", 2 } },
             Prerequisites = new List<string>() { "FlintTools" }
         };
 

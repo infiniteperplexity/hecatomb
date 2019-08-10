@@ -18,17 +18,17 @@ namespace Hecatomb
         {
             Symbols = new char[]
             {
-                '\u2625','.','\u2AEF',
-                '.','\u2135','.',
-                '\u2AEF','\u2606','\u263F'
+                '\u26EC','.','\u2692',
+                '\u2604','.','\u25A7',
+                '\u26CF','=','.'
             };
             FGs = new string[]
             {
-                "magenta", "FLOORFG","cyan",
-                "FLOORFG", "green","FLOORFG",
-                "yellow","red","orange"
+                "#99FF33", "FLOORFG","WALLFG",
+                "#FF5500", "FLOORFG","#BB9922",
+                "WALLFG","#FF9933","FLOORFG"
             };
-            BG = "#222244";
+            BG = "#554488";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
@@ -44,7 +44,7 @@ namespace Hecatomb
             MenuName = "forge";
             Name = "forge";
             //Researches = new[] { "Bronze };
-            Researches = new[] { "Bronzeworking", "Steelworking", "Alloys"};
+            Researches = new[] { "Bronzeworking", "Steelworking", "AlloySteel"};
             //ResearchPrereqs = new[] { "Bronzeworking"};
             StructurePrereqs = new[] { "Workshop" };
         }

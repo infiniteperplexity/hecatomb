@@ -238,11 +238,11 @@ namespace Hecatomb
             int chunk = 16;
             int nper = 5;
             Dictionary<Cover, List<Cover>> ores = new Dictionary<Cover, List<Cover>>();
-            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.FlintCluster, Cover.CoalSeam };
+            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.CoalSeam, Cover.FlintCluster};
             ores[Cover.Limestone] = new List<Cover>() { Cover.CopperVein, Cover.TinVein, Cover.CoalSeam };
-            ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.IronVein };
-            ores[Cover.Granite] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.GoldVein, Cover.SilverVein };
-            ores[Cover.Bedrock] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.AdamantVein, Cover.ThoriumVein };
+            ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.SilverVein };
+            ores[Cover.Granite] = new List<Cover>() {  Cover.GoldVein, Cover.SilverVein, Cover.TitaniumVein, Cover.CobaltVein};
+            ores[Cover.Bedrock] = new List<Cover>() { Cover.CobaltVein, Cover.TitaniumVein, Cover.AdamantVein, Cover.ThoriumVein };
             for (int z = 1; z < Game.World.Depth - 1; z++)
             {
                 for (int x = 0; x < Game.World.Width; x += chunk)
@@ -256,7 +256,8 @@ namespace Hecatomb
                             Cover c = Game.World.Covers[x0, y0, z];
                             if (ores.ContainsKey(c))
                             {
-                                int rj = Game.World.Random.Next(ores[c].Count);
+                                //int rj = Game.World.Random.Next(ores[c].Count);
+                                int rj = i % ores[c].Count;
                                 Cover choice = ores[c][rj];
                                 double displace = Game.World.Random.NextDouble() * 256;
                                 double angle = Game.World.Random.NextDouble() * 2 * Math.PI;

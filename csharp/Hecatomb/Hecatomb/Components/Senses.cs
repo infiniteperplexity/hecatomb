@@ -89,9 +89,30 @@ namespace Hecatomb
         }
         private void checkForEnemy(int x, int y)
         {
-            for (int i = 1; i >= -1; i--)
+            Creature cr = Creatures[x, y, storedZ];
+            for (int i = 0; i < 2; i++)
             {
-                Creature cr = Creatures[x, y, storedZ + i];
+                cr = null;
+                if (i == 0)
+                {
+                    cr = Creatures[x, y, storedZ];
+                }
+                else if (i == 1)
+                {
+                    // note that upwards diagonal visibility is not good...
+                    if (Terrains[x, y, storedZ + 1].ZView == -1)
+                    {
+                        cr = Creatures[x, y, storedZ + 1];
+                    }
+                }
+                else
+                {
+                    // visibility from above is a bit better
+                    if (Terrains[x, y, storedZ].ZView == -1)
+                    {
+                        cr = Creatures[x, y, storedZ - 1];
+                    }
+                }
                 if (cr != null)
                 {
                     if (storedActor.IsHostile(cr))
@@ -101,6 +122,7 @@ namespace Hecatomb
                             if (storedCreature == null || Tiles.QuickDistance(x, y, storedZ, Entity.X, Entity.Y, Entity.Z) < Tiles.QuickDistance(storedCreature.X, storedCreature.Y, storedCreature.Z, Entity.X, Entity.Y, Entity.Z))
                             {
                                 storedCreature = cr;
+                                break;
                             }
                         }
                     }

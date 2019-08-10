@@ -51,8 +51,11 @@ namespace Hecatomb
             KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
 			KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
 			KeyMap[Keys.Space] = Commands.Wait;
-			// skip for subclasses
-			if (GetType()==typeof(CameraControls))
+            KeyMap[Keys.OemMinus] = Commands.SlowDown;
+            KeyMap[Keys.OemPlus] = Commands.SpeedUp;
+
+            // skip for subclasses
+            if (GetType()==typeof(CameraControls))
 			{
 				KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
                 KeyMap[Keys.J] = Commands.ChooseTask;

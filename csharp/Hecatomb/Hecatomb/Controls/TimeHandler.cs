@@ -18,7 +18,8 @@ namespace Hecatomb
 	/// </summary>
 	public class TimeHandler
 	{
-		decimal[] Speeds;
+		//decimal[] Speeds;
+        List<(int, int)> Speeds;
 		int SpeedIndex = 3;
 		public bool PausedAfterLoad;
 		public bool AutoPausing;
@@ -27,21 +28,45 @@ namespace Hecatomb
 		
 		public TimeHandler()
 		{
-			Speeds = new decimal[]
-			{
-				1/4,
-				1/2,
-				3/4,
-				1/1,
-				3/2,
-				2/1,
-				4/1,
-				8/1
-			};
-			PausedAfterLoad = true;
+            Speeds = new List<(int, int)>
+            {
+                (1,4),
+                (1,2),
+                (3,4),
+                (1,1),
+                (3,2),
+                (2,1),
+                (4,1),
+                (8,1)
+            };
+            PausedAfterLoad = true;
 			AutoPausing = true;
 			LastUpdate = DateTime.Now;
 		}
+
+        public void SlowDown()
+        {
+            if (SpeedIndex < Speeds.Count - 1)
+            {
+                SpeedIndex += 1;
+                int num = Speeds[SpeedIndex].Item2;
+                int denom = Speeds[SpeedIndex].Item1;
+                Game.StatusPanel.PushMessage($"Game speed decreased to {num}:{denom}");
+                Game.StatusPanel.Dirty = true;
+            }
+        }
+
+        public void SpeedUp()
+        {
+            if (SpeedIndex > 0)
+            {
+                SpeedIndex -= 1;
+                int num = Speeds[SpeedIndex].Item2;
+                int denom = Speeds[SpeedIndex].Item1;
+                Game.StatusPanel.PushMessage($"Game speed increased to {num}:{denom}");
+                Game.StatusPanel.Dirty = true;
+            }
+        }
 		
 		public void Acted()
 		{
@@ -70,7 +95,8 @@ namespace Hecatomb
 			}
 			DateTime now = DateTime.Now;
 			int millis = (int) now.Subtract(LastUpdate).TotalMilliseconds;
-			if (millis > 1000*Speeds[SpeedIndex])
+            decimal fraction = (decimal) Speeds[SpeedIndex].Item1 / (decimal) Speeds[SpeedIndex].Item2;
+            if (millis > 1000*fraction)
 			{
 				Game.Commands.AutoWait();
 			}

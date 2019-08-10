@@ -363,5 +363,15 @@ namespace Hecatomb
         {
             Game.StatusPanel.ScrollDown();
         }
+
+        public void SpeedUp()
+        {
+            Time.SpeedUp();
+        }
+
+        public void SlowDown()
+        {
+            Time.SlowDown();
+        }
     }
 }

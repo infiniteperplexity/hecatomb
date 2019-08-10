@@ -45,6 +45,8 @@ namespace Hecatomb
             KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
             KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
             KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
+            KeyMap[Keys.OemMinus] = Commands.SlowDown;
+            KeyMap[Keys.OemPlus] = Commands.SpeedUp;
 			
 			MenuTop = new List<ColoredText>() {
 				"Esc: System view.",
