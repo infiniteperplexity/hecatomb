@@ -17,6 +17,7 @@ namespace Hecatomb
     public class ConstructTask : Task, IChoiceMenu, ISelectsBox
 	{
 		public int FeatureIndex;
+        public Dictionary<string, float> Harvests;
 		[JsonIgnore] public new int BoxWidth
 		{
 			get
@@ -84,6 +85,7 @@ namespace Hecatomb
             Structure = new TileEntityField<Structure>();
 			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket", "StoneMason", "Forge", "Chirurgeon", "Library", "Treasury"};
 			MenuName = "construct or repair a structure";
+            Harvests = new Dictionary<string, float>();
             Priority = 4;
             LaborCost = 5;
             Labor = 5;
@@ -150,9 +152,13 @@ namespace Hecatomb
             //f.BG = sc.BGs[FeatureIndex];
             f.BG = s.BG;
 			s.Features[FeatureIndex] = f;
+            // this is weird, shouldn't they just be a default part of it?
             StructuralComponent st = Spawn<StructuralComponent>();
             st.Structure = Structure;
             st.AddToEntity(f);
+            Harvestable h = Spawn<Harvestable>();
+            h.Yields = (Harvests != null) ? new Dictionary<string, float>(Harvests) : new Dictionary<string, float>();
+            h.AddToEntity(f);
             bool finished = true;
 			foreach (Feature fr in s.Features)
 			{

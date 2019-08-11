@@ -95,6 +95,23 @@ namespace Hecatomb
             {
                 menu.MenuTop.Insert(2, $"Controls {GetState<TaskHandler>().Minions.Count} minions.");
                 menu.MenuTop.Insert(3, "Tab) First minion.");
+
+                var stored = new List<Dictionary<string, int>>();
+                var structures = Structure.ListStructures();
+                foreach (Structure s in structures)
+                {
+                    stored.Add(s.GetStored());
+                }
+                var total = Item.CombinedResources(stored);
+                if (total.Count > 0)
+                {
+                    menu.MenuTop.Add(" ");
+                    menu.MenuTop.Add("Stored resources:");
+                    foreach (var res in total.Keys)
+                    {
+                        menu.MenuTop.Add("- " + Resource.Format((res, total[res])));
+                    }
+                }
             }
             else
             {

@@ -50,6 +50,14 @@ namespace Hecatomb
                 //null, new Dictionary<string, int>() {{"Rock", 1},{"Flint", 1}}, null,
                 //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}}
             };
+            Harvests = new Dictionary<string, float>[]
+            {
+                new Dictionary<string, float>() , new Dictionary<string, float>() {{"Flint", 1}},
+                new Dictionary<string, float>() , new Dictionary<string, float>()
+                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
+                //null, new Dictionary<string, int>() {{"Rock", 1},{"Flint", 1}}, null,
+                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}}
+            };
             MenuName = "workshop";
             Name = "workshop";
             Researches = new[] { "FlintTools", "SpearTrap", "BronzeTools", "SteelTools", "AlloyTools" };

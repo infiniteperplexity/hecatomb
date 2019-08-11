@@ -23,6 +23,7 @@ namespace Hecatomb
         // problem!
         public List<TileEntityField<Feature>> Features;
         public Dictionary<string, int>[] Ingredients;
+        public Dictionary<string, float>[] Harvests;
         public string[] Researches;
         public string[] ResearchPrereqs;
         public string[] StructurePrereqs;
@@ -56,6 +57,7 @@ namespace Hecatomb
             Height = 3;
             Features = new List<TileEntityField<Feature>>();
             Ingredients = new Dictionary<string, int>[Width * Height];
+            Harvests = new Dictionary<string, float>[Width * Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<DespawnEvent>(OnDespawn);
             ResearchPrereqs = new string[0];
@@ -156,7 +158,7 @@ namespace Hecatomb
                         // loop through available items in order of distance
                         foreach (Item item in items)
                         {
-                            if (item.Resource==resource && !item.IsStored() && item.Unclaimed>0)
+                            if (item.Resource==resource && !item.IsStored() && item.Owned && item.Unclaimed>0)
                             {
                                 TryToSpawnHaulTask(item);
                                 // go to next resource
@@ -284,6 +286,19 @@ namespace Hecatomb
                     txt
                 };
             }
+            if (Stores.Length > 0)
+            {
+                var stored = GetStored();
+                if (stored.Count > 0)
+                {
+                    menu.MenuTop.Add(" ");
+                    menu.MenuTop.Add("Stored:");
+                }
+                foreach (string res in stored.Keys)
+                {
+                    menu.MenuTop.Add("- " + Resource.Format((res, stored[res])));
+                }
+            }
             Game.MenuPanel.Dirty = true;
 
             menu.KeyMap[Keys.Escape] =
@@ -293,6 +308,31 @@ namespace Hecatomb
                     Game.Controls.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextStructure;
+        }
+
+        public Dictionary<string, int> GetStored()
+        {
+            var stored = new Dictionary<string, int>();
+            if (Stores.Length > 0)
+            {
+                foreach (Feature f in Features)
+                {
+                    var (x, y, z) = f;
+                    Item item = Items[x, y, z];
+                    if (item != null && Stores.Contains(item.Resource))
+                    {
+                        if (stored.ContainsKey(item.Resource))
+                        {
+                            stored[item.Resource] += item.Quantity;
+                        }
+                        else
+                        {
+                            stored[item.Resource] = item.Quantity;
+                        }
+                    }
+                }
+            }
+            return stored;
         }
 
         public void NextStructure()
@@ -363,6 +403,7 @@ namespace Hecatomb
                         tc.Structure = this;
                         tc.FeatureIndex = i;
                         tc.Ingredients = Ingredients[i] ?? new Dictionary<string, int>();
+                        tc.Harvests = (Harvests.Length> i) ? Harvests[i] : new Dictionary<string, float>();
                         tc.Place(s.X, s.Y, s.Z);
                     }
                     else if (f.TryComponent<StructuralComponent>()!=null)

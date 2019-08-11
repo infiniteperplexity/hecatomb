@@ -93,6 +93,12 @@ namespace Hecatomb
                 null, new Dictionary<string, int>() {{"TradeGoods", 1}}, null,
                 new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
             };
+            Harvests = new Dictionary<string, float>[]
+            {
+                null, null, null,
+                null, new Dictionary<string, float>() {{"TradeGoods", 1}}, null,
+                null, null, null
+            };
             MenuName = "black market";
             Name = "black market";
             AddListener<PlaceEvent>(OnPlace);

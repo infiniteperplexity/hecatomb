@@ -6,6 +6,8 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Diagnostics;
 
 namespace Hecatomb
 {
@@ -17,7 +19,8 @@ namespace Hecatomb
     {
         public ClaimTask() : base()
         {
-            MenuName = "claim items";
+            MenuName = "toggle item claims";
+            PrereqStructures = new List<string>() { "Stockpile" };
             BG = "pink";
         }
 
@@ -30,13 +33,13 @@ namespace Hecatomb
         {
             var co = Game.Controls;
             co.MenuMiddle.Clear();
-            co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Claim items from {0} {1} {2}", c.X, c.Y, c.Z) };
+            co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Toggle item claims from {0} {1} {2}", c.X, c.Y, c.Z) };
         }
         public override void TileHover(Coord c, List<Coord> squares)
         {
             var co = Game.Controls;
             co.MenuMiddle.Clear();
-            co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Claim items to {0} {1} {2}", c.X, c.Y, c.Z) };
+            co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Toggle item claims to {0} {1} {2}", c.X, c.Y, c.Z) };
         }
 
         public override bool ValidTile(Coord c)
@@ -47,9 +50,29 @@ namespace Hecatomb
         {
             foreach (Coord c in squares)
             {
-                if (Items[c.X, c.Y, c.Z] != null)
+                var item = Items[c.X, c.Y, c.Z];
+                if (item != null)
                 {
-                    Items[c.X, c.Y, c.Z].Owned = true;
+                    if (item.Owned)
+                    {
+                        item.Owned = false;
+                        if (item.Claimed > 0)
+                        {
+                            Debug.WriteLine("flag 1");
+                            foreach (var task in Game.World.Tasks.ToList())
+                            {
+                                if (task.Claims.ContainsKey(item.EID))
+                                {
+                                    Debug.WriteLine("flag 2");
+                                    task.Unassign();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        item.Owned = true;
+                    }
                 }
             }
         }

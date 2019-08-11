@@ -34,7 +34,7 @@ namespace Hecatomb
             Visible = false;
             //Visible = true;
             NoIngredients = false;
-            //NoIngredients = true;
+            NoIngredients = true;
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
@@ -48,7 +48,7 @@ namespace Hecatomb
             NoManaCost = false;
             //NoManaCost = true;
             WorkBonus = 0;
-            //WorkBonus = 5;
+            WorkBonus = 5;
             NoSpiders = false;
             //NoSpiders = true;
             NoGhouls = false;
@@ -64,11 +64,11 @@ namespace Hecatomb
             Invincible = false;
             Invincible = true;
             FreeStuff = new List<(string, int)>();
-            FreeStuff.Add(("TradeGoods", 4));
-            FreeStuff.Add(("Wood", 4));
-            FreeStuff.Add(("Rock", 4));
-            FreeStuff.Add(("Coal", 4));
-            FreeStuff.Add(("Flint", 4));
+            //FreeStuff.Add(("TradeGoods", 4));
+            //FreeStuff.Add(("Wood", 4));
+            //FreeStuff.Add(("Rock", 4));
+            //FreeStuff.Add(("Coal", 4));
+            //FreeStuff.Add(("Flint", 4));
         }
     }
     

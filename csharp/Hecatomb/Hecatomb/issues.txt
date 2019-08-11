@@ -92,3 +92,61 @@ Needs testing:
 New Features:
 - We need good ways to keep zombies indoors during sieges.
 - A rally point would work for this for now.
+
+Needs sorted:
+* deal with the ingredient menu slam.
+* show turns on research tasks
+* no more "stuck highlights"...maybe make that a singleton state
+* deal with double-use of Z
+* fix build to unassign dig in walls
+* "wait" recenters on selection
+* implement forbidtask
+* notify on hard walls cancel dig
+* add a way to cycle trades
+* colorize the tasks
+* better naming and colors for rotten stuff, check that corpses rot
+* Make it so corpses show signs of rot I guess.
+* revise code for guaranteeing starting area
+* test furnishing door on top of damaged door to repair
+* Is there any way to repair a damaged structural feature?
+* I don't think the corpse names showed up correctly?
+* zombies arguably rot too fast
+* don't need to show ingredients for haul tasks or butcher tasks
+* sanctum should allow +1 zombie
+* clicking creature should prioritize over clicking structure
+* maybe randomize starting decay?
+* graphics for chirurgeon are a bit repetitive to sanctum
+* number of turns left doesn't update correctly while waiting (believed fixed)
+* trade task display name should tell me turns left.
+* trade task in building description has badly formatted name
+* rotten zombies shouldn't leave corpses
+* keep an eye out for bad task names
+* "zombie couldn't find needed keys"?   wtf?
+* I got a "what the heck?" haul one rock message...so this is when a haul tasks has no claims, which means it's invalid.
+* got a crash from hovering over a butcher tasks whose corpse had decayed out from under it
+* keep an eye out for the desynced tasks...or did we solve that?  I think I saw one recently.
+* let's get rid of this message "trying look at despawned components?"
+* "butcher a corpse from" makes no sense when it's on the hovered task...actually it never makes sense
+* butcher tasks should go faster
+* add better trades...coal, etc.
+* get rid of article name in black market, and it should have ingredients listed; it seems like we aren't fulfilling the ingredients in the normal way?
+* diagonal grave digging should also not dig a hole...eh...
+* Forge also looks like Sanctum
+* should add deconstruction of workshop for flint?
+* got a "Trade for 1 trade goods" task on the menu somehow...
+* library also looks exactly like sanctum
+* toggling claims...should unclaim ingredients?  made it so it cancels the task
+* treasury should look a little different from stockpile
+* stockpile should show contents
+* Should stockpiles contribute to a central resource listing?
+* I think there's a race condition when you kick off a new game (I think this is now fixed)
+* Why are we skipping the "click any button" stage?
+* got no message when zombie rotted away
+* too many "assigned material too hard status bar messages
+* Oh wow, Unassign was asymmetrical...that's probably been the culprit all along
+* do we have speed adjustment?
+* weird stuff going on newly generated trade tasks
+* message when zombie expires
+* I don't think task priority is working? no, it is.
+* haul task carried by uses wrong name
+* updating research turns on menu doesn't work still

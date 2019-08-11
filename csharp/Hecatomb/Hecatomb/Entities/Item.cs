@@ -19,7 +19,7 @@ namespace Hecatomb
         public int Decay;
         public int TotalDecay;
         [JsonIgnore]
-        public  int StackSize
+        public int StackSize
         {
             get
             {
@@ -82,7 +82,7 @@ namespace Hecatomb
         public GameEvent CorpseDecays(GameEvent ge)
         {
             Decay -= 1;
-            if (Decay==0)
+            if (Decay == 0)
             {
                 Destroy();
             }
@@ -129,7 +129,7 @@ namespace Hecatomb
             item.Resource = Resource;
             item.Quantity = n;
             item.Owned = Owned;
-            if (Quantity<=0)
+            if (Quantity <= 0)
             {
                 Despawn();
             }
@@ -150,7 +150,7 @@ namespace Hecatomb
         }
         public static Item PlaceNewResource(string r, int n, int x, int y, int z, bool owned = true)
         {
-            Item item = (r=="Corpse") ? SpawnCorpse() : Spawn<Item>();
+            Item item = (r == "Corpse") ? SpawnCorpse() : Spawn<Item>();
             item.Resource = r;
             item.Quantity = n;
             item.Owned = owned;
@@ -191,7 +191,7 @@ namespace Hecatomb
         {
             int MaxDistance = 2;
             List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
-            order = order.OrderBy(s=>Game.World.Random.NextDouble()).ToList();
+            order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
             Queue<Coord> queue = new Queue<Coord>();
             if (Terrains[x, y, z] == Terrain.DownSlopeTile)
             {
@@ -205,7 +205,7 @@ namespace Hecatomb
                 queue.Enqueue(new Coord(x + dx, y + dy, z + dz));
             }
             HashSet<Coord> tried = new HashSet<Coord>();
-            while (queue.Count>0)
+            while (queue.Count > 0)
             {
                 Coord c = queue.Dequeue();
                 tried.Add(c);
@@ -213,9 +213,9 @@ namespace Hecatomb
                 {
                     continue;
                 }
-                if (Items[c]!=null)
+                if (Items[c] != null)
                 {
-                    if (Items[c].Resource!=Resource || Items[c].Quantity>=StackSize)
+                    if (Items[c].Resource != Resource || Items[c].Quantity >= StackSize)
                     {
                         if (Terrains[c.X, c.Y, c.Z] == Terrain.DownSlopeTile)
                         {
@@ -232,11 +232,11 @@ namespace Hecatomb
                             dy += c.Y;
                             dz += c.Z;
                             Coord d = new Coord(dx, dy, dz);
-                            if (!tried.Contains(d) && Tiles.QuickDistance(x, y, z, dx, dy, dz)<=MaxDistance)
+                            if (!tried.Contains(d) && Tiles.QuickDistance(x, y, z, dx, dy, dz) <= MaxDistance)
                             {
                                 queue.Enqueue(d);
                             }
-                            
+
                         }
                         continue;
                     }
@@ -277,6 +277,27 @@ namespace Hecatomb
             var unowned = (Owned) ? "" : "(unclaimed)";
             // return $"{Quantity} {name} ({Claimed} claimed, {txt}owned)";
             return $"{Quantity} {name} {unowned}";
+        }
+
+
+        public static Dictionary<string, int> CombinedResources(List<Dictionary<string, int>> list)
+        {
+            var total = new Dictionary<string, int>();
+            foreach (var resources in list)
+            {
+                if (resources != null)
+                {
+                    foreach (string resource in resources.Keys)
+                    {
+                        if (!total.ContainsKey(resource))
+                        {
+                            total[resource] = 0;
+                        }
+                        total[resource] += resources[resource];
+                    }
+                }
+            }
+            return total;
         }
     }
 }

@@ -19,17 +19,17 @@ namespace Hecatomb
         {
             Symbols = new char[]
             {
-                '\u2625','.','\u2AEF',
-                '.','\u2135','.',
-                '\u2AEF','\u2606','\u263F'
+                '\u25A4','.','\u25A4',
+                '\u25A4','.','\u25A4',
+                '\u25A4','.','\u25A4'
             };
             FGs = new string[]
             {
-                "magenta", "FLOORFG","cyan",
-                "FLOORFG", "green","FLOORFG",
-                "yellow","red","orange"
+                "#BB44BB", "FLOORFG","#BB4444",
+                "#BBBB44", "FLOORFG","#4444BB",
+                "#44BB44", "FLOORFG","#44BBBB"
             };
-            BG = "#222244";
+            BG = "#442244";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",

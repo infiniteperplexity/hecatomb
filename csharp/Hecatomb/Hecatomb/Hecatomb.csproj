@@ -89,7 +89,6 @@
     <Compile Include="Structures\Library.cs" />
     <Compile Include="Structures\StoneMason.cs" />
     <Compile Include="Structures\Treasury.cs" />
-    <Compile Include="Tasks\UnclaimTask.cs" />
     <Compile Include="TheFixer.cs" />
     <Compile Include="Utilities\CellularAutomaton.cs" />
     <Compile Include="Components\LeaderComponent.cs" />
