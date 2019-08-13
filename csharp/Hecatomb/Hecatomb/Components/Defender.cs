@@ -118,6 +118,11 @@ namespace Hecatomb
             }
             //Debug.Print("Total wounds for {0} are {1}", Entity.Describe(), Wounds);
             // now tally wounds
+            ResolveWounds();
+        }
+
+        public void ResolveWounds()
+        {
             if (Wounds >= 8)
             {
                 if (Entity == Game.World.Player)
@@ -128,12 +133,11 @@ namespace Hecatomb
                 {
                     Debug.WriteLine("This entity should die.");
                     (new BloodEmitter() { LifeSpan = 200 }).Place(Entity.X, Entity.Y, Entity.Z);
-                    Game.World.Events.Publish(new SensoryEvent() { Sight = $"{cd.Describe()} dies!" });
+                    Game.World.Events.Publish(new SensoryEvent() { Sight = $"{Entity.Describe()} dies!" });
                     Entity.Unbox().Destroy();
                 }
             }
         }
-
         public override void InterpretJSON(string json)
         {
             JObject obj = JObject.Parse(json);

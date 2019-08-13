@@ -140,7 +140,6 @@ namespace Hecatomb
             }
             // dig holes in the walls to connect rooms
             var maze = Maze.Generate(3, 3);
-            // it seems like the mazes must be bad
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -156,6 +155,15 @@ namespace Hecatomb
                     {
                         Game.World.Terrains[x1 + (i + 1) * 4 - 2, y1 + (j + 1) * 4, z] = Terrain.FloorTile;
                         Game.World.Covers[x1 + (i + 1) * 4 - 2, y1 + (j + 1) * 4, z] = Cover.NoCover;
+                    }
+                    if (Game.World.Random.Next(3) > 0)
+                    {
+                        var goblin = Entity.Spawn<Creature>("Goblin");
+                        if (Game.World.Random.Next(3) == 0)
+                        {
+                            goblin.GetComponent<Inventory>().Item = Item.SpawnNewResource("TradeGoods", 1);
+                        }
+                        goblin.Place(x0 + 4*i - 4, y0 + 4*j - 4, z);
                     }
                 }
             }

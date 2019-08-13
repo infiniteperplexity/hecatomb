@@ -30,9 +30,9 @@ namespace Hecatomb
         public HecatombOptions()
         {
             Explored = false;
-            //Explored = true;
+            Explored = true;
             Visible = false;
-            //Visible = true;
+            Visible = true;
             NoIngredients = false;
             NoIngredients = true;
             NoTutorial = false;

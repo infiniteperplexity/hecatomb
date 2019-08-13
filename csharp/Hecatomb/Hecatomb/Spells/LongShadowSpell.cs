@@ -16,12 +16,24 @@ namespace Hecatomb
     {
         public LongShadowSpell()
         {
-            MenuName = "long shadow";
+            MenuName = "shadow hop";
             cost = 10;
             Researches = new[] { "LongShadow" };
             Structures = new[] { "Sanctum" };
         }
 
+        public override void ChooseFromMenu()
+        {
+            base.ChooseFromMenu();
+            if (GetCost() > Component.Sanity)
+            {
+                Debug.WriteLine("cannot cast spell");
+            }
+            else
+            {
+                Cast();
+            }
+        }
         public override void Cast()
         {
             var (x, y, z) = Caster;
@@ -37,12 +49,12 @@ namespace Hecatomb
                 tries += 1;
                 if (tries > maxTries)
                 {
+                    Game.StatusPanel.PushMessage("The spell fizzles.");
                     break;
                 }
             }
             if (c.X != -1)
             {
-                Debug.WriteLine("This is a thing happening");
                 Caster.GetComponent<Movement>().StepTo(c.X, c.Y, c.Z);
                 Caster.GetComponent<Actor>().Spend();
                 Game.Camera.Center(c.X, c.Y, c.Z);
@@ -50,6 +62,7 @@ namespace Hecatomb
                 ParticleEmitter emitter2 = new ParticleEmitter();
                 emitter2.Place(c.X, c.Y, c.Z);
                 base.Cast();
+                Game.StatusPanel.PushMessage("You vanish and reappear nearby.");
             }
         }
     }

@@ -119,6 +119,20 @@
 				}
 			},
 			{
+				"Type" : "Goblin",
+				"Name" : "goblin",
+				"FG" : "blue",
+				"Symbol" : "g",
+				"Components" : {
+					"Actor": {"Team" : "Evil"},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {},
+					"Defender": {}
+				}
+			},
+			{
 				"Type" : "FlourescentJelly",
 				"Name" : "flourescent jelly",
 				"FG" : "green",

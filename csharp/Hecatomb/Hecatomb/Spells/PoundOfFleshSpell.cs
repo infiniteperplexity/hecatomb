@@ -16,7 +16,7 @@ namespace Hecatomb
     {
         public PoundOfFleshSpell()
         {
-            MenuName = "pound of flesh";
+            MenuName = "siphon flesh";
             cost = 5;
             Researches = new[] { "PoundOfFlesh" };
             Structures = new[] { "Sanctum" };
@@ -47,13 +47,53 @@ namespace Hecatomb
                 }
                 else if (cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
                 {
-                    base.Cast();
                     // heal ally at expense of caster
+                    Defender d1 = cr.GetComponent<Defender>();
+                    Defender d2 = Caster.GetComponent<Defender>();
+                    if (d1.Wounds > 0)
+                    {
+                        int heal = Math.Min(d1.Wounds, 14 - d2.Wounds);
+                        Decaying decay = cr.TryComponent<Decaying>();
+                        if (decay != null)
+                        {
+                            decay.Decay = decay.TotalDecay;
+                            d1.Wounds -= heal;
+                            d2.Wounds += (heal +1);
+                        }
+                        else
+                        {
+                            d1.Wounds -= heal;
+                            d2.Wounds += heal;
+                        }
+                        
+                        Game.StatusPanel.PushMessage("You siphon your own flesh and blood to heal your minion.");
+                        ParticleEmitter emitter1 = new ParticleEmitter();
+                        emitter1.Place(Caster.X, Caster.Y, Caster.Z);
+                        ParticleEmitter emitter2 = new ParticleEmitter();
+                        emitter2.Place(cr.X, cr.Y, cr.Z);
+                        base.Cast();
+                        d2.ResolveWounds();
+                    }
                 }
                 else
                 {
-                    base.Cast();
                     // heal caster at expense of target
+                    Defender d1 = cr.GetComponent<Defender>();
+                    Defender d2 = Caster.GetComponent<Defender>();
+                    
+                    if (d2.Wounds > 0)
+                    {
+                        int heal = Math.Min(d2.Wounds, 20 - d2.Wounds);
+                        d1.Wounds += heal;
+                        d2.Wounds -= heal;
+                        Game.StatusPanel.PushMessage("You siphon your minion's flesh and blood to mend your own.");
+                        ParticleEmitter emitter1 = new ParticleEmitter();
+                        emitter1.Place(Caster.X, Caster.Y, Caster.Z);
+                        ParticleEmitter emitter2 = new ParticleEmitter();
+                        emitter2.Place(cr.X, cr.Y, cr.Z);
+                        base.Cast();
+                        d1.ResolveWounds();
+                    }   
                 }
             }
             else

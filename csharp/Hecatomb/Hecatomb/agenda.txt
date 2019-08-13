@@ -5,16 +5,19 @@
 
 
 Design issues:
-- Need to think about why you get a warning for sieges; e.g. "ravens"?
 - Probably want some sort of busywork task
 - Should there be a furnace that can bake coal?
 - Should we save message history in state?
-- Should there be way to dispose of rotted zombies?  And should rotted zombies be weaker?
-- The guard post should do stuff.
+* Should there be way to dispose of rotted zombies?  And should rotted zombies be weaker?
+* The guard post should do stuff.
 - need a way to send messages along with destroying something; e.g. this is how it died.
-- should make the guard post do stuff
-- these spells should actually do stuff
-
+* should make the guard post do stuff
+* these spells should actually do stuff
+- Add some techs to the library
+- give us a heal-all debugging spell
+- give us a fresh zombie spell
+- orcs or something in warrens
+- make sieges progress
 
 
 finalizing

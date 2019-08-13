@@ -62,9 +62,9 @@ namespace Hecatomb
 		{
             if (GetCost()>Component.Sanity)
             {
-                return "{gray}" + MenuName;
+                return "{gray}" + MenuName + " (" + GetCost() + ")";
             }
-			return MenuName;
+			return MenuName + " (" + GetCost() + ")"; ;
 		}
 
         public string GetHighlightColor()

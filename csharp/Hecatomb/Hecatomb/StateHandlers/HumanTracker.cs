@@ -15,6 +15,7 @@ namespace Hecatomb
     {
         //public TileEntityField<DummyTile> EntryTile;
         public Coord EntryTile;
+        public int TurnsSince;
 
         public virtual void Act(Creature c)
         {
@@ -91,14 +92,15 @@ namespace Hecatomb
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
+            TurnsSince += 1;
             if (Options.NoHumanAttacks)
             {
                 return ge;
             }
-            TurnBeginEvent te = (TurnBeginEvent)ge;
             //if (te.Turn == 5)
-            if (te.Turn==1000)
+            if (TurnsSince > 1000 && Game.World.Random.Next(100) == 0)
             {
+                TurnsSince = 0;
                 BanditAttack();
             }
             return ge;
@@ -107,7 +109,7 @@ namespace Hecatomb
         public void BanditAttack(bool debugCloser = false)
         {
             Game.SplashPanel.Splash(new List<ColoredText> {
-               "Your ravens report a gang of bandits near the border of your domain.",
+               "A gang of bandits has been spotted near the border of your domain.",
                 "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
             });
             bool xwall = (Game.World.Random.Next(2)==0);
@@ -138,7 +140,7 @@ namespace Hecatomb
             x0 = 12;
             y0 = 12;
             EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < PastBanditAttacks + 3; i++)
             {
                 var bandit = Entity.Spawn<Creature>("HumanBandit");
                 bandit.PlaceNear(x0, y0, 0, max: 5);

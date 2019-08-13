@@ -16,7 +16,7 @@ namespace Hecatomb
     {
         public RaiseZombieSpell() : base()
         {
-            MenuName = "Raise zombie.";
+            MenuName = "raise zombie";
         }
 
         public override int GetCost()
