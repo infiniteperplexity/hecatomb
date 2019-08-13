@@ -77,6 +77,8 @@ namespace Hecatomb
                 "CondenseEctoplasmSpell",
                 "PoundOfFleshSpell",
                 "LongShadowSpell",
+                "DebugZombieSpell",
+                "DebugBanditSpell",
                 "SummonBanditsDebugSpell",
                 "RemoveCreatureDebugSpell",
                 "SevereDamageDebugSpell",

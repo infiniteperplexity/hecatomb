@@ -30,9 +30,9 @@ namespace Hecatomb
         public HecatombOptions()
         {
             Explored = false;
-            Explored = true;
+            //Explored = true;
             Visible = false;
-            Visible = true;
+            //Visible = true;
             NoIngredients = false;
             NoIngredients = true;
             NoTutorial = false;
@@ -62,7 +62,7 @@ namespace Hecatomb
             IgnoreHardness = false;
             //IgnoreHardness = true;
             Invincible = false;
-            Invincible = true;
+            //Invincible = true;
             FreeStuff = new List<(string, int)>();
             //FreeStuff.Add(("TradeGoods", 4));
             //FreeStuff.Add(("Wood", 4));

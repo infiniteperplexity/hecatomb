@@ -19,6 +19,11 @@ Design issues:
 - orcs or something in warrens
 - make sieges progress
 
+combat testing:
+- So...remind myself what their stats are?  So currently nothing has any stats whatsoever.
+- Attacker has Accuracy and Damage
+- Defender has Armor, Evasion, and Toughness, plus Wounds which is always fixed.
+
 
 finalizing
 - set all options correctly
