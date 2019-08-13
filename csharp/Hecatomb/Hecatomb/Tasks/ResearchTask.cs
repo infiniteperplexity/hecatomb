@@ -17,7 +17,7 @@ namespace Hecatomb
         public ResearchTask() : base()
         {
             Priority = 3;
-            BG = "#FFFF88";
+            BG = "magenta";
         }
         public override string GetDisplayName()
         {

@@ -81,6 +81,7 @@ namespace Hecatomb
         public Defender Defender;
         public int Roll;
         public Dictionary<string, int> Modifiers;
+        public int EvasionModifier;
     }
 
     public class AchievementEvent : GameEvent

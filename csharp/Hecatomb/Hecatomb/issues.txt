@@ -81,6 +81,7 @@ Performance Issues:
 - For some reason, setting a TileEntityField = null causes an error; I thought I fixed that.
 * So...spiders awake still slams performance.
 - Redraw goes very slowly when we're looking at a screen that has ingredients
+- can we convert the FlyWeight strings to Enums so they can't crash?
 
 Other issue
 

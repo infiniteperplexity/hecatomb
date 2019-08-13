@@ -4,24 +4,17 @@
 - We do probably need to be free of common crashes and major performance slams.
 
 
-Nice bite-sized chunks:
-
-- check priority stuff for event-based action overrides
-- change slaughterhouse to meat locker
-- should I require starting trees on the same z level, or 1 lower?
-- need to think entire way of handling pathfinding for sieges...they won't attack outdoor structures.
-- bake coal in furnace?
-- need a place to put trade goods for storage
-- Should we lose message history when we save/restore?
-- wtf "ravens"
+Design issues:
+- Need to think about why you get a warning for sieges; e.g. "ravens"?
+- Probably want some sort of busywork task
+- Should there be a furnace that can bake coal?
+- Should we save message history in state?
+- Should there be way to dispose of rotted zombies?  And should rotted zombies be weaker?
+- The guard post should do stuff.
 - need a way to send messages along with destroying something; e.g. this is how it died.
-- separate furnace from forge, for coal?
 - should make the guard post do stuff
-- can we convert the FlyWeight strings to Enums so they can't crash?
-- I don't like pale yellow background for research tasks
-- claimed items should maybe say so?
-- way to dispose of rotted zombies?
-- need busy-work tasks?
+- these spells should actually do stuff
+
 
 
 finalizing

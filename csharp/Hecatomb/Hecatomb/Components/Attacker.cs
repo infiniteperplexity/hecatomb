@@ -30,16 +30,17 @@ namespace Hecatomb
                 Modifiers = new Dictionary<string, int>()
             };
             Defender defender = attack.Defender;
-            int evade = defender.Evasion - defender.Wounds;
+            
             Game.World.Events.Publish(attack);
+            int evade = defender.Evasion - defender.Wounds + attack.EvasionModifier;
             // at this point in the JS code, we aggro the defender in most cases
-//            Debug.WriteLine(
-//$@"
-//roll: {attack.Roll}
-//roll+accuracy: {attack.Roll+Accuracy}
-//11+evade: {11+evade}
-//"
-//            );
+            //            Debug.WriteLine(
+            //$@"
+            //roll: {attack.Roll}
+            //roll+accuracy: {attack.Roll+Accuracy}
+            //11+evade: {11+evade}
+            //"
+            //            );
             if (attack.Roll + Accuracy >= 11 + evade)
             {
                 //Debug.WriteLine("hit");
