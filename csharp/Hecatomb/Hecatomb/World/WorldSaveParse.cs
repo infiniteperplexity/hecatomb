@@ -320,6 +320,12 @@ namespace Hecatomb
 				}
 			}
             World.WorldSafeToDraw = true;
+            if (Game.Options.ReseedRandom)
+            {
+                int r = System.DateTime.Now.Millisecond;
+                Game.World.Random = new StatefulRandom(r);
+                Debug.WriteLine($"Changed random seed to {r}");
+            }
         }
 	}
 }

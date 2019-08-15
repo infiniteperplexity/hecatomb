@@ -40,6 +40,7 @@ namespace Hecatomb
             int randomDecay = Game.World.Random.Next(500);
             zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
             zombie.GetComponent<Decaying>().Decay += randomDecay;
+            GetState<TaskHandler>().Minions.Add(zombie);
         }
 
         public void TileHover(Coord c)
@@ -109,6 +110,32 @@ namespace Hecatomb
             {
                 Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
             }
+        }
+    }
+
+    public class DebugHealSpell : Spell
+    {
+        public DebugHealSpell()
+        {
+            MenuName = "self heal (debug)";
+            cost = 0;
+        }
+
+        public override void ChooseFromMenu()
+        {
+            base.ChooseFromMenu();
+            if (GetCost() > Component.Sanity)
+            {
+                Debug.WriteLine("cannot cast spell");
+            }
+            else
+            {
+                Cast();
+            }
+        }
+        public override void Cast()
+        {
+            Caster.GetComponent<Defender>().Wounds = 0;
         }
     }
 }

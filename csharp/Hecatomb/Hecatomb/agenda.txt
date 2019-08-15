@@ -23,6 +23,9 @@ combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.
 - Attacker has Accuracy and Damage
 - Defender has Armor, Evasion, and Toughness, plus Wounds which is always fixed.
+- implement player death
+- Can double increase with guardpost
+	- also it has infinite range...do we want that?
 
 
 finalizing

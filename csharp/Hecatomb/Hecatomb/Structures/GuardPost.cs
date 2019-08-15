@@ -52,6 +52,7 @@ namespace Hecatomb
             TypedEntity c = (TypedEntity)ae.Attacker.Entity.Unbox();
             if (c.GetComponent<Actor>().Team != Teams.Friendly)
             {
+                // problem...this can double-increase
                 ae.EvasionModifier += 1;
                 System.Diagnostics.Debug.WriteLine("We're adding to evasion based on GuardPost");
       
