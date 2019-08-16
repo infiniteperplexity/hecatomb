@@ -60,7 +60,7 @@ namespace Hecatomb
             };
             MenuName = "workshop";
             Name = "workshop";
-            Researches = new[] { "FlintTools", "SpearTrap", "BronzeTools", "SteelTools", "AlloyTools" };
+            Researches = new[] { "FlintTools", "FlintWeapons", "SpearTrap", "BronzeTools", "SteelTools", "AlloyTools" };
         }
     }
 }

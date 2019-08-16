@@ -17,7 +17,12 @@ Design issues:
 - give us a heal-all debugging spell
 - give us a fresh zombie spell
 - orcs or something in warrens
-- make sieges progress
+* make sieges progress
+- maybe I should move the research bonus checker to a global bonus checker
+- we have some typos...corpsegot displaced.
+- maybe delay bandits a bit?
+- how did that zombie end up here?
+
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.

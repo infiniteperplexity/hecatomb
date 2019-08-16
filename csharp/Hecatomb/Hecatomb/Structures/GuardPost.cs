@@ -43,21 +43,21 @@ namespace Hecatomb
             };
 			MenuName = "guard post";
 			Name = "guard post";
-            AddListener<AttackEvent>(OnAttack);
+            //AddListener<AttackEvent>(OnAttack);
 		}
 
-        public GameEvent OnAttack(GameEvent ge)
-        {
-            AttackEvent ae = (AttackEvent)ge;
-            TypedEntity c = (TypedEntity)ae.Attacker.Entity.Unbox();
-            if (c.GetComponent<Actor>().Team != Teams.Friendly)
-            {
-                // problem...this can double-increase
-                ae.EvasionModifier += 1;
-                System.Diagnostics.Debug.WriteLine("We're adding to evasion based on GuardPost");
+        //public GameEvent OnAttack(GameEvent ge)
+        //{
+        //    AttackEvent ae = (AttackEvent)ge;
+        //    TypedEntity c = (TypedEntity)ae.Attacker.Entity.Unbox();
+        //    if (c.GetComponent<Actor>().Team != Teams.Friendly)
+        //    {
+        //        // problem...this can double-increase
+        //        ae.EvasionModifier += 1;
+        //        System.Diagnostics.Debug.WriteLine("We're adding to evasion based on GuardPost");
       
-            }
-            return ge;
-        }
+        //    }
+        //    return ge;
+        //}
 	}
 }

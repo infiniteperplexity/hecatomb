@@ -38,5 +38,40 @@ namespace Hecatomb
                 return 0;
             }
         }
+
+        public int GetMinionDamage()
+        {
+            int modifier = 0;
+            if (Researched.Contains("FlintWeapons"))
+            {
+                modifier += 2;
+            }
+            return modifier;
+        }
+
+        public int GetMinionAccuracy()
+        {
+            return 0;
+        }
+
+        public int GetMinionEvasion()
+        {
+            int modifier = 0;
+            if (Structure.ListAsStrings().Contains("GuardPost"))
+            {
+                modifier += 2;
+            }
+            return modifier;
+        }
+
+        public int GetMinionToughness()
+        {
+            return 0;
+        }
+
+        public int GetMinionArmor()
+        {
+            return 0;
+        }
     }
 }

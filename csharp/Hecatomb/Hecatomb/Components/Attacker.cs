@@ -9,6 +9,8 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -27,10 +29,23 @@ namespace Hecatomb
                 Attacker = this,
                 Defender = t.TryComponent<Defender>(),
                 Roll = Game.World.Random.Next(20)+1,
-                Modifiers = new Dictionary<string, int>()
             };
             Defender defender = attack.Defender;
-            
+
+            if (Entity.TryComponent<Minion>() != null)
+            {
+                attack.AccuracyModifier += Game.World.GetState<ResearchHandler>().GetMinionAccuracy();
+                attack.DamageModifier += Game.World.GetState<ResearchHandler>().GetMinionDamage();
+            }
+            if (defender.Entity.TryComponent<Minion>() != null)
+            {
+                attack.EvasionModifier += Game.World.GetState<ResearchHandler>().GetMinionEvasion();
+                attack.ToughnessModifier += Game.World.GetState<ResearchHandler>().GetMinionToughness();
+                attack.ArmorModifier += Game.World.GetState<ResearchHandler>().GetMinionArmor();
+            }
+
+
+
             Game.World.Events.Publish(attack);
             int evade = defender.Evasion - defender.Wounds + attack.EvasionModifier;
             // at this point in the JS code, we aggro the defender in most cases
@@ -41,7 +56,7 @@ namespace Hecatomb
             //11+evade: {11+evade}
             //"
             //            );
-            if (attack.Roll + Accuracy >= 11 + evade)
+            if (attack.Roll + Accuracy + attack.AccuracyModifier >= 11 + evade)
             {
                 //Debug.WriteLine("hit");
                 // defender switches targets if the attacker is closer
@@ -58,6 +73,20 @@ namespace Hecatomb
             if (Entity.Unbox() is Creature)
             {
                 Entity.GetComponent<Actor>().Spend();
+            }
+        }
+
+
+        public override void InterpretJSON(string json)
+        {
+            JObject obj = JObject.Parse(json);
+            if (obj["Accuracy"] != null)
+            {
+                Accuracy = (int)obj["Accuracy"];
+            }
+            if (obj["Damage"] != null)
+            {
+                Damage = (int)obj["Damage"];
             }
         }
     }

@@ -80,8 +80,11 @@ namespace Hecatomb
         public Attacker Attacker;
         public Defender Defender;
         public int Roll;
-        public Dictionary<string, int> Modifiers;
         public int EvasionModifier;
+        public int DamageModifier;
+        public int AccuracyModifier;
+        public int ToughnessModifier;
+        public int ArmorModifier;
     }
 
     public class AchievementEvent : GameEvent

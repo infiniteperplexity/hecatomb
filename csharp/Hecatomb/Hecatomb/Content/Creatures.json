@@ -41,7 +41,7 @@
 					"Inventory": {},
 					"Attacker": {},
 					"Defender": {
-						"Evasion": 1
+						"Evasion": 0
 					},
 					"Decaying": {}
 				}
@@ -88,6 +88,28 @@
 					"Inventory": {},
 					"Attacker": {},
 					"Defender": {}
+				}
+			},
+			{
+				"Type" : "WolfHound",
+				"Name" : "wolfhound",
+				"FG" : "brown",
+				"Symbol" : "w",
+				"Components" : {
+					"Actor": {
+						"Team" : "Good"
+					},
+					"Senses": {},
+					"Movement": {},
+					"Inventory": {},
+					"Attacker": {
+						"Damage": 1,
+						"Accuracy": -2
+					},
+					"Defender": {
+						"Toughness": -2,
+						"Evasion": 1
+					}
 				}
 			},
 			{

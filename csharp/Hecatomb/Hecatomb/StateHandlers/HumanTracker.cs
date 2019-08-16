@@ -142,7 +142,8 @@ namespace Hecatomb
             EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
             for (int i = 0; i < PastBanditAttacks + 3; i++)
             {
-                var bandit = Entity.Spawn<Creature>("HumanBandit");
+                string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
+                var bandit = Entity.Spawn<Creature>(creature);
                 bandit.PlaceNear(x0, y0, 0, max: 5);
                 Bandits.Add(bandit);
                 TargetPlayer(bandit);
