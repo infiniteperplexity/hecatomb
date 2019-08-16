@@ -97,7 +97,7 @@
 				"Symbol" : "w",
 				"Components" : {
 					"Actor": {
-						"Team" : "Good"
+						"Team" : "Evil"
 					},
 					"Senses": {},
 					"Movement": {},

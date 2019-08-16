@@ -217,7 +217,7 @@ namespace Hecatomb
 				} else {
 					Tuple<int, int, int> t = new Tuple<int, int, int>(x, y, z);
 					if (value==null || value.Count==0) {
-						if (dict[t]!=null)
+						if (dict.ContainsKey(t))
 						{
 							dict.Remove(t);
 						}

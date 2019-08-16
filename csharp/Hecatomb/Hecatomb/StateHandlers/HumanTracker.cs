@@ -98,7 +98,7 @@ namespace Hecatomb
                 return ge;
             }
             //if (te.Turn == 5)
-            if (TurnsSince > 1000 && Game.World.Random.Next(100) == 0)
+            if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
             {
                 TurnsSince = 0;
                 BanditAttack();
@@ -148,7 +148,7 @@ namespace Hecatomb
                 Bandits.Add(bandit);
                 TargetPlayer(bandit);
                 // do they occasionally get placed one step underground?
-                Debug.WriteLine($"bandit placed at {bandit.X} {bandit.Y}");
+                Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
                 if (i==0)
                 {
                     Item loot = Item.SpawnNewResource("TradeGoods", 1);

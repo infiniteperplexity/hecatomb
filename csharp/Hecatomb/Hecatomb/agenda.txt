@@ -21,8 +21,12 @@ Design issues:
 - maybe I should move the research bonus checker to a global bonus checker
 - we have some typos...corpsegot displaced.
 - maybe delay bandits a bit?
-- how did that zombie end up here?
-
+- how did that goblin end up here?
+- you often move a bit to start, which sort of defeats the purpose of the "distance from start" checks
+- get spurious "Can't butcher corpse" thing.
+- the bandits attacked their own wolfhound...but they don't normally do that...well...this happened twice through normal generation, but none with debugging
+- you can see attack messages a long way away
+- still very rarely get graves next to down slopes
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.

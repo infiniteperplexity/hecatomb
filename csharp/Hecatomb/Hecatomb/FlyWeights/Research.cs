@@ -166,7 +166,7 @@ namespace Hecatomb
         {
             Name = "pound of flesh",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flesh", 2 }, { "Ectoplasm", 1 } }
+            Ingredients = new Dictionary<string, int>() { { "Flesh", 2 } }
         };
 
 
