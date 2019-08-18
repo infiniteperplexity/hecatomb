@@ -65,13 +65,13 @@ namespace Hecatomb
             Game.World.Creatures[x0, y0, z0] = null;
         }
 
-        public override void Destroy()
+        public override void Destroy(string cause = null)
         {
             int x = X;
             int y = Y;
             int z = Z;
             bool decaying = (TryComponent<Decaying>() != null);
-            base.Destroy();
+            base.Destroy(cause: cause);
             if (!decaying)
             {
                 Item.SpawnCorpse().Place(x, y, z);

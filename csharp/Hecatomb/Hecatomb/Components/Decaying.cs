@@ -42,7 +42,7 @@ namespace Hecatomb
             Decay -= 1;
             if (Decay<=0)
             {
-                Entity.Unbox().Destroy();
+                Entity.Unbox().Destroy(cause: "Decay");
             }
             return ge;
         }

@@ -138,4 +138,40 @@ namespace Hecatomb
             Caster.GetComponent<Defender>().Wounds = 0;
         }
     }
+
+    public class DebugItemSpell : Spell, ISelectsTile
+    {
+        public DebugItemSpell() : base()
+        {
+            MenuName = "spawn item (debug)";
+            cost = 0;
+        }
+
+        public override void ChooseFromMenu()
+        {
+            if (GetCost() > Component.Sanity)
+            {
+                Debug.WriteLine("cannot cast spell");
+            }
+            else
+            {
+                Game.Controls.Set(new SelectTileControls(this));
+            }
+        }
+
+        public void SelectTile(Coord c)
+        {
+            //Item.SpawnCorpse().Place(c.X, c.Y, c.Z);
+            string item = "Rock";
+            if (Game.World.Random.Next(2) == 0)
+            {
+                item = "Wood";
+            }
+            Item.PlaceNewResource(item, 1, c.X, c.Y, c.Z);
+        }
+
+        public void TileHover(Coord c)
+        {
+        }
+    }
 }

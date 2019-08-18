@@ -241,7 +241,7 @@ namespace Hecatomb
                         continue;
                     }
                 }
-                Status.PushMessage($"{Describe()}got displaced to {c.X} {c.Y} {c.Z}.");
+                Game.World.Events.Publish(new SensoryEvent($"{Describe(capitalized: true)} got displaced to {c.X} {c.Y} {c.Z}.",c.X, c.Y, c.Z));
                 Place(c.X, c.Y, c.Z);
                 return;
             }
@@ -256,7 +256,7 @@ namespace Hecatomb
         )
         {
             string name = Hecatomb.Resource.Types[Resource].Name;
-
+            string str = "";
             if (Resource == "Corpse")
             {
                 if (TotalDecay > 0)
@@ -264,19 +264,41 @@ namespace Hecatomb
                     double frac = (double)Decay / (double)TotalDecay;
                     if (frac < 0.25)
                     {
-                        return "a severely rotted corpse";
+                        str = "severely rotted corpse";
                     }
                     else if (frac < 0.5)
                     {
-                        return "a rotted corpse";
+                        str = "rotted corpse";
                     }
-                    else return "a corpse";
+                    else
+                    {
+                        str = "corpse";
+                    }
+                }
+                if (article)
+                {
+                    if (definite)
+                    {
+                        str = "the " + str;
+                    }
+                    else
+                    {
+                        str = "a " + str;
+                    }
                 }
             }
-            //return $"{Quantity} {name}";
-            var unowned = (Owned) ? "" : "(unclaimed)";
-            // return $"{Quantity} {name} ({Claimed} claimed, {txt}owned)";
-            return $"{Quantity} {name} {unowned}";
+            else
+            {
+                //return $"{Quantity} {name}";
+                var unowned = (Owned) ? "" : " (unclaimed)";
+                // return $"{Quantity} {name} ({Claimed} claimed, {txt}owned)";
+                str = $"{Quantity} {name}{unowned}";
+            }
+            if (capitalized)
+            {
+                str = char.ToUpper(str[0]) + str.Substring(1);
+            }
+            return str;
         }
 
 

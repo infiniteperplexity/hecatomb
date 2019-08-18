@@ -87,6 +87,7 @@ namespace Hecatomb
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, checkForEnemy);
             return storedCreature;
         }
+
         private void checkForEnemy(int x, int y)
         {
             Creature cr = Creatures[x, y, storedZ];

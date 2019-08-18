@@ -75,8 +75,8 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DebugSpells.cs" />
-    <Compile Include="MendingTask.cs" />
+    <Compile Include="Spells\DebugSpells.cs" />
+    <Compile Include="Tasks\MendingTask.cs" />
     <Compile Include="RallyTask.cs" />
     <Compile Include="StateHandlers\LongCreatureComponent.cs" />
     <Compile Include="StateHandlers\FootprintManager.cs" />

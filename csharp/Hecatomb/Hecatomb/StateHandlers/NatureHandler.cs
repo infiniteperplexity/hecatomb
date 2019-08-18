@@ -16,6 +16,7 @@ namespace Hecatomb
         public int PastNatureAttacks;
         public List<EntityField<Creature>> Avengers;
         public int TreesKilled;
+        public int TreesSince;
 
         public NatureTracker()
         {
@@ -33,7 +34,8 @@ namespace Hecatomb
                 if (f.TypeName == "ClubTree" || f.TypeName == "SpadeTree")
                 {
                     TreesKilled += 1;
-                    if (TreesKilled > 25 && Game.World.Random.Next(25) == 0)
+                    TreesSince += 1;
+                    if (TreesKilled > 25 && TreesSince >= 8 && Game.World.Random.Next(25) == 0)
                     {
                         NatureAttack(f.X, f.Y, f.Z);
                     }
@@ -49,6 +51,7 @@ namespace Hecatomb
 
         public void NatureAttack(int x, int y, int z)
         {
+            TreesSince = 0;
             Game.SplashPanel.Splash(new List<ColoredText> {
                "Your wanton deforestation has attracted the attention of nature's defenders!"
             });

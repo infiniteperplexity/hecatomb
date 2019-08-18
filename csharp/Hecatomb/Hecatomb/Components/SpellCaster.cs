@@ -79,6 +79,7 @@ namespace Hecatomb
                 "LongShadowSpell",
                 "DebugZombieSpell",
                 "DebugBanditSpell",
+                "DebugItemSpell",
                 "SummonBanditsDebugSpell",
                 "RemoveCreatureDebugSpell",
                 "SevereDamageDebugSpell",

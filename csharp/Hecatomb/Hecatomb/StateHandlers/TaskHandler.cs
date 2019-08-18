@@ -33,7 +33,14 @@ namespace Hecatomb
             {
                 if (m.Unbox() == dse.Entity)
                 {
-                    Game.StatusPanel.PushMessage("{orange}" + (dse.Entity as Creature).Describe() + " has perished!");
+                    if (dse.Cause == "Decay")
+                    {
+                        Game.StatusPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has rotted away, leaving naught but bones.");
+                    }
+                    else
+                    {
+                        Game.StatusPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has perished!");
+                    }
                 }
             }
             return ge;
