@@ -92,15 +92,15 @@ namespace Hecatomb
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
+            //Debug.WriteLine($"We've had {PastBanditAttacks} bandit attacks so far.");
             TurnsSince += 1;
             if (Options.NoHumanAttacks)
             {
                 return ge;
             }
             //if (te.Turn == 5)
-            if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
-            {
-                TurnsSince = 0;
+            if (TurnsSince > 1500 && Game.World.Random.Next(1) == 0)
+            {             
                 BanditAttack();
             }
             return ge;
@@ -108,12 +108,24 @@ namespace Hecatomb
 
         public void BanditAttack(bool debugCloser = false)
         {
-            Game.SplashPanel.Splash(new List<ColoredText> {
-               "A gang of bandits has been spotted near the border of your domain.",
-                "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
-            });
+            Frustration = 0;
+            TurnsSince = 0;
+            Bandits.Clear();
             bool xwall = (Game.World.Random.Next(2)==0);
             bool zero = (Game.World.Random.Next(2) == 0);
+            string dir = "";
+            if (xwall)
+            {
+                dir = (zero) ? "western" : "eastern";
+            }
+            else
+            {
+                dir = (zero) ? "northern" : "southern";
+            }
+            Game.SplashPanel.Splash(new List<ColoredText> {
+               "A gang of bandits has been spotted near the " + dir + " border of your domain.",
+                "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
+            });
             int x0, y0;
             if (xwall)
             {
@@ -137,8 +149,9 @@ namespace Hecatomb
                 }
             }
             // for repeatable testing
-            x0 = 12;
-            y0 = 12;
+            //x0 = 12;
+            //y0 = 12;
+
             EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
             for (int i = 0; i < PastBanditAttacks + 3; i++)
             {

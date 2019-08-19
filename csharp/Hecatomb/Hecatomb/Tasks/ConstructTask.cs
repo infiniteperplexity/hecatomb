@@ -38,8 +38,15 @@ namespace Hecatomb
 		}
         public TileEntityField<Structure> Structure;
 		public string[] Structures;
+
+        protected List<IMenuListable> cachedChoices;
         public void BuildMenu(MenuChoiceControls menu)
         {
+            if (cachedChoices != null)
+            {
+                menu.Choices = cachedChoices;
+                return;
+            }
             var list = new List<IMenuListable>();
             var structures = Hecatomb.Structure.ListAsStrings();
             var researched = Game.World.GetState<ResearchHandler>().Researched;
@@ -73,6 +80,7 @@ namespace Hecatomb
             //var repair = Hecatomb.Entity.Mock<RepairTask>();
             //repair.MenuName = "repair or complete structure";
             //list.Add(repair);
+            cachedChoices = list;
             menu.Choices = list;
         }
         public void FinishMenu(MenuChoiceControls menu)

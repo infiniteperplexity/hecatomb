@@ -79,27 +79,29 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            Game.Controls.Set(new SelectTileControls(this));
+            Game.Controls.Set(new SelectZoneControls(this));
         }
 
-        public override void SelectTile(Coord c)
+        public override void SelectZone(List<Coord> squares)
         {
-            var structures = Structure.ListStructures().Where(s=>s is Slaughterhouse).ToList();
-            var (x, y, z) = structures[0];
-            Item corpse = Items[c];
-            if (corpse == null || corpse.Resource != "Corpse")
+            foreach (var c in squares)
             {
-                return;
+                Item corpse = Items[c];
+                if (corpse == null || corpse.Resource != "Corpse")
+                {
+                    continue;
+                }
+                var structures = Structure.ListStructures().Where(s => s is Slaughterhouse).ToList();
+                var (x, y, z) = structures[0];
+                if (Tasks[x, y, z] != null)
+                {
+                    Tasks[x, y, z].Cancel();
+                }
+                ButcherTask task = Spawn<ButcherTask>();
+                task.Place(c.X, c.Y, c.Z);
+                task.Claims[corpse.EID] = 1;
+                corpse.Claimed = 1;
             }
-            if (Tasks[x, y, z] != null)
-            {
-                Tasks[x, y, z].Cancel();
-            }
-            ButcherTask task = Spawn<ButcherTask>();
-            task.Place(c.X, c.Y, c.Z);
-            task.Claims[corpse.EID] = 1;
-            corpse.Claimed = 1;
-
         }
 
         

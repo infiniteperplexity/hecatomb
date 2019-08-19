@@ -181,7 +181,7 @@ namespace Hecatomb
             p.GetComponent<Actor>().Team = Teams.Friendly;
             p.Place(x, y, z);
             //***** This logic absolutely should not go here
-            int goodsBounds = 12;
+            int goodsBounds = 15;
             for (int i = x-goodsBounds; i<=x+goodsBounds; i++)
             {
                 for (int j = y-goodsBounds; j<=y+goodsBounds; j++)

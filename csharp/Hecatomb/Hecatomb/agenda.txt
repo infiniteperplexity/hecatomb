@@ -27,8 +27,17 @@ Design issues:
 * the bandits attacked their own wolfhound...but they don't normally do that...well...this happened twice through normal generation, but none with debugging
 * we need to refactor PushMessage so it handles sensory stuff sensibly
 - still very rarely get graves next to down slopes
-- we aren't wrapping message lines
 - "Your severely wounded zombie has perished" is maybe a bit wordy
+* higher mana totals should regenerate faster
+* butcher corpse should select an area
+* we have too many trade goods, or they are too close
+* tell what direction the bandits are coming from
+* test second bandit attack?
+* make it so you can start research without ingredients
+* we got a pile of 0 trade goods
+- for once we're getting slogged by successful searches 
+- various display issues with status panel...text not wrapping, need to show day info and stuff
+- not wrapping splash lines
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.

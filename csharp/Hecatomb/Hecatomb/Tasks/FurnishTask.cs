@@ -23,8 +23,14 @@ namespace Hecatomb
             return $"furnish {f.Name}";
         }
 
+        protected List<IMenuListable> cachedChoices;
         public void BuildMenu(MenuChoiceControls menu)
         {
+            if (cachedChoices != null)
+            {
+                menu.Choices = cachedChoices;
+                return;
+            }
             menu.Header = "Choose a fixture:";
             var list = new List<IMenuListable>();
             var structures = Structure.ListAsStrings();
@@ -61,6 +67,7 @@ namespace Hecatomb
                 }
             }
             //list.Add(Hecatomb.Entity.Mock<RepairTask>());
+            cachedChoices = list;
             menu.Choices = list;
         }
         public void FinishMenu(MenuChoiceControls menu)

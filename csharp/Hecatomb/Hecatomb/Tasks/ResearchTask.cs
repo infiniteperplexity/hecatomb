@@ -28,8 +28,8 @@ namespace Hecatomb
         public override void ChooseFromMenu()
         {
             Research research = Hecatomb.Research.Types[Makes];
-            if (Game.World.Player.GetComponent<Movement>().CanFindResources(research.Ingredients))
-            {
+            //if (Game.World.Player.GetComponent<Movement>().CanFindResources(research.Ingredients))
+            //{
                 int x = Structure.X;
                 int y = Structure.Y;
                 int z = Structure.Z;
@@ -41,7 +41,7 @@ namespace Hecatomb
                 rt.LaborCost = LaborCost;
                 rt.Ingredients = new Dictionary<string, int>(Ingredients);
                 rt.Place(x, y, z);
-            }
+            //}
             Controls.Set(new MenuChoiceControls(Structure.Unbox()));
         }
 

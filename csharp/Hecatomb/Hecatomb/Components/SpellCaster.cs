@@ -61,9 +61,15 @@ namespace Hecatomb
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
-            if (Game.World.Random.Next(10)==0)
+            int max = GetCalculatedMaxSanity();
+            int chance = 10;
+            if (max > 20)
             {
-                Sanity = Math.Min(GetCalculatedMaxSanity(), Sanity + 1);
+                chance = 7;
+            }
+            if (Game.World.Random.Next(chance)==0)
+            {
+                Sanity = Math.Min(max, Sanity + 1);
             }
             return ge;
         }

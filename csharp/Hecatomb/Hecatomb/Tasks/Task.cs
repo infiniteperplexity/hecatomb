@@ -502,7 +502,7 @@ namespace Hecatomb
         }
 
 
-        private ColoredText cachedMenuListing;
+        protected ColoredText cachedMenuListing;
         public virtual ColoredText ListOnMenu()
         {
             if (cachedMenuListing != null)

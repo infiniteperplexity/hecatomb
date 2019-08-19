@@ -227,7 +227,11 @@ namespace Hecatomb
 				}
 				if (success)
 				{
-                    //Debug.Print("Found path after {0} loops.", tally);
+                    
+                    if (tally > 8000)
+                    {
+                        Debug.Print($"Found from {fromEntity?.Describe()} to {toEntity?.Describe()} path after {tally} loops.");
+                    }
 					LinkedList<Coord> path = new LinkedList<Coord> {};
 					path.AddFirst(new Coord(current));
 					// ***trace backwards
