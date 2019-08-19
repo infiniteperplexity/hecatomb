@@ -31,6 +31,7 @@ namespace Hecatomb
 			X0 = 35;
 			Y0 = 150;
             LeftMargin = 2 * Size;
+            RightMargin = 2 * Size;
             Active = false;
 		}
 		
@@ -76,7 +77,7 @@ namespace Hecatomb
                 Game.Controls.Set(new FrozenControls());
                 Thread thread = new Thread(()=>
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                     Game.Controls.SetWithoutRedraw(new SplashControls());
                 });
                 thread.Start();

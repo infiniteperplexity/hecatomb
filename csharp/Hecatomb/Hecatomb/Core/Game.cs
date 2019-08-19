@@ -97,6 +97,11 @@ namespace Hecatomb
             Camera = new Camera();
             Visible = new HashSet<Coord>();
             LastDraw = DateTime.Now;
+            graphics.ApplyChanges();
+            if (Options.FullScreen)
+            {
+                graphics.IsFullScreen = true;
+            }
             base.Initialize();
             if (!Options.NoStartupScreen)
             {
@@ -221,6 +226,10 @@ namespace Hecatomb
             int Padding = MainPanel.Padding;
             graphics.PreferredBackBufferWidth = Padding + (2 + Camera.Width) * (Size + Padding) + MenuPanel.Width;  // set this value to the desired width of your window
             graphics.PreferredBackBufferHeight = Padding + (2 + Camera.Height) * (Size + Padding) + StatusPanel.Height;   // set this value to the desired height of your window
+            Debug.WriteLine($"original width was {graphics.PreferredBackBufferWidth}");
+            Debug.WriteLine($"original height was {graphics.PreferredBackBufferHeight}");
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
             //graphics.ToggleFullScreen();
             graphics.ApplyChanges();
 

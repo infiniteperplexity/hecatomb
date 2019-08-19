@@ -19,6 +19,7 @@ namespace Hecatomb
         public int Height;
         public int LeftMargin;
         public int TopMargin;
+        public int RightMargin;
         public int Size;
         public int Spacing;
         public TextPanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
@@ -68,7 +69,7 @@ namespace Hecatomb
                             if (text.Substring(j+k,1)!=" ")
                             {
                                 // I have no idea if this spacing is even right
-                                if (x >= (Width / Spacing) - 8)
+                                if (x >= ((Width - RightMargin) / Spacing) - 8)
                                 {
                                     j += k;
                                     x = 0;

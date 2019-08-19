@@ -26,10 +26,13 @@ namespace Hecatomb
         public bool IgnoreHardness;
         public bool Invincible;
         public bool ReseedRandom;
+        public bool FullScreen;
         public List<(string, int)> FreeStuff;
 
         public HecatombOptions()
         {
+            FullScreen = false;
+            //FullScreen = true;
             Explored = false;
             //Explored = true;
             Visible = false;

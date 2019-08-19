@@ -16,8 +16,9 @@ namespace Hecatomb
     {
         public CondenseEctoplasmSpell()
         {
+            // maybe have costs descend by number on the map that are owned?
             MenuName = "condense ectoplasm";
-            cost = 20;
+            cost = 15;
             Researches = new[] { "CondenseEctoplasm" };
             Structures = new[] { "Sanctum"};
         }

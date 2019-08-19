@@ -99,7 +99,7 @@ namespace Hecatomb
                 return ge;
             }
             //if (te.Turn == 5)
-            if (TurnsSince > 1500 && Game.World.Random.Next(1) == 0)
+            if (TurnsSince > 5 && Game.World.Random.Next(1) == 0)
             {             
                 BanditAttack();
             }
@@ -124,6 +124,7 @@ namespace Hecatomb
             }
             Game.SplashPanel.Splash(new List<ColoredText> {
                "A gang of bandits has been spotted near the " + dir + " border of your domain.",
+               " ",
                 "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
             });
             int x0, y0;
