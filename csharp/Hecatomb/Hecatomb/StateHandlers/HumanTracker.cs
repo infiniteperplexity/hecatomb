@@ -99,7 +99,7 @@ namespace Hecatomb
                 return ge;
             }
             //if (te.Turn == 5)
-            if (TurnsSince > 5 && Game.World.Random.Next(1) == 0)
+            if (TurnsSince > 1500 && Game.World.Random.Next(1) == 0)
             {             
                 BanditAttack();
             }

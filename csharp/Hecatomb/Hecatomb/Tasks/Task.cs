@@ -298,7 +298,7 @@ namespace Hecatomb
             }
             else
             {
-                Worker.GetComponent<Actor>().WalkToward(item.X, item.Y, item.Z, useLast: true);
+                Worker.GetComponent<Actor>().WalkToward(item, useLast: true);
             }
         }
         public virtual void SpendIngredient()
@@ -393,7 +393,7 @@ namespace Hecatomb
             }
             else
             {
-                Worker.GetComponent<Actor>().WalkToward(X, Y, Z, useLast: (WorkRange == 0));
+                Worker.GetComponent<Actor>().WalkToward(this, useLast: (WorkRange == 0));
             }
         }
 

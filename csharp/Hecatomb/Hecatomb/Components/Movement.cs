@@ -368,7 +368,7 @@ namespace Hecatomb
         {
             if (c == this.Entity)
             {
-                Debug.WriteLine("We're trying to displace ourselves, that's totally illegal.");
+                 throw new InvalidOperationException("We're trying to displace ourselves, that's totally illegal.");
             }
             Displace(c, Entity.X, Entity.Y, Entity.Z);
         }
@@ -378,6 +378,10 @@ namespace Hecatomb
             int y1 = cr.Y;
             int z1 = cr.Z;
             cr.Remove();
+            if (Game.World.Creatures[x1, y1, z1] != null)
+            {
+                Debug.WriteLine("how on earth did this happen?");
+            }
             StepTo(x1, y1, z1);
             Movement m = cr.TryComponent<Movement>();
             if (m != null)

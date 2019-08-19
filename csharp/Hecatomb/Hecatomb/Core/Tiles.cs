@@ -51,17 +51,24 @@ namespace Hecatomb
             Func<int, int, int, int, int, int, float> cost=null,
             int maxTries = 25000,
             int cacheMissesFor = 10,
+            int cacheHitsFor = 10, //need to perturb this to avoid stacked lag hits
+            int cacheHitDistance = 35,
             Func<int, int, int, bool> standable = null,
             Func<int, int, int, int, int, int, bool> movable = null
             )
 		{
 			var misses = Game.World.GetState<PathHandler>().PathMisses;
-			if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
+            var hits = Game.World.GetState<PathHandler>().PathHits;
+            if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
 			{
                 Debug.WriteLine("respected cached pathfinding failure");
 				return new LinkedList<Coord>();
 			}
-			int x0 = m.Entity.X;
+            if (Tiles.QuickDistance(m.Entity, t) > cacheHitDistance && hits.ContainsKey(m.Entity.EID) && hits[m.Entity.EID].ContainsKey(t.EID))
+            {
+                return hits[m.Entity.EID][t.EID].Item2;
+            }
+            int x0 = m.Entity.X;
 			int y0 = m.Entity.Y;
 			int z0 = m.Entity.Z;
 			int x1 = t.X;
@@ -102,11 +109,16 @@ namespace Hecatomb
 				}
 				misses[m.Entity.EID][t.EID] = cacheMissesFor;
 			}
-			else
+			else if (path.Count > 0 && cacheHitsFor > 0 && Tiles.QuickDistance(m.Entity, t) > cacheHitDistance)
 			{
-				//Debug.Print(m.Entity.Describe() + " found a path to " + t.Describe());
-//				pathHits[m.Entity.EID][t.EID] = 10;
-			}
+                if (!hits.ContainsKey(m.Entity.EID))
+                {
+                    hits[m.Entity.EID] = new Dictionary<int, (int, LinkedList<Coord>)>();
+                    hits[m.Entity.EID][t.EID] = (cacheHitsFor, new LinkedList<Coord>());
+                }
+                var list = hits[m.Entity.EID][t.EID].Item2;
+                hits[m.Entity.EID][t.EID] = (cacheHitsFor + Game.World.Random.Perturb(2), list);
+            }
 			return path;
 		}
 		
@@ -228,10 +240,10 @@ namespace Hecatomb
 				if (success)
 				{
                     
-                    if (tally > 8000)
-                    {
-                        Debug.Print($"Found from {fromEntity?.Describe()} to {toEntity?.Describe()} path after {tally} loops.");
-                    }
+                    //if (tally > 8000)
+                    //{
+                    //    Debug.Print($"Found from {fromEntity?.Describe()} to {toEntity?.Describe()} path after {tally} loops.");
+                    //}
 					LinkedList<Coord> path = new LinkedList<Coord> {};
 					path.AddFirst(new Coord(current));
 					// ***trace backwards

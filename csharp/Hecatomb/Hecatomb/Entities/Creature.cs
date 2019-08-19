@@ -37,6 +37,11 @@ namespace Hecatomb
             }
             else
             {
+                if (e == this)
+                {
+                    throw new InvalidOperationException(String.Format(
+                        "Cannot place {0} at {1} {2} {3} because it has already been placed there.", TypeName, x1, y1, z1));
+                }
                  throw new InvalidOperationException(String.Format(
                     "Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
                 ));

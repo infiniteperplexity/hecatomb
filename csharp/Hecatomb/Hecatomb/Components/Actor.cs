@@ -79,6 +79,23 @@ namespace Hecatomb
                 Wander();
         }
 
+        public void Patrol(TileEntity t)
+        {
+            var (x, y, z) = Entity;
+            int d = (int)Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z);
+            if (d >= 5)
+            {
+                WalkToward(t);
+            }
+            else if (d <= 2)
+            {
+                WalkAway(t.X, t.Y, t.Z);
+            }
+            else
+            {
+                WalkRandom();
+            }
+        }
         public void Patrol(int x1, int y1, int z1)
         {
             var (x, y, z) = Entity;
@@ -114,14 +131,28 @@ namespace Hecatomb
         }
 
 
-        public void WalkToward(TileEntity t, bool useLast = false)
-        {
-            WalkToward(t.X, t.Y, t.Z, useLast: useLast, targetEntity: t);
-        }
-
-        public void WalkToward(int x1, int y1, int z1, bool useLast = false, TileEntity targetEntity = null)
+        public void WalkToward(TileEntity t, bool useLast = false, int vagueDistance = 50)
         {
             var (x, y, z) = Entity;
+            if (Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z) > vagueDistance)
+            {
+                WalkVaguelyToward(t.X, t.Y, t.Z);
+            }
+            else
+            {
+                WalkToward(t.X, t.Y, t.Z, useLast: useLast, targetEntity: t);
+            }
+        }
+
+        public void WalkToward(int x1, int y1, int z1, bool useLast = false, TileEntity targetEntity = null, int vagueDistance = 50)
+        {
+            var (x, y, z) = Entity;
+            if (Tiles.QuickDistance(x, y, z, x1, y1, z1) > vagueDistance)
+            {
+
+                WalkVaguelyToward(x1, y1, z1);
+                return;
+            }
             Movement m = Entity.GetComponent<Movement>();
             LinkedList<Coord> path;
             if (targetEntity == null)
@@ -163,6 +194,27 @@ namespace Hecatomb
         }
 
 
+        public void WalkVaguelyToward(int x1, int y1, int z1)
+        {
+            var (x0, y0, z0) = Entity;
+            List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
+            if (line.Count <= 1)
+            {
+                WalkRandom();
+            }
+            else
+            {
+                Movement m = Entity.GetComponent<Movement>();
+                int x = line[1].X;
+                int y = line[1].Y;
+                int z = z0;
+                bool acted = TryStepTo(x, y, z);
+                if (!acted)
+                {
+                    WalkRandom();
+                }
+            }
+        }
 
 
         public void WalkAway(int x1, int y1, int z1)
@@ -342,7 +394,7 @@ namespace Hecatomb
                 else
                 {
                     // doesn't matter that this can't cache misses; a miss at this point would throw and error
-                    WalkToward(Target.X, Target.Y, Target.Z);
+                    WalkToward(Target);
                 }
             }
             // I think this code is now obsolete
@@ -361,7 +413,7 @@ namespace Hecatomb
                 }
                 else
                 {
-                    WalkToward(Target.X, Target.Y, Target.Z);
+                    WalkToward(Target);
                 }
             }
         }

@@ -68,5 +68,14 @@ namespace Hecatomb
         {
             return NextNormal(0f, 1f);
         }
+
+        public int Perturb()
+        {
+            return Next(2) - Next(2);
+        }
+        public int Perturb(int n)
+        {
+            return Next(n) - Next(n);
+        }
 	}
 }
