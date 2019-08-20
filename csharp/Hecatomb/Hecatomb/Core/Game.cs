@@ -33,6 +33,12 @@ namespace Hecatomb
         public static ForegroundPanel ForegroundPanel;
         public static Menu2GamePanel Menu2Panel;
 
+        public static NewGamePanel LeftMenuPanel;
+        public static NewGamePanel MainGamePanel;
+        public static NewGamePanel RightMenuPanel;
+        public static NewGamePanel BottomPanel;
+        public static List<NewGamePanel> AllGamePanels;
+
         public static ControlContext LastControls;
         public static ControlContext Controls;
         public static ControlContext DefaultControls;
@@ -40,6 +46,7 @@ namespace Hecatomb
         public static TimeHandler Time;
         public static DateTime LastDraw;
         public static String GameName;
+        
 
         //		public static GameEventHandler Events;
         public static HashSet<Coord> Visible;
@@ -219,16 +226,16 @@ namespace Hecatomb
             SplashPanel = new SplashPanel(graphics, sprites);
             ForegroundPanel = new ForegroundPanel(graphics, sprites);
             Menu2Panel = new Menu2GamePanel(graphics, sprites);
-            // why don't I initialize main panel??
+            //why don't I initialize main panel??
             MenuPanel.Initialize();
             StatusPanel.Initialize();
             SplashPanel.Initialize();
             ForegroundPanel.Initialize();
             Menu2Panel.Initialize();
-            int Size = MainPanel.Size;
-            int Padding = MainPanel.Padding;
-            graphics.PreferredBackBufferWidth = Padding + (2 + Camera.Width) * (Size + Padding) + MenuPanel.Width;  // set this value to the desired width of your window
-            graphics.PreferredBackBufferHeight = Padding + (2 + Camera.Height) * (Size + Padding) + StatusPanel.Height;   // set this value to the desired height of your window
+            //int Size = MainPanel.Size;
+            //int Padding = MainPanel.Padding;
+            //graphics.PreferredBackBufferWidth = Padding + (2 + Camera.Width) * (Size + Padding) + MenuPanel.Width;  // set this value to the desired width of your window
+            //graphics.PreferredBackBufferHeight = Padding + (2 + Camera.Height) * (Size + Padding) + StatusPanel.Height;   // set this value to the desired height of your window
             Debug.WriteLine($"original width was {graphics.PreferredBackBufferWidth}");
             Debug.WriteLine($"original height was {graphics.PreferredBackBufferHeight}");
             graphics.PreferredBackBufferWidth = 1280;
@@ -236,8 +243,21 @@ namespace Hecatomb
             //graphics.ToggleFullScreen();
             graphics.ApplyChanges();
 
-
-
+            int maindim = 486;
+            
+            LeftMenuPanel = new NewGamePanel(graphics, sprites, 0, 0) { PixelHeight = maindim, PixelWidth = 397};
+            MainGamePanel = new NewGamePanel(graphics, sprites, LeftMenuPanel.PixelWidth, 0) { PixelHeight = maindim, PixelWidth = maindim};
+            RightMenuPanel = new NewGamePanel(graphics, sprites, LeftMenuPanel.PixelWidth + maindim, 0) { PixelHeight = maindim, PixelWidth = 397 }; ;
+            BottomPanel = new NewGamePanel(graphics, sprites, 0, maindim) { PixelHeight = 234, PixelWidth = 1280 };
+            LeftMenuPanel.Elements.Add(new InterfaceElement());
+            MainGamePanel.Elements.Add(new InterfaceElement());
+            RightMenuPanel.Elements.Add(new InterfaceElement());
+            BottomPanel.Elements.Add(new InterfaceElement());
+            AllGamePanels = new List<NewGamePanel>();
+            AllGamePanels.Add(LeftMenuPanel);
+            AllGamePanels.Add(MainGamePanel);
+            AllGamePanels.Add(RightMenuPanel);
+            AllGamePanels.Add(BottomPanel);
             // TODO: use this.Content to load your game content here
         }
 
@@ -286,13 +306,20 @@ namespace Hecatomb
 
         protected override void Draw(GameTime gameTime)
         {
-            /*TimeSpan sinceDraw = DateTime.Now.Subtract(LastDraw);
+            TimeSpan sinceDraw = DateTime.Now.Subtract(LastDraw);
             if (sinceDraw > TimeSpan.FromMilliseconds(500))
             {
-                MainPanel.Dirty = true;
-                MenuPanel.Dirty = true;
-                StatusPanel.Dirty = true;
-            }*/
+                //MainPanel.Dirty = true;
+                //MenuPanel.Dirty = true;
+                //StatusPanel.Dirty = true;
+                foreach (var panel in AllGamePanels)
+                {
+                    foreach (var el in panel.Elements)
+                    {
+                        el.Dirty = true;
+                    }
+                }
+            }
             ControlContext.Redrawn = true;
             sprites.Begin();
             if (Controls?.ImageOverride != null)
@@ -342,6 +369,13 @@ namespace Hecatomb
             {
                 ForegroundPanel.DrawContent();
                 ForegroundPanel.Dirty = false;
+            }
+            if (Options.NewPanels)
+            {
+                foreach (var panel in AllGamePanels)
+                {
+                    panel.DrawElements();
+                }
             }
             sprites.End();
             base.Draw(gameTime);
