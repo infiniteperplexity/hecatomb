@@ -31,6 +31,7 @@ namespace Hecatomb
         public static StatusGamePanel StatusPanel;
         public static SplashPanel SplashPanel;
         public static ForegroundPanel ForegroundPanel;
+        public static Menu2GamePanel Menu2Panel;
 
         public static ControlContext LastControls;
         public static ControlContext Controls;
@@ -217,11 +218,13 @@ namespace Hecatomb
             StatusPanel = new StatusGamePanel(graphics, sprites);
             SplashPanel = new SplashPanel(graphics, sprites);
             ForegroundPanel = new ForegroundPanel(graphics, sprites);
+            Menu2Panel = new Menu2GamePanel(graphics, sprites);
             // why don't I initialize main panel??
             MenuPanel.Initialize();
             StatusPanel.Initialize();
             SplashPanel.Initialize();
             ForegroundPanel.Initialize();
+            Menu2Panel.Initialize();
             int Size = MainPanel.Size;
             int Padding = MainPanel.Padding;
             graphics.PreferredBackBufferWidth = Padding + (2 + Camera.Width) * (Size + Padding) + MenuPanel.Width;  // set this value to the desired width of your window
@@ -322,6 +325,13 @@ namespace Hecatomb
             {
                 MenuPanel.DrawContent();
                 MenuPanel.Dirty = false;
+                Menu2Panel.DrawContent();
+                Menu2Panel.Dirty = false;
+            }
+            if (Menu2Panel.Dirty)
+            {
+                Menu2Panel.DrawContent();
+                Menu2Panel.Dirty = false;
             }
             if (SplashPanel.Dirty && SplashPanel.Active)
             {

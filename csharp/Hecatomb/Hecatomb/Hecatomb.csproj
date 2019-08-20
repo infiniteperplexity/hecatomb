@@ -75,6 +75,7 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Menu2Panel.cs" />
     <Compile Include="Spells\DebugSpells.cs" />
     <Compile Include="Tasks\MendingTask.cs" />
     <Compile Include="RallyTask.cs" />
