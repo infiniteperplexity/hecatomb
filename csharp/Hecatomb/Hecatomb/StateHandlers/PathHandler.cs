@@ -64,6 +64,10 @@ namespace Hecatomb
                             PathHits.Remove(eid1);
                         }
                     }
+                    if (dict.Count == 0)
+                    {
+
+                    }
                 }
             }
             return g;

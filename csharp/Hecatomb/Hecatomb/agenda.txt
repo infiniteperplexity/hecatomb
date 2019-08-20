@@ -39,7 +39,7 @@ Design issues:
 - for once we're getting slogged by successful searches 
 - various display issues with status panel...text not wrapping, need to show day info and stuff (target 1280x720px)
 - better spell names
-
+- "research on researching X complete"
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.

@@ -116,6 +116,10 @@ namespace Hecatomb
                     hits[m.Entity.EID] = new Dictionary<int, (int, LinkedList<Coord>)>();
                     hits[m.Entity.EID][t.EID] = (cacheHitsFor, new LinkedList<Coord>());
                 }
+                if (!hits[m.Entity.EID].ContainsKey(t.EID))
+                {
+                    hits[m.Entity.EID][t.EID] = (cacheHitsFor, new LinkedList<Coord>());
+                }
                 var list = hits[m.Entity.EID][t.EID].Item2;
                 hits[m.Entity.EID][t.EID] = (cacheHitsFor + Game.World.Random.Perturb(2), list);
             }
