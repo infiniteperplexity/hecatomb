@@ -245,19 +245,11 @@ namespace Hecatomb
 
             int maindim = 486;
             
-            LeftMenuPanel = new NewGamePanel(Graphics, Sprites, 0, 0) { PixelHeight = maindim, PixelWidth = 397};
-            MainGamePanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth, 0) { PixelHeight = maindim, PixelWidth = maindim};
-            RightMenuPanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth + maindim, 0) { PixelHeight = maindim, PixelWidth = 397 }; ;
-            BottomPanel = new NewGamePanel(Graphics, Sprites, 0, maindim) { PixelHeight = 234, PixelWidth = 1280 };
-            LeftMenuPanel.AddElement(new InterfaceElement());
-            MainGamePanel.AddElement(new MainViewElement());
-            RightMenuPanel.AddElement(new InstructionsElement(RightMenuPanel.PixelWidth, RightMenuPanel.PixelHeight));
-            BottomPanel.AddElement(new InterfaceElement());
-            AllGamePanels = new List<NewGamePanel>();
-            AllGamePanels.Add(LeftMenuPanel);
-            AllGamePanels.Add(MainGamePanel);
-            AllGamePanels.Add(RightMenuPanel);
-            AllGamePanels.Add(BottomPanel);
+            InterfacePanel.Panels.Add(new MainElement()
+            //LeftMenuPanel = new NewGamePanel(Graphics, Sprites, 0, 0) { PixelHeight = maindim, PixelWidth = 397};
+            //MainGamePanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth, 0) { PixelHeight = maindim, PixelWidth = maindim};
+            //RightMenuPanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth + maindim, 0) { PixelHeight = maindim, PixelWidth = 397 }; ;
+            //BottomPanel = new NewGamePanel(Graphics, Sprites, 0, maindim) { PixelHeight = 234, PixelWidth = 1280 };
             // TODO: use this.Content to load your game content here
         }
 
@@ -299,7 +291,7 @@ namespace Hecatomb
                     }
                     World.Turns.Try();
                 }
-            }
+           
             base.Update(gameTime);
 
         }
@@ -312,12 +304,9 @@ namespace Hecatomb
                 //MainPanel.Dirty = true;
                 //MenuPanel.Dirty = true;
                 //StatusPanel.Dirty = true;
-                foreach (var panel in AllGamePanels)
+                foreach (var panel in InterfacePanel.Panels)
                 {
-                    foreach (var el in panel.Children)
-                    {
-                        el.Dirty = true;
-                    }
+                    panel.Dirty = true;
                 }
             }
             ControlContext.Redrawn = true;
@@ -372,10 +361,7 @@ namespace Hecatomb
             }
             if (Options.NewPanels)
             {
-                foreach (var panel in AllGamePanels)
-                {
-                    panel.DrawElements();
-                }
+                InterfacePanel.DrawPanels();
             }
             Sprites.End();
             base.Draw(gameTime);
