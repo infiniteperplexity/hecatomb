@@ -35,7 +35,7 @@ namespace Hecatomb
             FullScreen = false;
             //FullScreen = true;
             NewPanels = false;
-            //NewPanels = true;
+            NewPanels = true;
             Explored = false;
             //Explored = true;
             Visible = false;

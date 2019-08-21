@@ -50,8 +50,8 @@ namespace Hecatomb
 
         //		public static GameEventHandler Events;
         public static HashSet<Coord> Visible;
-        GraphicsDeviceManager graphics;
-        SpriteBatch sprites;
+        public static GraphicsDeviceManager Graphics;
+        public static SpriteBatch Sprites;
 
         public static string DefaultGameName;
         public Texture2D startup;
@@ -76,7 +76,7 @@ namespace Hecatomb
 
         public Game()
         {
-            graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
 
@@ -105,10 +105,10 @@ namespace Hecatomb
             Camera = new Camera();
             Visible = new HashSet<Coord>();
             LastDraw = DateTime.Now;
-            graphics.ApplyChanges();
+            Graphics.ApplyChanges();
             if (Options.FullScreen)
             {
-                graphics.IsFullScreen = true;
+                Graphics.IsFullScreen = true;
             }
             base.Initialize();
             if (!Options.NoStartupScreen)
@@ -129,7 +129,7 @@ namespace Hecatomb
                 (Keys.R, "Restore game.", RestoreGame),
                 (Keys.Q, "Quit.", QuitGame)
             });
-            Controls.ImageOverride = new ImageOverride(graphics, sprites);
+            Controls.ImageOverride = new ImageOverride(Graphics, Sprites);
         }
 
         public Queue<Action> UpdateActions = new Queue<Action>();
@@ -219,13 +219,13 @@ namespace Hecatomb
         /// 
         protected override void LoadContent()
         {
-            sprites = new SpriteBatch(GraphicsDevice);
-            MainPanel = new MainGamePanel(graphics, sprites);
-            MenuPanel = new MenuGamePanel(graphics, sprites);
-            StatusPanel = new StatusGamePanel(graphics, sprites);
-            SplashPanel = new SplashPanel(graphics, sprites);
-            ForegroundPanel = new ForegroundPanel(graphics, sprites);
-            Menu2Panel = new Menu2GamePanel(graphics, sprites);
+            Sprites = new SpriteBatch(GraphicsDevice);
+            MainPanel = new MainGamePanel(Graphics, Sprites);
+            MenuPanel = new MenuGamePanel(Graphics, Sprites);
+            StatusPanel = new StatusGamePanel(Graphics, Sprites);
+            SplashPanel = new SplashPanel(Graphics, Sprites);
+            ForegroundPanel = new ForegroundPanel(Graphics, Sprites);
+            Menu2Panel = new Menu2GamePanel(Graphics, Sprites);
             //why don't I initialize main panel??
             MenuPanel.Initialize();
             StatusPanel.Initialize();
@@ -236,23 +236,23 @@ namespace Hecatomb
             //int Padding = MainPanel.Padding;
             //graphics.PreferredBackBufferWidth = Padding + (2 + Camera.Width) * (Size + Padding) + MenuPanel.Width;  // set this value to the desired width of your window
             //graphics.PreferredBackBufferHeight = Padding + (2 + Camera.Height) * (Size + Padding) + StatusPanel.Height;   // set this value to the desired height of your window
-            Debug.WriteLine($"original width was {graphics.PreferredBackBufferWidth}");
-            Debug.WriteLine($"original height was {graphics.PreferredBackBufferHeight}");
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            Debug.WriteLine($"original width was {Graphics.PreferredBackBufferWidth}");
+            Debug.WriteLine($"original height was {Graphics.PreferredBackBufferHeight}");
+            Graphics.PreferredBackBufferWidth = 1280;
+            Graphics.PreferredBackBufferHeight = 720;
             //graphics.ToggleFullScreen();
-            graphics.ApplyChanges();
+            Graphics.ApplyChanges();
 
             int maindim = 486;
             
-            LeftMenuPanel = new NewGamePanel(graphics, sprites, 0, 0) { PixelHeight = maindim, PixelWidth = 397};
-            MainGamePanel = new NewGamePanel(graphics, sprites, LeftMenuPanel.PixelWidth, 0) { PixelHeight = maindim, PixelWidth = maindim};
-            RightMenuPanel = new NewGamePanel(graphics, sprites, LeftMenuPanel.PixelWidth + maindim, 0) { PixelHeight = maindim, PixelWidth = 397 }; ;
-            BottomPanel = new NewGamePanel(graphics, sprites, 0, maindim) { PixelHeight = 234, PixelWidth = 1280 };
-            LeftMenuPanel.Elements.Add(new InterfaceElement());
-            MainGamePanel.Elements.Add(new InterfaceElement());
-            RightMenuPanel.Elements.Add(new InterfaceElement());
-            BottomPanel.Elements.Add(new InterfaceElement());
+            LeftMenuPanel = new NewGamePanel(Graphics, Sprites, 0, 0) { PixelHeight = maindim, PixelWidth = 397};
+            MainGamePanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth, 0) { PixelHeight = maindim, PixelWidth = maindim};
+            RightMenuPanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth + maindim, 0) { PixelHeight = maindim, PixelWidth = 397 }; ;
+            BottomPanel = new NewGamePanel(Graphics, Sprites, 0, maindim) { PixelHeight = 234, PixelWidth = 1280 };
+            LeftMenuPanel.AddElement(new InterfaceElement());
+            MainGamePanel.AddElement(new MainViewElement());
+            RightMenuPanel.AddElement(new InstructionsElement(RightMenuPanel.PixelWidth, RightMenuPanel.PixelHeight));
+            BottomPanel.AddElement(new InterfaceElement());
             AllGamePanels = new List<NewGamePanel>();
             AllGamePanels.Add(LeftMenuPanel);
             AllGamePanels.Add(MainGamePanel);
@@ -314,14 +314,14 @@ namespace Hecatomb
                 //StatusPanel.Dirty = true;
                 foreach (var panel in AllGamePanels)
                 {
-                    foreach (var el in panel.Elements)
+                    foreach (var el in panel.Children)
                     {
                         el.Dirty = true;
                     }
                 }
             }
             ControlContext.Redrawn = true;
-            sprites.Begin();
+            Sprites.Begin();
             if (Controls?.ImageOverride != null)
             {
                 Controls.ImageOverride.Draw();
@@ -377,7 +377,7 @@ namespace Hecatomb
                     panel.DrawElements();
                 }
             }
-            sprites.End();
+            Sprites.End();
             base.Draw(gameTime);
         }
 

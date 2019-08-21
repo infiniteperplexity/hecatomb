@@ -88,7 +88,7 @@ public class MainGamePanel : GamePanel
 
 		public override void DrawContent()
 		{
-
+            return;
             if (Game.World == null || !World.WorldSafeToDraw)
             {
                 for (int i = 0; i < 25; i++)
