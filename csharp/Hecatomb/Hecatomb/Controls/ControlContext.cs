@@ -127,6 +127,7 @@ namespace Hecatomb
             var m = Mouse.GetState();
             HandleHover(m.X, m.Y);
         }
+
         public virtual void HandleHover(int x, int y)
         {
         	if (Cursor.X>-1)
@@ -134,14 +135,16 @@ namespace Hecatomb
         		Game.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
         		Cursor.Remove();
         	}
-        	if (x>Game.MainPanel.Size && y>Game.MainPanel.Size && x<Game.MenuPanel.X0-Game.MainPanel.Size && y<Game.StatusPanel.Y0-Game.MainPanel.Size)
+            var panel = InterfacePanel.GetPanel(x, y);
+        	if (panel is MainPanel)
         	{
-         		int Size = Game.MainPanel.Size;
-	        	int Padding = Game.MainPanel.Padding;
+                int Size = panel.CharWidth;
+                int Padding = panel.XPad;
 	        	Camera Camera = Game.Camera;
-	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.Z);
+	        	Coord tile = new Coord((x-panel.X0-Padding)/(Size+Padding)+Camera.XOffset,(y-panel.Y0-Padding)/(Size+Padding)+Camera.YOffset,Camera.Z);
 	        	OnTileHover(tile);
-        	} else if (x>=Game.MenuPanel.X0)
+        	}
+            else if (x>=Game.MenuPanel.X0)
         	{
         		OnMenuHover(x, y);
         	}

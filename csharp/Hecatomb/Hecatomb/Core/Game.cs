@@ -243,9 +243,14 @@ namespace Hecatomb
             //graphics.ToggleFullScreen();
             Graphics.ApplyChanges();
 
-            int maindim = 486;
-            
-            InterfacePanel.Panels.Add(new MainElement()
+            int main = 528;
+            int menu = 376;
+            int status = 192;
+
+            InterfacePanel.Panels.Add(new InterfacePanel(0, 0, menu, main));
+            InterfacePanel.Panels.Add(new MainPanel(menu, 0, main, main));
+            InterfacePanel.Panels.Add(new InstructionsPanel(menu + main, 0, menu, main + status));
+            InterfacePanel.Panels.Add(new InterfacePanel(0, main, menu + main, status));
             //LeftMenuPanel = new NewGamePanel(Graphics, Sprites, 0, 0) { PixelHeight = maindim, PixelWidth = 397};
             //MainGamePanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth, 0) { PixelHeight = maindim, PixelWidth = maindim};
             //RightMenuPanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth + maindim, 0) { PixelHeight = maindim, PixelWidth = 397 }; ;
@@ -291,7 +296,7 @@ namespace Hecatomb
                     }
                     World.Turns.Try();
                 }
-           
+            }
             base.Update(gameTime);
 
         }
@@ -317,51 +322,52 @@ namespace Hecatomb
             }
             else if (!Time.Frozen /*|| sinceDraw > TimeSpan.FromMilliseconds(500)*/)
             {
-                if (MainPanel.Dirty)
-                {
-                    GraphicsDevice.Clear(Color.Black);
+                //    if (MainPanel.Dirty)
+                //    {
+                //        GraphicsDevice.Clear(Color.Black);
 
-                    MainPanel.DrawContent();
-                    MainPanel.Dirty = false;
+                //        MainPanel.DrawContent();
+                //        MainPanel.Dirty = false;
 
 
-                }
-                else
+                //    }
+                //    else
+                //    {
+                //        MainPanel.DrawDirty();
+                //        SplashPanel.Dirty = true;
+                //    }
+                //    if (StatusPanel.Dirty)
+                //    {
+                //        StatusPanel.DrawContent();
+                //        StatusPanel.Dirty = false;
+                //    }
+                //}
+                //if (MenuPanel.Dirty)
+                //{
+                //    MenuPanel.DrawContent();
+                //    MenuPanel.Dirty = false;
+                //    Menu2Panel.DrawContent();
+                //    Menu2Panel.Dirty = false;
+                //}
+                //if (Menu2Panel.Dirty)
+                //{
+                //    Menu2Panel.DrawContent();
+                //    Menu2Panel.Dirty = false;
+                //}
+                //if (SplashPanel.Dirty && SplashPanel.Active)
+                //{
+                //    SplashPanel.DrawContent();
+                //    SplashPanel.Dirty = false;
+                //}
+                //if (ForegroundPanel.Dirty && ForegroundPanel.Active)
+                //{
+                //    ForegroundPanel.DrawContent();
+                //    ForegroundPanel.Dirty = false;
+                //}
+                if (Options.NewPanels)
                 {
-                    MainPanel.DrawDirty();
-                    SplashPanel.Dirty = true;
+                    InterfacePanel.DrawPanels();
                 }
-                if (StatusPanel.Dirty)
-                {
-                    StatusPanel.DrawContent();
-                    StatusPanel.Dirty = false;
-                }
-            }
-            if (MenuPanel.Dirty)
-            {
-                MenuPanel.DrawContent();
-                MenuPanel.Dirty = false;
-                Menu2Panel.DrawContent();
-                Menu2Panel.Dirty = false;
-            }
-            if (Menu2Panel.Dirty)
-            {
-                Menu2Panel.DrawContent();
-                Menu2Panel.Dirty = false;
-            }
-            if (SplashPanel.Dirty && SplashPanel.Active)
-            {
-                SplashPanel.DrawContent();
-                SplashPanel.Dirty = false;
-            }
-            if (ForegroundPanel.Dirty && ForegroundPanel.Active)
-            {
-                ForegroundPanel.DrawContent();
-                ForegroundPanel.Dirty = false;
-            }
-            if (Options.NewPanels)
-            {
-                InterfacePanel.DrawPanels();
             }
             Sprites.End();
             base.Draw(gameTime);

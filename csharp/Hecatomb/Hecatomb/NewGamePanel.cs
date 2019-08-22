@@ -76,7 +76,7 @@ namespace Hecatomb
         public virtual void Draw()
         {
             var bg = new Texture2D(Game.Graphics.GraphicsDevice, PixelWidth - 2, PixelHeight - 2);
-            Color cbg = Color.Yellow;
+            Color cbg = Color.DarkGray;
             Color[] bgdata = new Color[(PixelWidth - 2) * (PixelHeight - 2)];
             for (int i = 0; i < bgdata.Length; ++i)
             {
@@ -119,7 +119,7 @@ namespace Hecatomb
                             if (text.Substring(j + k, 1) != " ")
                             {
                                 // I have no idea if this spacing is even right
-                                if (x >= (((PixelWidth - LeftMargin - RightMargin) / CharWidth) - 8))
+                                if (x >= (((PixelWidth - CharWidth*LeftMargin - CharWidth*RightMargin) / CharWidth) - 8))
                                 {
                                     j += k;
                                     x = 0;
@@ -132,7 +132,7 @@ namespace Hecatomb
                     {
                         fg = colors[j];
                     }
-                    v = new Vector2(LeftMargin + X0 + x * CharWidth, TopMargin + Y0 + y * CharHeight);
+                    v = new Vector2(X0 + CharWidth*LeftMargin + x * CharWidth, TopMargin + Y0 + y * CharHeight);
                     Game.Sprites.DrawString(Font, text.Substring(j, 1), v, Game.Colors[fg]);
                     x += 1;
                 }
@@ -152,12 +152,12 @@ namespace Hecatomb
         }   
     }
 
-    public class MainElement : InterfacePanel
+    public class MainPanel : InterfacePanel
     {
         List<SpriteFont> Fonts;
         Dictionary<char, ValueTuple<Vector2, SpriteFont>> fontCache;
 
-        public MainElement(int x, int y, int w, int h) : base(x, y, w, h)
+        public MainPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
             CharWidth = 18;
             CharHeight = 18;
