@@ -99,13 +99,14 @@ namespace Hecatomb
         
         public virtual void HandleClick(int x, int y)
         {
-        	if (x>Game.MainPanel.Size && y>Game.MainPanel.Size && x<Game.MenuPanel.X0-Game.MainPanel.Size && y<Game.StatusPanel.Y0-Game.MainPanel.Size)
+            var panel = InterfacePanel.GetPanel(x, y);
+            if (panel is MainPanel)
         	{
          		int Size = Game.MainPanel.Size;
 	        	int Padding = Game.MainPanel.Padding;
 	        	Camera Camera = Game.Camera;
-	        	Coord tile = new Coord((x-Padding)/(Size+Padding)-1+Camera.XOffset,(y-Padding)/(Size+Padding)-1+Camera.YOffset,Camera.Z);
-	        	OnTileClick(tile);
+                Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
+                OnTileClick(tile);
         	}
         	else if (x>=Game.MenuPanel.X0) 
         	{

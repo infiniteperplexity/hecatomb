@@ -247,14 +247,11 @@ namespace Hecatomb
             int menu = 376;
             int status = 192;
 
-            InterfacePanel.Panels.Add(new InterfacePanel(0, 0, menu, main));
+            InterfacePanel.Panels.Add(new OtherMenuPanel(0, 0, menu, main));
             InterfacePanel.Panels.Add(new MainPanel(menu, 0, main, main));
             InterfacePanel.Panels.Add(new InstructionsPanel(menu + main, 0, menu, main + status));
-            InterfacePanel.Panels.Add(new InterfacePanel(0, main, menu + main, status));
-            //LeftMenuPanel = new NewGamePanel(Graphics, Sprites, 0, 0) { PixelHeight = maindim, PixelWidth = 397};
-            //MainGamePanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth, 0) { PixelHeight = maindim, PixelWidth = maindim};
-            //RightMenuPanel = new NewGamePanel(Graphics, Sprites, LeftMenuPanel.PixelWidth + maindim, 0) { PixelHeight = maindim, PixelWidth = 397 }; ;
-            //BottomPanel = new NewGamePanel(Graphics, Sprites, 0, maindim) { PixelHeight = 234, PixelWidth = 1280 };
+            InterfacePanel.Panels.Add(new ScrollPanel(0, main, menu + main, status));
+            
             // TODO: use this.Content to load your game content here
         }
 

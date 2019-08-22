@@ -86,10 +86,10 @@ namespace Hecatomb
         public void PushMessage(ColoredText ct)
         {
             int MaxArchive = 100;
-            MessageHistory.Insert(0, ct);
-            while (MessageHistory.Count > MaxArchive)
+            Game.World.GetState<MessageHandler>().MessageHistory.Insert(0, ct);
+            while (Game.World.GetState<MessageHandler>().MessageHistory.Count > MaxArchive)
             {
-                MessageHistory.RemoveAt(MaxArchive);
+                Game.World.GetState<MessageHandler>().MessageHistory.RemoveAt(MaxArchive);
             }
             SelectedMessage = 0;
         }
