@@ -26,9 +26,9 @@ namespace Hecatomb
         public StatusGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
         {
             Height = 100;
-            Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;
-            int size = Game.MainPanel.Size;
-            int padding = Game.MainPanel.Padding;
+            Width = Game.MenuPanel.X0 + Game.MenuPanel.PixelWidth;
+            int size = Game.MainPanel.CharWidth;
+            int padding = Game.MainPanel.XPad;
             X0 = padding + (size + padding);
             Y0 = padding + (2 + Game.Camera.Width) * (size + padding);
             MessageHistory = new List<ColoredText>();

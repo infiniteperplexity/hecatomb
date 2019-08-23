@@ -36,9 +36,11 @@ namespace Hecatomb
 
         public void Initialize()
         {
-            Height = Game.StatusPanel.Y0 + Game.StatusPanel.Height;
+            //Height = Game.StatusPanel.Y0 + Game.StatusPanel.PixelHeight;
+            Height = 1;
             // is this an arbitrary width?
-            Width = Game.MenuPanel.X0 + Game.MenuPanel.Width;
+            //Width = Game.MenuPanel.X0 + Game.MenuPanel.PixelWidth;
+            Width = 1;
             BG = new Texture2D(Graphics.GraphicsDevice, Width, Height);
             Color[] bgdata = new Color[(Width * Height)];
             for (int i = 0; i < bgdata.Length; ++i)

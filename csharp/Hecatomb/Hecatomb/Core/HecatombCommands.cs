@@ -220,7 +220,8 @@ namespace Hecatomb
             ControlContext.CenterCursor();
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
-			Game.StatusPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
 		}
 		
 		public void ChooseTask()

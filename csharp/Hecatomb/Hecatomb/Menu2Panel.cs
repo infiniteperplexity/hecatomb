@@ -27,9 +27,9 @@ namespace Hecatomb
         public Menu2GamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites) : base(graphics, sprites)
         {
             Width = 400;
-            int size = Game.MainPanel.Size;
-            int padding = Game.MainPanel.Padding;
-            X0 = padding + (2 + Game.Camera.Width) * (size + padding) + Game.MenuPanel.Width - 50;
+            int size = Game.MainPanel.CharWidth;
+            int padding = Game.MainPanel.XPad;
+            X0 = padding + (2 + Game.Camera.Width) * (size + padding) + Game.MenuPanel.PixelWidth - 50;
             Y0 = padding + (size + padding);
             middleLines = new List<ColoredText>() {
                 " ",
@@ -39,7 +39,8 @@ namespace Hecatomb
 
         public void Initialize()
         {
-            Height = Game.StatusPanel.Y0 + Game.StatusPanel.Height;
+            //Height = Game.StatusPanel.Y0 + Game.StatusPanel.PixelHeight;
+            Height = 1;
             BG = new Texture2D(Graphics.GraphicsDevice, Width, Height);
             Color[] bgdata = new Color[Width * Height];
             for (int i = 0; i < bgdata.Length; ++i)

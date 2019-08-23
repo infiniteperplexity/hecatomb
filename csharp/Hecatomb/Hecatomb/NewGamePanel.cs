@@ -11,18 +11,21 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Threading;
 
 namespace Hecatomb
 {
 
     public class InterfacePanel
     {
-        public static List<InterfacePanel> Panels = new List<InterfacePanel>();
+        public static List<List<InterfacePanel>> Panels = new List<List<InterfacePanel>>();
         public bool Dirty;
+        public bool Active;
         // basic stuff
         protected Texture2D BG;
         public int X0;
         public int Y0;
+        public int Zindex;
         public int XPad;
         public int YPad;
         public int PixelWidth;
@@ -35,12 +38,16 @@ namespace Hecatomb
         public int TopMargin;
         public int RightMargin;
         public int BottomMargin;
+        // should we have a textbuffer by default?
 
 
         public InterfacePanel(int x, int y, int w, int h)
         {
+            Active = true;
+            Dirty = true;
             X0 = x;
             Y0 = y;
+            Zindex = 0;
             PixelWidth = w;
             PixelHeight = h;
             Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
@@ -50,7 +57,6 @@ namespace Hecatomb
             YPad = 0;
             RightMargin = 1;
             LeftMargin = 1;
-            Dirty = true;
             BG = new Texture2D(Game.Graphics.GraphicsDevice, w, h);
             Color[] bgdata = new Color[w * h];
             for (int i = 0; i < bgdata.Length; ++i)
@@ -60,14 +66,27 @@ namespace Hecatomb
             BG.SetData(bgdata);
         }
 
+        public static void AddPanel(InterfacePanel ip)
+        {
+            int z = ip.Zindex;
+            while (Panels.Count < z + 1)
+            {
+                Panels.Add(new List<InterfacePanel>());
+            }
+            Panels[z].Add(ip);
+        }
+
         public static void DrawPanels()
         {
-            foreach (var panel in Panels)
+            foreach (var list in Panels)
             {
-                if (panel.Dirty)
+                foreach (var panel in list)
                 {
-                    panel.Draw();
-                    panel.Dirty = false;
+                    if (panel.Dirty && panel.Active)
+                    {
+                        panel.Draw();
+                        panel.Dirty = false;
+                    }
                 }
             }
         }
@@ -141,11 +160,15 @@ namespace Hecatomb
 
         public static InterfacePanel GetPanel(int x, int y)
         {
-            foreach (var panel in Panels)
+            for (int i = Panels.Count - 1; i > 0; i--)
             {
-                if (panel.X0 <= x && panel.Y0 <= y && panel.X0 + panel.PixelWidth > x && panel.Y0 + panel.PixelHeight > y)
+                var list = Panels[i];
+                foreach (var panel in list)
                 {
-                    return panel;
+                    if (panel.X0 <= x && panel.Y0 <= y && panel.X0 + panel.PixelWidth > x && panel.Y0 + panel.PixelHeight > y)
+                    {
+                        return panel;
+                    }
                 }
             }
             return null;
@@ -156,7 +179,8 @@ namespace Hecatomb
     {
         List<SpriteFont> Fonts;
         Dictionary<char, ValueTuple<Vector2, SpriteFont>> fontCache;
-
+        public HashSet<Coord> OldDirtyTiles;
+        public HashSet<Coord> NextDirtyTiles;
         public MainPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
             CharWidth = 18;
@@ -178,6 +202,41 @@ namespace Hecatomb
                 Fonts.Add(font);
             }
             fontCache = new Dictionary<char, ValueTuple<Vector2, SpriteFont>>();
+            OldDirtyTiles = new HashSet<Coord>();
+            NextDirtyTiles = new HashSet<Coord>();
+        }
+
+        public void DirtifyTile(int x, int y, int z)
+        {
+            NextDirtyTiles.Add(new Coord(x, y, z));
+        }
+        public void DirtifyTile(Coord c)
+        {
+            NextDirtyTiles.Add(c);
+        }
+
+        public void DrawDirty()
+        {
+            if (Game.World == null || !World.WorldSafeToDraw)
+            {
+                return;
+            }
+            OldDirtyTiles.UnionWith(NextDirtyTiles);
+            foreach (Coord c in OldDirtyTiles)
+            {
+                var glyph = Tiles.GetGlyph(c.X, c.Y, Game.Camera.Z);
+
+                int x = c.X - Game.Camera.XOffset;
+                int y = c.Y - Game.Camera.YOffset;
+                if (x >= 0 && x < Game.Camera.Width && y >= 0 && y < Game.Camera.Height)
+                {
+                    DrawGlyph(x, y, glyph.Item1, glyph.Item2, glyph.Item3);
+                }
+            }
+            var swap = OldDirtyTiles;
+            OldDirtyTiles = NextDirtyTiles;
+            NextDirtyTiles = swap;
+            NextDirtyTiles.Clear();
         }
         public override void Draw()
         {
@@ -397,20 +456,15 @@ namespace Hecatomb
                 string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "{yellow}Paused" : "      ";
                 string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
                 txt = $"Sanity:{sanity}  X:{x} Y:{y} Z:{z} {time}   {paused}";
-            }
-            else
-            {
-                txt = " ";
-            }
-
-            int MaxVisible = Math.Min(Game.World.GetState<MessageHandler>().MessageHistory.Count, 4);
-            List<ColoredText> list = new List<ColoredText> { txt };
-            list = list.Concat(Game.World.GetState<MessageHandler>().MessageHistory.GetRange(SelectedMessage, MaxVisible)).ToList();
-            if (list.Count > 1 && list[1].Colors.Count == 0)
-            {
-                list[1] = new ColoredText(list[1].Text, "cyan");
-            }
-            DrawLines(list);
+                int MaxVisible = Math.Min(Game.World.GetState<MessageHandler>().MessageHistory.Count, 4);
+                List<ColoredText> list = new List<ColoredText> { txt };
+                list = list.Concat(Game.World.GetState<MessageHandler>().MessageHistory.GetRange(SelectedMessage, MaxVisible)).ToList();
+                if (list.Count > 1 && list[1].Colors.Count == 0)
+                {
+                    list[1] = new ColoredText(list[1].Text, "cyan");
+                }
+                DrawLines(list);
+            } 
         }
     }
 
@@ -425,65 +479,131 @@ namespace Hecatomb
         {
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             var lines = new List<ColoredText>();
-            lines.Add($"{Game.World.Player.Describe()}");
-            lines.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
-            var stored = new List<Dictionary<string, int>>();
-            var structures = Structure.ListStructures();
-            foreach (Structure s in structures)
+            if (Game.World?.Player != null)
             {
-                stored.Add(s.GetStored());
-            }
-            var total = Item.CombinedResources(stored);
-            if (total.Count > 0)
-            {
-                lines.Add(" ");
-                lines.Add("Stored resources:");
-                foreach (var res in total.Keys)
+                lines.Add($"{Game.World.Player.Describe()}");
+                lines.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
+                var stored = new List<Dictionary<string, int>>();
+                var structures = Structure.ListStructures();
+                foreach (Structure s in structures)
                 {
-                    lines.Add("- " + Resource.Format((res, total[res])));
+                    stored.Add(s.GetStored());
                 }
+                var total = Item.CombinedResources(stored);
+                if (total.Count > 0)
+                {
+                    lines.Add(" ");
+                    lines.Add("Stored resources:");
+                    foreach (var res in total.Keys)
+                    {
+                        lines.Add("- " + Resource.Format((res, total[res])));
+                    }
+                }
+                DrawLines(lines);
             }
-            DrawLines(lines);
         }
     }
-    public class NewGamePanel
+
+    public class NewSplashPanel : InterfacePanel
     {
-        public GraphicsDeviceManager Graphics;
-        public SpriteBatch Sprites;
-        public Texture2D BG;
-        public int X0;
-        public int Y0;
-        public int PixelWidth;
-        public int PixelHeight;
-        public List<InterfaceElement> Children;
-
-
-        public NewGamePanel(GraphicsDeviceManager graphics, SpriteBatch sprites, int x0, int y0)
+        List<ColoredText> CurrentText;
+        public NewSplashPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
-            Graphics = graphics;
-            Sprites = sprites;
-            X0 = x0;
-            Y0 = y0;
-            Children = new List<InterfaceElement>();
+            LeftMargin = 2;
+            RightMargin = 2;
+            Active = false;
+            List<ColoredText> CurrentText = new List<ColoredText>();
         }
 
-        public virtual void DrawElements() {
-            int y1 = 0;
-            foreach (var el in Children)
+        public override void Draw()
+        {
+            // eventually want some kind of brief freeze to keep from instantly closing this
+            Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            Vector2 v;
+            v = new Vector2(X0, Y0);
+            Game.Sprites.DrawString(Font, new string('=', 55), v, Game.Colors["yellow"]);
+            for (var i = 1; i <= 11; i++)
             {
-                if (el.Dirty || el is MainViewElement)
-                {
-                    el.Draw(y1);
-                    el.Dirty = false;
-                }
-                y1 += el.Height;
+                v = new Vector2(X0, Y0 + CharHeight * i);
+                Game.Sprites.DrawString(Font, "#", v, Game.Colors["yellow"]);
+                v = new Vector2(X0 + CharHeight * 30 + 7, Y0 + CharHeight * i);
+                Game.Sprites.DrawString(Font, "#", v, Game.Colors["yellow"]);
             }
+            v = new Vector2(X0, Y0 + CharHeight * 12);
+            Game.Sprites.DrawString(Font, new string('=', 55), v, Game.Colors["yellow"]);
+            DrawLines(CurrentText);
         }
 
-        public void AddElement(InterfaceElement ie)
+        public void Splash(List<ColoredText> lines, bool frozen = false)
         {
-            ie.Panel = this;
-            Children.Add(ie);
+            Active = true;
+            Dirty = true;
+            if (!frozen)
+            {
+                Game.Controls.Set(new FrozenControls());
+                Thread thread = new Thread(() =>
+                {
+                    Thread.Sleep(1000);
+                    Game.Controls.SetWithoutRedraw(new SplashControls());
+                });
+                thread.Start();
+            }
+            else
+            {
+                Game.Controls.Set(new FrozenControls());
+            }
+            CurrentText = lines;
+        }
+
+        public void Reset()
+        {
+            Active = false;
+            Game.MainPanel.Dirty = true;
+            Game.MenuPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
+        }
+    }
+
+    public class FullScreenPanel : InterfacePanel
+    {
+        List<ColoredText> CurrentText;
+        public FullScreenPanel(int x, int y, int w, int h) : base(x, y, w, h)
+        {
+            Zindex = 1;
+            LeftMargin = 3;
+            TopMargin = 3;
+            Active = false;
+        }
+
+        public override void Draw()
+        {
+            // eventually want some kind of brief freeze to keep from instantly closing this
+            Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            DrawLines(CurrentText);
+        }
+        public void Splash(List<ColoredText> lines, bool frozen = false)
+        {
+            Active = true;
+            Dirty = true;
+            if (!frozen)
+            {
+                Game.Controls.Set(new SplashControls());
+            }
+            else
+            {
+                Game.Controls.Set(new FrozenControls());
+            }
+            CurrentText = lines;
+        }
+
+        public void Reset()
+        {
+            Active = false;
+            Game.MainPanel.Dirty = true;
+            Game.MenuPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
         }
     }
 }

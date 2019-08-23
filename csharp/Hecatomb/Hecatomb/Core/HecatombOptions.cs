@@ -45,7 +45,7 @@ namespace Hecatomb
             NoTutorial = false;
             NoTutorial = true;
             NoStartupScreen = false;
-            NoStartupScreen = true;
+            //NoStartupScreen = true;
             NoHumanAttacks = false;
             //NoHumanAttacks = true;
             NoNatureAttacks = false;

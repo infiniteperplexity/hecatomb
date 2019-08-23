@@ -47,7 +47,8 @@ namespace Hecatomb
         {
             SetWithoutRedraw(c);
         	Game.MenuPanel.Dirty = true;
-        	Game.MainPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
         }
 
@@ -71,7 +72,8 @@ namespace Hecatomb
             }
             Game.LastControls = Game.Controls;	
         	Game.MenuPanel.Dirty = true;
-        	Game.MainPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
             Game.SplashPanel.Active = false;
             Game.Time.Frozen = false;
@@ -88,7 +90,8 @@ namespace Hecatomb
             }  
             Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;          
             Game.MenuPanel.Dirty = true;
-        	Game.MainPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.MainPanel.Dirty = true;
             //Game.ForegroundPanel.Active = false;
         }
         
@@ -102,8 +105,8 @@ namespace Hecatomb
             var panel = InterfacePanel.GetPanel(x, y);
             if (panel is MainPanel)
         	{
-         		int Size = Game.MainPanel.Size;
-	        	int Padding = Game.MainPanel.Padding;
+         		int Size = Game.MainPanel.CharWidth;
+	        	int Padding = Game.MainPanel.XPad;
 	        	Camera Camera = Game.Camera;
                 Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
                 OnTileClick(tile);

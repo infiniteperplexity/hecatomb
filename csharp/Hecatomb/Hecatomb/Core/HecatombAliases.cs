@@ -9,21 +9,21 @@ namespace Hecatomb
     public static class HecatombAliases
     {
         // GUI elements
-        public static MainGamePanel MainPanel
+        public static MainPanel MainPanel
         {
             get
             {
                 return Game.MainPanel;
             }
         }
-        public static MenuGamePanel Menu
+        public static InstructionsPanel Menu
         {
             get
             {
                 return Game.MenuPanel;
             }
         }
-        public static StatusGamePanel Status
+        public static ScrollPanel Status
         {
             get
             {
@@ -31,7 +31,7 @@ namespace Hecatomb
             }
         }
 
-        public static SplashPanel Foreground
+        public static NewSplashPanel Foreground
         {
             get
             {

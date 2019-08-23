@@ -26,18 +26,19 @@ namespace Hecatomb
         public static Camera Camera;
         public static ContentManager MyContentManager;
         public static Dictionary<string, object> Caches;
-        public static MainGamePanel MainPanel;
-        public static MenuGamePanel MenuPanel;
-        public static StatusGamePanel StatusPanel;
-        public static SplashPanel SplashPanel;
-        public static ForegroundPanel ForegroundPanel;
-        public static Menu2GamePanel Menu2Panel;
+        //public static MainGamePanel MainPanel;
+        public static MainPanel MainPanel;
+        //public static MenuGamePanel MenuPanel;
+        public static InstructionsPanel MenuPanel;
+        //public static StatusGamePanel StatusPanel;
+        public static ScrollPanel StatusPanel;
+        //public static SplashPanel SplashPanel;
+        public static NewSplashPanel SplashPanel;
+        //public static ForegroundPanel ForegroundPanel;
+        public static FullScreenPanel ForegroundPanel;
+        public static OtherMenuPanel OtherPanel;
+        //public static Menu2GamePanel Menu2Panel;
 
-        public static NewGamePanel LeftMenuPanel;
-        public static NewGamePanel MainGamePanel;
-        public static NewGamePanel RightMenuPanel;
-        public static NewGamePanel BottomPanel;
-        public static List<NewGamePanel> AllGamePanels;
 
         public static ControlContext LastControls;
         public static ControlContext Controls;
@@ -220,18 +221,18 @@ namespace Hecatomb
         protected override void LoadContent()
         {
             Sprites = new SpriteBatch(GraphicsDevice);
-            MainPanel = new MainGamePanel(Graphics, Sprites);
-            MenuPanel = new MenuGamePanel(Graphics, Sprites);
-            StatusPanel = new StatusGamePanel(Graphics, Sprites);
-            SplashPanel = new SplashPanel(Graphics, Sprites);
-            ForegroundPanel = new ForegroundPanel(Graphics, Sprites);
-            Menu2Panel = new Menu2GamePanel(Graphics, Sprites);
+            //MainPanel = new MainGamePanel(Graphics, Sprites);
+            //MenuPanel = new MenuGamePanel(Graphics, Sprites);
+            //StatusPanel = new StatusGamePanel(Graphics, Sprites);
+            //SplashPanel = new SplashPanel(Graphics, Sprites);
+            //ForegroundPanel = new ForegroundPanel(Graphics, Sprites);
+            //Menu2Panel = new Menu2GamePanel(Graphics, Sprites);
             //why don't I initialize main panel??
-            MenuPanel.Initialize();
-            StatusPanel.Initialize();
-            SplashPanel.Initialize();
-            ForegroundPanel.Initialize();
-            Menu2Panel.Initialize();
+            //MenuPanel.Initialize();
+            //StatusPanel.Initialize();
+            //SplashPanel.Initialize();
+            //ForegroundPanel.Initialize();
+            //Menu2Panel.Initialize();
             //int Size = MainPanel.Size;
             //int Padding = MainPanel.Padding;
             //graphics.PreferredBackBufferWidth = Padding + (2 + Camera.Width) * (Size + Padding) + MenuPanel.Width;  // set this value to the desired width of your window
@@ -247,10 +248,18 @@ namespace Hecatomb
             int menu = 376;
             int status = 192;
 
-            InterfacePanel.Panels.Add(new OtherMenuPanel(0, 0, menu, main));
-            InterfacePanel.Panels.Add(new MainPanel(menu, 0, main, main));
-            InterfacePanel.Panels.Add(new InstructionsPanel(menu + main, 0, menu, main + status));
-            InterfacePanel.Panels.Add(new ScrollPanel(0, main, menu + main, status));
+            MainPanel = new MainPanel(menu, 0, main, main);
+            MenuPanel = new InstructionsPanel(menu + main, 0, menu, main + status);
+            StatusPanel = new ScrollPanel(0, main, menu + main, status);
+            SplashPanel = new NewSplashPanel(35 + 276, 150, 16 * 31, 16 * 13);
+            OtherPanel = new OtherMenuPanel(0, 0, menu, main);
+            ForegroundPanel = new FullScreenPanel(0, 0, 1280, 720);
+            InterfacePanel.AddPanel(OtherPanel);
+            InterfacePanel.AddPanel(MainPanel);
+            InterfacePanel.AddPanel(MenuPanel);
+            InterfacePanel.AddPanel(StatusPanel);
+            InterfacePanel.AddPanel(SplashPanel);
+            InterfacePanel.AddPanel(ForegroundPanel);
             
             // TODO: use this.Content to load your game content here
         }
@@ -308,7 +317,7 @@ namespace Hecatomb
                 //StatusPanel.Dirty = true;
                 foreach (var panel in InterfacePanel.Panels)
                 {
-                    panel.Dirty = true;
+                    //panel.Dirty = true;
                 }
             }
             ControlContext.Redrawn = true;
@@ -363,6 +372,12 @@ namespace Hecatomb
                 //}
                 if (Options.NewPanels)
                 {
+                    if (!MainPanel.Dirty)
+                    {
+                        MainPanel.DrawDirty();
+                        // seems like it shouldn't be necessary but currently is
+                        SplashPanel.Dirty = true;
+                    }
                     InterfacePanel.DrawPanels();
                 }
             }

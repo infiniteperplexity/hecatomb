@@ -79,6 +79,7 @@ namespace Hecatomb
 			//base.HoverTile(c);
 			DrawBox(c);
 			Selector.BoxHover(c, Squares);
+            // this might get changed to a different panel
 			Game.MenuPanel.Dirty = true;
 			Game.World.ShowTileDetails(c);
 		}
@@ -99,7 +100,8 @@ namespace Hecatomb
 			Selector.SelectBox(c, Squares);
 			Clean();
 			Game.MenuPanel.Dirty = true;
-			Reset();
+            Game.OtherPanel.Dirty = true;
+            Reset();
 		}
 		
 

@@ -75,7 +75,6 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="InterfaceElement.cs" />
     <Compile Include="Menu2Panel.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="NewGamePanel.cs" />

@@ -94,6 +94,7 @@ namespace Hecatomb
 			Active = false;
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
 			Game.StatusPanel.Dirty = true;
 		}
 	}
