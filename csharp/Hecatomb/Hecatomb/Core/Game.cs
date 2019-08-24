@@ -47,7 +47,7 @@ namespace Hecatomb
         public static TimeHandler Time;
         public static DateTime LastDraw;
         public static String GameName;
-        
+
 
         //		public static GameEventHandler Events;
         public static HashSet<Coord> Visible;
@@ -260,7 +260,7 @@ namespace Hecatomb
             InterfacePanel.AddPanel(StatusPanel);
             InterfacePanel.AddPanel(SplashPanel);
             InterfacePanel.AddPanel(ForegroundPanel);
-            
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -310,76 +310,22 @@ namespace Hecatomb
         protected override void Draw(GameTime gameTime)
         {
             TimeSpan sinceDraw = DateTime.Now.Subtract(LastDraw);
-            if (sinceDraw > TimeSpan.FromMilliseconds(500))
-            {
-                //MainPanel.Dirty = true;
-                //MenuPanel.Dirty = true;
-                //StatusPanel.Dirty = true;
-                foreach (var panel in InterfacePanel.Panels)
-                {
-                    //panel.Dirty = true;
-                }
-            }
             ControlContext.Redrawn = true;
             Sprites.Begin();
             if (Controls?.ImageOverride != null)
             {
                 Controls.ImageOverride.Draw();
+                MenuPanel.Draw();
             }
-            else if (!Time.Frozen /*|| sinceDraw > TimeSpan.FromMilliseconds(500)*/)
+            else if (!Time.Frozen || sinceDraw > TimeSpan.FromMilliseconds(500))
             {
-                //    if (MainPanel.Dirty)
-                //    {
-                //        GraphicsDevice.Clear(Color.Black);
-
-                //        MainPanel.DrawContent();
-                //        MainPanel.Dirty = false;
-
-
-                //    }
-                //    else
-                //    {
-                //        MainPanel.DrawDirty();
-                //        SplashPanel.Dirty = true;
-                //    }
-                //    if (StatusPanel.Dirty)
-                //    {
-                //        StatusPanel.DrawContent();
-                //        StatusPanel.Dirty = false;
-                //    }
-                //}
-                //if (MenuPanel.Dirty)
-                //{
-                //    MenuPanel.DrawContent();
-                //    MenuPanel.Dirty = false;
-                //    Menu2Panel.DrawContent();
-                //    Menu2Panel.Dirty = false;
-                //}
-                //if (Menu2Panel.Dirty)
-                //{
-                //    Menu2Panel.DrawContent();
-                //    Menu2Panel.Dirty = false;
-                //}
-                //if (SplashPanel.Dirty && SplashPanel.Active)
-                //{
-                //    SplashPanel.DrawContent();
-                //    SplashPanel.Dirty = false;
-                //}
-                //if (ForegroundPanel.Dirty && ForegroundPanel.Active)
-                //{
-                //    ForegroundPanel.DrawContent();
-                //    ForegroundPanel.Dirty = false;
-                //}
-                if (Options.NewPanels)
+                if (!MainPanel.Dirty)
                 {
-                    if (!MainPanel.Dirty)
-                    {
-                        MainPanel.DrawDirty();
-                        // seems like it shouldn't be necessary but currently is
-                        SplashPanel.Dirty = true;
-                    }
-                    InterfacePanel.DrawPanels();
+                    MainPanel.DrawDirty();
+                    // seems like it shouldn't be necessary but currently is
+                    SplashPanel.Dirty = true;
                 }
+                InterfacePanel.DrawPanels();
             }
             Sprites.End();
             base.Draw(gameTime);

@@ -962,7 +962,8 @@ namespace Hecatomb
 			{
 				// probably deal with text stuff here?
 				Game.MenuPanel.Dirty = true;
-				OnBegin();
+                Game.OtherPanel.Dirty = true;
+                OnBegin();
 			}
             public void NonEvent() { }
 			public void NonEvent(TutorialEvent t) {}

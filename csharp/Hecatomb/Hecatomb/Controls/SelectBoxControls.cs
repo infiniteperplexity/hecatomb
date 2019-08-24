@@ -81,7 +81,8 @@ namespace Hecatomb
 			Selector.BoxHover(c, Squares);
             // this might get changed to a different panel
 			Game.MenuPanel.Dirty = true;
-			Game.World.ShowTileDetails(c);
+            Game.OtherPanel.Dirty = true;
+            Game.World.ShowTileDetails(c);
 		}
 		
 		private void Clean()

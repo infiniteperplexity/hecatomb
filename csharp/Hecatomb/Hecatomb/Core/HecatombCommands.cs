@@ -201,7 +201,8 @@ namespace Hecatomb
             ControlContext.CenterCursor();
             Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
-			Game.StatusPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
 		}
 		private void moveCameraHorizontal(int dx, int dy)
 		{
@@ -229,7 +230,8 @@ namespace Hecatomb
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
 			Game.Controls = new MenuChoiceControls(GetState<TaskHandler>());
 			Game.MenuPanel.Dirty = true;
-		}
+            Game.OtherPanel.Dirty = true;
+        }
 		
 		public void ChooseSpell()
 		{
@@ -237,7 +239,8 @@ namespace Hecatomb
 
             Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
 			Game.MenuPanel.Dirty = true;
-		}
+            Game.OtherPanel.Dirty = true;
+        }
 		
 		public void AutoWait()
 		{
@@ -336,7 +339,9 @@ namespace Hecatomb
 			Game.Camera.Center(p.X, p.Y, p.Z);
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
-		}
+            Game.OtherPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
+        }
 		
 		public void ShowConsole()
 		{
@@ -353,6 +358,7 @@ namespace Hecatomb
             var tutorial = Game.World.GetState<TutorialHandler>();
             tutorial.Visible = !tutorial.Visible;
             Game.MenuPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
         }
 
         public void ScrollUpCommand()

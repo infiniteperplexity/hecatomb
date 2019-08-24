@@ -119,7 +119,8 @@ namespace Hecatomb
 			MenuTop[1] = "Select second corner with keys or mouse.";
 //			KeyMap[Keys.Escape] = BackToFirstSquare;
 			Game.MenuPanel.Dirty = true;
-		}
+            Game.OtherPanel.Dirty = true;
+        }
 		
 		private void BackToFirstSquare()
 		{
@@ -129,7 +130,8 @@ namespace Hecatomb
 			Clean();
 			Highlights.Clear();
 			Game.MenuPanel.Dirty = true;
-			Game.MainPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.MainPanel.Dirty = true;
 			KeyMap[Keys.Escape] = Back;
 		}
 		

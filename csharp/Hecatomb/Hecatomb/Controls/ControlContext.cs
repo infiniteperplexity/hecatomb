@@ -76,6 +76,7 @@ namespace Hecatomb
             Game.MainPanel.Dirty = true;
             Game.StatusPanel.Dirty = true;
             Game.SplashPanel.Active = false;
+            Game.ForegroundPanel.Active = false;
             Game.Time.Frozen = false;
         }
         
@@ -140,7 +141,7 @@ namespace Hecatomb
         		Cursor.Remove();
         	}
             var panel = InterfacePanel.GetPanel(x, y);
-        	if (panel is MainPanel)
+            if (panel is MainPanel)
         	{
                 int Size = panel.CharWidth;
                 int Padding = panel.XPad;

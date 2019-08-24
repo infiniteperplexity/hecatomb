@@ -293,7 +293,8 @@ namespace Hecatomb
 			
 			Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
-			Game.StatusPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
 			// *** Turns ***
 			Turns = parsed.GetValue("turns").ToObject<TurnHandler>();
             

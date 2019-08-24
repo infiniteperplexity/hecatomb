@@ -27,15 +27,12 @@ namespace Hecatomb
         public bool Invincible;
         public bool ReseedRandom;
         public bool FullScreen;
-        public bool NewPanels;
         public List<(string, int)> FreeStuff;
 
         public HecatombOptions()
         {
             FullScreen = false;
             //FullScreen = true;
-            NewPanels = false;
-            NewPanels = true;
             Explored = false;
             //Explored = true;
             Visible = false;

@@ -390,7 +390,8 @@ namespace Hecatomb
                 Game.Controls.MenuBottom[i].Colors[0] = (i<change) ? main : other;
 			}
 			Game.MenuPanel.Dirty = true;
-		}
+            Game.OtherPanel.Dirty = true;
+        }
 		
 		public T GetState<T>() where T : StateHandler, new()
 		{

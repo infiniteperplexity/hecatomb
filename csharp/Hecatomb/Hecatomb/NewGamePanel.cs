@@ -68,7 +68,7 @@ namespace Hecatomb
 
         public static void AddPanel(InterfacePanel ip)
         {
-            int z = ip.Zindex;
+            int z = ip.Zindex;           
             while (Panels.Count < z + 1)
             {
                 Panels.Add(new List<InterfacePanel>());
@@ -160,12 +160,12 @@ namespace Hecatomb
 
         public static InterfacePanel GetPanel(int x, int y)
         {
-            for (int i = Panels.Count - 1; i > 0; i--)
+            for (int i = Panels.Count - 1; i >= 0; i--)
             {
                 var list = Panels[i];
                 foreach (var panel in list)
                 {
-                    if (panel.X0 <= x && panel.Y0 <= y && panel.X0 + panel.PixelWidth > x && panel.Y0 + panel.PixelHeight > y)
+                    if (panel.Active && panel.X0 <= x && panel.Y0 <= y && panel.X0 + panel.PixelWidth > x && panel.Y0 + panel.PixelHeight > y)
                     {
                         return panel;
                     }
@@ -240,7 +240,7 @@ namespace Hecatomb
         }
         public override void Draw()
         {
-
+            Game.Graphics.GraphicsDevice.Clear(Color.Black);
             if (Game.World == null || !World.WorldSafeToDraw)
             {
                 for (int i = 0; i < 25; i++)
@@ -477,6 +477,11 @@ namespace Hecatomb
         }
         public override void Draw()
         {
+            if (Game.ForegroundPanel.Active)
+            {
+                // I don't know why this panel needs this and the others don't
+                return;
+            }
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             var lines = new List<ColoredText>();
             if (Game.World?.Player != null)
@@ -509,6 +514,7 @@ namespace Hecatomb
         List<ColoredText> CurrentText;
         public NewSplashPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
+            Zindex = 1;
             LeftMargin = 2;
             RightMargin = 2;
             Active = false;

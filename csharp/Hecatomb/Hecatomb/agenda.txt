@@ -42,6 +42,7 @@ Design issues:
 - "research on researching X complete"
 - can hover one tile past some edges of the screen
 - was water supposed to flicker when the mouse moved?
+- should have a more organized way to dirtify panels.
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.

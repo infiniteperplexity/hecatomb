@@ -50,7 +50,8 @@ namespace Hecatomb
 			base.HoverTile(c);
 			Selector.TileHover(c);
 			Game.MenuPanel.Dirty = true;
-		}
+            Game.OtherPanel.Dirty = true;
+        }
 		
 		public override void ClickTile(Coord c)
 		{

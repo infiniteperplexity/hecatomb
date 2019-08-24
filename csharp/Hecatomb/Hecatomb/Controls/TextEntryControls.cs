@@ -114,6 +114,7 @@ namespace Hecatomb
                 "{cyan}Press Enter when finished."
             };
             Game.MenuPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
         }
 
         public override void HandleClick(int x, int y)

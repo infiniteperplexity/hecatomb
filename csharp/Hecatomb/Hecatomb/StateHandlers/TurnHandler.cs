@@ -153,7 +153,8 @@ namespace Hecatomb
             //}
             Game.MainPanel.Dirty = true;
 			Game.MenuPanel.Dirty = true;
-			Game.StatusPanel.Dirty = true;
+            Game.OtherPanel.Dirty = true;
+            Game.StatusPanel.Dirty = true;
 			Creature[] actors = Game.World.Creatures.ToArray();
 			Queue.Clear();
 			Deck.Clear();
@@ -186,6 +187,7 @@ namespace Hecatomb
                     HandleVisibility();
                     Game.MainPanel.Dirty = true;
                     Game.MenuPanel.Dirty = true;
+                    Game.OtherPanel.Dirty = true;
                     Game.StatusPanel.Dirty = true;
                     PlayerActed = false;
                     return;
@@ -273,6 +275,7 @@ namespace Hecatomb
             //{
                 Game.MainPanel.Dirty = true;
                 Game.MenuPanel.Dirty = true;
+                Game.OtherPanel.Dirty = true;
                 Game.StatusPanel.Dirty = true;
                 var m = Mouse.GetState();
                 Controls?.HandleHover(m.X, m.Y);
