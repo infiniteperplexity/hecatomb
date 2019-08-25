@@ -244,16 +244,20 @@ namespace Hecatomb
             //graphics.ToggleFullScreen();
             Graphics.ApplyChanges();
 
-            int main = 528;
-            int menu = 376;
-            int status = 192;
+            //int main = 528;
+            //int menu = 376;
+            //int status = 192;
 
-            MainPanel = new MainPanel(menu, 0, main, main);
-            MenuPanel = new InstructionsPanel(menu + main, 0, menu, main + status);
-            StatusPanel = new ScrollPanel(0, main, menu + main, status);
+            //MainPanel = new MainPanel(menu, 0, main, main);
+            //MenuPanel = new InstructionsPanel(menu + main, 0, menu, main + status);
+            //StatusPanel = new ScrollPanel(0, main, menu + main, status);
             SplashPanel = new NewSplashPanel(35 + 276, 150, 16 * 31, 16 * 13);
-            OtherPanel = new OtherMenuPanel(0, 0, menu, main);
+            //OtherPanel = new OtherMenuPanel(0, 0, menu, main);
             ForegroundPanel = new FullScreenPanel(0, 0, 1280, 720);
+            MenuPanel = new InstructionsPanel(0, 0, 1280 - 720, 360);
+            StatusPanel = new ScrollPanel(0, 360, 1280 - 720, 360);
+            MainPanel = new MainPanel(1280 - 720 + 11, 0 + 11, 720, 720);
+            OtherPanel = new OtherMenuPanel(0, 0, 1, 1);
             InterfacePanel.AddPanel(OtherPanel);
             InterfacePanel.AddPanel(MainPanel);
             InterfacePanel.AddPanel(MenuPanel);

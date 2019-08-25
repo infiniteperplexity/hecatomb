@@ -15,8 +15,10 @@ namespace Hecatomb
 	/// </summary>
 	public class Camera
 	{
-		public int Height = 25;
-		public int Width = 25;
+		//public int Height = 25;
+		//public int Width = 25;
+        public int Height = 33;
+        public int Width = 33;
 		public int XOffset = 0;
 		public int YOffset = 0;
 		public int Z = 0;

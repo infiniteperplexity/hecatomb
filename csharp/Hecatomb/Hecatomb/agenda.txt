@@ -4,6 +4,15 @@
 - We do probably need to be free of common crashes and major performance slams.
 
 
+Tutorial notes:
+- Maybe hide certain screens to minimize distractions at start?
+- Is a dig task still the best first thing?  Maybe just cut trees and build a workshop? That requires flint.
+- Tutorial should hint at tasks to come
+- Where should we note what different buildings do?
+- Research complete text is the wrong color
+
+
+
 Design issues:
 - Probably want some sort of busywork task
 - Should there be a furnace that can bake coal?
@@ -43,6 +52,8 @@ Design issues:
 - can hover one tile past some edges of the screen
 - was water supposed to flicker when the mouse moved?
 - should have a more organized way to dirtify panels.
+- is newest message at top a good system?
+- need some way to keep your zombies indoors
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.
