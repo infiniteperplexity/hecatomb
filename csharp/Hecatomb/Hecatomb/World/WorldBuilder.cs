@@ -347,41 +347,31 @@ namespace Hecatomb
             base.Build(world);
             for (int i = 0; i < world.Width; i++) {
                 for (int j = 0; j < world.Height; j++) {
-                    if (i <= 16 && i > 9 && j <= 16 && j > 9)
-                    {
-                        world.Terrains[i, j, 0] = Terrain.FloorTile;
-                    }
-                    else
-                    {
-                        world.Terrains[i, j, 0] = Terrain.WallTile;
+                    for (int k = 0; k < world.Depth; k++) { 
+                        world.Terrains[i, j, k] = Terrain.FloorTile;
                     }
                 }
             }
-            RecursiveBacktracker maze = new RecursiveBacktracker(12, 12);
-            for (int i = 0; i < world.Width / 2; i++)
+            string[] lines = System.IO.File.ReadAllLines(@"../Content/ASCII_icon.txt");
+            for (int i = 0; i < lines.Length; i++)
             {
-                for (int j = 0; j < world.Height / 2; j++)
+                var line = lines[i];
+                for (int j = 0; j<line.Length; j++)
                 {
-                    Task t = Entity.Spawn<DigTask>();
-                    t.Place(2 * i, 2 * j, 0);
-                    if (!maze.BottomWalls[i, j])
+                    if (j%0 == 0 && line[j] != '.')
                     {
-                        t = Entity.Spawn<DigTask>();
-                        t.Place(2 * i, 2 * j + 1, 0);
-                    }
-                    if (!maze.RightWalls[i, j])
-                    {
-                        t = Entity.Spawn<DigTask>();
-                        t.Place(2 * i + 1, 2 * j, 0);
+                        string typ = (line[j] == '@') ? "IntroNecromancer" : "IntroZombie";
+
+                        Creature cr = Entity.Spawn<Creature>(typ);
+                        cr.Place(1 + j / 2, 1 + i / 2, 1);
                     }
                 }
             }
-            //Game.World.Entities.Spawn<Creature>("Necromancer").Place(12, 12, 0);
-            Entity.Spawn<Creature>("Zombie").Place(12, 13, 0);
-            Entity.Spawn<Creature>("Zombie").Place(12, 11, 0);
-            Entity.Spawn<Creature>("Zombie").Place(11, 12, 0);
-            Entity.Spawn<Creature>("Zombie").Place(13, 12, 0);
+            Game.Camera.Center(16, 16, 1);
+            // need to handle exploration and visibility
+            // need to handle special AI for intro drones, that sleeps to start and randomly wakes up
+            // hide the player on another level maybe?
+            // or just have no time pass...even maybe just have black backgrounds...make this not a world.
         }
-  
     }
 }

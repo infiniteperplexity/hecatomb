@@ -253,6 +253,27 @@
 					"Attacker": {},
 					"Defender": {}
 				}
+			},
+			{
+				"Type" : "IntroZombie",
+				"Name" : "zombie",
+				"FG" : "green",
+				"Symbol" : "z",
+				"Components" : {
+					"Actor": {"Team" : "Hostile"},
+					"Movement": {},
+					"Inventory": {}
+				}
+			},
+			{
+				"Type" : "IntroNecromancer",
+				"Name" : "necromancer",
+				"FG" : "magenta",
+				"Symbol" : "@",
+				"Components" : {
+					"Actor": {"Team" : "Hostile"},
+					"Movement": {}
+				}
 			}
 		]
 }

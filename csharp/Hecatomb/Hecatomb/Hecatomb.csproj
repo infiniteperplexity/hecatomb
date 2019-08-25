@@ -240,7 +240,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="agenda.txt" />
-    <Content Include="ASCII_icon.txt" />
+    <Content Include="Content\ASCII_icon.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\necromancer.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

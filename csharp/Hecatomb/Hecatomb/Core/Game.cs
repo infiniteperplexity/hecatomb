@@ -170,6 +170,11 @@ namespace Hecatomb
         }
         public void StartGame()
         {
+            
+            //string archiveFolder = Path.Combine(currentDirectory, "archive");
+            //string[] files = Directory.GetFiles(archiveFolder, "*.zip");
+
+
             Game.GameName = "GameWorld";
             TheFixer.Purge();
             Controls.Reset();
