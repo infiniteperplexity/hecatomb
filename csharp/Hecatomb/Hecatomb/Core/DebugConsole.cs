@@ -35,8 +35,8 @@ namespace Hecatomb
 				int y = Int32.Parse(parsed[3]);
 				int z = Int32.Parse(parsed[4]);
 				et.Place(x, y, z);
-				Game.MainPanel.Dirty = true;
-			}
+                InterfacePanel.DirtifyMainPanel();
+            }
 		}
 	}
 }

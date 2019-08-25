@@ -180,8 +180,7 @@ namespace Hecatomb
             {
 
             }
-            Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
+            InterfacePanel.DirtifySidePanels();
             menu.KeyMap[Keys.Escape] =
                () =>
                {

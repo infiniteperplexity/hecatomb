@@ -151,11 +151,8 @@ namespace Hecatomb
                     LightLevel = (int)Math.Min(255, ((60-Minute) / 60f) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
                 }
             //}
-            Game.MainPanel.Dirty = true;
-			Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
-			Creature[] actors = Game.World.Creatures.ToArray();
+            InterfacePanel.DirtifyUsualPanels();
+            Creature[] actors = Game.World.Creatures.ToArray();
 			Queue.Clear();
 			Deck.Clear();
 			foreach (Entity e in Entities.Values)
@@ -185,10 +182,7 @@ namespace Hecatomb
                 if (actor.Entity == Player)
                 {
                     HandleVisibility();
-                    Game.MainPanel.Dirty = true;
-                    Game.MenuPanel.Dirty = true;
-                    Game.OtherPanel.Dirty = true;
-                    Game.StatusPanel.Dirty = true;
+                    InterfacePanel.DirtifyUsualPanels();
                     PlayerActed = false;
                     return;
                 }
@@ -273,11 +267,8 @@ namespace Hecatomb
         {
             //if (Game.World.Turns.Turn > 1)
             //{
-                Game.MainPanel.Dirty = true;
-                Game.MenuPanel.Dirty = true;
-                Game.OtherPanel.Dirty = true;
-                Game.StatusPanel.Dirty = true;
-                var m = Mouse.GetState();
+            InterfacePanel.DirtifyUsualPanels();
+            var m = Mouse.GetState();
                 Controls?.HandleHover(m.X, m.Y);
             //}
             TheFixer.CheckStates();

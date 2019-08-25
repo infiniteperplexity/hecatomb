@@ -46,10 +46,7 @@ namespace Hecatomb
         public void Set(ControlContext c)
         {
             SetWithoutRedraw(c);
-        	Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.MainPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
+            InterfacePanel.DirtifyUsualPanels();
         }
 
         public void SetWithoutRedraw(ControlContext c)
@@ -70,11 +67,8 @@ namespace Hecatomb
                 Game.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Game.Controls });
                 Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             }
-            Game.LastControls = Game.Controls;	
-        	Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.MainPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
+            Game.LastControls = Game.Controls;
+            InterfacePanel.DirtifyUsualPanels();
             Game.SplashPanel.Active = false;
             Game.ForegroundPanel.Active = false;
             Game.Time.Frozen = false;
@@ -89,10 +83,8 @@ namespace Hecatomb
                 Game.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Game.Controls });
                 Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             }  
-            Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;          
-            Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.MainPanel.Dirty = true;
+            Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
+            InterfacePanel.DirtifyUsualPanels();
             //Game.ForegroundPanel.Active = false;
         }
         

@@ -299,8 +299,7 @@ namespace Hecatomb
                     menu.MenuTop.Add("- " + Resource.Format((res, stored[res])));
                 }
             }
-            Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
+            InterfacePanel.DirtifySidePanels();
             menu.KeyMap[Keys.Escape] =
                 () =>
                 {

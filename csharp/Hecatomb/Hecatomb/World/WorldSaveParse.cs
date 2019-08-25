@@ -290,13 +290,10 @@ namespace Hecatomb
 			
 			Player = (Creature) Entities[pid];
 			Explored = parsed.GetValue("explored").ToObject<HashSet<Coord>>();
-			
-			Game.MainPanel.Dirty = true;
-			Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
-			// *** Turns ***
-			Turns = parsed.GetValue("turns").ToObject<TurnHandler>();
+
+            InterfacePanel.DirtifyUsualPanels();
+            // *** Turns ***
+            Turns = parsed.GetValue("turns").ToObject<TurnHandler>();
             
             Turns.Queue = Turns.QueueAsActors(parsed["turns"]["Queue"].ToObject<Queue<int>>());
 			Turns.Deck = Turns.QueueAsActors(parsed["turns"]["Deck"].ToObject<Queue<int>>());

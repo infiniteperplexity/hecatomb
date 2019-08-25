@@ -960,9 +960,8 @@ namespace Hecatomb
 			
 			public void Begin()
 			{
-				// probably deal with text stuff here?
-				Game.MenuPanel.Dirty = true;
-                Game.OtherPanel.Dirty = true;
+                // probably deal with text stuff here?
+                InterfacePanel.DirtifySidePanels();
                 OnBegin();
 			}
             public void NonEvent() { }

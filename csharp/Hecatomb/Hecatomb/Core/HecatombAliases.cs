@@ -16,7 +16,7 @@ namespace Hecatomb
                 return Game.MainPanel;
             }
         }
-        public static InstructionsPanel Menu
+        public static CommandsPanel Menu
         {
             get
             {
@@ -31,7 +31,7 @@ namespace Hecatomb
             }
         }
 
-        public static NewSplashPanel Foreground
+        public static SplashPanel Foreground
         {
             get
             {

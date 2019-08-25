@@ -199,11 +199,8 @@ namespace Hecatomb
             }
             Game.Camera.Z = Math.Max(Math.Min(Game.Camera.Z+dz, Game.World.Depth-2),1);
             ControlContext.CenterCursor();
-            Game.MainPanel.Dirty = true;
-			Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
-		}
+            InterfacePanel.DirtifyUsualPanels();
+        }
 		private void moveCameraHorizontal(int dx, int dy)
 		{
             if (ControlContext.ShiftDown)
@@ -219,18 +216,14 @@ namespace Hecatomb
             c.XOffset = Math.Min(Math.Max(1, c.XOffset + dx), Game.World.Width - c.Width - 1);
             c.YOffset = Math.Min(Math.Max(1, c.YOffset + dy), Game.World.Height - c.Height - 1);
             ControlContext.CenterCursor();
-			Game.MainPanel.Dirty = true;
-			Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
-		}
+            InterfacePanel.DirtifyUsualPanels();
+        }
 		
 		public void ChooseTask()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
 			Game.Controls = new MenuChoiceControls(GetState<TaskHandler>());
-			Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
+            InterfacePanel.DirtifySidePanels();
         }
 		
 		public void ChooseSpell()
@@ -238,8 +231,7 @@ namespace Hecatomb
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
 
             Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
-			Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
+            InterfacePanel.DirtifySidePanels();
         }
 		
 		public void AutoWait()
@@ -313,8 +305,8 @@ namespace Hecatomb
             Game.World.Events.Publish(new TutorialEvent() { Action = "TogglePause" });
 			Game.Time.PausedAfterLoad = false;
 			Game.Time.AutoPausing = !Game.Time.AutoPausing;
-			Game.StatusPanel.Dirty = true;
-		}
+            InterfacePanel.DirtifySidePanels();
+        }
 		
 		public void ToggleMovingCamera()
 		{
@@ -337,10 +329,7 @@ namespace Hecatomb
 			}
 			Creature p = Game.World.Player;
 			Game.Camera.Center(p.X, p.Y, p.Z);
-			Game.MainPanel.Dirty = true;
-			Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
-            Game.StatusPanel.Dirty = true;
+            InterfacePanel.DirtifyUsualPanels();
         }
 		
 		public void ShowConsole()
@@ -357,8 +346,7 @@ namespace Hecatomb
         {
             var tutorial = Game.World.GetState<TutorialHandler>();
             tutorial.Visible = !tutorial.Visible;
-            Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
+            InterfacePanel.DirtifySidePanels();
         }
 
         public void ScrollUpCommand()

@@ -113,8 +113,7 @@ namespace Hecatomb
                 (CurrentText+"_"),
                 "{cyan}Press Enter when finished."
             };
-            Game.MenuPanel.Dirty = true;
-            Game.OtherPanel.Dirty = true;
+            InterfacePanel.DirtifySidePanels();
         }
 
         public override void HandleClick(int x, int y)

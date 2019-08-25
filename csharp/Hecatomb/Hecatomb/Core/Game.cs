@@ -29,11 +29,11 @@ namespace Hecatomb
         //public static MainGamePanel MainPanel;
         public static MainPanel MainPanel;
         //public static MenuGamePanel MenuPanel;
-        public static InstructionsPanel MenuPanel;
+        public static CommandsPanel MenuPanel;
         //public static StatusGamePanel StatusPanel;
         public static ScrollPanel StatusPanel;
         //public static SplashPanel SplashPanel;
-        public static NewSplashPanel SplashPanel;
+        public static SplashPanel SplashPanel;
         //public static ForegroundPanel ForegroundPanel;
         public static FullScreenPanel ForegroundPanel;
         public static OtherMenuPanel OtherPanel;
@@ -185,7 +185,7 @@ namespace Hecatomb
                 "(Building world...please wait.)"
             }, frozen: true);
             //Controls.Set(new FrozenControls());
-            MainPanel.Dirty = true;
+            InterfacePanel.DirtifyMainPanel();
             Thread thread = new Thread(StartupThread);
             thread.Start();
         }
@@ -251,10 +251,10 @@ namespace Hecatomb
             //MainPanel = new MainPanel(menu, 0, main, main);
             //MenuPanel = new InstructionsPanel(menu + main, 0, menu, main + status);
             //StatusPanel = new ScrollPanel(0, main, menu + main, status);
-            SplashPanel = new NewSplashPanel(35 + 276, 150, 16 * 31, 16 * 13);
+            SplashPanel = new SplashPanel(35 + 276, 150, 16 * 31, 16 * 13);
             //OtherPanel = new OtherMenuPanel(0, 0, menu, main);
             ForegroundPanel = new FullScreenPanel(0, 0, 1280, 720);
-            MenuPanel = new InstructionsPanel(0, 0, 1280 - 720, 360);
+            MenuPanel = new CommandsPanel(0, 0, 1280 - 720, 360);
             StatusPanel = new ScrollPanel(0, 360, 1280 - 720, 360);
             MainPanel = new MainPanel(1280 - 720 + 11, 0 + 11, 720, 720);
             OtherPanel = new OtherMenuPanel(0, 0, 1, 1);
