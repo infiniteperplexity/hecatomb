@@ -15,8 +15,12 @@ namespace Hecatomb
         Dictionary<char, ValueTuple<Vector2, SpriteFont>> fontCache;
         public HashSet<Coord> OldDirtyTiles;
         public HashSet<Coord> NextDirtyTiles;
+        public bool IntroState;
+        public string[] IntroLines;
         public MainPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
+            IntroLines = System.IO.File.ReadAllLines(@"Content/ASCII_icon.txt");
+            IntroState = false;
             CharWidth = 18;
             CharHeight = 18;
             XPad = 3;
@@ -75,11 +79,38 @@ namespace Hecatomb
         public override void Draw()
         {
             Game.Graphics.GraphicsDevice.Clear(Color.Black);
+            if (IntroState)
+            {
+                for (int j = 0; j < IntroLines.Length; j++)
+                {
+                    var line = IntroLines[j];
+                    for (int i = 0; i < line.Length; i++)
+                    {
+                        var sym = line[i];
+                        string fg = "white";
+                        string bg = "black";
+                        if (sym == ' ')
+                        {
+                            continue;
+                        }
+                        else if (sym == 'z')
+                        {
+                            fg = "lime green";
+                        }
+                        else if (sym == '@')
+                        {
+                            fg = "magenta";
+                        }
+                        DrawGlyph(i / 2, j, sym, fg, bg);
+                    }
+                }
+                return;
+            }
             if (Game.World == null || !World.WorldSafeToDraw)
             {
-                for (int i = 0; i < 25; i++)
+                for (int i = 0; i < Game.Camera.Width; i++)
                 {
-                    for (int j = 0; j < 25; j++)
+                    for (int j = 0; j < Game.Camera.Height; j++)
                     {
                         Game.Sprites.Draw(BG, new Vector2(X0 + XPad + (1 + i) * (CharWidth + XPad), Y0 + YPad + (1 + j) * (CharHeight + YPad)), Color.Black);
                     }

@@ -131,7 +131,6 @@
     <Compile Include="Tasks\PatrolTask.cs" />
     <Compile Include="Structures\Slaughterhouse.cs" />
     <Compile Include="Spells\CondenseEctoplasmSpell.cs" />
-    <Compile Include="Display\ImageOverride.cs" />
     <Compile Include="Spells\PoundOfFleshSpell.cs" />
     <Compile Include="Spells\RaiseZombieSpell.cs" />
     <Compile Include="StateHandlers\TaskHandler.cs" />

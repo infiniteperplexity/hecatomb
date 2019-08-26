@@ -11,6 +11,14 @@ namespace Hecatomb
 {
     public class ScrollPanel : InterfacePanel
     {
+        /* 
+         * We can expect this panel to take on several states.
+         * 1) Event log.
+         * 2) Overview of minions and such
+         * 3) Hover information.
+         * 4) Potentially the tutorial as well.
+         * 
+         */
         public int SelectedMessage;
         public ScrollPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {

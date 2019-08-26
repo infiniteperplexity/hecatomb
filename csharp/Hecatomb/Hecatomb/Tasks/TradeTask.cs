@@ -35,7 +35,7 @@ namespace Hecatomb
         }
 
 
-        private ColoredText cachedMenuListing;
+        private new ColoredText cachedMenuListing;
         private int cachedTurn;
         public override ColoredText ListOnMenu()
         {

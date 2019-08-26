@@ -40,7 +40,6 @@ namespace Hecatomb
         public Action<int, int> OnMenuClick;
         public Action<int, int> OnStatusClick;
         public Action<int, int> OnStatusHover;
-        public ImageOverride ImageOverride;
         public bool UseKeyFallback;
         
         public void Set(ControlContext c)

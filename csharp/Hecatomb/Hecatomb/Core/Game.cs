@@ -130,7 +130,7 @@ namespace Hecatomb
                 (Keys.R, "Restore game.", RestoreGame),
                 (Keys.Q, "Quit.", QuitGame)
             });
-            Controls.ImageOverride = new ImageOverride(Graphics, Sprites);
+            MainPanel.IntroState = true;
         }
 
         public Queue<Action> UpdateActions = new Queue<Action>();
@@ -170,11 +170,11 @@ namespace Hecatomb
         }
         public void StartGame()
         {
-            
+
             //string archiveFolder = Path.Combine(currentDirectory, "archive");
             //string[] files = Directory.GetFiles(archiveFolder, "*.zip");
 
-
+            MainPanel.IntroState = false;
             Game.GameName = "GameWorld";
             TheFixer.Purge();
             Controls.Reset();
@@ -198,6 +198,7 @@ namespace Hecatomb
         //not currently used
         public void RestartGame()
         {
+            MainPanel.IntroState = false;
             Game.GameName = "GameWorld";
             Game.SplashPanel.Splash(new List<ColoredText>()
             {
@@ -321,9 +322,9 @@ namespace Hecatomb
             TimeSpan sinceDraw = DateTime.Now.Subtract(LastDraw);
             ControlContext.Redrawn = true;
             Sprites.Begin();
-            if (Controls?.ImageOverride != null)
+            if (MainPanel.IntroState)
             {
-                Controls.ImageOverride.Draw();
+                MainPanel.Draw();
                 MenuPanel.Draw();
             }
             else if (!Time.Frozen || sinceDraw > TimeSpan.FromMilliseconds(500))
