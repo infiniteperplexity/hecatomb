@@ -130,7 +130,15 @@ namespace Hecatomb
                     var lines = new List<ColoredText>();
                     if (Game.World?.Player != null)
                     {
-                        lines.Add($"{Game.World.Player.Describe()}");
+                        var p = Game.World.Player;
+                        var t = Game.World.Turns;
+                        lines.Add($"Turn: {t.Turn}");
+                        // add the sun symbol?
+                        lines.Add($"Day: {t.Day} Hour: {t.Hour} Minute: {t.Minute}");
+                        lines.Add($"{p.Describe()}");
+                        // should be different for camera view?
+                        lines.Add($"X: {p.X} Y:{p.Y} Z:{p.Z}");
+                        lines.Add($"Sanity: {p.GetComponent<SpellCaster>().Sanity}/{p.GetComponent<SpellCaster>().MaxSanity}");
                         lines.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
                         var stored = new List<Dictionary<string, int>>();
                         var structures = Structure.ListStructures();

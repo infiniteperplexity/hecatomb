@@ -126,7 +126,7 @@ namespace Hecatomb
 
         public virtual void HandleHover(int x, int y)
         {
-            Game.InfoPanel.ShowHover();
+            
             if (Cursor.X > -1)
             {
                 Game.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
@@ -140,18 +140,22 @@ namespace Hecatomb
 	        	Camera Camera = Game.Camera;
 	        	Coord tile = new Coord((x-panel.X0-Padding)/(Size+Padding)+Camera.XOffset,(y-panel.Y0-Padding)/(Size+Padding)+Camera.YOffset,Camera.Z);
 	        	OnTileHover(tile);
-        	}
-            else if (x>=Game.MenuPanel.X0)
+                Game.InfoPanel.ShowHover();
+            }
+            else if (panel is CommandsPanel)
         	{
-        		OnMenuHover(x, y);
+                Game.InfoPanel.ShowSummary();
+                OnMenuHover(x, y);
         	}
-        	else if (y>=Game.InfoPanel.Y0)
+        	else if (panel is InformationPanel)
         	{
-        		OnStatusHover(x, y);
+                Game.InfoPanel.ShowSummary();
+                OnStatusHover(x, y);
         	}
         	else
         	{
-        		Nothing(x, y);
+                Game.InfoPanel.ShowSummary();
+                Nothing(x, y);
         	}
         }
 

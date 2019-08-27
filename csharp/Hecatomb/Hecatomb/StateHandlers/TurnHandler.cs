@@ -151,7 +151,9 @@ namespace Hecatomb
                     LightLevel = (int)Math.Min(255, ((60-Minute) / 60f) * (255 - Darkness) + Darkness + LightLevels[MoonPhase]);
                 }
             //}
+            Game.InfoPanel.ShowSummary();
             InterfacePanel.DirtifyUsualPanels();
+
             Creature[] actors = Game.World.Creatures.ToArray();
 			Queue.Clear();
 			Deck.Clear();
