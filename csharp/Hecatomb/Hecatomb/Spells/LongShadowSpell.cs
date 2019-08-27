@@ -49,7 +49,7 @@ namespace Hecatomb
                 tries += 1;
                 if (tries > maxTries)
                 {
-                    Game.StatusPanel.PushMessage("The spell fizzles.");
+                    Game.InfoPanel.PushMessage("The spell fizzles.");
                     break;
                 }
             }
@@ -62,7 +62,7 @@ namespace Hecatomb
                 ParticleEmitter emitter2 = new ParticleEmitter();
                 emitter2.Place(c.X, c.Y, c.Z);
                 base.Cast();
-                Game.StatusPanel.PushMessage("You vanish and reappear nearby.");
+                Game.InfoPanel.PushMessage("You vanish and reappear nearby.");
             }
         }
     }

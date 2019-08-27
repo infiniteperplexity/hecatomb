@@ -25,37 +25,37 @@ namespace Hecatomb
             var tutorial = (Game.Time.Frozen || Game.World == null) ? null : Game.World.GetState<TutorialHandler>();
 
             List<ColoredText> MenuTop = c.MenuTop;
-            List<ColoredText> MenuMiddle = c.MenuMiddle;
+            //List<ColoredText> MenuMiddle = c.MenuMiddle;
             if (!Game.Time.Frozen && tutorial != null && tutorial.Visible)
             {
                 if (!tutorial.Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
                 {
                     MenuTop = tutorial.Current.ControlText;
-                    MenuMiddle = tutorial.Current.InstructionsText;
+                    //MenuMiddle = tutorial.Current.InstructionsText;
                 }
                 else if (Game.Controls == Game.CameraControls)
                 {
-                    MenuMiddle = tutorial.OffTutorialCamera;
+                    //MenuMiddle = tutorial.OffTutorialCamera;
                 }
                 else
                 {
-                    MenuMiddle = tutorial.OffTutorialText;
+                    //MenuMiddle = tutorial.OffTutorialText;
                 }
             }
             List<ColoredText> text;
             text = MenuTop.ToList();
-            if (MenuMiddle.Count > 0)
-            {
-                text.Add(" ");
-            }
-            int i0 = text.Count;
-            text = text.Concat(MenuMiddle).ToList();
-            if (c.MenuBottom.Count > 0)
-            {
-                text.Add(" ");
-            }
-            int i1 = text.Count;
-            text = text.Concat(c.MenuBottom).ToList();
+            //if (MenuMiddle.Count > 0)
+            //{
+            //    text.Add(" ");
+            //}
+            //int i0 = text.Count;
+            //text = text.Concat(MenuMiddle).ToList();
+            //if (c.MenuBottom.Count > 0)
+            //{
+            //    text.Add(" ");
+            //}
+            //int i1 = text.Count;
+            //text = text.Concat(c.MenuBottom).ToList();
             DrawLines(text);
         }
     }

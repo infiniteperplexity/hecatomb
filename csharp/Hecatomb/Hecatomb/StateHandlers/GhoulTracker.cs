@@ -90,7 +90,7 @@ namespace Hecatomb
             }
             if (Game.Visible.Contains(new Coord(x, y, z)) || Game.Options.Visible)
             {
-                Game.StatusPanel.PushMessage("{orange}A ravenous ghoul bursts forth from its grave!");
+                Game.InfoPanel.PushMessage("{orange}A ravenous ghoul bursts forth from its grave!");
             }
         }
     }

@@ -26,7 +26,7 @@ namespace Hecatomb
             {
                 if (Terrains[x, y, z + 1].Solid)
                 {
-                    Game.StatusPanel.PushMessage("A ramp was placed but the ceiling was too hard to dig into.");
+                    Game.InfoPanel.PushMessage("A ramp was placed but the ceiling was too hard to dig into.");
                 }
             }
             Game.World.ValidateOutdoors();

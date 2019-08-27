@@ -51,7 +51,7 @@ namespace Hecatomb
                 SpeedIndex += 1;
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
-                Game.StatusPanel.PushMessage($"Game speed decreased to {num}:{denom}");
+                Game.InfoPanel.PushMessage($"Game speed decreased to {num}:{denom}");
                 InterfacePanel.DirtifySidePanels();
             }
         }
@@ -63,7 +63,7 @@ namespace Hecatomb
                 SpeedIndex -= 1;
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
-                Game.StatusPanel.PushMessage($"Game speed increased to {num}:{denom}");
+                Game.InfoPanel.PushMessage($"Game speed increased to {num}:{denom}");
                 InterfacePanel.DirtifySidePanels();
             }
         }

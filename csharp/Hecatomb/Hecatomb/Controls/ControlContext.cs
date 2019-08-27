@@ -107,7 +107,7 @@ namespace Hecatomb
         	{
         		OnMenuClick(x, y);
         	}
-        	else if (y>=Game.StatusPanel.Y0)
+        	else if (y>=Game.InfoPanel.Y0)
         	{
         		OnStatusClick(x, y);
         	}
@@ -126,11 +126,12 @@ namespace Hecatomb
 
         public virtual void HandleHover(int x, int y)
         {
-        	if (Cursor.X>-1)
-        	{
-        		Game.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
-        		Cursor.Remove();
-        	}
+            Game.InfoPanel.ShowHover();
+            if (Cursor.X > -1)
+            {
+                Game.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
+                Cursor.Remove();
+            }
             var panel = InterfacePanel.GetPanel(x, y);
             if (panel is MainPanel)
         	{
@@ -144,7 +145,7 @@ namespace Hecatomb
         	{
         		OnMenuHover(x, y);
         	}
-        	else if (y>=Game.StatusPanel.Y0)
+        	else if (y>=Game.InfoPanel.Y0)
         	{
         		OnStatusHover(x, y);
         	}

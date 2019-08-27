@@ -23,11 +23,11 @@ namespace Hecatomb
                 return Game.MenuPanel;
             }
         }
-        public static ScrollPanel Status
+        public static InformationPanel Status
         {
             get
             {
-                return Game.StatusPanel;
+                return Game.InfoPanel;
             }
         }
 

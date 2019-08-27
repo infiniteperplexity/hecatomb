@@ -73,7 +73,7 @@ namespace Hecatomb
                     cr.GetComponent<Actor>().Asleep = false;
                 }
             }
-            Game.StatusPanel.PushMessage(Messages[MessageId]);
+            Game.InfoPanel.PushMessage(Messages[MessageId]);
         }
 
         public void Populate()

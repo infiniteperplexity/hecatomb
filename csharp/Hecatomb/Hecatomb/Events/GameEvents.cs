@@ -123,7 +123,7 @@ namespace Hecatomb
             // should make this an actual event
             if (Game.Visible.Contains(c))
             {
-                Game.StatusPanel.PushMessage(Sight);
+                Game.InfoPanel.PushMessage(Sight);
             }
             else
             {
@@ -143,7 +143,7 @@ namespace Hecatomb
                     }
                     if (audible)
                     {
-                        Game.StatusPanel.PushMessage(Sound);
+                        Game.InfoPanel.PushMessage(Sound);
                     }
                 }
             }

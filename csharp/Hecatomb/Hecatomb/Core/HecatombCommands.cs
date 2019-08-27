@@ -351,12 +351,12 @@ namespace Hecatomb
 
         public void ScrollUpCommand()
         {
-            Game.StatusPanel.ScrollUp();
+            Game.InfoPanel.ScrollUp();
         }
 
         public void ScrollDownCommand()
         {
-            Game.StatusPanel.ScrollDown();
+            Game.InfoPanel.ScrollDown();
         }
 
         public void SpeedUp()

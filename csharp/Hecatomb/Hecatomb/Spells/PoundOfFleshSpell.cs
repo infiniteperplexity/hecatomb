@@ -64,7 +64,7 @@ namespace Hecatomb
                     }
                     if (siphon > 0)
                     {
-                        Game.StatusPanel.PushMessage("You siphon your own flesh and blood to heal your minion.");
+                        Game.InfoPanel.PushMessage("You siphon your own flesh and blood to heal your minion.");
                         ParticleEmitter emitter1 = new ParticleEmitter();
                         emitter1.Place(Caster.X, Caster.Y, Caster.Z);
                         ParticleEmitter emitter2 = new ParticleEmitter();
@@ -84,7 +84,7 @@ namespace Hecatomb
                         int heal = Math.Min(d2.Wounds, 20 - d1.Wounds);
                         d1.Wounds += heal;
                         d2.Wounds -= heal;
-                        Game.StatusPanel.PushMessage("You siphon your minion's flesh and blood to mend your own.");
+                        Game.InfoPanel.PushMessage("You siphon your minion's flesh and blood to mend your own.");
                         ParticleEmitter emitter1 = new ParticleEmitter();
                         emitter1.Place(Caster.X, Caster.Y, Caster.Z);
                         ParticleEmitter emitter2 = new ParticleEmitter();
