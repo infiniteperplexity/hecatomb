@@ -267,12 +267,12 @@ namespace Hecatomb
 
         public static void HandleVisibility()
         {
-            //if (Game.World.Turns.Turn > 1)
-            //{
-            InterfacePanel.DirtifyUsualPanels();
-            var m = Mouse.GetState();
+            if (!Game.ForegroundPanel.Active)
+            {
+                InterfacePanel.DirtifyUsualPanels();
+                var m = Mouse.GetState();
                 Controls?.HandleHover(m.X, m.Y);
-            //}
+            }
             TheFixer.CheckStates();
             Game.World.ValidateLighting();
             if (!(Controls is CameraControls))

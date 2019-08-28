@@ -44,6 +44,7 @@ namespace Hecatomb
         public void Reset()
         {
             Active = false;
+            Debug.WriteLine("flag 2");
             InterfacePanel.DirtifyUsualPanels();
         }
     }

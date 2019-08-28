@@ -98,7 +98,31 @@ namespace Hecatomb
             string txt;
             if (Game.World != null)
             {
-                if (ScrollState)
+                if (Game.World.GetState<TutorialHandler>().Visible)
+                {
+                    var c = Game.Controls;
+                    c.RefreshContent();
+                    var tutorial = Game.World.GetState<TutorialHandler>();
+                    List<ColoredText> tutorialText = c.MenuMiddle;
+                    // we need to change the conditions here...
+                    if (!Game.Time.Frozen && tutorial != null && tutorial.Visible)
+                    {
+                        if (!tutorial.Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
+                        {
+                            tutorialText = tutorial.Current.InstructionsText;
+                        }
+                        else if (Game.Controls == Game.CameraControls)
+                        {
+                            tutorialText = tutorial.OffTutorialCamera;
+                        }
+                        else
+                        {
+                            tutorialText = tutorial.OffTutorialText;
+                        }
+                        DrawLines(tutorialText);
+                    }
+                }
+                else if (ScrollState)
                 {
                     Creature p = Game.World.Player;
                     var (X, Y, Z) = Game.World.Player;
@@ -171,30 +195,6 @@ namespace Hecatomb
                     int i1 = lines.Count;
                     lines = lines.Concat(c.MenuBottom).ToList();
                     DrawLines(lines);
-                }
-                else if (TutorialState)
-                {
-                    var c = Game.Controls;
-                    c.RefreshContent();
-                    var tutorial = Game.World.GetState<TutorialHandler>();
-                    List<ColoredText> tutorialText = c.MenuMiddle;
-                    // we need to change the conditions here...
-                    if (!Game.Time.Frozen && tutorial != null && tutorial.Visible)
-                    {
-                        if (!tutorial.Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
-                        {
-                            tutorialText = tutorial.Current.InstructionsText;
-                        }
-                        else if (Game.Controls == Game.CameraControls)
-                        {
-                            tutorialText = tutorial.OffTutorialCamera;
-                        }
-                        else
-                        {
-                            tutorialText = tutorial.OffTutorialText;
-                        }
-                        DrawLines(tutorialText);
-                    }
                 }
             }
         }

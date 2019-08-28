@@ -56,7 +56,9 @@ namespace Hecatomb
             //}
             //int i1 = text.Count;
             //text = text.Concat(c.MenuBottom).ToList();
-            DrawLines(text);
+            var topMargin = (Game.World == null) ? 150 : 0;
+            var leftMargin = (Game.World == null) ? 150 : 0;
+            DrawLines(text, topMargin: topMargin, leftMargin: leftMargin);
         }
     }
 }

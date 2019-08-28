@@ -107,7 +107,7 @@ namespace Hecatomb
         }
 
 
-        public void DrawLines(List<ColoredText> lines)
+        public void DrawLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
         {
             Vector2 v;
             // ouput column
@@ -138,7 +138,7 @@ namespace Hecatomb
                             if (text.Substring(j + k, 1) != " ")
                             {
                                 // I have no idea if this spacing is even right
-                                if (x >= (((PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 8))
+                                if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 8))
                                 {
                                     j += k;
                                     x = 0;
@@ -151,14 +151,15 @@ namespace Hecatomb
                     {
                         fg = colors[j];
                     }
-                    v = new Vector2(X0 + CharWidth * LeftMargin + x * CharWidth, TopMargin + Y0 + y * CharHeight);
+                    v = new Vector2(leftMargin + X0 + CharWidth * LeftMargin + x * CharWidth, topMargin + TopMargin + Y0 + y * CharHeight);
                     Game.Sprites.DrawString(Font, text.Substring(j, 1), v, Game.Colors[fg]);
                     x += 1;
                 }
             }
         }
 
-        public static InterfacePanel GetPanel(int x, int y)
+
+            public static InterfacePanel GetPanel(int x, int y)
         {
             for (int i = Panels.Count - 1; i >= 0; i--)
             {

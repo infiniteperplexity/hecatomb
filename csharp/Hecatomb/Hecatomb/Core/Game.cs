@@ -124,7 +124,7 @@ namespace Hecatomb
 
         protected void ShowIntro()
         {
-            Controls = new StaticMenuControls("Welcome to Hecatomb", new List<(Keys, ColoredText, Action)>() {
+            Controls = new StaticMenuControls("{yellow}Welcome to Hecatomb!", new List<(Keys, ColoredText, Action)>() {
                 (Keys.N, "New game.", StartGame),
                 (Keys.R, "Restore game.", RestoreGame),
                 (Keys.Q, "Quit.", QuitGame)
@@ -189,7 +189,8 @@ namespace Hecatomb
                 "(Building world...please wait.)"
             }, frozen: true);
             //Controls.Set(new FrozenControls());
-            InterfacePanel.DirtifyMainPanel();
+            //InterfacePanel.DirtifyMainPanel();
+            //InterfacePanel.DirtifyUsualPanels();
             Thread thread = new Thread(StartupThread);
             thread.Start();
         }
