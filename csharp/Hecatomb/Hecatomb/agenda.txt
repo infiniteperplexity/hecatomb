@@ -49,9 +49,9 @@ Design issues:
 - various display issues with status panel...text not wrapping, need to show day info and stuff (target 1280x720px)
 - better spell names
 - "research on researching X complete"
-- can hover one tile past some edges of the screen
+* can hover one tile past some edges of the screen
 - was water supposed to flicker when the mouse moved?
-- should have a more organized way to dirtify panels.
+* should have a more organized way to dirtify panels.
 - is newest message at top a good system?
 - need some way to keep your zombies indoors
 

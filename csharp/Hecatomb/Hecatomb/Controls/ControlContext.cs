@@ -100,8 +100,11 @@ namespace Hecatomb
          		int Size = Game.MainPanel.CharWidth;
 	        	int Padding = Game.MainPanel.XPad;
 	        	Camera Camera = Game.Camera;
-                Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
-                OnTileClick(tile);
+                if ((x - panel.X0 - Padding) / (Size + Padding) < Camera.Width)
+                {
+                    Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
+                    OnTileClick(tile);
+                }
         	}
         	else if (x>=Game.MenuPanel.X0) 
         	{
@@ -138,9 +141,12 @@ namespace Hecatomb
                 int Size = panel.CharWidth;
                 int Padding = panel.XPad;
 	        	Camera Camera = Game.Camera;
-	        	Coord tile = new Coord((x-panel.X0-Padding)/(Size+Padding)+Camera.XOffset,(y-panel.Y0-Padding)/(Size+Padding)+Camera.YOffset,Camera.Z);
-	        	OnTileHover(tile);
-                Game.InfoPanel.ShowHover();
+                if ((x - panel.X0 - Padding) / (Size + Padding) < Camera.Width)
+                {
+                    Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
+                    OnTileHover(tile);
+                    Game.InfoPanel.ShowHover();
+                }
             }
             else if (panel is CommandsPanel)
         	{
