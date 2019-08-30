@@ -252,9 +252,9 @@ namespace Hecatomb
 
             SplashPanel = new SplashPanel(35 + 276, 150, 16 * 31, 16 * 13);
             ForegroundPanel = new FullScreenPanel(0, 0, 1280, 720);
-            MenuPanel = new CommandsPanel(0, 0, 1280 - 720, 360);
-            InfoPanel = new InformationPanel(0, 360, 1280 - 720, 360);
-            MainPanel = new MainPanel(1280 - 720 + 11, 0 + 11, 720, 720);
+            MenuPanel = new CommandsPanel(200, 0, 1080, 20);
+            InfoPanel = new InformationPanel(0, 0, 200, 720);
+            MainPanel = new MainPanel(200, 20, 1080, 700);
             InterfacePanel.AddPanel(MainPanel);
             InterfacePanel.AddPanel(MenuPanel);
             InterfacePanel.AddPanel(InfoPanel);

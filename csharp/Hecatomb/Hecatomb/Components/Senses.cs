@@ -18,7 +18,7 @@ namespace Hecatomb
 
     public class Senses : Component
     {
-        public int Range = 10;
+        public int Range = 15;
         [JsonIgnore] public HashSet<Coord> Visible;
         [JsonIgnore] private int storedZ;
 
