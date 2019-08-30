@@ -9,6 +9,22 @@ using System.Threading;
 
 namespace Hecatomb
 {
+    /* This will want...
+     * 1) Camera / avatar mode.
+     * 2) Spells.
+     * 3) Jobs.
+     * 4) Help / Key shortcuts
+     * 5) Toggle tutorial.
+     * 6) Message log.
+     * 7) Overview.
+     * 8) Hover.
+     * 9) Pause and speed.
+     * 10) Achievements.
+     * 11) Tech tree.
+     * 12) Structures.
+     * 13) Minions.
+     * 14) System view.
+     */
     public class CommandsPanel : InterfacePanel
     {
         public CommandsPanel(int x, int y, int w, int h) : base(x, y, w, h)
