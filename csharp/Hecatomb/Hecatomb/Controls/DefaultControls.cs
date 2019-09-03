@@ -12,14 +12,82 @@ using System.Collections.Generic;
 
 namespace Hecatomb
 {
-	/// <summary>
-	/// Description of DefaultControlContext.
-	/// </summary>
+    /// <summary>
+    /// Description of DefaultControlContext.
+    /// </summary>
+    /// 
+    class CommandMenu
+    {
+        public int Width;
+        public string Title;
+        public Func<List<ColoredText>> GetText;
+        public CommandMenu(string title, Keys k)
+        {
+            Width = 50;
+            Title = title;
+        }
+    }
 	class DefaultControls : ControlContext
-	{
+	{   
+        List<CommandMenu> CommandMenus;
+        int ActiveMenu;
 		public DefaultControls() : base()
 		{
-			var Commands = Game.Commands;
+            // probably want to change how clicking works on panels.
+            CommandMenus = new List<CommandMenu>();
+            CommandMenu menu;
+            ActiveMenu = 1;
+            menu = new CommandMenu("Esc: Game", Keys.Escape);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("0: Tutorial", Keys.NumPad0);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("1: Log", Keys.NumPad1);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("2: Overview", Keys.NumPad2);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("3: Spells", Keys.NumPad3);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("4: Jobs", Keys.NumPad4);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("5: Hover", Keys.NumPad5);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("6: Achievements", Keys.NumPad6);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("7: Research", Keys.NumPad7);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            menu = new CommandMenu("?: Help", Keys.OemQuestion);
+            menu.GetText = () =>
+            {
+                return new List<ColoredText>();
+            };
+            var Commands = Game.Commands;
             KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
 			KeyMap[Keys.Up] = Commands.MoveNorthCommand;
 			KeyMap[Keys.Down] = Commands.MoveSouthCommand;
