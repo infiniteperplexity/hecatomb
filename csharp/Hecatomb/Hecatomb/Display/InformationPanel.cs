@@ -98,6 +98,9 @@ namespace Hecatomb
             string txt;
             if (Game.World != null)
             {
+                var cp = Game.MenuPanel;
+                DrawLines(cp.CommandMenus[cp.ActiveMenu].GetText());
+                return;
                 if (Game.World.GetState<TutorialHandler>().Visible)
                 {
                     var c = Game.Controls;

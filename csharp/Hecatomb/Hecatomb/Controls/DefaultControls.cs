@@ -53,8 +53,18 @@ namespace Hecatomb
             KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
             KeyMap[Keys.OemMinus] = Commands.SlowDown;
             KeyMap[Keys.OemPlus] = Commands.SpeedUp;
-			
-			MenuTop = new List<ColoredText>() {
+
+            KeyMap[Keys.D0] = Commands.ChooseMenuZero;
+            KeyMap[Keys.D1] = Commands.ChooseMenuOne;
+            KeyMap[Keys.D2] = Commands.ChooseMenuTwo;
+            KeyMap[Keys.D3] = Commands.ChooseMenuThree;
+            KeyMap[Keys.D4] = Commands.ChooseMenuFour;
+            KeyMap[Keys.D5] = Commands.ChooseMenuFive;
+            KeyMap[Keys.D6] = Commands.ChooseMenuSix;
+            KeyMap[Keys.OemQuestion] = Commands.ChooseMenuSeven;
+
+
+            MenuTop = new List<ColoredText>() {
 				//"Esc: System view.",
 				//"{yellow}Avatar mode (Tab: Camera mode)",
 				//" ",
