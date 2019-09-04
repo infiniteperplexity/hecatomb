@@ -25,56 +25,103 @@ namespace Hecatomb
      * 13) Minions.
      * 14) System view.
      */
+
+    class CommandMenu
+    {
+        public int Width;
+        public string Title;
+        public Func<ColoredText> GetText;
+        public CommandMenu(string title, Keys k)
+        {
+            Title = title;
+            Width = 120;
+        }
+    }
     public class CommandsPanel : InterfacePanel
     {
+        List<CommandMenu> CommandMenus;
+        int ActiveMenu;
+
         public CommandsPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
+
             LeftMargin = 2;
             RightMargin = 2;
+            CommandMenus = new List<CommandMenu>();
+            CommandMenu menu;
+            ActiveMenu = 1;
+            menu = new CommandMenu("Esc: Game", Keys.Escape);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("0: Tutorial", Keys.NumPad0);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("1: Messages", Keys.NumPad1);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("2: Overview", Keys.NumPad2);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("3: Spells", Keys.NumPad3);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("4: Jobs", Keys.NumPad4);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("5: Achievements", Keys.NumPad5);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("6: Research", Keys.NumPad6);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
+            menu = new CommandMenu("?: Help", Keys.OemQuestion);
+            menu.GetText = () =>
+            {
+                return "X: Command";
+            };
+            CommandMenus.Add(menu);
         }
 
         public override void Draw()
         {
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-            var c = Game.Controls;
-            c.RefreshContent();
-            var tutorial = (Game.Time.Frozen || Game.World == null) ? null : Game.World.GetState<TutorialHandler>();
-
-            List<ColoredText> MenuTop = c.MenuTop;
-            //List<ColoredText> MenuMiddle = c.MenuMiddle;
-            if (!Game.Time.Frozen && tutorial != null && tutorial.Visible)
+            for (int i = 0; i < CommandMenus.Count; i++)
             {
-                if (!tutorial.Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
+                var menu = CommandMenus[i];
+                var text = menu.Title;
+                var color = "white";
+                if (i == ActiveMenu)
                 {
-                    MenuTop = tutorial.Current.ControlText;
-                    //MenuMiddle = tutorial.Current.InstructionsText;
+                    color = "orange";
                 }
-                else if (Game.Controls == Game.CameraControls)
-                {
-                    //MenuMiddle = tutorial.OffTutorialCamera;
-                }
-                else
-                {
-                    //MenuMiddle = tutorial.OffTutorialText;
-                }
+                var v = new Vector2(X0 + LeftMargin + i * menu.Width, Y0 + TopMargin);
+                Debug.WriteLine(text);
+                Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
             }
-            List<ColoredText> text;
-            text = MenuTop.ToList();
-            //if (MenuMiddle.Count > 0)
-            //{
-            //    text.Add(" ");
-            //}
-            //int i0 = text.Count;
-            //text = text.Concat(MenuMiddle).ToList();
-            //if (c.MenuBottom.Count > 0)
-            //{
-            //    text.Add(" ");
-            //}
-            //int i1 = text.Count;
-            //text = text.Concat(c.MenuBottom).ToList();
-            var topMargin = (Game.World == null) ? 150 : 0;
-            var leftMargin = (Game.World == null) ? 150 : 0;
-            DrawLines(text, topMargin: topMargin, leftMargin: leftMargin);
         }
     }
 }
