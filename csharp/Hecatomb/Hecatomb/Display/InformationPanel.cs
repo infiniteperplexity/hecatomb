@@ -21,7 +21,8 @@ namespace Hecatomb
         public InformationPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
             LeftMargin = 2;
-            RightMargin = 2;
+            //RightMargin = 2;
+            RightMargin = 0;
         }
 
         public void ShowScroll()
@@ -99,8 +100,8 @@ namespace Hecatomb
             if (Game.World != null)
             {
                 var cp = Game.MenuPanel;
-                DrawLines(cp.CommandMenus[cp.ActiveMenu].GetText());
-                return;
+                //DrawLines(cp.CommandMenus[cp.ActiveMenu].GetText());
+                //return;
                 if (Game.World.GetState<TutorialHandler>().Visible)
                 {
                     var c = Game.Controls;

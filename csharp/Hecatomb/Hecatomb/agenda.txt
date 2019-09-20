@@ -54,6 +54,7 @@ Design issues:
 * should have a more organized way to dirtify panels.
 - is newest message at top a good system?
 - need some way to keep your zombies indoors
+- we need a more modular command system here...
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.

@@ -138,7 +138,7 @@ namespace Hecatomb
                             if (text.Substring(j + k, 1) != " ")
                             {
                                 // I have no idea if this spacing is even right
-                                if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 8))
+                                if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 0 /* - 8 */))
                                 {
                                     j += k;
                                     x = 0;

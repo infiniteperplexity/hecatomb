@@ -28,13 +28,11 @@ namespace Hecatomb
 
     public class CommandMenu
     {
-        public int Width;
         public string Title;
         public Func<List<ColoredText>> GetText;
         public CommandMenu(string title, Keys k)
         {
             Title = title;
-            Width = 120;
         }
     }
     public class CommandsPanel : InterfacePanel
@@ -56,49 +54,37 @@ namespace Hecatomb
                 return new List<ColoredText>();
             };
             CommandMenus.Add(menu);
-            menu = new CommandMenu("0: Tutorial", Keys.NumPad0);
+            menu = new CommandMenu("?: Commands", Keys.NumPad0);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
             };
             CommandMenus.Add(menu);
-            menu = new CommandMenu("1: Messages", Keys.NumPad1);
+            menu = new CommandMenu("Z: Spells", Keys.NumPad1);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
             };
             CommandMenus.Add(menu);
-            menu = new CommandMenu("2: Overview", Keys.NumPad2);
+            menu = new CommandMenu("J: Jobs", Keys.NumPad2);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
             };
             CommandMenus.Add(menu);
-            menu = new CommandMenu("3: Spells", Keys.NumPad3);
+            menu = new CommandMenu("L: Message Log", Keys.NumPad3);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
             };
             CommandMenus.Add(menu);
-            menu = new CommandMenu("4: Jobs", Keys.NumPad4);
+            menu = new CommandMenu("R: Research", Keys.NumPad4);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
             };
             CommandMenus.Add(menu);
-            menu = new CommandMenu("5: Achievements", Keys.NumPad5);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("6: Research", Keys.NumPad6);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("?: Help", Keys.OemQuestion);
+            menu = new CommandMenu("V: Achievements", Keys.NumPad5);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
@@ -109,6 +95,8 @@ namespace Hecatomb
         public override void Draw()
         {
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            int total = 0;
+            int margin = 4 * CharWidth; 
             for (int i = 0; i < CommandMenus.Count; i++)
             {
                 var menu = CommandMenus[i];
@@ -118,8 +106,12 @@ namespace Hecatomb
                 {
                     color = "orange";
                 }
-                var v = new Vector2(X0 + LeftMargin + i * menu.Width, Y0 + TopMargin);
+                int adjust = (i == 0) ? -2 * CharWidth : 0;
+                var v = new Vector2(total + margin + adjust, Y0 + TopMargin);
+                var bump = margin + adjust + text.Length * CharWidth + margin;
+                //var v = new Vector2(justify + X0 + LeftMargin + i * menu.Width, Y0 + TopMargin);
                 Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
+                total += bump;
             }
         }
     }
