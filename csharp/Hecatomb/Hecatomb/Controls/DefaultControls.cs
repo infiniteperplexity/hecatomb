@@ -65,24 +65,24 @@ namespace Hecatomb
 
 
             MenuTop = new List<ColoredText>() {
-				//"Esc: System view.",
-				//"{yellow}Avatar mode (Tab: Camera mode)",
-				//" ",
-			 //   "Move: NumPad/Arrows, ,/.: Up/Down.",
-			 //   "(Control+Arrows for diagonal.)",
-			 //   "Wait: NumPad 5 / Space.",
-			 //   " ",
-			 //   "Enter: Enable auto-pause.",
-			 //   "+/-: Change speed.",
-			 //   " ",
-			 //   "Z: Cast spell, J: Assign job.",
-			 //   "M: Minions, S: Structures, U: Summary.",
-			 //   "G: Pick Up, D: Drop.",
-			 //   "I: Inventory, E: Equip/Unequip.",
-			 //   " ",
-			 //   "PageUp/Down: Scroll messages.",
-			 //   "A: Achievements, /: Toggle tutorial."
-             "0:Game 1:Camera 2:Commands 3:Log 4:Spells 5:Jobs 6:Achievements 7:Structures 8:Minions 9:Research"
+                "Esc: System view.",
+                "{yellow}Avatar mode (Tab: Camera mode)",
+                " ",
+                "Move: NumPad/Arrows, ,/.: Up/Down.",
+                "(Control+Arrows for diagonal.)",
+                "Wait: NumPad 5 / Space.",
+                " ",
+                "Enter: Enable auto-pause.",
+                "+/-: Change speed.",
+                " ",
+                "Z: Cast spell, J: Assign job.",
+                "M: Minions, S: Structures, U: Summary.",
+                "G: Pick Up, D: Drop.",
+                "I: Inventory, E: Equip/Unequip.",
+                " ",
+                "PageUp/Down: Scroll messages.",
+                "A: Achievements, /: Toggle tutorial."
+             //"0:Game 1:Camera 2:Commands 3:Log 4:Spells 5:Jobs 6:Achievements 7:Structures 8:Minions 9:Research"
 			};
 		}
 

@@ -101,7 +101,9 @@ namespace Hecatomb
             {
                 var cp = Game.MenuPanel;
                 //DrawLines(cp.CommandMenus[cp.ActiveMenu].GetText());
-                //return;
+
+                DrawLines(Game.Controls.MenuTop);
+                return;
                 if (Game.World.GetState<TutorialHandler>().Visible)
                 {
                     var c = Game.Controls;

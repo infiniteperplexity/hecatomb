@@ -102,7 +102,7 @@ namespace Hecatomb
                 var menu = CommandMenus[i];
                 var text = menu.Title;
                 var color = "white";
-                if (i == ActiveMenu)
+                if (menu == Game.Controls.LinkedCommand)
                 {
                     color = "orange";
                 }
