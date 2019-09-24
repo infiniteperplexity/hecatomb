@@ -92,6 +92,18 @@ namespace Hecatomb
             CommandMenus.Add(menu);
         }
 
+        public CommandMenu GetCommand(string title)
+        {
+            foreach (var menu in CommandMenus)
+            {
+                if (menu.Title == title)
+                {
+                    return menu;
+                }
+            }
+            return null;
+        }
+
         public override void Draw()
         {
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);

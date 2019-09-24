@@ -223,14 +223,15 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
             Game.Controls = new MenuChoiceControls(GetState<TaskHandler>());
+            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("J: Jobs");
             InterfacePanel.DirtifySidePanels();
         }
 
         public void ChooseSpell()
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
-
             Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
+            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("Z: Spells");
             InterfacePanel.DirtifySidePanels();
         }
 
@@ -287,6 +288,7 @@ namespace Hecatomb
                 (Keys.N, "New game.", Game.game.StartGame),
                 (Keys.Q, "Quit.", Game.game.QuitGame)
             }));
+            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("Esc: Game");
         }
 
         public void SaveGameAsCommand()
