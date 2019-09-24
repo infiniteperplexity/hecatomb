@@ -235,6 +235,13 @@ namespace Hecatomb
             InterfacePanel.DirtifySidePanels();
         }
 
+        public void ShowLog()
+        {
+            Game.Controls = new MessageLogControls();
+            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("L: Message Log");
+            InterfacePanel.DirtifySidePanels();
+        }
+
         public void AutoWait()
         {
             Game.World.Player.GetComponent<Actor>().Wait();

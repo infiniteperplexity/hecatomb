@@ -44,7 +44,8 @@ namespace Hecatomb
 			KeyMap[Keys.Space] = Commands.Wait;
 			KeyMap[Keys.J] = Commands.ChooseTask;
 			KeyMap[Keys.Z] = Commands.ChooseSpell;
-			KeyMap[Keys.Enter] = Commands.TogglePause;
+            KeyMap[Keys.L] = Commands.ShowLog;
+            KeyMap[Keys.Enter] = Commands.TogglePause;
 			KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
 			KeyMap[Keys.OemPipe] = Commands.ShowConsole;
             //KeyMap[Keys.A] = Commands.ShowAchievements;
