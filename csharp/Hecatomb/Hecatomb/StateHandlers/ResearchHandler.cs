@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-    public class ResearchHandler : StateHandler
+    public class ResearchHandler : StateHandler, IListPopulater
     {
         public List<string> Researched;
         public ResearchHandler() : base()
@@ -15,6 +15,16 @@ namespace Hecatomb
             Researched = new List<string>();
         }
 
+        public List<ColoredText> GetLines()
+        {
+            var list = new List<ColoredText> { "Researched:" };
+            foreach (var research in Researched)
+            {
+                var res = Research.Types[research];
+                list.Add(res.Name);
+            }
+            return list;
+        }
         public int GetToolHardness()
         {
             if (Researched.Contains("AlloyTools"))

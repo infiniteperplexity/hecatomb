@@ -94,3 +94,13 @@ Progression Tree:
 3) 
 	a) Find copper and tin.
 	b) Build forge.
+
+
+
+
+
+
+
+
+
+Does the new interface account for pause and speed?

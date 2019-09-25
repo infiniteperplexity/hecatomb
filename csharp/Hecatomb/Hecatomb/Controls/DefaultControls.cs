@@ -45,6 +45,11 @@ namespace Hecatomb
 			KeyMap[Keys.J] = Commands.ChooseTask;
 			KeyMap[Keys.Z] = Commands.ChooseSpell;
             KeyMap[Keys.L] = Commands.ShowLog;
+            KeyMap[Keys.V] = Commands.ShowAchievements;
+            KeyMap[Keys.R] = Commands.ShowResearch;
+            KeyMap[Keys.LeftControl] = Commands.HoverCamera;
+            KeyMap[Keys.RightControl] = Commands.HoverCamera;
+
             KeyMap[Keys.Enter] = Commands.TogglePause;
 			KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
 			KeyMap[Keys.OemPipe] = Commands.ShowConsole;
@@ -86,23 +91,6 @@ namespace Hecatomb
              //"0:Game 1:Camera 2:Commands 3:Log 4:Spells 5:Jobs 6:Achievements 7:Structures 8:Minions 9:Research"
 			};
 		}
-
-        /* This will want...
- * 1) Camera / avatar mode.
- * 2) Spells.
- * 3) Jobs.
- * 4) Help / Key shortcuts
- * 5) Toggle tutorial.
- * 6) Message log.
- * 7) Overview.
- * 8) Hover.
- * 9) Pause and speed.
- * 10) Achievements.
- * 11) Tech tree.
- * 12) Structures.
- * 13) Minions.
- * 14) System view.
- */
 
         public override void ClickTile(Coord c)
 		{

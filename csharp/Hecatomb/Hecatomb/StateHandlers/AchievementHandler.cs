@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb
 {
-    public class AchievementHandler : StateHandler
+    public class AchievementHandler : StateHandler, IListPopulater
     {
         public List<Achievement> Achievements;
 
@@ -24,6 +24,23 @@ namespace Hecatomb
                     Condition = (AchievementEvent a) => {return a.Action=="CastRaiseZombie"; }
                 }
             };
+        }
+
+        public List<ColoredText> GetLines()
+        {
+            var list = new List<ColoredText>() { "{magenta}Achievements:" };
+            foreach (var achieve in Achievements)
+            {
+                if (achieve.Unlocked)
+                {
+                    list.Add("{magenta}" + achieve.Name + ": " + achieve.Description);
+                }
+                else
+                {
+                    list.Add(achieve.Name + ": " + achieve.Description);
+                }
+            }
+            return list;
         }
         public GameEvent HandleEvent(GameEvent g)
         {

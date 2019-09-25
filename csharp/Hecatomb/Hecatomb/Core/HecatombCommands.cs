@@ -235,6 +235,22 @@ namespace Hecatomb
             InterfacePanel.DirtifySidePanels();
         }
 
+        public void ShowAchievements()
+        {
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowAchievements" });
+            Game.Controls = new ListViewControls(Game.World.GetState<AchievementHandler>());
+            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("V: Achievements");
+            InterfacePanel.DirtifySidePanels();
+        }
+
+        public void ShowResearch()
+        {
+            Game.Controls = new ListViewControls(Game.World.GetState<ResearchHandler>());
+            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("R: Research");
+            InterfacePanel.DirtifySidePanels();
+        }
+
+
         public void ShowLog()
         {
             Game.Controls = new MessageLogControls();
@@ -346,9 +362,9 @@ namespace Hecatomb
             DebugConsole.ShowConsole();
         }
 
-        public void ShowAchievements()
+        public void HoverCamera()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowAchievements" });
+            Game.Controls.CameraHover();
         }
 
         public void ToggleTutorial()

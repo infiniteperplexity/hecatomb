@@ -79,6 +79,7 @@
     <Compile Include="Display\FullScreenPanel.cs" />
     <Compile Include="Display\InformationPanel.cs" />
     <Compile Include="Display\MainPanel.cs" />
+    <Compile Include="ListViewControls.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="Display\InterfacePanel.cs" />
     <Compile Include="MessageLogControls.cs" />
