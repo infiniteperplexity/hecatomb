@@ -1,4 +1,14 @@
-﻿In order to have a playable demo...
+﻿Current interface issues:
+- The right margin of the info panel looks wrong.
+- Escape isn't always system view.
+- The default view, which shows resources and such, doesn't exist.
+- The tutorial doesn't seem to exist.
+- The commands list is totally out of date.
+- I don't really know how I want to handle hovering.
+
+
+
+In order to have a playable demo...
 - We need to have an installer that works all the way...at this point I definitely still need uninstall icons and so on.
 - Not all interface stuff needs to be awesome.
 - We do probably need to be free of common crashes and major performance slams.
