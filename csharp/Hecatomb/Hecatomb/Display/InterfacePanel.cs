@@ -129,6 +129,7 @@ namespace Hecatomb
                 // initialize to white
                 fg = "white";
                 // input column
+                //Debug.WriteLine("calc width: " + )
                 for (int j = 0; j < text.Length; j++)
                 {
                     if (text.Substring(j, 1) == " ")
@@ -138,7 +139,8 @@ namespace Hecatomb
                             if (text.Substring(j + k, 1) != " ")
                             {
                                 // I have no idea if this spacing is even right
-                                if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 0 /* - 8 */))
+                                if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 13))
+                                //if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 0 /* - 8 */))
                                 {
                                     j += k;
                                     x = 0;

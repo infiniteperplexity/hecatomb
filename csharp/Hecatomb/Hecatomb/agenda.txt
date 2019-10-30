@@ -1,5 +1,5 @@
 ﻿Current interface issues:
-- The right margin of the info panel looks wrong.
+* (possibly fixed, using ad hoc logic) The right margin of the info panel looks wrong.
 - Escape isn't always system view.
 - The default view, which shows resources and such, doesn't exist.
 - The tutorial doesn't seem to exist.
