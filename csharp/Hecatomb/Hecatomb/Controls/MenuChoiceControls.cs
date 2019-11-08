@@ -79,6 +79,7 @@ namespace Hecatomb
             KeyMap[Keys.Escape] = Reset;
             MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
+                " ",
                 ("{yellow}"+Header)
             };
             // not the real thing to do...

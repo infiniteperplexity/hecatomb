@@ -252,8 +252,8 @@ namespace Hecatomb
 
             SplashPanel = new SplashPanel(35 + 276, 150, 16 * 31, 16 * 13);
             ForegroundPanel = new FullScreenPanel(0, 0, 1280, 720);
-            MenuPanel = new CommandsPanel(0, 0, 1280, 20);
-            InfoPanel = new InformationPanel(0, 20, 286, 700);
+            MenuPanel = new CommandsPanel(286, 0, 1280, 20);
+            InfoPanel = new InformationPanel(0, 0, 286, 700);
             MainPanel = new MainPanel(286, 20, 994, 700);
             InterfacePanel.AddPanel(MainPanel);
             InterfacePanel.AddPanel(MenuPanel);
@@ -315,7 +315,7 @@ namespace Hecatomb
             if (MainPanel.IntroState)
             {
                 MainPanel.Draw();
-                MenuPanel.Draw();
+                InfoPanel.Draw();
             }
             else if (!Time.Frozen || sinceDraw > TimeSpan.FromMilliseconds(500))
             {

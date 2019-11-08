@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Hecatomb
@@ -39,6 +40,32 @@ namespace Hecatomb
             set { }
         }
 
+        public List<ColoredText> GetText()
+        {
+            var list = new List<ColoredText>();
+            if (!Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
+            {
+                list = list.Concat(Current.ControlText).ToList();
+                list.Add(" ");
+                list = list.Concat(Current.InstructionsText).ToList();
+            }
+            else if (Game.Controls == Game.CameraControls)
+            {
+                list = list.Concat(Game.Controls.MenuTop).ToList();
+                list.Add(" ");
+                list = list.Concat(OffTutorialCamera).ToList();
+            }
+            else
+            {
+                list = list.Concat(Game.Controls.MenuTop).ToList();
+                list.Add(" ");
+                list = list.Concat(OffTutorialText).ToList();
+            }
+            return list;
+        }
+
+  
+
         public TutorialHandler()
         {
             MoveCount = 0;
@@ -59,7 +86,7 @@ namespace Hecatomb
                         "{cyan}Move: NumPad/Arrows.",
                         "{cyan}(Control+Arrows for diagonal.)",
                         " ",
-                        @"\: Toggle tutorial."
+                        @"?: Toggle tutorial."
                     },
                     InstructionsText = new List<ColoredText>()
                     {
@@ -875,6 +902,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: System view.",
+                        " ",
                         "Navigation mode (Tab: Avatar mode)",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down",
@@ -884,10 +912,11 @@ namespace Hecatomb
                         "Enter: Enable auto-pause.",
                         "+/-: Change speed.",
                         " ",
-                        "Z: Cast spell, J: Assign job.",
+                        //"Z: Cast spell, J: Assign job.",
                         " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, {cyan}/: Toggle tutorial."
+                        //"PageUp/Down: Scroll messages.", // this would now be on that log only
+                        "A: Achievements, "
+                        //"{cyan}/: Toggle tutorial."
                     },
                     InstructionsText = new List<ColoredText>()
                     {

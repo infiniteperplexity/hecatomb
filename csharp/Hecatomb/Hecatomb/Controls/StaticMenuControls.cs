@@ -17,9 +17,12 @@ namespace Hecatomb
 	{
 		public StaticMenuControls(ColoredText header, List<(Keys, ColoredText, Action)> choices) : base()
         {
-            MenuTop = new List<ColoredText>() {
-                header
-            };
+            MenuTop = new List<ColoredText>();
+            if (header != " ")
+            {
+                MenuTop.Add(header);
+                MenuTop.Add(" ");
+            }
             for (int i = 0; i < choices.Count; i++)
             {
                 var key = choices[i].Item1;

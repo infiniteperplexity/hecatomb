@@ -97,20 +97,21 @@ namespace Hecatomb
         {
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             string txt;
-            if (Game.World != null)
+            var cp = Game.MenuPanel;
+            var k = Keyboard.GetState();
+            if (ControlContext.ControlDown)
             {
-                var cp = Game.MenuPanel;
-                //DrawLines(cp.CommandMenus[cp.ActiveMenu].GetText());
-                var k = Keyboard.GetState();
-                if (ControlContext.ControlDown)
-                {
-                    DrawLines(Game.Controls.MenuBottom);
-                }
-                else
-                {
-                    DrawLines(Game.Controls.MenuTop);
-                }
+                DrawLines(Game.Controls.MenuBottom);
             }
+            else if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+            {
+                DrawLines(Game.World.GetState<TutorialHandler>().GetText());
+            }
+            else
+            {
+                DrawLines(Game.Controls.MenuTop);
+            }
+            //}
         }
     }
 }

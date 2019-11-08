@@ -53,8 +53,8 @@ namespace Hecatomb
             {
                 return new List<ColoredText>();
             };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("?: Commands", Keys.NumPad0);
+            //CommandMenus.Add(menu);
+            menu = new CommandMenu("?: Tutorial", Keys.NumPad0);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
@@ -72,7 +72,7 @@ namespace Hecatomb
                 return new List<ColoredText>();
             };
             CommandMenus.Add(menu);
-            menu = new CommandMenu("L: Message Log", Keys.NumPad3);
+            menu = new CommandMenu("L: Log", Keys.NumPad3);
             menu.GetText = () =>
             {
                 return new List<ColoredText>();
@@ -118,8 +118,8 @@ namespace Hecatomb
                 {
                     color = "orange";
                 }
-                int adjust = (i == 0) ? -2 * CharWidth : 0;
-                var v = new Vector2(total + margin + adjust, Y0 + TopMargin);
+                int adjust = (i == 0) ? -4 * CharWidth : 0;
+                var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
                 var bump = margin + adjust + text.Length * CharWidth + margin;
                 //var v = new Vector2(justify + X0 + LeftMargin + i * menu.Width, Y0 + TopMargin);
                 Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);

@@ -123,7 +123,7 @@ namespace Hecatomb
                 text = lines[i].Text;
                 colors = lines[i].Colors;
                 // advance by one line for every new line of input
-                y++;
+                //y++;
                 // return to left margin
                 x = 0;
                 // initialize to white
@@ -157,7 +157,9 @@ namespace Hecatomb
                     Game.Sprites.DrawString(Font, text.Substring(j, 1), v, Game.Colors[fg]);
                     x += 1;
                 }
+                y++;
             }
+            
         }
 
 
