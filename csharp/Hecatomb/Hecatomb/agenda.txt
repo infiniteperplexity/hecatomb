@@ -1,8 +1,12 @@
 ﻿Current interface issues:
 - The commands lists and tutorials are completely out of date.
 - I don't really know how I want to handle hovering.
-	- Control-click, and mention this in relevant places?
-	- some sort of motion-reactive thing?
+	- Whenever you move the mouse, there's a timed thing for hovering.
+		- Like...just a certain amount of time after moving it?  Doesn't make a whole lot of sense.
+	- Control+hover does the hovering.
+	- Special control context for hovering.
+	- Hovering is always there in most views except tutorial...which is kinda weird...
+	- Skip "hovering" entirely and make it on click.  Is there anything wrong with that?  What does clicking currently do, anyway?  Pause?
 - Maybe I can jam the full commands list at the end of the tutorial?
 
 
