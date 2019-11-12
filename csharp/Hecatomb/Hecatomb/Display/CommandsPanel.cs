@@ -109,19 +109,26 @@ namespace Hecatomb
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             int total = 0;
             int margin = 4 * CharWidth; 
-            for (int i = 0; i < CommandMenus.Count; i++)
+            for (int i = 0; i < Game.Controls.MenuCommands.Count; i++)
             {
-                var menu = CommandMenus[i];
-                var text = menu.Title;
+                var command = Game.Controls.MenuCommands[i];
+                var text = command.Item2;
                 var color = "white";
-                if (menu == Game.Controls.LinkedCommand)
+                if (command.Item1 == Game.Controls.SelectedMenuCommand)
                 {
                     color = "orange";
+                }
+                else if (command.Item1 == "Tutorial" && Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+                {
+                    color = "cyan";
+                }
+                else if (!Game.Controls.MenuSelectable)
+                {
+                    color = "gray";
                 }
                 int adjust = (i == 0) ? -4 * CharWidth : 0;
                 var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
                 var bump = margin + adjust + text.Length * CharWidth + margin;
-                //var v = new Vector2(justify + X0 + LeftMargin + i * menu.Width, Y0 + TopMargin);
                 Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
                 total += bump;
             }

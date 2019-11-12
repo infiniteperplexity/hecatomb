@@ -39,6 +39,8 @@ namespace Hecatomb
             KeyMap[Keys.Space] = Commands.Wait;
             KeyMap[Keys.Escape] = Reset;
             MenuTop = populater.GetLines();
+            MenuTop.Insert(0, " ");
+            MenuTop.Insert(0, "Esc) Back.");
         }
     }
 }

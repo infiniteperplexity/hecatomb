@@ -223,7 +223,8 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
             Game.Controls = new MenuChoiceControls(GetState<TaskHandler>());
-            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("J: Jobs");
+            Game.Controls.MenuSelectable = false;
+            Game.Controls.SelectedMenuCommand = "Jobs";
             InterfacePanel.DirtifySidePanels();
         }
 
@@ -231,7 +232,8 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
             Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
-            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("Z: Spells");
+            Game.Controls.MenuSelectable = false;
+            Game.Controls.SelectedMenuCommand = "Spells";
             InterfacePanel.DirtifySidePanels();
         }
 
@@ -239,14 +241,17 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowAchievements" });
             Game.Controls = new ListViewControls(Game.World.GetState<AchievementHandler>());
-            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("V: Achievements");
+            Game.Controls.MenuSelectable = false;
+            Game.Controls.SelectedMenuCommand = "Achievements";
             InterfacePanel.DirtifySidePanels();
         }
 
         public void ShowResearch()
         {
             Game.Controls = new ListViewControls(Game.World.GetState<ResearchHandler>());
-            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("R: Research");
+            Game.Controls.MenuSelectable = false;
+            Game.Controls.SelectedMenuCommand = "Research";
+            //Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("R: Research");
             InterfacePanel.DirtifySidePanels();
         }
 
@@ -392,54 +397,6 @@ namespace Hecatomb
         public void SlowDown()
         {
             Time.SlowDown();
-        }
-
-
-        public void ChooseMenu(int n)
-        {
-            Game.MenuPanel.ActiveMenu = n;
-            InterfacePanel.DirtifyUsualPanels();
-            Debug.WriteLine("did this work?");
-        }
-        public void ChooseMenuOne()
-        {
-            ChooseMenu(1);
-        }
-        public void ChooseMenuTwo()
-        {
-            ChooseMenu(2);
-        }
-        public void ChooseMenuThree()
-        {
-            ChooseMenu(3);
-        }
-        public void ChooseMenuFour()
-        {
-            ChooseMenu(4);
-        }
-        public void ChooseMenuFive()
-        {
-            ChooseMenu(5);
-        }
-        public void ChooseMenuSix()
-        {
-            ChooseMenu(6);
-        }
-        public void ChooseMenuSeven()
-        {
-            ChooseMenu(7);
-        }
-        public void ChooseMenuEight()
-        {
-            ChooseMenu(8);
-        }
-        public void ChooseMenuNine()
-        {
-            ChooseMenu(9);
-        }
-        public void ChooseMenuZero()
-        {
-            ChooseMenu(0);
-        }
+        } 
     }
 }

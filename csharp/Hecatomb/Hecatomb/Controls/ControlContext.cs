@@ -42,7 +42,14 @@ namespace Hecatomb
         public Action<int, int> OnStatusHover;
         public bool UseKeyFallback;
         public CommandMenu LinkedCommand;
+
+        // key, text, selected, selectable
+        public bool HideMenu;
+        public bool MenuSelectable;
+        public string SelectedMenuCommand;
+        public List<(string, string)> MenuCommands;
         
+
         public void Set(ControlContext c)
         {
             SetWithoutRedraw(c);
@@ -242,7 +249,14 @@ namespace Hecatomb
 			OnMenuHover = MenuHover;
 			OnStatusClick = StatusClick;
 			OnStatusHover = StatusHover;
-		}
+            MenuCommands = new List<(string, string)>();
+            MenuSelectable = true;
+            MenuCommands.Add(("Tutorial", "?) Tutorial"));
+            MenuCommands.Add(("Spells", "Z) Spells"));
+            MenuCommands.Add(("Jobs", "J) Jobs"));
+            MenuCommands.Add(("Research", "R) Research"));
+            MenuCommands.Add(("Achievements", "V) Achievements"));
+        }
 		
 		public virtual void HandleKeyDown(Keys key)
 		{
