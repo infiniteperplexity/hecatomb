@@ -61,29 +61,47 @@ namespace Hecatomb
             KeyMap[Keys.OemPlus] = Commands.SpeedUp;
 
 
+            RefreshContent();
+		}
+
+        public override void RefreshContent()
+        {
             MenuTop = new List<ColoredText>() {
                 "Esc: System view.",
                 " ",
                 "{yellow}Avatar mode (Tab: Camera mode)",
-                " ",
-                //"Move: NumPad/Arrows, ,/.: Up/Down.",
-                //"(Control+Arrows for diagonal.)",
-                //"Wait: NumPad 5 / Space.",
-                //" ",
-                //"Enter: Enable auto-pause.",
-                //"+/-: Change speed.",
-                //" ",
-                //"Z: Cast spell, J: Assign job.",
-                //"M: Minions, S: Structures, U: Summary.",
-                //"G: Pick Up, D: Drop.",
-                //"I: Inventory, E: Equip/Unequip.",
-                //" ",
-                //"PageUp/Down: Scroll messages.",
-                //"A: Achievements, /: Toggle tutorial."
-             //"0:Game 1:Camera 2:Commands 3:Log 4:Spells 5:Jobs 6:Achievements 7:Structures 8:Minions 9:Research"
+                " "
 			};
-		}
+            if (Game.World != null && Game.World.Player != null)
+            {
+                var p = Game.World.Player;
+                MenuTop.Add($"{p.Describe()} at {p.X} {p.Y} {p.Z}");
+                MenuTop.Add($"Sanity: {p.GetComponent<SpellCaster>().Sanity}/{p.GetComponent<SpellCaster>().GetCalculatedMaxSanity()}");
+                TurnHandler t = Game.World.Turns;
+                string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
+                MenuTop.Add(time);
+                MenuTop.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
 
+                string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "{yellow}Paused" : "      ";
+                
+                var stored = new List<Dictionary<string, int>>();
+                var structures = Structure.ListStructures();
+                foreach (Structure s in structures)
+                {
+                    stored.Add(s.GetStored());
+                }
+                var total = Item.CombinedResources(stored);
+                if (total.Count > 0)
+                {
+                    MenuTop.Add(" ");
+                    MenuTop.Add("Stored resources:");
+                    foreach (var res in total.Keys)
+                    {
+                        MenuTop.Add("- " + Resource.Format((res, total[res])));
+                    }
+                }
+            }
+        }
         public override void ClickTile(Coord c)
 		{
             var (x, y, z) = c;

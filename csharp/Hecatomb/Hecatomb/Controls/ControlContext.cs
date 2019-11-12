@@ -75,6 +75,7 @@ namespace Hecatomb
                 Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             }
             Game.LastControls = Game.Controls;
+            Game.Controls.RefreshContent();
             InterfacePanel.DirtifyUsualPanels();
             Game.SplashPanel.Active = false;
             Game.ForegroundPanel.Active = false;
@@ -254,6 +255,7 @@ namespace Hecatomb
             MenuCommands.Add(("Tutorial", "?) Tutorial"));
             MenuCommands.Add(("Spells", "Z) Spells"));
             MenuCommands.Add(("Jobs", "J) Jobs"));
+            MenuCommands.Add(("Log", "L) Log"));
             MenuCommands.Add(("Research", "R) Research"));
             MenuCommands.Add(("Achievements", "V) Achievements"));
         }

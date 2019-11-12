@@ -164,7 +164,7 @@ namespace Hecatomb
             }
             else
             {
-                Controls = new DefaultControls();
+                Controls = new DefaultControls();  
             }
         }
         public void StartGame()

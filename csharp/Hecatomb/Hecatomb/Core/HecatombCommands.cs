@@ -259,7 +259,8 @@ namespace Hecatomb
         public void ShowLog()
         {
             Game.Controls = new MessageLogControls();
-            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("L: Message Log");
+            Game.Controls.MenuSelectable = false;
+            Game.Controls.SelectedMenuCommand = "Log";
             InterfacePanel.DirtifySidePanels();
         }
 
