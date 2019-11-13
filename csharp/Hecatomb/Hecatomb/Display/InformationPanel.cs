@@ -99,18 +99,35 @@ namespace Hecatomb
             string txt;
             var cp = Game.MenuPanel;
             var k = Keyboard.GetState();
-            if (ControlContext.ControlDown)
+            var lines = new List<ColoredText>();
+            if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
             {
-                DrawLines(Game.Controls.MenuBottom);
-            }
-            else if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
-            {
-                DrawLines(Game.World.GetState<TutorialHandler>().GetText());
+                lines = lines.Concat(Game.World.GetState<TutorialHandler>().GetText()).ToList();
             }
             else
             {
-                DrawLines(Game.Controls.MenuTop);
+                lines = lines.Concat(Game.Controls.MenuTop).ToList();
             }
+            if (Game.Controls.MenuBottom.Count > 0 && !Game.World.GetState<TutorialHandler>().Visible && !(Game.Controls is ExamineTileControls))
+            {
+                lines.Add(" ");
+                lines.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                lines.Add(" ");
+                lines = lines.Concat(Game.Controls.MenuBottom).ToList();
+            }
+            DrawLines(lines);
+            //if (ControlContext.ControlDown)
+            //{
+            //    DrawLines(Game.Controls.MenuBottom);
+            //}
+            //else if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+            //{
+            //    DrawLines(Game.World.GetState<TutorialHandler>().GetText());
+            //}
+            //else
+            //{
+            //    DrawLines(Game.Controls.MenuTop);
+            //}
             //}
         }
     }

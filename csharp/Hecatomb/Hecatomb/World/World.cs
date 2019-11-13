@@ -285,110 +285,119 @@ namespace Hecatomb
 			return 1;
 		}
 
-		public void ShowTileDetails(Coord c)
-		{
-			int x = c.X;
-			int y = c.Y;
-			int z = c.Z;
-			int za = z+1;
-			int zb = z-1;
-			Coord above = new Coord(x, y, za);
-			Coord below = new Coord(x, y, zb);
-			string main = "light cyan";
-			string other = "gainsboro";
-			int change = 0;
-			List<ColoredText> text = new List<ColoredText>() {
-				"Coord: " + x + "," + y + ", " + z
-			};
-			TileEntity t;
-			if (Explored.Contains(c) || Game.Options.Explored)
-			{
-				text.Add("Terrain: " + Terrains[x, y, z].Name);
+        public List<ColoredText> GetTileDetails(Coord c)
+        {
+            int x = c.X;
+            int y = c.Y;
+            int z = c.Z;
+            int za = z + 1;
+            int zb = z - 1;
+            Coord above = new Coord(x, y, za);
+            Coord below = new Coord(x, y, zb);
+            string main = "light cyan";
+            string other = "gainsboro";
+            int change = 0;
+            List<ColoredText> text = new List<ColoredText>() {
+                "Coord: " + x + "," + y + ", " + z
+            };
+            TileEntity t;
+            if (Explored.Contains(c) || Game.Options.Explored)
+            {
+                text.Add("Terrain: " + Terrains[x, y, z].Name);
                 text.Add("Cover: " + Covers[x, y, z].Name);
                 text.Add("Lighting: " + GetLighting(x, y, z));
-				t = Creatures[x, y, z];
-				if (t!=null)
-				{
-					text.Add("Creature: " + t.Describe());
-				}
-				t = Features[x, y, z];
-				if (t!=null)
-				{
-					text.Add("Feature: " + t.Describe());
-				}
+                t = Creatures[x, y, z];
+                if (t != null)
+                {
+                    text.Add("Creature: " + t.Describe());
+                }
+                t = Features[x, y, z];
+                if (t != null)
+                {
+                    text.Add("Feature: " + t.Describe());
+                }
                 t = Items[x, y, z];
-                if (t!=null)
+                if (t != null)
                 {
                     text.Add("Item: " + t.Describe());
                 }
-				t = Tasks[x, y, z];
-				if (t!=null)
-				{
+                t = Tasks[x, y, z];
+                if (t != null)
+                {
                     //text.Add("Task: " + t.Describe(article: false));
                     text.Add("Task: " + (t as Task).GetHoverName());
                 }
-				text.Add(" ");
-			}
-			change = text.Count;
-			if (Explored.Contains(above) || Game.Options.Explored)
-			{
-				text.Add("Above: " + Terrains[x, y, za].Name);
+                text.Add(" ");
+            }
+            change = text.Count;
+            if (Explored.Contains(above) || Game.Options.Explored)
+            {
+                text.Add("Above: " + Terrains[x, y, za].Name);
                 text.Add("Cover: " + Covers[x, y, za].Name);
                 text.Add("Lighting: " + GetLighting(x, y, za));
                 t = Creatures[x, y, za];
-				if (t!=null)
-				{
-					text.Add("Creature: " + t.Describe());
-				}
-				t = Features[x, y, za];
-				if (t!=null)
-				{
-					text.Add("Feature: " + t.Describe());
-				}
+                if (t != null)
+                {
+                    text.Add("Creature: " + t.Describe());
+                }
+                t = Features[x, y, za];
+                if (t != null)
+                {
+                    text.Add("Feature: " + t.Describe());
+                }
                 t = Items[x, y, za];
                 if (t != null)
                 {
                     text.Add("Item: " + t.Describe());
                 }
                 t = Tasks[x, y, za];
-				if (t!=null)
-				{
-					text.Add("Task: " + (t as Task).GetHoverName());
-				}
-				text.Add(" ");
-			}
-			if (Explored.Contains(below) || Game.Options.Explored)
-			{
-				text.Add("Below: " + Terrains[x, y, zb].Name);
+                if (t != null)
+                {
+                    text.Add("Task: " + (t as Task).GetHoverName());
+                }
+                text.Add(" ");
+            }
+            if (Explored.Contains(below) || Game.Options.Explored)
+            {
+                text.Add("Below: " + Terrains[x, y, zb].Name);
                 text.Add("Cover: " + Covers[x, y, zb].Name);
                 text.Add("Lighting: " + GetLighting(x, y, zb));
                 t = Creatures[x, y, zb];
-				if (t!=null)
-				{
-					text.Add("Creature: " + t.Describe());
-				}
-				t = Features[x, y, zb];
-				if (t!=null)
-				{
-					text.Add("Feature: " + t.Describe());
-				}
+                if (t != null)
+                {
+                    text.Add("Creature: " + t.Describe());
+                }
+                t = Features[x, y, zb];
+                if (t != null)
+                {
+                    text.Add("Feature: " + t.Describe());
+                }
                 t = Items[x, y, zb];
                 if (t != null)
                 {
                     text.Add("Item: " + t.Describe());
                 }
                 t = Tasks[x, y, zb];
-				if (t!=null)
-				{
-					text.Add("Task: " + (t as Task).GetHoverName());
-				}
-				text.Add(" ");
-			}
-			Game.Controls.MenuBottom = text;
-			for (int i=0; i<text.Count; i++)
-			{
-                Game.Controls.MenuBottom[i].Colors[0] = (i<change) ? main : other;
-			}
+                if (t != null)
+                {
+                    text.Add("Task: " + (t as Task).GetHoverName());
+                }
+                text.Add(" ");
+            }
+            for (int i = 0; i < text.Count; i++)
+            {
+                text[i].Colors[0] = (i < change) ? main : other;
+            }
+            return text;
+        }
+		public void ShowTileDetails(Coord c)
+		{
+            var text = GetTileDetails(c);
+            Game.Controls.MenuBottom = text;
+			//for (int i=0; i<text.Count; i++)
+			//{
+   //             Game.Controls.MenuBottom[i].Colors[0] = (i<change) ? main : other;
+			//}
             InterfacePanel.DirtifySidePanels();
         }
 		

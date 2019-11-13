@@ -186,12 +186,15 @@ namespace Hecatomb
             if (cr != null && visible)
             {
                 Game.Controls.Set(new MenuChoiceControls(cr));
+                return;
             }
             Feature fr = Game.World.Features[x, y, z];
             if (fr?.TryComponent<StructuralComponent>() != null)
             {
                 Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+                return;
             }
+            Game.Controls.Set(new ExamineTileControls(c));
         }
 
         public virtual void HoverTile(Coord c)

@@ -102,25 +102,25 @@ namespace Hecatomb
                 }
             }
         }
-        public override void ClickTile(Coord c)
-		{
-            var (x, y, z) = c;
-            Creature cr = Game.World.Creatures[x, y, z];
-            bool visible = Game.Visible.Contains(c);
-            if (cr!=null && visible)
-            {
-                Game.Controls.Set(new MenuChoiceControls(cr));
-                return;
-            }
-            Feature fr = Game.World.Features[x, y, z];
-            if (fr?.TryComponent<StructuralComponent>()!=null && fr.GetComponent<StructuralComponent>().Structure.Placed)
-            {
-                Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
-            }
-            else if (fr?.TryComponent<DoorFeatureComponent>()!=null)
-            {
-                //Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<DoorFeatureComponent>()));
-            }
-        }
+  //      public override void ClickTile(Coord c)
+		//{
+  //          var (x, y, z) = c;
+  //          Creature cr = Game.World.Creatures[x, y, z];
+  //          bool visible = Game.Visible.Contains(c);
+  //          if (cr!=null && visible)
+  //          {
+  //              Game.Controls.Set(new MenuChoiceControls(cr));
+  //              return;
+  //          }
+  //          Feature fr = Game.World.Features[x, y, z];
+  //          if (fr?.TryComponent<StructuralComponent>()!=null && fr.GetComponent<StructuralComponent>().Structure.Placed)
+  //          {
+  //              Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+  //          }
+  //          else if (fr?.TryComponent<DoorFeatureComponent>()!=null)
+  //          {
+  //              //Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<DoorFeatureComponent>()));
+  //          }
+  //      }
 	}
 }

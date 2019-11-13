@@ -55,6 +55,10 @@ namespace Hecatomb
                 list.Add(" ");
                 list = list.Concat(OffTutorialCamera).ToList();
             }
+            else if (Game.Controls is ExamineTileControls)
+            {
+                list = list.Concat(Game.Controls.MenuTop).ToList();
+            }
             else
             {
                 list = list.Concat(Game.Controls.MenuTop).ToList();
