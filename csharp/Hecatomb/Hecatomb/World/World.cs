@@ -298,7 +298,8 @@ namespace Hecatomb
             string other = "gainsboro";
             int change = 0;
             List<ColoredText> text = new List<ColoredText>() {
-                "Coord: " + x + "," + y + ", " + z
+                "Tile: " + x + "," + y + ", " + z,
+                " "
             };
             TileEntity t;
             if (Explored.Contains(c) || Game.Options.Explored)

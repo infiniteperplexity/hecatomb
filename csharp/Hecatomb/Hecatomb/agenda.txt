@@ -6,6 +6,7 @@
 - Active command should maybe be yellow, not orange?
 - Need visible auto-pause
 - Should certain events force you into log mode?  Or maybe highlight the log in magenta?
+- We aren't consistent on Esc) versus Escape)
 
 
 Tutorial notes:
@@ -15,6 +16,7 @@ Tutorial notes:
 1b) Might want to get rid of the Move: NumPad thing up top.
 1c) We now support WASD as well.
 2a) The text on this step is now too long.
+2b) Should we introduce mouseless stuff (i.e. using Tab to hover) at this point?
 3a) This might be a fine time to teach the hovering thing.
 3b) Still don't need those instructions up top.
 4a) Good time for Z to "light up".

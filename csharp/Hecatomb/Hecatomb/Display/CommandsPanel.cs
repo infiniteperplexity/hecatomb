@@ -26,82 +26,13 @@ namespace Hecatomb
      * 14) System view.
      */
 
-    public class CommandMenu
-    {
-        public string Title;
-        public Func<List<ColoredText>> GetText;
-        public CommandMenu(string title, Keys k)
-        {
-            Title = title;
-        }
-    }
     public class CommandsPanel : InterfacePanel
     {
-        public List<CommandMenu> CommandMenus;
-        public int ActiveMenu;
-
         public CommandsPanel(int x, int y, int w, int h) : base(x, y, w, h)
         {
 
             LeftMargin = 2;
             RightMargin = 2;
-            CommandMenus = new List<CommandMenu>();
-            CommandMenu menu;
-            ActiveMenu = 1;
-            menu = new CommandMenu("Esc: Game", Keys.Escape);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            //CommandMenus.Add(menu);
-            menu = new CommandMenu("?: Tutorial", Keys.NumPad0);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("Z: Spells", Keys.NumPad1);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("J: Jobs", Keys.NumPad2);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("L: Log", Keys.NumPad3);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("R: Research", Keys.NumPad4);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-            menu = new CommandMenu("V: Achievements", Keys.NumPad5);
-            menu.GetText = () =>
-            {
-                return new List<ColoredText>();
-            };
-            CommandMenus.Add(menu);
-        }
-
-        public CommandMenu GetCommand(string title)
-        {
-            foreach (var menu in CommandMenus)
-            {
-                if (menu.Title == title)
-                {
-                    return menu;
-                }
-            }
-            return null;
         }
 
         public override void Draw()
@@ -111,26 +42,39 @@ namespace Hecatomb
             int margin = 4 * CharWidth; 
             for (int i = 0; i < Game.Controls.MenuCommands.Count; i++)
             {
-                var command = Game.Controls.MenuCommands[i];
-                var text = command.Item2;
-                var color = "white";
-                if (command.Item1 == Game.Controls.SelectedMenuCommand)
+                if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
                 {
-                    color = "orange";
+                    var text = Game.World.GetState<TutorialHandler>().Current.MenuCommands[i];
+                    var color = text.Colors[0];
+                    int adjust = (i == 0) ? -4 * CharWidth : 0;
+                    var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
+                    var bump = margin + adjust + text.Length * CharWidth + margin;
+                    Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
+                    total += bump;
                 }
-                else if (command.Item1 == "Tutorial" && Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+                else
                 {
-                    color = "cyan";
+                    var command = Game.Controls.MenuCommands[i];
+                    var text = command.Item2;
+                    var color = "white";
+                    if (command.Item1 == Game.Controls.SelectedMenuCommand)
+                    {
+                        color = "yellow";
+                    }
+                    else if (command.Item1 == "Tutorial" && Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+                    {
+                        color = "cyan";
+                    }
+                    else if (!Game.Controls.MenuSelectable)
+                    {
+                        color = "gray";
+                    }
+                    int adjust = (i == 0) ? -4 * CharWidth : 0;
+                    var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
+                    var bump = margin + adjust + text.Length * CharWidth + margin;
+                    Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
+                    total += bump;
                 }
-                else if (!Game.Controls.MenuSelectable)
-                {
-                    color = "gray";
-                }
-                int adjust = (i == 0) ? -4 * CharWidth : 0;
-                var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
-                var bump = margin + adjust + text.Length * CharWidth + margin;
-                Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
-                total += bump;
             }
         }
     }

@@ -41,7 +41,6 @@ namespace Hecatomb
         public Action<int, int> OnStatusClick;
         public Action<int, int> OnStatusHover;
         public bool UseKeyFallback;
-        public CommandMenu LinkedCommand;
 
         // key, text, selected, selectable
         public bool HideMenu;

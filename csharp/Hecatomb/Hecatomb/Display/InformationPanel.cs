@@ -108,7 +108,8 @@ namespace Hecatomb
             {
                 lines = lines.Concat(Game.Controls.MenuTop).ToList();
             }
-            if (Game.Controls.MenuBottom.Count > 0 && !Game.World.GetState<TutorialHandler>().Visible && !(Game.Controls is ExamineTileControls))
+            if (Game.Controls.MenuBottom.Count > 0)
+            //if (Game.Controls.MenuBottom.Count > 0 && !Game.World.GetState<TutorialHandler>().Visible && !(Game.Controls is ExamineTileControls))
             {
                 lines.Add(" ");
                 lines.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");

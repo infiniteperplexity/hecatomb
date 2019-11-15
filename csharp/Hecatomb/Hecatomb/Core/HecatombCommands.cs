@@ -317,7 +317,6 @@ namespace Hecatomb
                 (Keys.N, "New game.", Game.game.StartGame),
                 (Keys.Q, "Quit.", Game.game.QuitGame)
             }));
-            Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("Esc: Game");
         }
 
         public void SaveGameAsCommand()

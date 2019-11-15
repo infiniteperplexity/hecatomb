@@ -45,7 +45,7 @@ namespace Hecatomb
             var list = new List<ColoredText>();
             if (!Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
             {
-                list = list.Concat(Current.ControlText).ToList();
+                list = new List<ColoredText>() { "Esc: Game menu." };
                 list.Add(" ");
                 list = list.Concat(Current.InstructionsText).ToList();
             }
@@ -83,24 +83,15 @@ namespace Hecatomb
             {
                 new TutorialState("Welcome")
                 {
-                    ControlText = new List<ColoredText>()
-                    {
-                        "Esc: System view.",
-                        " ",
-                        "{cyan}Move: NumPad/Arrows.",
-                        "{cyan}(Control+Arrows for diagonal.)",
-                        " ",
-                        @"?: Toggle tutorial."
-                    },
                     InstructionsText = new List<ColoredText>()
                     {
-                        "{yellow}Welcome to the Hecatomb in-game tutorial.  Follow the instructions on this panel to proceed through the tutorial, or press ? to turn off these messages and play without the tutorial.",
+                        "{yellow}Welcome to the Hecatomb in-game tutorial.  Follow the instructions below to proceed through the tutorial, or press ? to turn off these messages and play without the tutorial.",
                         " ",
                         "You walk amongst the tombstones of a hillside graveyard, searching for the site upon which you will build your mighty fortress.",
                         " ",
-                        "{lime green}This symbol is you: {magenta}@",
+                        "{lime green}The magenta 'at' symbol is you: {magenta}@",
                         " ",
-                        "{cyan}Try walking around using the numeric keypad.If your keyboard has no keypad, use the arrow keys.One turn will pass for each step you take."
+                        "{cyan}Try walking around using the numeric keypad, WASD/QEXC, or the arrow keys.  One turn will pass for each step you take."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -120,30 +111,15 @@ namespace Hecatomb
                 },
                 new TutorialState("Movement")
                 {
-                    ControlText = new List<ColoredText>()
-                    {
-                        "Esc: System view.",
-                        " ",
-                        "{cyan}Move: NumPad/Arrows.",
-                        "{cyan}(Control+Arrows for diagonal.)",
-                        " ",
-                        @"\: Toggle tutorial."
-                    },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Movement and vision.",
+                        " ",
                         "You walk amongst the tombstones of a hillside graveyard, searching for the site upon which you will build your mighty fortress.",
                         " ",
-                        @"{lime green}- Green areas with {GRASSFG}"" {lime green}are grass.",
+                        @"{lime green}Look at all those colored Unicode symbols!  What does it all mean?  {GRASSFG}Olive green {lime green}terrain is grass, level with your field of vision.  Dark olive green areas are also grass, one elevation level below you.  Gray areas with {WALLFG}# {lime green}are walls, but they may have walkable floors one level above you.",
                         " ",
-                        "{lime green}- Dim green areas are also grass, one elevation level below you.",
-                        " ",
-                        "{lime green}- Gray areas with {WALLFG}# {lime green}are walls, but they may have walkable floors one level above you.",
-                        " ",
-                        "{lime green}- Other symbols (clubs, spades, flowers) may be trees or plants.",
-                        " ",
-                        "{lime green}- Letters such as s or b are wild animals, mostly harmless for now.",
-                        " ",
-                        "{cyan}Try walking around using the numeric keypad.  If your keyboard has no keypad, use the arrow keys.  One turn will pass for each step you take."
+                        "{cyan}Try walking around using the numeric keypad, WASD/QEXC, or the arrow keys.  One turn will pass for each step you take."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -163,30 +139,13 @@ namespace Hecatomb
                 },
                 new TutorialState("Slopes")
                 {
-                    ControlText = new List<ColoredText>()
-                    {
-                        "Esc: System view.",
-                        " ",
-                        "{cyan}Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "{cyan}(Control+Arrows for diagonal.)",
-                        " ",
-                        @"\: Toggle tutorial."
-                    },
                     InstructionsText = new List<ColoredText>()
                     {
                         "You scramble up and down the slopes for a better view of the area.",
                         " ",
-                        "{lime green}- The {WALLFG}^ {lime green}and {WALLFG}v {lime green}symbols are slopes.",
+                        "{lime green}The {WALLFG}^ {lime green}and {WALLFG}v {lime green}symbols are slopes.  Slopes provide access to different elevation levels in this 3D world.  You can climb up or down a slope by standing on it and pressing . (<) or , (>).  If you try to walk sideways off a cliff or into a wall, you will automatically climb a slope instead if possible.  When you climb up or down, colors change with your relative elevation.",
                         " ",
-                        "{lime green}- The game world is a 3D grid of tiles.  Slopes provide access to different elevation levels.",
-                        " ",
-                        "{lime green}- You can climb up or down a slope by standing on it and pressing . (<) or , (>).",
-                        " ",
-                        "{lime green}- If you try to walk sideways off a cliff or into a wall, you will automatically climb a slope instead if possible.",
-                        " ",
-                        "{lime green}- When you climb up or down, colors change with your relative elevation.",
-                        " ",
-                        "{cyan}Try climbing up and down a few slopes."
+                        "{cyan}Try climbing up and down a few slopes.  Hover the mouse over a tile for a description of what's there."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -208,16 +167,14 @@ namespace Hecatomb
                 },
                 new TutorialState("CastSpell")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: System view.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "{cyan}Z: Cast spell.",
-                        " ",
-                        @"\: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "{cyan}Z) Spells",
+                        "{gray}J) Jobs",
+                        "{gray}L) Log",
+                        "{gray}R) Research",
+                        "{gray}V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
@@ -242,6 +199,16 @@ namespace Hecatomb
                 new TutorialState("ChooseSpell")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "{yellow}Z) Spells",
+                        "{gray}J) Jobs",
+                        "{gray}L) Log",
+                        "{gray}R) Research",
+                        "{gray}V) Achievements"
+                    },
+                    // oh all of a sudden we *do* need this...
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
@@ -303,7 +270,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -340,7 +307,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -371,7 +338,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -419,7 +386,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -523,7 +490,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -564,7 +531,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -660,7 +627,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -703,7 +670,7 @@ namespace Hecatomb
 
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         "{cyan}Avatar mode (Tab: Navigation mode)",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
@@ -739,7 +706,7 @@ namespace Hecatomb
                     RequiresDefaultControls = false,
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         "{cyan}Navigation mode (Tab: Avatar mode)",
                         " ",
                         "{cyan}Move: NumPad/Arrows, ,/.: Up/Down",
@@ -775,7 +742,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -872,7 +839,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Move: NumPad/Arrows, ,/.: Up/Down.",
                         "(Control+Arrows for diagonal.)",
@@ -905,7 +872,7 @@ namespace Hecatomb
                 {
                     ControlText = new List<ColoredText>()
                     {
-                        "Esc: System view.",
+                        "Esc: Game menu.",
                         " ",
                         "Navigation mode (Tab: Avatar mode)",
                         " ",
@@ -981,6 +948,7 @@ namespace Hecatomb
 			public List<ColoredText> ControlText;
 			public List<ColoredText> InstructionsText;
             public bool RequiresDefaultControls;
+            public List<ColoredText> MenuCommands;
             public TutorialState(string name)
 			{
 				Name = name;
@@ -989,6 +957,15 @@ namespace Hecatomb
 				ControlText = new List<ColoredText>();
 				InstructionsText = new List<ColoredText>();
                 RequiresDefaultControls = true;
+                MenuCommands = new List<ColoredText>()
+                {
+                    "{cyan}?) Tutorial",
+                    "{gray}Z) Spells",
+                    "{gray}J) Jobs",
+                    "{gray}L) Log",
+                    "{gray}R) Research",
+                    "{gray}V) Achievements"
+                };
 			}
 			
 			public void Begin()
