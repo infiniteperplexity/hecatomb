@@ -277,6 +277,7 @@ namespace Hecatomb
                         }
                     },
                 },
+                // let's skip over this step for now...it's a little hairy
                 new TutorialState("Achievements")
                 {
                     MenuCommands = new List<ColoredText>()
@@ -312,18 +313,14 @@ namespace Hecatomb
                 },
                 new TutorialState("WaitForZombie")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "{cyan}Wait: NumPad 5 / Space.",
-                        " ",
-                        "Z: Cast spell.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{gray}J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
@@ -343,21 +340,14 @@ namespace Hecatomb
                 },
                 new TutorialState("Unpausing")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "{cyan}Wait: NumPad 5 / Space.",
-                        " ",
-                        "{cyan}Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{gray}J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {

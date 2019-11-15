@@ -37,12 +37,20 @@ namespace Hecatomb
             KeyMap[Keys.PageUp] = ScrollUp;
             KeyMap[Keys.PageDown] = ScrollDown;
             int MaxVisible = Math.Min(Game.World.GetState<MessageHandler>().MessageHistory.Count, 4);
+            var controls = new List<ColoredText>()
+            {
+                "{orange}Esc) Back.",
+                " ",
+                "PageUp/PageDown: Scroll up/down",
+                "(Fn + Up/Down on Mac)",
+                " "
+            };
             var list = Game.World.GetState<MessageHandler>().MessageHistory.GetRange(SelectedMessage, MaxVisible).ToList();
             if (list.Count > 1 && list[1].Colors.Count == 0)
             {
-                list[1] = new ColoredText(list[1].Text, "cyan");
+                list[0] = new ColoredText(list[1].Text, "cyan");
             }
-            MenuTop = list;
+            MenuTop = controls.Concat(list).ToList();
         }
 
         // huh...so...the "ShowScroll" thing...do we still want that?

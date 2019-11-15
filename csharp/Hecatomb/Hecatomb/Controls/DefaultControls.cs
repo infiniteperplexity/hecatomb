@@ -69,18 +69,22 @@ namespace Hecatomb
             MenuTop = new List<ColoredText>() {
                 "Esc: Game menu.",
                 " ",
-                "{yellow}Avatar mode (Tab: Camera mode)",
+                "{yellow}Avatar (Tab: Camera)",
                 " "
 			};
             if (Game.World != null && Game.World.Player != null)
             {
                 var p = Game.World.Player;
-                MenuTop.Add($"{p.Describe()} at {p.X} {p.Y} {p.Z}");
-                MenuTop.Add($"Sanity: {p.GetComponent<SpellCaster>().Sanity}/{p.GetComponent<SpellCaster>().GetCalculatedMaxSanity()}");
+                
                 TurnHandler t = Game.World.Turns;
                 string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
                 MenuTop.Add(time);
-                MenuTop.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
+                MenuTop.Add(" ");
+                MenuTop.Add($"Sanity: {p.GetComponent<SpellCaster>().Sanity}/{p.GetComponent<SpellCaster>().GetCalculatedMaxSanity()}");
+                if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                {
+                    MenuTop.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
+                }
 
                 string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "{yellow}Paused" : "      ";
                 
