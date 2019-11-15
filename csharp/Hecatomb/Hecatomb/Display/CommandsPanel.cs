@@ -45,7 +45,7 @@ namespace Hecatomb
                 if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
                 {
                     var text = Game.World.GetState<TutorialHandler>().Current.MenuCommands[i];
-                    var color = text.Colors[0];
+                    var color = (text.Colors.ContainsKey(0)) ? text.Colors[0] : "white";
                     int adjust = (i == 0) ? -4 * CharWidth : 0;
                     var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
                     var bump = margin + adjust + text.Length * CharWidth + margin;

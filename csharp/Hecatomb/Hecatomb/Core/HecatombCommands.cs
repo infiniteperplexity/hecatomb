@@ -258,6 +258,7 @@ namespace Hecatomb
 
         public void ShowLog()
         {
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
             Game.Controls = new MessageLogControls();
             Game.Controls.MenuSelectable = false;
             Game.Controls.SelectedMenuCommand = "Log";

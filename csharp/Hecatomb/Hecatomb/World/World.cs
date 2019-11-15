@@ -306,7 +306,7 @@ namespace Hecatomb
             {
                 text.Add("Terrain: " + Terrains[x, y, z].Name);
                 text.Add("Cover: " + Covers[x, y, z].Name);
-                text.Add("Lighting: " + GetLighting(x, y, z));
+                //text.Add("Lighting: " + GetLighting(x, y, z));
                 t = Creatures[x, y, z];
                 if (t != null)
                 {
@@ -335,7 +335,7 @@ namespace Hecatomb
             {
                 text.Add("Above: " + Terrains[x, y, za].Name);
                 text.Add("Cover: " + Covers[x, y, za].Name);
-                text.Add("Lighting: " + GetLighting(x, y, za));
+                //text.Add("Lighting: " + GetLighting(x, y, za));
                 t = Creatures[x, y, za];
                 if (t != null)
                 {
@@ -362,7 +362,7 @@ namespace Hecatomb
             {
                 text.Add("Below: " + Terrains[x, y, zb].Name);
                 text.Add("Cover: " + Covers[x, y, zb].Name);
-                text.Add("Lighting: " + GetLighting(x, y, zb));
+                //text.Add("Lighting: " + GetLighting(x, y, zb));
                 t = Creatures[x, y, zb];
                 if (t != null)
                 {

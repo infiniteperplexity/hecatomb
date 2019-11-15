@@ -45,8 +45,7 @@ namespace Hecatomb
             var list = new List<ColoredText>();
             if (!Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
             {
-                list = new List<ColoredText>() { "Esc: Game menu." };
-                list.Add(" ");
+                list = Current.ControlText.ToList();
                 list = list.Concat(Current.InstructionsText).ToList();
             }
             else if (Game.Controls == Game.CameraControls)
@@ -141,6 +140,8 @@ namespace Hecatomb
                 {
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Movement and vision.",
+                        " ",
                         "You scramble up and down the slopes for a better view of the area.",
                         " ",
                         "{lime green}The {WALLFG}^ {lime green}and {WALLFG}v {lime green}symbols are slopes.  Slopes provide access to different elevation levels in this 3D world.  You can climb up or down a slope by standing on it and pressing . (<) or , (>).  If you try to walk sideways off a cliff or into a wall, you will automatically climb a slope instead if possible.  When you climb up or down, colors change with your relative elevation.",
@@ -169,7 +170,7 @@ namespace Hecatomb
                 {
                     MenuCommands = new List<ColoredText>()
                     {
-                        "{cyan}?) Tutorial",
+                        "{yellow}?) Tutorial",
                         "{cyan}Z) Spells",
                         "{gray}J) Jobs",
                         "{gray}L) Log",
@@ -178,11 +179,11 @@ namespace Hecatomb
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Casting spells / creating zombies.",
+                        " ",
                         "Enough of this pointless wandering - it is time to summon an undead servant.",
                         " ",
-                        "{lime green}Near where you started, there should be some cross-shaped symbols. These are tombstones.  If you want to know what a symbol represents, hover over it with the mouse and look at the bottom half of the right panel.",
-                        " ",
-                        "{cyan}Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
+                        "{cyan}Near where you started, there should be some cross-shaped symbols. These are tombstones.  Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -212,16 +213,18 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
+                        " ",
                         "{yellow}Choose a spell:",
-                        "{cyan}a) Raise Zombie"
+                        "{cyan}a) Raise Zombie",
+                        " "
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Casting spells / creating zombies.",
+                        " ",
                         "Enough of this pointless wandering - it is time to summon an undead servant.",
                         " ",
-                        "{lime green}Near where you started, there should be some cross-shaped symbols. These are tombstones.  If you want to know what a symbol represents, hover over it with the mouse and look at the bottom half of the right panel.",
-                        " ",
-                        "{cyan}Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
+                        "{cyan}Near where you started, there should be some cross-shaped symbols. These are tombstones.  Find a tombstone - you don't have to stand right next to it.  Then press Z to view a list of spells you can cast, and press A to choose 'raise zombie.'"
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -238,19 +241,27 @@ namespace Hecatomb
                 new TutorialState("TargetSpell")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "{yellow}Z) Spells",
+                        "{gray}J) Jobs",
+                        "{gray}L) Log",
+                        "{gray}R) Research",
+                        "{gray}V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
+                        " ",
                         "{yellow}Select a square with keys or mouse.",
                         " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "{cyan}Click / Space: Select.",
                     },
                     InstructionsText = new List<ColoredText>()
                     {
-                        "{cyan}Select a tombstone, either by using the mouse, or by navigating with the direction keys and pressing space to select.  Make sure the tombstone is on the current elevation level.",
+                        "{yellow}Tutorial: Casting spells / creating zombies.",
+                        " ",
+                        "{cyan}Select a tombstone, either by using the mouse, or by navigating with the direction keys and clicking or pressing space to select.  Make sure the tombstone is on the current elevation level.",
                         " ",
                         "{lime green}Notice that the bottom portion of this panel gives you information about the square you are hovering over - whether it's a valid target for your spell, what the terrain is like, and so on."
                     },
@@ -268,32 +279,28 @@ namespace Hecatomb
                 },
                 new TutorialState("Achievements")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "{cyan}A: Achievements, {white}/: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{gray}J) Jobs",
+                        "{cyan}L) Log",
+                        "{gray}R) Research",
+                        "{cyan}V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Casting spells / creating zombies.",
+                        " ",
                         "Forbidden runes swirl around you as you call forth a corpse from its grave.",
                         " ",
-                        "{lime green}You just earned an achievement, as noted on the message bar below the play area.  You can scroll messages up and down using the PageUp and PageDown keys (on a Mac, Fn+Arrows.)",
+                        "{lime green}You just earned an achievement, which has been noted in your message log and on the achievements list.",
                         " ",
-                        "{cyan}Press 'A' to view the achievements screen."
+                        "{cyan}Press 'L' to view the message log or (V) to view your achievements."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action=="ShowAchievements")
+                        if (t.Action=="ShowAchievements" || t.Action=="ShowLog")
                         {
                             NextState();
                         }
@@ -954,7 +961,7 @@ namespace Hecatomb
 				Name = name;
                 OnBegin = NonEvent;
 				HandleEvent = NonEvent;
-				ControlText = new List<ColoredText>();
+				ControlText = new List<ColoredText>() { "Esc: Game menu.", " "};
 				InstructionsText = new List<ColoredText>();
                 RequiresDefaultControls = true;
                 MenuCommands = new List<ColoredText>()

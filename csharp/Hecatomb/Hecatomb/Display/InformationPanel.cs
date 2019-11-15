@@ -108,11 +108,16 @@ namespace Hecatomb
             {
                 lines = lines.Concat(Game.Controls.MenuTop).ToList();
             }
+            if (Game.Controls.MenuMiddle.Count > 0)
+            {
+                lines.Add(" ");
+                lines = lines.Concat(Game.Controls.MenuMiddle).ToList();
+            }
             if (Game.Controls.MenuBottom.Count > 0)
             //if (Game.Controls.MenuBottom.Count > 0 && !Game.World.GetState<TutorialHandler>().Visible && !(Game.Controls is ExamineTileControls))
             {
-                lines.Add(" ");
-                lines.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                //lines.Add(" ");
+                //lines.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 lines.Add(" ");
                 lines = lines.Concat(Game.Controls.MenuBottom).ToList();
             }
