@@ -47,6 +47,8 @@ namespace Hecatomb
             {
                 list = list.Concat(Game.Controls.MenuTop).ToList();
                 list.Add(" ");
+                list.Add("{yellow}Tutorial: Casting spells / creating zombies.");
+                list.Add(" ");
                 list.Add("{cyan}Press escape to return to the main view.");
                 list[0] = "{cyan}Esc) Go back.";
             }
@@ -360,11 +362,13 @@ namespace Hecatomb
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Casting spells / creating zombies.",
+                        " ",
                         "You wait impatiently as your undead thrall claws its way out of its grave.",
                         " ",
                         "{lime green}The orange background around the tombstone indicates that there is a task assigned in that square.",
                         " ",
-                        @"{cyan}Press 5 on the numeric keypad several times, to pass turns (""wait"") until your zombie emerges.  If you have no numeric keypad, press Space to wait."
+                        @"{cyan}Press keypad 5 or space bar several times, to pass turns (""wait"") until your zombie emerges."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -387,11 +391,13 @@ namespace Hecatomb
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Time / Pausing / Speed.",
+                        " ",
                         "Your minion bursts forth from the ground!",
                         " ",
-                        "{lime green}The word 'Pause' above the right-hand side of the message bar.  The game is currently auto-paused - one turn will pass for each action you take.  If you turn auto-pause off, turns will pass in realtime even if you take no actions.  You can press + or - to make time pass faster or slower.",
+                        "{lime green}Notice the word 'Pause' near the top left corner of the screen.  The game is currently auto-paused - one turn will pass for each action you take.  If you turn auto-pause off, turns will pass in realtime even if you take no actions.  You can press + or - to make time pass faster or slower.",
                         " ",
-                        "{cyan}Press Enter / Return to turn off auto-pause, then wait for several turns to pass.",
+                        "{cyan}Press Enter / Return to turn off auto-pause, then wait for several turns to pass.  Press PageUp/Down or Fn+Up/Down to adjust the speed at which time passes when the game is unpaused.",
                         " ",
                         "{lime green}Your zombie will wander a short distance from you.  If it seems to disappear, it probably went up or down a slope."
                     },
@@ -417,24 +423,10 @@ namespace Hecatomb
                 },
                 new TutorialState("AssignJob")
                 {
-                    ControlText = new List<ColoredText>()
-                    {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, {cyan}J: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
-                    },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks.",
+                        " ",
                         "You close your eyes and concentrate, formulating a task for your unthinking slave.",
                         " ",
                         "{cyan}Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
@@ -452,14 +444,26 @@ namespace Hecatomb
                 new TutorialState("ChooseJob")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{yellow}J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
                         "{yellow}Choose a task:",
-                        "{cyan}a) Dig or harvest"
+                        "{cyan}a) Dig or harvest",
+                        " "
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks.",
+                        " ",
                         "You close your eyes and concentrate, formulating a task for your unthinking slave.",
                         " ",
                         "{cyan}Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
@@ -481,20 +485,27 @@ namespace Hecatomb
                 new TutorialState("ChooseDigTiles")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{yellow}J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
                         "{yellow}Select a square with keys or mouse.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "{cyan}Click / Space: Select.",
+                        " "
                     },
                     // there's a divergence between how the tutorial used to work and how it works now...
                     // now it's possible to accidentally harvest trees in this step
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks.",
+                        " ",
                         "{cyan}Using the mouse or keyboard, select two corners of a rectangular area for your zombie to dig.",
                         " ",
                         "{lime green}What 'dig' means is contextual, depending on the terrain you select:",
@@ -521,24 +532,19 @@ namespace Hecatomb
                 },
                 new TutorialState("WaitForDig")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "{cyan}Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, A: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks.",
+                        " ",
                         "The zombie shuffles dutifully to complete its task.",
                         " ",
                         "{cyan}Now wait (pass turns) while your zombie digs.",
@@ -562,19 +568,19 @@ namespace Hecatomb
                 },
                 new TutorialState("CastSpell2")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "{cyan}Z: Cast spell.",
-                        " ",
-                        @"\: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "{cyan}Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Raising multiple zombies.",
+                        " ",
                         "This decaying wretch is but the beginning - soon, you will command an undead horde.",
                         " ",
                         "{lime green}Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed above the left-hand side of the message bar.",
@@ -589,21 +595,34 @@ namespace Hecatomb
                         }
                         else if (t.Action=="Cancel")
                         {
-                            GotoState("CastSpell");
+                            // was this the problem right here?
+                            GotoState("CastSpell2");
                         }
                     },
                 },
                 new TutorialState("ChooseSpell2")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "{yellow}Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
                         "{yellow}Choose a spell:",
-                        "a) Raise Zombie"
+                        "a) Raise Zombie",
+                        " "
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Raising multiple zombies.",
+                        " ",
                         "This decaying wretch is but the beginning - soon, you will command an undead horde.",
                         " ",
                         "{lime green}Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed above the left-hand side of the message bar.",
@@ -625,18 +644,25 @@ namespace Hecatomb
                 new TutorialState("TargetSpell2")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "{yellow}Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
                         "{yellow}Select a square with keys or mouse.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "{cyan}Click / Space: Select.",
+                        " "
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Raising multiple zombies.",
+                        " ",
                         "This decaying wretch is but the beginning - soon, you will command an undead horde.",
                         " ",
                         "{lime green}Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed above the left-hand side of the message bar.",
@@ -658,24 +684,19 @@ namespace Hecatomb
 
                 new TutorialState("WaitForZombie2")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "{cyan}Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, A: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Raising multiple zombies.",
+                        " ",
                         "This decaying wretch is but the beginning - soon, you will command an undead horde.",
                         " ",
                         "{lime green}Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed above the left-hand side of the message bar.",
@@ -683,10 +704,10 @@ namespace Hecatomb
                         "{cyan}Wait (pass turns) until you your zombie emerges."
                     },
                     HandleEvent = (TutorialEvent t) =>
-                    {
+                    {    
                         if (t.Action=="ZombieEmerges")
                         {
-                            // in the unusual circumstance that there are no rocks available, skip to the end of the tutorial
+                            //in the unusual circumstance that there are no rocks available, skip to the end of the tutorial
                             if (Game.World.Player.GetComponent<Movement>().CanFindResources(new Dictionary<string, int>() {{"Rock", 1}}))
                             {
                                 NextState();
@@ -700,26 +721,25 @@ namespace Hecatomb
                 },
                 new TutorialState("CameraMode")
                 {
-
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
                         "{cyan}Avatar mode (Tab: Navigation mode)",
                         " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, J: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Navigation mode.",
+                        " ",
                         "These mindless servants shall be your hands, eyes, and ears.",
                         " ",
                         "{lime green}Once you have several zombies, there is less need for your necromancer to walk around.  You may wish to spend most of your time in 'Navigation Mode', moving the viewing window independently while your necromancer meditates on a throne or conducts research in a laboratory.",
@@ -737,25 +757,19 @@ namespace Hecatomb
                 new TutorialState("MoveCamera")
                 {
                     RequiresDefaultControls = false,
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        "{cyan}Navigation mode (Tab: Avatar mode)",
-                        " ",
-                        "{cyan}Move: NumPad/Arrows, ,/.: Up/Down",
-                        "{cyan}(Control+Arrows for diagonal.)",
-                        "{cyan}Wait: NumPad 5 / Control+Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, J: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Navigation mode.",
+                        " ",
                         "Now you are in navigation mode.",
                         " ",
                         "{lime green}Move the screen around using the keypad or arrows.  Hold Shift to move multiple spaces at a time.  Also try pressing . or , to move the view up or down a level.  To wait in Navigation Mode, press 5 on the keypad, or Control+Space.",
@@ -773,24 +787,19 @@ namespace Hecatomb
                 },
                 new TutorialState("AssignJob2")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, {cyan}J: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{cyan}J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks with ingredients.",
+                        " ",
                         "The stones your zombies hew from the hills can be shaped into walls and pillars.",
                         " ",
                         "{cyan}Press J to assign a job, and then press B to make your zombie build.",
@@ -806,15 +815,27 @@ namespace Hecatomb
                 new TutorialState("ChooseJob2")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{yellow}J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
                         "{yellow}Choose a task:",
                         "a) dig or harvest",
-                        "{cyan}b) build walls or floors ($: 1 rock)"
+                        "{cyan}b) build walls or floors ($: 1 rock)",
+                        " "
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks with ingredients.",
+                        " ",
                         "The stones your zombies hew from the hills can be shaped into walls and pillars.",
                         " ",
                         "{cyan}Press J to assign a job, and then press B to make your zombie build.",
@@ -834,18 +855,25 @@ namespace Hecatomb
                 new TutorialState("ChooseBuildTiles")
                 {
                     RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{yellow}J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
                         "{yellow}Select a square with keys or mouse.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        " ",
-                        "{cyan}Click / Space: Select.",
+                        " "
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks with ingredients.",
+                        " ",
                         "{cyan}Using the mouse or keyboard, select two corners of a rectangular area for your zombie to build.",
                         " ",
                         "{lime green}What 'build' means is contextual, depending on the terrain you select:",
@@ -870,24 +898,19 @@ namespace Hecatomb
                 },
                 new TutorialState("WaitForBuild")
                 {
-                    ControlText = new List<ColoredText>()
+                    MenuCommands = new List<ColoredText>()
                     {
-                        "Esc: Game menu.",
-                        " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down.",
-                        "(Control+Arrows for diagonal.)",
-                        "{cyan}Wait: NumPad 5 / Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        "Z: Cast spell, A: Assign job.",
-                        " ",
-                        "PageUp/Down: Scroll messages.",
-                        "A: Achievements, /: Toggle tutorial."
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "{gray}R) Research",
+                        "V) Achievements"
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        "{yellow}Tutorial: Assigning tasks with ingredients.",
+                        " ",
                         "{lime green}Building walls or floors requires rocks as ingredients.  Notice that your zombies claim rocks and fetch them; the claimed rocks are highlighted.",
                         " ",
                         "{cyan}Wait for your zombies to build."
@@ -900,31 +923,30 @@ namespace Hecatomb
                         }
                     },
                 },
-                // Maybe just call it quits at this point
+                // This may need to be split into two steps, one of which has all the different commands listed
 				new TutorialState("EndOfTutorial")
                 {
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "R) Research",
+                        "V) Achievements"
+                    },
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
                         " ",
-                        "Navigation mode (Tab: Avatar mode)",
+                        "{red}List all the commands here.",
                         " ",
-                        "Move: NumPad/Arrows, ,/.: Up/Down",
-                        "(Control+Arrows for diagonal.)",
-                        "Wait: NumPad 5 / Control+Space.",
-                        " ",
-                        "Enter: Enable auto-pause.",
-                        "+/-: Change speed.",
-                        " ",
-                        //"Z: Cast spell, J: Assign job.",
-                        " ",
-                        //"PageUp/Down: Scroll messages.", // this would now be on that log only
-                        "A: Achievements, "
-                        //"{cyan}/: Toggle tutorial."
+                        "{cyan}/: Toggle tutorial."
                     },
                     InstructionsText = new List<ColoredText>()
                     {
-                        // rewrite
+                        "{yellow}Tutorial: Commands.",
+                        " ",
                         "Cruel laughter wells in your throat.  Your fortress will cast a shadow of menace over all the land.  The undead under your command will become a legion, a multitude, an army.  And then all who have wronged you will pay!",
                         " ",
                         "{lime green}Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  See if you can unlock all the achievements in the demo.",

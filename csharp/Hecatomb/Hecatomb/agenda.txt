@@ -8,7 +8,11 @@
 - Should certain events force you into log mode?  Or maybe highlight the log in magenta?
 - We aren't consistent on Esc) versus Escape)
 - Ideally want to get time of day, phase of moon, and total turn number on there.
-
+- Should Log light up when there is unviewed text?
+- the current system, where the tutorial text completely replaces the normal text, is probably not viable when we have timing and pausing and stuff on that panel.
+- Sanity mostly not listed during tutorial
+- Seems like we get stuck in a zombie summoning loop, we don't get to the second summoning
+- Some menu tutorials need a space at the bottom
 
 Tutorial notes:
 0a) There's a ton of text right off the bat.
