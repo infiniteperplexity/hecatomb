@@ -158,17 +158,17 @@ namespace Hecatomb
             }
             else if (panel is CommandsPanel)
         	{
-                Game.InfoPanel.ShowSummary();
+                //Game.InfoPanel.ShowSummary();
                 OnMenuHover(x, y);
         	}
         	else if (panel is InformationPanel)
         	{
-                Game.InfoPanel.ShowSummary();
+                //Game.InfoPanel.ShowSummary();
                 OnStatusHover(x, y);
         	}
         	else
         	{
-                Game.InfoPanel.ShowSummary();
+                //Game.InfoPanel.ShowSummary();
                 Nothing(x, y);
         	}
         }

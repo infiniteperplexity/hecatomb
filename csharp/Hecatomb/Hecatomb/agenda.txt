@@ -7,6 +7,7 @@
 - Need visible auto-pause
 - Should certain events force you into log mode?  Or maybe highlight the log in magenta?
 - We aren't consistent on Esc) versus Escape)
+- Ideally want to get time of day, phase of moon, and total turn number on there.
 
 
 Tutorial notes:

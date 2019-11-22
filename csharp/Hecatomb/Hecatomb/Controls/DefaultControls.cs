@@ -77,7 +77,12 @@ namespace Hecatomb
                 var p = Game.World.Player;
                 
                 TurnHandler t = Game.World.Turns;
+                if (Game.Time.AutoPausing || Game.Time.PausedAfterLoad)
+                {
+                    MenuTop.Add("{yellow}Paused");
+                }
                 string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
+                //string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
                 MenuTop.Add(time);
                 MenuTop.Add(" ");
                 MenuTop.Add($"Sanity: {p.GetComponent<SpellCaster>().Sanity}/{p.GetComponent<SpellCaster>().GetCalculatedMaxSanity()}");

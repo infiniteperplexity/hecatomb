@@ -186,6 +186,7 @@ namespace Hecatomb
         {
             if (Panels.Count > 0)
             {
+                Game.Controls?.RefreshContent();
                 foreach (var panel in Panels[0])
                 {
                     if (!(panel is MainPanel))
@@ -198,8 +199,10 @@ namespace Hecatomb
 
         public static void DirtifyUsualPanels()
         {
+
             if (Panels.Count > 0)
             {
+                Game.Controls?.RefreshContent();
                 foreach (var panel in Panels[0])
                 {
                     panel.Dirty = true;

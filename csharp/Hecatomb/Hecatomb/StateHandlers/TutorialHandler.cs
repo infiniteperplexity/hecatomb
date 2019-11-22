@@ -43,7 +43,14 @@ namespace Hecatomb
         public List<ColoredText> GetText()
         {
             var list = new List<ColoredText>();
-            if (!Current.RequiresDefaultControls || Game.Controls == Game.DefaultControls)
+            if (Current.Name == "Log")
+            {
+                list = list.Concat(Game.Controls.MenuTop).ToList();
+                list.Add(" ");
+                list.Add("{cyan}Press escape to return to the main view.");
+                list[0] = "{cyan}Esc) Go back.";
+            }
+            else if (!Current.RequiresDefaultControls || Game.Controls is DefaultControls)
             {
                 list = Current.ControlText.ToList();
                 list = list.Concat(Current.InstructionsText).ToList();
@@ -60,6 +67,7 @@ namespace Hecatomb
             }
             else
             {
+                Debug.WriteLine(Game.Controls);
                 list = list.Concat(Game.Controls.MenuTop).ToList();
                 list.Add(" ");
                 list = list.Concat(OffTutorialText).ToList();
@@ -297,11 +305,39 @@ namespace Hecatomb
                         " ",
                         "{lime green}You just earned an achievement, which has been noted in your message log and on the achievements list.",
                         " ",
-                        "{cyan}Press 'L' to view the message log or (V) to view your achievements."
+                        "{cyan}Press 'L' to view the message log."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action=="ShowAchievements" || t.Action=="ShowLog")
+                        if (t.Action=="ShowLog")
+                        {
+                            NextState();
+                        }
+                        else if (t.Action=="ZombieEmerges")
+                        {
+                            GotoState("Unpausing");
+                        }
+                    },
+                },
+                new TutorialState("Log")
+                {
+                    RequiresDefaultControls = false,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "{gray}J) Jobs",
+                        "{yellow}L) Log",
+                        "{gray}R) Research",
+                        "{cyan}V) Achievements"
+                    },
+                    InstructionsText = new List<ColoredText>()
+                    {
+                        // needs special handling
+                    },
+                    HandleEvent = (TutorialEvent t) =>
+                    {
+                        if (t.Action=="Cancel")
                         {
                             NextState();
                         }

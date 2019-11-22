@@ -42,7 +42,7 @@ namespace Hecatomb
             }
             else
             {
-                co.MenuMiddle = new List<ColoredText>() { "{green}"+$"Declare hostility to {cr}." };
+                co.MenuMiddle = new List<ColoredText>() { "{green}"+$"Declare hostility to {cr.Describe()}." };
                 return;
             }
             

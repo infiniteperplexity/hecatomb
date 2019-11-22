@@ -201,22 +201,25 @@ namespace Hecatomb
 		{
 			if (Makes==null)
 			{
-				Game.Controls.Set(new MenuChoiceControls(this));
-			}
+                var menu = new MenuChoiceControls(this);
+                menu.Header = "Choose a structure:";
+                Game.Controls.Set(menu);
+            }
 			else
 			{
 				Game.Controls.Set(new SelectBoxControls(this));
 			}
 		}
 
-        public override void TileHover(Coord c)
-		{
-			var co = Game.Controls;
-			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<ColoredText>() {"{green}"+String.Format("Build from {0} {1} {2}", c.X, c.Y, c.Z)};
-		}
-		
-		public override void SelectBox(Coord c, List<Coord> squares)
+        public override void BoxHover(Coord c, List<Coord> squares)
+        {
+            base.BoxHover(c, squares);
+            var co = Game.Controls;
+            co.MenuMiddle.Clear();
+            co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {0} in this area.", Mock().Name) };
+        }
+
+        public override void SelectBox(Coord c, List<Coord> squares)
 		{
             foreach (Coord s in squares)
             {

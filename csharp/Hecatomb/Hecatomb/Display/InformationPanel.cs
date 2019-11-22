@@ -96,7 +96,6 @@ namespace Hecatomb
         public override void Draw()
         {
             Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-            string txt;
             var cp = Game.MenuPanel;
             var k = Keyboard.GetState();
             var lines = new List<ColoredText>();

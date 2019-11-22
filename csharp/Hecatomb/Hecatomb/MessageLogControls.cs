@@ -41,16 +41,22 @@ namespace Hecatomb
             {
                 "{orange}Esc) Back.",
                 " ",
-                "PageUp/PageDown: Scroll up/down",
-                "(Fn + Up/Down on Mac)",
-                " "
+                "{yellow}Message Log:",
+                "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             };
             var list = Game.World.GetState<MessageHandler>().MessageHistory.GetRange(SelectedMessage, MaxVisible).ToList();
             if (list.Count > 1 && list[1].Colors.Count == 0)
             {
                 list[0] = new ColoredText(list[1].Text, "cyan");
             }
-            MenuTop = controls.Concat(list).ToList();
+            if (list.Count==0)
+            {
+                list.Add("{cyan}Welcome to Hecatomb!");
+            }
+            list = controls.Concat(list).ToList();
+            list.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            list.Add("Scroll: Page/Fn Up/Down");
+            MenuTop = list.ToList();
         }
 
         // huh...so...the "ShowScroll" thing...do we still want that?

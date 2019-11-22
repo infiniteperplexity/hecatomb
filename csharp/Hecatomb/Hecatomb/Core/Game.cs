@@ -26,18 +26,11 @@ namespace Hecatomb
         public static Camera Camera;
         public static ContentManager MyContentManager;
         public static Dictionary<string, object> Caches;
-        //public static MainGamePanel MainPanel;
         public static MainPanel MainPanel;
-        //public static MenuGamePanel MenuPanel;
         public static CommandsPanel MenuPanel;
-        //public static StatusGamePanel StatusPanel;
         public static InformationPanel InfoPanel;
-        //public static SplashPanel SplashPanel;
         public static SplashPanel SplashPanel;
-        //public static ForegroundPanel ForegroundPanel;
         public static FullScreenPanel ForegroundPanel;
-        //public static Menu2GamePanel Menu2Panel;
-
 
         public static ControlContext LastControls;
         public static ControlContext Controls;
@@ -164,7 +157,7 @@ namespace Hecatomb
             }
             else
             {
-                Controls = new DefaultControls();  
+                Controls = DefaultControls;  
             }
         }
         public void StartGame()

@@ -42,15 +42,8 @@ namespace Hecatomb
 			};
 			MenuTop = new List<ColoredText>() {
      			"{orange}**Esc: Cancel.**",
-      			"{yellow}Select a box with keys or mouse.",
-      			" ",
-     			"Move: NumPad/Arrows, ,/.: Up/Down.",
-      			"(Control+Arrows for diagonal.)",
-      			"Wait: NumPad 5 / Control+Space.",
-      			" ",
-      			"Click / Space: Select.",
-      			"Enter: Toggle Pause."
-			};
+                "{yellow}Select an area with keys or mouse."
+            };
 		}
 		
 		
