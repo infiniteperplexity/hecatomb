@@ -44,6 +44,17 @@ namespace Hecatomb
 			LastUpdate = DateTime.Now;
 		}
 
+        public List<ColoredText> GetTimeText()
+        {
+            var list = new List<ColoredText>();
+            var t = Game.World.Turns;
+            // should probably show the speed when unpaused
+            list.Add((Game.Time.AutoPausing || Game.Time.PausedAfterLoad) ? "{yellow}Paused" : " ");
+            string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
+            //string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
+            list.Add(time);
+            return list;
+        }
         public void SlowDown()
         {
             if (SpeedIndex < Speeds.Count - 1)

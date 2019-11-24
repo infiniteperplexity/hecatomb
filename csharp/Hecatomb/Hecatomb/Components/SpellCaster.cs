@@ -129,5 +129,10 @@ namespace Hecatomb
 			s.Caster = (Creature) this.Entity;
 			return s;
 		}
+
+        public ColoredText GetSanityText()
+        {
+            return $"Sanity: {Sanity}/{GetCalculatedMaxSanity()}";
+        }
 	}
 }

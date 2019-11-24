@@ -56,12 +56,26 @@ namespace Hecatomb
             {
                 list = Current.ControlText.ToList();
                 list = list.Concat(Current.InstructionsText).ToList();
+                if (Current.ShowTimeAndSanity)
+                {
+                    var ins = Game.Time.GetTimeText();
+                    ins.Add(" ");
+                    ins.Add(Game.World.Player.GetComponent<SpellCaster>().GetSanityText());
+                    list.InsertRange(4, ins);
+                }
             }
             else if (Game.Controls == Game.CameraControls)
             {
                 list = list.Concat(Game.Controls.MenuTop).ToList();
                 list.Add(" ");
                 list = list.Concat(OffTutorialCamera).ToList();
+                if (Current.ShowTimeAndSanity)
+                {
+                    var ins = Game.Time.GetTimeText();
+                    ins.Add(" ");
+                    ins.Add(Game.World.Player.GetComponent<SpellCaster>().GetSanityText());
+                    list.InsertRange(4, ins);
+                }
             }
             else if (Game.Controls is ExamineTileControls)
             {
@@ -380,6 +394,7 @@ namespace Hecatomb
                 },
                 new TutorialState("Unpausing")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -423,6 +438,7 @@ namespace Hecatomb
                 },
                 new TutorialState("AssignJob")
                 {
+                    ShowTimeAndSanity = true,
                     InstructionsText = new List<ColoredText>()
                     {
                         "{yellow}Tutorial: Assigning tasks.",
@@ -532,6 +548,7 @@ namespace Hecatomb
                 },
                 new TutorialState("WaitForDig")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -568,6 +585,7 @@ namespace Hecatomb
                 },
                 new TutorialState("CastSpell2")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -684,6 +702,7 @@ namespace Hecatomb
 
                 new TutorialState("WaitForZombie2")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -721,6 +740,7 @@ namespace Hecatomb
                 },
                 new TutorialState("CameraMode")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -757,6 +777,7 @@ namespace Hecatomb
                 new TutorialState("MoveCamera")
                 {
                     RequiresDefaultControls = false,
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -787,6 +808,7 @@ namespace Hecatomb
                 },
                 new TutorialState("AssignJob2")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -898,6 +920,7 @@ namespace Hecatomb
                 },
                 new TutorialState("WaitForBuild")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -926,6 +949,7 @@ namespace Hecatomb
                 // This may need to be split into two steps, one of which has all the different commands listed
 				new TutorialState("EndOfTutorial")
                 {
+                    ShowTimeAndSanity = true,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -1003,6 +1027,7 @@ namespace Hecatomb
 			public List<ColoredText> ControlText;
 			public List<ColoredText> InstructionsText;
             public bool RequiresDefaultControls;
+            public bool ShowTimeAndSanity;
             public List<ColoredText> MenuCommands;
             public TutorialState(string name)
 			{

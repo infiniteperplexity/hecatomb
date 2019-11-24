@@ -75,17 +75,11 @@ namespace Hecatomb
             if (Game.World != null && Game.World.Player != null)
             {
                 var p = Game.World.Player;
-                
-                TurnHandler t = Game.World.Turns;
-                if (Game.Time.AutoPausing || Game.Time.PausedAfterLoad)
-                {
-                    MenuTop.Add("{yellow}Paused");
-                }
-                string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
-                //string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
-                MenuTop.Add(time);
+                var time = Game.Time.GetTimeText();
+                MenuTop.Add(time[0]);
+                MenuTop.Add(time[1]);
                 MenuTop.Add(" ");
-                MenuTop.Add($"Sanity: {p.GetComponent<SpellCaster>().Sanity}/{p.GetComponent<SpellCaster>().GetCalculatedMaxSanity()}");
+                MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
                 if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
                 {
                     MenuTop.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
