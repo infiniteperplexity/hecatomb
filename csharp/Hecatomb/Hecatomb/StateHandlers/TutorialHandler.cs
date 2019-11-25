@@ -22,6 +22,7 @@ namespace Hecatomb
         public int SlopeCount;
         public bool HasUnpaused;
         public int TurnsWaited;
+        public int NonTutorialTurns;
         [JsonIgnore] public List<ColoredText> OffTutorialText;
         [JsonIgnore] public List<ColoredText> OffTutorialCamera;
         
@@ -99,6 +100,10 @@ namespace Hecatomb
             SlopeCount = 0;
             CurrentIndex = 0;
             Visible = !Options.NoTutorial;
+            if (Options.NoTutorial)
+            {
+                GotoState("CommandsReference");
+            }
             AddListener<TutorialEvent>(HandleEvent);
             OffTutorialText = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Escape to get back on track or ? to hide tutorial messages." };
             OffTutorialCamera = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Tab to get back on track or ? to hide tutorial messages." };
@@ -408,6 +413,7 @@ namespace Hecatomb
                     {
                         "{yellow}Tutorial: Time / Pausing / Speed.",
                         " ",
+                        " ",
                         "Your minion bursts forth from the ground!",
                         " ",
                         "{lime green}Notice the word 'Pause' near the top left corner of the screen.  The game is currently auto-paused - one turn will pass for each action you take.  If you turn auto-pause off, turns will pass in realtime even if you take no actions.  You can press + or - to make time pass faster or slower.",
@@ -426,7 +432,18 @@ namespace Hecatomb
                         {
                             TurnsWaited+=1;
                         }
-                        if (HasUnpaused && TurnsWaited>=15)
+                        if (t.Action == "DigTaskComplete")
+                        {
+                            if (GetState<TaskHandler>().Minions.Count>1)
+                            {
+                                GotoState("CameraMode");
+                            }
+                            else
+                            {
+                                GotoState("CastSpell2");
+                            }
+                        }
+                        else if (HasUnpaused && TurnsWaited>=15)
                         {
                             NextState();
                         }
@@ -443,6 +460,7 @@ namespace Hecatomb
                     {
                         "{yellow}Tutorial: Assigning tasks.",
                         " ",
+                        " ",
                         "You close your eyes and concentrate, formulating a task for your unthinking slave.",
                         " ",
                         "{cyan}Press J to assign a job, and then press A to make your zombie dig.  You can assign a job from any distance.",
@@ -451,7 +469,18 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action == "ShowJobs")
+                        if (t.Action == "DigTaskComplete")
+                        {
+                            if (GetState<TaskHandler>().Minions.Count>1)
+                            {
+                                GotoState("CameraMode");
+                            }
+                            else
+                            {
+                                GotoState("CastSpell2");
+                            }
+                        }
+                        else if (t.Action == "ShowJobs")
                         {
                             NextState();
                         }
@@ -488,7 +517,18 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action =="ChooseDigTask")
+                        if (t.Action == "DigTaskComplete")
+                        {
+                            if (GetState<TaskHandler>().Minions.Count>1)
+                            {
+                                GotoState("CameraMode");
+                            }
+                            else
+                            {
+                                GotoState("CastSpell2");
+                            }
+                        }
+                        else if (t.Action =="ChooseDigTask")
                         {
                             NextState();
                         }
@@ -536,7 +576,18 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action == "DesignateDigTask")
+                        if (t.Action == "DigTaskComplete")
+                        {
+                            if (GetState<TaskHandler>().Minions.Count>1)
+                            {
+                                GotoState("CameraMode");
+                            }
+                            else
+                            {
+                                GotoState("CastSpell2");
+                            }
+                        }
+                        else if (t.Action == "DesignateDigTask")
                         {
                             NextState();
                         }
@@ -561,6 +612,7 @@ namespace Hecatomb
                     InstructionsText = new List<ColoredText>()
                     {
                         "{yellow}Tutorial: Assigning tasks.",
+                        " ",
                         " ",
                         "The zombie shuffles dutifully to complete its task.",
                         " ",
@@ -598,6 +650,7 @@ namespace Hecatomb
                     InstructionsText = new List<ColoredText>()
                     {
                         "{yellow}Tutorial: Raising multiple zombies.",
+                        " ",
                         " ",
                         "This decaying wretch is but the beginning - soon, you will command an undead horde.",
                         " ",
@@ -740,7 +793,7 @@ namespace Hecatomb
                 },
                 new TutorialState("CameraMode")
                 {
-                    ShowTimeAndSanity = 6,
+                    ShowTimeAndSanity = 5,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -753,22 +806,27 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
-                        "{cyan}Avatar mode (Tab: Navigation mode)",
+                        "{cyan}Avatar (Tab: Navigate)",
                         " ",
                     },
                     InstructionsText = new List<ColoredText>()
                     {
                         "{yellow}Tutorial: Navigation mode.",
                         " ",
+                        " ",
                         "These mindless servants shall be your hands, eyes, and ears.",
                         " ",
                         "{lime green}Once you have several zombies, there is less need for your necromancer to walk around.  You may wish to spend most of your time in 'Navigation Mode', moving the viewing window independently while your necromancer meditates on a throne or conducts research in a laboratory.",
                         " ",
-                        "{cyan}Press Tab to enter Navigation Mode.",
+                        "{cyan}Press Tab to enter navigation mode.",
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action=="CameraMode")
+                        if (t.Action=="BuildTaskComplete")
+                        {
+                            GotoState("EndOfTutorial");
+                        }
+                        else if (t.Action=="CameraMode")
                         {
                             NextState();
                         }
@@ -777,7 +835,7 @@ namespace Hecatomb
                 new TutorialState("MoveCamera")
                 {
                     RequiresDefaultControls = false,
-                    ShowTimeAndSanity = 6,
+                    ShowTimeAndSanity = 5,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -790,12 +848,13 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
-                        "{cyan}Navigation mode (Tab: Avatar mode)",
+                        "{cyan}Navigate (Tab: Avatar)",
                         " ",
                     },
                     InstructionsText = new List<ColoredText>()
                     {
                         "{yellow}Tutorial: Navigation mode.",
+                        " ",
                         " ",
                         "Now you are in navigation mode.",
                         " ",
@@ -805,7 +864,11 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action=="MainMode")
+                        if (t.Action=="BuildTaskComplete")
+                        {
+                            GotoState("EndOfTutorial");
+                        }
+                        else if (t.Action=="MainMode")
                         {
                             NextState();
                         }
@@ -814,7 +877,13 @@ namespace Hecatomb
                 },
                 new TutorialState("AssignJob2")
                 {
-                    ShowTimeAndSanity = 6,
+                    ShowTimeAndSanity = 5,
+                    ControlText = new List<ColoredText>()
+                    {
+                        "Esc: Game menu.",
+                        "{yellow}Avatar (Tab: Navigate)",
+                        " ",
+                    },
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -828,19 +897,18 @@ namespace Hecatomb
                     {
                         "{yellow}Tutorial: Assigning tasks with ingredients.",
                         " ",
+                        " ",
                         "The stones your zombies hew from the hills can be shaped into walls and pillars.",
                         " ",
                         "{cyan}Press J to assign a job, and then press B to make your zombie build.  Your zombies need one rock for each wall, so don't assign too many.",
                     },
-                    ControlText = new List<ColoredText>()
-                    {
-                        "Esc: Game menu.",
-                        "{cyan}Avatar mode (Tab: Navigation mode)",
-                        " ",
-                    },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action == "ShowJobs")
+                        if (t.Action=="BuildTaskComplete")
+                        {
+                            GotoState("EndOfTutorial");
+                        }
+                        else if (t.Action == "ShowJobs")
                         {
                             NextState();
                         }
@@ -876,7 +944,11 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action =="ChooseBuildTask")
+                        if (t.Action=="BuildTaskComplete")
+                        {
+                            GotoState("EndOfTutorial");
+                        }
+                        else if (t.Action =="ChooseBuildTask")
                         {
                             NextState();
                         }
@@ -920,7 +992,11 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action == "DesignateBuildTask")
+                        if (t.Action=="BuildTaskComplete")
+                        {
+                            GotoState("EndOfTutorial");
+                        }
+                        else if (t.Action == "DesignateBuildTask")
                         {
                             NextState();
                         }
@@ -932,7 +1008,7 @@ namespace Hecatomb
                 },
                 new TutorialState("WaitForBuild")
                 {
-                    ShowTimeAndSanity = 6,
+                    ShowTimeAndSanity = 5,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -945,12 +1021,13 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
-                        "{cyan}Avatar mode (Tab: Navigation mode)",
+                        "{yellow}Avatar (Tab: Navigate)",
                         " ",
                     },
                     InstructionsText = new List<ColoredText>()
                     {
                         "{yellow}Tutorial: Assigning tasks with ingredients.",
+                        " ",
                         " ",
                         "{lime green}Building walls or floors requires rocks as ingredients.  Notice that your zombies claim rocks and fetch them; the claimed rocks are highlighted.",
                         " ",
@@ -967,7 +1044,7 @@ namespace Hecatomb
                 // This may need to be split into two steps, one of which has all the different commands listed
 				new TutorialState("EndOfTutorial")
                 {
-                    ShowTimeAndSanity = 6,
+                    ShowTimeAndSanity = 5,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -980,19 +1057,61 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
-                        "{cyan}Avatar mode (Tab: Navigation mode)",
-                        " ",
-                        "{red}List all the commands here.",
+                        "{yellow}Avatar (Tab: Navigate)",
+                        " "
                     },
                     InstructionsText = new List<ColoredText>()
                     {
-                        "{yellow}Tutorial: Commands.",
+                        "{yellow}End of tutorial.",
+                        " ",
                         " ",
                         "Cruel laughter wells in your throat.  Your fortress will cast a shadow of menace over all the land.  The undead under your command will become a legion, a multitude, an army.  And then all who have wronged you will pay!",
                         " ",
                         "{lime green}Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  See if you can unlock all the achievements in the demo.",
                         " ",
-                        "{cyan}Press ? to dismiss these messages."
+                        "{cyan}Press ? to dismiss these messages. If you return to the tutorial later, you will see a list of commands."
+                    },
+                    HandleEvent = (TutorialEvent t) =>
+                    {
+                        Debug.WriteLine("Checking end of tutorial");
+                        if (t.Action=="HideTutorial")
+                        {
+                            NextState();
+                        }
+                    },
+                },
+                new TutorialState("CommandsReference")
+                {
+                    ShowTimeAndSanity = 5,
+                    MenuCommands = new List<ColoredText>()
+                    {
+                        "{cyan}?) Tutorial",
+                        "Z) Spells",
+                        "J) Jobs",
+                        "L) Log",
+                        "R) Research",
+                        "V) Achievements"
+                    },
+                    ControlText = new List<ColoredText>()
+                    {
+                        "Esc: Game menu.",
+                        "{yellow}Avatar (Tab: Navigate)",
+                        " "
+                    },
+                    InstructionsText = new List<ColoredText>()
+                    {
+                        "{yellow}Tutorial: Commands.",
+                        " ",
+                        " ",
+                        "{cyan}WASD/QEXC/arrows/keypad to walk or move cursor.",
+                        " ",
+                        "{cyan}Keypad 5/Space to wait (Ctrl+Space in navigation mode.)",
+                        " ",
+                        "{cyan}Space to select with cursor.",
+                        " ",
+                        "{cyan}Enter/Return to toggle auto-pause.",
+                        " ",
+                        "{cyan}PageUp/Down or Fn+Up/Down to adjust speed."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -1031,6 +1150,29 @@ namespace Hecatomb
             {
                 Activate();
             }
+            if (g is TurnBeginEvent && !Visible)
+            {
+                NonTutorialTurns += 1;
+                if (NonTutorialTurns > 50 && Current.Name != "CommandsReference")
+                {
+                    GotoState("CommandsReference");
+                }
+            }
+            if (g is TutorialEvent)
+            {
+                TutorialEvent t = (TutorialEvent)g;
+                if (t.Action == "BuildTaskComplete")
+                {
+                    if (Visible && Current.Name != "CommandsReference")
+                    {
+                        GotoState("EndOfTutorial");
+                    }
+                    else
+                    {
+                        GotoState("CommandsReference");
+                    }
+                }
+            }
             TutorialStates[CurrentIndex].HandleEvent((TutorialEvent) g);
 			return g;
 		}
@@ -1046,6 +1188,7 @@ namespace Hecatomb
             public bool RequiresDefaultControls;
             public int ShowTimeAndSanity;
             public List<ColoredText> MenuCommands;
+            
             public TutorialState(string name)
 			{
 				Name = name;

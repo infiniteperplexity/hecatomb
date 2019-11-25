@@ -14,6 +14,7 @@
 - Seems like we get stuck in a zombie summoning loop, we don't get to the second summoning
 - Some menu tutorials need a space at the bottom
 - TurnHandler is accessed in a bizarre way incompatible with other state handlers
+- Maybe make it so certain actions outside the tutorial advance the tutorial to the end?
 
 Tutorial notes:
 0a) There's a ton of text right off the bat.

@@ -376,6 +376,10 @@ namespace Hecatomb
         public void ToggleTutorial()
         {
             var tutorial = Game.World.GetState<TutorialHandler>();
+            if (tutorial.Visible)
+            {
+                Game.World.Events.Publish(new TutorialEvent() { Action = "HideTutorial" });
+            }
             tutorial.Visible = !tutorial.Visible;
             InterfacePanel.DirtifySidePanels();
         }
