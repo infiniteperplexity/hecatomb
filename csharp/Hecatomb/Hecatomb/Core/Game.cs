@@ -310,6 +310,10 @@ namespace Hecatomb
             {
                 MainPanel.Draw();
                 InfoPanel.Draw();
+                if (SplashPanel.Active)
+                {
+                    SplashPanel.Draw();
+                }
             }
             else if (!Time.Frozen || sinceDraw > TimeSpan.FromMilliseconds(500))
             {

@@ -298,6 +298,7 @@ namespace Hecatomb
             //Game.World.Parse(json);
             Game.World.Parse(@"..\" + Game.GameName + ".json");
             // we need some kind of failure handling...
+            Game.MainPanel.IntroState = false;
             ControlContext.Reset();
         }
         public void RestoreGameCommand()

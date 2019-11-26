@@ -99,7 +99,7 @@ namespace Hecatomb
             var cp = Game.MenuPanel;
             var k = Keyboard.GetState();
             var lines = new List<ColoredText>();
-            if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+            if (Game.World != null && !Game.Time.Frozen && Game.World.GetState<TutorialHandler>().Visible)
             {
                 lines = lines.Concat(Game.World.GetState<TutorialHandler>().GetText()).ToList();
             }
