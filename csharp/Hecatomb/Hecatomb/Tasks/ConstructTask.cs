@@ -203,11 +203,11 @@ namespace Hecatomb
 			{
                 var menu = new MenuChoiceControls(this);
                 menu.Header = "Choose a structure:";
-                Game.Controls.Set(menu);
+                ControlContext.Set(menu);
             }
 			else
 			{
-				Game.Controls.Set(new SelectBoxControls(this));
+				ControlContext.Set(new SelectBoxControls(this));
 			}
 		}
 

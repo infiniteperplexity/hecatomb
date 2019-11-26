@@ -17,6 +17,11 @@ namespace Hecatomb
         private static Regex capture = new Regex("\\{([^}]*)\\}");
         private static char[] braces = new char[] { '{', '}' };
 
+        public ColoredText()
+        {
+            Colors = new SortedList<int, string>();
+            Text = "";
+        }
         public ColoredText(string s)
         {
             Colors = new SortedList<int, string>();

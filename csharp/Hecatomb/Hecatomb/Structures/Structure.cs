@@ -237,9 +237,10 @@ namespace Hecatomb
 
         public virtual void BuildMenu(MenuChoiceControls menu)
         {
+            Debug.WriteLine("testing");
             
             // might want to format htis guy a bit...like add coordinates?
-            menu.Header = "Structure: " + Describe();
+            menu.Header = "Structure: " + Describe();          
             ControlContext.Selection = this;
             if (Tasks[X, Y, Z] != null)
             {
@@ -269,7 +270,6 @@ namespace Hecatomb
         }
         public virtual void FinishMenu(MenuChoiceControls menu)
         {
-            Debug.WriteLine("rebuilding structure menu content");
             menu.MenuTop.Insert(2, "Tab) Next structure.");
             if (Researching != null)
             {
@@ -299,12 +299,13 @@ namespace Hecatomb
                     menu.MenuTop.Add("- " + Resource.Format((res, stored[res])));
                 }
             }
-            InterfacePanel.DirtifySidePanels();
+            Game.InfoPanel.Dirty = true;
+            //InterfacePanel.DirtifySidePanels();
             menu.KeyMap[Keys.Escape] =
                 () =>
                 {
                     ControlContext.Selection = null;
-                    Game.Controls.Reset();
+                    ControlContext.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextStructure;
         }
@@ -349,11 +350,11 @@ namespace Hecatomb
                 }
                 if (n==-1 || n==structures.Count-1)
                 {
-                    Controls.Set(new MenuChoiceControls((Structure)structures[0]));
+                    ControlContext.Set(new MenuChoiceControls((Structure)structures[0]));
                 }
                 else
                 {
-                    Controls.Set(new MenuChoiceControls((Structure)structures[n+1]));
+                    ControlContext.Set(new MenuChoiceControls((Structure)structures[n+1]));
                 }
             }
         }

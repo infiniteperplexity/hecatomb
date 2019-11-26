@@ -58,7 +58,7 @@ namespace Hecatomb
                 Caster.GetComponent<Movement>().StepTo(c.X, c.Y, c.Z);
                 Caster.GetComponent<Actor>().Spend();
                 Game.Camera.Center(c.X, c.Y, c.Z);
-                Controls.Reset();
+                ControlContext.Reset();
                 ParticleEmitter emitter2 = new ParticleEmitter();
                 emitter2.Place(c.X, c.Y, c.Z);
                 base.Cast();

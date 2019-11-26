@@ -100,10 +100,6 @@ namespace Hecatomb
             SlopeCount = 0;
             CurrentIndex = 0;
             Visible = !Options.NoTutorial;
-            if (Options.NoTutorial)
-            {
-                GotoState("CommandsReference");
-            }
             AddListener<TutorialEvent>(HandleEvent);
             OffTutorialText = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Escape to get back on track or ? to hide tutorial messages." };
             OffTutorialCamera = new List<ColoredText>() { "{orange}You have strayed from the tutorial.  Press Tab to get back on track or ? to hide tutorial messages." };
@@ -1115,13 +1111,13 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action=="HideTutorial")
-                        {
-                            NextState();
-                        }
                     },
                 }
             };
+            if (Options.NoTutorial)
+            {
+                GotoState("CommandsReference");
+            }
         }
 		
 		public void NextState()

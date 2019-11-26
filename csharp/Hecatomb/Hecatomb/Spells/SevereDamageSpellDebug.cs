@@ -29,7 +29,7 @@ namespace Hecatomb
             }
             else
             {
-                Game.Controls.Set(new SelectTileControls(this));
+                ControlContext.Set(new SelectTileControls(this));
             }
         }
 

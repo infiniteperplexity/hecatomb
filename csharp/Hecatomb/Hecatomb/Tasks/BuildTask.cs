@@ -202,7 +202,7 @@ namespace Hecatomb
         public override void ChooseFromMenu()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseBuildTask" });
-            Game.Controls.Set(new SelectZoneControls(this));
+            ControlContext.Set(new SelectZoneControls(this));
 		}
 
         public override bool ValidTile(Coord c)

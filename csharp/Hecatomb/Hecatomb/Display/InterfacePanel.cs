@@ -155,7 +155,7 @@ namespace Hecatomb
                     }
                     if ((y+1) * CharHeight < PixelHeight)
                     {
-                        v = new Vector2(leftMargin + X0 + CharWidth * LeftMargin + x * CharWidth, topMargin + TopMargin + Y0 + y * CharHeight);
+                        v = new Vector2(leftMargin + X0 + CharWidth * LeftMargin + x * CharWidth, topMargin + TopMargin * CharHeight + Y0 + y * CharHeight);
                         Game.Sprites.DrawString(Font, text.Substring(j, 1), v, Game.Colors[fg]);
                     }
                     x += 1;

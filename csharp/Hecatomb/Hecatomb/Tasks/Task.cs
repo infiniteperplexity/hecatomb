@@ -498,7 +498,7 @@ namespace Hecatomb
         // IMenuListable
         public virtual void ChooseFromMenu()
         {
-            Game.Controls.Set(new SelectZoneControls(this));
+            ControlContext.Set(new SelectZoneControls(this));
         }
 
 

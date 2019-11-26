@@ -140,7 +140,7 @@ namespace Hecatomb
 			Clean();
 			Highlights.Clear();
 			Squares.Clear();
-			Game.Controls.Reset();
+            ControlContext.Reset();
 		}
 	}
 }

@@ -32,11 +32,11 @@ namespace Hecatomb
             Dirty = true;
             if (!frozen)
             {
-                Game.Controls.Set(new SplashControls());
+                ControlContext.Set(new SplashControls());
             }
             else
             {
-                Game.Controls.Set(new FrozenControls());
+                ControlContext.Set(new FrozenControls());
             }
             CurrentText = lines;
         }

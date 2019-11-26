@@ -17,6 +17,7 @@ namespace Hecatomb
             Zindex = 1;
             LeftMargin = 2;
             RightMargin = 2;
+            TopMargin = 2;
             Active = false;
             List<ColoredText> CurrentText = new List<ColoredText>();
         }
@@ -46,17 +47,17 @@ namespace Hecatomb
             Dirty = true;
             if (!frozen)
             {
-                Game.Controls.Set(new FrozenControls());
+                ControlContext.Set(new FrozenControls());
                 Thread thread = new Thread(() =>
                 {
                     Thread.Sleep(1000);
-                    Game.Controls.SetWithoutRedraw(new SplashControls());
+                    ControlContext.SetWithoutRedraw(new SplashControls());
                 });
                 thread.Start();
             }
             else
             {
-                Game.Controls.Set(new FrozenControls());
+                ControlContext.Set(new FrozenControls());
             }
             CurrentText = lines;
         }

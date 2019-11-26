@@ -36,7 +36,7 @@ namespace Hecatomb
                 $"Restoring {Name}..."
             }, frozen: true);
             Debug.WriteLine("restoring the game");
-            Controls.Set(new FrozenControls());
+            ControlContext.Set(new FrozenControls());
             Thread thread = new Thread(Commands.RestoreGameProcess);
             thread.Start();
         }

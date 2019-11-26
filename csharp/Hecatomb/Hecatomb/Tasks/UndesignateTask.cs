@@ -23,7 +23,7 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-			Game.Controls.Set(new SelectZoneControls(this));
+			ControlContext.Set(new SelectZoneControls(this));
 		}
 			
 		public override void TileHover(Coord c)

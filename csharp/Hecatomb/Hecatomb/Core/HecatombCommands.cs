@@ -285,7 +285,7 @@ namespace Hecatomb
         public void SaveGameProcess()
         {
             Game.World.Stringify();
-            Controls.Reset();
+            ControlContext.Reset();
         }
 
         public void RestoreGameProcess()
@@ -298,19 +298,19 @@ namespace Hecatomb
             //Game.World.Parse(json);
             Game.World.Parse(@"..\" + Game.GameName + ".json");
             // we need some kind of failure handling...
-            Controls.Reset();
+            ControlContext.Reset();
         }
         public void RestoreGameCommand()
         {
             // I guess maybe a Save File should have an object representation?
-            Controls.Set(new MenuChoiceControls(new SaveGameChooser()));
+            ControlContext.Set(new MenuChoiceControls(new SaveGameChooser()));
         }
 
         public void SystemMenuCommand()
         {
             Time.Frozen = true;
-            Game.Controls.Set(new StaticMenuControls(" ", new List<(Keys, ColoredText, Action)>() {
-                (Keys.Escape, "Cancel.", Controls.Reset),
+            ControlContext.Set(new StaticMenuControls(" ", new List<(Keys, ColoredText, Action)>() {
+                (Keys.Escape, "Cancel.", ControlContext.Reset),
                 (Keys.S, "Save game.", SaveGameCommand),
                 (Keys.A, "Save as...", SaveGameAsCommand),
                 (Keys.R, "Restore game.", Game.game.RestoreGame),
@@ -327,7 +327,7 @@ namespace Hecatomb
                 Game.GameName = name;
                 SaveGameCommand();
             };
-            Controls.Set(new TextEntryControls("Type a name for your saved game.", saveGameAs));
+            ControlContext.Set(new TextEntryControls("Type a name for your saved game.", saveGameAs));
             (Controls as TextEntryControls).CurrentText = Game.GameName;
         }
 

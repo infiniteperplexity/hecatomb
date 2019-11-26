@@ -185,7 +185,7 @@ namespace Hecatomb
                () =>
                {
                    ControlContext.Selection = null;
-                    Game.Controls.Reset();
+                    ControlContext.Reset();
                 };
             menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
         }

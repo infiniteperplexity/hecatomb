@@ -94,6 +94,7 @@ namespace Hecatomb
             Time.Frozen = true;
             Commands = new HecatombCommmands();
             DefaultControls = new DefaultControls();
+            ControlContext.Initialize(DefaultControls);
             CameraControls = new CameraControls();
             Camera = new Camera();
             Visible = new HashSet<Coord>();
@@ -142,7 +143,7 @@ namespace Hecatomb
             Time.Frozen = false;
             if (!Options.NoStartupScreen)
             {
-                Controls.Reset();
+                ControlContext.Reset();
                 ForegroundPanel.Splash(new List<ColoredText>{
                     "{yellow}Welcome to Hecatomb!",
                     " ",
@@ -157,7 +158,7 @@ namespace Hecatomb
             }
             else
             {
-                Controls = DefaultControls;  
+                ControlContext.Set(DefaultControls);  
             }
         }
         public void StartGame()
@@ -169,7 +170,7 @@ namespace Hecatomb
             MainPanel.IntroState = false;
             Game.GameName = "GameWorld";
             TheFixer.Purge();
-            Controls.Reset();
+            ControlContext.Reset();
             ForegroundPanel.Splash(new List<ColoredText>{
                 "{yellow}Welcome to Hecatomb!",
                 " ",
@@ -197,7 +198,7 @@ namespace Hecatomb
             {
                 $"Starting new game..."
             }, frozen: true);
-            Controls.Set(new FrozenControls());
+            ControlContext.Set(new FrozenControls());
         }
 
         public void RestoreGame()

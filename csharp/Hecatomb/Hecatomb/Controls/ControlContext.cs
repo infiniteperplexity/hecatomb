@@ -49,20 +49,25 @@ namespace Hecatomb
         public List<(string, string)> MenuCommands;
         
 
-        public void Set(ControlContext c)
+        public static void Initialize(ControlContext c)
+        {
+            Game.Controls = c;
+            Game.LastControls = c;
+        }
+        public static void Set(ControlContext c)
         {
             SetWithoutRedraw(c);
             InterfacePanel.DirtifyUsualPanels();
         }
 
-        public void SetWithoutRedraw(ControlContext c)
+        public static void SetWithoutRedraw(ControlContext c)
         {
             Game.Controls.CleanUp();
             Game.LastControls = Game.Controls;
             Game.Controls = c;
         }
 
-        public void Reset()
+        public static void Reset()
         {
             //Debug.WriteLine("Resetting");
             var old = Game.Controls;
@@ -184,16 +189,16 @@ namespace Hecatomb
             bool visible = Game.Visible.Contains(c);
             if (cr != null && visible)
             {
-                Game.Controls.Set(new MenuChoiceControls(cr));
+                ControlContext.Set(new MenuChoiceControls(cr));
                 return;
             }
             Feature fr = Game.World.Features[x, y, z];
             if (fr?.TryComponent<StructuralComponent>() != null)
             {
-                Game.Controls.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+                ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
                 return;
             }
-            Game.Controls.Set(new ExamineTileControls(c));
+            ControlContext.Set(new ExamineTileControls(c));
         }
 
         public virtual void HoverTile(Coord c)

@@ -80,7 +80,7 @@ namespace Hecatomb
                 t.LaborCost = LaborCost;
                 t.Place(x, y, z);
             }
-            Controls.Set(new MenuChoiceControls(Structure.Unbox()));
+            ControlContext.Set(new MenuChoiceControls(Structure.Unbox()));
         }
 
         public override bool ValidTile(Coord c)

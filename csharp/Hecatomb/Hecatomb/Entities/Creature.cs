@@ -150,7 +150,7 @@ namespace Hecatomb
                 () =>
                 {
                     ControlContext.Selection = null;
-                    Game.Controls.Reset();
+                    ControlContext.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextMinion;
             Game.Camera.Center(X, Y, Z);
@@ -173,12 +173,12 @@ namespace Hecatomb
             {
                 if (minions.Count>0)
                 {
-                    Game.Controls.Set(new MenuChoiceControls((Creature) minions[0]));
+                    ControlContext.Set(new MenuChoiceControls((Creature) minions[0]));
                 }
             }
             else if (TryComponent<Minion>()==null)
             {
-                Game.Controls.Set(new MenuChoiceControls(Player));
+                ControlContext.Set(new MenuChoiceControls(Player));
             }
             else
             {
@@ -193,11 +193,11 @@ namespace Hecatomb
                 }
                 if (n==-1 || n==minions.Count-1)
                 {
-                    Game.Controls.Set(new MenuChoiceControls(Player));
+                    ControlContext.Set(new MenuChoiceControls(Player));
                 }
                 else
                 {
-                    Game.Controls.Set(new MenuChoiceControls((Creature)minions[n+1]));
+                    ControlContext.Set(new MenuChoiceControls((Creature)minions[n+1]));
                 }
             }
         }

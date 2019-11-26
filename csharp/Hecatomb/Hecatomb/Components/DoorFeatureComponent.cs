@@ -34,7 +34,7 @@ namespace Hecatomb
                 () =>
                 {
                     ControlContext.Selection = null;
-                    Game.Controls.Reset();
+                    ControlContext.Reset();
                 };
         }
 

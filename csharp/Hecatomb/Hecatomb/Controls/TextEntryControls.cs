@@ -56,7 +56,7 @@ namespace Hecatomb
 
         public TextEntryControls(ColoredText header, Action<string> submit) : base()
         {
-            CurrentText = "";
+            CurrentText = Game.GameName;
             Header = header;
             MaxTextLength = 25;
             Throttle = 250;
@@ -106,14 +106,13 @@ namespace Hecatomb
 
         public override void RefreshContent()
         {
-            
             MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
                 ("{yellow}"+Header),
                 (CurrentText+"_"),
                 "{cyan}Press Enter when finished."
             };
-            InterfacePanel.DirtifySidePanels();
+            Game.InfoPanel.Dirty = true;
         }
 
         public override void HandleClick(int x, int y)

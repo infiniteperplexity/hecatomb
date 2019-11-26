@@ -99,11 +99,11 @@ namespace Hecatomb
 		{
 			if (Makes==null)
 			{
-				Game.Controls.Set(new MenuChoiceControls(this));
+				ControlContext.Set(new MenuChoiceControls(this));
 			}
 			else
 			{
-				Game.Controls.Set(new SelectTileControls(this));
+				ControlContext.Set(new SelectTileControls(this));
 			}
 		}
 		
