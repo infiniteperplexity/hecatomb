@@ -4,11 +4,12 @@
 - Should Log light up when there is unviewed text?
 - TurnHandler is accessed in a bizarre way incompatible with other state handlers
 - Time/date block looks stupid
-- seeing too many menu options that shouldn't be visible yet
 - menu items wrapping because it's narrow.
-- forgot to test with NoIngredients false
 - Lack of color variation on menu is kind of an eyesore
 - Maybe better to have a specified list of minions
+- Creature view looks kind of terrible
+- No way to access creature and structure views without mouse?
+- Starting to get a little bit of drag
 
 In order to have a playable demo...
 - We need to have an installer that works all the way...at this point I definitely still need uninstall icons and so on.

@@ -37,8 +37,8 @@ namespace Hecatomb
             //Explored = true;
             Visible = false;
             //Visible = true;
-            //NoIngredients = false;
-            NoIngredients = true;
+            NoIngredients = false;
+            //NoIngredients = true;
             NoTutorial = false;
             //NoTutorial = true;
             NoStartupScreen = false;
