@@ -54,7 +54,8 @@ namespace Hecatomb
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "BuildTaskComplete" });
 			Game.World.Features[X, Y, Z].Despawn();
-			var tiles = Game.World.Terrains;
+            Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
+            var tiles = Game.World.Terrains;
 			Terrain t = tiles[X, Y, Z];	
 			Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;

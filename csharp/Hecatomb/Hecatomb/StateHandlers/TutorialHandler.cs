@@ -407,14 +407,14 @@ namespace Hecatomb
                     },
                     InstructionsText = new List<ColoredText>()
                     {
-                        "{yellow}Tutorial: Time / Pausing / Speed.",
+                        "{yellow}Tutorial: Pausing / Speed.",
                         " ",
                         " ",
                         "Your minion bursts forth from the ground!",
                         " ",
-                        "{lime green}Notice the word 'Pause' near the top left corner of the screen.  The game is currently auto-paused - one turn will pass for each action you take.  If you turn auto-pause off, turns will pass in realtime even if you take no actions.  You can press + or - to make time pass faster or slower.",
+                        "{lime green}Notice the word 'Paused' near the top left corner of the screen.  The game is currently auto-paused - one turn will pass for each action you take.  If you turn auto-pause off, turns will pass in realtime even if you take no actions.  You can press + or - to make time pass faster or slower.",
                         " ",
-                        "{cyan}Press Enter / Return to turn off auto-pause, then wait for several turns to pass.  Press PageUp/Down or Fn+Up/Down to adjust the speed at which time passes when the game is unpaused.",
+                        "{cyan}Press Enter / Return to turn off auto-pause, then wait for several turns to pass.  Press '+' or '-' to adjust the speed at which time passes when the game is unpaused.",
                         " ",
                         "{lime green}Your zombie will wander a short distance from you.  If it seems to disappear, it probably went up or down a slope."
                     },
@@ -650,7 +650,7 @@ namespace Hecatomb
                         " ",
                         "This decaying wretch is but the beginning - soon, you will command an undead horde.",
                         " ",
-                        "{lime green}Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed above the left-hand side of the message bar.",
+                        "{lime green}Every zombie under your control raises the cost of the 'raise zombie' spell in sanity points.  Your current sanity points are listed near the top of this panel.",
                         " ",
                         "{cyan}Wait (pass turns) until you have 15 sanity points, then raise a second zombie and wait for it to emerge.  Press Z to cast a spell, press A to choose 'raise zombie', and then select a tombstone."
                     },
@@ -900,7 +900,7 @@ namespace Hecatomb
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
-                        if (t.Action=="BuildTaskComplete")
+                        if (t.Action=="AnyBuildComplete")
                         {
                             GotoState("EndOfTutorial");
                         }
@@ -1063,7 +1063,7 @@ namespace Hecatomb
                         " ",
                         "Cruel laughter wells in your throat.  Your fortress will cast a shadow of menace over all the land.  The undead under your command will become a legion, a multitude, an army.  And then all who have wronged you will pay!",
                         " ",
-                        "{lime green}Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  See if you can unlock all the achievements in the demo.",
+                        "{lime green}Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  Your next step might be to construct buildings, like a Guard Post and a Workshop.",
                         " ",
                         "{cyan}Press ? to dismiss these messages. If you return to the tutorial later, you will see a list of commands."
                     },
@@ -1105,9 +1105,12 @@ namespace Hecatomb
                         " ",
                         "{cyan}Space to select with cursor.",
                         " ",
+                        "{cyan}M to view minions, U to view structures.",
+
+                        " ",
                         "{cyan}Enter/Return to toggle auto-pause.",
                         " ",
-                        "{cyan}PageUp/Down or Fn+Up/Down to adjust speed."
+                        "{cyan}+ or - to adjust speed."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -1157,7 +1160,7 @@ namespace Hecatomb
             if (g is TutorialEvent)
             {
                 TutorialEvent t = (TutorialEvent)g;
-                if (t.Action == "BuildTaskComplete")
+                if (t.Action == "AnyBuildComplete" || (t.Action == "ZombieEmerges" && GetState<TaskHandler>().Minions.Count > 2))
                 {
                     if (Visible && Current.Name != "CommandsReference")
                     {

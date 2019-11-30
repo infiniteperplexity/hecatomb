@@ -404,5 +404,23 @@ namespace Hecatomb
         {
             Time.SlowDown();
         } 
+        
+        public void ShowStructures()
+        {
+            var structures = Structure.ListStructures();
+            if (structures.Count > 0)
+            {
+                ControlContext.Set(new MenuChoiceControls(structures[0]));
+            }
+        }
+
+        public void ShowMinions()
+        {
+            var minions = GetState<TaskHandler>().Minions;
+            if (minions.Count > 0)
+            {
+                ControlContext.Set(new MenuChoiceControls((Creature)minions[0]));
+            }
+        }
     }
 }

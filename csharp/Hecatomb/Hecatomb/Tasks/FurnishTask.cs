@@ -87,7 +87,8 @@ namespace Hecatomb
 			
 		public override void Finish()
 		{
-			Feature incomplete = Game.World.Features[X, Y, Z];
+            Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
+            Feature incomplete = Game.World.Features[X, Y, Z];
 			incomplete.Despawn();
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
 			Feature finished = Entity.Spawn<Feature>(Makes);

@@ -49,6 +49,8 @@ namespace Hecatomb
             KeyMap[Keys.R] = Commands.ShowResearch;
             KeyMap[Keys.LeftControl] = Commands.HoverCamera;
             KeyMap[Keys.RightControl] = Commands.HoverCamera;
+            KeyMap[Keys.U] = Commands.ShowStructures;
+            KeyMap[Keys.M] = Commands.ShowMinions;
 
             KeyMap[Keys.Enter] = Commands.TogglePause;
 			KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;

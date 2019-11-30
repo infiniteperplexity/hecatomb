@@ -140,6 +140,7 @@ namespace Hecatomb
         }
 		public override void Finish()
 		{
+            Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
             Structure s = Structure.Entity;
             if (s.Features.Count==0)
             {
@@ -152,7 +153,7 @@ namespace Hecatomb
             var x = incomplete.GetComponent<IncompleteFixtureComponent>();
             incomplete.Despawn();
 			Feature f = Entity.Spawn<Feature>("StructureFeature");
-			f.Place(X, Y, Z);
+            f.Place(X, Y, Z);
             Game.World.Covers[X, Y, Z] = Cover.NoCover;
 			f.Symbol = s.Symbols[FeatureIndex];
             f.Name = Structure.Name;

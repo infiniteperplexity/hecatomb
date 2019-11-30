@@ -10,6 +10,11 @@
 - Creature view looks kind of terrible
 - No way to access creature and structure views without mouse?
 - Starting to get a little bit of drag
+- Still got a tombstone next to the edge somehow...this is very rare and hard to duplicate.
+- is click-hovering still needed?
+- on several screens, I dunno if I want an extra space under the Escape command
+- Got no message for that ghoul attack?
+End of tutorial should have hint about buildings.
 
 In order to have a playable demo...
 - We need to have an installer that works all the way...at this point I definitely still need uninstall icons and so on.

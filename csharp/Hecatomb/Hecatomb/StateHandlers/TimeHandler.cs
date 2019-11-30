@@ -19,7 +19,7 @@ namespace Hecatomb
 	public class TimeHandler
 	{
 		//decimal[] Speeds;
-        List<(int, int)> Speeds;
+        List<(int, int, string)> Speeds;
 		int SpeedIndex = 3;
 		public bool PausedAfterLoad;
 		public bool AutoPausing;
@@ -28,16 +28,16 @@ namespace Hecatomb
 		
 		public TimeHandler()
 		{
-            Speeds = new List<(int, int)>
+            Speeds = new List<(int, int, string)>
             {
-                (1,4),
-                (1,2),
-                (3,4),
-                (1,1),
-                (3,2),
-                (2,1),
-                (4,1),
-                (8,1)
+                (1,4, "4x"),
+                (1,2, "2x"),
+                (3,4, "4/3x"),
+                (1,1, "1x"),
+                (3,2, "2/3x"),
+                (2,1, "1/2x"),
+                (4,1, "1/4x"),
+                (8,1, "1/8x")
             };
             PausedAfterLoad = true;
 			AutoPausing = true;
@@ -49,7 +49,7 @@ namespace Hecatomb
             var list = new List<ColoredText>();
             var t = Game.World.Turns;
             // should probably show the speed when unpaused
-            list.Add((Game.Time.AutoPausing || Game.Time.PausedAfterLoad) ? "{yellow}Paused" : " ");
+            list.Add((Game.Time.AutoPausing || Game.Time.PausedAfterLoad) ? "{yellow}Paused" : "{yellow}Speed: " + Speeds[SpeedIndex].Item3);
             string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
             //string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
             list.Add(time);
