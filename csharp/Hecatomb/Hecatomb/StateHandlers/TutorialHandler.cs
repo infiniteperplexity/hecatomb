@@ -1063,7 +1063,7 @@ namespace Hecatomb
                         " ",
                         "Cruel laughter wells in your throat.  Your fortress will cast a shadow of menace over all the land.  The undead under your command will become a legion, a multitude, an army.  And then all who have wronged you will pay!",
                         " ",
-                        "{lime green}Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  Your next step might be to construct buildings, like a Guard Post and a Workshop.",
+                        "{lime green}Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  Your next step might be to construct buildings, like a Guard Post and a Workshop.  Then research Flint Tools so you can dig through harder stone.",
                         " ",
                         "{cyan}Press ? to dismiss these messages. If you return to the tutorial later, you will see a list of commands."
                     },

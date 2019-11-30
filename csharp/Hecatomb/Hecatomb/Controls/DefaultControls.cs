@@ -71,7 +71,7 @@ namespace Hecatomb
             MenuTop = new List<ColoredText>() {
                 "Esc: Game menu.",
                 " ",
-                "{yellow}Avatar (Tab: Camera)",
+                "{yellow}Avatar (Tab: Navigate)",
                 " "
 			};
             if (Game.World != null && Game.World.Player != null)
@@ -84,10 +84,28 @@ namespace Hecatomb
                 MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
                 if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
                 {
-                    MenuTop.Add($"Controls {Game.World.GetState<TaskHandler>().Minions.Count} minions.");
+                    MenuTop.Add(" ");
+                    MenuTop.Add("Minions:");
+                    var types = new Dictionary<string, int>();
+                    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                    {
+                        Creature c = (Creature)minion;
+                        if (!types.ContainsKey(c.TypeName))
+                        {
+                            types[c.TypeName] = 1;
+                        }
+                        else
+                        {
+                            types[c.TypeName] += 1;
+                        }
+                    }
+                    foreach (var type in types.Keys)
+                    {
+                        var mock = Entity.Mock<Creature>(type);
+                        // might need better handling for when we have multiple zombie types that still share a TypeName?
+                        MenuTop.Add("{" + mock.FG + "}" + type + ": " + types[type]);
+                    }
                 }
-
-                string paused = (Game.Time.PausedAfterLoad || Game.Time.AutoPausing) ? "{yellow}Paused" : "      ";
                 
                 var stored = new List<Dictionary<string, int>>();
                 var structures = Structure.ListStructures();
@@ -102,7 +120,8 @@ namespace Hecatomb
                     MenuTop.Add("Stored resources:");
                     foreach (var res in total.Keys)
                     {
-                        MenuTop.Add("- " + Resource.Format((res, total[res])));
+                        var r = Resource.Types[res];
+                        MenuTop.Add("{" + r.ListColor + "} - " + Resource.Format((res, total[res])));
                     }
                 }
             }

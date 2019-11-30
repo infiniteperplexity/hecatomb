@@ -13,6 +13,7 @@ namespace Hecatomb
         public char Symbol;
         public string FG;
         public string BG;
+        public string ListColor;
         public int StackSize;
 
         public Resource(
@@ -21,7 +22,8 @@ namespace Hecatomb
             char symbol = ' ',
             string fg = "white",
             int stack = 5,
-            string bg = null
+            string bg = null,
+            string listColor = null
         ) : base(type)
         {
             Name = name;
@@ -29,6 +31,7 @@ namespace Hecatomb
             FG = fg;
             BG = bg;
             StackSize = stack;
+            ListColor = (listColor == null) ? fg : listColor;
         }
 
         public static string Format(ValueTuple<string, int> vt)
@@ -99,7 +102,8 @@ namespace Hecatomb
             type: "Coal",
             name: "coal",
             symbol: '\u2022',
-            fg: "#222222"
+            fg: "#222222",
+            listColor: "#666666"
         );
 
         public static readonly Resource Wood = new Resource(

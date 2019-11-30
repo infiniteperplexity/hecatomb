@@ -62,26 +62,74 @@ namespace Hecatomb
 				KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
                 KeyMap[Keys.J] = Commands.ChooseTask;
                 KeyMap[Keys.Z] = Commands.ChooseSpell;
+                RefreshContent();
             }
-			
-			MenuTop = new List<ColoredText>() {
-				"Esc: System view.",
-				"{yellow}Camera mode (Tab: Avatar mode)",
-				" ",
-			    "Move: NumPad/Arrows, ,/.: Up/Down.",
-			    "(Control+Arrows for diagonal.)",
-			    "Wait: NumPad 5 / Space.",
-			    " ",
-			    "Enter: Enable auto-pause.",
-			    "+/-: Change speed.",
-			    " ",
-			    "Z: Cast spell, J: Assign job.",
-			    "M: Minions, S: Structures, U: Summary.",
-			    " ",
-			    "PageUp/Down: Scroll messages.",
-			    "A: Achievements, /: Toggle tutorial."
-			};
 		}
+
+        public override void RefreshContent()
+        {
+            // this stupid code means I should probably subclass an abstract class instead
+            if (GetType() == typeof(CameraControls))
+            {
+                MenuTop = new List<ColoredText>() {
+                    "Esc: Game menu.",
+                    " ",
+                    "{yellow}Navigate (Tab: Avatar)",
+                    " "
+                };
+                if (Game.World != null && Game.World.Player != null)
+                {
+                    var p = Game.World.Player;
+                    var time = Game.Time.GetTimeText();
+                    MenuTop.Add(time[0]);
+                    MenuTop.Add(time[1]);
+                    MenuTop.Add(" ");
+                    MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
+                    if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                    {
+                        MenuTop.Add(" ");
+                        MenuTop.Add("Minions:");
+                        var types = new Dictionary<string, int>();
+                        foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                        {
+                            Creature c = (Creature)minion;
+                            if (!types.ContainsKey(c.TypeName))
+                            {
+                                types[c.TypeName] = 1;
+                            }
+                            else
+                            {
+                                types[c.TypeName] += 1;
+                            }
+                        }
+                        foreach (var type in types.Keys)
+                        {
+                            var mock = Entity.Mock<Creature>(type);
+                            // might need better handling for when we have multiple zombie types that still share a TypeName?
+                            MenuTop.Add("{" + mock.FG + "}" + type + ": " + types[type]);
+                        }
+                    }
+
+                    var stored = new List<Dictionary<string, int>>();
+                    var structures = Structure.ListStructures();
+                    foreach (Structure s in structures)
+                    {
+                        stored.Add(s.GetStored());
+                    }
+                    var total = Item.CombinedResources(stored);
+                    if (total.Count > 0)
+                    {
+                        MenuTop.Add(" ");
+                        MenuTop.Add("Stored resources:");
+                        foreach (var res in total.Keys)
+                        {
+                            var r = Resource.Types[res];
+                            MenuTop.Add("{" + r.ListColor + "} - " + Resource.Format((res, total[res])));
+                        }
+                    }
+                }
+            }
+        }
 
         public override void CameraHover()
         {
