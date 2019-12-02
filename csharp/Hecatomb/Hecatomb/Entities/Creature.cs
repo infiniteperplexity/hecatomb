@@ -99,7 +99,7 @@ namespace Hecatomb
             menu.MenuTop.RemoveAt(2);
             menu.MenuTop.Add("Tab) View minions.");
             menu.MenuTop.Add(" ");
-            menu.MenuTop.Add("{yellow}Creature: " + Describe());
+            menu.MenuTop.Add("{yellow}" + Describe(capitalized: true));
             if (TryComponent<Minion>() != null)
             {
                 menu.MenuTop.Add(" ");

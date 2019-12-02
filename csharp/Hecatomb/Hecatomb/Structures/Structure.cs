@@ -272,7 +272,7 @@ namespace Hecatomb
         {
             menu.MenuTop.Insert(2, "Tab) Next structure.");
             menu.MenuTop.Insert(3, " ");
-            menu.MenuTop.Insert(4, "{yellow}Structure: " + Describe());
+            menu.MenuTop.Insert(4, "{yellow}" + Describe(capitalized: true));
             menu.MenuTop.Insert(5, "{light cyan}" + UseHint);
             if (Researching != null)
             {
@@ -287,7 +287,7 @@ namespace Hecatomb
                     " ",
                     "Tab) Next structure.",
                     " ",
-                    "{yellow}Structure: "+Describe(),
+                    "{yellow}" + Describe(capitalized: true),
                     "{light cyan}" + UseHint,
                     " ",
                     txt
