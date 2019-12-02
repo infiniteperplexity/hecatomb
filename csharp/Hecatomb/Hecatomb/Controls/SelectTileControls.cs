@@ -23,7 +23,7 @@ namespace Hecatomb
         string GetHighlightColor();
     }
 		
-	public class SelectTileControls : CameraControls
+	public class SelectTileControls : AbstractCameraControls
 	{
 		ISelectsTile Selector;
 		
@@ -34,8 +34,8 @@ namespace Hecatomb
             KeyMap[Keys.Space] = SelectTile;
 			MenuTop = new List<ColoredText>() {
      			"{orange}**Esc: Cancel.**",
-      			"{yellow}Select a tile with keys or mouse.",
-      			" "
+                " ",
+      			"{yellow}Select a tile with keys or mouse."
 			};
 		}
 		

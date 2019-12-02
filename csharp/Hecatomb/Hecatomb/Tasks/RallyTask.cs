@@ -19,7 +19,10 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            ControlContext.Set(new SelectTileControls(this));
+            var c = new SelectTileControls(this);
+            c.MenuSelectable = false;
+            c.SelectedMenuCommand = "Jobs";
+            ControlContext.Set(c);
         }
 
         public override void SelectTile(Coord c)

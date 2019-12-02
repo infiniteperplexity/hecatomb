@@ -72,7 +72,7 @@ namespace Hecatomb
                 {
                     var task = Hecatomb.Entity.Mock<ConstructTask>();
                     task.Makes = st;
-                    task.MenuName = "construct " + structure.Describe();
+                    task.MenuName = structure.Describe(article: false);
                     task.Ingredients = structure.GetIngredients();
                     list.Add(task);
                 }
@@ -203,12 +203,17 @@ namespace Hecatomb
 			if (Makes==null)
 			{
                 var menu = new MenuChoiceControls(this);
-                menu.Header = "Choose a structure:";
+                menu.Header = "Construct a structure:";
+                menu.MenuSelectable = false;
+                menu.SelectedMenuCommand = "Jobs";
                 ControlContext.Set(menu);
             }
 			else
 			{
-				ControlContext.Set(new SelectBoxControls(this));
+                var c = new SelectBoxControls(this);
+                c.MenuSelectable = false;
+                c.SelectedMenuCommand = "Jobs";
+                ControlContext.Set(c);
 			}
 		}
 

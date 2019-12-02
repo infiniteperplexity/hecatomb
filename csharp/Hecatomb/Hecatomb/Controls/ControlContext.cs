@@ -198,7 +198,8 @@ namespace Hecatomb
                 ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
                 return;
             }
-            ControlContext.Set(new ExamineTileControls(c));
+            // these are buggy and probably not needed
+            //ControlContext.Set(new ExamineTileControls(c));
         }
 
         public virtual void HoverTile(Coord c)

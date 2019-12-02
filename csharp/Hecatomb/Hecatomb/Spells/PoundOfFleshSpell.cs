@@ -31,7 +31,10 @@ namespace Hecatomb
             }
             else
             {
-                ControlContext.Set(new SelectTileControls(this));
+                var c = new SelectTileControls(this);
+                c.MenuSelectable = false;
+                c.SelectedMenuCommand = "Spells";
+                ControlContext.Set(c);
             }
         }
 

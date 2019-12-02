@@ -54,7 +54,10 @@ namespace Hecatomb
             else
             {
                 Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
-                ControlContext.Set(new SelectTileControls(this));
+                var c = new SelectTileControls(this);
+                c.MenuSelectable = false;
+                c.SelectedMenuCommand = "Spells";
+                ControlContext.Set(c);
             }
         }
 

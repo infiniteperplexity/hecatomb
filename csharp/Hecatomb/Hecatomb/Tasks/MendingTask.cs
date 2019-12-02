@@ -28,7 +28,10 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            ControlContext.Set(new SelectTileControls(this));
+            var c = new SelectTileControls(this);
+            c.SelectedMenuCommand = "Jobs";
+            c.MenuSelectable = false;
+            ControlContext.Set(c);
         }
 
         public override void TileHover(Coord c)

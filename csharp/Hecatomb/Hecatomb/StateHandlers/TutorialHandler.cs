@@ -70,13 +70,13 @@ namespace Hecatomb
                 list = list.Concat(Game.Controls.MenuTop).ToList();
                 list.Add(" ");
                 list = list.Concat(OffTutorialCamera).ToList();
-                if (Current.ShowTimeAndSanity > -1)
-                {
-                    var ins = Game.Time.GetTimeText();
-                    ins.Add(" ");
-                    ins.Add(Game.World.Player.GetComponent<SpellCaster>().GetSanityText());
-                    list.InsertRange(Current.ShowTimeAndSanity, ins);
-                }
+                //if (Current.ShowTimeAndSanity > -1)
+                //{
+                //    var ins = Game.Time.GetTimeText();
+                //    ins.Add(" ");
+                //    ins.Add(Game.World.Player.GetComponent<SpellCaster>().GetSanityText());
+                //    list.InsertRange(Current.ShowTimeAndSanity, ins);
+                //}
             }
             else if (Game.Controls is ExamineTileControls)
             {
@@ -204,6 +204,7 @@ namespace Hecatomb
                     },
                     InstructionsText = new List<ColoredText>()
                     {
+                        " ",
                         "{yellow}Tutorial: Casting spells / creating zombies.",
                         " ",
                         "Enough of this pointless wandering - it is time to summon an undead servant.",
@@ -279,8 +280,7 @@ namespace Hecatomb
                     {
                         "{orange}**Esc: Cancel.**",
                         " ",
-                        "{yellow}Select a square with keys or mouse.",
-                        " ",
+                        "{yellow}Select a square with keys or mouse."
                     },
                     InstructionsText = new List<ColoredText>()
                     {
@@ -497,6 +497,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
+                        " ",
                         "{yellow}Choose a task:",
                         "{cyan}a) Dig or harvest",
                         " "
@@ -549,6 +550,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
+                        " ",
                         "{yellow}Select a square with keys or mouse.",
                         " "
                     },
@@ -682,6 +684,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
+                        " ",
                         "{yellow}Choose a spell:",
                         "a) Raise Zombie",
                         " "
@@ -723,6 +726,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
+                        " ",
                         "{yellow}Select a square with keys or mouse.",
                         " "
                     },
@@ -789,7 +793,7 @@ namespace Hecatomb
                 },
                 new TutorialState("CameraMode")
                 {
-                    ShowTimeAndSanity = 5,
+                    ShowTimeAndSanity = 6,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -802,6 +806,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
+                        " ",
                         "{cyan}Avatar (Tab: Navigate)",
                         " ",
                     },
@@ -831,7 +836,7 @@ namespace Hecatomb
                 new TutorialState("MoveCamera")
                 {
                     RequiresDefaultControls = false,
-                    ShowTimeAndSanity = 5,
+                    ShowTimeAndSanity = 6,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -844,6 +849,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
+                        " ",
                         "{cyan}Navigate (Tab: Avatar)",
                         " ",
                     },
@@ -873,10 +879,11 @@ namespace Hecatomb
                 },
                 new TutorialState("AssignJob2")
                 {
-                    ShowTimeAndSanity = 5,
+                    ShowTimeAndSanity = 6,
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
+                        " ",
                         "{yellow}Avatar (Tab: Navigate)",
                         " ",
                     },
@@ -925,6 +932,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel**.",
+                        " ",
                         "{yellow}Choose a task:",
                         "a) dig or harvest",
                         "{cyan}b) build walls or floors ($: 1 rock)",
@@ -933,6 +941,7 @@ namespace Hecatomb
                     InstructionsText = new List<ColoredText>()
                     {
                         "{yellow}Tutorial: Assigning tasks with ingredients.",
+                        " ",
                         " ",
                         "The stones your zombies hew from the hills can be shaped into walls and pillars.",
                         " ",
@@ -969,6 +978,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
+                        " ",
                         "{yellow}Select a square with keys or mouse.",
                         " "
                     },
@@ -1004,7 +1014,7 @@ namespace Hecatomb
                 },
                 new TutorialState("WaitForBuild")
                 {
-                    ShowTimeAndSanity = 5,
+                    ShowTimeAndSanity = 6,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -1017,6 +1027,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
+                        " ",
                         "{yellow}Avatar (Tab: Navigate)",
                         " ",
                     },
@@ -1040,7 +1051,7 @@ namespace Hecatomb
                 // This may need to be split into two steps, one of which has all the different commands listed
 				new TutorialState("EndOfTutorial")
                 {
-                    ShowTimeAndSanity = 5,
+                    ShowTimeAndSanity = 6,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -1053,6 +1064,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
+                        " ",
                         "{yellow}Avatar (Tab: Navigate)",
                         " "
                     },
@@ -1078,7 +1090,7 @@ namespace Hecatomb
                 },
                 new TutorialState("CommandsReference")
                 {
-                    ShowTimeAndSanity = 5,
+                    ShowTimeAndSanity = 6,
                     MenuCommands = new List<ColoredText>()
                     {
                         "{cyan}?) Tutorial",
@@ -1091,6 +1103,7 @@ namespace Hecatomb
                     ControlText = new List<ColoredText>()
                     {
                         "Esc: Game menu.",
+                        " ",
                         "{yellow}Avatar (Tab: Navigate)",
                         " "
                     },

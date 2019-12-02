@@ -23,7 +23,7 @@ namespace Hecatomb
 		void TileHover(Coord c, List<Coord> squares);
         string GetHighlightColor();
 	}
-	public class SelectZoneControls : CameraControls
+	public class SelectZoneControls : AbstractCameraControls
 	{
 		ISelectsZone Selector;
 		Coord FirstCorner;
@@ -42,8 +42,8 @@ namespace Hecatomb
 			Highlights = new List<Particle>();
 			MenuTop = new List<ColoredText>() {
      			"{orange}**Esc: Cancel.**",
-      			"{yellow}Select first corner with keys or mouse.",
-      			" "
+                " ",
+      			"{yellow}Select first corner with keys or mouse."
 			};
 		}
 		

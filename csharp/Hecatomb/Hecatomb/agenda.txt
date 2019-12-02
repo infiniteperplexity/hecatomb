@@ -1,20 +1,17 @@
 ﻿Current interface issues:
 - Should certain events force you into log mode?  Or maybe highlight the log in magenta?
-- Ideally want to get time of day, phase of moon, and total turn number on there.
-- Should Log light up when there is unviewed text?
+- Ideally want to get time of day, phase of moon, and total turn number on there.  Time/date block looks stupid
 - TurnHandler is accessed in a bizarre way incompatible with other state handlers
-- Time/date block looks stupid
-- menu items wrapping because it's narrow.
-- Lack of color variation on menu is kind of an eyesore
-- Maybe better to have a specified list of minions
-- Creature view looks kind of terrible
-- No way to access creature and structure views without mouse?
+- menu items wrapping because it's narrow looks kind of ugly.
 - Starting to get a little bit of drag
 - Still got a tombstone next to the edge somehow...this is very rare and hard to duplicate.
-- is click-hovering still needed?
-- on several screens, I dunno if I want an extra space under the Escape command
 - Got no message for that ghoul attack?
-End of tutorial should have hint about buildings.
+- Does the special "Choose a structure" menu header show up right?Is "Avatar" a good name, or should it be "Control", "Pilot", "Incarnate"?
+tombstones adjacenet sometimes?  is that a problem?
+- make it so you can cancel research.
+- should have fixed order for listing minion types and resources.
+- Should tabbing to a minion snap the cursor to that square?
+- Construct task shows ingredients when NoIngredients is true
 
 In order to have a playable demo...
 - We need to have an installer that works all the way...at this point I definitely still need uninstall icons and so on.
@@ -23,8 +20,6 @@ In order to have a playable demo...
 
 
 Tutorial notes:
-- Maybe hide certain screens to minimize distractions at start?
-- Is a dig task still the best first thing?  Maybe just cut trees and build a workshop? That requires flint.
 - Tutorial should hint at tasks to come
 - Where should we note what different buildings do?
 - Research complete text is the wrong color

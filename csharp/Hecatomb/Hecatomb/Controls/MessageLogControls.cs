@@ -25,6 +25,7 @@ namespace Hecatomb
 
         public MessageLogControls() : base()
         {
+            MenuSelectable = false;
             RefreshContent();
             Game.MenuPanel.Dirty = true;
         }
@@ -39,7 +40,7 @@ namespace Hecatomb
             int MaxVisible = Math.Min(Game.World.GetState<MessageHandler>().MessageHistory.Count, 4);
             var controls = new List<ColoredText>()
             {
-                "{orange}Esc) Back.",
+                "{orange}**Esc) Back**.",
                 " ",
                 "{yellow}Message Log:",
                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",

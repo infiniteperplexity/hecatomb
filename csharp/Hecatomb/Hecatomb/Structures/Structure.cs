@@ -236,12 +236,9 @@ namespace Hecatomb
         }
 
         public virtual void BuildMenu(MenuChoiceControls menu)
-        {
-            Debug.WriteLine("testing");
-            
-            // might want to format htis guy a bit...like add coordinates?
-            menu.Header = "Structure: " + Describe();          
+        {         
             ControlContext.Selection = this;
+            // this is kind of weird...in BuildMenu we check for a task, in FinishMenu we instead check for Researching
             if (Tasks[X, Y, Z] != null)
             {
                 // ideally this should have the option to cancel research
@@ -268,21 +265,28 @@ namespace Hecatomb
                 menu.Choices = list;
             }
         }
+
+        // we are passed Cancel, , (blank header), (choices)
         public virtual void FinishMenu(MenuChoiceControls menu)
         {
             menu.MenuTop.Insert(2, "Tab) Next structure.");
+            menu.MenuTop.Insert(3, " ");
+            menu.MenuTop.Insert(4, "{yellow}Structure: " + Describe());
             if (Researching != null)
             {
                 ResearchTask rt = Researching;
-                string txt = "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns; Delete to cancel.)";
+                string txt = "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns.)";
                 if (rt.Ingredients.Count > 0 && !Options.NoIngredients)
                 {
                     txt = "Researching " + Research.Types[rt.Makes].Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
                 }
                 menu.MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
-                    "{yellow}Structure: "+Describe(),
+                    " ",
                     "Tab) Next structure.",
+                    " ",
+                    "{yellow}Structure: "+Describe(),
+                    " ",
                     txt
                 };
             }
@@ -296,7 +300,8 @@ namespace Hecatomb
                 }
                 foreach (string res in stored.Keys)
                 {
-                    menu.MenuTop.Add("- " + Resource.Format((res, stored[res])));
+                    var r = Resource.Types[res];
+                    menu.MenuTop.Add("{" + r.ListColor + "}- " + Resource.Format((res, stored[res])));
                 }
             }
             Game.InfoPanel.Dirty = true;

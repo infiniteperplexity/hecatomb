@@ -498,7 +498,10 @@ namespace Hecatomb
         // IMenuListable
         public virtual void ChooseFromMenu()
         {
-            ControlContext.Set(new SelectZoneControls(this));
+            var c = new SelectZoneControls(this);
+            c.MenuSelectable = false;
+            c.SelectedMenuCommand = "Jobs";
+            ControlContext.Set(c);
         }
 
 

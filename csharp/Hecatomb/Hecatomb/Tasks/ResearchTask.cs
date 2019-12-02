@@ -42,7 +42,9 @@ namespace Hecatomb
                 rt.Ingredients = new Dictionary<string, int>(Ingredients);
                 rt.Place(x, y, z);
             //}
-            ControlContext.Set(new MenuChoiceControls(Structure.Unbox()));
+            var c = new MenuChoiceControls(Structure.Unbox());
+            c.SelectedMenuCommand = "Jobs";
+            ControlContext.Set(c);
         }
 
         public override bool ValidTile(Coord c)

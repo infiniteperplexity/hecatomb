@@ -24,7 +24,7 @@ namespace Hecatomb
         string GetHighlightColor();
     }
 		
-	public class SelectBoxControls : CameraControls
+	public class SelectBoxControls : AbstractCameraControls
 	{
 		ISelectsBox Selector;
 		List<Coord> Squares;
@@ -42,6 +42,7 @@ namespace Hecatomb
 			};
 			MenuTop = new List<ColoredText>() {
      			"{orange}**Esc: Cancel.**",
+                " ",
                 "{yellow}Select an area with keys or mouse."
             };
 		}

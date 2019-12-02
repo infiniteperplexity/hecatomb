@@ -29,6 +29,7 @@ namespace Hecatomb
 
         public ListViewControls(IListPopulater p) : base()
         {
+            MenuSelectable = false;
             populater = p;
             RefreshContent();
         }
@@ -40,7 +41,7 @@ namespace Hecatomb
             KeyMap[Keys.Escape] = Reset;
             MenuTop = populater.GetLines();
             MenuTop.Insert(0, " ");
-            MenuTop.Insert(0, "Esc) Back.");
+            MenuTop.Insert(0, "{orange}**Esc) Back**.");
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Hecatomb
 
         public ExamineTileControls(Coord c) : base()
         {
+            MenuSelectable = false;
             tile = c;
             RefreshContent();
         }

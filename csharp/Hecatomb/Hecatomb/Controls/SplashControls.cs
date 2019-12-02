@@ -21,7 +21,8 @@ namespace Hecatomb
     public class SplashControls : ControlContext
     {
         public SplashControls()
-        { 
+        {
+            MenuSelectable = false;
             UseKeyFallback = true;
         }
         public override void HandleClick(int x, int y)

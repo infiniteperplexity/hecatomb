@@ -75,20 +75,21 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AbstractCameraControls.cs" />
     <Compile Include="Display\CommandsPanel.cs" />
     <Compile Include="Display\FullScreenPanel.cs" />
     <Compile Include="Display\InformationPanel.cs" />
     <Compile Include="Display\MainPanel.cs" />
-    <Compile Include="ListViewControls.cs" />
-    <Compile Include="MessageHandler.cs" />
+    <Compile Include="Controls\ListViewControls.cs" />
+    <Compile Include="StateHandlers\MessageHandler.cs" />
     <Compile Include="Display\InterfacePanel.cs" />
-    <Compile Include="MessageLogControls.cs" />
-    <Compile Include="ExamineTileControls.cs" />
+    <Compile Include="Controls\MessageLogControls.cs" />
+    <Compile Include="Controls\ExamineTileControls.cs" />
     <Compile Include="PanelWidget.cs" />
     <Compile Include="Spells\DebugSpells.cs" />
     <Compile Include="Display\SplashPanel.cs" />
     <Compile Include="Tasks\MendingTask.cs" />
-    <Compile Include="RallyTask.cs" />
+    <Compile Include="Tasks\RallyTask.cs" />
     <Compile Include="StateHandlers\LongCreatureComponent.cs" />
     <Compile Include="StateHandlers\FootprintManager.cs" />
     <Compile Include="StateHandlers\DebuggingListener.cs" />

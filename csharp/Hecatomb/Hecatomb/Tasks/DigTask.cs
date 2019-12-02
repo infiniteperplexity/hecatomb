@@ -152,8 +152,11 @@ namespace Hecatomb
 		public override void ChooseFromMenu()
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
-			ControlContext.Set(new SelectZoneControls(this));
-		}
+            var c = new SelectZoneControls(this);
+            c.MenuSelectable = false;
+            c.SelectedMenuCommand = "Jobs";
+            ControlContext.Set(c);
+        }
 		
 		public override void TileHover(Coord c)
 		{

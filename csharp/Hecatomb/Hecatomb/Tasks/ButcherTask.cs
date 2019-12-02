@@ -79,7 +79,10 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            ControlContext.Set(new SelectZoneControls(this));
+            var c = new SelectZoneControls(this);
+            c.MenuSelectable = false;
+            c.SelectedMenuCommand = "Jobs";
+            ControlContext.Set(c);
         }
 
         public override void SelectZone(List<Coord> squares)

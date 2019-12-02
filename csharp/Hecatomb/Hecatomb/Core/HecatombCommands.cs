@@ -211,8 +211,6 @@ namespace Hecatomb
             Camera c = Game.Camera;
             int xhalf = c.Width / 2;
             int yhalf = c.Height / 2;
-            //c.XOffset = Math.Min(Math.Max(0, c.XOffset+dx), Game.World.Width-c.Width);
-            //c.YOffset = Math.Min(Math.Max(0, c.YOffset+dy), Game.World.Height-c.Height);
             c.XOffset = Math.Min(Math.Max(1, c.XOffset + dx), Game.World.Width - c.Width - 1);
             c.YOffset = Math.Min(Math.Max(1, c.YOffset + dy), Game.World.Height - c.Height - 1);
             ControlContext.CenterCursor();

@@ -26,7 +26,9 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            ControlContext.Set(new SelectZoneControls(this));
+            var c = new SelectZoneControls(this);
+            c.SelectedMenuCommand = "Jobs";
+            ControlContext.Set(c);
         }
 
         public override void TileHover(Coord c)
@@ -58,12 +60,10 @@ namespace Hecatomb
                         item.Owned = false;
                         if (item.Claimed > 0)
                         {
-                            Debug.WriteLine("flag 1");
                             foreach (var task in Game.World.Tasks.ToList())
                             {
                                 if (task.Claims.ContainsKey(item.EID))
                                 {
-                                    Debug.WriteLine("flag 2");
                                     task.Unassign();
                                 }
                             }

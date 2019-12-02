@@ -20,7 +20,7 @@ namespace Hecatomb
         public override string GetDisplayName()
         {
             Feature f = Entity.Mock<Feature>(Makes);
-            return $"furnish {f.Name}";
+            return $"furnish {f.Describe()}";
         }
 
         protected List<IMenuListable> cachedChoices;
@@ -31,7 +31,7 @@ namespace Hecatomb
                 menu.Choices = cachedChoices;
                 return;
             }
-            menu.Header = "Choose a fixture:";
+            menu.Header = "Furnish a fixture:";
             var list = new List<IMenuListable>();
             var structures = Structure.ListAsStrings();
             var researched = Game.World.GetState<ResearchHandler>().Researched;
@@ -62,7 +62,8 @@ namespace Hecatomb
                     var task = Hecatomb.Entity.Mock<FurnishTask>();
                     var feat = Entity.Mock<Feature>(f);
                     task.Makes = f;
-                    task.MenuName = "furnish " + feat.Name;
+                    //task.MenuName = "furnish " + feat.Name;
+                    task.MenuName = feat.Describe(article: false);
                     list.Add(task);
                 }
             }
@@ -100,11 +101,17 @@ namespace Hecatomb
 		{
 			if (Makes==null)
 			{
-				ControlContext.Set(new MenuChoiceControls(this));
+                var c = new MenuChoiceControls(this);
+                c.MenuSelectable = false;
+                c.SelectedMenuCommand = "Jobs";
+                ControlContext.Set(c);
 			}
 			else
 			{
-				ControlContext.Set(new SelectTileControls(this));
+                var c = new SelectTileControls(this);
+                c.MenuSelectable = false;
+                c.SelectedMenuCommand = "Jobs";
+                ControlContext.Set(c);
 			}
 		}
 		

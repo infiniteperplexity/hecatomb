@@ -90,40 +90,19 @@ namespace Hecatomb
         public void BuildMenu(MenuChoiceControls menu)
         {
             // might want to format htis guy a bit...like add coordinates?
-            menu.Header = "Creature: " + Describe();
+            //menu.Header = "Creature: " + Describe();
             menu.Choices = new List<IMenuListable>();
             ControlContext.Selection = this;
         }
         public void FinishMenu(MenuChoiceControls menu)
         {
-            if (this == Player)
-            {
-                menu.MenuTop.Insert(2, $"Controls {GetState<TaskHandler>().Minions.Count} minions.");
-                menu.MenuTop.Insert(3, "Tab) First minion.");
-
-                var stored = new List<Dictionary<string, int>>();
-                var structures = Structure.ListStructures();
-                foreach (Structure s in structures)
-                {
-                    stored.Add(s.GetStored());
-                }
-                var total = Item.CombinedResources(stored);
-                if (total.Count > 0)
-                {
-                    menu.MenuTop.Add(" ");
-                    menu.MenuTop.Add("Stored resources:");
-                    foreach (var res in total.Keys)
-                    {
-                        menu.MenuTop.Add("- " + Resource.Format((res, total[res])));
-                    }
-                }
-            }
-            else
-            {
-                menu.MenuTop.Insert(2, "Tab) View minions.");
-            }
+            menu.MenuTop.RemoveAt(2);
+            menu.MenuTop.Add("Tab) View minions.");
+            menu.MenuTop.Add(" ");
+            menu.MenuTop.Add("{yellow}Creature: " + Describe());
             if (TryComponent<Minion>() != null)
             {
+                menu.MenuTop.Add(" ");
                 Task t = GetComponent<Minion>().Task;
                 if (t == null)
                 {
@@ -136,6 +115,7 @@ namespace Hecatomb
             }
             if (TryComponent<Inventory>() != null)
             {
+                menu.MenuTop.Add(" ");
                 Item item = GetComponent<Inventory>().Item;
                 if (item == null)
                 {
@@ -144,6 +124,36 @@ namespace Hecatomb
                 else
                 {
                     menu.MenuTop.Add("Carrying " + item.Describe());
+                }
+            }
+            if (this == Player)
+            {
+                var p = Game.World.Player;
+                menu.MenuTop.Add(" ");
+                menu.MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
+                if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                {
+                    menu.MenuTop.Add(" ");
+                    menu.MenuTop.Add("Minions:");
+                    var types = new Dictionary<string, int>();
+                    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                    {
+                        Creature c = (Creature)minion;
+                        if (!types.ContainsKey(c.TypeName))
+                        {
+                            types[c.TypeName] = 1;
+                        }
+                        else
+                        {
+                            types[c.TypeName] += 1;
+                        }
+                    }
+                    foreach (var type in types.Keys)
+                    {
+                        var mock = Entity.Mock<Creature>(type);
+                        // might need better handling for when we have multiple zombie types that still share a TypeName?
+                        menu.MenuTop.Add("{" + mock.FG + "}" + type + ": " + types[type]);
+                    }
                 }
             }
             menu.KeyMap[Keys.Escape] =

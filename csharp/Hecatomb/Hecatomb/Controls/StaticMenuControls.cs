@@ -17,6 +17,7 @@ namespace Hecatomb
 	{
 		public StaticMenuControls(ColoredText header, List<(Keys, ColoredText, Action)> choices) : base()
         {
+            MenuSelectable = false;
             MenuTop = new List<ColoredText>();
             if (header != " ")
             {
@@ -25,12 +26,20 @@ namespace Hecatomb
             }
             for (int i = 0; i < choices.Count; i++)
             {
-                var key = choices[i].Item1;
-                ColoredText ct = choices[i].Item2;
-                KeyMap[key] = choices[i].Item3;
-                string s = key.ToString();
-                ct.Text = (s + ") " + ct.Text);
-                MenuTop.Add(ct);
+                // allow for blank lines by setting the third item equal to null
+                if (choices[i].Item3 == null)
+                {
+                    MenuTop.Add(" ");
+                }
+                else
+                {
+                    var key = choices[i].Item1;
+                    ColoredText ct = choices[i].Item2;
+                    KeyMap[key] = choices[i].Item3;
+                    string s = key.ToString();
+                    ct.Text = (s + ") " + ct.Text);
+                    MenuTop.Add(ct);
+                }
             }
         }
 	}

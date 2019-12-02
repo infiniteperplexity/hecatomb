@@ -20,6 +20,10 @@ namespace Hecatomb
 
     public class FrozenControls : ControlContext
     {
+        public FrozenControls()
+        {
+            MenuSelectable = false;
+        }
         public override void HandleClick(int x, int y)
         {
         }
