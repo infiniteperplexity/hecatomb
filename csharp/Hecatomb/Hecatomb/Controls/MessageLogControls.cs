@@ -21,8 +21,6 @@ namespace Hecatomb
 
     public class MessageLogControls : ControlContext
     {
-        public int SelectedMessage;
-
         public MessageLogControls() : base()
         {
             MenuSelectable = false;
@@ -35,8 +33,8 @@ namespace Hecatomb
             var Commands = Game.Commands;
             KeyMap[Keys.Space] = Commands.Wait;
             KeyMap[Keys.Escape] = Reset;
-            KeyMap[Keys.PageUp] = ScrollUp;
-            KeyMap[Keys.PageDown] = ScrollDown;
+            KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
+            KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
             int MaxVisible = Math.Min(Game.World.GetState<MessageHandler>().MessageHistory.Count, 4);
             var controls = new List<ColoredText>()
             {
@@ -45,53 +43,29 @@ namespace Hecatomb
                 "{yellow}Message Log:",
                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             };
-            var list = Game.World.GetState<MessageHandler>().MessageHistory.GetRange(SelectedMessage, MaxVisible).ToList();
+            Debug.WriteLine($"SelectedMessage is {Game.InfoPanel.SelectedMessage} and MaxVisible is {MaxVisible}");
+            var list = Game.World.GetState<MessageHandler>().MessageHistory.GetRange(Game.InfoPanel.SelectedMessage, MaxVisible).ToList();
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i] = new ColoredText(list[i]);
+            }
             if (list.Count > 1 && list[1].Colors.Count == 0)
             {
-                list[0] = new ColoredText(list[1].Text, "cyan");
+                // this used to reference list[1] on the right hand side, I assume that was just a bug
+                list[0] = new ColoredText(list[0].Text, "cyan");
             }
             if (list.Count==0)
             {
                 list.Add("{cyan}Welcome to Hecatomb!");
+            }
+            foreach (var txt in list)
+            {
+                txt.Text = "- " + txt.Text;
             }
             list = controls.Concat(list).ToList();
             list.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             list.Add("Scroll: Page/Fn Up/Down");
             MenuTop = list.ToList();
         }
-
-        // huh...so...the "ShowScroll" thing...do we still want that?
-        public void PushMessage(ColoredText ct)
-        {
-            int MaxArchive = 100;
-            Game.World.GetState<MessageHandler>().MessageHistory.Insert(0, ct);
-            while (Game.World.GetState<MessageHandler>().MessageHistory.Count > MaxArchive)
-            {
-                Game.World.GetState<MessageHandler>().MessageHistory.RemoveAt(MaxArchive);
-            }
-            SelectedMessage = 0;
-            RefreshContent();
-        }
-
-        public void ScrollUp()
-        {
-            if (SelectedMessage > 0)
-            {
-                SelectedMessage -= 1;
-            }
-            RefreshContent();
-        }
-
-        public void ScrollDown()
-        {
-            int maxVisible = 4;
-            if (SelectedMessage < Game.World.GetState<MessageHandler>().MessageHistory.Count - maxVisible)
-            {
-                SelectedMessage += 1;
-            }
-            RefreshContent();
-        }
-
-
     }
 }

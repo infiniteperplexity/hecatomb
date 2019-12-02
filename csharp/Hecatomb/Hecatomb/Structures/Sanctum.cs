@@ -43,6 +43,7 @@ namespace Hecatomb
             };
             MenuName = "sanctum";
             Name = "sanctum";
+            UseHint = "(research new spells and increase sanity.)";
             Researches = new[] { "CondenseEctoplasm", "LongShadow", "PoundOfFlesh" };
         }
     }

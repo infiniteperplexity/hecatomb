@@ -63,6 +63,7 @@ namespace Hecatomb
             };
             MenuName = "stockpile";
             Name = "stockpile";
+            UseHint = "(store common resources.)";
             Stores = new string[] { "Rock", "Wood", "Flint", "Coal", "IronOre", "TinOre", "CopperOre"};
         }
     }

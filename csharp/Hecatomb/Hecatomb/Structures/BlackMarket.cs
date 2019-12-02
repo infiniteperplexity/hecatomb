@@ -101,6 +101,7 @@ namespace Hecatomb
             };
             MenuName = "black market";
             Name = "black market";
+            UseHint = "(trade goods of one type for another.)";
             AddListener<PlaceEvent>(OnPlace);
 
 

@@ -43,6 +43,7 @@ namespace Hecatomb
             };
             MenuName = "forge";
             Name = "forge";
+            UseHint = "(research metal tools and weapons.)";
             //Researches = new[] { "Bronze };
             Researches = new[] { "Bronzeworking", "Steelworking", "AlloySteel"};
             //ResearchPrereqs = new[] { "Bronzeworking"};

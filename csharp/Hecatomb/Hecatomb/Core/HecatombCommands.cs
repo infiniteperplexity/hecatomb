@@ -386,11 +386,13 @@ namespace Hecatomb
         public void ScrollUpCommand()
         {
             Game.InfoPanel.ScrollUp();
+            InterfacePanel.DirtifySidePanels();
         }
 
         public void ScrollDownCommand()
         {
             Game.InfoPanel.ScrollDown();
+            InterfacePanel.DirtifySidePanels();
         }
 
         public void SpeedUp()

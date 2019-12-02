@@ -6,12 +6,13 @@
 - Starting to get a little bit of drag
 - Still got a tombstone next to the edge somehow...this is very rare and hard to duplicate.
 - Got no message for that ghoul attack?
-- Does the special "Choose a structure" menu header show up right?Is "Avatar" a good name, or should it be "Control", "Pilot", "Incarnate"?
+- Is "Avatar" a good name, or should it be "Control", "Pilot", "Incarnate"?
 tombstones adjacenet sometimes?  is that a problem?
 - make it so you can cancel research.
 - should have fixed order for listing minion types and resources.
 - Should tabbing to a minion snap the cursor to that square?
 - Construct task shows ingredients when NoIngredients is true
+- Should we put timestamps on messages?
 
 In order to have a playable demo...
 - We need to have an installer that works all the way...at this point I definitely still need uninstall icons and so on.
@@ -20,7 +21,6 @@ In order to have a playable demo...
 
 
 Tutorial notes:
-- Tutorial should hint at tasks to come
 - Where should we note what different buildings do?
 - Research complete text is the wrong color
 

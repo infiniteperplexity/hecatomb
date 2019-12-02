@@ -48,7 +48,7 @@ namespace Hecatomb
             NoNatureAttacks = false;
             //NoNatureAttacks = true;
             AllSpells = false;
-            //AllSpells = true;
+            AllSpells = true;
             NoManaCost = false;
             NoManaCost = true;
             WorkBonus = 0;

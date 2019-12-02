@@ -43,6 +43,7 @@ namespace Hecatomb
             };
 			MenuName = "guard post";
 			Name = "guard post";
+            UseHint = "(provides a bonus to evasion for nearby minions.)";
             //AddListener<AttackEvent>(OnAttack);
 		}
 

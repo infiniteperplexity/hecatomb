@@ -29,6 +29,7 @@ namespace Hecatomb
         public string[] StructurePrereqs;
         public string[] Stores;
         public List<Coord> Squares;
+        public string UseHint;
 
         [JsonIgnore]
         public ResearchTask Researching
@@ -272,6 +273,7 @@ namespace Hecatomb
             menu.MenuTop.Insert(2, "Tab) Next structure.");
             menu.MenuTop.Insert(3, " ");
             menu.MenuTop.Insert(4, "{yellow}Structure: " + Describe());
+            menu.MenuTop.Insert(5, "{light cyan}" + UseHint);
             if (Researching != null)
             {
                 ResearchTask rt = Researching;
@@ -286,6 +288,7 @@ namespace Hecatomb
                     "Tab) Next structure.",
                     " ",
                     "{yellow}Structure: "+Describe(),
+                    "{light cyan}" + UseHint,
                     " ",
                     txt
                 };

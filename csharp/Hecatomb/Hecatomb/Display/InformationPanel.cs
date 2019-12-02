@@ -25,49 +25,12 @@ namespace Hecatomb
             RightMargin = 0;
         }
 
-        public void ShowScroll()
-        {
-            ScrollState = true;
-            SummaryState = false;
-            HoverState = false;
-            TutorialState = false;
-            Dirty = true;
-        }
-
-        public void ShowSummary()
-        {
-            ScrollState = false;
-            SummaryState = true;
-            HoverState = false;
-            TutorialState = false;
-            Dirty = true;
-        }
-
-        public void ShowHover()
-        {
-            ScrollState = false;
-            SummaryState = false;
-            HoverState = true;
-            TutorialState = false;
-            Dirty = true;
-        }
-
-        public void ShowTutorial()
-        {
-            ScrollState = false;
-            SummaryState = false;
-            HoverState = false;
-            TutorialState = true;
-            Dirty = true;
-        }
-
         public void ScrollUp()
         {
             if (SelectedMessage > 0)
             {
                 SelectedMessage -= 1;
             }
-            ShowScroll();
         }
 
         public void ScrollDown()
@@ -77,7 +40,6 @@ namespace Hecatomb
             {
                 SelectedMessage += 1;
             }
-            ShowScroll();
         }
 
         // this should actually be on the message handler
@@ -90,7 +52,7 @@ namespace Hecatomb
                 Game.World.GetState<MessageHandler>().MessageHistory.RemoveAt(MaxArchive);
             }
             SelectedMessage = 0;
-            ShowScroll();
+            InterfacePanel.DirtifySidePanels();
         }
 
         public override void Draw()
@@ -113,27 +75,11 @@ namespace Hecatomb
                 lines = lines.Concat(Game.Controls.MenuMiddle).ToList();
             }
             if (Game.Controls.MenuBottom.Count > 0)
-            //if (Game.Controls.MenuBottom.Count > 0 && !Game.World.GetState<TutorialHandler>().Visible && !(Game.Controls is ExamineTileControls))
             {
-                //lines.Add(" ");
-                //lines.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 lines.Add(" ");
                 lines = lines.Concat(Game.Controls.MenuBottom).ToList();
             }
             DrawLines(lines);
-            //if (ControlContext.ControlDown)
-            //{
-            //    DrawLines(Game.Controls.MenuBottom);
-            //}
-            //else if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
-            //{
-            //    DrawLines(Game.World.GetState<TutorialHandler>().GetText());
-            //}
-            //else
-            //{
-            //    DrawLines(Game.Controls.MenuTop);
-            //}
-            //}
         }
     }
 }
