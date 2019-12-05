@@ -158,7 +158,6 @@ namespace Hecatomb
                 {
                     Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
                     OnTileHover(tile);
-                    Game.InfoPanel.ShowHover();
                 }
             }
             else if (panel is CommandsPanel)

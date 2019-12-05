@@ -10,6 +10,7 @@ namespace Hecatomb
     public class MessageHandler : StateHandler
     {
         public List<ColoredText> MessageHistory;
+        public bool Unread;
 
         public MessageHandler()
         {

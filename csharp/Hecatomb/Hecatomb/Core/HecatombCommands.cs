@@ -260,6 +260,7 @@ namespace Hecatomb
             Game.Controls = new MessageLogControls();
             Game.Controls.MenuSelectable = false;
             Game.Controls.SelectedMenuCommand = "Log";
+            Game.World.GetState<MessageHandler>().Unread = false;
             InterfacePanel.DirtifySidePanels();
         }
 

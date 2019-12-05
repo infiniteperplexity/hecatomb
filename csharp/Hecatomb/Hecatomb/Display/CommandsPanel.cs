@@ -69,6 +69,10 @@ namespace Hecatomb
                     {
                         color = "gray";
                     }
+                    else if (command.Item1 == "Log" && Game.World.GetState<MessageHandler>().Unread)
+                    {
+                        color = "orange";
+                    }
                     int adjust = (i == 0) ? -4 * CharWidth : 0;
                     var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
                     var bump = margin + adjust + text.Length * CharWidth + margin;

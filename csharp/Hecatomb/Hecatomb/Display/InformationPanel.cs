@@ -25,49 +25,12 @@ namespace Hecatomb
             RightMargin = 0;
         }
 
-        public void ShowScroll()
-        {
-            ScrollState = true;
-            SummaryState = false;
-            HoverState = false;
-            TutorialState = false;
-            Dirty = true;
-        }
-
-        public void ShowSummary()
-        {
-            ScrollState = false;
-            SummaryState = true;
-            HoverState = false;
-            TutorialState = false;
-            Dirty = true;
-        }
-
-        public void ShowHover()
-        {
-            ScrollState = false;
-            SummaryState = false;
-            HoverState = true;
-            TutorialState = false;
-            Dirty = true;
-        }
-
-        public void ShowTutorial()
-        {
-            ScrollState = false;
-            SummaryState = false;
-            HoverState = false;
-            TutorialState = true;
-            Dirty = true;
-        }
-
         public void ScrollUp()
         {
             if (SelectedMessage > 0)
             {
                 SelectedMessage -= 1;
             }
-            ShowScroll();
         }
 
         public void ScrollDown()
@@ -77,20 +40,20 @@ namespace Hecatomb
             {
                 SelectedMessage += 1;
             }
-            ShowScroll();
         }
 
         // this should actually be on the message handler
         public void PushMessage(ColoredText ct)
         {
             int MaxArchive = 100;
-            Game.World.GetState<MessageHandler>().MessageHistory.Insert(0, ct);
+            var m = Game.World.GetState<MessageHandler>();
+            m.MessageHistory.Insert(0, ct);
             while (Game.World.GetState<MessageHandler>().MessageHistory.Count > MaxArchive)
             {
-                Game.World.GetState<MessageHandler>().MessageHistory.RemoveAt(MaxArchive);
+                m.MessageHistory.RemoveAt(MaxArchive);
             }
             SelectedMessage = 0;
-            ShowScroll();
+            m.Unread = true;
         }
 
         public override void Draw()
