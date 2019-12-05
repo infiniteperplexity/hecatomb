@@ -277,11 +277,6 @@ namespace Hecatomb
             if (Researching != null)
             {
                 ResearchTask rt = Researching;
-                string txt = "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns.)";
-                if (rt.Ingredients.Count > 0 && !Options.NoIngredients)
-                {
-                    txt = "Researching " + Research.Types[rt.Makes].Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
-                }
                 menu.MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     " ",
@@ -290,8 +285,13 @@ namespace Hecatomb
                     "{yellow}" + Describe(capitalized: true),
                     "{light cyan}" + UseHint,
                     " ",
-                    txt
+                    "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns.)",
+                    "(Backspace/Del to Cancel)"
                 };
+                if (rt.Ingredients.Count > 0 && !Options.NoIngredients)
+                {
+                    menu.MenuTop[7] = "Researching " + Research.Types[rt.Makes].Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
+                }
             }
             if (Stores.Length > 0)
             {
@@ -316,6 +316,19 @@ namespace Hecatomb
                     ControlContext.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextStructure;
+            menu.KeyMap[Keys.Delete] = CancelResearch;
+            menu.KeyMap[Keys.Delete] = CancelResearch;
+        }
+
+        public void CancelResearch()
+        {
+            if (Researching != null)
+            {
+                Task t = Tasks[X, Y, Z];
+                t?.Cancel();
+                Researching = null;
+            }
+            InterfacePanel.DirtifyUsualPanels();
         }
 
         public Dictionary<string, int> GetStored()

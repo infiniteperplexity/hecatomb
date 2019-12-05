@@ -71,6 +71,12 @@ namespace Hecatomb
             Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);  
         }
 
+        public override void Cancel()
+        {
+            Structure.Unbox().Researching = null;
+            base.Cancel();
+        }
+
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnBeginEvent t = (TurnBeginEvent)ge;
