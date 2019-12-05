@@ -40,7 +40,7 @@ namespace Hecatomb
             NoIngredients = false;
             NoIngredients = true;
             NoTutorial = false;
-            //NoTutorial = true;
+            NoTutorial = true;
             NoStartupScreen = false;
             NoStartupScreen = true;
             NoHumanAttacks = false;

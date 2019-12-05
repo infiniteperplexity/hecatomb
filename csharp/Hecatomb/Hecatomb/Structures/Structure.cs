@@ -317,7 +317,7 @@ namespace Hecatomb
                 };
             menu.KeyMap[Keys.Tab] = NextStructure;
             menu.KeyMap[Keys.Delete] = CancelResearch;
-            menu.KeyMap[Keys.Delete] = CancelResearch;
+            menu.KeyMap[Keys.Back] = CancelResearch;
         }
 
         public void CancelResearch()

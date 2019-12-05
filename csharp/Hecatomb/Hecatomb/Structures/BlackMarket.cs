@@ -166,29 +166,48 @@ namespace Hecatomb
         public override void FinishMenu(MenuChoiceControls menu)
         {
             menu.MenuTop.Insert(2, "Tab) Next structure.");
+            menu.MenuTop.Insert(3, " ");
+            menu.MenuTop.Insert(4, "{yellow}" + Describe(capitalized: true));
+            menu.MenuTop.Insert(5, "{light cyan}" + UseHint);
+            
             if (Trading != null)
             {
                 TradeTask t = Trading;
-                string txt = t.GetHoverName();
+                var txt = t.GetHoverName();
+                txt = "T" + txt.Substring(1);
                 menu.MenuTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
-                    "{yellow}Structure: "+Describe(),
+                    " ",
                     "Tab) Next structure.",
-                    txt
+                    " ",
+                    "{yellow}" + Describe(capitalized: true),
+                    "{light cyan}" + UseHint,
+                    " ",
+                    txt,
+                    "(Backspace/Del to Cancel)"
                 };
             }
-            else
-            {
-
-            }
-            InterfacePanel.DirtifySidePanels();
+            Game.InfoPanel.Dirty = true;
             menu.KeyMap[Keys.Escape] =
                () =>
                {
                    ControlContext.Selection = null;
                     ControlContext.Reset();
                 };
-            menu.KeyMap[Keys.Tab] = () => { /* NextStructure */};
+            menu.KeyMap[Keys.Tab] = NextStructure;
+            menu.KeyMap[Keys.Delete] = CancelTrade;
+            menu.KeyMap[Keys.Back] = CancelTrade;
+        }
+
+        public void CancelTrade()
+        {
+            if (Trading != null)
+            {
+                Task t = Game.World.Tasks[X, Y, Z];
+                t?.Cancel();
+                Trading = null;
+            }
+            InterfacePanel.DirtifyUsualPanels();
         }
     }
 }
