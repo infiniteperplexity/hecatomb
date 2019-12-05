@@ -18,6 +18,7 @@ namespace Hecatomb
         {
             MenuName = "particle test (debug)";
             cost = 0;
+            ForDebugging = true;
         }
 
         public override void ChooseFromMenu()

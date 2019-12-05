@@ -33,6 +33,10 @@ namespace Hecatomb
             {
                 var spell = GetSpell(sp);
                 bool valid = true;
+                if (spell.ForDebugging && !Options.ShowDebugSpells)
+                {
+                    valid = false;
+                }
                 foreach (string s in spell.Researches)
                 {
                     if (!researched.Contains(s) && !Options.AllSpells)

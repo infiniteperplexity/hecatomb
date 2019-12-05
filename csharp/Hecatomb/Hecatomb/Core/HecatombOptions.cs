@@ -27,6 +27,7 @@ namespace Hecatomb
         public bool Invincible;
         public bool ReseedRandom;
         public bool FullScreen;
+        public bool ShowDebugSpells;
         public List<(string, int)> FreeStuff;
 
         public HecatombOptions()
@@ -49,6 +50,8 @@ namespace Hecatomb
             //NoNatureAttacks = true;
             AllSpells = false;
             //AllSpells = true;
+            ShowDebugSpells = false;
+            //ShowDebugSpells = true;
             NoManaCost = false;
             NoManaCost = true;
             WorkBonus = 0;

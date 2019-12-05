@@ -18,6 +18,7 @@ namespace Hecatomb
         {
             MenuName = "spawn zombie (debug)";
             cost = 0;
+            ForDebugging = true;
         }
 
         public override void ChooseFromMenu()
@@ -75,6 +76,7 @@ namespace Hecatomb
         {
             MenuName = "spawn bandit (debug)";
             cost = 0;
+            ForDebugging = true;
         }
 
         public override void ChooseFromMenu()
@@ -122,6 +124,7 @@ namespace Hecatomb
         {
             MenuName = "self heal (debug)";
             cost = 0;
+            ForDebugging = true;
         }
 
         public override void ChooseFromMenu()
@@ -148,6 +151,7 @@ namespace Hecatomb
         {
             MenuName = "spawn item (debug)";
             cost = 0;
+            ForDebugging = true;
         }
 
         public override void ChooseFromMenu()

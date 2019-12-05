@@ -22,6 +22,7 @@ namespace Hecatomb
 		protected int cost;
 		public SpellCaster Component;
 		public Creature Caster;
+        public bool ForDebugging;
         public string[] Researches;
         public string[] Structures;
 		

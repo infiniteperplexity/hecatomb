@@ -4,15 +4,12 @@
 - menu items wrapping because it's narrow looks kind of ugly.
 - Starting to get a little bit of drag
 - Still got a tombstone next to the edge somehow...this is very rare and hard to duplicate.
-- Got no message for that ghoul attack?
 - Is "Avatar" a good name, or should it be "Control", "Pilot", "Incarnate"?
 - tombstones adjacenet sometimes?  is that a problem?
-- make it so you can cancel research.
 - should have fixed order for listing minion types and resources.
 - Should tabbing to a minion snap the cursor to that square?
 - Construct task shows ingredients when NoIngredients is true
 - Pushmessage goes through some weird hoops.
-- There's some kind of error where TradeTask and NoIngredients makes it look like no task gets assigned, but I bet it's assigning and then failing
 - Should we put timestamps on messages?
 
 In order to have a playable demo...
@@ -21,54 +18,33 @@ In order to have a playable demo...
 - We do probably need to be free of common crashes and major performance slams.
 
 
-Tutorial notes:
-- Where should we note what different buildings do?
-- Research complete text is the wrong color
-
-
-
 Design issues:
 - Probably want some sort of busywork task
 - Should there be a furnace that can bake coal?
-- Should we save message history in state?
-* Should there be way to dispose of rotted zombies?  And should rotted zombies be weaker?
-* The guard post should do stuff.
 - need a way to send messages along with destroying something; e.g. this is how it died.
-* should make the guard post do stuff
 * these spells should actually do stuff
 - Add some techs to the library
-* give us a heal-all debugging spell
-* give us a fresh zombie spell
 * orcs or something in warrens
 * make sieges progress
 - maybe I should move the research bonus checker to a global bonus checker
-* we have some typos...corpsegot displaced.
 * maybe delay bandits a bit?
 - how did that goblin end up here?
 - you often move a bit to start, which sort of defeats the purpose of the "distance from start" checks
 * get spurious "Can't butcher corpse" thing.
 * the bandits attacked their own wolfhound...but they don't normally do that...well...this happened twice through normal generation, but none with debugging
-* we need to refactor PushMessage so it handles sensory stuff sensibly
 - "Your severely wounded zombie has perished" is maybe a bit wordy
 * higher mana totals should regenerate faster
 * butcher corpse should select an area
 * we have too many trade goods, or they are too close
 * tell what direction the bandits are coming from
 * test second bandit attack?
-* make it so you can start research without ingredients
 * we got a pile of 0 trade goods
-* not wrapping splash lines (or rather, we need to manually set margins)
 - still very rarely get graves next to down slopes
 - for once we're getting slogged by successful searches 
 - various display issues with status panel...text not wrapping, need to show day info and stuff (target 1280x720px)
 - better spell names
-- "research on researching X complete"
-* can hover one tile past some edges of the screen
 - was water supposed to flicker when the mouse moved?
-* should have a more organized way to dirtify panels.
-- is newest message at top a good system?
 - need some way to keep your zombies indoors
-- we need a more modular command system here...
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.
