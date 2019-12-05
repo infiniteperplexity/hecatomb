@@ -95,6 +95,13 @@ namespace Hecatomb
             return false;
         }
 
+        public override void Cancel()
+        {
+            (Structure.Unbox() as BlackMarket).Trading = null;
+            base.Cancel();
+        }
+
+
         public override bool CanAssign(Creature c)
         {
             if (Labor < LaborCost)

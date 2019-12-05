@@ -143,7 +143,6 @@ namespace Hecatomb
         public override void BuildMenu(MenuChoiceControls menu)
         {
             // might want to format htis guy a bit...like add coordinates?
-            menu.Header = "Structure: " + Describe();
             ControlContext.Selection = this;
             if (Trading != null)
             {

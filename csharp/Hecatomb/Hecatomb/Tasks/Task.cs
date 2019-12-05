@@ -129,7 +129,7 @@ namespace Hecatomb
                 return false;
             }
             Movement m = c.GetComponent<Movement>();
-            return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients);
+            return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients, alwaysNeedsIngredients: NeedsIngredients());
         }
         public virtual void AssignTo(Creature c)
         {

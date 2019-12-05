@@ -640,9 +640,9 @@ namespace Hecatomb
             return (c == null) ? false : true;
         }
 
-        public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true)
+        public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false)
         {
-            if (Game.Options.NoIngredients)
+            if (Game.Options.NoIngredients && !alwaysNeedsIngredients)
             {
                 return true;
             }
