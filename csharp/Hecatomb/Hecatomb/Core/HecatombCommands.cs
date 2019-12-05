@@ -274,7 +274,7 @@ namespace Hecatomb
         {
             Game.SplashPanel.Splash(new List<ColoredText>()
             {
-                "Saving the game..."
+                $"Saving {Game.GameName}..."
             }, frozen: true);
             Debug.WriteLine("saving the game");
             Thread thread = new Thread(SaveGameProcess);
@@ -387,11 +387,13 @@ namespace Hecatomb
         public void ScrollUpCommand()
         {
             Game.InfoPanel.ScrollUp();
+            InterfacePanel.DirtifySidePanels();
         }
 
         public void ScrollDownCommand()
         {
             Game.InfoPanel.ScrollDown();
+            InterfacePanel.DirtifySidePanels();
         }
 
         public void SpeedUp()

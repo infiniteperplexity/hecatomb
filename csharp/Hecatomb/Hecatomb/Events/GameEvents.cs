@@ -108,7 +108,9 @@ namespace Hecatomb
 
         public SensoryEvent()
         {
-
+            X = -1;
+            Y = -1;
+            Z = -1;
         }
         public SensoryEvent(ColoredText sight, int x, int y, int z)
         {
@@ -119,6 +121,12 @@ namespace Hecatomb
         }
         public override void Fire()
         {
+            if (X == -1 && Y == -1 && Z == -1)
+            {
+                Debug.WriteLine(Sight);
+                Debug.WriteLine(Sound);
+                throw new InvalidOperationException("We shouldn't have sensory events without locations.");
+            }
             Coord c = new Coord(X, Y, Z);
             // should make this an actual event
             if (Game.Visible.Contains(c))

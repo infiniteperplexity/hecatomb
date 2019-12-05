@@ -44,6 +44,8 @@ namespace Hecatomb
             };
             MenuName = "library";
             Name = "library";
+            // should it add Sanity as well?
+            UseHint = "(research new technologies.)";
             Researches = new[] { "Bronzeworking", "Chirurgy", "Masonry", "Steelworking", "AlloySteel" };
             StructurePrereqs = new[] { "BlackMarket" };
         }

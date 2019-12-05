@@ -54,6 +54,8 @@ namespace Hecatomb
             }
             SelectedMessage = 0;
             m.Unread = true;
+            InterfacePanel.DirtifySidePanels();
+
         }
 
         public override void Draw()
@@ -76,27 +78,11 @@ namespace Hecatomb
                 lines = lines.Concat(Game.Controls.MenuMiddle).ToList();
             }
             if (Game.Controls.MenuBottom.Count > 0)
-            //if (Game.Controls.MenuBottom.Count > 0 && !Game.World.GetState<TutorialHandler>().Visible && !(Game.Controls is ExamineTileControls))
             {
-                //lines.Add(" ");
-                //lines.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 lines.Add(" ");
                 lines = lines.Concat(Game.Controls.MenuBottom).ToList();
             }
             DrawLines(lines);
-            //if (ControlContext.ControlDown)
-            //{
-            //    DrawLines(Game.Controls.MenuBottom);
-            //}
-            //else if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
-            //{
-            //    DrawLines(Game.World.GetState<TutorialHandler>().GetText());
-            //}
-            //else
-            //{
-            //    DrawLines(Game.Controls.MenuTop);
-            //}
-            //}
         }
     }
 }

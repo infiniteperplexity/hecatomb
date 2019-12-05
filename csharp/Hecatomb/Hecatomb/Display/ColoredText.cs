@@ -40,6 +40,16 @@ namespace Hecatomb
             Text = txt;
         }
 
+        public ColoredText(ColoredText ct)
+        {
+            Colors = new SortedList<int, string>();
+            Text = ct.Text;
+            foreach (var key in ct.Colors.Keys)
+            {
+                Colors[key] = ct.Colors[key];
+            }
+        }
+
         public ColoredText(string s, string c) : this(s)
         {
             Colors[0] = c;

@@ -109,6 +109,7 @@ namespace Hecatomb
         {
             MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
+                " ",
                 ("{yellow}"+Header),
                 (CurrentText+"_"),
                 "{cyan}Press Enter when finished."
