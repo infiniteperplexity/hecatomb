@@ -12,6 +12,12 @@
 - Pushmessage goes through some weird hoops.
 - Should we put timestamps on messages?
 
+Tech tree:
+- Does "chirurgy" exist as an active technology?
+- Why does the stonemason require flesh and bone?
+- Should things that require ectoplasm also require the sanctum?
+- Should make a technology centered map.
+
 In order to have a playable demo...
 - We need to have an installer that works all the way...at this point I definitely still need uninstall icons and so on.
 - Not all interface stuff needs to be awesome.
