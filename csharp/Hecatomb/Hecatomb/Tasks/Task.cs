@@ -243,7 +243,7 @@ namespace Hecatomb
             }
         }
 
-        public void ValidateClaims()
+        public virtual void ValidateClaims()
         {
             int claims = Claims.Keys.Count;
             foreach (int eid in Claims.Keys.ToList())
@@ -268,6 +268,11 @@ namespace Hecatomb
                 ClaimIngredients();
             }
         }
+
+        public virtual Item PickUpIngredient(int eid, Item item)
+        {
+            return item.TakeClaimed(Claims[eid]);
+        }
         public void FetchIngredient()
         {
             // make sure the claims are still valid
@@ -289,7 +294,8 @@ namespace Hecatomb
                 {
                     swap = inv.Item; 
                 }
-                inv.Item = item.TakeClaimed(Claims[eid]);
+                //inv.Item = item.TakeClaimed(Claims[eid]);
+                inv.Item = PickUpIngredient(eid, item);
                 
                 // this is a weird way to drop it...
                 swap?.Place(x, y, z);
@@ -319,7 +325,7 @@ namespace Hecatomb
             }
             item.Despawn();
         }
-        public void UnclaimIngredients()
+        public virtual void UnclaimIngredients()
         {
             foreach (int eid in Claims.Keys)
             {

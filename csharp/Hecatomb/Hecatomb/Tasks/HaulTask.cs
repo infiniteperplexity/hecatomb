@@ -125,6 +125,62 @@ namespace Hecatomb
             Ingredients.Clear();
         }
 
+        public override void ValidateClaims()
+        {
+            if (Options.HaulTaskClaims)
+            {
+                base.ValidateClaims();
+                return;
+            }
+            int claims = Claims.Keys.Count;
+            foreach (int eid in Claims.Keys.ToList())
+            {
+                // if it has despawned
+                if (!Entities.ContainsKey(eid))
+                {
+                    Claims.Remove(eid);
+                }
+                else
+                {
+                    Item item = (Item)Entities[eid];
+                    if (!item.Placed)
+                    {
+                        Claims.Remove(eid);
+                    }
+                }
+            }
+            // if the haulable item was moved, cancel the task
+            if (Claims.Keys.Count < claims)
+            {
+                Cancel();
+            }
+        }
+
+        public override void UnclaimIngredients()
+        {
+            if (Options.HaulTaskClaims)
+            {
+                base.UnclaimIngredients();
+            }
+            else
+            {
+                Claims.Clear();
+            }
+        }
+
+        public override Item PickUpIngredient(int eid, Item item)
+        {
+            if (Options.HaulTaskClaims)
+            {
+                return base.PickUpIngredient(eid, item);
+            }
+            else
+            {
+                return item.Take(Claims[eid]);
+            }
+          
+        }
+
     }
 
 

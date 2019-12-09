@@ -1,4 +1,10 @@
-﻿Current interface issues:
+﻿Playtest issues:
+- Need to implement Fn+Up/Down (I think this works automatically)
+- Mouse drags on certain interface screens where cacheing is not implemented
+- Ingredient checks should probably be able to cancel unassigned haul tasks
+- Alright, I think I made it so haul tasks don't stake claims
+
+Interface issues:
 - Ideally want to get time of day, phase of moon, and total turn number on there.  Time/date block looks stupid
 - TurnHandler is accessed in a bizarre way incompatible with other state handlers
 - menu items wrapping because it's narrow looks kind of ugly.

@@ -23,9 +23,38 @@ namespace Hecatomb
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
             KeyMap[Keys.J] = Commands.ChooseTask;
             KeyMap[Keys.Z] = Commands.ChooseSpell;
+            KeyMap[Keys.J] = Commands.ChooseTask;
+            KeyMap[Keys.Z] = Commands.ChooseSpell;
+            KeyMap[Keys.L] = Commands.ShowLog;
+            KeyMap[Keys.V] = Commands.ShowAchievements;
+            KeyMap[Keys.R] = Commands.ShowResearch;
+            KeyMap[Keys.U] = Commands.ShowStructures;
+            KeyMap[Keys.M] = Commands.ShowMinions;
+
+            KeyMap[Keys.Enter] = Commands.TogglePause;
+            KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
+            KeyMap[Keys.OemPipe] = Commands.ShowConsole;
+            KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
+            KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
+            KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
+            KeyMap[Keys.OemMinus] = Commands.SlowDown;
+            KeyMap[Keys.OemPlus] = Commands.SpeedUp;
+
+            KeyMap[Keys.Space] = SelectOrWait;
             RefreshContent();
 		}
 
+        public void SelectOrWait()
+        {
+            if (ControlDown)
+            {
+                Game.Commands.Wait();
+            }
+            else
+            {
+                SelectTile();
+            }
+        }
         public override void RefreshContent()
         {
              MenuTop = new List<ColoredText>() {

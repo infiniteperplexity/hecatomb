@@ -34,7 +34,6 @@ namespace Hecatomb
         public AbstractCameraControls() : base()
         {
             var Commands = Game.Commands;
-            KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Up] = Commands.MoveCameraNorth;
             KeyMap[Keys.Down] = Commands.MoveCameraSouth;
             KeyMap[Keys.Left] = Commands.MoveCameraWest;
@@ -47,14 +46,9 @@ namespace Hecatomb
             KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
             KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
             KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
-            KeyMap[Keys.U] = Commands.ShowStructures;
-            KeyMap[Keys.M] = Commands.ShowMinions;
 
             KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
             KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
-            KeyMap[Keys.Space] = Commands.Wait;
-            KeyMap[Keys.OemMinus] = Commands.SlowDown;
-            KeyMap[Keys.OemPlus] = Commands.SpeedUp;
         }
         public override void CameraHover()
         {

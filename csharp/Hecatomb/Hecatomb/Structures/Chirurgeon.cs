@@ -43,6 +43,7 @@ namespace Hecatomb
             Name = "chirurgeon";
             UseHint = "(repair injured minions)";
             StructurePrereqs = new[] { "Slaughterhouse" };
+            ResearchPrereqs = new[] { "Chirurgy" };
         }
     }
 }

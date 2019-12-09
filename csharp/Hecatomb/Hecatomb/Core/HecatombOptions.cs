@@ -28,6 +28,7 @@ namespace Hecatomb
         public bool ReseedRandom;
         public bool FullScreen;
         public bool ShowDebugSpells;
+        public bool HaulTaskClaims;
         public List<(string, int)> FreeStuff;
 
         public HecatombOptions()
@@ -41,15 +42,15 @@ namespace Hecatomb
             NoIngredients = false;
             NoIngredients = true;
             NoTutorial = false;
-            NoTutorial = true;
+            //NoTutorial = true;
             NoStartupScreen = false;
-            NoStartupScreen = true;
+            //NoStartupScreen = true;
             NoHumanAttacks = false;
             //NoHumanAttacks = true;
             NoNatureAttacks = false;
             //NoNatureAttacks = true;
             AllSpells = false;
-            //AllSpells = true;
+            AllSpells = true;
             ShowDebugSpells = false;
             //ShowDebugSpells = true;
             NoManaCost = false;
@@ -72,6 +73,8 @@ namespace Hecatomb
             //Invincible = true;
             ReseedRandom = false;
             //ReseedRandom = true;
+            HaulTaskClaims = false;
+            //HaulTaskClaims = true;
             FreeStuff = new List<(string, int)>();
             //FreeStuff.Add(("TradeGoods", 4));
             //FreeStuff.Add(("Wood", 4));

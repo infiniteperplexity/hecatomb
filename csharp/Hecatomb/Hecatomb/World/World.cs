@@ -330,6 +330,14 @@ namespace Hecatomb
                 }
                 text.Add(" ");
             }
+            else if (Tasks[c] != null)
+            {
+                t = Tasks[c];
+                if (t != null)
+                {
+                    text.Add("Task: " + (t as Task).GetHoverName());
+                }
+            }
             change = text.Count;
             if (Explored.Contains(above) || Game.Options.Explored)
             {
@@ -358,6 +366,14 @@ namespace Hecatomb
                 }
                 text.Add(" ");
             }
+            else if (Tasks[above]!=null)
+            {
+                t = Tasks[above];
+                if (t != null)
+                {
+                    text.Add("Above: " + (t as Task).GetHoverName());
+                }
+            }
             if (Explored.Contains(below) || Game.Options.Explored)
             {
                 text.Add("Below: " + Terrains[x, y, zb].Name);
@@ -384,6 +400,14 @@ namespace Hecatomb
                     text.Add("Task: " + (t as Task).GetHoverName());
                 }
                 text.Add(" ");
+            }
+            else if (Tasks[below] != null)
+            {
+                t = Tasks[below];
+                if (t != null)
+                {
+                    text.Add("Below: " + (t as Task).GetHoverName());
+                }
             }
             for (int i = 0; i < text.Count; i++)
             {

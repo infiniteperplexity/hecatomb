@@ -210,7 +210,11 @@ namespace Hecatomb
                     int claim = Math.Min(item.Unclaimed, pile.StackSize-pile.Quantity);
                     ht.Ingredients[resource] = claim;
                     ht.Claims[item.EID] = claim;
-                    item.Claimed += claim;
+                    // experimental code (the experiment is to set this to false)
+                    if (Options.HaulTaskClaims)
+                    {
+                        item.Claimed += claim;
+                    }
                     return;
                 }
             }
