@@ -61,6 +61,10 @@ namespace Hecatomb
                 {
                     var task = Hecatomb.Entity.Mock<FurnishTask>();
                     var feat = Entity.Mock<Feature>(f);
+                    string json = EntityType.Types[f].Components["Fixture"];
+                    JObject obj = JObject.Parse(json);
+                    var ingredients = obj["Ingredients"];
+                    task.Ingredients = (ingredients == null) ? new Dictionary<string, int>() : ingredients.ToObject<Dictionary<string, int>>();
                     task.Makes = f;
                     //task.MenuName = "furnish " + feat.Name;
                     task.MenuName = feat.Describe(article: false);

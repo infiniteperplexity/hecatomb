@@ -105,12 +105,12 @@ namespace Hecatomb
             {
                 if (Hour == DawnHour)
                 {
-                    Game.InfoPanel.PushMessage("The sun is coming up.");
+                    Game.InfoPanel.PushMessage("{yellow}The sun is coming up.");
                     PhaseSymbol = PhaseSymbols["Twilight"];
                 }
                 else if (Hour == DuskHour)
                 {
-                    Game.InfoPanel.PushMessage("Night is falling.");
+                    Game.InfoPanel.PushMessage("{yellow}Night is falling.");
                     PhaseSymbol = PhaseSymbols["Twilight"];
                 }
                 else if (Hour == DawnHour + 1)

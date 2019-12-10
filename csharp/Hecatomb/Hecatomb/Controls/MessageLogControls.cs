@@ -38,6 +38,7 @@ namespace Hecatomb
             var Commands = Game.Commands;
             KeyMap[Keys.Space] = Commands.Wait;
             KeyMap[Keys.Escape] = ExitLogMode;
+            KeyMap[Keys.L] = ExitLogMode;   
             KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
             KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
             KeyMap[Keys.Z] = Commands.ChooseSpell;

@@ -98,7 +98,7 @@ namespace Hecatomb
             {
                 researched.Add(Makes);
             }
-            Game.InfoPanel.PushMessage("{blue}Research on " + Describe(article: false) + " completed!");
+            Game.InfoPanel.PushMessage("{magenta}Research on " + Describe(article: false) + " completed!");
             Complete();
         }
 
