@@ -37,12 +37,12 @@ namespace Hecatomb
                     return "messed up haul task";
                 }
                 var carried = $"carried by {Worker.Describe()} at {Worker.X} {Worker.Y} {Worker.Z}";
-                return $"haul {Resource} "+carried;
+                return $"haul {Hecatomb.Resource.Types[Resource].Name} "+carried;
             }
             Item item = Entity.FromEID(Claims.Keys.ToList()[0]) as Item;
             if (item==null)
             {
-                return $"haul {Resource}";
+                return $"haul {Hecatomb.Resource.Types[Resource].Name}";
             }
             var (x, y, z) = item;
             string where = null;
@@ -82,6 +82,11 @@ namespace Hecatomb
             Movement m = c.GetComponent<Movement>();
             // if the Item has been removed...do something...
             if (Claims.Count == 0)
+            {
+                Cancel();
+                return false;
+            }
+            else if (!Entities.ContainsKey(Claims.Keys.ToList()[0]))
             {
                 Cancel();
                 return false;

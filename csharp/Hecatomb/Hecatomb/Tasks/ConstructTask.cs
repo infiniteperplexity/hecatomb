@@ -200,7 +200,8 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-			if (Makes==null)
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            if (Makes==null)
 			{
                 var menu = new MenuChoiceControls(this);
                 menu.Header = "Construct a structure:";

@@ -54,9 +54,15 @@ namespace Hecatomb
             return ge;
         }
 
-
+        // this causes some issues because we want to cache only until the interface changes
+        protected List<IMenuListable> cachedChoices;
         public void BuildMenu(MenuChoiceControls menu)
         {
+            if (cachedChoices != null)
+            {
+                //menu.Choices = cachedChoices;
+                //return;
+            }
             menu.Header = "Choose a task:";
             List<IMenuListable> tasks = new List<IMenuListable>();
             var structures = Structure.ListAsStrings();
@@ -76,6 +82,7 @@ namespace Hecatomb
                     tasks.Add(GetTask(t));
                 }
             }
+            cachedChoices = tasks;
             menu.Choices = tasks;
         }
         public void FinishMenu(MenuChoiceControls menu)

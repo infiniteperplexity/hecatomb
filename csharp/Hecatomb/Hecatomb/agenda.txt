@@ -1,8 +1,7 @@
 ﻿Playtest issues:
 - Need to implement Fn+Up/Down (I think this works automatically)
-- Mouse drags on certain interface screens where cacheing is not implemented
-- Ingredient checks should probably be able to cancel unassigned haul tasks
-- Alright, I think I made it so haul tasks don't stake claims
+- I'm a little worried that non-cacheing chooser menus might drag sometimes, but I couldn't replicate that.
+- It's possible that I missed one or more bugs related to hauling/ingredients/claims/priority, but I did test as much chaos as possible.
 
 Interface issues:
 - Ideally want to get time of day, phase of moon, and total turn number on there.  Time/date block looks stupid

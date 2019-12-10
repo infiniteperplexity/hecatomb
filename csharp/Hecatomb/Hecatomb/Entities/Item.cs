@@ -45,6 +45,18 @@ namespace Hecatomb
             Owned = true;
         }
 
+        public bool IsHauled()
+        {
+            foreach (var task in Tasks)
+            {
+                if (task is HaulTask && task.Claims.ContainsKey(EID))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static Item SpawnCorpse()
         {
             return SpawnCorpse("Human");

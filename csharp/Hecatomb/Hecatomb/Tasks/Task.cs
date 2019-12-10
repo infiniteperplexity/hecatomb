@@ -307,6 +307,42 @@ namespace Hecatomb
                 Worker.GetComponent<Actor>().WalkToward(item, useLast: true);
             }
         }
+
+
+        public void FetchIngredientWithPriority()
+        {
+            // make sure the claims are still valid
+            ValidateClaims();
+            if (Claims.Count == 0)
+            {
+                return;
+            }
+            // this will throw an error if the item has despawned
+            int eid = Claims.Keys.ToList()[0];
+            Item item = (Item)Entities[eid];
+            // now need to do some validation
+            if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z && !HasIngredient())
+            {
+                var (x, y, z) = item;
+                Inventory inv = Worker.GetComponent<Inventory>();
+                Item swap = null;
+                if (inv.Item != null)
+                {
+                    swap = inv.Item;
+                }
+                //inv.Item = item.TakeClaimed(Claims[eid]);
+                inv.Item = PickUpIngredient(eid, item);
+
+                // this is a weird way to drop it...
+                swap?.Place(x, y, z);
+                Claims.Remove(eid);
+                Worker.GetComponent<Actor>().Spend();
+            }
+            else
+            {
+                Worker.GetComponent<Actor>().WalkToward(item, useLast: true);
+            }
+        }
         public virtual void SpendIngredient()
         {
             if (!NeedsIngredients())
@@ -504,6 +540,7 @@ namespace Hecatomb
         // IMenuListable
         public virtual void ChooseFromMenu()
         {
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectZoneControls(this);
             c.MenuSelectable = false;
             c.SelectedMenuCommand = "Jobs";

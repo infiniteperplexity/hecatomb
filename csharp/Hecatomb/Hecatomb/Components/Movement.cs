@@ -662,6 +662,10 @@ namespace Hecatomb
                     }
                 }
             }
+            if (needed.ContainsKey("Wood"))
+            {
+                Debug.WriteLine($"Needs {needed["Wood"]}");
+            }
             return (needed.Count == 0);
         }
 

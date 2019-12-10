@@ -40,11 +40,11 @@ namespace Hecatomb
             Visible = false;
             //Visible = true;
             NoIngredients = false;
-            NoIngredients = true;
+            //NoIngredients = true;
             NoTutorial = false;
-            //NoTutorial = true;
+            NoTutorial = true;
             NoStartupScreen = false;
-            //NoStartupScreen = true;
+            NoStartupScreen = true;
             NoHumanAttacks = false;
             //NoHumanAttacks = true;
             NoNatureAttacks = false;
@@ -56,7 +56,7 @@ namespace Hecatomb
             NoManaCost = false;
             NoManaCost = true;
             WorkBonus = 0;
-            //WorkBonus = 5;
+            WorkBonus = 5;
             NoSpiders = false;
             //NoSpiders = true;
             NoGhouls = false;

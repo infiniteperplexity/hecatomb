@@ -525,9 +525,13 @@ namespace Hecatomb
                                 GotoState("CastSpell2");
                             }
                         }
-                        else if (t.Action =="ChooseDigTask")
+                        else if (t.Action == "ChooseDigTask")
                         {
                             NextState();
+                        }
+                        else if (t.Action == "ChooseAnotherTask" || t.Action == "ChooseBuildTask")
+                        {
+                            GotoState("AssignJob");
                         }
                         else if (t.Action == "Cancel")
                         {
@@ -956,6 +960,10 @@ namespace Hecatomb
                         else if (t.Action =="ChooseBuildTask")
                         {
                             NextState();
+                        }
+                        else if (t.Action == "ChooseAnotherTask" || t.Action == "ChooseDigTask")
+                        {
+                            GotoState("AssignJob2");
                         }
                         else if (t.Action == "Cancel")
                         {

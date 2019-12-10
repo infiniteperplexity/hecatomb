@@ -159,7 +159,7 @@ namespace Hecatomb
                         // loop through available items in order of distance
                         foreach (Item item in items)
                         {
-                            if (item.Resource==resource && !item.IsStored() && item.Owned && item.Unclaimed>0)
+                            if (item.Resource==resource && !item.IsStored() && item.Owned && item.Unclaimed>0 && !item.IsHauled())
                             {
                                 TryToSpawnHaulTask(item);
                                 // go to next resource
@@ -209,6 +209,7 @@ namespace Hecatomb
                     // this logic seems correct
                     int claim = Math.Min(item.Unclaimed, pile.StackSize-pile.Quantity);
                     ht.Ingredients[resource] = claim;
+                    ht.Resource = resource;
                     ht.Claims[item.EID] = claim;
                     // experimental code (the experiment is to set this to false)
                     if (Options.HaulTaskClaims)
@@ -233,8 +234,12 @@ namespace Hecatomb
                     // this logic seems correct
                     int claim = item.Unclaimed; ;
                     ht.Ingredients[resource] = claim;
+                    ht.Resource = resource;
                     ht.Claims[item.EID] = claim;
-                    item.Claimed += claim;
+                    if (Options.HaulTaskClaims)
+                    {
+                        item.Claimed += claim;
+                    }
                     return;
                 }
             }

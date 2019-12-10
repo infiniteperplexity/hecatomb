@@ -99,7 +99,8 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-			if (Makes==null)
+            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            if (Makes==null)
 			{
                 var c = new MenuChoiceControls(this);
                 c.MenuSelectable = false;
