@@ -15,8 +15,8 @@ namespace Hecatomb
     public class Fixture : Component
     {
         public Dictionary<string, int> Ingredients = new Dictionary<string, int>();
-        public string[] Structures = new string[0];
-        public string[] Research = new string[0];
+        public string[] StructurePrereqs = new string[0];
+        public string[] ResearchPrereqs = new string[0];
         public int Labor = 10;
 
         public override void InterpretJSON(string json)
@@ -30,12 +30,12 @@ namespace Hecatomb
             var structures = obj["Structures"];
             if (structures != null)
             {
-                Structures = structures.ToObject<string[]>();
+                StructurePrereqs = structures.ToObject<string[]>();
             }
             var research = obj["Research"];
             if (research != null)
             {
-                Research = research.ToObject<string[]>();
+                ResearchPrereqs = research.ToObject<string[]>();
             }
         }
     }

@@ -54,6 +54,24 @@ namespace Hecatomb
             }
             SelectedMessage = 0;
             m.Unread = true;
+            if (ct.Colors.ContainsKey(0))
+            {
+                var order = new Dictionary<string, int> { 
+                    ["white"] = 0, 
+                    ["yellow"] = 1, 
+                    ["magenta"] = 2,
+                    ["orange"] = 3,
+                    ["red"] = 4 
+                };
+                var c = ct.Colors[0];
+                if (order.ContainsKey(c))
+                {
+                    if (order[c] > order[m.UnreadColor])
+                    {
+                        m.UnreadColor = c;
+                    }
+                }
+            }
             InterfacePanel.DirtifySidePanels();
 
         }

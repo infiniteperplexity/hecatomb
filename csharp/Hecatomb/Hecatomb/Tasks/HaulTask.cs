@@ -37,7 +37,8 @@ namespace Hecatomb
                     return "messed up haul task";
                 }
                 var carried = $"carried by {Worker.Describe()} at {Worker.X} {Worker.Y} {Worker.Z}";
-                return $"haul {Hecatomb.Resource.Types[Resource].Name} "+carried;
+                //return $"haul {Hecatomb.Resource.Types[Resource].Name} "+carried;
+                return $"haul {Hecatomb.Resource.Types[Resource].Name}";
             }
             Item item = Entity.FromEID(Claims.Keys.ToList()[0]) as Item;
             if (item==null)

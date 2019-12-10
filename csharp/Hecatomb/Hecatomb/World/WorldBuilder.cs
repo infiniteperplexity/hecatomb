@@ -99,7 +99,7 @@ namespace Hecatomb
                     } else {
                         if (!Game.Options.NoSpiders)
                         {
-                            if (world.Random.Next(250) == 1)
+                            if (world.Random.Next(200) == 1)
                             {
                                 var s = Entity.Spawn<Creature>("Spider");
                                 //s.GetComponent<Actor>().Asleep = true;

@@ -20,6 +20,7 @@ namespace Hecatomb
 		public CameraControls() : base()
 		{
 			var Commands = Game.Commands;
+            KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
             KeyMap[Keys.J] = Commands.ChooseTask;
             KeyMap[Keys.Z] = Commands.ChooseSpell;
@@ -52,7 +53,13 @@ namespace Hecatomb
             }
             else
             {
-                SelectTile();
+                var m = Mouse.GetState();
+                HandleClick(m.X, m.Y);
+                // unless we selected something, wait anyway
+                if (Game.Controls is CameraControls)
+                {
+                    Game.Commands.Wait();
+                }
             }
         }
         public override void RefreshContent()

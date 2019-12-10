@@ -12,13 +12,13 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class LongShadowSpell : Spell
+    public class ShadowHopSpell : Spell
     {
-        public LongShadowSpell()
+        public ShadowHopSpell()
         {
             MenuName = "shadow hop";
             cost = 10;
-            Researches = new[] { "LongShadow" };
+            Researches = new[] { "ShadowHop" };
             Structures = new[] { "Sanctum" };
         }
 

@@ -36,7 +36,7 @@ namespace Hecatomb
 			get
 			{	
 				if (x<0 || x>=X || y<0 || y>=Y || z<0 || z>=Z) {
-					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
+					 throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 				} else {
 					T value;
 					if (dict.TryGetValue(z * X * Y + x * Y + y, out value)) {

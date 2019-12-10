@@ -27,6 +27,7 @@ namespace Hecatomb
         public static bool ControlDown = false;
         public static bool ShiftDown = false;
         public static bool MovingCamera;
+        public static bool LogMode;
         public int Throttle;
         public int StartThrottle = 750;
         public static bool Redrawn = false;
@@ -69,10 +70,20 @@ namespace Hecatomb
 
         public static void Reset()
         {
-            //Debug.WriteLine("Resetting");
             var old = Game.Controls;
             Game.Controls.CleanUp();
-            Game.Controls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
+            if (LogMode)
+            {
+                Game.Commands.ShowLog();
+            }
+            else if (MovingCamera)
+            {
+                Game.Controls = Game.CameraControls;
+            }
+            else
+            {
+                Game.Controls = Game.DefaultControls;
+            }
             if (Game.World != null)
             {
                 Game.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Game.Controls });
@@ -394,6 +405,30 @@ namespace Hecatomb
                 }
             }
             return true;
+        }
+
+        public bool IsMenuSelected(string s)
+        {
+            if (SelectedMenuCommand == s)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public virtual bool IsMenuSelectable(string s)
+        {
+            if (MenuSelectable)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }	
 }

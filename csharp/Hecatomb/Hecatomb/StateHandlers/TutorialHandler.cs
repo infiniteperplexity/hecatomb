@@ -286,7 +286,7 @@ namespace Hecatomb
                     {
                         "{yellow}Tutorial: Casting spells / creating zombies.",
                         " ",
-                        "{cyan}Select a tombstone, either by using the mouse, or by navigating with the direction keys and clicking or pressing space to select.  Make sure the tombstone is on the current elevation level.",
+                        "{cyan}Select a tombstone, either by using the mouse, or by navigating with the direction keys and clicking the mouse or pressing space to select.  Make sure the tombstone is on the current elevation level.",
                         " ",
                         "{lime green}Notice that the bottom portion of this panel gives you information about the square you are hovering over - whether it's a valid target for your spell, what the terrain is like, and so on."
                     },
@@ -1122,12 +1122,11 @@ namespace Hecatomb
                         " ",
                         "{cyan}WASD/QEXC/arrows/keypad to walk or move cursor.",
                         " ",
-                        "{cyan}Keypad 5/Space to wait (Ctrl+Space in navigation mode.)",
+                        "{cyan}Keypad 5/Space to wait.",
                         " ",
-                        "{cyan}Space to select with cursor.",
+                        "{cyan}On some menus, use Space to select with cursor.",
                         " ",
                         "{cyan}M to view minions, U to view structures.",
-
                         " ",
                         "{cyan}Enter/Return to toggle auto-pause.",
                         " ",

@@ -85,8 +85,8 @@ namespace Hecatomb
 			Spells = new List<string>() {
                 "RaiseZombieSpell",
                 "CondenseEctoplasmSpell",
-                "PoundOfFleshSpell",
-                "LongShadowSpell",
+                "SiphonFleshSpell",
+                "ShadowHopSpell",
                 "DebugZombieSpell",
                 "DebugBanditSpell",
                 "DebugItemSpell",

@@ -260,7 +260,16 @@ namespace Hecatomb
                 var researched = Game.World.GetState<ResearchHandler>().Researched;
                 foreach (string s in Researches)
                 {
-                    if (!researched.Contains(s))
+                    bool valid = true;
+                    var res = Research.Types[s];
+                    foreach (string pre in res.Prerequisites)
+                    {
+                        if (!researched.Contains(pre))
+                        {
+                            valid = false;
+                        }
+                    }
+                    if (valid && !researched.Contains(s))
                     {
                         Research research = Hecatomb.Research.Types[s];
                         ResearchTask rt = Entity.Mock<ResearchTask>();

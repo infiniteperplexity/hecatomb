@@ -28,13 +28,20 @@ namespace Hecatomb
             Game.MenuPanel.Dirty = true;
         }
 
+        public void ExitLogMode()
+        {
+            LogMode = false;
+            Reset();
+        }
         public override void RefreshContent()
         {
             var Commands = Game.Commands;
             KeyMap[Keys.Space] = Commands.Wait;
-            KeyMap[Keys.Escape] = Reset;
+            KeyMap[Keys.Escape] = ExitLogMode;
             KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
             KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
+            KeyMap[Keys.Z] = Commands.ChooseSpell;
+            KeyMap[Keys.J] = Commands.ChooseTask;
             int MaxVisible = Math.Min(Game.World.GetState<MessageHandler>().MessageHistory.Count, 4);
             var controls = new List<ColoredText>()
             {
@@ -66,6 +73,19 @@ namespace Hecatomb
             list.Add("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             list.Add("Scroll: Page/Fn Up/Down");
             MenuTop = list.ToList();
+        }
+
+
+        public override bool IsMenuSelectable(string s)
+        {
+            if (s == "Spells" || s == "Jobs")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

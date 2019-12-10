@@ -11,10 +11,12 @@ namespace Hecatomb
     {
         public List<ColoredText> MessageHistory;
         public bool Unread;
+        public string UnreadColor;
 
         public MessageHandler()
         {
             MessageHistory = new List<ColoredText>();
+            UnreadColor = "white";
         }
     }
 }

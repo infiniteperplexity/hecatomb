@@ -1,6 +1,9 @@
 ﻿Playtest issues:
 - Need to implement Fn+Up/Down (I think this works automatically)
-- I'm a little worried that non-cacheing chooser menus might drag sometimes, but I couldn't replicate that.
+- In the long term we might want to make CanFindResources see carried items
+- Lack of headers for selection menus is a bit distracting
+- Spiders should eventually respawn
+- Access to more controls from Log mode?
 - It's possible that I missed one or more bugs related to hauling/ingredients/claims/priority, but I did test as much chaos as possible.
 
 Interface issues:
@@ -17,11 +20,6 @@ Interface issues:
 - Pushmessage goes through some weird hoops.
 - Should we put timestamps on messages?
 
-Tech tree:
-- Does "chirurgy" exist as an active technology?
-- Why does the stonemason require flesh and bone?
-- Should things that require ectoplasm also require the sanctum?
-- Should make a technology centered map.
 
 In order to have a playable demo...
 - We need to have an installer that works all the way...at this point I definitely still need uninstall icons and so on.

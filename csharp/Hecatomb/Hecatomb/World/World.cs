@@ -305,7 +305,10 @@ namespace Hecatomb
             if (Explored.Contains(c) || Game.Options.Explored)
             {
                 text.Add("Terrain: " + Terrains[x, y, z].Name);
-                text.Add("Cover: " + Covers[x, y, z].Name);
+                if (Covers[x, y, z] != Cover.NoCover)
+                {
+                    text.Add("Cover: " + Covers[x, y, z].Name);
+                }
                 //text.Add("Lighting: " + GetLighting(x, y, z));
                 t = Creatures[x, y, z];
                 if (t != null)
@@ -342,7 +345,10 @@ namespace Hecatomb
             if (Explored.Contains(above) || Game.Options.Explored)
             {
                 text.Add("Above: " + Terrains[x, y, za].Name);
-                text.Add("Cover: " + Covers[x, y, za].Name);
+                if (Covers[x, y, za] != Cover.NoCover)
+                {
+                    text.Add("Cover: " + Covers[x, y, za].Name);
+                }
                 //text.Add("Lighting: " + GetLighting(x, y, za));
                 t = Creatures[x, y, za];
                 if (t != null)
@@ -377,7 +383,10 @@ namespace Hecatomb
             if (Explored.Contains(below) || Game.Options.Explored)
             {
                 text.Add("Below: " + Terrains[x, y, zb].Name);
-                text.Add("Cover: " + Covers[x, y, zb].Name);
+                if (Covers[x, y, zb] != Cover.NoCover)
+                {
+                    text.Add("Cover: " + Covers[x, y, zb].Name);
+                }
                 //text.Add("Lighting: " + GetLighting(x, y, zb));
                 t = Creatures[x, y, zb];
                 if (t != null)

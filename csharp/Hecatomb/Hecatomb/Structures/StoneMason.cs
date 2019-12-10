@@ -44,7 +44,6 @@ namespace Hecatomb
             MenuName = "stonemason";
             Name = "stonemason";
             UseHint = "(currently does nothing.)";
-            //Researches = new[] { "CondenseEctoplasm", "LongShadow", "PoundOfFlesh" };
             StructurePrereqs = new[] { "Workshop", "Stockpile" };
             ResearchPrereqs = new[] { "Masonry" };
         }

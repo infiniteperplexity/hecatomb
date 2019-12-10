@@ -220,7 +220,9 @@ namespace Hecatomb
         public void ChooseTask()
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
-            Game.Controls = new MenuChoiceControls(GetState<TaskHandler>());
+            var tasks = GetState<TaskHandler>();
+            tasks.PurgeCache();
+            Game.Controls = new MenuChoiceControls(tasks);
             Game.Controls.MenuSelectable = false;
             Game.Controls.SelectedMenuCommand = "Jobs";
             InterfacePanel.DirtifySidePanels();
@@ -261,6 +263,8 @@ namespace Hecatomb
             Game.Controls.MenuSelectable = false;
             Game.Controls.SelectedMenuCommand = "Log";
             Game.World.GetState<MessageHandler>().Unread = false;
+            Game.World.GetState<MessageHandler>().UnreadColor = "white";
+            ControlContext.LogMode = true;
             InterfacePanel.DirtifySidePanels();
         }
 

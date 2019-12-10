@@ -12,13 +12,13 @@ namespace Hecatomb
 {
     using static HecatombAliases;
 
-    public class PoundOfFleshSpell : Spell, ISelectsTile
+    public class SiphonFleshSpell : Spell, ISelectsTile
     {
-        public PoundOfFleshSpell()
+        public SiphonFleshSpell()
         {
             MenuName = "siphon flesh";
             cost = 5;
-            Researches = new[] { "PoundOfFlesh" };
+            Researches = new[] { "SiphonFlesh" };
             Structures = new[] { "Sanctum" };
         }
 
@@ -87,7 +87,7 @@ namespace Hecatomb
                         int heal = Math.Min(d2.Wounds, 20 - d1.Wounds);
                         d1.Wounds += heal;
                         d2.Wounds -= heal;
-                        Game.InfoPanel.PushMessage("You siphon your minion's flesh and blood to mend your own.");
+                        Game.InfoPanel.PushMessage($"You siphon flesh and blood from {cr.Describe()} to mend your wounds.");
                         ParticleEmitter emitter1 = new ParticleEmitter();
                         emitter1.Place(Caster.X, Caster.Y, Caster.Z);
                         ParticleEmitter emitter2 = new ParticleEmitter();

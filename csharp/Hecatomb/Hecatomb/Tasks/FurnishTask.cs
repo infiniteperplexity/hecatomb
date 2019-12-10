@@ -43,14 +43,14 @@ namespace Hecatomb
                 fixture.InterpretJSON(EntityType.Types[f].Components["Fixture"]);
                 bool valid = true;
 
-                foreach (string s in fixture.Research)
+                foreach (string s in fixture.ResearchPrereqs)
                 {
                     if (!researched.Contains(s))
                     {
                         valid = false;
                     }
                 }
-                foreach (string s in fixture.Structures)
+                foreach (string s in fixture.StructurePrereqs)
                 {
                     if (!structures.Contains(s))
                     {

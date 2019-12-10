@@ -9,23 +9,6 @@ using System.Threading;
 
 namespace Hecatomb
 {
-    /* This will want...
-     * 1) Camera / avatar mode.
-     * 2) Spells.
-     * 3) Jobs.
-     * 4) Help / Key shortcuts
-     * 5) Toggle tutorial.
-     * 6) Message log.
-     * 7) Overview.
-     * 8) Hover.
-     * 9) Pause and speed.
-     * 10) Achievements.
-     * 11) Tech tree.
-     * 12) Structures.
-     * 13) Minions.
-     * 14) System view.
-     */
-
     public class CommandsPanel : InterfacePanel
     {
         public CommandsPanel(int x, int y, int w, int h) : base(x, y, w, h)
@@ -57,7 +40,8 @@ namespace Hecatomb
                     var command = Game.Controls.MenuCommands[i];
                     var text = command.Item2;
                     var color = "white";
-                    if (command.Item1 == Game.Controls.SelectedMenuCommand)
+                    //if (command.Item1 == Game.Controls.SelectedMenuCommand)
+                    if (Game.Controls.IsMenuSelected(command.Item1))   
                     {
                         color = "yellow";
                     }
@@ -65,13 +49,18 @@ namespace Hecatomb
                     {
                         color = "cyan";
                     }
-                    else if (!Game.Controls.MenuSelectable)
+                    //else if (!Game.Controls.MenuSelectable)
+                    else if (!Game.Controls.IsMenuSelectable(command.Item1))
                     {
                         color = "gray";
                     }
+                    //else if (command.Item1 == "Log" && Game.World.GetState<MessageHandler>().Unread)
+                    //{
+                    //    color = "orange";
+                    //}
                     else if (command.Item1 == "Log" && Game.World.GetState<MessageHandler>().Unread)
                     {
-                        color = "orange";
+                        color = Game.World.GetState<MessageHandler>().UnreadColor;
                     }
                     int adjust = (i == 0) ? -4 * CharWidth : 0;
                     var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);

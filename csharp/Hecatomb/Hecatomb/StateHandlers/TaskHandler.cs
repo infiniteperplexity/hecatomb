@@ -56,12 +56,17 @@ namespace Hecatomb
 
         // this causes some issues because we want to cache only until the interface changes
         protected List<IMenuListable> cachedChoices;
+
+        public void PurgeCache()
+        {
+            cachedChoices = null;
+        }
         public void BuildMenu(MenuChoiceControls menu)
         {
             if (cachedChoices != null)
             {
-                //menu.Choices = cachedChoices;
-                //return;
+                menu.Choices = cachedChoices;
+                return;
             }
             menu.Header = "Choose a task:";
             List<IMenuListable> tasks = new List<IMenuListable>();
