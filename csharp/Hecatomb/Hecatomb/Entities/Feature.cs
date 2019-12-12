@@ -53,5 +53,25 @@ namespace Hecatomb
             }
             return base.GetCalculatedBG();
         }
+
+
+        public override string GetDisplayName()
+        {
+            var defend = TryComponent<Defender>();
+            int wounds = (defend == null) ? 0 : defend.Wounds;
+            if (wounds >= 6)
+            {
+                return ("severely damaged " + base.GetDisplayName());
+            }
+            else if (wounds >= 4)
+            {
+                return ("damaged " + base.GetDisplayName());
+            }
+            else if (wounds >= 2)
+            {
+                return ("slightly damaged " + base.GetDisplayName());
+            }
+            return base.GetDisplayName();
+        }
     }
 }

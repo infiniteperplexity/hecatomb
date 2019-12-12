@@ -43,6 +43,7 @@ namespace Hecatomb
         public List<EntityField<Creature>> Bandits;
         public int Frustration;
         public int FrustrationLimit = 25;
+        public bool FrustrationAnnounced;
 
         public HumanTracker()
         {
@@ -58,13 +59,21 @@ namespace Hecatomb
             Actor actor = ae.Actor;
             if (actor.Entity.Unbox() is Creature)
             {
-;               Creature cr = (Creature)actor.Entity.Unbox();
+                ; Creature cr = (Creature)actor.Entity.Unbox();
                 Movement m = cr.GetComponent<Movement>();
                 if (Bandits.Contains(cr))
                 {
+                    //wait...this acts regardless, so we never reach the frustratiion code
                     if (!actor.Acted)
                     {
                         actor.Alert();
+                    }
+                    if (!actor.Acted)
+                    {
+                        if (actor.Target == null || !m.CanReach(actor.Target, ignoreDoors: false))
+                        {
+                            cr.GetComponent<Senses>().GetVisibleEnemy();
+                        }
                     }
                     // if you're frustrated, can't reach the player easily, and don't have something to fight, go home
                     if (!actor.Acted && Frustration >= FrustrationLimit && !m.CanReach(Player, ignoreDoors: false))
@@ -84,7 +93,7 @@ namespace Hecatomb
                     if (!actor.Acted)
                     {
                         TargetPlayer(cr);
-                    }                   
+                    }
                 }
             }
             return ge;
@@ -108,6 +117,7 @@ namespace Hecatomb
 
         public void BanditAttack(bool debugCloser = false)
         {
+            FrustrationAnnounced = false;
             Frustration = 0;
             TurnsSince = 0;
             Bandits.Clear();
@@ -126,7 +136,8 @@ namespace Hecatomb
                "A gang of bandits has been spotted near the " + dir + " border of your domain.",
                " ",
                 "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
-            });
+            },
+            logText: "{red}A gang of bandits approaches from the "+dir+" border!");
             int x0, y0;
             if (xwall)
             {
@@ -184,6 +195,7 @@ namespace Hecatomb
             {
                 if (ae.Defender.Entity.Unbox().TypeName == "Door")
                 {
+                    Debug.WriteLine($"attacking a door, frustration {Frustration}");
                     Frustration += 1;
                 }
             }

@@ -41,10 +41,14 @@ namespace Hecatomb
             DrawLines(CurrentText);
         }
 
-        public void Splash(List<ColoredText> lines, bool frozen = false, Action callback = null)
+        public void Splash(List<ColoredText> lines, bool frozen = false, Action callback = null, ColoredText logText = null)
         {
             Active = true;
             Dirty = true;
+            if (logText != null)
+            {
+                Game.InfoPanel.PushMessage(logText);
+            }
             if (!frozen)
             {
                 ControlContext.Set(new FrozenControls());

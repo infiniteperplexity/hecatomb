@@ -357,20 +357,8 @@ namespace Hecatomb
         public void Alert()
         {
             var (x, y, z) = Entity;
-            // so...back in the JS version, this totally flogged performance.
-            // for now, let's try making it so neutral creatures don't alert to enemies
-            if (Target == null && Team != null && Team != Teams.Neutral)
+            if (Target == null && Team != Teams.Neutral)
             {
-                //List<Creature> enemies = GetState<TeamHandler>().GetEnemies(Entity.Entity as Creature);
-                //enemies = enemies.Where(cr => (Tiles.QuickDistance(x, y, z, cr.X, cr.Y, cr.Z) < 10)).ToList();
-                //enemies = enemies.Where(cr => (Entity.GetComponent<Movement>().CanReach(cr))).ToList(); // could limit number of tries, since distance has already been limited
-                //if (enemies.Count > 0)
-                //{
-                // should we be able to reach it?
-                //Target = enemies[0];
-                //}
-                //Target = GetState<TeamHandler>().GetClosestEnemy(Entity.Unbox() as Creature);
-                //TileEntity te = GetState<TeamHandler>().GetClosestEnemy((Creature)Entity.Unbox());
                 TileEntity te = Entity.GetComponent<Senses>().GetVisibleEnemy();
                 if (te != null)
                 {
@@ -381,6 +369,7 @@ namespace Hecatomb
             {
                 Debug.WriteLine("Somehow ended up targeting itself.");
             }
+            // we don't verify that we can reach it before trying
             if (Target != null && Target.Entity is Creature && IsHostile((Creature)Target.Entity))
             {
                 Creature cr = (Creature)Target;

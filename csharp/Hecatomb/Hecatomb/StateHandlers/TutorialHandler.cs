@@ -1046,7 +1046,7 @@ namespace Hecatomb
                         " ",
                         "{lime green}Building walls or floors requires rocks as ingredients.  Notice that your zombies claim rocks and fetch them; the claimed rocks are highlighted.",
                         " ",
-                        "{cyan}Wait for your zombies to build."
+                        "{cyan}Wait for your zombies to build.  Note that the build task requires an ingredient.  Ingredients claimed for tasks are highlighted in white."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {
@@ -1083,9 +1083,9 @@ namespace Hecatomb
                         " ",
                         "Cruel laughter wells in your throat.  Your fortress will cast a shadow of menace over all the land.  The undead under your command will become a legion, a multitude, an army.  And then all who have wronged you will pay!",
                         " ",
-                        "{lime green}Congratulations, you finished the in-game tutorial.  Experiment with different tasks and commands.  Your next step might be to construct buildings, like a Guard Post and a Workshop.  Then research Flint Tools so you can dig through harder stone.",
+                        "{lime green}Congratulations, you finished the in-game tutorial.  Your next step might be to construct buildings, like a Workshop.  Then research Flint Tools so you can dig through harder stone.",
                         " ",
-                        "{cyan}Press ? to dismiss these messages. If you return to the tutorial later, you will see a list of commands."
+                        "{cyan}Press ? to dismiss these messages. Return to the tutorial to see a list of commands."
                     },
                     HandleEvent = (TutorialEvent t) =>
                     {

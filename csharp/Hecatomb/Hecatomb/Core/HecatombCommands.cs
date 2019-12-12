@@ -325,7 +325,7 @@ namespace Hecatomb
                 (Keys.R, "Restore game.", Game.game.RestoreGame),
                 (Keys.D, "Delete game.", Game.game.StartGame),
                 (Keys.N, "New game.", Game.game.StartGame),
-                (Keys.Q, "Quit.", Game.game.QuitGame)
+                (Keys.Q, "Quit.", Game.game.BackToTitle)
             }));
         }
 
@@ -439,7 +439,7 @@ namespace Hecatomb
             if (Game.Options.Invincible)
             {
                 Game.SplashPanel.Splash(new List<ColoredText> {
-                    "The spark of life fades from your fallen corpse as your soul slips away to darker realms.",
+                    "The spark of life fades from your fallen corpse and your soul slips away to darker realms.",
                     " ",
                     "Your depraved ambition has come to an end...or it would have, if you weren't invincible for debugging purposes."
                 });
@@ -448,7 +448,7 @@ namespace Hecatomb
             else
             {
                 Game.SplashPanel.Splash(new List<ColoredText> {
-                    "The spark of life fades from your fallen corpse as your soul slips away to darker realms.",
+                    "The spark of life fades from your fallen corpse and your soul slips away to darker realms.",
                     " ",
                     "Your depraved ambition has come to an end."
                 }, callback: Game.game.BackToTitle);

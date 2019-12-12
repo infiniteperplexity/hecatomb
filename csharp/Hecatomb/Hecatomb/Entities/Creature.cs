@@ -216,6 +216,39 @@ namespace Hecatomb
                 }
             }
         }
-       
+
+        public override string GetDisplayName()
+        {
+            var defend = TryComponent<Defender>();
+            int wounds = (defend == null) ? 0 : defend.Wounds;
+            var decay = TryComponent<Decaying>();
+            double rotten = (decay == null) ? 1.0 : decay.GetFraction();
+            if (wounds >= 6)
+            {
+                return ("severely wounded " + base.GetDisplayName());
+            }
+            else if (rotten < 0.25)
+            {
+                return ("severely rotted " + base.GetDisplayName());
+            }
+            else if (wounds >= 4)
+            {
+                return ("wounded " + base.GetDisplayName());
+            }
+            else if (rotten < 0.5)
+            {
+                return ("rotted " + base.GetDisplayName());
+            }
+            else if (wounds >= 2)
+            {
+                return ("slightly wounded " + base.GetDisplayName());
+            }
+            else if (rotten < 0.75)
+            {
+                return ("slightly rotted " + base.GetDisplayName());
+            }
+            return base.GetDisplayName();
+        }
+
     }
 }

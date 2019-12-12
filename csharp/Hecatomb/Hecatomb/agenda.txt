@@ -3,8 +3,9 @@
 - In the long term we might want to make CanFindResources see carried items
 - Lack of headers for selection menus is a bit distracting
 - Spiders should eventually respawn
-- Implement player death
 - It's possible that I missed one or more bugs related to hauling/ingredients/claims/priority, but I did test as much chaos as possible.
+- We want a confirmation prompt for certain things.
+- Sadly, I think we need to refactor how Actor and HumanTracker work, especially how they handle doors
 
 Interface issues:
 - Ideally want to get time of day, phase of moon, and total turn number on there.  Time/date block looks stupid
