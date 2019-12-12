@@ -20,6 +20,7 @@ namespace Hecatomb
    
     public class SplashControls : ControlContext
     {
+        public Action MyCallback;
         public SplashControls()
         {
             MenuSelectable = false;
@@ -27,7 +28,14 @@ namespace Hecatomb
         }
         public override void HandleClick(int x, int y)
         {
-            Reset();
+            if (MyCallback != null)
+            {
+                MyCallback();
+            }
+            else
+            {
+                Reset();
+            }
         }
         public override void HandleHover(int x, int y)
         {

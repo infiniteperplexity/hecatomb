@@ -22,7 +22,7 @@ namespace Hecatomb
         static Coord OldCamera;
         static ControlContext OldControls;
         static DateTime InputBegan;
-        public static Highlight Cursor = new Highlight("cyan");
+        public static Highlight Cursor;
         public static TileEntity Selection = null;
         public static bool ControlDown = false;
         public static bool ShiftDown = false;
@@ -48,7 +48,6 @@ namespace Hecatomb
         public bool MenuSelectable;
         public string SelectedMenuCommand;
         public List<(string, string)> MenuCommands;
-        
 
         public static void Initialize(ControlContext c)
         {
@@ -153,7 +152,11 @@ namespace Hecatomb
 
         public virtual void HandleHover(int x, int y)
         {
-            
+         
+            if (Game.World == null)
+            {
+                return;
+            }
             if (Cursor.X > -1)
             {
                 Game.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
@@ -245,7 +248,8 @@ namespace Hecatomb
         
         static ControlContext()
         {
-        	OldKeyboard = Keyboard.GetState();
+            Cursor = new Highlight("cyan");
+            OldKeyboard = Keyboard.GetState();
         	OldMouse = Mouse.GetState();
         	OldCamera = new Coord(-1, -1, -1);
         	InputBegan = DateTime.Now;

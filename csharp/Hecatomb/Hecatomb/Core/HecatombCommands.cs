@@ -79,7 +79,8 @@ namespace Hecatomb
             int y1 = p.Y + dy;
             int z1 = p.Z;
             var m = p.TryComponent<Movement>();
-            if (m == null) {
+            if (m == null)
+            {
                 return;
             }
             Coord[] moves = new Coord[]
@@ -122,10 +123,12 @@ namespace Hecatomb
             int y1 = p.Y;
             int z1 = p.Z + dz;
             var m = p.TryComponent<Movement>();
-            if (m == null) {
+            if (m == null)
+            {
                 return;
             }
-            if (!m.CanPass(x1, y1, z1)) {
+            if (!m.CanPass(x1, y1, z1))
+            {
                 Creature cr = Game.World.Creatures[x1, y1, z1];
                 if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
                 {
@@ -141,7 +144,9 @@ namespace Hecatomb
 
                 return;
 
-            } else {
+            }
+            else
+            {
                 Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
                 m.StepTo(x1, y1, z1);
                 Act();
@@ -326,7 +331,8 @@ namespace Hecatomb
 
         public void SaveGameAsCommand()
         {
-            Action<string> saveGameAs = (string name) => {
+            Action<string> saveGameAs = (string name) =>
+            {
                 //could check legality of name here?
                 Game.GameName = name;
                 SaveGameCommand();
@@ -408,8 +414,8 @@ namespace Hecatomb
         public void SlowDown()
         {
             Time.SlowDown();
-        } 
-        
+        }
+
         public void ShowStructures()
         {
             var structures = Structure.ListStructures();
@@ -426,6 +432,12 @@ namespace Hecatomb
             {
                 ControlContext.Set(new MenuChoiceControls((Creature)minions[0]));
             }
+        }
+
+        public void PlayerDies()
+        {
+            Debug.WriteLine("The player should die.");
+            Game.SplashPanel.Splash(new List<ColoredText> { "The spark of life fades from your fallen corpse as your soul slips away to darker realms.  Your depraved ambition has come to an end." }, callback: Game.game.BackToTitle);
         }
     }
 }

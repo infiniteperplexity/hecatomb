@@ -82,6 +82,11 @@ namespace Hecatomb
         /// 
         protected override void Initialize()
         {
+            SetUpTitle();
+        }
+
+        public void SetUpTitle()
+        {
             game.Window.Title = "Hecatomb";
             DefaultGameName = "GameWorld";
             GameName = DefaultGameName;
@@ -92,6 +97,7 @@ namespace Hecatomb
             Colors = new Colors();
             Time = new TimeHandler();
             Time.Frozen = true;
+            World = null;
             Commands = new HecatombCommmands();
             DefaultControls = new DefaultControls();
             ControlContext.Initialize(DefaultControls);
@@ -107,6 +113,7 @@ namespace Hecatomb
             base.Initialize();
             if (!Options.NoStartupScreen)
             {
+                Debug.WriteLine("we got at least this far...");
                 ShowIntro();
             }
             else
@@ -333,6 +340,11 @@ namespace Hecatomb
         {
             TheFixer.Dump();
             base.OnExiting(sender, args);
+        }
+
+        public void BackToTitle()
+        {
+            SetUpTitle();
         }
     }
 }

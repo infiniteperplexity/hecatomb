@@ -75,6 +75,11 @@ namespace Hecatomb
             int x = X;
             int y = Y;
             int z = Z;
+            if (this == Game.World.Player)
+            {
+                Game.Commands.PlayerDies();
+                return;
+            }
             bool decaying = (TryComponent<Decaying>() != null);
             base.Destroy(cause: cause);
             if (!decaying)

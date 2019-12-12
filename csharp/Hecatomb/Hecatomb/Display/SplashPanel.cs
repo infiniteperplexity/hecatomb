@@ -41,7 +41,7 @@ namespace Hecatomb
             DrawLines(CurrentText);
         }
 
-        public void Splash(List<ColoredText> lines, bool frozen = false)
+        public void Splash(List<ColoredText> lines, bool frozen = false, Action callback = null)
         {
             Active = true;
             Dirty = true;
@@ -51,7 +51,9 @@ namespace Hecatomb
                 Thread thread = new Thread(() =>
                 {
                     Thread.Sleep(1000);
-                    ControlContext.SetWithoutRedraw(new SplashControls());
+                    var sc = new SplashControls();
+                    sc.MyCallback = callback;
+                    ControlContext.SetWithoutRedraw(sc);
                 });
                 thread.Start();
             }

@@ -132,10 +132,7 @@ namespace Hecatomb
             {
                 if (Entity == Game.World.Player)
                 {
-                    Debug.WriteLine("The player should die.");
-                    Game.SplashPanel.Splash(new List<ColoredText> {
-                        "This is some placeholder text to make it obvious that the player would have died in a real game."
-                    });
+                    Commands.PlayerDies();
                 }
                 else
                 {
