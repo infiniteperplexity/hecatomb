@@ -136,7 +136,6 @@ namespace Hecatomb
                 }
                 else
                 {
-                    Debug.WriteLine("This entity should die.");
                     (new BloodEmitter() { LifeSpan = 200 }).Place(Entity.X, Entity.Y, Entity.Z);
                     Game.World.Events.Publish(new SensoryEvent() { X = x, Y = y, Z = z, Sight = "{red}" + $"{Entity.Describe(capitalized: true)} dies!" });
                     Entity.Unbox().Destroy();

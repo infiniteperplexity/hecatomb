@@ -436,8 +436,24 @@ namespace Hecatomb
 
         public void PlayerDies()
         {
-            Debug.WriteLine("The player should die.");
-            Game.SplashPanel.Splash(new List<ColoredText> { "The spark of life fades from your fallen corpse as your soul slips away to darker realms.  Your depraved ambition has come to an end." }, callback: Game.game.BackToTitle);
+            if (Game.Options.Invincible)
+            {
+                Game.SplashPanel.Splash(new List<ColoredText> {
+                    "The spark of life fades from your fallen corpse as your soul slips away to darker realms.",
+                    " ",
+                    "Your depraved ambition has come to an end...or it would have, if you weren't invincible for debugging purposes."
+                });
+                Game.World.Player.GetComponent<Defender>().Wounds = 0;
+            }
+            else
+            {
+                Game.SplashPanel.Splash(new List<ColoredText> {
+                    "The spark of life fades from your fallen corpse as your soul slips away to darker realms.",
+                    " ",
+                    "Your depraved ambition has come to an end."
+                }, callback: Game.game.BackToTitle);
+            }
+            
         }
     }
 }
