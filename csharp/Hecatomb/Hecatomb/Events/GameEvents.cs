@@ -162,6 +162,7 @@ namespace Hecatomb
     {
         public Actor Actor;
         public Entity Entity;
+        public string Step;
     }
 
     public class DestroyEvent : GameEvent
@@ -177,4 +178,5 @@ namespace Hecatomb
         public int Z;
         public string EventType;
     }
+
 }

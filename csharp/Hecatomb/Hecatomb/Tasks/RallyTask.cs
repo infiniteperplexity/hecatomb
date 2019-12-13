@@ -13,7 +13,7 @@ namespace Hecatomb
     {
         public RallyTask() : base()
         {
-            MenuName = "set rally point";
+            MenuName = "rally all minions";
             PrereqStructures = new List<string>() { "GuardPost" };
         }
 
@@ -45,13 +45,12 @@ namespace Hecatomb
         public GameEvent OnAct(GameEvent ge)
         {
             ActEvent ae = (ActEvent)ge;
-            if (ae.Entity is Creature)
-            {
+            if (ae.Entity is Creature && ae.Step == "BeforeAlert")
+            {   
+                // we need some kind of sensible priority system here, to avoid conflicts between this and Minion.OnAct
                 Creature cr = (Creature)ae.Entity;
                 if (cr.TryComponent<Minion>()!=null)
                 {
-                    Debug.WriteLine($"Is this thing even spawned? {Spawned}");
-                    Debug.WriteLine($"We shoudl be patrolling around {X} {Y} {Z}");
                     Actor actor = cr.GetComponent<Actor>();
                     actor.Patrol(X, Y, Z);
                 }

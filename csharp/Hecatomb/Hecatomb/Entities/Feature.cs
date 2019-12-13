@@ -16,6 +16,7 @@ namespace Hecatomb
     {
 
         public bool Solid;
+        public bool Owned;
 
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {

@@ -55,6 +55,7 @@ namespace Hecatomb
 
         public GameEvent OnAct(GameEvent ge)
         {
+            return ge;
             ActEvent ae = (ActEvent)ge;
             Actor actor = ae.Actor;
             if (actor.Entity.Unbox() is Creature)
@@ -72,7 +73,7 @@ namespace Hecatomb
                     {
                         if (actor.Target == null || !m.CanReach(actor.Target))
                         {
-                            cr.GetComponent<Senses>().GetVisibleEnemy();
+                            //cr.GetComponent<Senses>().GetVisibleEnemy();
                         }
                     }
                     // if you're frustrated, can't reach the player easily, and don't have something to fight, go home

@@ -21,7 +21,7 @@ namespace Hecatomb
         public NatureTracker()
         {
             AddListener<DestroyEvent>(OnDestroy);
-            AddListener<ActEvent>(OnAct);
+            //AddListener<ActEvent>(OnAct);
             Avengers = new List<EntityField<Creature>>();
         }
 
@@ -44,10 +44,10 @@ namespace Hecatomb
             return ge;
         }
 
-        public GameEvent OnAct(GameEvent ge)
-        {
-            return ge;
-        }
+        //public GameEvent OnAct(GameEvent ge)
+        //{
+        //    return ge;
+        //}
 
         public void NatureAttack(int x, int y, int z)
         {

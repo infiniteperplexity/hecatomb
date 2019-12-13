@@ -74,60 +74,40 @@ namespace Hecatomb
             Visible.Add(new Coord(x, y, storedZ));
         }
 
-        private Creature storedCreature;
+        // some callback-heavy code to find nearby, visible things
+        private Func<int, int, int, bool> storedCallback;
+        private Coord storedCoord;
         private Actor storedActor;
         private Movement storedMovement;
-        public Creature GetVisibleEnemy()
+        public Coord FindClosestVisible(Func<int, int, int, bool> where = null)
         {
             var (x, y, z) = Entity;
             storedZ = z;
-            storedCreature = null;
-            storedActor = Entity.GetComponent<Actor>();
-            storedMovement = Entity.GetComponent<Movement>();
-            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, checkForEnemy);
-            return storedCreature;
+            storedCallback = where;
+            storedCoord = new Coord();
+            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, lookAround);
+            return storedCoord;
         }
-
-        private void checkForEnemy(int x, int y)
+        private void lookAround(int x, int y)
         {
-            Creature cr = Creatures[x, y, storedZ];
-            for (int i = 0; i < 2; i++)
+            var c = storedCoord;
+            var z = storedZ;
+            var (X, Y, Z) = Entity;
+            if (!c.Equals(default(Coord)) && Tiles.QuickDistance(c.X, c.Y, c.Z, X, Y, Z) <= Tiles.QuickDistance(x, y, z, X, Y, Z))
             {
-                cr = null;
-                if (i == 0)
-                {
-                    cr = Creatures[x, y, storedZ];
-                }
-                else if (i == 1)
-                {
-                    // note that upwards diagonal visibility is not good...
-                    if (Terrains[x, y, storedZ + 1].ZView == -1)
-                    {
-                        cr = Creatures[x, y, storedZ + 1];
-                    }
-                }
-                else
-                {
-                    // visibility from above is a bit better
-                    if (Terrains[x, y, storedZ].ZView == -1)
-                    {
-                        cr = Creatures[x, y, storedZ - 1];
-                    }
-                }
-                if (cr != null)
-                {
-                    if (storedActor.IsHostile(cr))
-                    {
-                        if (storedMovement.CanReach(cr))
-                        {
-                            if (storedCreature == null || Tiles.QuickDistance(x, y, storedZ, Entity.X, Entity.Y, Entity.Z) < Tiles.QuickDistance(storedCreature.X, storedCreature.Y, storedCreature.Z, Entity.X, Entity.Y, Entity.Z))
-                            {
-                                storedCreature = cr;
-                                break;
-                            }
-                        }
-                    }
-                }
+                return;
+            }
+            if (storedCallback(x, y, z))
+            {
+                storedCoord = new Coord(x, y, z);
+            }
+            else if (Terrains[x, y, z + 1].ZView == -1 && storedCallback(x, y, z + 1))
+            {
+                storedCoord = new Coord(x, y, z + 1);
+            }
+            else if (Terrains[x, y, z].ZView == -1 && storedCallback(x, y, z - 1))
+            {
+                storedCoord = new Coord(x, y, z - 1);
             }
         }
     }

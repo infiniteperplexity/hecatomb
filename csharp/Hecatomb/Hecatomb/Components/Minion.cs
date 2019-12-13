@@ -28,16 +28,12 @@ namespace Hecatomb
         public GameEvent OnAct(GameEvent ge)
         {
             ActEvent ae = (ActEvent)ge;
-            if (ae.Entity == Entity.Unbox())
+            if (ae.Entity == Entity.Unbox() && ae.Step == "BeforeWander")
             {
                 if (!ae.Actor.Acted)
-                    ae.Actor.Alert();
-
-                if (!ae.Actor.Acted)
+                {
                     Act();
-
-                if (!ae.Actor.Acted)
-                    ae.Actor.Wander();
+                }
             }
             return ge;
         }

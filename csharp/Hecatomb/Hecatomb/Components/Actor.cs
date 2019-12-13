@@ -26,7 +26,20 @@ namespace Hecatomb
         public Teams Team;
         public bool Acted;
         public bool Asleep;
-
+        [JsonIgnore]
+        Movement cachedMovement;
+        [JsonIgnore]
+        Movement CachedMovement
+        {
+            get
+            {
+                if (cachedMovement == null)
+                {
+                    cachedMovement = Entity.Unbox().GetComponent<Movement>();
+                }
+                return cachedMovement;
+            }
+        }
         public void CallString(string s)
         {
             Type thisType = this.GetType();
@@ -34,7 +47,7 @@ namespace Hecatomb
             MethodInfo theMethod = thisType.GetMethod(s);
             theMethod.Invoke(this, new object[0]);
         }
-        // so I guess this doesn't get reconstituted correctly when restoring a game
+        // so I guess this doesn't get reconstituted correctly when restoring a game?
         public Actor() : base()
         {
             ActionPoints = 16;
@@ -71,13 +84,21 @@ namespace Hecatomb
             {
                 return;
             }
+
+            Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity , Step = "BeforeAlert"});
+
             if (!Acted)
+            {
                 Alert();
+            }
 
-            // this is probably where the magic should happen
+
+            Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeWander" });
 
             if (!Acted)
+            {
                 Wander();
+            }
         }
 
         public void Patrol(TileEntity t)
@@ -121,6 +142,14 @@ namespace Hecatomb
         public bool IsHostile(Teams team)
         {
             return GetState<TeamHandler>().CheckHostile(Team, team);
+        }
+        public bool IsHostile(Feature f)
+        {
+            if (f.Owned && f.TryComponent<Defender>()!=null && IsHostile(Player))
+            {
+                return true;
+            }
+            return false;
         }
         public bool IsFriendly(Creature c)
         {
@@ -227,7 +256,7 @@ namespace Hecatomb
                 WalkRandom();
             } else
             {
-                Movement m = Entity.GetComponent<Movement>();
+                Movement m = CachedMovement;
                 int x = line[0].X - x0;
                 int y = line[0].Y - y0;
                 int z = z0;
@@ -255,13 +284,14 @@ namespace Hecatomb
 
         public bool TryStepTo(int x1, int y1, int z1)
         {
-            Movement m = Entity.GetComponent<Movement>();
+            Movement m = CachedMovement;
             // okay what's up here?
             int x = x1 - Entity.X;
             int y = y1 - Entity.Y;
             int z = z1 - Entity.Z;
             Coord c = new Coord(x, y, z);
             Creature cr;
+            Feature fr;
             // we want to loop through the base
             Coord[][] fallbacks;
             // use fallbacks for ordinary, directional movement
@@ -282,6 +312,7 @@ namespace Hecatomb
                     y = dir.Y + Entity.Y;
                     z = dir.Z + Entity.Z;
                     cr = Creatures[x, y, z];
+                    fr = Features[x, y, z];
                     // so...this logic is weird...they will route around hostile creatures rather than attacking them
                     if (m.CanPass(x, y, z))
                     {
@@ -296,7 +327,7 @@ namespace Hecatomb
                             Minion minion = cr.TryComponent<Minion>();
                             if (minion != null && minion.Task != null)
                             {
-                                Movement move = cr.GetComponent<Movement>();
+                                Movement move = CachedMovement;
                                 Task task = minion.Task;
                                 // reluctant to displace a creature if it is standing next to its task
                                 if (task.CanWork())
@@ -313,13 +344,13 @@ namespace Hecatomb
                                         // choose a square randomly from that list
                                         int r = Game.World.Random.Next(squares.Count);
                                         var s = squares[r];
-                                        Entity.GetComponent<Movement>().Displace(cr, s.X, s.Y, s.Z);
+                                        move.Displace(cr, s.X, s.Y, s.Z);
                                         return true;
                                     }
                                     else if (task.CouldWorkFrom(Entity.X, Entity.Y, Entity.Z))
                                     {
                                         // should we do this anyway?  arguable...
-                                        Entity.GetComponent<Movement>().Displace(cr);
+                                        move.Displace(cr);
                                         return true;
                                     }
                                 }
@@ -338,15 +369,10 @@ namespace Hecatomb
                         }
 
                     }
-                    else if (Features[x, y, z] != null && IsHostile(Player))
+                    else if (fr != null && IsHostile(fr))
                     {
-                        // Do I need to check CanTouch here?
-                        Feature f = Features[x, y, z];
-                        if (f.Solid)
-                        {
-                            Attacker a = Entity.GetComponent<Attacker>();
-                            a.Attack(f);
-                        }
+                        Attacker a = Entity.GetComponent<Attacker>();
+                        a.Attack(fr);
                     }
                 }
             }
@@ -355,16 +381,44 @@ namespace Hecatomb
 
         public void Wait() => Spend(ActionPoints);
 
+
+        private bool reachableHostileCreature(int x, int y, int z)
+        {
+            Creature cr = Creatures[x, y, z];
+            if (cr != null && IsHostile(cr) && CachedMovement.CanReach(x, y, z))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool reachableEnemyFeature(int x, int y, int z)
+        {
+            Feature fr = Features[x, y, z];
+            if (fr != null && IsHostile(fr) && CachedMovement.CanReach(x, y, z))
+            {
+                return true;
+            }
+            return false;
+        }
         public void Alert()
         {
             var (x, y, z) = Entity;
             if (Target == null && Team != Teams.Neutral)
             {
-                // This needs to get refactored to deal with doors
-                TileEntity te = Entity.GetComponent<Senses>().GetVisibleEnemy();
-                if (te != null)
+                Coord c;
+                c = Entity.GetComponent<Senses>().FindClosestVisible(where: reachableHostileCreature);
+                if (!c.Equals(default(Coord)))
                 {
-                    Target = te;
+                    Target = Creatures[c];
+                }
+                else
+                {
+                    c = Entity.GetComponent<Senses>().FindClosestVisible(where: reachableEnemyFeature);
+                    if (!c.Equals(default(Coord)))
+                    {
+                        Target = Features[c];
+                    }
                 }
             }
             if (Target == Entity)
@@ -372,6 +426,7 @@ namespace Hecatomb
                 Debug.WriteLine("Somehow ended up targeting itself.");
             }
             // we don't verify that we can reach it before trying
+            // So...there's currently duplicate code for creatures and features...could be generalized
             if (Target != null && Target.Entity is Creature && IsHostile((Creature)Target.Entity))
             {
                 Creature cr = (Creature)Target;
@@ -389,21 +444,19 @@ namespace Hecatomb
                 }
             }
             // This code should get used again now
-            else if (Target != null && Target.Entity is Feature)
+            else if (Target != null && Target.Entity is Feature && IsHostile((Feature)Target.Entity))
             {
                 Feature fr = (Feature)Target;
                 Movement m = Entity.GetComponent<Movement>();
                 Attacker a = Entity.TryComponent<Attacker>();
-                Defender d = fr.TryComponent<Defender>();
-
                 // this is poorly thought out
-                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null && d != null)
+                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
                 {
-                    Debug.WriteLine("Attacking a door");
                     a.Attack(fr);
                 }
                 else
                 {
+                    // doesn't matter that this can't cache misses; a miss at this point would throw and error
                     WalkToward(Target);
                 }
             }

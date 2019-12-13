@@ -20,7 +20,7 @@ namespace Hecatomb
         public TaskHandler() : base()
         {
             Minions = new List<TypedEntityField<Creature>>();
-            Tasks = new[] { "DigTask", "BuildTask", "ConstructTask", "FurnishTask", "MurderTask", "PatrolTask", "RallyTask", "ForbidTask", "ButcherTask", "MendingTask", "ClaimTask", "UndesignateTask" };
+            Tasks = new[] { "DigTask", "BuildTask", "ConstructTask", "FurnishTask", "MurderTask", "PatrolTask", /*"RallyTask",*/ "ForbidTask", "ButcherTask", "MendingTask", "ClaimTask", "UndesignateTask" };
             AddListener<DestroyEvent>(OnDestroy);
             AddListener<DespawnEvent>(OnDespawn);
         }

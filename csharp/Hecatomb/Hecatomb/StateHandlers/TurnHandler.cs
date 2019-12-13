@@ -195,7 +195,6 @@ namespace Hecatomb
                         int checkPoints = actor.CurrentPoints;
                         if (checkPoints > 0)
                         {
-                            Game.World.Events.Publish(new ActEvent() { Actor = actor, Entity = actor.Entity });
                             actor.Act();
                             if (actor.CurrentPoints == checkPoints)
                             {
