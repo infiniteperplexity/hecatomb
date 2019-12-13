@@ -29,7 +29,7 @@ namespace Hecatomb
             if (actor.Target == null)
             {
                 Movement m = c.GetComponent<Movement>();
-                if (m.CanReach(Player, ignoreDoors: true))
+                if (m.CanReach(Player))
                 {
                     actor.Target = Player;
                 }
@@ -70,13 +70,13 @@ namespace Hecatomb
                     }
                     if (!actor.Acted)
                     {
-                        if (actor.Target == null || !m.CanReach(actor.Target, ignoreDoors: false))
+                        if (actor.Target == null || !m.CanReach(actor.Target))
                         {
                             cr.GetComponent<Senses>().GetVisibleEnemy();
                         }
                     }
                     // if you're frustrated, can't reach the player easily, and don't have something to fight, go home
-                    if (!actor.Acted && Frustration >= FrustrationLimit && !m.CanReach(Player, ignoreDoors: false))
+                    if (!actor.Acted && Frustration >= FrustrationLimit && !m.CanReach(Player))
                     {
                         var (x, y, z) = EntryTile;
                         // if you're right near where you entered the map, despawn

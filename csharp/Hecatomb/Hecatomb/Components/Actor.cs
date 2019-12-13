@@ -74,6 +74,7 @@ namespace Hecatomb
             if (!Acted)
                 Alert();
 
+            // this is probably where the magic should happen
 
             if (!Acted)
                 Wander();
@@ -157,11 +158,11 @@ namespace Hecatomb
             LinkedList<Coord> path;
             if (targetEntity == null)
             {
-                path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast, movable: m.CouldMoveIgnoreDoors, standable: m.CanStandIgnoreDoors);
+                path = Tiles.FindPath(m, x1, y1, z1, useLast: useLast, movable: m.CouldMove, standable: m.CanStand);
             }
             else
             {
-                path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMoveIgnoreDoors, standable: m.CanStandIgnoreDoors);
+                path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMove, standable: m.CanStand);
             }
             Coord? target = (path.Count > 0) ? path.First.Value : (Coord?)null;
             if (target == null)
@@ -359,6 +360,7 @@ namespace Hecatomb
             var (x, y, z) = Entity;
             if (Target == null && Team != Teams.Neutral)
             {
+                // This needs to get refactored to deal with doors
                 TileEntity te = Entity.GetComponent<Senses>().GetVisibleEnemy();
                 if (te != null)
                 {
@@ -386,7 +388,7 @@ namespace Hecatomb
                     WalkToward(Target);
                 }
             }
-            // I think this code is now obsolete
+            // This code should get used again now
             else if (Target != null && Target.Entity is Feature)
             {
                 Feature fr = (Feature)Target;
@@ -433,9 +435,6 @@ namespace Hecatomb
                     Target = c;
                 }
             }
-        }
-
-        
-		
+        }	
 	}
 }

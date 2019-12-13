@@ -396,14 +396,6 @@ namespace Hecatomb
 
         public bool CanStand(int x1, int y1, int z1)
         {
-            return CanStand(x1, y1, z1, ignoreDoors: false);
-        }
-        public bool CanStandIgnoreDoors(int x1, int y1, int z1)
-        {
-            return CanStand(x1, y1, z1, ignoreDoors: true);
-        }
-        public bool CanStand(int x1, int y1, int z1, bool ignoreDoors = false)
-        {
             if (x1 < 0 || x1 >= Game.World.Width || y1 < 0 || y1 >= Game.World.Height || z1 < 0 || z1 >= Game.World.Depth) {
                 return false;
             }
@@ -424,7 +416,7 @@ namespace Hecatomb
                     return false;
                 }
             }
-            if (ignoreDoors == false && CachedActor.Team != Teams.Friendly)
+            if (CachedActor.Team != Teams.Friendly)
             {
                 // doors block non-allied creatures
                 Feature f = Game.World.Features[x1, y1, z1];
@@ -460,16 +452,7 @@ namespace Hecatomb
 
         public bool CouldMove(int x0, int y0, int z0, int x1, int y1, int z1)
         {
-            return CouldMove(x0, y0, z0, x1, y1, z1, ignoreDoors: false);
-        }
-        public bool CouldMoveIgnoreDoors(int x0, int y0, int z0, int x1, int y1, int z1)
-        {
-            return CouldMove(x0, y0, z0, x1, y1, z1, ignoreDoors: true);
-        }
-
-        public bool CouldMove(int x0, int y0, int z0, int x1, int y1, int z1, bool ignoreDoors = false)
-        {
-            if (!CanStand(x1, y1, z1, ignoreDoors: ignoreDoors))
+            if (!CanStand(x1, y1, z1))
             {
                 return false;
             }
@@ -508,9 +491,9 @@ namespace Hecatomb
             return true;
         }
 
-        public bool CanMove(int x1, int y1, int z1, bool ignoreDoors = false)
+        public bool CanMove(int x1, int y1, int z1)
         {
-            return CouldMove(Entity.X, Entity.Y, Entity.Z, x1, y1, z1, ignoreDoors: ignoreDoors);
+            return CouldMove(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
         }
 
         public bool CanPass(int x1, int y1, int z1)
@@ -598,43 +581,27 @@ namespace Hecatomb
 			return (int x, int y, int z)=>{return CanStand(x, y, z);};
 		}
 		
-		public bool CanReach(int x1, int y1, int z1, bool useLast=true, bool ignoreDoors = false)
+		public bool CanReach(int x1, int y1, int z1, bool useLast=true)
 		{
 			int x0 = Entity.X;
 			int y0 = Entity.Y;
 			int z0 = Entity.Z;
             Func<int, int, int, int, int, int, bool> movable;
             Func<int, int, int, bool> standable;
-            if (ignoreDoors)
-            {
-                movable = CouldMoveIgnoreDoors;
-                standable = CanStandIgnoreDoors;
-            }
-            else
-            {
-                movable = CouldMove;
-                standable = CanStand;
-            }
+            movable = CouldMove;
+            standable = CanStand;
 			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast, movable: movable, standable: standable);
 			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;		
 			return (c==null) ? false : true;
 		}
 
 
-        public bool CanReach(TileEntity t, bool useLast = true, bool ignoreDoors = false)
+        public bool CanReach(TileEntity t, bool useLast = true)
         {
             Func<int, int, int, int, int, int, bool> movable;
             Func<int, int, int, bool> standable;
-            if (ignoreDoors)
-            {
-                movable = CouldMoveIgnoreDoors;
-                standable = CanStandIgnoreDoors;
-            }
-            else
-            {
-                movable = CouldMove;
-                standable = CanStand;
-            }
+            movable = CouldMove;
+            standable = CanStand;
             var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable);
             Coord? c = (path.Count > 0) ? path.First.Value : (Coord?)null;
             return (c == null) ? false : true;

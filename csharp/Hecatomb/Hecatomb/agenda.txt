@@ -6,6 +6,7 @@
 - It's possible that I missed one or more bugs related to hauling/ingredients/claims/priority, but I did test as much chaos as possible.
 - We want a confirmation prompt for certain things.
 - Sadly, I think we need to refactor how Actor and HumanTracker work, especially how they handle doors
+- Mention which buildings enable tasks
 
 Interface issues:
 - Ideally want to get time of day, phase of moon, and total turn number on there.  Time/date block looks stupid

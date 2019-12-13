@@ -45,7 +45,7 @@ namespace Hecatomb
             };
             MenuName = "slaughterhouse";
             Name = "slaughterhouse";
-            UseHint = "(butcher corpses and store flesh and bone.)";
+            UseHint = "(enables butcher task and stores flesh and bone.)";
             Stores = new string[] { "Flesh", "Bone" };
         }
     }
