@@ -259,7 +259,10 @@ namespace Hecatomb
 			Queue<Actor> qa = new Queue<Actor>();
 			for (int i=0; i<list.Count; i++)
 			{
-				qa.Enqueue((Actor) Entities[list[i]]);
+                if (Entities.ContainsKey(list[i]))
+                {
+                    qa.Enqueue((Actor)Entities[list[i]]);
+                }
 			}
 			return qa;
 		}

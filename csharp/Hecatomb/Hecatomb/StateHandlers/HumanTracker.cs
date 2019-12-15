@@ -23,16 +23,36 @@ namespace Hecatomb
         }
 
 
+        // okay, so now this can no longer be just the player, it needs to be able to target doors
         public void TargetPlayer(Creature c)
         {
+            Debug.WriteLine("(begin TargetPlayer)");
             Actor actor = c.GetComponent<Actor>();
             if (actor.Target == null)
             {
+                Debug.WriteLine("(current target is null)");
                 Movement m = c.GetComponent<Movement>();
                 if (m.CanReach(Player))
                 {
+                    Debug.WriteLine("(was able to target Player)");
                     actor.Target = Player;
                 }
+                else
+                {
+                    Debug.WriteLine("(failed to target Player, trying doors)");
+                    List<Feature> doors = Features.Where<Feature>((f) => (f.TypeName == "Door")).ToList();
+                    doors = doors.OrderBy((f) => Tiles.QuickDistance(f.X, f.Y, f.Z, Player.X, Player.Y, Player.Z)).ToList();
+                    foreach (var f in doors)
+                    {
+                        if (m.CanReach(f, useLast: false))
+                        {
+                            Debug.WriteLine("(targeted a door)");
+                            actor.Target = f;
+                            return;
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -53,7 +73,58 @@ namespace Hecatomb
             Bandits = new List<EntityField<Creature>>();
         }
 
+
+
         public GameEvent OnAct(GameEvent ge)
+        {
+            // this is all preliminary
+            ActEvent ae = (ActEvent)ge;
+            Actor actor = ae.Actor;
+            if (!actor.Acted && ae.Step == "BeforeWander" && actor.Entity.Unbox() is Creature)
+            {
+                
+                Creature cr = (Creature)actor.Entity.Unbox();
+                if (Bandits.Contains(cr))
+                {
+                    Debug.WriteLine("actor had not acted as of alert)");
+                    // here is the actual logic
+                    Movement m = cr.GetComponent<Movement>();
+                    var p = Player;
+                    // if the player were nearby and reachable we would have already targeted them
+                    if (Frustration > FrustrationLimit && !m.CanReach(Player))
+                    {
+                        if (!FrustrationAnnounced)
+                        {
+                            Game.SplashPanel.Splash(new List<ColoredText> { "Unable to penetrate your defenses, the bandits grow frustrated and break off the siege." });
+                            FrustrationAnnounced = true;
+                        }
+                        var (x, y, z) = EntryTile;
+                        // if you're right near where you entered the map, despawn
+                        if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
+                        {
+                            Debug.WriteLine("Screw you guys, I'm going home.");
+                            cr.Leave();
+                        }
+                        else
+                        {
+                            actor.WalkToward(x, y, z);
+                        }
+                    }
+                    else if (actor.Target == null)
+                    {
+                        Debug.WriteLine("target is null");
+                        TargetPlayer(cr);
+                        if (actor.Target != null)
+                        {
+                            var t = actor.Target;
+                            actor.WalkToward(t.X, t.Y, t.Z);
+                        }
+                    }
+                }
+            }
+            return ge;
+        }
+        public GameEvent OldOnAct(GameEvent ge)
         {
             return ge;
             ActEvent ae = (ActEvent)ge;

@@ -145,7 +145,7 @@ namespace Hecatomb
         }
         public bool IsHostile(Feature f)
         {
-            if (f.Owned && f.TryComponent<Defender>()!=null && IsHostile(Player))
+            if (/*f.Owned && */f.TryComponent<Defender>()!=null && IsHostile(Player))
             {
                 return true;
             }
@@ -191,34 +191,47 @@ namespace Hecatomb
             }
             else
             {
+                Debug.WriteLine("this is the door, right?");
+                Debug.WriteLine(useLast);
                 path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMove, standable: m.CanStand);
             }
             Coord? target = (path.Count > 0) ? path.First.Value : (Coord?)null;
             if (target == null)
             {
+                Debug.WriteLine("we couldn't reach our target, waah");
+                // this is what we do if we can't reach our target
                 WalkRandom();
             } else {
                 // this way of doing it makes it hard to attack things that are in the way...
                 if (Target?.Entity is Creature && IsHostile((Creature)Target.Entity))
                 {
                     if (m.CanTouch(Target.X, Target.Y, Target.Z))
-                    //if (Tiles.QuickDistance(Entity, Target)<=1)
                     {
                         Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Creature);
+                    }
+                }
+                else if(Target?.Entity is Feature && IsHostile((Feature)Target.Entity))
+                {
+                    if (m.CanTouch(Target.X, Target.Y, Target.Z))
+                    {
+                        Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Feature);
                     }
                 }
                 Coord t = (Coord)target;
                 if (!Acted)
                 {
+                    Debug.WriteLine("flag 0");
                     TryStepTo(t.X, t.Y, t.Z);
                 }
                 if (!Acted)
                 {
+                    Debug.WriteLine("flag 1");
                     WalkRandom();
                 }
             }
             if (!Acted)
             {
+                Debug.WriteLine("flag 2");
                 WalkRandom();
             }
         }
@@ -385,7 +398,7 @@ namespace Hecatomb
         private bool reachableHostileCreature(int x, int y, int z)
         {
             Creature cr = Creatures[x, y, z];
-            if (cr != null && IsHostile(cr) && CachedMovement.CanReach(x, y, z))
+            if (cr != null && IsHostile(cr) && CachedMovement.CanReach(cr))
             {
                 return true;
             }
@@ -395,7 +408,7 @@ namespace Hecatomb
         private bool reachableEnemyFeature(int x, int y, int z)
         {
             Feature fr = Features[x, y, z];
-            if (fr != null && IsHostile(fr) && CachedMovement.CanReach(x, y, z))
+            if (fr != null && IsHostile(fr) && CachedMovement.CanReach(fr, useLast: false))
             {
                 return true;
             }
@@ -403,6 +416,7 @@ namespace Hecatomb
         }
         public void Alert()
         {
+            // we have no handling for being unable to reach the target!
             var (x, y, z) = Entity;
             if (Target == null && Team != Teams.Neutral)
             {
@@ -456,8 +470,9 @@ namespace Hecatomb
                 }
                 else
                 {
+                    Debug.WriteLine($"walking toward a damn door on turn {Turns.Turn}");
                     // doesn't matter that this can't cache misses; a miss at this point would throw and error
-                    WalkToward(Target);
+                    WalkToward(Target, useLast: false);
                 }
             }
         }
