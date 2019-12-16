@@ -194,6 +194,7 @@ namespace Hecatomb
                 Debug.WriteLine("this is the door, right?");
                 Debug.WriteLine(useLast);
                 path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMove, standable: m.CanStand);
+                Debug.WriteLine(path.Count);
             }
             Coord? target = (path.Count > 0) ? path.First.Value : (Coord?)null;
             if (target == null)

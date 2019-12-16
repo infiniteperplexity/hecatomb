@@ -57,7 +57,9 @@ namespace Hecatomb
             Func<int, int, int, int, int, int, bool> movable = null
             )
 		{
-			var misses = Game.World.GetState<PathHandler>().PathMisses;
+            
+
+            var misses = Game.World.GetState<PathHandler>().PathMisses;
             var hits = Game.World.GetState<PathHandler>().PathHits;
             if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
 			{
@@ -66,7 +68,19 @@ namespace Hecatomb
 			}
             if (Tiles.QuickDistance(m.Entity, t) > cacheHitDistance && hits.ContainsKey(m.Entity.EID) && hits[m.Entity.EID].ContainsKey(t.EID))
             {
-                return hits[m.Entity.EID][t.EID].Item2;
+                if (hits[m.Entity.EID][t.EID].Item2.Count == 0)
+                {
+                    // if there is a 0-length list in here it's bad
+                    Debug.WriteLine("trying to return a 0-count cached list");
+                }
+                else
+                {
+                    return new LinkedList<Coord>(hits[m.Entity.EID][t.EID].Item2);
+                }
+            }
+            if (t is Feature)
+            {
+                Debug.WriteLine("flag 1");
             }
             int x0 = m.Entity.X;
 			int y0 = m.Entity.Y;
@@ -88,6 +102,7 @@ namespace Hecatomb
                     return m.CouldTouch(x, y, z, xx, yy, zz);
                 };
             }
+            // where does this come from now?
             cost = cost ?? m.MovementCost;
             var path = FindPath(
                 x0, y0, z0, x1, y1, z1,
@@ -120,10 +135,12 @@ namespace Hecatomb
                 {
                     hits[m.Entity.EID][t.EID] = (cacheHitsFor, new LinkedList<Coord>());
                 }
+                // are there issues with data mutability here
                 var list = hits[m.Entity.EID][t.EID].Item2;
                 hits[m.Entity.EID][t.EID] = (cacheHitsFor + Game.World.Random.Perturb(2), list);
             }
-			return path;
+            return new LinkedList<Coord>(path);
+			//return path;
 		}
 		
 		public static LinkedList<Coord> FindPath(

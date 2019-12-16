@@ -512,11 +512,11 @@ namespace Hecatomb
 
         public float MovementCost(int x0, int y0, int z0, int x1, int y1, int z1)
         {
-            Feature f = Game.World.Features[x1, y1, z1];
-            if (f != null && f.Solid && CachedActor.Team != Teams.Friendly)
-            {
-                return 12;
-            }
+            //Feature f = Game.World.Features[x1, y1, z1];
+            //if (f != null && f.Solid && CachedActor.Team != Teams.Friendly)
+            //{
+            //    return 12;
+            //}
             Cover cv = Game.World.Covers[x1, y1, z1];
             if (cv.Liquid)
             {

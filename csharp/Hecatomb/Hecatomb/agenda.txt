@@ -9,6 +9,7 @@
 - Why do we have no nature attacks?  Should check on those and other "extras"
 - Rally tasks for minions would require an event priority system...I know I need that eventually...disable rally task for now
 - Feature ownership is not implemented, right now we just use Defender presence or absence
+- We're getting cached path success of length 0...why?  are we passing mutable lists?
 
 Interface issues:
 - Ideally want to get time of day, phase of moon, and total turn number on there.  Time/date block looks stupid
