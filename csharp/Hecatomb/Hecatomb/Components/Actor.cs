@@ -92,6 +92,13 @@ namespace Hecatomb
                 Alert();
             }
 
+            Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeVandalism" });
+
+            if (!Acted)
+            {
+                Vandalize();
+            }
+
 
             Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeWander" });
 
@@ -417,23 +424,19 @@ namespace Hecatomb
         }
         public void Alert()
         {
+            if (Acted)
+            {
+                return;
+            }
             // we have no handling for being unable to reach the target!
             var (x, y, z) = Entity;
-            if (Target == null && Team != Teams.Neutral)
+            if (Team != Teams.Neutral && (Target == null || Target.Unbox() is Feature))
             {
                 Coord c;
                 c = Entity.GetComponent<Senses>().FindClosestVisible(where: reachableHostileCreature);
                 if (!c.Equals(default(Coord)))
                 {
                     Target = Creatures[c];
-                }
-                else
-                {
-                    c = Entity.GetComponent<Senses>().FindClosestVisible(where: reachableEnemyFeature);
-                    if (!c.Equals(default(Coord)))
-                    {
-                        Target = Features[c];
-                    }
                 }
             }
             if (Target == Entity)
@@ -442,7 +445,7 @@ namespace Hecatomb
             }
             // we don't verify that we can reach it before trying
             // So...there's currently duplicate code for creatures and features...could be generalized
-            if (Target != null && Target.Entity is Creature && IsHostile((Creature)Target.Entity))
+            if (Target.Entity is Creature && IsHostile((Creature)Target.Entity))
             {
                 Creature cr = (Creature)Target;
                 Movement m = Entity.GetComponent<Movement>();
@@ -458,8 +461,28 @@ namespace Hecatomb
                     WalkToward(Target);
                 }
             }
-            // This code should get used again now
-            else if (Target != null && Target.Entity is Feature && IsHostile((Feature)Target.Entity))
+        }
+
+        public void Vandalize()
+        {
+            if (Acted)
+            {
+                return;
+            }
+            // we have no handling for being unable to reach the target!
+            var (x, y, z) = Entity;
+            if (Target == null && Team != Teams.Neutral)
+            {
+                Coord c;
+                c = Entity.GetComponent<Senses>().FindClosestVisible(where: reachableEnemyFeature);
+                if (!c.Equals(default(Coord)))
+                {
+                    Target = Features[c];
+                }
+            }
+            // we don't verify that we can reach it before trying
+            // So...there's currently duplicate code for creatures and features...could be generalized
+            if (Target != null && Target.Entity is Feature && IsHostile((Feature)Target.Entity))
             {
                 Feature fr = (Feature)Target;
                 Movement m = Entity.GetComponent<Movement>();

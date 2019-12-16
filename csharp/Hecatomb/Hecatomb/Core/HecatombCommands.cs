@@ -436,6 +436,8 @@ namespace Hecatomb
 
         public void PlayerDies()
         {
+            // I don't really like doing this but it's just for debugging so it's probably okay
+            Options.NoStartupScreen = false;
             if (Game.Options.Invincible)
             {
                 Game.SplashPanel.Splash(new List<ColoredText> {

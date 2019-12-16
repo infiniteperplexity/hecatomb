@@ -80,50 +80,53 @@ namespace Hecatomb
             // this is all preliminary
             ActEvent ae = (ActEvent)ge;
             Actor actor = ae.Actor;
-            if (!actor.Acted && ae.Step == "BeforeWander" && actor.Entity.Unbox() is Creature)
+            if (actor.Acted || !(actor.Entity.Unbox() is Creature))
             {
-                
-                Creature cr = (Creature)actor.Entity.Unbox();
-                if (Bandits.Contains(cr))
+                return ge;
+            }
+            Creature cr = (Creature)actor.Entity.Unbox();
+            if (!Bandits.Contains(cr))
+            {
+                return ge;
+            }
+            Movement m = cr.GetComponent<Movement>();
+            if (ae.Step == "BeforeAlert")
+            {
+                if (actor.Target == null && Frustration <= FrustrationLimit && m.CanReach(Player))
                 {
-                    Debug.WriteLine("actor had not acted as of alert)");
-                    // here is the actual logic
-                    Movement m = cr.GetComponent<Movement>();
-                    var p = Player;
-                    // if the player were nearby and reachable we would have already targeted them
-                    if (Frustration > FrustrationLimit && !m.CanReach(Player))
+                    TargetPlayer(cr);
+                }
+            }
+            else if (ae.Step == "BeforeVandalism")
+            {
+                // if the player were nearby and reachable we would have already targeted them
+                if (Frustration > FrustrationLimit && !m.CanReach(Player))
+                {
+                    if (!FrustrationAnnounced)
                     {
-                        if (!FrustrationAnnounced)
-                        {
-                            Game.SplashPanel.Splash(new List<ColoredText> { "Unable to penetrate your defenses, the bandits grow frustrated and break off the siege." });
-                            FrustrationAnnounced = true;
-                        }
-                        var (x, y, z) = EntryTile;
-                        // if you're right near where you entered the map, despawn
-                        if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
-                        {
-                            Debug.WriteLine("Screw you guys, I'm going home.");
-                            cr.Leave();
-                        }
-                        else
-                        {
-                            actor.WalkToward(x, y, z);
-                        }
+                        Game.SplashPanel.Splash(new List<ColoredText> { "Unable to penetrate your defenses, the bandits grow frustrated and break off the siege." });
+                        FrustrationAnnounced = true;
                     }
-                    else if (actor.Target == null)
+                    var (x, y, z) = EntryTile;
+                    // if you're right near where you entered the map, despawn
+                    if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
                     {
-                        Debug.WriteLine("target is null");
-                        TargetPlayer(cr);
-                        if (actor.Target != null)
-                        {
-                            var t = actor.Target;
-                            actor.WalkToward(t.X, t.Y, t.Z);
-                        }
+                        Debug.WriteLine("Screw you guys, I'm going home.");
+                        cr.Leave();
                     }
+                    else
+                    {
+                        actor.WalkToward(x, y, z);
+                    }
+                }
+                if (!actor.Acted)
+                {
+                    actor.Wander();
                 }
             }
             return ge;
         }
+
         public GameEvent OldOnAct(GameEvent ge)
         {
             return ge;
