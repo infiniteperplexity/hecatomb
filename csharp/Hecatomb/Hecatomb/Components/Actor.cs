@@ -199,7 +199,6 @@ namespace Hecatomb
             else
             {
                 path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMove, standable: m.CanStand);
-                Debug.WriteLine(path.Count);
             }
             Coord? target = (path.Count > 0) ? path.First.Value : (Coord?)null;
             if (target == null)
@@ -234,7 +233,6 @@ namespace Hecatomb
             }
             if (!Acted)
             {
-                Debug.WriteLine("flag 2");
                 WalkRandom();
             }
         }
@@ -305,6 +303,10 @@ namespace Hecatomb
             int x = x1 - Entity.X;
             int y = y1 - Entity.Y;
             int z = z1 - Entity.Z;
+            if (x == 0 && y == 0 && z == 0)
+            {
+                Debug.WriteLine("why are why trying to step on ourselves?");
+            }
             Coord c = new Coord(x, y, z);
             Creature cr;
             Feature fr;
@@ -461,7 +463,7 @@ namespace Hecatomb
                 else
                 {
                     // doesn't matter that this can't cache misses; a miss at this point would throw and error
-                    WalkToward(Target);
+                    WalkToward(cr);
                 }
             }
         }

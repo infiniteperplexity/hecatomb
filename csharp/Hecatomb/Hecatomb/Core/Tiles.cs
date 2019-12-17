@@ -66,19 +66,20 @@ namespace Hecatomb
                 Debug.WriteLine("respected cached pathfinding failure");
 				return new LinkedList<Coord>();
 			}
-            if (Tiles.QuickDistance(m.Entity, t) > cacheHitDistance && hits.ContainsKey(m.Entity.EID) && hits[m.Entity.EID].ContainsKey(t.EID))
-            {
-                if (hits[m.Entity.EID][t.EID].Item2.Count == 0)
-                {
-                    // if there is a 0-length list in here it's bad
-                    Debug.WriteLine("trying to return a 0-count cached list");
-                    Debug.WriteLine($"From {m.Entity.Describe()} to {t.Describe()}");
-                }
-                else
-                {
-                    return new LinkedList<Coord>(hits[m.Entity.EID][t.EID].Item2);
-                }
-            }
+            //// I'm not clear on whether I ever at any point was cacheing successes in a way that actually works
+            //if (Tiles.QuickDistance(m.Entity, t) > cacheHitDistance && hits.ContainsKey(m.Entity.EID) && hits[m.Entity.EID].ContainsKey(t.EID))
+            //{
+            //    if (hits[m.Entity.EID][t.EID].Item2.Count == 0)
+            //    {
+            //        Debug.WriteLine("trying to return a 0-count cached list");
+            //        Debug.WriteLine($"From {m.Entity.Describe()} to {t.Describe()}");
+            //    }
+            //    else
+            //    {
+            //        Debug.WriteLine("returning cached success");
+            //        return new LinkedList<Coord>(hits[m.Entity.EID][t.EID].Item2);
+            //    }
+            //}
             int x0 = m.Entity.X;
 			int y0 = m.Entity.Y;
 			int z0 = m.Entity.Z;

@@ -422,7 +422,6 @@ namespace Hecatomb
                 Feature f = Game.World.Features[x1, y1, z1];
                 if (f != null && f.Solid && !Phases)
                 {
-                    Debug.WriteLine("we failed because it's a damned door");
                     return false;
                 }
             }
@@ -629,10 +628,6 @@ namespace Hecatomb
                         needed.Remove(item.Resource);
                     }
                 }
-            }
-            if (needed.ContainsKey("Wood"))
-            {
-                Debug.WriteLine($"Needs {needed["Wood"]}");
             }
             return (needed.Count == 0);
         }
