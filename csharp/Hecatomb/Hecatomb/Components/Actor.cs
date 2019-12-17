@@ -198,15 +198,12 @@ namespace Hecatomb
             }
             else
             {
-                Debug.WriteLine("this is the door, right?");
-                Debug.WriteLine(useLast);
                 path = Tiles.FindPath(m, targetEntity, useLast: useLast, movable: m.CouldMove, standable: m.CanStand);
                 Debug.WriteLine(path.Count);
             }
             Coord? target = (path.Count > 0) ? path.First.Value : (Coord?)null;
             if (target == null)
             {
-                Debug.WriteLine("we couldn't reach our target, waah");
                 // this is what we do if we can't reach our target
                 WalkRandom();
             } else {
@@ -228,12 +225,10 @@ namespace Hecatomb
                 Coord t = (Coord)target;
                 if (!Acted)
                 {
-                    Debug.WriteLine("flag 0");
                     TryStepTo(t.X, t.Y, t.Z);
                 }
                 if (!Acted)
                 {
-                    Debug.WriteLine("flag 1");
                     WalkRandom();
                 }
             }
@@ -400,6 +395,10 @@ namespace Hecatomb
             return false;
         }
 
+        public void SeekTarget()
+        {
+
+        }
         public void Wait() => Spend(ActionPoints);
 
 
@@ -445,13 +444,17 @@ namespace Hecatomb
             }
             // we don't verify that we can reach it before trying
             // So...there's currently duplicate code for creatures and features...could be generalized
-            if (Target.Entity is Creature && IsHostile((Creature)Target.Entity))
+            if (Target != null && Target.Entity is Creature && IsHostile((Creature)Target.Entity))
             {
                 Creature cr = (Creature)Target;
                 Movement m = Entity.GetComponent<Movement>();
                 Attacker a = Entity.TryComponent<Attacker>();
+                if (!m.CanReach(Target))
+                {
+                    Target = null;
+                }
                 // this is poorly thought out
-                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
+                else if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
                 {
                     a.Attack(cr);
                 }
@@ -488,13 +491,16 @@ namespace Hecatomb
                 Movement m = Entity.GetComponent<Movement>();
                 Attacker a = Entity.TryComponent<Attacker>();
                 // this is poorly thought out
-                if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
+                if (!m.CanReach(Target, useLast: false))
+                {
+                    Target = null;
+                }
+                else if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
                 {
                     a.Attack(fr);
                 }
                 else
                 {
-                    Debug.WriteLine($"walking toward a damn door on turn {Turns.Turn}");
                     // doesn't matter that this can't cache misses; a miss at this point would throw and error
                     WalkToward(Target, useLast: false);
                 }

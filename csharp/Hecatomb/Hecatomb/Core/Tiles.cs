@@ -72,15 +72,12 @@ namespace Hecatomb
                 {
                     // if there is a 0-length list in here it's bad
                     Debug.WriteLine("trying to return a 0-count cached list");
+                    Debug.WriteLine($"From {m.Entity.Describe()} to {t.Describe()}");
                 }
                 else
                 {
                     return new LinkedList<Coord>(hits[m.Entity.EID][t.EID].Item2);
                 }
-            }
-            if (t is Feature)
-            {
-                Debug.WriteLine("flag 1");
             }
             int x0 = m.Entity.X;
 			int y0 = m.Entity.Y;
@@ -126,18 +123,12 @@ namespace Hecatomb
 			}
 			else if (path.Count > 0 && cacheHitsFor > 0 && Tiles.QuickDistance(m.Entity, t) > cacheHitDistance)
 			{
+                // this logic was totally whacked, I hope I fixed it now
                 if (!hits.ContainsKey(m.Entity.EID))
                 {
                     hits[m.Entity.EID] = new Dictionary<int, (int, LinkedList<Coord>)>();
-                    hits[m.Entity.EID][t.EID] = (cacheHitsFor, new LinkedList<Coord>());
                 }
-                if (!hits[m.Entity.EID].ContainsKey(t.EID))
-                {
-                    hits[m.Entity.EID][t.EID] = (cacheHitsFor, new LinkedList<Coord>());
-                }
-                // are there issues with data mutability here
-                var list = hits[m.Entity.EID][t.EID].Item2;
-                hits[m.Entity.EID][t.EID] = (cacheHitsFor + Game.World.Random.Perturb(2), list);
+                hits[m.Entity.EID][t.EID] = (cacheHitsFor, new LinkedList<Coord>(path));
             }
             return new LinkedList<Coord>(path);
 			//return path;

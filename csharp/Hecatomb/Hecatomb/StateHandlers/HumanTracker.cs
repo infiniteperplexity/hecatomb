@@ -13,9 +13,14 @@ namespace Hecatomb
 
     public class EncounterTracker : StateHandler
     {
+        public int PastEncounters;
+        public List<EntityField<Creature>> MyCreatures;
         //public TileEntityField<DummyTile> EntryTile;
         public Coord EntryTile;
         public int TurnsSince;
+        public int Frustration;
+        public int FrustrationLimit = 25;
+        public bool FrustrationAnnounced;
 
         public virtual void Act(Creature c)
         {
@@ -26,51 +31,67 @@ namespace Hecatomb
         // okay, so now this can no longer be just the player, it needs to be able to target doors
         public void TargetPlayer(Creature c)
         {
-            Debug.WriteLine("(begin TargetPlayer)");
             Actor actor = c.GetComponent<Actor>();
             if (actor.Target == null)
             {
-                Debug.WriteLine("(current target is null)");
                 Movement m = c.GetComponent<Movement>();
                 if (m.CanReach(Player))
                 {
-                    Debug.WriteLine("(was able to target Player)");
                     actor.Target = Player;
                 }
                 else
                 {
-                    Debug.WriteLine("(failed to target Player, trying doors)");
                     List<Feature> doors = Features.Where<Feature>((f) => (f.TypeName == "Door")).ToList();
                     doors = doors.OrderBy((f) => Tiles.QuickDistance(f.X, f.Y, f.Z, Player.X, Player.Y, Player.Z)).ToList();
                     foreach (var f in doors)
                     {
                         if (m.CanReach(f, useLast: false))
                         {
-                            Debug.WriteLine("(targeted a door)");
                             actor.Target = f;
                             return;
                         }
                     }
                 }
-
             }
+        }
+
+        public void LeaveTheMap(Creature cr)
+        {
+            var actor = cr.GetComponent<Actor>();
+            var (x, y, z) = EntryTile;
+            // if you're right near where you entered the map, despawn
+            if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
+            {
+                Debug.WriteLine("Screw you guys, I'm going home.");
+                cr.Leave();
+            }
+            else
+            {
+                actor.WalkToward(x, y, z);
+            }
+        }
+
+        public bool IsFrustrated(Creature cr)
+        {
+            if (Frustration > FrustrationLimit)
+            {
+                return true;
+            }
+            return false;
         }
     }
 
     class HumanTracker : EncounterTracker
     {
-        public int PastBanditAttacks;
-        public List<EntityField<Creature>> Bandits;
-        public int Frustration;
-        public int FrustrationLimit = 25;
-        public bool FrustrationAnnounced;
+        
+        
 
         public HumanTracker()
         {
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<AttackEvent>(OnBanditAttack);
             AddListener<ActEvent>(OnAct);
-            Bandits = new List<EntityField<Creature>>();
+            MyCreatures = new List<EntityField<Creature>>();
         }
 
 
@@ -85,43 +106,32 @@ namespace Hecatomb
                 return ge;
             }
             Creature cr = (Creature)actor.Entity.Unbox();
-            if (!Bandits.Contains(cr))
+            if (!MyCreatures.Contains(cr))
             {
                 return ge;
             }
             Movement m = cr.GetComponent<Movement>();
+            Senses s = cr.GetComponent<Senses>();
             if (ae.Step == "BeforeAlert")
             {
-                if (actor.Target == null && Frustration <= FrustrationLimit && m.CanReach(Player))
+                // this makes sense
+                if (actor.Target == null && !IsFrustrated(cr))
                 {
                     TargetPlayer(cr);
                 }
             }
             else if (ae.Step == "BeforeVandalism")
             {
-                // if the player were nearby and reachable we would have already targeted them
-                if (Frustration > FrustrationLimit && !m.CanReach(Player))
+                // if the player were nearby and reachable we would have targeted them in the alert step
+                if (IsFrustrated(cr) && (Tiles.QuickDistance(Player.X, Player.Y, Player.Z, cr.X, cr.Y, cr.Z) > s.Range || !m.CanReach(Player)))
                 {
+                    actor.Target = null;
                     if (!FrustrationAnnounced)
                     {
                         Game.SplashPanel.Splash(new List<ColoredText> { "Unable to penetrate your defenses, the bandits grow frustrated and break off the siege." });
                         FrustrationAnnounced = true;
                     }
-                    var (x, y, z) = EntryTile;
-                    // if you're right near where you entered the map, despawn
-                    if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
-                    {
-                        Debug.WriteLine("Screw you guys, I'm going home.");
-                        cr.Leave();
-                    }
-                    else
-                    {
-                        actor.WalkToward(x, y, z);
-                    }
-                }
-                if (!actor.Acted)
-                {
-                    actor.Wander();
+                    LeaveTheMap(cr);
                 }
             }
             return ge;
@@ -136,7 +146,7 @@ namespace Hecatomb
             {
                 ; Creature cr = (Creature)actor.Entity.Unbox();
                 Movement m = cr.GetComponent<Movement>();
-                if (Bandits.Contains(cr))
+                if (MyCreatures.Contains(cr))
                 {
                     //wait...this acts regardless, so we never reach the frustratiion code
                     if (!actor.Acted)
@@ -195,7 +205,7 @@ namespace Hecatomb
             FrustrationAnnounced = false;
             Frustration = 0;
             TurnsSince = 0;
-            Bandits.Clear();
+            MyCreatures.Clear();
             bool xwall = (Game.World.Random.Next(2)==0);
             bool zero = (Game.World.Random.Next(2) == 0);
             string dir = "";
@@ -240,12 +250,12 @@ namespace Hecatomb
             //y0 = 12;
 
             EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
-            for (int i = 0; i < PastBanditAttacks + 3; i++)
+            for (int i = 0; i < PastEncounters + 3; i++)
             {
                 string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
                 var bandit = Entity.Spawn<Creature>(creature);
                 bandit.PlaceNear(x0, y0, 0, max: 5);
-                Bandits.Add(bandit);
+                MyCreatures.Add(bandit);
                 TargetPlayer(bandit);
                 // do they occasionally get placed one step underground?
                 Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
@@ -258,7 +268,7 @@ namespace Hecatomb
             
             // this would be a good time to calculate all the paths, yes?
 
-            PastBanditAttacks += 1;
+            PastEncounters += 1;
         }
         
         public GameEvent OnBanditAttack(GameEvent ge)
@@ -266,7 +276,7 @@ namespace Hecatomb
             AttackEvent ae = (AttackEvent)ge;
             Attacker att = ae.Attacker;
             Creature cr = (Creature) att.Entity.Unbox();
-            if (Bandits.Contains(cr))
+            if (MyCreatures.Contains(cr))
             {
                 if (ae.Defender.Entity.Unbox().TypeName == "Door")
                 {
