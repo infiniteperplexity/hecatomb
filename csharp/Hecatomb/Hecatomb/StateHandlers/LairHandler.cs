@@ -79,7 +79,7 @@ namespace Hecatomb
                     int y0 = y + (i + hallwayLength + setPieceRadius - 1) * dy;
                     if (CheckBoundingBox(x0, y0, z, dx, dy))
                     {
-                        BuildDwarfLair(x0, y0, z, dx, dy);
+                        BuildLair(x0, y0, z, dx, dy);
                         return true;
                     }
                     else
@@ -113,9 +113,9 @@ namespace Hecatomb
             return true;
         }
 
-        public void BuildDwarfLair(int x0, int y0, int z, int dx, int dy)
+        public void BuildLair(int x0, int y0, int z, int dx, int dy)
         {
-            Debug.WriteLine($"building a dwarf lair centered on {x0} {y0} {z}");
+            Debug.WriteLine($"building a lair centered on {x0} {y0} {z}");
             int hallwayLength = 3;
             int setPieceRadius = 6;
             // the top left corner
@@ -185,7 +185,7 @@ namespace Hecatomb
         }
 
 
-        public void PlaceDwarfLair()
+        public void PlaceLair()
         {
             int maxTries = 1000;
             for (int i = 0; i < maxTries; i++)

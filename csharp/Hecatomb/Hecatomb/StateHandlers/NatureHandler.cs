@@ -30,12 +30,13 @@ namespace Hecatomb
             DestroyEvent de = (DestroyEvent)ge;
             if (de.Entity is Feature && Game.Options.NoNatureAttacks == false)
             {
+                
                 Feature f = (Feature)de.Entity;
                 if (f.TypeName == "ClubTree" || f.TypeName == "SpadeTree")
                 {
                     TreesKilled += 1;
                     TreesSince += 1;
-                    if (TreesKilled > 25 && TreesSince >= 8 && Game.World.Random.Next(25) == 0)
+                    if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Next(20) == 0)
                     {
                         NatureAttack(f.X, f.Y, f.Z);
                     }
@@ -54,7 +55,8 @@ namespace Hecatomb
             TreesSince = 0;
             Game.SplashPanel.Splash(new List<ColoredText> {
                "Your wanton deforestation has attracted the attention of nature's defenders!"
-            });
+            },
+            logText: "{red}You have angered the spirits of nature!");
 
             var trees = Features.Where((Feature f) => ((f.TypeName == "ClubTree" || f.TypeName == "SpadeTree") && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<25)).ToList();
             trees.Sort((f1, f2) => (Game.World.Random.NextDouble().CompareTo(Game.World.Random.NextDouble())));

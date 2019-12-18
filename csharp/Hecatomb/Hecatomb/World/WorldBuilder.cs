@@ -146,13 +146,17 @@ namespace Hecatomb
                 //world.GetState<CaveVaultTracker>().PlaceBatCaves();
                 world.GetState<VaultHandler>().PlaceBatCaves();
             }
-            if (!Game.Options.NoDwarfLairs)
+            if (!Game.Options.NoLairs)
             {
-                world.GetState<LairHandler>().PlaceDwarfLair();
+                int nLairs = 3;
+                for (int i = 0; i < nLairs; i++)
+                {
+                    world.GetState<LairHandler>().PlaceLair();
+                }
             }
             if (!Game.Options.NoCaverns)
             {
-                //world.GetState<CavernHandler>().DigCaverns(40);
+                world.GetState<VaultHandler>().DigCaverns(25);
                 world.GetState<VaultHandler>().DigCaverns(40);
             }
             World.WorldSafeToDraw = true;

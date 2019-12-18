@@ -34,11 +34,11 @@ namespace Hecatomb
 
         }
         [JsonIgnore]
-        public static List<string> Messages;
+        public static List<ColoredText> Messages;
 
         static Vault()
         {
-            Messages = new List<string>
+            Messages = new List<ColoredText>
             {
                 "You breach a cavern.",
                 "You breach a vault full of monsters!"
@@ -73,7 +73,10 @@ namespace Hecatomb
                     cr.GetComponent<Actor>().Asleep = false;
                 }
             }
-            Game.InfoPanel.PushMessage(Messages[MessageId]);
+            Game.SplashPanel.Splash(new List<ColoredText> {
+               Messages[MessageId]
+            },
+            logText: "{red}" + Messages[MessageId]);
         }
 
         public void Populate()
@@ -286,6 +289,7 @@ namespace Hecatomb
             Deepest = 46;
             foreach (Vault v in Vaults)
             {
+                // what's going on with this check?  Oh, that's right, we don't populate the rest until we dig down
                 if (v.Z >= Deepest - 3)
                 {
                     v.Populate();

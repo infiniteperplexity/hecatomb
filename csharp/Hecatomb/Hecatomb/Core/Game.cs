@@ -321,14 +321,19 @@ namespace Hecatomb
                 {
                     SplashPanel.Draw();
                 }
+                if (ForegroundPanel.Active)
+                {
+                    ForegroundPanel.Draw();
+                }
             }
             else if (!Time.Frozen || sinceDraw > TimeSpan.FromMilliseconds(500))
             {
                 if (!MainPanel.Dirty)
                 {
                     MainPanel.DrawDirty();
-                    // seems like it shouldn't be necessary but currently is
+                    // I totally don't remember why these lines of codes are necessary, but stuff gets weird without them
                     SplashPanel.Dirty = true;
+                    ForegroundPanel.Dirty = true;
                 }
                 InterfacePanel.DrawPanels();
             }

@@ -43,7 +43,7 @@ namespace Hecatomb
                     }
                 }
             }
-            Entity.Despawn();
+            Entity.Unbox().Destroy();
         }
 
         public override void InterpretJSON(string json)

@@ -21,7 +21,7 @@ namespace Hecatomb
         public bool NoSpiders;
         public bool NoGhouls;
         public bool NoBatCaves;
-        public bool NoDwarfLairs;
+        public bool NoLairs;
         public bool NoCaverns;
         public bool IgnoreHardness;
         public bool Invincible;
@@ -63,7 +63,7 @@ namespace Hecatomb
             //NoGhouls = true;
             NoBatCaves = false;
             //NoBatCaves = true;
-            NoDwarfLairs = false;
+            NoLairs = false;
             //NoDwarfLairs = true;
             NoCaverns = false;
             //NoCaverns = true;
