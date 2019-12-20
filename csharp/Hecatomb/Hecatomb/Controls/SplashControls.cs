@@ -37,12 +37,20 @@ namespace Hecatomb
                 Reset();
             }
         }
+
         public override void HandleHover(int x, int y)
         {
         }
         public override void HandleKeyFallback()
         {
-            Reset();
+            if (MyCallback != null)
+            {
+                MyCallback();
+            }
+            else
+            {
+                Reset();
+            }
         }
 
     }

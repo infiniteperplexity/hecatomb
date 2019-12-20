@@ -51,6 +51,7 @@ namespace Hecatomb
             }
             if (!frozen)
             {
+                // this freezes the controls for one second and then sets the callback, right?
                 ControlContext.Set(new FrozenControls());
                 Thread thread = new Thread(() =>
                 {

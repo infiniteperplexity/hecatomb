@@ -42,7 +42,7 @@ namespace Hecatomb
             NoIngredients = false;
             //NoIngredients = true;
             NoTutorial = false;
-            //NoTutorial = true;
+            NoTutorial = true;
             NoStartupScreen = false;
             //NoStartupScreen = true;
             NoHumanAttacks = false;
@@ -52,7 +52,7 @@ namespace Hecatomb
             AllSpells = false;
             //AllSpells = true;
             ShowDebugSpells = false;
-            //ShowDebugSpells = true;
+            ShowDebugSpells = true;
             NoManaCost = false;
             //NoManaCost = true;
             WorkBonus = 0;

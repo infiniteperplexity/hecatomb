@@ -165,6 +165,7 @@ namespace Hecatomb
             var panel = InterfacePanel.GetPanel(x, y);
             if (panel is MainPanel)
         	{
+                //Debug.WriteLine($"here we are on the main panel {x} {y}");
                 int Size = panel.CharWidth;
                 int Padding = panel.XPad;
 	        	Camera Camera = Game.Camera;

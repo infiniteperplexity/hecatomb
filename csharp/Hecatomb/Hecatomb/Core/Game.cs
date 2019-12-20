@@ -349,6 +349,7 @@ namespace Hecatomb
 
         public void BackToTitle()
         {
+            SplashPanel.Active = false;
             SetUpTitle();
         }
     }
