@@ -10,6 +10,7 @@
 - Rally tasks for minions would require an event priority system...I know I need that eventually...disable rally task for now
 - Feature ownership is not implemented, right now we just use Defender presence or absence
 - Should double check whether the title screen works after death
+- Might want to reorder when waiting in the tutorial happens, move it one step later while waiting for a task.
 
 
 Interface issues:
@@ -60,6 +61,7 @@ Design issues:
 - better spell names
 - was water supposed to flicker when the mouse moved?
 - need some way to keep your zombies indoors
+
 
 combat testing:
 - So...remind myself what their stats are?  So currently nothing has any stats whatsoever.
