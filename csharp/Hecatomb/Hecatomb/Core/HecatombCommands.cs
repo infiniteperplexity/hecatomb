@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -279,6 +280,18 @@ namespace Hecatomb
             Act();
         }
 
+        public void SaveGameCommandCheckFileName()
+        {
+
+            if (File.Exists(@"..\" + Game.GameName + ".json"))
+            {
+                ControlContext.Set(new ConfirmationControls("overwrite " + Game.GameName + ".json", SaveGameCommand));
+            }
+            else
+            {
+                SaveGameCommand();
+            }
+        }
         public void SaveGameCommand()
         {
             Game.SplashPanel.Splash(new List<ColoredText>()
@@ -320,12 +333,12 @@ namespace Hecatomb
             Time.Frozen = true;
             ControlContext.Set(new StaticMenuControls(" ", new List<(Keys, ColoredText, Action)>() {
                 (Keys.Escape, "Cancel.", ControlContext.Reset),
-                (Keys.S, "Save game.", SaveGameCommand),
+                (Keys.S, "Save game.", SaveGameCommandCheckFileName),
                 (Keys.A, "Save as...", SaveGameAsCommand),
-                (Keys.R, "Restore game.", Game.game.RestoreGame),
-                (Keys.D, "Delete game.", Game.game.StartGame),
-                (Keys.N, "New game.", Game.game.StartGame),
-                (Keys.Q, "Quit.", Game.game.BackToTitle)
+                (Keys.R, "Restore game.", Game.game.RestoreGameWithConfirmation),
+                //(Keys.D, "Delete game.", Game.game.StartGame),
+                (Keys.N, "New game.", Game.game.StartGameWithConfirmation),
+                (Keys.Q, "Quit.", Game.game.BackToTitleWithConfirmation)
             }));
         }
 
@@ -335,7 +348,7 @@ namespace Hecatomb
             {
                 //could check legality of name here?
                 Game.GameName = name;
-                SaveGameCommand();
+                SaveGameCommandCheckFileName();
             };
             ControlContext.Set(new TextEntryControls("Type a name for your saved game.", saveGameAs));
             (Controls as TextEntryControls).CurrentText = Game.GameName;

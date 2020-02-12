@@ -168,6 +168,11 @@ namespace Hecatomb
                 ControlContext.Set(DefaultControls);  
             }
         }
+
+        public void StartGameWithConfirmation()
+        {
+            ControlContext.Set(new ConfirmationControls("quit the current game", StartGame));
+        }
         public void StartGame()
         {
 
@@ -208,6 +213,11 @@ namespace Hecatomb
             ControlContext.Set(new FrozenControls());
         }
 
+
+        public void RestoreGameWithConfirmation()
+        {
+            ControlContext.Set(new ConfirmationControls("quit the current game", RestoreGame));
+        }
         public void RestoreGame()
         {
             TheFixer.Purge();
@@ -347,6 +357,10 @@ namespace Hecatomb
             base.OnExiting(sender, args);
         }
 
+        public void BackToTitleWithConfirmation()
+        {
+            ControlContext.Set(new ConfirmationControls("quit the current game", BackToTitle));
+        }
         public void BackToTitle()
         {
             SplashPanel.Active = false;
