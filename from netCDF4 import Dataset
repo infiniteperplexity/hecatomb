@@ -1,5 +1,0 @@
-from netCDF4 import Dataset
-path = "C:/Users/Glenn Wright/Desktop/sst.mon.mean.nc"
-rootgrp = Dataset(path, "w", format="NETCDF4")
-print(rootgrp.data_model)
-rootgrp.close()
