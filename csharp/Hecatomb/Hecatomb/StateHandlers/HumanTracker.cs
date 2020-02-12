@@ -149,8 +149,8 @@ namespace Hecatomb
             {
                 return ge;
             }
-            if (TurnsSince == 5 && MyCreatures.Count == 0)
-            //if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
+            //if (TurnsSince == 5 && MyCreatures.Count == 0)
+            if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
             {             
                 BanditAttack();
             }
