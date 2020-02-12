@@ -98,6 +98,10 @@ namespace Hecatomb
 
         public GameEvent OnAct(GameEvent ge)
         {
+            if (MyCreatures.Count == 0)
+            {
+                return ge;
+            }
             // this is all preliminary
             ActEvent ae = (ActEvent)ge;
             Actor actor = ae.Actor;
