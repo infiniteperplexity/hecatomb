@@ -141,53 +141,6 @@ namespace Hecatomb
             return ge;
         }
 
-        public GameEvent OldOnAct(GameEvent ge)
-        {
-            return ge;
-            ActEvent ae = (ActEvent)ge;
-            Actor actor = ae.Actor;
-            if (actor.Entity.Unbox() is Creature)
-            {
-                ; Creature cr = (Creature)actor.Entity.Unbox();
-                Movement m = cr.GetComponent<Movement>();
-                if (MyCreatures.Contains(cr))
-                {
-                    //wait...this acts regardless, so we never reach the frustratiion code
-                    if (!actor.Acted)
-                    {
-                        actor.Alert();
-                    }
-                    if (!actor.Acted)
-                    {
-                        if (actor.Target == null || !m.CanReach(actor.Target))
-                        {
-                            //cr.GetComponent<Senses>().GetVisibleEnemy();
-                        }
-                    }
-                    // if you're frustrated, can't reach the player easily, and don't have something to fight, go home
-                    if (!actor.Acted && Frustration >= FrustrationLimit && !m.CanReach(Player))
-                    {
-                        var (x, y, z) = EntryTile;
-                        // if you're right near where you entered the map, despawn
-                        if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, x, y, z) <= 1)
-                        {
-                            Debug.WriteLine("Screw you guys, I'm going home.");
-                            cr.Leave();
-                        }
-                        else
-                        {
-                            actor.WalkToward(x, y, z);
-                        }
-                    }
-                    if (!actor.Acted)
-                    {
-                        TargetPlayer(cr);
-                    }
-                }
-            }
-            return ge;
-        }
-
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             //Debug.WriteLine($"We've had {PastBanditAttacks} bandit attacks so far.");
@@ -196,8 +149,8 @@ namespace Hecatomb
             {
                 return ge;
             }
-            //if (te.Turn == 5)
-            if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
+            if (TurnsSince == 5 && MyCreatures.Count == 0)
+            //if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
             {             
                 BanditAttack();
             }

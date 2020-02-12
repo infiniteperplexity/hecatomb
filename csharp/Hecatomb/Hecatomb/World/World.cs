@@ -55,7 +55,18 @@ namespace Hecatomb
 		public EventHandler Events;
 		public Creature Player;
 		public StatefulRandom Random;
-        public TurnHandler Turns;
+        TurnHandler _turns;
+        public TurnHandler Turns
+        {
+            get
+            {
+                if (_turns == null)
+                {
+                    _turns = GetState<TurnHandler>();
+                }
+                return _turns;
+            }
+        }
 
         // should these attach to builder?
         public FastNoise ElevationNoise;
@@ -231,7 +242,6 @@ namespace Hecatomb
             Particles = new SparseJaggedArray3D<Particle>(Width, Height, Depth);
             Emitters = new List<ParticleEmitter>();
 			Explored = new HashSet<Coord>();
-			Turns = new TurnHandler();
             InitializeHandlers();
         }
 		
@@ -251,7 +261,7 @@ namespace Hecatomb
             Particles = new SparseJaggedArray3D<Particle>(Width, Height, Depth);
             Emitters = new List<ParticleEmitter>();
             Explored = new HashSet<Coord>();
-			Turns = new TurnHandler();
+            _turns = null;
             InitializeHandlers();
         }
 
@@ -516,7 +526,7 @@ namespace Hecatomb
         }
         public int GetLighting(int x, int y, int z)
         {
-            int lighting = Game.World.Turns.LightLevel;
+            int lighting = Turns.LightLevel;
             int outdoors = Game.World.Outdoors[x, y, z];
             if (outdoors == 0)
             {

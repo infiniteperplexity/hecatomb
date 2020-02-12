@@ -103,16 +103,13 @@ namespace Hecatomb
                     }
 				}
 			}
-			var turns = new {
-				Turn = Turns.Turn,
-				Queue = Turns.QueueAsIDs(Turns.Queue),
-				Deck = Turns.QueueAsIDs(Turns.Deck)
-			};
+            var turns = GetState<TurnHandler>();
             var jsonready = new
             {
                 random = Random,
                 player = Player.EID,
-                turns = turns,
+                turnQueue = turns.QueueAsIDs(turns.Queue),
+                turnDeck = turns.QueueAsIDs(turns.Deck),
                 entities = Entities,
                 explored = Explored,
                 events = Events.StringifyListeners(),
@@ -164,6 +161,7 @@ namespace Hecatomb
     //public void Parse(string json)
     public void Parse(string filename)	
 		{
+            Reset();
             TheFixer.Purge();
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
@@ -240,6 +238,12 @@ namespace Hecatomb
 
                 if (ge is StateHandler)
                 {
+                    if (ge is TurnHandler)
+                    {
+                        var th = (TurnHandler)ge;
+                        th.Queue = th.QueueAsActors(parsed["turnQueue"].ToObject<Queue<int>>());
+                        th.Deck = th.QueueAsActors(parsed["turnDeck"].ToObject<Queue<int>>());
+                    }
                     (ge as StateHandler).Activate();
                 }
             }
@@ -291,13 +295,8 @@ namespace Hecatomb
 			Player = (Creature) Entities[pid];
 			Explored = parsed.GetValue("explored").ToObject<HashSet<Coord>>();
 
-            InterfacePanel.DirtifyUsualPanels();
-            // *** Turns ***
-            Turns = parsed.GetValue("turns").ToObject<TurnHandler>();
             
-            Turns.Queue = Turns.QueueAsActors(parsed["turns"]["Queue"].ToObject<Queue<int>>());
-			Turns.Deck = Turns.QueueAsActors(parsed["turns"]["Deck"].ToObject<Queue<int>>());
-            TurnHandler.HandleVisibility();
+    
             // *** Event Listeners ***
             var	events = parsed.GetValue("events").ToObject<Dictionary<string,Dictionary<int, string>>>();
 			foreach (string type in events.Keys)
@@ -317,6 +316,8 @@ namespace Hecatomb
                     Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
 				}
 			}
+            TurnHandler.HandleVisibility();
+            InterfacePanel.DirtifyUsualPanels();
             World.WorldSafeToDraw = true;
             if (Game.Options.ReseedRandom)
             {

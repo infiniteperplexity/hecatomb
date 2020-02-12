@@ -157,10 +157,10 @@ namespace Hecatomb
 
         public T Unbox()
         {
-            StackTrace st = new StackTrace();
+            //StackTrace st = new StackTrace();
             //Debug.WriteLine($"frame count is {st.FrameCount}");
-            if (st.FrameCount>2000)
-                throw new InvalidOperationException("Let's look at the trace");
+            //if (st.FrameCount>2000)
+                //throw new InvalidOperationException("Let's look at the trace");
             _validate();
             return Entity;
         }

@@ -12,7 +12,9 @@
 					"Movement": {},
 					"SpellCaster": {},
 					"Attacker": {},
-					"Defender": {}
+					"Defender": {
+						"Evasion": 1
+					}
 				}
 			},
 			{
