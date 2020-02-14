@@ -291,31 +291,39 @@ namespace Hecatomb
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (!Time.Frozen)
+            try
             {
-                if (World != null)
+                if (!Time.Frozen)
                 {
-                    foreach (Particle p in World.Particles.ToList())
+                    if (World != null)
                     {
-                        p.Update();
+                        foreach (Particle p in World.Particles.ToList())
+                        {
+                            p.Update();
+                        }
+                        Time.Update();
                     }
-                    Time.Update();
                 }
+                Controls?.HandleInput();
+                if (!Time.Frozen)
+                {
+                    if (World != null)
+                    {
+                        if (World.Turns.PlayerActed)
+                        {
+                            World.Turns.AfterPlayerActed();
+                        }
+                        World.Turns.Try();
+                    }
+                }
+                base.Update(gameTime);
             }
-            Controls?.HandleInput();
-            if (!Time.Frozen)
+            catch (Exception e)
             {
-                if (World != null)
-                {
-                    if (World.Turns.PlayerActed)
-                    {
-                        World.Turns.AfterPlayerActed();
-                    }
-                    World.Turns.Try();
-                }
+                string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
+                System.IO.File.WriteAllLines(@"..\" + "HecatombBugReport" + timestamp + ".txt", new[] { e.Source });
+                throw (e);
             }
-            base.Update(gameTime);
-
         }
 
         protected override void Draw(GameTime gameTime)

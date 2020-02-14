@@ -33,6 +33,7 @@ namespace Hecatomb
 
         public GameEvent OnTurnBegin(GameEvent g)
         {
+            throw new Exception("Deeply buried exception test.");
             foreach (int eid1 in PathMisses.Keys.ToList())
             {
                 var dict = PathMisses[eid1];
