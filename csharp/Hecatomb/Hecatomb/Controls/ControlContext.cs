@@ -387,10 +387,16 @@ namespace Hecatomb
 
         public static void CenterCursor()
         {
-            Cursor.Place(Game.Camera.XOffset + 12, Game.Camera.YOffset + 12, Game.Camera.Z);
-
+            Cursor.Place(Game.Camera.XOffset + Game.Camera.Width/2, Game.Camera.YOffset + Game.Camera.Height/2, Game.Camera.Z);
         }
 
+        public static void HideCursor()
+        {
+            if (Cursor.Placed)
+            {
+                Cursor.Remove();
+            }
+        }
         public virtual void SelectTile()
         {
             Camera Camera = Game.Camera;

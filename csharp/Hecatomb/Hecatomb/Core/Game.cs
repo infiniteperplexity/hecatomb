@@ -146,6 +146,7 @@ namespace Hecatomb
             {
                 p = World.PlacePlayer();
             }
+            ControlContext.HideCursor();
             TurnHandler.HandleVisibility();
             Time.Frozen = false;
             if (!Options.NoStartupScreen)
@@ -165,7 +166,7 @@ namespace Hecatomb
             }
             else
             {
-                ControlContext.Set(DefaultControls);  
+                ControlContext.Set(DefaultControls);      
             }
         }
 

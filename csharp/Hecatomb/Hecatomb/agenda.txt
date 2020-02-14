@@ -1,7 +1,6 @@
 ﻿Fresh issues list starting on 2/14/2020:
 - !!!Think about the saved game folder structure for the release version
 - !!!Come up with some kind of bug export system
-- Should the selection cursor start near or on the player, for the sake of keyboard-only users?
 - I *think* I fixed the weird issues where TurnHandler didn't act like other state handlers
 
 
