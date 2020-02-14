@@ -46,12 +46,14 @@ namespace Hecatomb
     {
         public void BuildMenu(MenuChoiceControls menu)
         {
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             menu.Header = "Choose a saved game:";
             menu.Choices = new List<IMenuListable>();
-            string[] filePaths = Directory.GetFiles(@"..\", "*.json");
-            foreach (string path in filePaths)
+            System.IO.Directory.CreateDirectory(path + @"\saves");
+            string[] filePaths = Directory.GetFiles(path + @"\saves", "*.json");
+            foreach (string paths in filePaths)
             {
-                string[] split = path.Split('\\');
+                string[] split = paths.Split('\\');
                 string fname = split[split.Length-1];
                 split = fname.Split('.');
                 fname = split[0];

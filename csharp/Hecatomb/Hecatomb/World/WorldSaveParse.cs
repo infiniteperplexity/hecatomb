@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace Hecatomb
 {
@@ -128,7 +129,9 @@ namespace Hecatomb
             settings.Formatting = Formatting.Indented;
             settings.NullValueHandling = NullValueHandling.Ignore;
             var json = JsonConvert.SerializeObject(jsonready, settings);
-            System.IO.File.WriteAllText(@"..\" + Game.GameName + ".json", json);
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            System.IO.Directory.CreateDirectory(path + @"\saves");
+            System.IO.File.WriteAllText(path + @"\saves\" + Game.GameName + ".json", json);
 			return json;
 		}
 
@@ -166,7 +169,10 @@ namespace Hecatomb
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
             //JObject parsed;
-            string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            System.IO.Directory.CreateDirectory(path + @"\saves");
+            Game.World.Parse(path + @"\saves\" + Game.GameName + ".json");
+            string json = System.IO.File.ReadAllText(path + @"\saves\" + Game.GameName + ".json");
             JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
             
             //using (StreamReader stream = File.OpenText(filename))

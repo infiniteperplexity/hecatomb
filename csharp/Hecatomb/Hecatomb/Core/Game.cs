@@ -322,7 +322,9 @@ namespace Hecatomb
             catch (Exception e)
             {
                 string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
-                System.IO.File.WriteAllLines(@"..\" + "HecatombBugReport" + timestamp + ".txt", new[] { e.Source });
+                var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+                System.IO.Directory.CreateDirectory(path + @"\logs");
+                System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombStackTrace" + timestamp + ".txt", new[] { e.ToString() });
                 throw (e);
             }
         }

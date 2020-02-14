@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Threading;
+using System.Reflection;
 
 namespace Hecatomb
 {
@@ -282,8 +283,8 @@ namespace Hecatomb
 
         public void SaveGameCommandCheckFileName()
         {
-
-            if (File.Exists(@"..\" + Game.GameName + ".json"))
+            System.IO.Directory.CreateDirectory(@"..\saves");
+            if (File.Exists(@"..\saves\" + Game.GameName + ".json"))
             {
                 ControlContext.Set(new ConfirmationControls("overwrite " + Game.GameName + ".json", SaveGameCommand));
             }
@@ -317,7 +318,9 @@ namespace Hecatomb
                 Game.World = new World(256, 256, 64);
             }
             //Game.World.Parse(json);
-            Game.World.Parse(@"..\" + Game.GameName + ".json");
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            System.IO.Directory.CreateDirectory(path+@"\saves");
+            Game.World.Parse(path+@"\saves\" + Game.GameName + ".json");
             // we need some kind of failure handling...
             Game.MainPanel.IntroState = false;
             ControlContext.Reset();
