@@ -1,8 +1,9 @@
 ﻿Fresh issues list starting on 2/14/2020:
-- !!!Think about the saved game folder structure for the release version
-- !!!Come up with some kind of bug export system
+- Tutorial can apparently get stuck after raising first zombie.
+- I think I fixed relative paths for saved games and crash reports.
 - I *think* I fixed the weird issues where TurnHandler didn't act like other state handlers
-
+- Research menu should tell you how to get out.
+- Message to tell how you died.  That guy got killed by an angry nymph.  Shouldn't it have raised a blurb about that?
 
 
 
