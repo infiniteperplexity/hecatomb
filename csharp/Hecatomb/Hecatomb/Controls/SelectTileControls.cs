@@ -29,6 +29,7 @@ namespace Hecatomb
 		
 		public SelectTileControls(ISelectsTile i) : base()
 		{
+			AlwaysPaused = true;
 			Selector = i;
 			KeyMap[Keys.Escape] = Back;
             KeyMap[Keys.Space] = SelectTile;

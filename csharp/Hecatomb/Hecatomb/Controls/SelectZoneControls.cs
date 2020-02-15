@@ -26,12 +26,13 @@ namespace Hecatomb
 	public class SelectZoneControls : AbstractCameraControls
 	{
 		ISelectsZone Selector;
-		Coord FirstCorner;
+		public Coord FirstCorner;
 		List<Coord> Squares;
 		List<Particle> Highlights;
 		
 		public SelectZoneControls(ISelectsZone i)
 		{
+			AlwaysPaused = true;
 			Selector = i;
             KeyMap[Keys.Space] = SelectTile;
 			KeyMap[Keys.Escape] = ()=>{
@@ -110,7 +111,7 @@ namespace Hecatomb
 		public void SelectFirstCorner(Coord c)
 		{
 			FirstCorner = c;
-			MenuTop[1] = "Select second corner with keys or mouse.";
+			MenuTop[2] = "{yellow}Select second corner with keys or mouse.";
             //			KeyMap[Keys.Escape] = BackToFirstSquare;
             InterfacePanel.DirtifyUsualPanels();
         }
@@ -119,7 +120,7 @@ namespace Hecatomb
 		{
 			// not currently used
 			FirstCorner = default(Coord);
-			MenuTop[1] = "Select first corner with keys or mouse.";
+			MenuTop[2] = "{yellow}Select first corner with keys or mouse.";
 			Clean();
 			Highlights.Clear();
             InterfacePanel.DirtifyUsualPanels();

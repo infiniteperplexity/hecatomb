@@ -56,6 +56,7 @@ namespace Hecatomb
 
         public TextEntryControls(ColoredText header, Action<string> submit) : base()
         {
+            AlwaysPaused = true;
             MenuSelectable = false;
             CurrentText = Game.GameName;
             Header = header;

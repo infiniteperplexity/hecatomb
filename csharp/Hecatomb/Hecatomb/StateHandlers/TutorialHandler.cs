@@ -25,7 +25,7 @@ namespace Hecatomb
         public int NonTutorialTurns;
         [JsonIgnore] public List<ColoredText> OffTutorialText;
         [JsonIgnore] public List<ColoredText> OffTutorialCamera;
-        
+
 
         public int CurrentIndex;
         // the tutorial is always active but it's not always visible
@@ -52,6 +52,22 @@ namespace Hecatomb
                 list.Add(" ");
                 list.Add("{cyan}Press escape to return to the main view.");
                 list[0] = "{cyan}Esc) Go back.";
+            }
+            else if ((Current.Name == "ChooseDigTiles" || Current.Name == "ChooseBuildTiles") && Game.Controls is SelectZoneControls)
+            {
+                list = Current.ControlText.ToList();
+                list = list.Concat(Current.InstructionsText).ToList();
+                if (!(Game.Controls as SelectZoneControls).FirstCorner.Equals(default(Coord)))
+                {
+                    list[2] = "{yellow}Select second corner with keys or mouse.";
+                }
+                if (Current.ShowTimeAndSanity > -1)
+                {
+                    var ins = Game.Time.GetTimeText();
+                    ins.Add(" ");
+                    ins.Add(Game.World.Player.GetComponent<SpellCaster>().GetSanityText());
+                    list.InsertRange(Current.ShowTimeAndSanity, ins);
+                }
             }
             else if (!Current.RequiresDefaultControls || Game.Controls is DefaultControls)
             {
@@ -84,7 +100,6 @@ namespace Hecatomb
             }
             else
             {
-                Debug.WriteLine(Game.Controls);
                 list = list.Concat(Game.Controls.MenuTop).ToList();
                 list.Add(" ");
                 list = list.Concat(OffTutorialText).ToList();
@@ -298,7 +313,7 @@ namespace Hecatomb
                         }
                         else if (t.Action=="Cancel")
                         {
-                            GotoState("CastSpell");
+                            GotoState("ChooseSpell");
                         }
                     },
                 },
@@ -551,11 +566,12 @@ namespace Hecatomb
                         "{gray}R) Research",
                         "V) Achievements"
                     },
+                    // aha...does the tutorial always give the first message? yes it does
                     ControlText = new List<ColoredText>()
                     {
                         "{orange}**Esc: Cancel.**",
                         " ",
-                        "{yellow}Select a square with keys or mouse.",
+                        "{yellow}Select first corner with keys or mouse.",
                         " "
                     },
                     // there's a divergence between how the tutorial used to work and how it works now...
@@ -987,7 +1003,7 @@ namespace Hecatomb
                     {
                         "{orange}**Esc: Cancel.**",
                         " ",
-                        "{yellow}Select a square with keys or mouse.",
+                        "{yellow}Select first corner with keys or mouse.",
                         " "
                     },
                     InstructionsText = new List<ColoredText>()

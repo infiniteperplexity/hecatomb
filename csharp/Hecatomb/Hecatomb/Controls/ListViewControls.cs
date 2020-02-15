@@ -36,6 +36,7 @@ namespace Hecatomb
 
         public override void RefreshContent()
         {
+            AlwaysPaused = true;
             var Commands = Game.Commands;
             KeyMap[Keys.Space] = Commands.Wait;
             KeyMap[Keys.Escape] = Reset;

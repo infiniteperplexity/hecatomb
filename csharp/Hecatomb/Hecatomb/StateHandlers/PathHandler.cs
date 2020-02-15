@@ -33,7 +33,6 @@ namespace Hecatomb
 
         public GameEvent OnTurnBegin(GameEvent g)
         {
-            Debug.WriteLine($"Cursor at {ControlContext.Cursor.X} {ControlContext.Cursor.Y} {ControlContext.Cursor.Z}");
             foreach (int eid1 in PathMisses.Keys.ToList())
             {
                 var dict = PathMisses[eid1];

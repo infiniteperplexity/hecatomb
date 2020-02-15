@@ -67,6 +67,7 @@ namespace Hecatomb
 		
 		public MenuChoiceControls(IChoiceMenu chooser): base()
 		{
+			AlwaysPaused = true;
             Chooser = chooser;
             RefreshContent();
 		}

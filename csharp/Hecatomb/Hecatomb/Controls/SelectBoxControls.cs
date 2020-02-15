@@ -32,6 +32,7 @@ namespace Hecatomb
 		
 		public SelectBoxControls(ISelectsBox i) : base()
 		{
+			AlwaysPaused = true;
 			Selector = i;
 			Squares = new List<Coord>();
 			Highlights = new List<Particle>();

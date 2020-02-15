@@ -100,7 +100,7 @@ namespace Hecatomb
 			{	
 				p.Update();
 			}
-			if (PausedAfterLoad || AutoPausing)
+			if (PausedAfterLoad || AutoPausing || Game.Controls.AlwaysPaused)
 			{
 				return;
 			}

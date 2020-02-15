@@ -23,6 +23,7 @@ namespace Hecatomb
         public string Header;
         public ConfirmationControls(ColoredText header, Action confirmed) : base()
         {
+            AlwaysPaused = true;
             MenuSelectable = false;
             Header = header;
             var Commands = Game.Commands;
