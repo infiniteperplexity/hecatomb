@@ -325,6 +325,12 @@ namespace Hecatomb
                 var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
                 System.IO.Directory.CreateDirectory(path + @"\logs");
                 System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombStackTrace" + timestamp + ".txt", new[] { e.ToString() });
+                Process.Start(String.Format(
+                    "mailto:{0}?subject={1}&body={2}",
+                    "infinite.perplexity@gmail.com",
+                    "bug report",
+                    "no text"
+                ));
                 throw (e);
             }
         }

@@ -132,7 +132,7 @@ namespace Hecatomb
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
             System.IO.File.WriteAllText(path + @"\saves\" + Game.GameName + ".json", json);
-			return json;
+            return json;
 		}
 
         //public static void SerializeToStream(MyObject obj, Stream stream)

@@ -358,7 +358,7 @@ namespace Hecatomb
         }
 
         public void TogglePause()
-        {
+        {        
             Game.World.Events.Publish(new TutorialEvent() { Action = "TogglePause" });
             Game.Time.PausedAfterLoad = false;
             Game.Time.AutoPausing = !Game.Time.AutoPausing;
