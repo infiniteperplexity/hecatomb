@@ -327,9 +327,9 @@ namespace Hecatomb
                 System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombStackTrace" + timestamp + ".txt", new[] { e.ToString() });
                 Process.Start(String.Format(
                     "mailto:{0}?subject={1}&body={2}",
-                    "infinite.perplexity@gmail.com",
-                    "bug report",
-                    "no text"
+                    "hecatomb.gamedev@gmail.com",
+                    "Hecatomb crash report: " + timestamp,
+                    e.ToString()
                 ));
                 throw (e);
             }
