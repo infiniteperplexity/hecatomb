@@ -404,8 +404,9 @@ namespace Hecatomb
         }
         public void BuildInSquares()
         {
+            //Structure existingStructure;
             for (int i = 0; i < Squares.Count; i++)
-            {
+            { 
                 Coord s = Squares[i];
                 Feature f = Game.World.Features[s.X, s.Y, s.Z];
                 if (Game.World.Tasks[s.X, s.Y, s.Z] != null)
@@ -519,8 +520,9 @@ namespace Hecatomb
                 Feature f = (Feature)de.Entity;
                 if (Placed && Features.Contains(f))
                 {
-                    Remove();
-                    Features = new List<TileEntityField<Feature>>();
+                    Remove();                 
+                    // This code is kind of experimental, but it seems to work
+                    Features[Features.IndexOf(f)] = null;
                     if (!AtLeastPartiallyExists(f))
                     {
                         Despawn();

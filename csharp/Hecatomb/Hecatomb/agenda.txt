@@ -1,6 +1,6 @@
 ﻿Fresh issues list starting on 2/14/2020:
-- There is now a new issue with stack overflows when restoring the tutorial.
-- Rebuilding a dismanted structure doesn't seem to actually re-place it?
+- I think I fixed the building reconstruction issues
+- Apparently some weird things can happen if displacement causes a creature to fall
 - Need a better bug reporting system:
 	- email pops up.
 - Can't see mana while choosing a spell.
