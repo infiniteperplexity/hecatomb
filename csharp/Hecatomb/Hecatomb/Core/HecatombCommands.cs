@@ -306,24 +306,38 @@ namespace Hecatomb
 
         public void SaveGameProcess()
         {
-            Game.World.Stringify();
-            ControlContext.Reset();
+            try
+            {
+                Game.World.Stringify();
+                ControlContext.Reset();
+            }
+            catch (Exception e)
+            {
+                Game.HandleException(e);
+            }
         }
 
         public void RestoreGameProcess()
         {
-            //string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
-            if (Game.World == null)
+            try
             {
-                Game.World = new World(256, 256, 64);
+                //string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
+                if (Game.World == null)
+                {
+                    Game.World = new World(256, 256, 64);
+                }
+                //Game.World.Parse(json);
+                var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+                System.IO.Directory.CreateDirectory(path + @"\saves");
+                Game.World.Parse(path + @"\saves\" + Game.GameName + ".json");
+                // we need some kind of failure handling...
+                Game.MainPanel.IntroState = false;
+                ControlContext.Reset();
             }
-            //Game.World.Parse(json);
-            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            System.IO.Directory.CreateDirectory(path+@"\saves");
-            Game.World.Parse(path+@"\saves\" + Game.GameName + ".json");
-            // we need some kind of failure handling...
-            Game.MainPanel.IntroState = false;
-            ControlContext.Reset();
+            catch (Exception e)
+            {
+                Game.HandleException(e);
+            }
         }
         public void RestoreGameCommand()
         {

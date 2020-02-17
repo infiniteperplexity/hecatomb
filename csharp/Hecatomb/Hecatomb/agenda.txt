@@ -8,6 +8,7 @@
 - Can't duplicate the issue of research menu not showing how to exit
 - Someome had a crash while deconstructing a stockpile
 - Message to tell how you died.  That guy got killed by an angry nymph.  Shouldn't it have raised a blurb about that?
+- Should I catch Exception in the minor asynchronous threads, like SplashControls and such?
 
 Playtest issues:
 - In the long term we might want to make CanFindResources see carried items

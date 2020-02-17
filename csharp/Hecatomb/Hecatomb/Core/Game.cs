@@ -137,36 +137,43 @@ namespace Hecatomb
 
         public void StartupThread()
         {
-            World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
-            WorldBuilder builder = new DefaultBuilder();
-            builder.Build(World);
-            //ShowIntro();
-            Creature p = null;
-            while (p == null)
+            try
             {
-                p = World.PlacePlayer();
+                World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
+                WorldBuilder builder = new DefaultBuilder();
+                builder.Build(World);
+                //ShowIntro();
+                Creature p = null;
+                while (p == null)
+                {
+                    p = World.PlacePlayer();
+                }
+                ControlContext.HideCursor();
+                TurnHandler.HandleVisibility();
+                Time.Frozen = false;
+                if (!Options.NoStartupScreen)
+                {
+                    ControlContext.Reset();
+                    ForegroundPanel.Splash(new List<ColoredText>{
+                        "{yellow}Welcome to Hecatomb!",
+                        " ",
+                        "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                        " ",
+                        "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                        " ",
+                        "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
+                        " ",
+                        "{orange}(Press Space Bar to continue.)"
+                    }, frozen: false);
+                }
+                else
+                {
+                    ControlContext.Set(DefaultControls);
+                }
             }
-            ControlContext.HideCursor();
-            TurnHandler.HandleVisibility();
-            Time.Frozen = false;
-            if (!Options.NoStartupScreen)
+            catch (Exception e)
             {
-                ControlContext.Reset();
-                ForegroundPanel.Splash(new List<ColoredText>{
-                    "{yellow}Welcome to Hecatomb!",
-                    " ",
-                    "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
-                    " ",
-                    "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
-                    " ",
-                    "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
-                    " ",
-                    "{orange}(Press Space Bar to continue.)"
-                }, frozen: false);
-            }
-            else
-            {
-                ControlContext.Set(DefaultControls);      
+                HandleException(e);
             }
         }
 
@@ -290,6 +297,23 @@ namespace Hecatomb
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        /// 
+
+        public static void HandleException(Exception e)
+        {
+            Debug.WriteLine("creating crash report");
+            string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            System.IO.Directory.CreateDirectory(path + @"\logs");
+            System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombStackTrace" + timestamp + ".txt", new[] { e.ToString() });
+            Process.Start(String.Format(
+                "mailto:{0}?subject={1}&body={2}",
+                "hecatomb.gamedev@gmail.com",
+                "Hecatomb crash report: " + timestamp,
+                e.ToString()
+            ));
+            throw (e);
+        }
         protected override void Update(GameTime gameTime)
         {
             try
@@ -321,17 +345,7 @@ namespace Hecatomb
             }
             catch (Exception e)
             {
-                string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
-                var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-                System.IO.Directory.CreateDirectory(path + @"\logs");
-                System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombStackTrace" + timestamp + ".txt", new[] { e.ToString() });
-                Process.Start(String.Format(
-                    "mailto:{0}?subject={1}&body={2}",
-                    "hecatomb.gamedev@gmail.com",
-                    "Hecatomb crash report: " + timestamp,
-                    e.ToString()
-                ));
-                throw (e);
+                HandleException(e);
             }
         }
 
