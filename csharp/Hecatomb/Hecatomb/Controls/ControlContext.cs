@@ -210,7 +210,10 @@ namespace Hecatomb
             Feature fr = Game.World.Features[x, y, z];
             if (fr?.TryComponent<StructuralComponent>() != null)
             {
-                ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+                if (fr.GetComponent<StructuralComponent>().Structure.Placed)
+                {
+                    ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+                }
                 return;
             }
             // these are buggy and probably not needed

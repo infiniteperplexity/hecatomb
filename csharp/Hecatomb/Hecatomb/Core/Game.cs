@@ -312,7 +312,8 @@ namespace Hecatomb
                 "Hecatomb crash report: " + timestamp,
                 e.ToString()
             ));
-            throw (e);
+            
+            //throw (e);
         }
         protected override void Update(GameTime gameTime)
         {

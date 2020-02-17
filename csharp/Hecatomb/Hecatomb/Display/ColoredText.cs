@@ -29,6 +29,11 @@ namespace Hecatomb
             Match m = null;
             while (true)
             {
+                //Random r = new Random();
+                //if (r.Next(1000)==0)
+                //{
+                //    throw new Exception("grab a stack trace");
+                //}
                 m = capture.Match(txt);
                 if (!m.Success)
                 {
@@ -39,7 +44,6 @@ namespace Hecatomb
             }
             Text = txt;
         }
-
         public ColoredText(ColoredText ct)
         {
             Colors = new SortedList<int, string>();

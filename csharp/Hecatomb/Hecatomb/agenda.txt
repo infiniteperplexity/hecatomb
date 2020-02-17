@@ -1,12 +1,13 @@
 ﻿Fresh issues list starting on 2/14/2020:
-- Set up a specific e-mail account for the game.
+- There is now a new issue with stack overflows when restoring the tutorial.
+- Rebuilding a dismanted structure doesn't seem to actually re-place it?
 - Need a better bug reporting system:
 	- email pops up.
 - Can't see mana while choosing a spell.
 - I think I fixed relative paths for saved games and crash reports.
 - I *think* I fixed the weird issues where TurnHandler didn't act like other state handlers
 - Can't duplicate the issue of research menu not showing how to exit
-- Someome had a crash while deconstructing a stockpile
+- Someome had a crash while deconstructing a stockpile...that's probably fixed now.
 - Message to tell how you died.  That guy got killed by an angry nymph.  Shouldn't it have raised a blurb about that?
 - Should I catch Exception in the minor asynchronous threads, like SplashControls and such?
 
