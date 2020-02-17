@@ -171,7 +171,6 @@ namespace Hecatomb
             //JObject parsed;
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            Game.World.Parse(path + @"\saves\" + Game.GameName + ".json");
             string json = System.IO.File.ReadAllText(path + @"\saves\" + Game.GameName + ".json");
             JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
             
