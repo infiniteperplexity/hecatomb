@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Hecatomb Crash Report</title>
+	</head>
+	<script>
+		function getUrlVars() {
+		    var vars = {};
+		    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+		        vars[key] = value;
+		    });
+		    return vars;
+		}
+
+		function insertUrlVars()
+		{
+			let vars = getUrlVars();
+			if (vars.timestamp)
+			{
+				let text = "  What's even more helpful is attaching the crash report located in the same folder where you installed Hecatomb, at yourfolder/logs/HecatombCrashReport" + vars.timestamp + ".";
+				let html = document.getElementById("pageText").innerHTML;
+				document.getElementById("pageText").innerHTML = html + text;
+			}
+		}
+	</script>
+	<body style="background-color: black" onload="insertUrlVars();">
+		<div>
+			<p style="color: white" id="pageText">
+				Oh no, Hecatomb crashed!  I'm trying very hard to debug the game so that never happens, and it would help me tremendously if you send a description of what happened right before the crash to <a style="color: cyan" href="hecatomb.gamedev@gmail.com">hecatomb.gamedev@gmail.com</a>.
+			</p>
+		</div>
+	</body>
+</html>

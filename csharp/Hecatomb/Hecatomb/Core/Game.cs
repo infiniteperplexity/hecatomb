@@ -312,7 +312,7 @@ namespace Hecatomb
                 "Hecatomb crash report: " + timestamp,
                 e.ToString()
             ));
-            
+            Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp);
             throw (e);
         }
         protected override void Update(GameTime gameTime)
