@@ -15,9 +15,10 @@
 		function insertUrlVars()
 		{
 			let vars = getUrlVars();
-			if (vars.timestamp)
+			if (vars.timestamp && vars.path)
 			{
-				let text = "  What's even more helpful is attaching the crash report located in the same folder where you installed Hecatomb, at yourfolder/logs/HecatombCrashReport" + vars.timestamp + ".";
+				let path = vars.path..replace("~",":").replace("-","\\");
+				let text = "  What's even more helpful is either attaching or pasting the text from the crash report located in the folder where you installed Hecatomb, at " + path + "HecatombCrashReport" + vars.timestamp + ".txt.";
 				let html = document.getElementById("pageText").innerHTML;
 				document.getElementById("pageText").innerHTML = html + text;
 			}
@@ -26,7 +27,11 @@
 	<body style="background-color: black" onload="insertUrlVars();">
 		<div>
 			<p style="color: white" id="pageText">
-				Oh no, Hecatomb crashed!  I'm trying very hard to debug the game so that never happens, and it would help me tremendously if you send a description of what happened right before the crash to <a style="color: cyan" href="hecatomb.gamedev@gmail.com">hecatomb.gamedev@gmail.com</a>.
+				Oh no, Hecatomb crashed!  I'm trying very hard to debug the game so that never happens, and it would help me tremendously if you send a description of what happened right before the crash to <a style="color: cyan" href="hecatomb.gamedev@gmail.com">hecatomb.gamedev@gmail.com</a>.  
+			</p>
+			<br>
+			<p>
+				The game tried to open your default mail program, but this page is a backup option in case you haven't set that up.
 			</p>
 		</div>
 	</body>

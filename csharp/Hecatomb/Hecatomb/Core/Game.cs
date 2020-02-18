@@ -305,14 +305,15 @@ namespace Hecatomb
             string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\logs");
-            System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombStackTrace" + timestamp + ".txt", new[] { e.ToString() });
+            System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombCrashReport" + timestamp + ".txt", new[] { e.ToString() });
             Process.Start(String.Format(
                 "mailto:{0}?subject={1}&body={2}",
                 "hecatomb.gamedev@gmail.com",
                 "Hecatomb crash report: " + timestamp,
                 e.ToString()
             ));
-            Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp);
+            var replaced = path.Replace(@"\", "-").Replace(":","~");
+            Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);
             throw (e);
         }
         protected override void Update(GameTime gameTime)

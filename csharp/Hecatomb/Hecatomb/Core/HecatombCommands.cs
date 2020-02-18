@@ -341,6 +341,7 @@ namespace Hecatomb
         }
         public void RestoreGameCommand()
         {
+            throw new Exception("test exception");
             // I guess maybe a Save File should have an object representation?
             ControlContext.Set(new MenuChoiceControls(new SaveGameChooser()));
         }
