@@ -21,7 +21,7 @@
 				let link = path + "HecatombCrashReport" + vars.timestamp + ".txt";
 				let a = document.getElementById("filepath");
 				a.innerHTML = link;
-				a.href = "file://" + link.replace(/\\/g, "/");
+				a.href = "file:///" + link.replace(/\\/g, "/");
 			}
 		}
 	</script>

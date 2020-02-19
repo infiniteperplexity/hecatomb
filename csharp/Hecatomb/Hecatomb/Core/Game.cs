@@ -311,7 +311,7 @@ namespace Hecatomb
                 "Hecatomb crash report: " + timestamp,
                 e.ToString()
             ));
-            var replaced = path.Replace(@"\", "-").Replace(":","~");
+            var replaced = (path + @"\logs\").Replace(@"\", "-").Replace(":","~");
             Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);
             throw (e);
         }
