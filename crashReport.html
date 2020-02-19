@@ -18,20 +18,23 @@
 			if (vars.timestamp && vars.path)
 			{
 				let path = vars.path.replace("~",":").replace(/-/g,"\\");
-				let text = "  What's even more helpful is either attaching or pasting the text from the crash report located in the folder where you installed Hecatomb, at " + path + "HecatombCrashReport" + vars.timestamp + ".txt.";
-				let html = document.getElementById("pageText").innerHTML;
-				document.getElementById("pageText").innerHTML = html + text;
+				let link = path + "HecatombCrashReport" + vars.timestamp + ".txt";
+				let a = document.getElementById("filepath");
+				a.innerHTML = link;
+				a.href = "file://" + link.replace(/\\/g, "/");
 			}
 		}
 	</script>
 	<body style="background-color: black" onload="insertUrlVars();">
 		<div>
-			<p style="color: white" id="pageText">
-				Oh no, Hecatomb crashed!  I'm trying very hard to debug the game so that never happens, and it would help me tremendously if you send a description of what happened right before the crash to <a style="color: cyan" href="hecatomb.gamedev@gmail.com">hecatomb.gamedev@gmail.com</a>.  
+			<p style="color: white">
+				Oh no, Hecatomb crashed!  I'm trying very hard to debug the game so that never happens, and it would help me tremendously if you send a description of what happened right before the crash to <a style="color: cyan" href="hecatomb.gamedev@gmail.com">hecatomb.gamedev@gmail.com</a>  What's even more helpful is either attaching or pasting the text from the crash report located in the folder where you installed Hecatomb:  
 			</p>
 			<br>
-			<p>
-				The game tried to open your default mail program, but this page is a backup option in case you don't have a default mail program set
+			<a style="color: cyan" id="filepath">(unable to locate file!)</a>
+			<br>
+			<p style="color: white">
+				The game tried to open your default mail program, but this page is a backup option in case you don't have a default mail program set.
 			</p>
 		</div>
 	</body>
