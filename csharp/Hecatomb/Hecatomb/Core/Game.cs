@@ -309,7 +309,7 @@ namespace Hecatomb
                 "mailto:{0}?subject={1}&body={2}",
                 "hecatomb.gamedev@gmail.com",
                 "Hecatomb crash report: " + timestamp,
-                e.ToString()
+                "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + e.ToString()
             ));
             var replaced = (path + @"\logs\").Replace(@"\", "-").Replace(":","~");
             Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);
