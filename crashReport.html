@@ -17,7 +17,7 @@
 			let vars = getUrlVars();
 			if (vars.timestamp && vars.path)
 			{
-				let path = vars.path.replace("~",":").replace("-","\\");
+				let path = vars.path.replace("~",":").replace(/-/g,"\\");
 				let text = "  What's even more helpful is either attaching or pasting the text from the crash report located in the folder where you installed Hecatomb, at " + path + "HecatombCrashReport" + vars.timestamp + ".txt.";
 				let html = document.getElementById("pageText").innerHTML;
 				document.getElementById("pageText").innerHTML = html + text;
@@ -31,7 +31,7 @@
 			</p>
 			<br>
 			<p>
-				The game tried to open your default mail program, but this page is a backup option in case you haven't set that up.
+				The game tried to open your default mail program, but this page is a backup option in case you don't have a default mail program set
 			</p>
 		</div>
 	</body>

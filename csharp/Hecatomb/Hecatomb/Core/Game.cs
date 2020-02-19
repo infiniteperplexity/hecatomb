@@ -301,7 +301,6 @@ namespace Hecatomb
 
         public static void HandleException(Exception e)
         {
-            //Debug.WriteLine("creating crash report");
             string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\logs");
