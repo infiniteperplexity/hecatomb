@@ -91,7 +91,6 @@ namespace Hecatomb
         //https://blog.maskalik.com/asp-net/json-net-implement-custom-serialization/
         public string Stringify()
 		{
-            //throw new Exception("test exception");
             int[,,] terrainFIDs = new int[Width, Height, Depth];
             int[,,] coverFIDs = new int[Width, Height, Depth];
 			for (int i=0; i<Width; i++)

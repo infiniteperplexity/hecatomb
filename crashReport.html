@@ -17,7 +17,7 @@
 			let vars = getUrlVars();
 			if (vars.timestamp && vars.path)
 			{
-				let path = vars.path..replace("~",":").replace("-","\\");
+				let path = vars.path.replace("~",":").replace("-","\\");
 				let text = "  What's even more helpful is either attaching or pasting the text from the crash report located in the folder where you installed Hecatomb, at " + path + "HecatombCrashReport" + vars.timestamp + ".txt.";
 				let html = document.getElementById("pageText").innerHTML;
 				document.getElementById("pageText").innerHTML = html + text;
