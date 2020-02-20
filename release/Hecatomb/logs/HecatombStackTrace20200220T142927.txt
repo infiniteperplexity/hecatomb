@@ -1,0 +1,8 @@
+System.IndexOutOfRangeException: -1 -1 -1
+   at Hecatomb.SparseArray3D`1.get_Item(Int32 x, Int32 y, Int32 z) in C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\Utilities\SparseArray3D.cs:line 39
+   at Hecatomb.Structure.BuildMenu(MenuChoiceControls menu) in C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\Structures\Structure.cs:line 250
+   at Hecatomb.MenuChoiceControls.RefreshContent() in C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\Controls\MenuChoiceControls.cs:line 77
+   at Hecatomb.ControlContext.ClickTile(Coord c) in C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\Controls\ControlContext.cs:line 211
+   at Hecatomb.ControlContext.HandleClick(Int32 x, Int32 y) in C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\Controls\ControlContext.cs:line 130
+   at Hecatomb.ControlContext.HandleInput() in C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\Controls\ControlContext.cs:line 368
+   at Hecatomb.Game.Update(GameTime gameTime) in C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb\Hecatomb\Core\Game.cs:line 297

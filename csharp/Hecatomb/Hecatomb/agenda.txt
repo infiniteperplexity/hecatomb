@@ -1,4 +1,5 @@
 ﻿Fresh issues list starting on 2/14/2020:
+- If you assign a digtask in an unexplored area that contains a tree, it won't auto-cancel when you explore it.
 - I think I fixed the building reconstruction issues
 - Apparently some weird things can happen if displacement causes a creature to fall
 - Need a better bug reporting system:

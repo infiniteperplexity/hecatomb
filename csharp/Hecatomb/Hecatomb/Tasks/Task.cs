@@ -467,7 +467,9 @@ namespace Hecatomb
                     }
                     Debug.WriteLine($"But it makes {ifc.Makes} instead of {Makes}");
                 }
-                Debug.WriteLine("somehow trying to start building where a feature already exists"); 
+                Debug.WriteLine("somehow trying to start building where a feature already exists");
+                Cancel();
+                return;
             }
             f = Spawn<Feature>("IncompleteFeature");
             if (Makes != null && EntityType.Types.ContainsKey(Makes))

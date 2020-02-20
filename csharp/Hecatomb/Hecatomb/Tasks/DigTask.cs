@@ -15,7 +15,7 @@ namespace Hecatomb
 	{
 		public DigTask(): base()
 		{
-			MenuName = "dig, harvest, or dismantle";
+			MenuName = "dig, harvest, or deconstruct";
             Makes = "Excavation";
             BG = "orange";
 		}
@@ -168,11 +168,11 @@ namespace Hecatomb
             }
             else if (ValidTile(c))
             {
-                co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Dig, harvest, or dismantle from {0} {1} {2}.", c.X, c.Y, c.Z) };
+                co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Dig, harvest, or deconstruct from {0} {1} {2}.", c.X, c.Y, c.Z) };
             }
             else
             {
-                co.MenuMiddle = new List<ColoredText>() {"{orange}Can't dig, harvest, or dismantle here."};
+                co.MenuMiddle = new List<ColoredText>() {"{orange}Can't dig, harvest, or deconstruct here."};
             }
 		}
 		public override void TileHover(Coord c, List<Coord> squares)
@@ -251,7 +251,7 @@ namespace Hecatomb
             }
             else
             {
-                txt = "{orange}Cannot dig, harvest, or dismantle area.";
+                txt = "{orange}Cannot dig, harvest, or deconstruct area.";
             } 
 			co.MenuMiddle = new List<ColoredText>() {txt};
         }

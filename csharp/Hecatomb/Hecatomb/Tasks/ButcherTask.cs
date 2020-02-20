@@ -95,16 +95,21 @@ namespace Hecatomb
                 {
                     continue;
                 }
-                var structures = Structure.ListStructures().Where(s => s is Slaughterhouse).ToList();
-                var (x, y, z) = structures[0];
-                if (Tasks[x, y, z] != null)
+                // I think this slaughterhouse code is old and unnecessary
+                //var structures = Structure.ListStructures().Where(s => s is Slaughterhouse).ToList();
+                //// this will crash if there is no slaughterhouse
+                //var (x, y, z) = structures[0];
+                //if (Tasks[x, y, z] != null)
+                //{
+                //    Tasks[x, y, z].Cancel();
+                //}
+                if (Tasks[c] == null)
                 {
-                    Tasks[x, y, z].Cancel();
+                    ButcherTask task = Spawn<ButcherTask>();
+                    task.Place(c.X, c.Y, c.Z);
+                    task.Claims[corpse.EID] = 1;
+                    corpse.Claimed = 1;
                 }
-                ButcherTask task = Spawn<ButcherTask>();
-                task.Place(c.X, c.Y, c.Z);
-                task.Claims[corpse.EID] = 1;
-                corpse.Claimed = 1;
             }
         }
 

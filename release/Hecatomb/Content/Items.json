@@ -1,0 +1,11 @@
+{
+	"Types":
+		[	
+			{
+				"Type" : "Rock",
+				"FG" : "gray",
+				"Symbol" : "\u2022",
+				"Components" : {}
+			}
+		]
+}
