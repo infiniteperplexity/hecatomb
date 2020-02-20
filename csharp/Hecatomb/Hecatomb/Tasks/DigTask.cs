@@ -445,10 +445,21 @@ namespace Hecatomb
                 }
                 else
                 {
-                    Status.PushMessage("Canceling invalid task.");
+                    Status.PushMessage("Canceling invalid dig task.");
                 }
                 Cancel();
                 return false;
+            }
+            // ValidTile produces misleading results if a harvest or deconstruct task could have been placed
+            else if(Features[X, Y, Z] != null)
+            {
+                Feature f = Features[X, Y, Z];
+                if (f.TryComponent<IncompleteFixtureComponent>() == null || f.GetComponent<IncompleteFixtureComponent>().Makes != "Excavation")
+                {
+                    Status.PushMessage("Canceling invalid dig  task.");
+                    Cancel();
+                    return false;
+                }
             }
             Movement m = c.GetComponent<Movement>();
             return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients);
