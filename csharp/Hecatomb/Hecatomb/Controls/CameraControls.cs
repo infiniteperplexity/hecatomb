@@ -53,8 +53,9 @@ namespace Hecatomb
             }
             else
             {
-                var m = Mouse.GetState();
-                HandleClick(m.X, m.Y);
+                //var m = Mouse.GetState();
+                //HandleClick(m.X, m.Y);
+                SelectTile();
                 // unless we selected something, wait anyway
                 if (Game.Controls is CameraControls)
                 {

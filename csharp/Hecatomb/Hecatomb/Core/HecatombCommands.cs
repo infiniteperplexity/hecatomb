@@ -283,8 +283,9 @@ namespace Hecatomb
 
         public void SaveGameCommandCheckFileName()
         {
-            System.IO.Directory.CreateDirectory(@"..\saves");
-            if (File.Exists(@"..\saves\" + Game.GameName + ".json"))
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            System.IO.Directory.CreateDirectory(path + @"\saves");
+            if (File.Exists(path + @"\saves\" + Game.GameName + ".json"))
             {
                 ControlContext.Set(new ConfirmationControls("overwrite " + Game.GameName + ".json", SaveGameCommand));
             }
