@@ -12,14 +12,12 @@ using System.Collections.Generic;
 
 namespace Hecatomb
 {
-    /// <summary>
-    /// Description of NavigationControlContext.
-    /// </summary>
+    // Note that if I update this functionality, I should consider updating MenuCameraControls as well
     public abstract class AbstractCameraControls : ControlContext
     {
-        static int Z;
-        static int XOffset;
-        static int YOffset;
+        public static int Z;
+        public static int XOffset;
+        public static int YOffset;
 
         public override void HandleKeyDown(Keys key)
         {

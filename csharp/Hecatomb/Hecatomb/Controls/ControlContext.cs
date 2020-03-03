@@ -202,9 +202,12 @@ namespace Hecatomb
             var (x, y, z) = c;
             Creature cr = Game.World.Creatures[x, y, z];
             bool visible = Game.Visible.Contains(c);
+            // this functionality should probably be defined in HecatombCommands
             if (cr != null && visible)
             {
-                ControlContext.Set(new MenuChoiceControls(cr));
+                //ControlContext.Set(new MenuChoiceControls(cr));
+                ControlContext.Set(new MenuCameraControls(cr));
+                Game.Camera.CenterOnSelection();
                 return;
             }
             Feature fr = Game.World.Features[x, y, z];
@@ -212,7 +215,10 @@ namespace Hecatomb
             {
                 if (fr.GetComponent<StructuralComponent>().Structure.Placed)
                 {
-                    ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+                    var s = fr.GetComponent<StructuralComponent>().Structure.Unbox();
+                    ControlContext.Set(new MenuCameraControls(s));
+                    Game.Camera.CenterOnSelection();
+                    //ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
                 }
                 return;
             }
@@ -404,6 +410,10 @@ namespace Hecatomb
         public virtual void SelectTile()
         {
             Camera Camera = Game.Camera;
+            if (Cursor.X == -1 || Cursor.Y == -1)
+            {
+                return;
+            }
             Coord tile = new Coord(Cursor.X, Cursor.Y, Camera.Z);   
             ClickTile(tile);
         }

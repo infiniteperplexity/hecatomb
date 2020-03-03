@@ -168,7 +168,8 @@ namespace Hecatomb
                     ControlContext.Reset();
                 };
             menu.KeyMap[Keys.Tab] = NextMinion;
-            Game.Camera.Center(X, Y, Z);
+            menu.KeyMap[Keys.U] = Commands.ShowStructures;
+            menu.KeyMap[Keys.M] = Commands.ShowMinions;
         }
 
         public Actor GetCachedActor()
@@ -188,12 +189,19 @@ namespace Hecatomb
             {
                 if (minions.Count>0)
                 {
-                    ControlContext.Set(new MenuChoiceControls((Creature) minions[0]));
+                    ControlContext.Set(new MenuCameraControls((Creature)minions[0]));
+                    Game.Camera.CenterOnSelection();
+                }
+                else
+                {
+                    ControlContext.Set(new MenuCameraControls(Player));
+                    Game.Camera.CenterOnSelection();
                 }
             }
             else if (TryComponent<Minion>()==null)
             {
-                ControlContext.Set(new MenuChoiceControls(Player));
+                ControlContext.Set(new MenuCameraControls(Player));
+                Game.Camera.CenterOnSelection();
             }
             else
             {
@@ -208,11 +216,16 @@ namespace Hecatomb
                 }
                 if (n==-1 || n==minions.Count-1)
                 {
-                    ControlContext.Set(new MenuChoiceControls(Player));
+                    //ControlContext.Set(new MenuChoiceControls(Player));
+                    ControlContext.Set(new MenuCameraControls(Player));
+                    Game.Camera.CenterOnSelection();
                 }
                 else
                 {
-                    ControlContext.Set(new MenuChoiceControls((Creature)minions[n+1]));
+                    //ControlContext.Set(new MenuChoiceControls((Creature)minions[n+1]));
+
+                    ControlContext.Set(new MenuCameraControls((Creature)minions[n + 1]));
+                    Game.Camera.CenterOnSelection();
                 }
             }
         }

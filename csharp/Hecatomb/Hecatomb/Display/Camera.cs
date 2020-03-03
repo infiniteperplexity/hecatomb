@@ -33,5 +33,15 @@ namespace Hecatomb
 			YOffset = Math.Min(Math.Max(0, y-yhalf), Game.World.Height-Height);
 			Z = _z;
 		}
+
+        public void CenterOnSelection()
+        {
+            if (ControlContext.Selection != null && ControlContext.Selection.Placed)
+            {
+                var (x, y, z) = ControlContext.Selection;
+                Game.Camera.Center(x, y, z);
+                ControlContext.Cursor.Place(x, y, z);
+            }    
+        }
 	}
 }

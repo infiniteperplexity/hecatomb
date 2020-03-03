@@ -336,6 +336,8 @@ namespace Hecatomb
             menu.KeyMap[Keys.Tab] = NextStructure;
             menu.KeyMap[Keys.Delete] = CancelResearch;
             menu.KeyMap[Keys.Back] = CancelResearch;
+            menu.KeyMap[Keys.U] = Commands.ShowStructures;
+            menu.KeyMap[Keys.M] = Commands.ShowMinions;
         }
 
         public void CancelResearch()
@@ -389,12 +391,20 @@ namespace Hecatomb
                 }
                 if (n==-1 || n==structures.Count-1)
                 {
-                    ControlContext.Set(new MenuChoiceControls((Structure)structures[0]));
+                    //ControlContext.Set(new MenuChoiceControls((Structure)structures[0]));
+                    ControlContext.Set(new MenuCameraControls((Structure)structures[0]));
+                    Game.Camera.CenterOnSelection(); ;
                 }
                 else
                 {
-                    ControlContext.Set(new MenuChoiceControls((Structure)structures[n+1]));
+                    //ControlContext.Set(new MenuChoiceControls((Structure)structures[n+1]));
+                    ControlContext.Set(new MenuCameraControls((Structure)structures[n + 1]));
+                    Game.Camera.CenterOnSelection();
                 }
+            }
+            else
+            {
+                Game.Camera.CenterOnSelection();
             }
         }
         public void BuildInSquares(List<Coord> squares)

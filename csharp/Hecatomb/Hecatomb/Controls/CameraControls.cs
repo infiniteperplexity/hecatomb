@@ -63,6 +63,7 @@ namespace Hecatomb
                 }
             }
         }
+
         public override void RefreshContent()
         {
              MenuTop = new List<ColoredText>() {

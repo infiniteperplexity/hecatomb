@@ -24,8 +24,9 @@
 - I'm not sure chirurgy should be a prerequisite for the chirurgeon, or maybe it should be researched at the sanctum or slaughterhouse rather than the library
 - I got a very strange error while trying to quit?  Like...it tried to accept a "wait" command after the world had been torn down? 
 - Now we still can't see mana while choosing a spell during the tutorial but I think I'm okay with that
-- Bandits show up are 1:11:45
+- Bandits show up around 1:11:45
 - I'm not crazy about the mana cap approach to limiting zombies; it makes new zombies very expensive.
+* Made it so you can navigate around while viewing creatures or structures.
 
 Playtest issues:
 - In the long term we might want to make CanFindResources see carried items

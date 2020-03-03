@@ -453,7 +453,9 @@ namespace Hecatomb
             var structures = Structure.ListStructures();
             if (structures.Count > 0)
             {
-                ControlContext.Set(new MenuChoiceControls(structures[0]));
+                ControlContext.Set(new MenuCameraControls(structures[0]));
+                Game.Camera.CenterOnSelection();
+                //ControlContext.Set(new MenuChoiceControls(structures[0]));
             }
         }
 
@@ -462,7 +464,9 @@ namespace Hecatomb
             var minions = GetState<TaskHandler>().Minions;
             if (minions.Count > 0)
             {
-                ControlContext.Set(new MenuChoiceControls((Creature)minions[0]));
+                ControlContext.Set(new MenuCameraControls((Creature)minions[0]));
+                Game.Camera.CenterOnSelection();
+                //ControlContext.Set(new MenuChoiceControls((Creature)minions[0]));
             }
         }
 
