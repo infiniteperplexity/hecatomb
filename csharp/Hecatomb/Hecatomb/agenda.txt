@@ -21,6 +21,8 @@
 	- Is escape a good way to get to the system menu?  I feel like I back out one too many steps more than I'd like.
 	- Some people have had trouble finding the deeper ores.
 	- Might be good to fix that "can't see spellcasting mana" issue.
+- I'm not sure chirurgy should be a prerequisite for the chirurgeon, or maybe it should be researched at the sanctum or slaughterhouse rather than the library
+
 
 Playtest issues:
 - In the long term we might want to make CanFindResources see carried items

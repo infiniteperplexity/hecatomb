@@ -157,7 +157,7 @@ namespace Hecatomb
                     ForegroundPanel.Splash(new List<ColoredText>{
                         "{yellow}Welcome to Hecatomb!",
                         " ",
-                        "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                        "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
                         " ",
                         "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
                         " ",
@@ -194,7 +194,7 @@ namespace Hecatomb
             ForegroundPanel.Splash(new List<ColoredText>{
                 "{yellow}Welcome to Hecatomb!",
                 " ",
-                "You are a necromancer: A despised sorceror who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
                 " ",
                 "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
                 " ",

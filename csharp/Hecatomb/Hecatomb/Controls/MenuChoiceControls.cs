@@ -83,17 +83,13 @@ namespace Hecatomb
                 " ",
                 ("{yellow}"+Header)
             };
-            // not the real thing to do...
             for (int i = 0; i < Choices.Count; i++)
             {
                 KeyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
                 ColoredText ct = new ColoredText(alphabet[i] + ") ") + Choices[i].ListOnMenu();
-                //ct = new ColoredText()
-                //ct.Text = (alphabet[i] + ") " + ct.Text);
                 MenuTop.Add(ct);
             }
             Chooser.FinishMenu(this);
-            //Game.MenuPanel.Dirty = true;
         }
 
 
