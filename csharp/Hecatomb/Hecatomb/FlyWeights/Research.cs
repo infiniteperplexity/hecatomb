@@ -68,6 +68,13 @@ namespace Hecatomb
             Prerequisites = new List<string>() { "FlintTools", "Bronzeworking" }
         };
 
+        public static Research BronzeWeapons = new Research("BronzeWeapons")
+        {
+            Name = "bronze weapons",
+            Turns = 25,
+            Ingredients = new Dictionary<string, int>() { { "CopperOre", 2 }, { "TinOre", 2 }, { "Coal", 2 }, { "Wood", 2 } }
+        };
+
         // hardness 3
         public static Research SteelTools = new Research("SteelTools")
         {
@@ -121,8 +128,8 @@ namespace Hecatomb
         {
             Name = "chirurgy",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flesh", 2 }, { "Bone", 2 }, { "Flint", 2 } },
-            Prerequisites = new List<string>() { "BronzeTools" }
+            Ingredients = new Dictionary<string, int>() { { "Flesh", 2 }, { "Bone", 2 }, { "Flint", 2 }, { "Ectoplasm", 1 } },
+            Prerequisites = new List<string>() { "FlintTools", "CondenseEctoplasm" }
         };
 
         public static Research Masonry = new Research("Masonry")

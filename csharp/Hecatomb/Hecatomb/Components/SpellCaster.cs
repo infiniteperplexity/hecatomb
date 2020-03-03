@@ -60,7 +60,8 @@ namespace Hecatomb
         }
         public void FinishMenu(MenuChoiceControls menu)
         {
-
+            menu.MenuTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());
+            menu.MenuTop.Insert(1, " ");
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)

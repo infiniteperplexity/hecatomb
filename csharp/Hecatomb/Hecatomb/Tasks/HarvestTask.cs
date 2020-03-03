@@ -71,6 +71,7 @@ namespace Hecatomb
                 
 
                 h.Harvest();
+                // there is some special handling for harvesting graves
                 if (f.TypeName=="Grave")
                 {
                     // basically, if there's an explored tunnel underneath, it's more convenient if we don't dig a hole
@@ -81,6 +82,15 @@ namespace Hecatomb
                         Game.World.Covers[X, Y, Z] = Cover.NoCover;
                         Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
                         Game.World.ValidateOutdoors();
+                    }
+                    int goodsBounds = 12;
+                    int half = Game.World.Width / 2;
+                    if ((X < half - goodsBounds || X > half + goodsBounds) && (Y < half - goodsBounds || Y > half + goodsBounds))
+                    {
+                        if (Game.World.Random.Next(10) == 0)
+                        {
+                            Item.PlaceNewResource("TradeGoods", 1, X, Y, Z);
+                        }
                     }
                 }
             }

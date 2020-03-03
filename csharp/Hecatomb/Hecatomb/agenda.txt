@@ -1,28 +1,31 @@
 ﻿Fresh issues list starting on 2/14/2020:
-- If you assign a digtask in an unexplored area that contains a tree, it won't auto-cancel when you explore it.
-- I think I fixed the building reconstruction issues
+* If you assign a digtask in an unexplored area that contains a tree, it won't auto-cancel when you explore it.
+* I think I fixed the building reconstruction issues
 - Apparently some weird things can happen if displacement causes a creature to fall
-- Need a better bug reporting system:
-	- email pops up.
-- Can't see mana while choosing a spell.
-- I think I fixed relative paths for saved games and crash reports.
-- I *think* I fixed the weird issues where TurnHandler didn't act like other state handlers
+* Need a better bug reporting system:
+	* email pops up.
+* Can't see mana while choosing a spell.
+* I think I fixed relative paths for saved games and crash reports.
+* I *think* I fixed the weird issues where TurnHandler didn't act like other state handlers
 - Can't duplicate the issue of research menu not showing how to exit
-- Someome had a crash while deconstructing a stockpile...that's probably fixed now.
+* Someome had a crash while deconstructing a stockpile...that's probably fixed now.
 - Message to tell how you died.  That guy got killed by an angry nymph.  Shouldn't it have raised a blurb about that?
 - Should I catch Exception in the minor asynchronous threads, like SplashControls and such?
 - Ugh I just lost a bunch of notes...let's see what I can reconstruct.
-	- Can we get trade goods both by raising zombies and harvesting graves?
+	* Can we get trade goods both by raising zombies and harvesting graves?
 	- I think I'm making a mistake by having the bandit attack be the first "event"
-	- We should be able to "click" on buildings and minions without using the mouse.
-	- We don't seem to be getting the "really overwrite save file" message
+	* We should be able to "click" on buildings and minions without using the mouse.
+	* We don't seem to be getting the "really overwrite save file" message
 	- Why can't we see the chirurgeon?
-	- Can we move the forbid task down on the list
+	* Can we move the forbid task down on the list
 	- Is escape a good way to get to the system menu?  I feel like I back out one too many steps more than I'd like.
 	- Some people have had trouble finding the deeper ores.
-	- Might be good to fix that "can't see spellcasting mana" issue.
+	* Might be good to fix that "can't see spellcasting mana" issue.
 - I'm not sure chirurgy should be a prerequisite for the chirurgeon, or maybe it should be researched at the sanctum or slaughterhouse rather than the library
-
+- I got a very strange error while trying to quit?  Like...it tried to accept a "wait" command after the world had been torn down? 
+- Now we still can't see mana while choosing a spell during the tutorial but I think I'm okay with that
+- Bandits show up are 1:11:45
+- I'm not crazy about the mana cap approach to limiting zombies; it makes new zombies very expensive.
 
 Playtest issues:
 - In the long term we might want to make CanFindResources see carried items
