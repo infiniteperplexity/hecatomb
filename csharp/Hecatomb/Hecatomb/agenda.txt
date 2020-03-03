@@ -11,6 +11,16 @@
 - Someome had a crash while deconstructing a stockpile...that's probably fixed now.
 - Message to tell how you died.  That guy got killed by an angry nymph.  Shouldn't it have raised a blurb about that?
 - Should I catch Exception in the minor asynchronous threads, like SplashControls and such?
+- Ugh I just lost a bunch of notes...let's see what I can reconstruct.
+	- Can we get trade goods both by raising zombies and harvesting graves?
+	- I think I'm making a mistake by having the bandit attack be the first "event"
+	- We should be able to "click" on buildings and minions without using the mouse.
+	- We don't seem to be getting the "really overwrite save file" message
+	- Why can't we see the chirurgeon?
+	- Can we move the forbid task down on the list
+	- Is escape a good way to get to the system menu?  I feel like I back out one too many steps more than I'd like.
+	- Some people have had trouble finding the deeper ores.
+	- Might be good to fix that "can't see spellcasting mana" issue.
 
 Playtest issues:
 - In the long term we might want to make CanFindResources see carried items
