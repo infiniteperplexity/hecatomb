@@ -1,4 +1,32 @@
-﻿Fresh issues list starting on 2/14/2020:
+﻿
+Hecatomb brainstorm: The game isn't very fun once you reach the "waiting for bandit siege" stage.
+1) I could just make the bandit siege much easier.  Make it so there's only one bandit, for example.
+2) I could replace the bandit siege with an expedition...to hunt spider nests?  We already have wandering spiders.  One issue is that there is no early-game use for spider silk or anything like that so far.  Maybe to make trade goods?
+3) I mean, in theory you can go dig up graves and risk getting attacked by ghouls.  Maybe make the ghouls pop up only when the graves are disturbed?
+4) Could make it so you can dig for caves or something.
+5) Could make it so there are multiple places you can go for trade goods.
+6) Could make it so the market requires copper instead?
+7) Could make it so there are random wandering hunters or hermits.
+8) Revamp things so gold is a currency, and all black market transactions either give or require gold.
+9) Also, call it a trading post instead of a black market.
+10) Have there be small villages nearby.
+11) Have there be special tombs pre-gens you can rob.
+12) Make scattered rocks like gold in Don't Starve Together.
+13) Special crops to garden
+14) Sunken treasure chests.
+15) Add an herb garden structure, grows random plants?
+16) Require additional kinds of corpses for advancement.
+17) Require a magical ore for advancement.
+18) Hunt down slimes...might sort of overlap with ectoplasm though.
+19) Hunt aquatic creatures, like fish.
+20) Needing to gather charcoal or some kind of lava thing.
+Of these, what I really like are:
+	- Making the first bandit attack be only one.
+	- Make gold the universal currency.
+	- Pregen tombs.
+
+
+Fresh issues list starting on 2/14/2020:
 * If you assign a digtask in an unexplored area that contains a tree, it won't auto-cancel when you explore it.
 * I think I fixed the building reconstruction issues
 - Apparently some weird things can happen if displacement causes a creature to fall
@@ -27,6 +55,13 @@
 - Bandits show up around 1:11:45
 - I'm not crazy about the mana cap approach to limiting zombies; it makes new zombies very expensive.
 * Made it so you can navigate around while viewing creatures or structures.
+
+
+
+New features:
+- Make gold the universal currency.
+- Add pregen tombs to rob.
+- Make the first bandit attack be just one or two.
 
 Playtest issues:
 - In the long term we might want to make CanFindResources see carried items
