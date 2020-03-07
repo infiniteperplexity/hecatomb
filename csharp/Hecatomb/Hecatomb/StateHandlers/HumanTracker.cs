@@ -207,7 +207,7 @@ namespace Hecatomb
             //y0 = 12;
 
             EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
-            for (int i = 0; i < PastEncounters + 3; i++)
+            for (int i = 0; i < PastEncounters + 1; i++)
             {
                 string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
                 var bandit = Entity.Spawn<Creature>(creature);
