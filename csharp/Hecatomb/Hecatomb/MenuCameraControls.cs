@@ -44,6 +44,12 @@ namespace Hecatomb
             KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
             KeyMap[Keys.Space] = SelectOrWait;
 
+            for (int i = 0; i < Choices.Count; i++)
+            {
+                KeyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
+                ColoredText ct = new ColoredText(alphabet[i] + ") ") + Choices[i].ListOnMenu();
+                MenuTop.Add(ct);
+            }
             Chooser.FinishMenu(this);
         }
 
