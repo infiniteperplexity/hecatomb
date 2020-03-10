@@ -194,13 +194,13 @@ namespace Hecatomb
                     {
                         priority = 7;
                     }
-                    else if (f?.TryComponent<Harvestable>()!=null)
-                    {
-                        priority = 6;
-                    }
                     else if (f?.TypeName == "IncompleteFeature" || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null)
                     {
                         priority = Math.Max(priority, 2);
+                    }
+                    else if (f != null && f.TryComponent<Harvestable>()!=null && f.TryComponent<StructuralComponent>()==null)
+                    {
+                        priority = 6;
                     }
                     else if (t == Terrain.WallTile || t == Terrain.UpSlopeTile)
                     {
@@ -272,7 +272,7 @@ namespace Hecatomb
                     {
                         priority = 7;
                     }
-                    if (f?.TryComponent<Harvestable>() != null)
+                    if (f != null && f.TryComponent<Harvestable>() != null && f.TryComponent<StructuralComponent>() == null)
                     {
                         priority = 6;
                     }
@@ -316,7 +316,7 @@ namespace Hecatomb
                     {
                         Entity.Spawn<DigTask>().Place(x, y, z);
                     }
-                    else if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null)
+                    else if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null && Game.World.Features[x, y, z]?.TryComponent<StructuralComponent>()==null)
                     {
                         Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
                         Entity.Spawn<HarvestTask>().Place(x, y, z);

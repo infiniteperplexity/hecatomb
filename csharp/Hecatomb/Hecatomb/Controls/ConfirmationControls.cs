@@ -27,7 +27,7 @@ namespace Hecatomb
             MenuSelectable = false;
             Header = header;
             var Commands = Game.Commands;
-            KeyMap[Keys.Escape] = Back;
+            KeyMap[Keys.Escape] = GoBack;
             KeyMap[Keys.Y] = confirmed;
             KeyMap[Keys.N] = GoBack;
             RefreshContent();
