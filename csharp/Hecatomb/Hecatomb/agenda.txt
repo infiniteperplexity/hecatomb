@@ -31,7 +31,7 @@ Fresh issues list starting on 2/14/2020:
 - Should rotting be a little slower
 - Is there some kind of race condition in saved games?
 - Should we regenerate mana faster on a sanctum?
-- Achievements are totally wrong
+* Achievements are totally wrong
 - Should grass grow under spear traps
 - Should traps be able to go on slopes
 - I didn't see dryads after a pop-up warning

@@ -10,7 +10,9 @@ namespace Hecatomb
 {
     public class AchievementHandler : StateHandler, IListPopulater
     {
-        public List<Achievement> Achievements;
+
+        public List<string> Achieved = new List<string>();
+        [JsonIgnore]public List<Achievement> Achievements;
 
         public AchievementHandler() : base()
         {
@@ -31,7 +33,8 @@ namespace Hecatomb
             var list = new List<ColoredText>() { "{magenta}Achievements:" };
             foreach (var achieve in Achievements)
             {
-                if (achieve.Unlocked)
+                if (Achieved.Contains(achieve.Name))
+                //if (achieve.Unlocked)
                 {
                     list.Add("{magenta}- " + achieve.Name + ": " + achieve.Description);
                 }
@@ -47,10 +50,12 @@ namespace Hecatomb
             AchievementEvent ae = (AchievementEvent)g;
             foreach (Achievement achievement in Achievements)
             {
-                if (achievement.Condition(ae) && !achievement.Unlocked)
+                if (achievement.Condition(ae) && !Achieved.Contains(achievement.Name))
+                //if (achievement.Condition(ae) && !achievement.Unlocked)
                 {
                     Game.InfoPanel.PushMessage("{magenta}Achievement unlocked: " + achievement.Name + " " + achievement.Description);
-                    achievement.Unlocked = true;
+                    //achievement.Unlocked = true;
+                    Achieved.Add(achievement.Name);
                 }
             }
             return g;
@@ -61,7 +66,7 @@ namespace Hecatomb
         {
             public string Name;
             public string Description;
-            public bool Unlocked;
+            //public bool Unlocked;
             [JsonIgnore] public Func<AchievementEvent, bool> Condition;
             public Achievement()
             {
