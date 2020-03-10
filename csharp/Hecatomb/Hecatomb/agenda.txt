@@ -27,6 +27,19 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- Stored resources show up for broken buildings
+- Deconstruct task assignment prioritizes over digging
+- Should rotting be a little slower
+- Is there some kind of race condition in saved games?
+- Should we regenerate mana faster on a sanctum?
+- Achievements are totally wrong
+- Should grass grow under spear traps
+- Should traps be able to go on slopes
+- I didn't see dryads after a pop-up warning
+- I think there are some bugs relating to the intro screen and saving and loading, but they are hard to reproduce.
+- Include versioning and build number.
+- Come up with a "Release checklist" that definitely includes setting the options back to normal.
+- Ideally, invalid tasks would be caught and canceled when you're trying to walk toward them, not just when you try to work them.
 * If you assign a digtask in an unexplored area that contains a tree, it won't auto-cancel when you explore it.
 * I think I fixed the building reconstruction issues
 - Apparently some weird things can happen if displacement causes a creature to fall

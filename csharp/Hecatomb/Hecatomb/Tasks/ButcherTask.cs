@@ -151,14 +151,18 @@ namespace Hecatomb
 
         public override void Start()
         {
-            Debug.WriteLine("are we reaching this? 3");
             Worker.GetComponent<Inventory>().Drop();
         }
 
         public override void Finish()
         {
-            Debug.WriteLine("are we reaching this? 1");
             Item corpse = Items[X, Y, Z];
+            if (corpse == null)
+            {
+                Cancel();
+                return;
+            }
+            // I guess this can in theory be null, and somehow someone reached it.
             if (corpse.Resource == "Corpse")
             {
                 Item.PlaceNewResource("Flesh", 1, X, Y, Z);

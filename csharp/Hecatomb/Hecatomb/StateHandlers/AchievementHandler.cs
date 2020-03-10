@@ -33,11 +33,11 @@ namespace Hecatomb
             {
                 if (achieve.Unlocked)
                 {
-                    list.Add("{magenta}" + achieve.Name + ": " + achieve.Description);
+                    list.Add("{magenta}- " + achieve.Name + ": " + achieve.Description);
                 }
                 else
                 {
-                    list.Add(achieve.Name + ": " + achieve.Description);
+                    list.Add("- " + achieve.Name + ": " + achieve.Description);
                 }
             }
             return list;

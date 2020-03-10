@@ -56,7 +56,7 @@ namespace Hecatomb
                     }
                 }
             }
-            Creature ca = (Creature)attack.Attacker.Entity;
+            TypedEntity ca = (TypedEntity)attack.Attacker.Entity;
             TileEntity cd = (TileEntity)Entity;
             if (damage >= 20)
             {

@@ -107,6 +107,7 @@ namespace Hecatomb
             var turns = GetState<TurnHandler>();
             var jsonready = new
             {
+                buildDate = Game.BuildDate.ToString(),
                 random = Random,
                 player = Player.EID,
                 turnQueue = turns.QueueAsIDs(turns.Queue),
@@ -173,7 +174,6 @@ namespace Hecatomb
             System.IO.Directory.CreateDirectory(path + @"\saves");
             string json = System.IO.File.ReadAllText(path + @"\saves\" + Game.GameName + ".json");
             JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
-            
             //using (StreamReader stream = File.OpenText(filename))
             //using (JsonTextReader reader = new JsonTextReader(stream))
             //{

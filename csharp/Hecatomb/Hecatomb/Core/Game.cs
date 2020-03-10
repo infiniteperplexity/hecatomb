@@ -50,11 +50,14 @@ namespace Hecatomb
         public Texture2D startup;
 
         public static global::Hecatomb.Game game;
+        public static DateTime BuildDate;
 
 
         [STAThread]
         static void Main()
         {
+       
+            BuildDate = BuildHandler.GetBuildDate();
             Go();
         }
         public static void Go()
@@ -126,7 +129,7 @@ namespace Hecatomb
         protected void ShowIntro()
         {
             Controls = new StaticMenuControls("{yellow}Welcome to Hecatomb!", new List<(Keys, ColoredText, Action)>() {
-                (Keys.N, "New game.", StartGame),
+            (Keys.N, "New game.", StartGame),
                 (Keys.R, "Restore game.", RestoreGame),
                 (Keys.Q, "Quit.", QuitGame)
             });
@@ -179,7 +182,7 @@ namespace Hecatomb
 
         public void StartGameWithConfirmation()
         {
-            ControlContext.Set(new ConfirmationControls("quit the current game", StartGame));
+            ControlContext.Set(new ConfirmationControls("Really quit the current game?", StartGame));
         }
         public void StartGame()
         {
@@ -224,7 +227,7 @@ namespace Hecatomb
 
         public void RestoreGameWithConfirmation()
         {
-            ControlContext.Set(new ConfirmationControls("quit the current game", RestoreGame));
+            ControlContext.Set(new ConfirmationControls("Really quit the current game?", RestoreGame));
         }
         public void RestoreGame()
         {
@@ -391,7 +394,7 @@ namespace Hecatomb
 
         public void BackToTitleWithConfirmation()
         {
-            ControlContext.Set(new ConfirmationControls("quit the current game", BackToTitle));
+            ControlContext.Set(new ConfirmationControls("Really quit the current game?", BackToTitle));
         }
         public void BackToTitle()
         {

@@ -14,6 +14,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Threading;
 using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Hecatomb
 {
@@ -287,7 +290,7 @@ namespace Hecatomb
             System.IO.Directory.CreateDirectory(path + @"\saves");
             if (File.Exists(path + @"\saves\" + Game.GameName + ".json"))
             {
-                ControlContext.Set(new ConfirmationControls("overwrite " + Game.GameName + ".json", SaveGameCommand));
+                ControlContext.Set(new ConfirmationControls("Really overwrite " + Game.GameName + ".json?", SaveGameCommand));
             }
             else
             {
@@ -340,6 +343,7 @@ namespace Hecatomb
                 Game.HandleException(e);
             }
         }
+
         public void RestoreGameCommand()
         {
             //throw new Exception("test exception");

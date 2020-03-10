@@ -75,9 +75,10 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MenuCameraControls.cs" />
+    <Compile Include="Core\BuildHandler.cs" />
+    <Compile Include="Controls\MenuCameraControls.cs" />
     <Compile Include="TextFile.cs" />
-    <Compile Include="ConfirmationControls.cs" />
+    <Compile Include="Controls\ConfirmationControls.cs" />
     <Compile Include="Controls\AbstractCameraControls.cs" />
     <Compile Include="Display\CommandsPanel.cs" />
     <Compile Include="Display\FullScreenPanel.cs" />

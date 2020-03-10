@@ -441,12 +441,28 @@ namespace Hecatomb
 
         public virtual void Work()
         {
+            if (!ValidTile(new Coord(X, Y, Z)))
+            {
+                Cancel();
+                return;
+            }
+            // should we check if it's a validTile each time we work?
             if (Labor == LaborCost)
             {
                 Start();
             }
+            if (!ValidTile(new Coord(X, Y, Z)))
+            {
+                Cancel();
+                return;
+            }
             Labor -= (1 + Options.WorkBonus);
             Worker.GetComponent<Actor>().Spend();
+            if (!ValidTile(new Coord(X, Y, Z)))
+            {
+                Cancel();
+                return;
+            }
             if (Labor <= 0)
             {
                 Finish();

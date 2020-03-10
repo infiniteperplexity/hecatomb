@@ -29,14 +29,26 @@ namespace Hecatomb
             var Commands = Game.Commands;
             KeyMap[Keys.Escape] = Back;
             KeyMap[Keys.Y] = confirmed;
-            KeyMap[Keys.N] = Back;
+            KeyMap[Keys.N] = GoBack;
             RefreshContent();
+        }
+
+        public void GoBack()
+        {
+            if (Game.MainPanel.IntroState)
+            {
+                Game.game.BackToTitle();
+            }
+            else
+            {
+                Back();
+            }
         }
 
         public override void RefreshContent()
         {
             MenuTop = new List<ColoredText>() {
-                "{orange}**Really " + Header + "?**.",
+                "{orange}**" + Header + "**.",
                 "{orange}Y) Yes.",
                 "{orange}N) No."
             };

@@ -232,7 +232,12 @@ namespace Hecatomb
         {
             AttackEvent ae = (AttackEvent)ge;
             Attacker att = ae.Attacker;
-            Creature cr = (Creature) att.Entity.Unbox();
+            Entity e = att.Entity.Unbox();
+            if (!(e is Creature))
+            {
+                return ge;
+            }
+            Creature cr = (Creature) e; 
             if (MyCreatures.Contains(cr))
             {
                 if (ae.Defender.Entity.Unbox().TypeName == "Door")

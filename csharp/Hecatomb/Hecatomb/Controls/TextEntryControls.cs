@@ -50,9 +50,30 @@ namespace Hecatomb
             Keys.X,
             Keys.Y,
             Keys.Z,
+            Keys.D0,
+            Keys.D1,
+            Keys.D2,
+            Keys.D3,
+            Keys.D4,
+            Keys.D5,
+            Keys.D6,
+            Keys.D7,
+            Keys.D8,
+            Keys.D9,
+            Keys.NumPad0,
+            Keys.NumPad1,
+            Keys.NumPad2,
+            Keys.NumPad3,
+            Keys.NumPad4,
+            Keys.NumPad5,
+            Keys.NumPad6,
+            Keys.NumPad7,
+            Keys.NumPad8,
+            Keys.NumPad9,
+            Keys.OemMinus
         };
 
-        public static string alphabet = "abcdefghijklmnopqrstuvwxyz";
+        public static string alphabet = "abcdefghijklmnopqrstuvwxyz01234567890123456789_";
 
         public TextEntryControls(ColoredText header, Action<string> submit) : base()
         {
@@ -81,15 +102,20 @@ namespace Hecatomb
                 {
                     return;
                 }
-                string s = Enum.GetName(typeof(Keys), key);
+                //string s = Enum.GetName(typeof(Keys), key);
+                char s = alphabet[Alphabet.IndexOf(key)];
+                if (Char.IsDigit(s) && CurrentText.Length==0)
+                {
+                    return;
+                }
                 // check if shift is down
                 if (ControlContext.ShiftDown)
                 {
-                    CurrentText += s;
+                    CurrentText += s.ToString().ToUpper();
                 }
                 else
                 {
-                    CurrentText += s.ToLower();
+                    CurrentText += s;
                 }
                 RefreshContent();
                 // do I need to make the panel dirty?

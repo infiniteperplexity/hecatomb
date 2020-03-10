@@ -21,7 +21,7 @@ namespace Hecatomb
             foreach (var research in Researched)
             {
                 var res = Research.Types[research];
-                list.Add(res.Name);
+                list.Add("- " + res.Name);
             }
             return list;
         }
