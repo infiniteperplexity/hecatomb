@@ -41,7 +41,7 @@ namespace Hecatomb
 
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            System.IO.StreamReader file = new System.IO.StreamReader(path + @"\saves\" + Game.GameName + ".json");
+            System.IO.StreamReader file = new System.IO.StreamReader(path + @"\saves\" + Name + ".json");
             string line = file.ReadLine();
             line = file.ReadLine();
             MatchCollection col = Regex.Matches(line, "\\\"(.*?)\\\"");
