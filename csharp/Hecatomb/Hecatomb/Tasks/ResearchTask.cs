@@ -27,6 +27,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
+            CommandLogger.LogCommand(command: "ResearchTask", makes: Makes);
             Research research = Hecatomb.Research.Types[Makes];
             //if (Game.World.Player.GetComponent<Movement>().CanFindResources(research.Ingredients))
             //{

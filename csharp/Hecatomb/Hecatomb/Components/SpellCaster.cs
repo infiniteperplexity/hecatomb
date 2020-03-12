@@ -95,7 +95,8 @@ namespace Hecatomb
                 "RemoveCreatureDebugSpell",
                 "SevereDamageDebugSpell",
                 "DebugHealSpell",
-                "ParticleTestDebugSpell"
+                "ParticleTestDebugSpell",
+                "CrashDebugSpell"
             };
             AddListener<TurnBeginEvent>(OnTurnBegin);
 		}

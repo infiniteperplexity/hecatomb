@@ -25,6 +25,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
+            CommandLogger.LogCommand(command: "CondenseEctoplasm");
             Cast();
             var (x, y, z) = Caster;
             ParticleEmitter emitter = new ParticleEmitter();

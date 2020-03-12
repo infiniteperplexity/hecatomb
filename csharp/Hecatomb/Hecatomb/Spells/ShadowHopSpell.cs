@@ -36,6 +36,7 @@ namespace Hecatomb
         }
         public override void Cast()
         {
+            CommandLogger.LogCommand(command: "ShadowHop");
             var (x, y, z) = Caster;
             ParticleEmitter emitter1 = new ParticleEmitter();
             emitter1.Place(x, y, z);

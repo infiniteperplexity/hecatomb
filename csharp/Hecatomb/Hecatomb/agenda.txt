@@ -27,6 +27,8 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- should the first weapon level be bone?
+- want some use for spider corpses
 * Deconstruct task assignment prioritizes over digging
 - Should rotting be a little slower
 - Is there some kind of race condition in saved games?

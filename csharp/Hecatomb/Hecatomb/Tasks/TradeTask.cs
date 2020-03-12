@@ -64,6 +64,8 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
+            int menuIndex = (Structure.Unbox() as BlackMarket).AvailableTrades.IndexOf(this);
+            CommandLogger.LogCommand(command: "TradeTask", n: menuIndex);
             // wait is this actuall a condition we want?
             if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients))
             {

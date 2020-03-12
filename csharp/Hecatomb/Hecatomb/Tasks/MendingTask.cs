@@ -61,6 +61,7 @@ namespace Hecatomb
        
         public override void SelectTile(Coord c)
         {
+            CommandLogger.LogCommand(command: "MendingTask", x: c.X, y: c.Y, z: c.Z);
             var cr = Creatures[c];
             if (ValidTile(c))
             {

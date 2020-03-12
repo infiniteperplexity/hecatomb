@@ -257,6 +257,7 @@ namespace Hecatomb
         }
         public override void SelectZone(List<Coord> squares)
         {
+            CommandLogger.LogCommand(command: "DigTask", squares: squares);
             int priority = 0;
             foreach (Coord square in squares)
             {

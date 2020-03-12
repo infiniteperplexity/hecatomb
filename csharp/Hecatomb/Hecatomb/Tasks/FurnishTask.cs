@@ -129,6 +129,7 @@ namespace Hecatomb
 
         public override void SelectTile(Coord c)
         {
+            CommandLogger.LogCommand(command: "FurnishTask", x: c.X, y: c.Y, z: c.Z);
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
                 Feature f = Game.World.Features[c];

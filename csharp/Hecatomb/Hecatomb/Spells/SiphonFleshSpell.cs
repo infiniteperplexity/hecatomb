@@ -40,6 +40,7 @@ namespace Hecatomb
 
         public void SelectTile(Coord c)
         {
+            CommandLogger.LogCommand(command: "SiphonFlesh", x: c.X, y: c.Y, z: c.Z);
             Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
 
             if (cr!=null && (Game.World.Explored.Contains(c) || Options.Explored))

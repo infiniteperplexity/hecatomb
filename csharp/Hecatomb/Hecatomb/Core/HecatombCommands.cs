@@ -79,6 +79,7 @@ namespace Hecatomb
         }
         private void moveHorizontalCommand(int dx, int dy)
         {
+            CommandLogger.LogCommand(command: "MoveHorizontal", x: dx, y: dy);
             Creature p = Player;
             int x1 = p.X + dx;
             int y1 = p.Y + dy;
@@ -123,6 +124,7 @@ namespace Hecatomb
 
         private void moveVerticalCommand(int dz)
         {
+            CommandLogger.LogCommand(command: "MoveVertical", z: dz);
             Creature p = Game.World.Player;
             int x1 = p.X;
             int y1 = p.Y;

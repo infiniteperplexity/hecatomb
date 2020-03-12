@@ -28,6 +28,7 @@ namespace Hecatomb
 
         public override void SelectTile(Coord c)
         {
+            CommandLogger.LogCommand(command: "RallyTask", x: c.X, y: c.Y, z: c.Z);
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
             {
                 var rallies = Game.World.Tasks.Where((Task t) => t is RallyTask).ToList();

@@ -63,6 +63,7 @@ namespace Hecatomb
 
         public void SelectTile(Coord c)
         {
+            CommandLogger.LogCommand(command: "RaiseZombie", x: c.X, y: c.Y, z: c.Z);
             Feature f = Game.World.Features[c.X, c.Y, c.Z];
             if ((Game.World.Explored.Contains(c) || Options.Explored) && f != null && f.TypeName == "Grave")
             { 

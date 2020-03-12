@@ -27,6 +27,12 @@ namespace Hecatomb
             ControlContext.Set(c);
         }
 
+        public override void SelectTile(Coord c)
+        {
+            CommandLogger.LogCommand(command: "PatrolTask", x: c.X, y: c.Y, z: c.Z);
+            base.SelectTile(c);
+        }
+
         public override bool ValidTile(Coord c)
         {
             return true;

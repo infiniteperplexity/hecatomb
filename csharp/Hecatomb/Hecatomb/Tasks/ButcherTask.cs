@@ -88,6 +88,7 @@ namespace Hecatomb
 
         public override void SelectZone(List<Coord> squares)
         {
+            CommandLogger.LogCommand(command: "ButcherTask", squares: squares);
             foreach (var c in squares)
             {
                 Item corpse = Items[c];

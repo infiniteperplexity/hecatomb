@@ -18,6 +18,12 @@ namespace Hecatomb
             BG = "red";
         }
 
+        public override void SelectZone(List<Coord> squares)
+        {
+            CommandLogger.LogCommand(command: "ForbidTask", squares: squares, makes: Makes);
+            base.SelectZone(squares);
+        }
+
         public override bool ValidTile(Coord c)
         {
             return true;

@@ -69,6 +69,7 @@ namespace Hecatomb
 
         public override void SelectTile(Coord c)
         {
+            CommandLogger.LogCommand(command: "MurderTask", x: c.X, y: c.Y, z: c.Z);
 
             Creature cr = Creatures[c];
             if (cr != null && cr != Player)

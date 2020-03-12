@@ -49,6 +49,7 @@ namespace Hecatomb
         }
 		public override void SelectZone(List<Coord> squares)
 		{
+			CommandLogger.LogCommand(command: "UndesignateTask", squares: squares);
 			foreach (Coord c in squares)
 			{
 

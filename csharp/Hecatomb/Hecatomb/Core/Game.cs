@@ -307,12 +307,22 @@ namespace Hecatomb
             string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\logs");
-            System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombCrashReport" + timestamp + ".txt", new[] { e.ToString() });
+            var body = new List<string>();
+            string json = CommandLogger.DumpLog();
+            body.Add(e.ToString());
+            body.Add(" ");
+            body.Add("Randomization State: " + Game.World.Random.Seed + ":" + Game.World.Random.Calls);
+            body.Add(" ");
+            body.Add("Logged Commands");
+            body.Add(json);
+            System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombCrashReport" + timestamp + ".txt", body);
             Process.Start(String.Format(
                 "mailto:{0}?subject={1}&body={2}",
                 "hecatomb.gamedev@gmail.com",
                 "Hecatomb crash report: " + timestamp,
                 "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + e.ToString()
+                    + "%0A%0A" + "Randomization State: " + Game.World.Random.Seed + ":" + Game.World.Random.Calls +
+                      "%0A%0A" + json
             ));
             var replaced = (path + @"\logs\").Replace(@"\", "-").Replace(":","~");
             Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);

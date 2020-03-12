@@ -50,6 +50,7 @@ namespace Hecatomb
         }
         public override void SelectZone(List<Coord> squares)
         {
+            CommandLogger.LogCommand(command: "ClaimTask", squares: squares);
             foreach (Coord c in squares)
             {
                 var item = Items[c.X, c.Y, c.Z];

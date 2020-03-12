@@ -228,6 +228,7 @@ namespace Hecatomb
 
         public override void SelectBox(Coord c, List<Coord> squares)
 		{
+            CommandLogger.LogCommand(command: "ConstructTask", squares: squares, makes: Makes);
             foreach (Coord s in squares)
             {
                 Feature f = Game.World.Features[s.X, s.Y, s.Z];
