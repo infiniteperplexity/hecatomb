@@ -144,6 +144,8 @@ namespace Hecatomb
 
         public static void LogCommand(string command = "NoCommand", int n = -1, string makes = null, int x = -1, int y = -1, int z = -1, List<Coord> squares = null)
         {
+            Debug.WriteLine("Logging " + command);
+            Game.World.Random.Poll();
             if (Game.ReconstructMode)
             {
                 return;
@@ -205,9 +207,9 @@ namespace Hecatomb
             }
             ControlContext.Reset();
             GameCommand gc = CommandQueue.Dequeue();
-            Debug.WriteLine("Submitting a " + gc.Command + " command.");
+            //Debug.WriteLine("Submitting a " + gc.Command + " command.");
             SubmitCommand(gc);
-            Debug.WriteLine(CommandQueue.Count + " commands left in the queue.");
+            //Debug.WriteLine(CommandQueue.Count + " commands left in the queue.");
             if (CommandQueue.Count == 0)
             {
                 Game.ReconstructMode = false;

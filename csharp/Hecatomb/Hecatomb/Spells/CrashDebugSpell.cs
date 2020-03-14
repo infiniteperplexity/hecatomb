@@ -24,7 +24,6 @@ namespace Hecatomb
         public override void ChooseFromMenu()
         {
             throw new Exception("debugging exception");
-
         }
     }
 }

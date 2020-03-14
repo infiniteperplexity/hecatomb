@@ -205,6 +205,7 @@ namespace Hecatomb
                 {
                     ControlContext.Set(DefaultControls);
                 }
+                Game.World.Random.Poll();
             }
             catch (Exception e)
             {

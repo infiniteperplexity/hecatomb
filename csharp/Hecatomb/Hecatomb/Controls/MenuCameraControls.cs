@@ -55,7 +55,11 @@ namespace Hecatomb
 
         public void SelectOrWait()
         {
-            if (ControlDown)
+            if (Game.ReconstructMode)
+            {
+                Game.World.GetState<CommandLogger>().StepForward();
+            }
+            else if (ControlDown)
             {
                 Game.Commands.Wait();
             }

@@ -37,12 +37,13 @@ namespace Hecatomb
         public override void RefreshContent()
         {
             AlwaysPaused = true;
-            var Commands = Game.Commands;
-            KeyMap[Keys.Space] = Commands.Wait;
+            KeyMap[Keys.Space] = WaitOrReconstruct;
             KeyMap[Keys.Escape] = Reset;
             MenuTop = populater.GetLines();
             MenuTop.Insert(0, " ");
             MenuTop.Insert(0, "{orange}**Esc) Back**.");
         }
+
+        
     }
 }

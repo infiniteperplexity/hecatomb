@@ -36,7 +36,7 @@ namespace Hecatomb
         public override void RefreshContent()
         {
             var Commands = Game.Commands;
-            KeyMap[Keys.Space] = Commands.Wait;
+            KeyMap[Keys.Space] = WaitOrReconstruct;
             KeyMap[Keys.Escape] = ExitLogMode;
             KeyMap[Keys.L] = ExitLogMode;   
             KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;

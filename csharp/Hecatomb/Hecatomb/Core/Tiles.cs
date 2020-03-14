@@ -193,9 +193,10 @@ namespace Hecatomb
 			movable = movable ?? defaultMovable;
 			standable = standable ?? defaultStandable;
             cost = cost ?? uniformCost;
-			// !should check enclosed right up front
-			// should this be dirs10 or dirs26?
-			Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
+            // !should check enclosed right up front
+            // should this be dirs10 or dirs26?
+            //Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
+            Coord[] dirs = Movement.Directions10.OrderBy((Coord c) => Game.World.Random.Arbitrary(c.X * Game.World.Width * Game.World.Height + c.Y * Game.World.Height + c.Z)).ToArray();
             //Coord current = new Coord(x0, y0, z0);
             int current = Coord.Numberize(x0, y0, z0);
             // cost for the best known path to each cell

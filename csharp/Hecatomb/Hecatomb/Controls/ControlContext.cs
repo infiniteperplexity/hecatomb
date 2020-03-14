@@ -459,5 +459,18 @@ namespace Hecatomb
                 return false;
             }
         }
+
+        // this gets used in a variety of constructs to prevent messing up the reconstruction from logs
+        public void WaitOrReconstruct()
+        {
+            if (Game.ReconstructMode)
+            {
+                Game.World.GetState<CommandLogger>().StepForward();
+            }
+            else
+            {
+                Game.Commands.Wait();
+            }
+        }
     }	
 }

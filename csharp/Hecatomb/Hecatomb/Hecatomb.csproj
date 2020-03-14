@@ -75,7 +75,7 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CommandLogger.cs" />
+    <Compile Include="StateHandlers\CommandLogger.cs" />
     <Compile Include="Core\BuildHandler.cs" />
     <Compile Include="Controls\MenuCameraControls.cs" />
     <Compile Include="Spells\CrashDebugSpell.cs" />

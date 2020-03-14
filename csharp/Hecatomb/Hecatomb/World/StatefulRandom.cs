@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace Hecatomb
 {
@@ -14,6 +15,7 @@ namespace Hecatomb
 	{
 		public int Seed;
 		public int Calls;
+        public int Last;
 		private Random random;
         private Random stateless;
 		
@@ -43,26 +45,50 @@ namespace Hecatomb
             stateless = new Random();
 		}
 		
+        public void Poll()
+        {
+            Debug.WriteLine($"Turn: {Game.World.Turns.Turn}, Last: {Game.World.Random.Last}, Calls: {Game.World.Random.Calls}, Seed: {Game.World.Random.Seed}");
+        }
+
+        TurnHandler cachedTurns;
 		public int Next(int i)
 		{
-			Calls+=1;
+            Calls +=1;
             int next = random.Next(i);
-            Debug.WriteLine("R: " + next);
+            Last = next;
             return next;
 		}
 
         public int Next(int i, int j)
         {
             Calls += 1;
-            return random.Next(i, j);
+            int next = random.Next(i, j);
+            Last = next;
+            return next;
         }
 
+        public int StatelessNext(int i)
+        {
+            int next = stateless.Next(i);
+            return next;
+        }
+
+        public int StatelessNext(int i, int j)
+        {
+            int next = stateless.Next(i, j);
+            return next;
+        }
 
         public double NextDouble()
 		{
-			Calls+=1;
-			return random.NextDouble();
+            Calls += 1;
+            return random.NextDouble();
 		}
+
+        public double StatelessDouble()
+        {
+            return stateless.NextDouble();
+        }
 
         public double NextNormal(float u, float std)
         {
@@ -103,5 +129,18 @@ namespace Hecatomb
         {
             return Next(n) - Next(n);
         }
-	}
+
+        // used for things that should be arbitrary, repeatable, and not increment the World's random state
+        // e.g. perturbing ingredient paths for menu display
+        public float Arbitrary(int seed)
+        {
+            double a = 1103515245;
+            double c = 12345;
+            double m = Math.Pow(2,31);
+            double n = (a * seed + c) % m;
+            float f = (float)n;
+            f /= (float)2147473647.0;
+            return f;
+        }
+    }
 }

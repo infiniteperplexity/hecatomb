@@ -90,7 +90,7 @@ namespace Hecatomb
             LastEmit = DateTime.Now;
             Particle p = new Particle()
             {
-                Symbol = Symbols[Game.World.Random.Next(Symbols.Length)],
+                Symbol = Symbols[Game.World.Random.StatelessNext(Symbols.Length)],
                 FG = FG,
                 X0 = X,
                 Y0 = Y,
@@ -101,7 +101,7 @@ namespace Hecatomb
                 LifeSpan = LifeSpan,
 //              D = (float) Game.World.Random.Next(1,4),
                 D = D,
-                Angle = (float) (Game.World.Random.NextDouble()*2*Math.PI)
+                Angle = (float) (Game.World.Random.StatelessDouble()*2*Math.PI)
             };
             p.Place(X, Y, Z);
         }
