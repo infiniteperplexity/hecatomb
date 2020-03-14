@@ -78,7 +78,8 @@
     <Compile Include="CommandLogger.cs" />
     <Compile Include="Core\BuildHandler.cs" />
     <Compile Include="Controls\MenuCameraControls.cs" />
-    <Compile Include="CrashDebugSpell.cs" />
+    <Compile Include="Spells\CrashDebugSpell.cs" />
+    <Compile Include="Controls\ReconstructControls.cs" />
     <Compile Include="TextFile.cs" />
     <Compile Include="Controls\ConfirmationControls.cs" />
     <Compile Include="Controls\AbstractCameraControls.cs" />

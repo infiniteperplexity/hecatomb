@@ -33,8 +33,8 @@ namespace Hecatomb
 
         public void Wait()
         {
+            CommandLogger.LogCommand(command: "Wait");
             Player.GetComponent<Actor>().Wait();
-
             Act();
         }
         public void MoveNorthCommand()
@@ -77,7 +77,7 @@ namespace Hecatomb
         {
             moveHorizontalCommand(-1, +1);
         }
-        private void moveHorizontalCommand(int dx, int dy)
+        public void moveHorizontalCommand(int dx, int dy)
         {
             CommandLogger.LogCommand(command: "MoveHorizontal", x: dx, y: dy);
             Creature p = Player;
@@ -122,7 +122,7 @@ namespace Hecatomb
             }
         }
 
-        private void moveVerticalCommand(int dz)
+        public void moveVerticalCommand(int dz)
         {
             CommandLogger.LogCommand(command: "MoveVertical", z: dz);
             Creature p = Game.World.Player;
@@ -282,6 +282,7 @@ namespace Hecatomb
 
         public void AutoWait()
         {
+            CommandLogger.LogCommand(command: "Wait");
             Game.World.Player.GetComponent<Actor>().Wait();
             Act();
         }

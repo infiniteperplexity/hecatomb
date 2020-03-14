@@ -37,6 +37,7 @@ namespace Hecatomb
         public static ControlContext Controls;
         public static ControlContext DefaultControls;
         public static ControlContext CameraControls;
+        public static ControlContext ReconstructControls;
         public static TimeHandler Time;
         public static DateTime LastDraw;
         public static String GameName;
@@ -109,6 +110,7 @@ namespace Hecatomb
             DefaultControls = new DefaultControls();
             ControlContext.Initialize(DefaultControls);
             CameraControls = new CameraControls();
+            ReconstructControls = new ReconstructControls();
             Camera = new Camera();
             Visible = new HashSet<Coord>();
             LastDraw = DateTime.Now;
@@ -169,7 +171,22 @@ namespace Hecatomb
                 ControlContext.HideCursor();
                 TurnHandler.HandleVisibility();
                 Time.Frozen = false;
-                if (!Options.NoStartupScreen)
+                if (ReconstructMode)
+                {
+                    var tutorial = Game.World.GetState<TutorialHandler>();
+                    if (tutorial.Visible)
+                    {
+                        Game.World.Events.Publish(new TutorialEvent() { Action = "HideTutorial" });
+                    }
+                    tutorial.Visible = false;
+                    var logger = World.GetState<CommandLogger>();
+                    foreach (GameCommand gc in CrashReportFile.LoggedCommands)
+                    {
+                        logger.CommandQueue.Enqueue(gc);
+                    }
+                    ControlContext.Reset();
+                }
+                else if (!Options.NoStartupScreen)
                 {
                     ControlContext.Reset();
                     ForegroundPanel.Splash(new List<ColoredText>{

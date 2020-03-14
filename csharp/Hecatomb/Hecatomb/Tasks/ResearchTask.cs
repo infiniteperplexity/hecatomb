@@ -27,13 +27,14 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            CommandLogger.LogCommand(command: "ResearchTask", makes: Makes);
+            
             Research research = Hecatomb.Research.Types[Makes];
             //if (Game.World.Player.GetComponent<Movement>().CanFindResources(research.Ingredients))
             //{
                 int x = Structure.X;
                 int y = Structure.Y;
                 int z = Structure.Z;
+                CommandLogger.LogCommand(command: "ResearchTask", x: x, y: y, z: z, makes: Makes);
                 // could I forceably spawn this rather than just copying it?
                 ResearchTask rt = Entity.Spawn<ResearchTask>();
                 rt.Structure = Structure;

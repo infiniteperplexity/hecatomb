@@ -72,7 +72,11 @@ namespace Hecatomb
         {
             var old = Game.Controls;
             Game.Controls.CleanUp();
-            if (LogMode)
+            if (Game.ReconstructMode)
+            {
+                Game.Controls = Game.ReconstructControls;
+            }
+            else if (LogMode)
             {
                 Game.Commands.ShowLog();
             }

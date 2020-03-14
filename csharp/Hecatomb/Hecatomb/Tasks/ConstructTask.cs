@@ -226,7 +226,7 @@ namespace Hecatomb
             co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {0} in this area.", Mock().Name) };
         }
 
-        public override void SelectBox(Coord c, List<Coord> squares)
+        public override void SelectBox(List<Coord> squares)
 		{
             CommandLogger.LogCommand(command: "ConstructTask", squares: squares, makes: Makes);
             foreach (Coord s in squares)

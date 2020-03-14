@@ -25,51 +25,132 @@ namespace Hecatomb
         public int Y;
         public int Z;
         public string Makes;
-        public List<Coord> Squares;
+        public List<Coord> Squares = new List<Coord>();
     }
     public class CommandLogger : StateHandler, IChoiceMenu
     {
         public List<GameCommand> LoggedCommands;
-
-        //[JsonIgnore]
-        public Dictionary<string, Object> CommandIndex = new Dictionary<string, Object>
-        {
-            { "MoveHorizontal", null }, // x y
-            { "MoveVertical", null }, // z
-            { "CondenseEctoplasm", null },
-            { "RaiseZombie", null }, // x y z
-            { "ShadowHop", null },
-            { "SiphonFlesh", null }, // x y z
-            { "BuildTask", null}, // squares,
-            { "ButcherTask", null}, // squares,
-            { "ClaimTask", null}, // squares,
-            { "ConstructTask", null}, // squares !!!als oneed to specify what structure!,
-            { "DigTask", null}, // squares,
-            { "ForbidTask", null}, // squares,
-            { "FurnishTask", null}, // x y z and makes,
-            { "MendingTask", null}, // x y z,
-            { "MurderTask", null}, // x y z,
-            { "PatrolTask", null}, // x y z,
-            { "RallyTask", null}, // x y z,
-            { "UndesignateTask", null}, // squares,
-            { "ResearchTask", null}, // x y z makes,
-            { "TradeTask", null} // x y z complicated stuff...,
-
-
-        };
+        [JsonIgnore] public Queue<GameCommand> CommandQueue;
 
         public void SubmitCommand(GameCommand g)
         {
-
+            var commands = Game.Commands;
+            var s = Game.World.Player.GetComponent<SpellCaster>();
+            var t = Game.World.GetState<TaskHandler>();
+            var c = new Coord(g.X, g.Y, g.Z);
+            if (g.Command == "Wait")
+            {
+                commands.Wait();
+            }
+            else if (g.Command == "MoveHorizontal")
+            {
+                commands.moveHorizontalCommand(g.X, g.Y);
+            }
+            else if (g.Command == "MoveVertical")
+            {
+                commands.moveVerticalCommand(g.Z);
+            }
+            else if (g.Command == "RaiseZombie")
+            {
+                (s.GetSpell("RaiseZombieSpell") as RaiseZombieSpell).SelectTile(c);
+            }
+            else if (g.Command == "SiphonFlesh")
+            {
+                (s.GetSpell("SiphonFleshSpell") as SiphonFleshSpell).SelectTile(c);
+            }
+            else if (g.Command == "CondenseEctoplasm")
+            {
+                (s.GetSpell("CondenseEctoplasmSpell") as CondenseEctoplasmSpell).ChooseFromMenu();
+            }
+            else if (g.Command == "ShadowHop")
+            {
+                (s.GetSpell("ShadowHopSpell") as ShadowHopSpell).ChooseFromMenu();
+            }
+            else if (g.Command == "BuildTask")
+            {
+                t.GetTask("BuildTask").SelectZone(g.Squares);
+            }
+            else if (g.Command == "ButcherTask")
+            {
+                t.GetTask("ButcherTask").SelectZone(g.Squares);
+            }
+            else if (g.Command == "ClaimTask")
+            {
+                t.GetTask("ClaimTask").SelectZone(g.Squares);
+            }
+            else if (g.Command == "ConstructTask")
+            {
+                var task = t.GetTask("ConstructTask");
+                task.Makes = g.Makes;
+                task.SelectBox(g.Squares);
+            }
+            else if (g.Command == "DigTask")
+            {
+                t.GetTask("DigTask").SelectZone(g.Squares);
+            }
+            else if (g.Command == "ForbidTask")
+            {
+                t.GetTask("ForbidTask").SelectZone(g.Squares);
+            }
+            else if (g.Command == "UndesignateTask")
+            {
+                t.GetTask("UndesignateTask").SelectZone(g.Squares);
+            }
+            else if (g.Command == "FurnishTask")
+            {
+                var task = t.GetTask("FurnishTask");
+                task.Makes = g.Makes;
+                task.SelectTile(c);
+            }
+            else if (g.Command == "MendingTask")
+            {
+                t.GetTask("MendingTask").SelectTile(c);
+            }
+            else if (g.Command == "MurderTask")
+            {
+                t.GetTask("MurderTask").SelectTile(c);
+            }
+            else if (g.Command == "PatrolTask")
+            {
+                t.GetTask("PatrolTask").SelectTile(c);
+            }
+            else if (g.Command == "RallyTask")
+            {
+                t.GetTask("RallyTask").SelectTile(c);
+            }
+            else if (g.Command == "ResearchTask")
+            {
+                var task = (ResearchTask) t.GetTask("ResearchTask");
+                task.Makes = g.Makes;
+                task.Structure = Game.World.Features[c].GetComponent<StructuralComponent>().Structure;
+                task.ChooseFromMenu();
+            }
+            else if (g.Command == "TradeTask")
+            {
+                var market = (BlackMarket) Game.World.Features[c].GetComponent<StructuralComponent>().Structure;
+                var task = market.AvailableTrades[g.N];
+                task.ChooseFromMenu();
+            }
+            else
+            {
+                Debug.WriteLine("Apparnetly I forgot to code the " + g.Command + " command?");
+            }
         }
         public CommandLogger()
         {
             LoggedCommands = new List<GameCommand>();
+            CommandQueue = new Queue<GameCommand>();
         }
 
         public static void LogCommand(string command = "NoCommand", int n = -1, string makes = null, int x = -1, int y = -1, int z = -1, List<Coord> squares = null)
         {
-            Game.World.GetState<CommandLogger>().LoggedCommands.Add(new GameCommand()
+            if (Game.ReconstructMode)
+            {
+                return;
+                //Debug.WriteLine("Explicit command interrupted reconstruction");
+                //Game.ReconstructMode = false;
+            }
+            var c = new GameCommand()
             {
                 Command = command,
                 N = n,
@@ -77,8 +158,9 @@ namespace Hecatomb
                 X = x,
                 Y = y,
                 Z = z,
-                Squares = squares
-            });
+                Squares = (squares == null) ? new List<Coord>() : new List<Coord>(squares)
+            };
+            Game.World.GetState<CommandLogger>().LoggedCommands.Add(c);
         }
 
         public static string DumpLog()
@@ -111,6 +193,27 @@ namespace Hecatomb
         public void FinishMenu(MenuChoiceControls menu)
         {
             menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = Game.Controls.Back;
+        }
+
+        public void StepForward()
+        {
+            if (CommandQueue.Count == 0)
+            {
+                Game.ReconstructMode = false;
+                ControlContext.Reset();
+                return;
+            }
+            ControlContext.Reset();
+            GameCommand gc = CommandQueue.Dequeue();
+            Debug.WriteLine("Submitting a " + gc.Command + " command.");
+            SubmitCommand(gc);
+            Debug.WriteLine(CommandQueue.Count + " commands left in the queue.");
+            if (CommandQueue.Count == 0)
+            {
+                Game.ReconstructMode = false;
+                //ControlContext.Reset();
+            }
+            ControlContext.Reset();
         }
     }
 

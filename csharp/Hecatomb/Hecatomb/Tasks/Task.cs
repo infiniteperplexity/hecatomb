@@ -535,7 +535,7 @@ namespace Hecatomb
         }
         public virtual void TileHover(Coord c, List<Coord> squares) {}
         // ISelectsBox
-        public virtual void SelectBox(Coord c, List<Coord> squares)
+        public virtual void SelectBox(List<Coord> squares)
         {
             foreach (Coord s in squares)
             {

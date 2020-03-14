@@ -65,14 +65,15 @@ namespace Hecatomb
         public override void ChooseFromMenu()
         {
             int menuIndex = (Structure.Unbox() as BlackMarket).AvailableTrades.IndexOf(this);
-            CommandLogger.LogCommand(command: "TradeTask", n: menuIndex);
-            // wait is this actuall a condition we want?
+            
+            // wait is this actually a condition we want?
             if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients))
             {
                 (Structure.Unbox() as BlackMarket).AvailableTrades.Remove(this);
                 int x = Structure.X;
                 int y = Structure.Y;
                 int z = Structure.Z;
+                CommandLogger.LogCommand(command: "TradeTask", x: x, y: y, z: z, n: menuIndex);
                 // could I forceably spawn this rather than just copying it?
                 TradeTask t = Entity.Spawn<TradeTask>();
                 t.Structure = Structure;
