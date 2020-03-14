@@ -368,7 +368,7 @@ namespace Hecatomb
             };
             if (Options.ReconstructGames)
             {
-                commands.Add((Keys.Q, "Reconstruct game from log.", ReconstructGameCommand));
+                commands.Add((Keys.C, "Reconstruct game from log.", ReconstructGameCommand));
             }
             ControlContext.Set(new StaticMenuControls(" ", commands));
         }

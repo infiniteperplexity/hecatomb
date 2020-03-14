@@ -56,9 +56,9 @@ namespace Hecatomb
             int r = c.R;
             int g = c.G;
             int b = c.B;
-            r = (int) Game.World.Random.NextNormal(r, r / 16f);
-            g = (int) Game.World.Random.NextNormal(g, g / 16f);
-            b = (int) Game.World.Random.NextNormal(b, b / 16f);
+            r = (int)Game.World.Random.StatelessNormal(r, r / 16f);
+            g = (int)Game.World.Random.StatelessNormal(g, g / 16f);
+            b = (int)Game.World.Random.StatelessNormal(b, b / 16f);
             return ("#" + r.ToString("X2") + g.ToString("X2") + b.ToString("X2"));
         }
         public static readonly Cover NoCover = new Cover(

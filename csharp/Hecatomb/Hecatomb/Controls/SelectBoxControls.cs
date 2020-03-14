@@ -19,7 +19,7 @@ namespace Hecatomb
 	{
 		int BoxWidth {get; set;}
 		int BoxHeight {get; set;}
-		void SelectBox(Coord c, List<Coord> squares);
+		void SelectBox(List<Coord> squares);
 		void BoxHover(Coord c, List<Coord> squares);
         string GetHighlightColor();
     }
@@ -92,7 +92,7 @@ namespace Hecatomb
 		
 		public override void ClickTile(Coord c)
 		{
-			Selector.SelectBox(c, Squares);
+			Selector.SelectBox(Squares);
 			Clean();
             InterfacePanel.DirtifyUsualPanels();
             Reset();

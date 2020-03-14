@@ -15,6 +15,7 @@ namespace Hecatomb
 		public int Seed;
 		public int Calls;
 		private Random random;
+        private Random stateless;
 		
 
         public static int GetTimeSeed()
@@ -39,12 +40,15 @@ namespace Hecatomb
 			{
 				random.Next();
 			}
+            stateless = new Random();
 		}
 		
 		public int Next(int i)
 		{
 			Calls+=1;
-			return random.Next(i);
+            int next = random.Next(i);
+            Debug.WriteLine("R: " + next);
+            return next;
 		}
 
         public int Next(int i, int j)
@@ -71,6 +75,19 @@ namespace Hecatomb
         public double NextNormal(int u, int std)
         {
             return NextNormal((float)u, (float)std);
+        }
+
+        public double StatelessNormal(float u, float std)
+        {
+            double u1 = 1.0 - stateless.NextDouble();
+            double u2 = 1.0 - stateless.NextDouble();
+            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+            return (u + std * randStdNormal);
+        }
+
+        public double StatelessNormal(int u, int std)
+        {
+            return StatelessNormal((float)u, (float)std);
         }
 
         public double NextNormal()
