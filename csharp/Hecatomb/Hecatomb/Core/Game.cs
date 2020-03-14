@@ -11,6 +11,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading;
+using System.Runtime.ExceptionServices;
 
 namespace Hecatomb
 {
@@ -51,6 +52,9 @@ namespace Hecatomb
 
         public static global::Hecatomb.Game game;
         public static DateTime BuildDate;
+
+        public static bool ReconstructMode;
+        public static int FixedSeed = -1;
 
 
         [STAThread]
@@ -128,11 +132,16 @@ namespace Hecatomb
 
         protected void ShowIntro()
         {
-            Controls = new StaticMenuControls("{yellow}Welcome to Hecatomb!", new List<(Keys, ColoredText, Action)>() {
-            (Keys.N, "New game.", StartGame),
+            var commands = new List<(Keys, ColoredText, Action)>() {
+                (Keys.N, "New game.", StartGame),
                 (Keys.R, "Restore game.", RestoreGame),
                 (Keys.Q, "Quit.", QuitGame)
-            });
+            };
+            if (Options.ReconstructGames)
+            {
+                commands.Add((Keys.C, "Reconstruct game from log.", ReconstructGame));
+            }
+            Controls = new StaticMenuControls("{yellow}Welcome to Hecatomb!", commands);
             MainPanel.IntroState = true;
         }
 
@@ -142,7 +151,12 @@ namespace Hecatomb
         {
             try
             {
-                World = new World(256, 256, 64, seed: System.DateTime.Now.Millisecond);
+                int seed = System.DateTime.Now.Millisecond;
+                if (FixedSeed > -1)
+                {
+                    seed = FixedSeed;
+                }
+                World = new World(256, 256, 64, seed: seed);
                 WorldBuilder builder = new DefaultBuilder();
                 builder.Build(World);
                 //ShowIntro();
@@ -235,6 +249,11 @@ namespace Hecatomb
             Commands.RestoreGameCommand();
         }
 
+        public void ReconstructGame()
+        {
+            Commands.ReconstructGameCommand();
+        }
+
         public void QuitGame()
         {
             Exit();
@@ -304,29 +323,38 @@ namespace Hecatomb
 
         public static void HandleException(Exception e)
         {
+            Debug.WriteLine(e.ToString());
             string timestamp = DateTime.Now.ToString("yyyyMMddTHHmmss");
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\logs");
             var body = new List<string>();
-            string json = CommandLogger.DumpLog();
+            body.Add("Build Date:" +"\"" + Game.BuildDate.ToString() + "\"");
+            body.Add(" ");
             body.Add(e.ToString());
-            body.Add(" ");
-            body.Add("Randomization State: " + Game.World.Random.Seed + ":" + Game.World.Random.Calls);
-            body.Add(" ");
-            body.Add("Logged Commands");
-            body.Add(json);
+            string json ="";
+            if (Game.World != null)
+            {
+                json = CommandLogger.DumpLog();
+                body[0] += (", Seed: " + "\"" + Game.World.Random.Seed + "\"");
+                body.Add(" ");
+                body.Add("Logged Commands:");
+                body.Add(json);
+            }
             System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombCrashReport" + timestamp + ".txt", body);
+            //string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + e.ToString();
+            string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + String.Join("%0A",body);
             Process.Start(String.Format(
                 "mailto:{0}?subject={1}&body={2}",
                 "hecatomb.gamedev@gmail.com",
                 "Hecatomb crash report: " + timestamp,
-                "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + e.ToString()
-                    + "%0A%0A" + "Randomization State: " + Game.World.Random.Seed + ":" + Game.World.Random.Calls +
-                      "%0A%0A" + json
+                messageBody
             ));
             var replaced = (path + @"\logs\").Replace(@"\", "-").Replace(":","~");
             Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);
-            throw (e);
+
+            var capturedException = ExceptionDispatchInfo.Capture(e);
+            capturedException.Throw();
+            //throw (e);
         }
         protected override void Update(GameTime gameTime)
         {

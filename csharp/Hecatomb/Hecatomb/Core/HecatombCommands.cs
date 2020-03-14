@@ -356,7 +356,7 @@ namespace Hecatomb
         public void SystemMenuCommand()
         {
             Time.Frozen = true;
-            ControlContext.Set(new StaticMenuControls(" ", new List<(Keys, ColoredText, Action)>() {
+            var commands = new List<(Keys, ColoredText, Action)>() {
                 (Keys.Escape, "Cancel.", ControlContext.Reset),
                 (Keys.S, "Save game.", SaveGameCommandCheckFileName),
                 (Keys.A, "Save as...", SaveGameAsCommand),
@@ -364,7 +364,18 @@ namespace Hecatomb
                 //(Keys.D, "Delete game.", Game.game.StartGame),
                 (Keys.N, "New game.", Game.game.StartGameWithConfirmation),
                 (Keys.Q, "Quit.", Game.game.BackToTitleWithConfirmation)
-            }));
+            };
+            if (Options.ReconstructGames)
+            {
+                commands.Add((Keys.Q, "Reconstruct game from log.", ReconstructGameCommand));
+            }
+            ControlContext.Set(new StaticMenuControls(" ", commands));
+        }
+
+        public void ReconstructGameCommand()
+        {
+            
+            ControlContext.Set(new MenuChoiceControls(new CommandLogger()));
         }
 
         public void SaveGameAsCommand()

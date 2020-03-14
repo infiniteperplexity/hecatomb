@@ -76,7 +76,13 @@ namespace Hecatomb
         {
             Chooser.BuildMenu(this);
             var Commands = Game.Commands;
-            KeyMap[Keys.Space] = Commands.Wait;
+			KeyMap[Keys.Space] = () =>
+			{
+				if (Game.World != null)
+				{
+					Commands.Wait();
+				}
+			};
             KeyMap[Keys.Escape] = Reset;
             MenuTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",

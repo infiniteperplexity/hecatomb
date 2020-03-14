@@ -5,6 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Hecatomb
 {
@@ -20,7 +25,7 @@ namespace Hecatomb
         public string Makes;
         public List<Coord> Squares;
     }
-    public class CommandLogger : StateHandler
+    public class CommandLogger : StateHandler, IChoiceMenu
     {
         public List<GameCommand> LoggedCommands;
 
@@ -82,6 +87,90 @@ namespace Hecatomb
         public static void RebuildFromFile()
         {
 
+        }
+
+        public void BuildMenu(MenuChoiceControls menu)
+        {
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            menu.Header = "Choose a crash report:";
+            menu.Choices = new List<IMenuListable>();
+            System.IO.Directory.CreateDirectory(path + @"\logs");
+            string[] filePaths = Directory.GetFiles(path + @"\logs", "*.txt");
+            foreach (string paths in filePaths)
+            {
+                string[] split = paths.Split('\\');
+                string fname = split[split.Length - 1];
+                split = fname.Split('.');
+                fname = split[0];
+                menu.Choices.Add(new CrashReportFile(fname.Replace("HecatombCrashReport","")));
+            }
+        }
+
+        public void FinishMenu(MenuChoiceControls menu)
+        {
+            menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = Game.Controls.Back;
+        }
+    }
+
+    class CrashReportFile : IMenuListable
+    {
+        public string Name;
+        public int Seed;
+
+        public CrashReportFile(string name)
+        {
+            Name = name;
+        }
+
+        public ColoredText ListOnMenu()
+        {
+            return Name;
+        }
+
+        public void ChooseFromMenu()
+        {
+            CheckBuildDate();
+        }
+
+        public void CheckBuildDate()
+        {
+
+
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            System.IO.Directory.CreateDirectory(path + @"\logs");
+            System.IO.StreamReader file = new System.IO.StreamReader(path + @"\logs\HecatombCrashReport" + Name + ".txt");
+            string line = file.ReadLine();
+            MatchCollection col = Regex.Matches(line, "\\\"(.*?)\\\"");
+            if (col.Count >= 2)
+            {
+                var str = col[1].ToString();
+                Seed = Int32.Parse(str.Substring(1,str.Length-2));
+                Debug.WriteLine("seed was " + Seed);
+            }
+            if (col.Count == 0 || col[0].ToString() != '"' + Game.BuildDate.ToString() + '"')
+            {
+                ControlContext.Set(new ConfirmationControls(
+                    "Warning: This crash report was created under a different build of Hecatomb and restoring it may cause unexpected results.  Really restore the game?"
+                , ReconstructGame));
+            }
+            else
+            {
+                ReconstructGame();
+            }
+        }
+
+        public void ReconstructGame()
+        {
+            Game.GameName = Name;
+            Game.SplashPanel.Splash(new List<ColoredText>()
+            {
+                $"Reconstructing {Name}..."
+            }, frozen: true);
+            Debug.WriteLine("reconstructing the game");
+            ControlContext.Set(new FrozenControls());
+            Game.ReconstructMode = true;
+            Game.FixedSeed = 1;
+            Game.game.StartGame();
         }
     }
 }

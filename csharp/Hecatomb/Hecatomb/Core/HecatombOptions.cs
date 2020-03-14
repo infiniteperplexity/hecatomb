@@ -29,10 +29,13 @@ namespace Hecatomb
         public bool FullScreen;
         public bool ShowDebugSpells;
         public bool HaulTaskClaims;
+        public bool ReconstructGames;
         public List<(string, int)> FreeStuff;
 
         public HecatombOptions()
         {
+            ReconstructGames = false;
+            ReconstructGames = true;
             FullScreen = false;
             //FullScreen = true;
             Explored = false;
@@ -52,7 +55,7 @@ namespace Hecatomb
             AllSpells = false;
             //AllSpells = true;
             ShowDebugSpells = false;
-            //ShowDebugSpells = true;
+            ShowDebugSpells = true;
             NoManaCost = false;
             //NoManaCost = true;
             WorkBonus = 0;
