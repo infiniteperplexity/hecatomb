@@ -14,7 +14,7 @@ namespace Hecatomb
 	public class StatefulRandom
 	{
 		public int Seed;
-		public int Calls;
+		public long Calls;
         public int Last;
 		private Random random;
         private Random stateless;
@@ -132,12 +132,13 @@ namespace Hecatomb
 
         // used for things that should be arbitrary, repeatable, and not increment the World's random state
         // e.g. perturbing ingredient paths for menu display
+        // I believe this is based on the ANSI C PRNG
         public float Arbitrary(int seed)
         {
-            double a = 1103515245;
-            double c = 12345;
+            long a = 1103515245;
+            long c = 12345;
             double m = Math.Pow(2,31);
-            double n = (a * seed + c) % m;
+            long n = (a * seed + c) % (long) m;
             float f = (float)n;
             f /= (float)2147473647.0;
             return f;

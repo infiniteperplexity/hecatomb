@@ -144,8 +144,8 @@ namespace Hecatomb
 
         public static void LogCommand(string command = "NoCommand", int n = -1, string makes = null, int x = -1, int y = -1, int z = -1, List<Coord> squares = null)
         {
-            Debug.WriteLine("Logging " + command);
-            Game.World.Random.Poll();
+            //Debug.WriteLine("Logging " + command);
+            //Game.World.Random.Poll();
             if (Game.ReconstructMode)
             {
                 return;
