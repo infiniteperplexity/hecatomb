@@ -16,6 +16,15 @@ namespace Hecatomb
 		public int Calls;
 		private Random random;
 		
+
+        public static int GetTimeSeed()
+        {
+            return 
+                System.DateTime.Now.Millisecond
+                + 1000 * System.DateTime.Now.Second
+                + 60 * 1000 * System.DateTime.Now.Minute
+                + 60 * 60 * 1000 * System.DateTime.Now.Hour;
+        }
 		public StatefulRandom(int seed, int calls=0)
 		{
 			Seed = seed;

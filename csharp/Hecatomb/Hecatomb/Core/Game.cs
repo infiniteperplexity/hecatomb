@@ -151,7 +151,8 @@ namespace Hecatomb
         {
             try
             {
-                int seed = System.DateTime.Now.Millisecond;
+                
+                int seed = StatefulRandom.GetTimeSeed();
                 if (FixedSeed > -1)
                 {
                     seed = FixedSeed;

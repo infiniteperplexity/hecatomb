@@ -10,6 +10,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hecatomb
 {
@@ -116,6 +118,7 @@ namespace Hecatomb
     {
         public string Name;
         public int Seed;
+        public static List<GameCommand> LoggedCommands;
 
         public CrashReportFile(string name)
         {
@@ -134,8 +137,6 @@ namespace Hecatomb
 
         public void CheckBuildDate()
         {
-
-
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\logs");
             System.IO.StreamReader file = new System.IO.StreamReader(path + @"\logs\HecatombCrashReport" + Name + ".txt");
@@ -147,10 +148,29 @@ namespace Hecatomb
                 Seed = Int32.Parse(str.Substring(1,str.Length-2));
                 Debug.WriteLine("seed was " + Seed);
             }
+            int maxTries = 5000;
+            int tries = 0;
+            while (line != "Logged Commands:")
+            {
+                
+                line = file.ReadLine();
+                tries += 1;
+                if (tries > maxTries)
+                {
+                    throw new Exception("Invalid crash report");
+                }
+            }
+            string json = file.ReadLine();
+            while ((line = file.ReadLine()) != null)
+            {
+                json += line;
+            }
+            LoggedCommands = JsonConvert.DeserializeObject<List<GameCommand>>(json);
+            Debug.WriteLine("there were " + LoggedCommands.Count + " logged commands");
             if (col.Count == 0 || col[0].ToString() != '"' + Game.BuildDate.ToString() + '"')
             {
                 ControlContext.Set(new ConfirmationControls(
-                    "Warning: This crash report was created under a different build of Hecatomb and restoring it may cause unexpected results.  Really restore the game?"
+                    "Warning: This crash report was created under a different build of Hecatomb and reconstructing it may cause unexpected results.  Really reconstruct the game?"
                 , ReconstructGame));
             }
             else
@@ -169,7 +189,8 @@ namespace Hecatomb
             Debug.WriteLine("reconstructing the game");
             ControlContext.Set(new FrozenControls());
             Game.ReconstructMode = true;
-            Game.FixedSeed = 1;
+            Game.FixedSeed = Seed;
+
             Game.game.StartGame();
         }
     }
