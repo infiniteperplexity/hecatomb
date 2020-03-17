@@ -51,17 +51,17 @@ namespace Hecatomb
             Func<int, int, int, int, int, int, float> cost=null,
             int maxTries = 25000,
             int cacheMissesFor = 10,
+            bool useCache = true,
             int cacheHitsFor = 10, //need to perturb this to avoid stacked lag hits
             int cacheHitDistance = 35,
             Func<int, int, int, bool> standable = null,
             Func<int, int, int, int, int, int, bool> movable = null
             )
-		{
-            
+		{      
 
             var misses = Game.World.GetState<PathHandler>().PathMisses;
             var hits = Game.World.GetState<PathHandler>().PathHits;
-            if (misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
+            if (useCache && misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
 			{
                 Debug.WriteLine("respected cached pathfinding failure");
 				return new LinkedList<Coord>();
@@ -113,7 +113,7 @@ namespace Hecatomb
                 cost: cost,
                 maxTries: maxTries
 			);
-			if (path.Count==0 && cacheMissesFor > 0)
+			if (path.Count==0 && cacheMissesFor > 0 && useCache)
 			{
 				Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.Entity.Describe(),t.Describe(), t.X, t.Y, t.Z);
 				if (!misses.ContainsKey(m.Entity.EID))
@@ -122,7 +122,7 @@ namespace Hecatomb
 				}
 				misses[m.Entity.EID][t.EID] = cacheMissesFor;
 			}
-			else if (path.Count > 0 && cacheHitsFor > 0 && Tiles.QuickDistance(m.Entity, t) > cacheHitDistance)
+			else if (useCache && path.Count > 0 && cacheHitsFor > 0 && Tiles.QuickDistance(m.Entity, t) > cacheHitDistance)
 			{
                 // this logic was totally whacked, I hope I fixed it now
                 if (!hits.ContainsKey(m.Entity.EID))
@@ -185,6 +185,8 @@ namespace Hecatomb
             TileEntity fromEntity = null,
             TileEntity toEntity = null
 		) {
+            StatefulRandom r = Game.World.Random;
+            int seedEID = (fromEntity == null) ? -1 : fromEntity.EID;
             //			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
             // default value for the cost estimation heuristic
             heuristic = heuristic ?? QuickDistance;
@@ -196,7 +198,8 @@ namespace Hecatomb
             // !should check enclosed right up front
             // should this be dirs10 or dirs26?
             //Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
-            Coord[] dirs = Movement.Directions10.OrderBy((Coord c) => Game.World.Random.Arbitrary(c.X * Game.World.Width * Game.World.Height + c.Y * Game.World.Height + c.Z)).ToArray();
+            // this always gets the same result doofus
+            Coord[] dirs = Movement.Directions10.OrderBy((Coord c) => r.Arbitrary(c.OwnSeed() + seedEID)).ToArray();
             //Coord current = new Coord(x0, y0, z0);
             int current = Coord.Numberize(x0, y0, z0);
             // cost for the best known path to each cell
@@ -475,11 +478,15 @@ namespace Hecatomb
             valid = valid ?? ((int x1, int y1, int z1) => true);
             int tries = 0;
             int maxTries = 1000;
+            Coord c = new Coord(x, y, z);
             while (tries<maxTries)
             {
                 tries += 1;
-                int i = Game.World.Random.Next(-max, max + 1);
-                int j = Game.World.Random.Next(-max, max + 1);
+                
+                int i = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed());
+                int j = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+1);
+                //int i = Game.World.Random.Next(-max, max + 1);
+                //int j = Game.World.Random.Next(-max, max + 1);
                 if (i+x>Game.World.Width-2 || i+x<1 || j+y>Game.World.Height-2 || j+y<1)
                 {
                     continue;

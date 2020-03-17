@@ -193,7 +193,8 @@ namespace Hecatomb
             {
                 order.Add(i);
             }
-            order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
+            order = order.OrderBy(s => Game.World.Random.Arbitrary(OwnSeed())).ToList();
+            //order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
             // if there is an existing pile
             foreach (int i in order)
             {
@@ -522,14 +523,16 @@ namespace Hecatomb
                 return exists;
             }
         }
-        public GameEvent OnDespawn(GameEvent ge)
+        public virtual GameEvent OnDespawn(GameEvent ge)
         {
+            
             DespawnEvent de = (DespawnEvent)ge;
             if (de.Entity is Feature)
             {
                 Feature f = (Feature)de.Entity;
                 if (Placed && Features.Contains(f))
                 {
+                    CancelResearch();
                     Remove();                 
                     // This code is kind of experimental, but it seems to work
                     Features[Features.IndexOf(f)] = null;

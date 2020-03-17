@@ -89,5 +89,17 @@ namespace Hecatomb
             Y = Entity.Y;
             Z = Entity.Z;
         }
+
+        public int OwnSeed()
+        {
+            if (EID == -1)
+            {
+                return -1 + Game.World.Turns.Turn;
+            }
+            else
+            {
+                return Entity.OwnSeed();
+            }
+        }
     }
 }

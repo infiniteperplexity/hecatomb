@@ -52,7 +52,7 @@ namespace Hecatomb
             else
             {
                 bool available = false;
-                if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients))
+                if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
                 {
                     available = true;
                 }
@@ -64,16 +64,15 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            int menuIndex = (Structure.Unbox() as BlackMarket).AvailableTrades.IndexOf(this);
-            
+            int menuIndex = (Structure.Unbox() as BlackMarket).AvailableTrades.IndexOf(this);    
             // wait is this actually a condition we want?
-            if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients))
+            if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
             {
-                (Structure.Unbox() as BlackMarket).AvailableTrades.Remove(this);
                 int x = Structure.X;
                 int y = Structure.Y;
                 int z = Structure.Z;
                 CommandLogger.LogCommand(command: "TradeTask", x: x, y: y, z: z, n: menuIndex);
+                (Structure.Unbox() as BlackMarket).AvailableTrades.Remove(this);
                 // could I forceably spawn this rather than just copying it?
                 TradeTask t = Entity.Spawn<TradeTask>();
                 t.Structure = Structure;
@@ -83,10 +82,13 @@ namespace Hecatomb
                 t.LaborCost = LaborCost;
                 t.Place(x, y, z);
             }
-            var c = new MenuChoiceControls(Structure.Unbox());
-            c.SelectedMenuCommand = "Jobs";
-            c.MenuSelectable = false;
-            ControlContext.Set(c);
+            if (!Game.ReconstructMode)
+            {
+                var c = new MenuChoiceControls(Structure.Unbox());
+                c.SelectedMenuCommand = "Jobs";
+                c.MenuSelectable = false;
+                ControlContext.Set(c);
+            }
         }
 
         public override bool ValidTile(Coord c)

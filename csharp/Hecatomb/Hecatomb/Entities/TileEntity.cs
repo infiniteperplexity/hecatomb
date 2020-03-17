@@ -183,5 +183,10 @@ namespace Hecatomb
 			}
 			return name;
 		}
+
+		public override int OwnSeed()
+		{
+			return EID + X * Game.World.Width * Game.World.Height + Y * Game.World.Height + Z + Game.World.Turns.Turn;
+		}
 	}
 }

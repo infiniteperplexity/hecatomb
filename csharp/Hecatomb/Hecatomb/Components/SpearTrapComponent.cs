@@ -25,11 +25,13 @@ namespace Hecatomb
                 {
                     Debug.WriteLine("trap should go off");
                     Entity.GetComponent<Attacker>().Attack((TypedEntity) pe.Entity);
-                    if (Game.World.Random.Next(2)==0)
+                    if (Game.World.Random.Arbitrary(2, OwnSeed()) == 0)
+                    //if (Game.World.Random.Next(2)==0)
                     {
                         Item.PlaceNewResource("Flint", 1, Entity.X, Entity.Y, Entity.Z);
                     }
-                    else if (Game.World.Random.Next(2) == 0)
+                    else if (Game.World.Random.Arbitrary(2, OwnSeed()+1) == 0)
+                    //else if (Game.World.Random.Next(2) == 0)
                     {
                         Item.PlaceNewResource("Wood", 1, Entity.X, Entity.Y, Entity.Z);
                     }

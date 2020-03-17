@@ -362,18 +362,31 @@ namespace Hecatomb
             System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombCrashReport" + timestamp + ".txt", body);
             //string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + e.ToString();
             string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + String.Join("%0A",body);
-            Process.Start(String.Format(
-                "mailto:{0}?subject={1}&body={2}",
-                "hecatomb.gamedev@gmail.com",
-                "Hecatomb crash report: " + timestamp,
-                messageBody
-            ));
+            try
+            {
+                Process.Start(String.Format(
+                    "mailto:{0}?subject={1}&body={2}",
+                    "hecatomb.gamedev@gmail.com",
+                    "Hecatomb crash report: " + timestamp,
+                    messageBody
+                ));
+            }
+            catch (Exception e2)
+            {
+                // this is allowed to fail silently
+            }
             var replaced = (path + @"\logs\").Replace(@"\", "-").Replace(":","~");
-            Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);
-
+            try
+            {
+                Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);
+            }
+            catch (Exception e2)
+            {
+                // this is allowed to fail silently
+            }
+            // this method of handling preserves the stack trace
             var capturedException = ExceptionDispatchInfo.Capture(e);
             capturedException.Throw();
-            //throw (e);
         }
         protected override void Update(GameTime gameTime)
         {
@@ -395,10 +408,6 @@ namespace Hecatomb
                 {
                     if (World != null)
                     {
-                        if (World.Turns.PlayerActed)
-                        {
-                            World.Turns.AfterPlayerActed();
-                        }
                         World.Turns.Try();
                     }
                 }

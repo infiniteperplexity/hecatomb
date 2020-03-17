@@ -28,25 +28,26 @@ namespace Hecatomb
         public override void ChooseFromMenu()
         {
             
+            
+            int x = Structure.X;
+            int y = Structure.Y;
+            int z = Structure.Z;
+            CommandLogger.LogCommand(command: "ResearchTask", x: x, y: y, z: z, makes: Makes);
             Research research = Hecatomb.Research.Types[Makes];
-            //if (Game.World.Player.GetComponent<Movement>().CanFindResources(research.Ingredients))
-            //{
-                int x = Structure.X;
-                int y = Structure.Y;
-                int z = Structure.Z;
-                CommandLogger.LogCommand(command: "ResearchTask", x: x, y: y, z: z, makes: Makes);
-                // could I forceably spawn this rather than just copying it?
-                ResearchTask rt = Entity.Spawn<ResearchTask>();
-                rt.Structure = Structure;
-                rt.Makes = Makes;
-                rt.Labor = LaborCost;
-                rt.LaborCost = LaborCost;
-                rt.Ingredients = new Dictionary<string, int>(Ingredients);
-                rt.Place(x, y, z);
-            //}
-            var c = new MenuChoiceControls(Structure.Unbox());
-            c.SelectedMenuCommand = "Jobs";
-            ControlContext.Set(c);
+            // could I forceably spawn this rather than just copying it?
+            ResearchTask rt = Entity.Spawn<ResearchTask>();
+            rt.Structure = Structure;
+            rt.Makes = Makes;
+            rt.Labor = LaborCost;
+            rt.LaborCost = LaborCost;
+            rt.Ingredients = new Dictionary<string, int>(Ingredients);
+            rt.Place(x, y, z);
+            if (!Game.ReconstructMode)
+            {
+                var c = new MenuChoiceControls(Structure.Unbox());
+                c.SelectedMenuCommand = "Jobs";
+                ControlContext.Set(c);
+            }
         }
 
         public override bool ValidTile(Coord c)

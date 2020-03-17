@@ -46,7 +46,8 @@ namespace Hecatomb
                         {
                             if (f.TypeName=="Grave" && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <=8)
                             {
-                                if (Game.World.Random.Next(500)==0 && Game.World.Tasks[f.X, f.Y, f.Z]==null)
+                                if (Game.World.Random.Arbitrary(500, OwnSeed()) == 0 && Game.World.Tasks[f.X, f.Y, f.Z] == null)
+                                //if (Game.World.Random.Next(500)==0 && Game.World.Tasks[f.X, f.Y, f.Z]==null)
                                 {
                                     EmergeGhoul(f);
                                 }
@@ -72,7 +73,8 @@ namespace Hecatomb
                 f = Game.World.Features[x1, y1, z1];
                 if (Game.World.Features[x1, y1, z1] == null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
                 {
-                    if (Game.World.Random.Next(2) == 0)
+                    if (Game.World.Random.Arbitrary(2, OwnSeed()) == 0)
+                    //if (Game.World.Random.Next(2) == 0)
                     {
                         Item.PlaceNewResource("Rock", 1, x1, y1, z1, owned: false);
                     }
@@ -84,7 +86,8 @@ namespace Hecatomb
             Game.World.Covers[x, y, z - 1] = Cover.NoCover;
             Creature ghoul = Entity.Spawn<Creature>("HungryGhoul");
             ghoul.Place(x, y, z - 1);
-            if (Game.World.Random.Next(10) == 0)
+            if (Game.World.Random.Arbitrary(10, OwnSeed()) == 0)
+            //if (Game.World.Random.Next(10) == 0)
             {
                 ghoul.GetComponent<Inventory>().Item = Item.SpawnNewResource("TradeGoods", 1);
             }

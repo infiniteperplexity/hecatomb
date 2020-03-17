@@ -72,7 +72,8 @@ namespace Hecatomb
             {
                 chance = 7;
             }
-            if (Game.World.Random.Next(chance)==0)
+            if (Game.World.Random.Arbitrary(chance, OwnSeed())==0)
+            //if (Game.World.Random.Next(chance)==0)
             {
                 Sanity = Math.Min(max, Sanity + 1);
             }

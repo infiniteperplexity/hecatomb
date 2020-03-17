@@ -149,8 +149,8 @@ namespace Hecatomb
             {
                 return ge;
             }
-            //if (TurnsSince == 5 && MyCreatures.Count == 0)
-            if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
+            if (TurnsSince > 1500 && Game.World.Random.Arbitrary(100,OwnSeed()) == 0)
+            //if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
             {             
                 BanditAttack();
             }
@@ -163,8 +163,10 @@ namespace Hecatomb
             Frustration = 0;
             TurnsSince = 0;
             MyCreatures.Clear();
-            bool xwall = (Game.World.Random.Next(2)==0);
-            bool zero = (Game.World.Random.Next(2) == 0);
+            bool xwall = (Game.World.Random.Arbitrary(2, OwnSeed()) == 0);
+            bool zero = (Game.World.Random.Arbitrary(2, OwnSeed()+1) == 0);
+            //bool xwall = (Game.World.Random.Next(2)==0);
+            //bool zero = (Game.World.Random.Next(2) == 0);
             string dir = "";
             if (xwall)
             {
@@ -184,8 +186,8 @@ namespace Hecatomb
             if (xwall)
             {
                 x0 = (zero) ? 1 : Game.World.Width - 2;
-                
-                y0 = Game.World.Random.Next(Game.World.Height - 2) + 1;
+                y0 = Game.World.Random.Arbitrary((Game.World.Height - 2),OwnSeed()) + 1;
+                //y0 = Game.World.Random.Next(Game.World.Height - 2) + 1;
                 if (debugCloser)
                 {
                     x0 = (zero) ? 75 : 180;
@@ -195,7 +197,8 @@ namespace Hecatomb
             else
             {
                 y0 = (zero) ? 1 : Game.World.Height - 2;
-                x0 = Game.World.Random.Next(Game.World.Width - 2) + 1;
+                x0 = Game.World.Random.Arbitrary(Game.World.Width - 2, OwnSeed()+1) + 1;
+                //x0 = Game.World.Random.Next(Game.World.Width - 2) + 1;
                 if (debugCloser)
                 {
                     y0 = (zero) ? 75 : 180;

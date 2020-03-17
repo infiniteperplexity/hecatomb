@@ -79,7 +79,7 @@ namespace Hecatomb
 		{
 			if (PlayerActed)
 			{
-				NextTurn();
+                AfterPlayerActed();
 			}
 		}
         public void NextTurn()
@@ -89,6 +89,10 @@ namespace Hecatomb
             Creature p = Game.World.Player;
             PlayerActed = false;
             Turn += 1;
+            if (Turn % 10 == 0)
+            {
+                //Game.World.Random.Poll();
+            }
             Minute += 1;
             if (Minute >= 60)
             {

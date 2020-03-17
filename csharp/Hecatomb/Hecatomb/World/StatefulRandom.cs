@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Hecatomb
 {
@@ -50,11 +51,30 @@ namespace Hecatomb
             Debug.WriteLine($"Turn: {Game.World.Turns.Turn}, Last: {Game.World.Random.Last}, Calls: {Game.World.Random.Calls}, Seed: {Game.World.Random.Seed}");
         }
 
-        TurnHandler cachedTurns;
+        [JsonIgnore] TurnHandler _cached;
+        [JsonIgnore] TurnHandler cachedTurns
+        {
+            get
+            {
+                if (_cached != null)
+                {
+                    return _cached;
+                }
+                else
+                {
+                    _cached = Game.World.GetState<TurnHandler>();
+                    return _cached;
+                }
+            }
+        }
 		public int Next(int i)
 		{
             Calls +=1;
             int next = random.Next(i);
+            if (cachedTurns.Turn > 0)
+            {
+                PrintTrace();
+            }
             Last = next;
             return next;
 		}
@@ -63,6 +83,10 @@ namespace Hecatomb
         {
             Calls += 1;
             int next = random.Next(i, j);
+            if (cachedTurns.Turn > 0)
+            {
+                PrintTrace();
+            }
             Last = next;
             return next;
         }
@@ -82,6 +106,10 @@ namespace Hecatomb
         public double NextDouble()
 		{
             Calls += 1;
+            if (cachedTurns.Turn > 0)
+            {
+                PrintTrace();
+            }
             return random.NextDouble();
 		}
 
@@ -133,15 +161,41 @@ namespace Hecatomb
         // used for things that should be arbitrary, repeatable, and not increment the World's random state
         // e.g. perturbing ingredient paths for menu display
         // I believe this is based on the ANSI C PRNG
-        public float Arbitrary(int seed)
+        public double Arbitrary(int seed)
         {
             long a = 1103515245;
             long c = 12345;
             double m = Math.Pow(2,31);
             long n = (a * seed + c) % (long) m;
-            float f = (float)n;
-            f /= (float)2147473647.0;
+            double f = (double)n;
+            f /= (double)2147473647.0;
             return f;
+        }
+
+        public int Arbitrary(int i, int seed)
+        {
+            return (int) Math.Floor(Arbitrary(seed) * i);
+        }
+
+        public int Arbitrary(int i, int j, int seed)
+        {
+            return (int)Math.Floor(Arbitrary(seed) * j) + i;
+        }
+
+        public void PrintTrace()
+        {
+            //if (Game.World.Turns.Turn < 69)
+            //{
+             //   return;
+            //}
+            //return;
+            StackTrace s = new StackTrace();
+            if (s.GetFrame(2).GetMethod().Name == "WalkRandom")
+            {
+                return;
+            }
+            Debug.WriteLine(
+                $"{s.GetFrame(1).GetMethod().Name} called by {s.GetFrame(2).GetMethod().Name}, {s.GetFrame(2).GetMethod().ReflectedType.Name}");
         }
     }
 }

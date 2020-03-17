@@ -75,7 +75,8 @@ namespace Hecatomb
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z - 1);
-                int randomDecay = Game.World.Random.Next(500);
+                int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
+                //int randomDecay = Game.World.Random.Next(500);
                 zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
                 zombie.GetComponent<Decaying>().Decay += randomDecay;
                 if (!Game.World.Terrains[c.X, c.Y, c.Z - 1].Solid && Game.World.Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)))
@@ -103,7 +104,8 @@ namespace Hecatomb
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z);
-                int randomDecay = Game.World.Random.Next(500);
+                int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
+                //int randomDecay = Game.World.Random.Next(500);
                 zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
                 zombie.GetComponent<Decaying>().Decay = 4 * i.Decay + randomDecay;
                 i.Despawn();
@@ -138,6 +140,7 @@ namespace Hecatomb
         public static void BreakTombstone(Feature f)
         {
             var (x, y, z) = f;
+            int seed = f.OwnSeed();
             f.Destroy();
             foreach (Coord c in Tiles.GetNeighbors8(x, y, z))
             {
@@ -147,7 +150,8 @@ namespace Hecatomb
                 f = Game.World.Features[x1, y1, z1];
                 if (Game.World.Features[x1, y1, z1] == null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
                 {
-                    if (Game.World.Random.Next(2) == 0)
+                    if (Game.World.Random.Arbitrary(2, seed) == 0)
+                    //if (Game.World.Random.Next(2) == 0)
                     {
                         Item.PlaceNewResource("Rock", 1, x1, y1, z1);
                     }
@@ -158,7 +162,8 @@ namespace Hecatomb
             int half = Game.World.Width / 2;
             if ((x < half - goodsBounds || x > half + goodsBounds) && (y < half - goodsBounds || y > half + goodsBounds))
             {
-                if (Game.World.Random.Next(10) == 0)
+                if (Game.World.Random.Arbitrary(10, seed+1) == 0)
+                //if (Game.World.Random.Next(10) == 0)
                 {
                     Item.PlaceNewResource("TradeGoods", 1, x, y, z - 1);
                 }

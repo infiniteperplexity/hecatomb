@@ -578,7 +578,7 @@ namespace Hecatomb
                 cachedMenuListing = MenuName;
                 return cachedMenuListing;
             }
-            else if (Player.GetComponent<Movement>().CanFindResources(Ingredients))
+            else if (Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
             {
                 cachedMenuListing = (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
                 return cachedMenuListing;
@@ -588,7 +588,7 @@ namespace Hecatomb
             for (int i=0; i<keys.Count; i++)
             {
                 string resource = keys[i];
-                if (Player.GetComponent<Movement>().CanFindResource(resource, Ingredients[resource]))
+                if (Player.GetComponent<Movement>().CanFindResource(resource, Ingredients[resource], useCache: false))
                 {
                     ingredients += ("{white}" + Resource.Format((resource, Ingredients[resource])));
                 }

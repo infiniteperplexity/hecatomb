@@ -203,7 +203,8 @@ namespace Hecatomb
         {
             int MaxDistance = 2;
             List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
-            order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
+            order = order.OrderBy(s => Game.World.Random.Arbitrary(OwnSeed()+s)).ToList();
+            //order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
             Queue<Coord> queue = new Queue<Coord>();
             if (Terrains[x, y, z] == Terrain.DownSlopeTile)
             {

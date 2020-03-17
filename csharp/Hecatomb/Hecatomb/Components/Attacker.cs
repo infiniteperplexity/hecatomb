@@ -28,7 +28,8 @@ namespace Hecatomb
             {
                 Attacker = this,
                 Defender = t.TryComponent<Defender>(),
-                Roll = Game.World.Random.Next(20)+1,
+                Roll = Game.World.Random.Arbitrary(20, OwnSeed()) + 1,
+                //Roll = Game.World.Random.Next(20)+1,
             };
             Defender defender = attack.Defender;
 

@@ -32,7 +32,8 @@ namespace Hecatomb
                         int z = Game.World.GetGroundLevel(x, y);
                         if (Game.World.Outdoors[x, y, z]==2 && (Game.World.Terrains[x, y, z] == Terrain.FloorTile || Game.World.Terrains[x, y, z] == Terrain.UpSlopeTile) && Game.World.Covers[x, y, z] == Cover.NoCover && Game.World.Features[x, y, z]==null)
                         {
-                            if (Game.World.Random.Next(chance)==0)
+                            if (Game.World.Random.Arbitrary(chance, OwnSeed()) == 0)
+                            //if (Game.World.Random.Next(chance)==0)
                             {
                                 Game.World.Covers[x, y, z] = Cover.Grass;
                             }

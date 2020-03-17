@@ -35,7 +35,6 @@ namespace Hecatomb
             var list = new List<IMenuListable>();
             var structures = Structure.ListAsStrings();
             var researched = Game.World.GetState<ResearchHandler>().Researched;
-            Debug.WriteLine(JsonConvert.SerializeObject(researched));
             // only if we have the prerequisite structures / technologies...
             foreach (string f in Fixtures)
             {
@@ -129,7 +128,7 @@ namespace Hecatomb
 
         public override void SelectTile(Coord c)
         {
-            CommandLogger.LogCommand(command: "FurnishTask", x: c.X, y: c.Y, z: c.Z);
+            CommandLogger.LogCommand(command: "FurnishTask", makes: Makes, x: c.X, y: c.Y, z: c.Z);
             if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
                 Feature f = Game.World.Features[c];

@@ -25,7 +25,8 @@ namespace Hecatomb
         public void Defend(AttackEvent attack)
         {
             Attacker attacker = attack.Attacker;
-            int damageRoll = Game.World.Random.Next(20) + 1 + attack.DamageModifier;
+            int damageRoll = Game.World.Random.Arbitrary(20, OwnSeed()) + 1 + attack.DamageModifier;
+            //int damageRoll = Game.World.Random.Next(20) + 1 + attack.DamageModifier;
             // in the JS version the damage roll is separate from the attack roll
             //int damage = attack.Roll + attacker.Damage - Armor - Toughness;
             int damage = damageRoll + attacker.Damage - Armor - attack.ArmorModifier - Toughness - attack.ToughnessModifier;

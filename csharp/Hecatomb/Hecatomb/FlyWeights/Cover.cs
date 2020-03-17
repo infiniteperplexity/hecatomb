@@ -276,7 +276,8 @@ namespace Hecatomb
             }
             else if (this.Solid)
             {
-                if (Game.World.Random.Next(4)==0)
+                if (Game.World.Random.Arbitrary(4, new Coord(x, y, z).OwnSeed())==0)
+                //if (Game.World.Random.Next(4)==0)
                 {
                     Item.PlaceNewResource("Rock", 1, x, y, z);
                 }

@@ -93,6 +93,11 @@ namespace Hecatomb
             return Numberize(X, Y, Z);
         }
 
+        public int OwnSeed()
+        {
+            return X * Game.World.Width * Game.World.Height + Y * Game.World.Height + Z + Game.World.Turns.Turn;
+        }
+
         public bool Equals(Coord c)
             => X == c.X && Y == c.Y && Z == c.Z;
     }
@@ -596,18 +601,18 @@ namespace Hecatomb
 		}
 
 
-        public bool CanReach(TileEntity t, bool useLast = true)
+        public bool CanReach(TileEntity t, bool useLast = true, bool useCache = true)
         {
             Func<int, int, int, int, int, int, bool> movable;
             Func<int, int, int, bool> standable;
             movable = CouldMove;
             standable = CanStand;
-            var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable);
+            var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable, useCache: useCache);
             Coord? c = (path.Count > 0) ? path.First.Value : (Coord?)null;
             return (c == null) ? false : true;
         }
 
-        public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false)
+        public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
         {
             if (Game.Options.NoIngredients && !alwaysNeedsIngredients)
             {
@@ -615,7 +620,7 @@ namespace Hecatomb
             }
             Dictionary<string, int> needed = new Dictionary<string, int>(resources);
             List<Item> items = Game.World.Items.Where(
-                it => { return (needed.ContainsKey(it.Resource) && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it)); }
+                it => { return (needed.ContainsKey(it.Resource) && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
             ).ToList();
             foreach (Item item in items)
             {
@@ -632,14 +637,14 @@ namespace Hecatomb
             return (needed.Count == 0);
         }
 
-        public bool CanFindResource(string resource, int need, bool respectClaims = true, bool ownedOnly = true)
+        public bool CanFindResource(string resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
         {
             if (Game.Options.NoIngredients)
             {
                 return true;
             }
             List<Item> items = Game.World.Items.Where(
-                it => { return (it.Resource == resource && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it)); }
+                it => { return (it.Resource == resource && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
             ).ToList();
             int needed = need;
             foreach (Item item in items)

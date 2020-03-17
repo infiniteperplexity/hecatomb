@@ -22,7 +22,8 @@ namespace Hecatomb
                 int n = 0;
                 if (Yields[key] < 1)
                 {
-                    if (Game.World.Random.NextDouble() < Yields[key])
+                    if (Game.World.Random.Arbitrary(OwnSeed()) < Yields[key])
+                    //if (Game.World.Random.NextDouble() < Yields[key])
                     {
                         n = 1;
                     }

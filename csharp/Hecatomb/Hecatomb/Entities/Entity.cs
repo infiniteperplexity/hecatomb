@@ -158,5 +158,10 @@ namespace Hecatomb
             Entities.Remove(EID);
             EID = -1;
         }
+
+        public virtual int OwnSeed()
+        {
+            return EID + Game.World.Turns.Turn;
+        }
 	}
 }

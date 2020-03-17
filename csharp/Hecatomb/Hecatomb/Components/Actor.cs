@@ -283,7 +283,9 @@ namespace Hecatomb
         }
         public void WalkRandom()
         {
-            int r = Game.World.Random.Next(4);
+            
+            int r = Game.World.Random.Arbitrary(4, OwnSeed());
+            //int r = Game.World.Random.Next(4);
             Coord d = Movement.Directions4[r];
             int x1 = Entity.X + d.X;
             int y1 = Entity.Y + d.Y;
@@ -360,7 +362,8 @@ namespace Hecatomb
                                     if (squares.Count > 0)
                                     {
                                         // choose a square randomly from that list
-                                        int r = Game.World.Random.Next(squares.Count);
+                                        int r = Game.World.Random.Arbitrary(squares.Count, OwnSeed()+1);
+                                        //int r = Game.World.Random.Next(squares.Count);
                                         var s = squares[r];
                                         move.Displace(cr, s.X, s.Y, s.Z);
                                         return true;
@@ -374,7 +377,8 @@ namespace Hecatomb
                                 }
 
                             }
-                            if (Game.World.Random.NextDouble() < 0.5)
+                            //if (Game.World.Random.NextDouble() < 0.5)
+                            if (Game.World.Random.Arbitrary(OwnSeed()+2) < 0.5)
                             {
                                 m.Displace(cr);
                                 return true;

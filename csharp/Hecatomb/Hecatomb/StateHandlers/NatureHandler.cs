@@ -36,7 +36,8 @@ namespace Hecatomb
                 {
                     TreesKilled += 1;
                     TreesSince += 1;
-                    if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Next(20) == 0)
+                    if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Arbitrary(20, OwnSeed()) == 0)
+                    //if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Next(20) == 0)
                     {
                         NatureAttack(f.X, f.Y, f.Z);
                     }
@@ -59,7 +60,8 @@ namespace Hecatomb
             logText: "{red}You have angered the spirits of nature!");
 
             var trees = Features.Where((Feature f) => ((f.TypeName == "ClubTree" || f.TypeName == "SpadeTree") && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<25)).ToList();
-            trees.Sort((f1, f2) => (Game.World.Random.NextDouble().CompareTo(Game.World.Random.NextDouble())));
+            trees.Sort((f1, f2) => (Game.World.Random.Arbitrary(OwnSeed()).CompareTo(Game.World.Random.Arbitrary(OwnSeed()+1))));
+            //trees.Sort((f1, f2) => (Game.World.Random.NextDouble().CompareTo(Game.World.Random.NextDouble())));
             for (int i = 0; i<PastNatureAttacks+2; i++)
             {
                 if (i>trees.Count-1)

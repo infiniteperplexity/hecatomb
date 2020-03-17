@@ -25,7 +25,8 @@ namespace Hecatomb
         {
             // should I call this several times upon Placement?
             int MaxTrades = 4;
-            int r = Game.World.Random.Next(PotentialTrades.Count);
+            int r = Game.World.Random.Arbitrary(PotentialTrades.Count, OwnSeed());
+            //int r = Game.World.Random.Next(PotentialTrades.Count);
             TradeTask newTrade = Entity.Mock<TradeTask>();
             newTrade.Ingredients = PotentialTrades[r].Ingredients;
             newTrade.Trading = PotentialTrades[r].Trading;
@@ -41,7 +42,8 @@ namespace Hecatomb
         public override GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnBeginEvent turn = (TurnBeginEvent)ge;
-            if (Game.World.Random.Next(100)==0)
+            if (Game.World.Random.Arbitrary(100,OwnSeed())==0)
+            //if (Game.World.Random.Next(100)==0)
             {
                 AddTrade();
             }
@@ -207,6 +209,20 @@ namespace Hecatomb
                 Trading = null;
             }
             InterfacePanel.DirtifyUsualPanels();
+        }
+
+        public override GameEvent OnDespawn(GameEvent ge) 
+        {
+            DespawnEvent de = (DespawnEvent)ge;
+            if (de.Entity is Feature)
+            {
+                Feature f = (Feature)de.Entity;
+                if (Placed && Features.Contains(f))
+                {
+                    CancelResearch();
+                }
+            }
+            return base.OnDespawn(ge);
         }
     }
 }

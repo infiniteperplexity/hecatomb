@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -44,11 +45,9 @@ namespace Hecatomb
             }
             else if (ShiftDown)
             {
-                // this somehow desyncs things???
-                for (var i=0; i < 10; i++)
-                {
-                    Game.World.GetState<CommandLogger>().StepForward();
-                }
+                Game.World.GetState<CommandLogger>().StepForward();
+                // this is a dead end...causes all kinds of problems
+                //Game.World.GetState<CommandLogger>().AsyncSteps(10);
             }
             else
             {

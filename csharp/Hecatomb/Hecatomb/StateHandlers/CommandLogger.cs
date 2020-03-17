@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace Hecatomb
 {
@@ -26,6 +27,7 @@ namespace Hecatomb
         public int Z;
         public string Makes;
         public List<Coord> Squares = new List<Coord>();
+        public long Calls;
     }
     public class CommandLogger : StateHandler, IChoiceMenu
     {
@@ -144,7 +146,11 @@ namespace Hecatomb
 
         public static void LogCommand(string command = "NoCommand", int n = -1, string makes = null, int x = -1, int y = -1, int z = -1, List<Coord> squares = null)
         {
-            //Debug.WriteLine("Logging " + command);
+            int turn = Game.World.GetState<TurnHandler>().Turn;
+            if (turn >= 400 && turn <= 450)
+            {
+                Debug.WriteLine("Logging " + command + " on turn " + turn);
+            }
             //Game.World.Random.Poll();
             if (Game.ReconstructMode)
             {
@@ -160,7 +166,8 @@ namespace Hecatomb
                 X = x,
                 Y = y,
                 Z = z,
-                Squares = (squares == null) ? new List<Coord>() : new List<Coord>(squares)
+                Squares = (squares == null) ? new List<Coord>() : new List<Coord>(squares),
+                Calls = Game.World.Random.Calls
             };
             Game.World.GetState<CommandLogger>().LoggedCommands.Add(c);
         }
@@ -207,8 +214,14 @@ namespace Hecatomb
             }
             ControlContext.Reset();
             GameCommand gc = CommandQueue.Dequeue();
-            //Debug.WriteLine("Submitting a " + gc.Command + " command.");
+           // Debug.WriteLine("Submitting a " + gc.Command + " command.");
             SubmitCommand(gc);
+            if (gc.Calls != Game.World.Random.Calls)
+            {
+                Debug.WriteLine($"New calls {Game.World.Random.Calls}, old calls {gc.Calls}");
+                Debug.WriteLine("Command was " + gc.Command);
+                Debug.WriteLine("Turn was " + Game.World.Turns.Turn);
+            }
             //Debug.WriteLine(CommandQueue.Count + " commands left in the queue.");
             if (CommandQueue.Count == 0)
             {
@@ -216,6 +229,19 @@ namespace Hecatomb
                 //ControlContext.Reset();
             }
             ControlContext.Reset();
+        }
+
+        public void AsyncSteps(int n, int delay = 100)
+        {
+            Thread thread = new Thread(() =>
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    StepForward();
+                    Thread.Sleep(delay);
+                }
+            });
+            thread.Start();
         }
     }
 
