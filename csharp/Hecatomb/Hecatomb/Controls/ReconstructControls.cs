@@ -13,6 +13,7 @@ namespace Hecatomb
     {
         public ReconstructControls()
         {
+            Throttle = 150;
             var Commands = Game.Commands;
             KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;

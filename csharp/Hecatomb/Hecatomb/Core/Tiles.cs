@@ -256,11 +256,6 @@ namespace Hecatomb
 				}
 				if (success)
 				{
-                    
-                    //if (tally > 8000)
-                    //{
-                    //    Debug.Print($"Found from {fromEntity?.Describe()} to {toEntity?.Describe()} path after {tally} loops.");
-                    //}
 					LinkedList<Coord> path = new LinkedList<Coord> {};
 					path.AddFirst(new Coord(current));
 					// ***trace backwards
@@ -483,8 +478,8 @@ namespace Hecatomb
             {
                 tries += 1;
                 
-                int i = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed());
-                int j = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+1);
+                int i = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+tries);
+                int j = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+1+tries);
                 //int i = Game.World.Random.Next(-max, max + 1);
                 //int j = Game.World.Random.Next(-max, max + 1);
                 if (i+x>Game.World.Width-2 || i+x<1 || j+y>Game.World.Height-2 || j+y<1)

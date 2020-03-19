@@ -115,7 +115,7 @@ namespace Hecatomb
                 }
                 else
                 {
-                    menu.MenuTop.Add($"Working on {t.Describe()} at {t.X} {t.Y} {t.Z}");
+                    menu.MenuTop.Add($"Working on {t.Describe(article: false)} at {t.X} {t.Y} {t.Z}");
                 }
             }
             if (TryComponent<Inventory>() != null)

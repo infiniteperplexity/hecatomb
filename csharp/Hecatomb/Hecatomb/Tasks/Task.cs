@@ -16,7 +16,7 @@ namespace Hecatomb
     {
         // subclass properties
         [JsonIgnore] public int WorkRange;
-        [JsonIgnore] public int LaborCost;
+        public int LaborCost;
         [JsonIgnore] public string MenuName;
         [JsonIgnore] public List<string> PrereqStructures;
         [JsonIgnore] public bool ShowIngredients;
@@ -354,6 +354,11 @@ namespace Hecatomb
                 return;
             }
             Item item = (Item)Worker.GetComponent<Inventory>().Item;
+            if (item==null)
+            {
+                Debug.WriteLine("this happened for...");
+                Debug.WriteLine(this.Describe());
+            }
             Ingredients[item.Resource] -= item.Quantity;
             if (Ingredients[item.Resource]<=0)
             {
@@ -420,7 +425,8 @@ namespace Hecatomb
             {
                 Debug.WriteLine("Why are we trying to act with a despawned task");
             }
-            if (!HasIngredient() && Labor == LaborCost)
+            // changed this to >= to protect against certain bugs that are probably fixed already
+            if (!HasIngredient() && Labor >= LaborCost)
             {
                 FetchIngredient();
                 return;
@@ -447,7 +453,7 @@ namespace Hecatomb
                 return;
             }
             // should we check if it's a validTile each time we work?
-            if (Labor == LaborCost)
+            if (Labor >= LaborCost)
             {
                 Start();
             }

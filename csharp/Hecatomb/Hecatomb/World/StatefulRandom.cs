@@ -184,10 +184,6 @@ namespace Hecatomb
 
         public void PrintTrace()
         {
-            //if (Game.World.Turns.Turn < 69)
-            //{
-             //   return;
-            //}
             //return;
             StackTrace s = new StackTrace();
             if (s.GetFrame(2).GetMethod().Name == "WalkRandom")

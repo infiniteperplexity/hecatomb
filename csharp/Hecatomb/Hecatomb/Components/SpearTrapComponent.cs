@@ -20,10 +20,8 @@ namespace Hecatomb
             PlaceEvent pe = (PlaceEvent)ge;
             if (pe.Entity is Creature && pe.X==Entity.X && pe.Y==Entity.Y && pe.Z==Entity.Z)
             {
-                Debug.WriteLine("stepping on trap");
                 if ((pe.Entity as TypedEntity).GetComponent<Actor>().Team != Teams.Friendly)
                 {
-                    Debug.WriteLine("trap should go off");
                     Entity.GetComponent<Attacker>().Attack((TypedEntity) pe.Entity);
                     if (Game.World.Random.Arbitrary(2, OwnSeed()) == 0)
                     //if (Game.World.Random.Next(2)==0)

@@ -57,11 +57,10 @@ namespace Hecatomb
             Game.SplashPanel.Splash(new List<ColoredText> {
                "Your wanton deforestation has attracted the attention of nature's defenders!"
             },
-            logText: "{red}You have angered the spirits of nature!");
+            logText: "{red}You have angered nature's defenders!");
 
             var trees = Features.Where((Feature f) => ((f.TypeName == "ClubTree" || f.TypeName == "SpadeTree") && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<25)).ToList();
-            trees.Sort((f1, f2) => (Game.World.Random.Arbitrary(OwnSeed()).CompareTo(Game.World.Random.Arbitrary(OwnSeed()+1))));
-            //trees.Sort((f1, f2) => (Game.World.Random.NextDouble().CompareTo(Game.World.Random.NextDouble())));
+            trees = trees.OrderBy((Feature f) => Game.World.Random.Arbitrary(f.OwnSeed())).ToList();
             for (int i = 0; i<PastNatureAttacks+2; i++)
             {
                 if (i>trees.Count-1)

@@ -1,4 +1,9 @@
-﻿
+﻿What does a thorough test look like?
+- Max out the tech tree and build all the things.
+- Fight the bandits, cast spells at them, and use traps.
+
+
+
 Hecatomb brainstorm: The game isn't very fun once you reach the "waiting for bandit siege" stage.
 1) I could just make the bandit siege much easier.  Make it so there's only one bandit, for example.
 2) I could replace the bandit siege with an expedition...to hunt spider nests?  We already have wandering spiders.  One issue is that there is no early-game use for spider silk or anything like that so far.  Maybe to make trade goods?
@@ -27,17 +32,24 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- We don't actually allow for the possibility, currently, that a fixture may require other than 10 labor
+- It's easy to get a stuck in a key-board only mode where you keep clicking on minions after exiting minion selection mode.	
+- Does the mending task auto-cancel because the zombie isn't injured?
+- Resuming incomplete dig tasks doesn't work the way I expect.
+- Slaughterhouse should be able to disassemble zombies.
+- Should we be able to fight in message mmode?
+- Give a message for defeating bandits, dryads, et cetera?
 - try to fix Mending task, which gets auto-canceled
 - better arbitrary algorithm for pathing
 - should the first weapon level be bone?
 - want some use for spider corpses
 * Deconstruct task assignment prioritizes over digging
-- Should rotting be a little slower
+- Should rotting be a little slower?
 - Is there some kind of race condition in saved games?
 - Should we regenerate mana faster on a sanctum?
 * Achievements are totally wrong
-- Should grass grow under spear traps
-- Should traps be able to go on slopes
+- Should grass grow under spear traps?
+- Should traps be able to go on slopes?
 - I didn't see dryads after a pop-up warning
 - I think there are some bugs relating to the intro screen and saving and loading, but they are hard to reproduce.
 * Include versioning and build number.
