@@ -118,7 +118,6 @@ namespace Hecatomb
 		
 		public virtual void Destroy(string cause = null)
 		{
-            Debug.WriteLine("about to fire a destroy event");
             Game.World.Events.Publish(new DestroyEvent() { Entity = this, Cause = cause});
             Remove();
 			Despawn();
