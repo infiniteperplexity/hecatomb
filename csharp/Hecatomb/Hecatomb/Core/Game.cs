@@ -359,9 +359,10 @@ namespace Hecatomb
                 body.Add("Logged Commands:");
                 body.Add(json);
             }
-            System.IO.File.WriteAllLines(path + @"\logs\" + "HecatombCrashReport" + timestamp + ".txt", body);
+            string filePath = path + @"\logs\" + "HecatombCrashReport" + timestamp + ".txt";
+            System.IO.File.WriteAllLines(filePath, body);
             //string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + e.ToString();
-            string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.%0A%0A" + String.Join("%0A",body);
+            string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.  If possible, please attach the crash log file: " + filePath + "%0A%0A" + String.Join("%0A",body);
             try
             {
                 Process.Start(String.Format(

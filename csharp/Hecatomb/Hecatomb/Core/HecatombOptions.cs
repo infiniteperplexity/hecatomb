@@ -35,7 +35,7 @@ namespace Hecatomb
         public HecatombOptions()
         {
             ReconstructGames = false;
-            ReconstructGames = true;
+            //ReconstructGames = true;
             FullScreen = false;
             //FullScreen = true;
             Explored = false;
@@ -55,7 +55,7 @@ namespace Hecatomb
             AllSpells = false;
             //AllSpells = true;
             ShowDebugSpells = false;
-            ShowDebugSpells = true;
+            //ShowDebugSpells = true;
             NoManaCost = false;
             //NoManaCost = true;
             WorkBonus = 0;
