@@ -200,7 +200,7 @@ namespace Hecatomb
                     Feature f = Features[i, j, GetGroundLevel(i, j)];
                     if (f!=null && f.TypeName=="Grave")
                     {
-                        f.GetComponent<Harvestable>().Yields.Remove("TradeGoods");
+                        f.GetComponent<Harvestable>().Yields.Remove("Gold");
                     }
                 }
             }

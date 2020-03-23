@@ -221,7 +221,7 @@ namespace Hecatomb
                 Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
                 if (i==0)
                 {
-                    Item loot = Item.SpawnNewResource("TradeGoods", 1);
+                    Item loot = Item.SpawnNewResource("Gold", 1);
                     bandit.GetComponent<Inventory>().Item = loot;
                 }
             }

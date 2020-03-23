@@ -1,4 +1,12 @@
-﻿What does a thorough test look like?
+﻿- swapped trade goods for gold
+- made it so graves appear only on a checkerboard
+
+newer ideas:
+- make spiders leave webs randomly
+- 
+
+
+What does a thorough test look like?
 - Max out the tech tree and build all the things.
 - Fight the bandits, cast spells at them, and use traps.
 
@@ -32,16 +40,18 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
-- Siphon flesh doesn't aggro spiders
+- Did a zombie stepto an air space to harvest a web, when the slope got dug out from under it?
+- Add in a bunch of achievements
+* Siphon flesh doesn't aggro spiders
 - We don't actually allow for the possibility, currently, that a fixture may require other than 10 labor
 - It's easy to get a stuck in a key-board only mode where you keep clicking on minions after exiting minion selection mode.	
 - Does the mending task auto-cancel because the zombie isn't injured?
-- Resuming incomplete dig tasks doesn't work the way I expect.
+- Some issues with dig tasks, some of which are shared with build tasks:
+	- Canceled incomplete tasks have absolute priority; do we want that or should they use the priority of their terrain?
+	- I'm not sure how I deal with features that can't be harvested.
 - Slaughterhouse should be able to disassemble zombies.
-- Should we be able to fight in message mmode?
+- Should we be able to fight in message mode?
 - Give a message for defeating bandits, dryads, et cetera?
-- try to fix Mending task, which gets auto-canceled
-- better arbitrary algorithm for pathing
 - should the first weapon level be bone?
 - want some use for spider corpses
 * Deconstruct task assignment prioritizes over digging

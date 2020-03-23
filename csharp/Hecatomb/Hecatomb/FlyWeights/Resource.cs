@@ -118,6 +118,18 @@ namespace Hecatomb
             symbol: '\u2696',
             fg: "#AAAA44"
         );
+        public static readonly Resource Gold = new Resource(
+            type: "Gold",
+            name: "gold",
+            symbol: '$',
+            fg: "#EEDD00"
+        );
+        public static readonly Resource Silk = new Resource(
+            type: "Silk",
+            name: "silk",
+            symbol: '&',
+            fg: "#DDDDDD"
+        );
 
         public static readonly Resource Ectoplasm = new Resource(
             type: "Ectoplasm",

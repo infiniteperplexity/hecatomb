@@ -36,7 +36,7 @@ namespace Hecatomb
             };
             Ingredients = new Dictionary<string, int>[]
             {
-                new Dictionary<string, int>() {{"TradeGoods", 1}}, new Dictionary<string, int>() {{"Bone", 2}},
+                new Dictionary<string, int>() {{"Gold", 1}}, new Dictionary<string, int>() {{"Bone", 2}},
                 new Dictionary<string, int>() {{"Flesh", 2}}, new Dictionary<string, int>() {{"Ectoplasm", 1}}
             };
             MenuName = "chirurgeon";

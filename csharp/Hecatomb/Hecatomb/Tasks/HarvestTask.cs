@@ -83,16 +83,6 @@ namespace Hecatomb
                         Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
                         Game.World.ValidateOutdoors();
                     }
-                    int goodsBounds = 12;
-                    int half = Game.World.Width / 2;
-                    if ((X < half - goodsBounds || X > half + goodsBounds) && (Y < half - goodsBounds || Y > half + goodsBounds))
-                    {
-                        if (Game.World.Random.Arbitrary(10, OwnSeed()) == 0)
-                        //if (Game.World.Random.Next(10) == 0)
-                        {
-                            Item.PlaceNewResource("TradeGoods", 1, X, Y, Z);
-                        }
-                    }
                 }
             }
             else

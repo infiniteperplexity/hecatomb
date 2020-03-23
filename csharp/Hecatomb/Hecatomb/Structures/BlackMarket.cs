@@ -54,18 +54,26 @@ namespace Hecatomb
         {
             PotentialTrades = new List<TradeTask>();
             TradeTask t;
-            t = Entity.Mock<TradeTask>();
-            t.Ingredients["Flint"] = 2;
-            t.Trading["TradeGoods"] = 1;
-            PotentialTrades.Add(t);
-            t = Entity.Mock<TradeTask>();
-            t.Ingredients["Wood"] = 3;
-            t.Trading["Coal"] = 1;
-            PotentialTrades.Add(t);
-            t = Entity.Mock<TradeTask>();
-            t.Ingredients["TradeGoods"] = 1;
-            t.Trading["Flint"] = 2;
-            PotentialTrades.Add(t);
+            var potential = new List<(string, int, string, int)>()
+            {
+                ("Gold", 1, "Flint", 2),
+                ("Gold", 1, "Coal", 2),
+                ("Gold", 1, "Bone", 2),
+                ("Gold", 1, "Tin", 1),
+                ("Gold", 1, "Copper", 1),
+                ("Flint", 3, "Gold", 1),
+                ("Coal", 3, "Gold", 1),
+                ("Tin", 2, "Gold", 1),
+                ("Copper", 2, "Gold", 1)
+            };
+
+            foreach (var tuple in potential)
+            {
+                t = Entity.Mock<TradeTask>();
+                t.Ingredients[tuple.Item1] = tuple.Item2;
+                t.Trading[tuple.Item3] = tuple.Item4;
+                PotentialTrades.Add(t);
+            }
         }
         public BlackMarket() : base()
         {
@@ -92,18 +100,18 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>[]
             {
                 new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
-                null, new Dictionary<string, int>() {{"TradeGoods", 1}}, null,
+                null, new Dictionary<string, int>() {{"Gold", 1}}, null,
                 new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
             };
             Harvests = new Dictionary<string, float>[]
             {
                 null, null, null,
-                null, new Dictionary<string, float>() {{"TradeGoods", 1}}, null,
+                null, new Dictionary<string, float>() {{"Gold", 1}}, null,
                 null, null, null
             };
             MenuName = "black market";
             Name = "black market";
-            UseHint = "(trade goods of one type for another.)";
+            UseHint = "(trade goods for gold or vice versa.)";
             AddListener<PlaceEvent>(OnPlace);
 
 

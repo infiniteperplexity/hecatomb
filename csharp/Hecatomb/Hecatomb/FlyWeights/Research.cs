@@ -52,11 +52,11 @@ namespace Hecatomb
             Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } }
         };
 
-        public static Research FlintWeapons = new Research("FlintWeapons")
+        public static Research FlintWeapons = new Research("BoneWeapons")
         {
-            Name = "flint weapons",
+            Name = "bone weapons",
             Turns = 25,
-            Ingredients = new Dictionary<string, int>() { { "Flint", 2 }, { "Wood", 2 } }
+            Ingredients = new Dictionary<string, int>() { { "Bone", 2 }, { "Wood", 2 } }
         };
 
         // hardness 2

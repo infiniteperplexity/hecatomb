@@ -190,6 +190,7 @@ namespace Hecatomb
                 Task ta = Game.World.Tasks[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
+                    // right now, incomplete dig tasks are the absolute top priority.  is that really what we want? or should they count the same as the terrain they're on?
                     if (f?.TypeName == "IncompleteFeature" && ta == null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
                     {
                         priority = 7;
@@ -269,6 +270,7 @@ namespace Hecatomb
                 Task ta = Game.World.Tasks[x, y, z];
                 if (Game.World.Explored.Contains(square) || Options.Explored)
                 {
+                    // right now, incomplete dig tasks are the absolute top priority.  is that really what we want? or should they count the same as the terrain they're on?
                     if (f?.TypeName == "IncompleteFeature" && ta == null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
                     {
                         priority = 7;

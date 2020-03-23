@@ -61,7 +61,7 @@ namespace Hecatomb
             MenuName = "workshop";
             Name = "workshop";
             UseHint = "(enables furnish task; research basic tools and weapons.)";
-            Researches = new[] { "FlintTools", "FlintWeapons", "SpearTrap", "BronzeTools", "SteelTools", "AlloyTools" };
+            Researches = new[] { "FlintTools", "BoneWeapons", "SpearTrap", "BronzeTools", "SteelTools", "AlloyTools" };
         }
     }
 }

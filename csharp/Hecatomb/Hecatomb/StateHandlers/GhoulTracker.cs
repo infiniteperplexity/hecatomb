@@ -89,7 +89,7 @@ namespace Hecatomb
             if (Game.World.Random.Arbitrary(10, OwnSeed()) == 0)
             //if (Game.World.Random.Next(10) == 0)
             {
-                ghoul.GetComponent<Inventory>().Item = Item.SpawnNewResource("TradeGoods", 1);
+                ghoul.GetComponent<Inventory>().Item = Item.SpawnNewResource("Gold", 1);
             }
             if (Game.Visible.Contains(new Coord(x, y, z)) || Game.Options.Visible)
             {

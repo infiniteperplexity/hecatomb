@@ -132,7 +132,7 @@ namespace Hecatomb
                         else
                         {
                             Func<int, int, int, bool> downslopes = (int x, int y, int zz) => (world.GetTile(x, y, zz) == Terrain.DownSlopeTile);
-                            if (world.Random.Next(50) == 0 && !world.Covers[i, j, k].Liquid && Tiles.GetNeighbors8(i, j, k, where: downslopes).Count == 0)
+                            if (world.Random.Next(25) == 0 && i%2 == j%2 && !world.Covers[i, j, k].Liquid && Tiles.GetNeighbors8(i, j, k, where: downslopes).Count == 0)
                             {
                                 Feature grave = Entity.Spawn<Feature>("Grave");
                                 grave.Place(i, j, k);

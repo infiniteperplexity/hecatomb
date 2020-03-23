@@ -165,7 +165,7 @@ namespace Hecatomb
                 if (Game.World.Random.Arbitrary(10, seed+1) == 0)
                 //if (Game.World.Random.Next(10) == 0)
                 {
-                    Item.PlaceNewResource("TradeGoods", 1, x, y, z - 1);
+                    Item.PlaceNewResource("Gold", 1, x, y, z - 1);
                 }
             }
         }

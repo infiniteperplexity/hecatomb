@@ -61,7 +61,7 @@ namespace Hecatomb
             MenuName = "treasury";
             Name = "treasury";
             UseHint = "(store valuable resources.)";
-            Stores = new string[] { "TradeGoods", "BronzeIngots", "SteelIngots", "AlloyIngots", "ThoriumIngots", "AdamantIngots"};
+            Stores = new string[] { "Gold", "BronzeIngots", "Silk", "SteelIngots", "AlloyIngots", "ThoriumIngots", "AdamantIngots"};
             StructurePrereqs = new[] { "Stockpile", "BlackMarket" };
         }
     }

@@ -161,7 +161,7 @@ namespace Hecatomb
                         var goblin = Entity.Spawn<Creature>("Goblin");
                         if (Game.World.Random.Next(3) == 0)
                         {
-                            goblin.GetComponent<Inventory>().Item = Item.SpawnNewResource("TradeGoods", 1);
+                            goblin.GetComponent<Inventory>().Item = Item.SpawnNewResource("Gold", 1);
                         }
                         goblin.Place(x0 + 4*i - 4, y0 + 4*j - 4, z);
                     }
