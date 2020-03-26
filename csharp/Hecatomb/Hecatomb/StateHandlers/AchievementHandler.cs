@@ -24,7 +24,37 @@ namespace Hecatomb
                     Name = "Bring Out Your Dead!",
                     Description = "(raise one zombie.)",
                     Condition = (AchievementEvent a) => {return a.Action=="CastRaiseZombie"; }
-                }
+                },
+                new Achievement()
+                {
+                    Name = "Tools Of The Trade.",
+                    Description = "(research flint tools at a workshop.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="ResearchFlintTools"; }
+                },
+                new Achievement()
+                {
+                    Name = "Limb From Limb.",
+                    Description = "(build a slaughterhouse, butcher a corpse for flesh and bone.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="ButcherCorpse"; }
+                },
+                new Achievement()
+                {
+                    Name = "Fully Stocked.",
+                    Description = "(store four different resources in a stockpile.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="FullyStocked"; }
+                },
+                new Achievement()
+                {
+                    Name = "Army Of The Dead.",
+                    Description = "(build a sanctum to raise a fourth zombie.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="RaiseFourthZombie"; }
+                },
+                new Achievement()
+                {
+                    Name = "Striking Gold.",
+                    Description = "(find some gold.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="FoundGold"; }
+                },
             };
         }
 
@@ -50,6 +80,7 @@ namespace Hecatomb
             AchievementEvent ae = (AchievementEvent)g;
             foreach (Achievement achievement in Achievements)
             {
+                Debug.WriteLine(ae.Action);
                 if (achievement.Condition(ae) && !Achieved.Contains(achievement.Name))
                 //if (achievement.Condition(ae) && !achievement.Unlocked)
                 {

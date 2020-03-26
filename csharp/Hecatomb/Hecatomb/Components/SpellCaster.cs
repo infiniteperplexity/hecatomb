@@ -72,11 +72,21 @@ namespace Hecatomb
             {
                 chance = 7;
             }
+            var (x, y, z) = Entity;
+            var f = Features[x, y, z];
+            if (f != null && f.TryComponent<StructuralComponent>() != null)
+            {
+                if (f.GetComponent<StructuralComponent>().Structure.Unbox() is Sanctum)
+                {
+                    chance /= 2;
+                }
+            }
             if (Game.World.Random.Arbitrary(chance, OwnSeed())==0)
             //if (Game.World.Random.Next(chance)==0)
             {
                 Sanity = Math.Min(max, Sanity + 1);
             }
+            
             return ge;
         }
         

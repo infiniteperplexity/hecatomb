@@ -91,11 +91,28 @@ namespace Hecatomb
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<AttackEvent>(OnBanditAttack);
             AddListener<ActEvent>(OnAct);
+            //AddListener<DestroyEvent>(OnDestroy);
             MyCreatures = new List<EntityField<Creature>>();
         }
 
 
+        //public GameEvent OnDestroy(GameEvent ge)
+        //{
+        //    if (MyCreatures.Count == 0)
+        //    {
+        //        return ge;
+        //    }
+        //    DestroyEvent de = (DestroyEvent)ge;
+        //    if (de.Entity is Creature)
+        //    {
+        //        Creature cr = (Creature)de.Entity;
+        //        if (MyCreatures.Contains(cr))
+        //        {
 
+        //        }
+        //    }
+        //    return ge;
+        //}
         public GameEvent OnAct(GameEvent ge)
         {
             if (MyCreatures.Count == 0)

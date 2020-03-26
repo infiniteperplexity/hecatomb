@@ -51,7 +51,6 @@ namespace Hecatomb
                 "{yellow}Message Log:",
                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             };
-            Debug.WriteLine($"SelectedMessage is {Game.InfoPanel.SelectedMessage} and MaxVisible is {MaxVisible}");
             var list = Game.World.GetState<MessageHandler>().MessageHistory.GetRange(Game.InfoPanel.SelectedMessage, MaxVisible).ToList();
             for (int i = 0; i < list.Count; i++)
             {

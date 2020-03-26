@@ -333,6 +333,7 @@ namespace Hecatomb
                 {
                     ControlContext.Selection = null;
                     ControlContext.Reset();
+                    ControlContext.Cursor.Remove();
                 };
             menu.KeyMap[Keys.Tab] = NextStructure;
             menu.KeyMap[Keys.Delete] = CancelResearch;

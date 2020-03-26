@@ -42,10 +42,67 @@ namespace Hecatomb
                     throw new InvalidOperationException(String.Format(
                         "Cannot place {0} at {1} {2} {3} because it has already been placed there.", TypeName, x1, y1, z1));
                 }
-                 throw new InvalidOperationException(String.Format(
-                    "Cannot place {0} at {1} {2} {3} because {4} is already there.", TypeName, x1, y1, z1, e.TypeName
-                ));
+                Displace(x1, y1, z1);
             }
+        }
+
+        public void Displace(int x, int y, int z)
+        {
+            int MaxDistance = 2;
+            List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
+            order = order.OrderBy(s => Game.World.Random.Arbitrary(OwnSeed() + s)).ToList();
+            //order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
+            Queue<Coord> queue = new Queue<Coord>();
+            if (Terrains[x, y, z] == Terrain.DownSlopeTile)
+            {
+                // first try to roll it down a slope
+                queue.Enqueue(new Coord(x, y, z - 1));
+            }
+            foreach (int i in order)
+            {
+                // add all eight neighbors to the queue
+                var (dx, dy, dz) = Movement.Directions8[i];
+                queue.Enqueue(new Coord(x + dx, y + dy, z + dz));
+            }
+            HashSet<Coord> tried = new HashSet<Coord>();
+            while (queue.Count > 0)
+            {
+                Coord c = queue.Dequeue();
+                tried.Add(c);
+                if (Terrains[c.X, c.Y, c.Z].Solid)
+                {
+                    continue;
+                }
+                if (Creatures[c] != null)
+                {
+                    if (Terrains[c.X, c.Y, c.Z] == Terrain.DownSlopeTile)
+                    {
+                        Coord d = new Coord(c.X, c.Y, c.Z - 1);
+                        if (!tried.Contains(d))
+                        {
+                            queue.Enqueue(d);
+                        }
+                    }
+                    foreach (int i in order)
+                    {
+                        var (dx, dy, dz) = Movement.Directions8[i];
+                        dx += c.X;
+                        dy += c.Y;
+                        dz += c.Z;
+                        Coord d = new Coord(dx, dy, dz);
+                        if (!tried.Contains(d) && Tiles.QuickDistance(x, y, z, dx, dy, dz) <= MaxDistance)
+                        {
+                            queue.Enqueue(d);
+                        }
+                    }
+                    continue;
+                }
+                Game.World.Events.Publish(new SensoryEvent($"{Describe(capitalized: true)} got displaced to {c.X} {c.Y} {c.Z}.", c.X, c.Y, c.Z));
+                Place(c.X, c.Y, c.Z);
+                return;
+            }
+            Status.PushMessage($"{Describe()} was crushed by the crowd!");
+            Destroy();
         }
 
         public override void Fall()
@@ -166,6 +223,7 @@ namespace Hecatomb
                 {
                     ControlContext.Selection = null;
                     ControlContext.Reset();
+                    ControlContext.Cursor.Remove();
                 };
             menu.KeyMap[Keys.Tab] = NextMinion;
             menu.KeyMap[Keys.U] = Commands.ShowStructures;

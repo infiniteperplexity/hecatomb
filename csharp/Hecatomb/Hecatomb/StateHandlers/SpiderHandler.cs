@@ -25,7 +25,7 @@ namespace Hecatomb
                 if (Game.World.Random.Arbitrary(250, actor.OwnSeed()) == 0)
                 {
                     var (x, y, z) = te;
-                    if (Game.World.Features[x, y, z] == null)
+                    if (Game.World.Features[x, y, z] == null && Game.World.Terrains[x, y, z] == Terrain.FloorTile)
                     {
                         Entity.Spawn<Feature>("SpiderWeb").Place(x, y, z);
                         actor.Spend(16);

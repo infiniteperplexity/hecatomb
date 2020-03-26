@@ -136,6 +136,13 @@
 						"Yields": {"Silk": 1}
 					}
 				}
+			},
+			{
+				"Type" : "DyeFlower",
+				"Name": "flower",
+				"FG" : "#889933",
+				"Symbol" : "\u2698",
+				"Components" : {}
 			}
 
 		]

@@ -122,7 +122,22 @@ namespace Hecatomb
 
         public override void Work()
         {
+            var (x, y, z) = Worker;
+            
             Worker.GetComponent<Inventory>().Drop();
+            Feature f = Features[x, y, z];
+            if (f != null)
+            {
+                if (f.TryComponent<StructuralComponent>() != null)
+                {
+                    Structure s = f.GetComponent<StructuralComponent>().Structure;
+                    if (s.GetStored().Count >= 4)
+                    {
+                        Game.World.Events.Publish(new AchievementEvent() { Action = "FullyStocked" });
+                    }
+                }
+
+            }
             Finish();
         }
 

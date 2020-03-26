@@ -40,67 +40,42 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
-- Did a zombie stepto an air space to harvest a web, when the slope got dug out from under it?
+- Should we highlight achievements in magenta when there is a new one?
+- Deep water uses the wrong glyph
+* Did a zombie stepto an air space to harvest a web, when the slope got dug out from under it?
 - Add in a bunch of achievements
-* Siphon flesh doesn't aggro spiders
 - We don't actually allow for the possibility, currently, that a fixture may require other than 10 labor
-- It's easy to get a stuck in a key-board only mode where you keep clicking on minions after exiting minion selection mode.	
+* It's easy to get a stuck in a key-board only mode where you keep clicking on minions after exiting minion selection mode.	
 - Does the mending task auto-cancel because the zombie isn't injured?
 - Some issues with dig tasks, some of which are shared with build tasks:
 	- Canceled incomplete tasks have absolute priority; do we want that or should they use the priority of their terrain?
+	- Or maybe I should just get rid of incomplete excavations?
 	- I'm not sure how I deal with features that can't be harvested.
 - Slaughterhouse should be able to disassemble zombies.
-- Should we be able to fight in message mode?
+- Should we be able to fight in message mode?  The whole idea of that doesn't really work unless we track whether we're in camera mode, and maybe have the message thing as an overlay?
 - Give a message for defeating bandits, dryads, et cetera?
-- should the first weapon level be bone?
 - want some use for spider corpses
-* Deconstruct task assignment prioritizes over digging
 - Should rotting be a little slower?
 - Is there some kind of race condition in saved games?
-- Should we regenerate mana faster on a sanctum?
-* Achievements are totally wrong
+* Should we regenerate mana faster on a sanctum?
 - Should grass grow under spear traps?
 - Should traps be able to go on slopes?
 - I didn't see dryads after a pop-up warning
-- I think there are some bugs relating to the intro screen and saving and loading, but they are hard to reproduce.
-* Include versioning and build number.
-- Come up with a "Release checklist" that definitely includes setting the options back to normal.
 - Ideally, invalid tasks would be caught and canceled when you're trying to walk toward them, not just when you try to work them.
-* If you assign a digtask in an unexplored area that contains a tree, it won't auto-cancel when you explore it.
-* I think I fixed the building reconstruction issues
-- Apparently some weird things can happen if displacement causes a creature to fall
-* Need a better bug reporting system:
-	* email pops up.
-* Can't see mana while choosing a spell.
-* I think I fixed relative paths for saved games and crash reports.
-* I *think* I fixed the weird issues where TurnHandler didn't act like other state handlers
 - Can't duplicate the issue of research menu not showing how to exit
-* Someome had a crash while deconstructing a stockpile...that's probably fixed now.
 - Message to tell how you died.  That guy got killed by an angry nymph.  Shouldn't it have raised a blurb about that?
 - Should I catch Exception in the minor asynchronous threads, like SplashControls and such?
-- Ugh I just lost a bunch of notes...let's see what I can reconstruct.
-	* Can we get trade goods both by raising zombies and harvesting graves?
-	- I think I'm making a mistake by having the bandit attack be the first "event"
-	* We should be able to "click" on buildings and minions without using the mouse.
-	* We don't seem to be getting the "really overwrite save file" message
-	- Why can't we see the chirurgeon?
-	* Can we move the forbid task down on the list
-	- Is escape a good way to get to the system menu?  I feel like I back out one too many steps more than I'd like.
-	- Some people have had trouble finding the deeper ores.
-	* Might be good to fix that "can't see spellcasting mana" issue.
-- I'm not sure chirurgy should be a prerequisite for the chirurgeon, or maybe it should be researched at the sanctum or slaughterhouse rather than the library
+- I think I'm making a mistake by having the bandit attack be the first "event"
+- Is escape a good way to get to the system menu?  I feel like I back out one too many steps more than I'd like.
+- Some people have had trouble finding the deeper ores.
 - I got a very strange error while trying to quit?  Like...it tried to accept a "wait" command after the world had been torn down? 
-- Now we still can't see mana while choosing a spell during the tutorial but I think I'm okay with that
 - Bandits show up around 1:11:45
 - I'm not crazy about the mana cap approach to limiting zombies; it makes new zombies very expensive.
-* Made it so you can navigate around while viewing creatures or structures.
 
 
 
 New features:
-- Make gold the universal currency.
 - Add pregen tombs to rob.
-- Make the first bandit attack be just one or two.
 
 Playtest issues:
 - In the long term we might want to make CanFindResources see carried items

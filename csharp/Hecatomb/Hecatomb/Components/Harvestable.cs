@@ -34,6 +34,10 @@ namespace Hecatomb
                 }
                 if (n > 0)
                 {
+                    if (key == "Gold")
+                    {
+                        Game.World.Events.Publish(new AchievementEvent() { Action = "FoundGold" });
+                    }
                     if (key == "Corpse")
                     {
                         Item.SpawnCorpse().Place(Entity.X, Entity.Y, Entity.Z);

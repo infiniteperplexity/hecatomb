@@ -166,6 +166,7 @@ namespace Hecatomb
             // I guess this can in theory be null, and somehow someone reached it.
             if (corpse.Resource == "Corpse")
             {
+                Game.World.Events.Publish(new AchievementEvent() { Action = "ButcherCorpse" });
                 Item.PlaceNewResource("Flesh", 1, X, Y, Z);
                 Item.PlaceNewResource("Bone", 1, X, Y, Z);
                 base.Finish();

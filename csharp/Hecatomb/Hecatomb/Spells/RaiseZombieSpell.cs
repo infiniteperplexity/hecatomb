@@ -69,6 +69,10 @@ namespace Hecatomb
             { 
                 Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
                 Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
+                if (Game.World.GetState<TaskHandler>().Minions.Count >= 3)
+                {
+                    Game.World.Events.Publish(new AchievementEvent() { Action = "RaiseFourthZombie" });
+                }
                 Cast();
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
