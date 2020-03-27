@@ -109,11 +109,27 @@ namespace Hecatomb
         }
 
         
-
+        public override string GetDisplayName()
+        {
+            var palette = TryComponent<RandomPaletteComponent>();
+            if (palette != null)
+            {
+                return GetComponent<RandomPaletteComponent>().GetDisplayName();
+            }
+            return base.GetDisplayName();
+        }
         public string GetCalculatedFG()
         {
             //string rotten = "#774422";
             // unused
+            var palette = TryComponent<RandomPaletteComponent>();
+            if (palette != null)
+            {
+                string s = GetComponent<RandomPaletteComponent>().GetFG();
+                Debug.WriteLine(s);
+                return s;
+            }
+
             if (TryComponent<Decaying>()!=null)
             {
                 var d = GetComponent<Decaying>();

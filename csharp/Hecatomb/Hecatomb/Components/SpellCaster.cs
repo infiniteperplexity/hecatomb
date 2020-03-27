@@ -107,6 +107,7 @@ namespace Hecatomb
                 "SevereDamageDebugSpell",
                 "DebugHealSpell",
                 "ParticleTestDebugSpell",
+                "DebugFlowerSpell",
                 "CrashDebugSpell"
             };
             AddListener<TurnBeginEvent>(OnTurnBegin);

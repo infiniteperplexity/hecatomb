@@ -94,7 +94,7 @@ namespace Hecatomb
             else if (Features[c] != null)
             {
                 sym = Features[c].Symbol;
-                fg = fg ?? Features[c].FG;
+                fg = fg ?? Features[c].GetCalculatedFG();
             }
             // items above
             else if (zview == +1 && Items[ca] != null)

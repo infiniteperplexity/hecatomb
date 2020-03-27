@@ -138,11 +138,13 @@
 				}
 			},
 			{
-				"Type" : "DyeFlower",
+				"Type" : "Flower",
 				"Name": "flower",
-				"FG" : "#889933",
+				"FG" : "white",
 				"Symbol" : "\u2698",
-				"Components" : {}
+				"Components" : {
+					"RandomPaletteComponent": {}
+				}
 			}
 
 		]

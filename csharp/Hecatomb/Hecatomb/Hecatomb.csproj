@@ -75,6 +75,8 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\RandomPaletteComponent.cs" />
+    <Compile Include="StateHandlers\RandomPaletteHandler.cs" />
     <Compile Include="StateHandlers\SpiderHandler.cs" />
     <Compile Include="StateHandlers\CommandLogger.cs" />
     <Compile Include="Core\BuildHandler.cs" />

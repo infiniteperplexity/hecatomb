@@ -181,4 +181,39 @@ namespace Hecatomb
         {
         }
     }
+
+    public class DebugFlowerSpell : Spell, ISelectsTile
+    {
+        public DebugFlowerSpell() : base()
+        {
+            MenuName = "spawn flower (debug)";
+            cost = 0;
+            ForDebugging = true;
+        }
+
+        public override void ChooseFromMenu()
+        {
+            if (GetCost() > Component.Sanity)
+            {
+                Debug.WriteLine("cannot cast spell");
+            }
+            else
+            {
+                ControlContext.Set(new SelectTileControls(this));
+            }
+        }
+
+        static int NextFlower = 0;
+        public void SelectTile(Coord c)
+        {
+            Feature f = Entity.Spawn<Feature>("Flower");
+            f.Place(c.X, c.Y, c.Z);
+            f.GetComponent<RandomPaletteComponent>().RandomPaletteType = RandomPaletteHandler.FlowerNames[NextFlower].Item1;
+            NextFlower = (NextFlower + 1) % RandomPaletteHandler.FlowerNames.Count;
+        }
+
+        public void TileHover(Coord c)
+        {
+        }
+    }
 }
