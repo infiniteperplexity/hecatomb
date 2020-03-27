@@ -40,6 +40,7 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- add an apothecary to support dying
 - Should we highlight achievements in magenta when there is a new one?
 - Deep water uses the wrong glyph
 * Did a zombie stepto an air space to harvest a web, when the slope got dug out from under it?

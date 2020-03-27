@@ -32,13 +32,7 @@ namespace Hecatomb
         {
             if (Entity.Unbox().TypeName == "Flower")
             {
-                foreach (var tuple in RandomPaletteHandler.FlowerNames)
-                {
-                    if (tuple.Item1 == RandomPaletteType)
-                    {
-                        return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(RandomPaletteType);
-                    }
-                }
+                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColorName(RandomPaletteType);
             }
             // shouldn't reach this
             return "white";

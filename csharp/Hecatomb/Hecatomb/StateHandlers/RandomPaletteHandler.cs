@@ -109,5 +109,17 @@ namespace Hecatomb
             }
             return FlowerColors[s];
         }
+
+        public string GetFlowerColorName(string s)
+        {
+            foreach (var tuple in RandomPaletteHandler.FlowerNames)
+            {
+                if (tuple.Item1 == s)
+                {
+                    return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(s);
+                }
+            }
+            return "white";
+        }
     }
 }

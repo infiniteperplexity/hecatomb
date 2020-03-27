@@ -75,7 +75,9 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ColorizeTask.cs" />
     <Compile Include="Components\RandomPaletteComponent.cs" />
+    <Compile Include="CustomizedComponent.cs" />
     <Compile Include="StateHandlers\RandomPaletteHandler.cs" />
     <Compile Include="StateHandlers\SpiderHandler.cs" />
     <Compile Include="StateHandlers\CommandLogger.cs" />

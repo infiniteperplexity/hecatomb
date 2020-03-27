@@ -152,6 +152,11 @@ namespace Hecatomb
                 }
                 //return Game.Colors.Interpolate(rotten, FG, decay);
             }
+            var cc = TryComponent<CustomizedComponent>();
+            if (cc?.FG != null)
+            {
+                return cc.FG;
+            }
             return FG;
         }
 
@@ -177,6 +182,11 @@ namespace Hecatomb
                 {
                     return "yellow";
                 }
+            }
+            var cc = TryComponent<CustomizedComponent>();
+            if (cc?.BG != null)
+            {
+                return cc.BG;
             }
             return BG;
         }
