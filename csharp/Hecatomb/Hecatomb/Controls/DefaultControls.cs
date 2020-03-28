@@ -118,7 +118,7 @@ namespace Hecatomb
                     foreach (var res in total.Keys)
                     {
                         var r = Resource.Types[res];
-                        MenuTop.Add("{" + r.ListColor + "} - " + Resource.Format((res, total[res])));
+                        MenuTop.Add("{" + Resource.GetListColor(res) + "} - " + Resource.Format((res, total[res])));
                     }
                 }
             }

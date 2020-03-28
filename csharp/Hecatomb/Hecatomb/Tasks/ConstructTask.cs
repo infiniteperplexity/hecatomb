@@ -56,14 +56,14 @@ namespace Hecatomb
                 bool valid = true;
                 foreach (string s in structure.ResearchPrereqs)
                 {
-                    if (!researched.Contains(s))
+                    if (!Options.NoIngredients && !researched.Contains(s))
                     {
                         valid = false;
                     }
                 }
                 foreach (string s in structure.StructurePrereqs)
                 {
-                    if (!structures.Contains(s))
+                    if (!Options.NoIngredients && !structures.Contains(s))
                     {
                         valid = false;
                     }
@@ -91,7 +91,7 @@ namespace Hecatomb
         public ConstructTask(): base()
 		{
             Structure = new TileEntityField<Structure>();
-			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket", "StoneMason", "Forge", "Chirurgeon", "Library", "Treasury"};
+			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket", "StoneMason", "Forge", "Chirurgeon", "Apothecary", "Library", "Treasury"};
 			MenuName = "construct or repair a structure";
             Harvests = new Dictionary<string, float>();
             Priority = 4;

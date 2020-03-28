@@ -25,8 +25,13 @@ namespace Hecatomb
         {
             // should I call this several times upon Placement?
             int MaxTrades = 4;
-            int r = Game.World.Random.Arbitrary(PotentialTrades.Count, OwnSeed());
-            //int r = Game.World.Random.Next(PotentialTrades.Count);
+            //int extraSeed = 1;
+            //if (AvailableTrades.Count > 0)
+            //{
+            //    extraSeed = AvailableTrades[0].OwnSeed();
+            //}
+            //int r = Game.World.Random.Arbitrary(PotentialTrades.Count, (OwnSeed() + extraSeed));
+            int r = Game.World.Random.Next(PotentialTrades.Count);
             TradeTask newTrade = Entity.Mock<TradeTask>();
             newTrade.Ingredients = PotentialTrades[r].Ingredients;
             newTrade.Trading = PotentialTrades[r].Trading;
@@ -37,7 +42,6 @@ namespace Hecatomb
                 AvailableTrades.RemoveAt(MaxTrades-1);
             }
             AvailableTrades.Insert(0,newTrade);
-
         }
         public override GameEvent OnTurnBegin(GameEvent ge)
         {
@@ -59,12 +63,14 @@ namespace Hecatomb
                 ("Gold", 1, "Flint", 2),
                 ("Gold", 1, "Coal", 2),
                 ("Gold", 1, "Bone", 2),
-                ("Gold", 1, "Tin", 1),
-                ("Gold", 1, "Copper", 1),
+                ("Gold", 1, "TinOre", 1),
+                ("Gold", 1, "CopperOre", 1),
+                ("Gold", 1, "Silk", 2),
                 ("Flint", 3, "Gold", 1),
                 ("Coal", 3, "Gold", 1),
-                ("Tin", 2, "Gold", 1),
-                ("Copper", 2, "Gold", 1)
+                ("Silk", 3, "Gold", 1),
+                ("TinOre", 2, "Gold", 1),
+                ("CopperOre", 2, "Gold", 1)
             };
 
             foreach (var tuple in potential)
@@ -74,6 +80,7 @@ namespace Hecatomb
                 t.Trading[tuple.Item3] = tuple.Item4;
                 PotentialTrades.Add(t);
             }
+            // maybe add dyes here as well?
         }
         public BlackMarket() : base()
         {

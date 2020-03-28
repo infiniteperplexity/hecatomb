@@ -133,9 +133,15 @@ namespace Hecatomb
                 var task = market.AvailableTrades[g.N];
                 task.ChooseFromMenu();
             }
+            else if (g.Command == "ColorizeTask")
+            {
+                var task = t.GetTask("ColorizeTask");
+                task.Makes = g.Makes;
+                task.SelectTile(c);
+            }
             else
             {
-                Debug.WriteLine("Apparnetly I forgot to code the " + g.Command + " command?");
+                Debug.WriteLine("Apparently I forgot to code the " + g.Command + " command?");
             }
         }
         public CommandLogger()

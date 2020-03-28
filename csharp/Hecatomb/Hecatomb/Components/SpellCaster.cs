@@ -125,6 +125,7 @@ namespace Hecatomb
 		
 		public Spell GetSpell(Type t)
 		{
+            
             Spell spell = (Spell)Activator.CreateInstance(t);
             spell.Component = this;
             spell.Caster = (Creature) Entity;
@@ -133,7 +134,7 @@ namespace Hecatomb
 		
 		public Spell GetSpell(String s)
 		{
-			Type t = Type.GetType("Hecatomb."+s);
+            Type t = Type.GetType("Hecatomb."+s);
             Spell spell = (Spell) Activator.CreateInstance(t);
             spell.Component = this;
             spell.Caster = (Creature) Entity;

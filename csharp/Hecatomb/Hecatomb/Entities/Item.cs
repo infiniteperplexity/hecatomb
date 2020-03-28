@@ -88,7 +88,7 @@ namespace Hecatomb
                     return "olive";
                 }
             }
-            return Hecatomb.Resource.Types[Resource].FG;
+            return Hecatomb.Resource.GetResourceColor(Resource);
         }
 
         public GameEvent CorpseDecays(GameEvent ge)

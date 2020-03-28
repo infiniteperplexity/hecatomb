@@ -32,7 +32,7 @@ namespace Hecatomb
         {
             if (Entity.Unbox().TypeName == "Flower")
             {
-                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColorName(RandomPaletteType);
+                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(RandomPaletteType);
             }
             // shouldn't reach this
             return "white";

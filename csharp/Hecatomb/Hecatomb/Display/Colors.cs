@@ -123,5 +123,56 @@ namespace Hecatomb
             c.B = (byte)Math.Max(0, c.B - 255 + light);
             return Stringify(c);
         }
+
+        public static (int, int, int) SplitRGB(int i)
+        {
+            int r = (i & 0xFF0000) >> 16;
+            int g = (i & 0xFF00) >> 8;
+            int b = (i & 0xFF);
+            return (r, g, b);
+        }
+
+        public static (int, int, int) SplitRGB(string s)
+        {
+            Color c = Game.Colors[s];
+            return (c.R, c.G, c.B);
+        }
+
+        public static int GetLightness(int i)
+        {
+            var (r, g, b) = SplitRGB(i);
+            return Math.Max(r, Math.Max(g, b));
+        }
+
+        public static int GetLightness(string s)
+        {
+            var (r, g, b) = SplitRGB(s);
+            return Math.Max(r, Math.Max(g, b));
+        }
+
+        public static int GetGreenness(int i)
+        {
+            var (r, g, b) = SplitRGB(i);
+            return 2 * g - r - b;
+        }
+
+        public static int GetGreenness(string s)
+        {
+            var (r, g, b) = SplitRGB(s);
+            return 2 * g - r - b;
+        }
+
+        public static int GetBrightness(int i)
+        {
+            var (r, g, b) = SplitRGB(i);
+            return Math.Max(Math.Max(Math.Abs(r - g), Math.Abs(r - b)), Math.Abs(g - b));
+        }
+
+        public static int GetBrightness(string s)
+        {
+            var (r, g, b) = SplitRGB(s);
+            return Math.Max(Math.Max(Math.Abs(r - g), Math.Abs(r - b)), Math.Abs(g - b));
+        }
+
     }
 }

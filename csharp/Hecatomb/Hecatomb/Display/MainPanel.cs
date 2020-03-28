@@ -150,6 +150,10 @@ namespace Hecatomb
             {
                 Game.Sprites.DrawString(Fonts[0], "^", vfg + (new Vector2(-2, 0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
             }
+            else if (c == '\u2235')
+            {
+                Game.Sprites.DrawString(Fonts[1], "\u26EC", vfg + (new Vector2(-3, -5)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+            }
             else
             {
                 Game.Sprites.DrawString(font, s, vfg, cfg);

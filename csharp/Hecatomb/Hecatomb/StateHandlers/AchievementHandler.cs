@@ -55,6 +55,18 @@ namespace Hecatomb
                     Description = "(find some gold.)",
                     Condition = (AchievementEvent a) => {return a.Action=="FoundGold"; }
                 },
+                new Achievement()
+                {
+                    Name = "Let's Make A Deal.",
+                    Description = "(finish a trade at the black market.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="FinishedTrade"; }
+                },
+                new Achievement()
+                {
+                    Name = "A Splash Of Color.",
+                    Description = "(build an apothecary, find flowers, and dye a fixture.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="FinishedDyeTask"; }
+                },
             };
         }
 

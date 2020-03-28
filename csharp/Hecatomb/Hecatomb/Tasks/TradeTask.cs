@@ -56,7 +56,7 @@ namespace Hecatomb
                 {
                     available = true;
                 }
-                cachedMenuListing = (((available) ? "{white}" : "{gray}") + Resource.Format(Ingredients) + " for " + " ($: " + Resource.Format(Trading) + ")");
+                cachedMenuListing = (((available) ? "{white}" : "{gray}") + Resource.Format(Trading) + " for " + " ($: " + Resource.Format(Ingredients) + ")");
                 cachedTurn = Game.World.Turns.Turn;
                 return cachedMenuListing;
             }
@@ -117,7 +117,6 @@ namespace Hecatomb
         }
         public override void Work()
         {
-            Debug.WriteLine("worked a trade task");
             Labor -= (1 + Options.WorkBonus);
             Unassign();
             Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);
@@ -144,6 +143,7 @@ namespace Hecatomb
                 int n = Trading[resource];
                 Item.PlaceNewResource(resource, n, X, Y, Z);
             }
+            Game.World.Events.Publish(new AchievementEvent() { Action = "FinishedTrade" });
             Complete();
         }
 

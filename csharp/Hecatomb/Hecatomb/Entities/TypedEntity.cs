@@ -126,7 +126,6 @@ namespace Hecatomb
             if (palette != null)
             {
                 string s = GetComponent<RandomPaletteComponent>().GetFG();
-                Debug.WriteLine(s);
                 return s;
             }
 

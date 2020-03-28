@@ -206,9 +206,10 @@ namespace Hecatomb
         static int NextFlower = 0;
         public void SelectTile(Coord c)
         {
-            Feature f = Entity.Spawn<Feature>("Flower");
-            f.Place(c.X, c.Y, c.Z);
-            f.GetComponent<RandomPaletteComponent>().RandomPaletteType = RandomPaletteHandler.FlowerNames[NextFlower].Item1;
+            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var s = RandomPaletteHandler.FlowerNames[NextFlower].Item1;
+            Feature f = RandomPaletteHandler.SpawnFlower(s);
+            f.Place(c.X, c.Y, c.Z);  
             NextFlower = (NextFlower + 1) % RandomPaletteHandler.FlowerNames.Count;
         }
 

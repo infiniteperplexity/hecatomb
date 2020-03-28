@@ -43,6 +43,17 @@ namespace Hecatomb
                     f.GetValue(null);
                 }
             }
+            var handler = Game.World.GetState<RandomPaletteHandler>();
+            handler.PickFlowerColors();
+            foreach (var tuple in RandomPaletteHandler.FlowerNames)
+            {
+                new Resource(
+                    type: tuple.Item1,
+                    name: tuple.Item2,
+                    symbol: '\u2698',
+                    fg: "white"
+                );
+            }
         }
     }
 }

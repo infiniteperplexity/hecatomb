@@ -34,6 +34,23 @@ namespace Hecatomb
             ListColor = (listColor == null) ? fg : listColor;
         }
 
+        public static string GetListColor(string resource)
+        {
+            if (RandomPaletteHandler.FlowerDictionary.ContainsKey(resource))
+            {
+                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
+            }
+            return Types[resource].ListColor;
+        }
+        public static string GetResourceColor(string resource)
+        {
+            if (RandomPaletteHandler.FlowerDictionary.ContainsKey(resource))
+            {
+                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
+            }
+            return Types[resource].FG;
+        }
+
         public static string Format(ValueTuple<string, int> vt)
         {
             var (s, i) = vt;

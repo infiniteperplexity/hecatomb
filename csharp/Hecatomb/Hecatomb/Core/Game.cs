@@ -387,7 +387,7 @@ namespace Hecatomb
             }
             // this method of handling preserves the stack trace
             var capturedException = ExceptionDispatchInfo.Capture(e);
-            capturedException.Throw();
+             capturedException.Throw();
         }
         protected override void Update(GameTime gameTime)
         {

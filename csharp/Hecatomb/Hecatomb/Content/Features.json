@@ -143,7 +143,17 @@
 				"FG" : "white",
 				"Symbol" : "\u2698",
 				"Components" : {
-					"RandomPaletteComponent": {}
+					"RandomPaletteComponent": {},
+					"Harvestable": { "Yields": {}}
+				}
+			},
+			{
+				"Type" : "CustomizedTile",
+				"Name": "you are seeing this in error",
+				"FG" : "red",
+				"Symbol" : "X",
+				"Components" : {
+					"CustomizedComponent": {}
 				}
 			}
 

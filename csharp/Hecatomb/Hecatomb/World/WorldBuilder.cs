@@ -75,6 +75,7 @@ namespace Hecatomb
             }
             placeSoils();
             placeOres();
+            plantFlowers();
             for (int i = 1; i < world.Width - 1; i++) {
                 for (int j = 1; j < world.Height - 1; j++) {
                     int k = world.GetGroundLevel(i, j);
@@ -111,7 +112,7 @@ namespace Hecatomb
                         float plants = vscale * VegetationNoise.GetSimplexFractal(hscale * i, hscale * j);
                         if (plants > 1.0f)
                         {
-                            if (world.Random.Next(2) == 1)
+                            if (world.Random.Next(2) == 1 && Game.World.Features[i, j, k] == null)
                             {
                                 Feature tree;
                                 if (world.Covers[i, j, k].Liquid)
@@ -132,7 +133,7 @@ namespace Hecatomb
                         else
                         {
                             Func<int, int, int, bool> downslopes = (int x, int y, int zz) => (world.GetTile(x, y, zz) == Terrain.DownSlopeTile);
-                            if (world.Random.Next(25) == 0 && i%2 == j%2 && !world.Covers[i, j, k].Liquid && Tiles.GetNeighbors8(i, j, k, where: downslopes).Count == 0)
+                            if (Game.World.Features[i, j, k] == null && world.Random.Next(25) == 0 && i%2 == j%2 && !world.Covers[i, j, k].Liquid && Tiles.GetNeighbors8(i, j, k, where: downslopes).Count == 0)
                             {
                                 Feature grave = Entity.Spawn<Feature>("Grave");
                                 grave.Place(i, j, k);
@@ -163,6 +164,45 @@ namespace Hecatomb
         }
 
 
+        protected void plantFlowers()
+        {
+            // make sure the stupid thing does it here, just in case
+            Game.World.GetState<RandomPaletteHandler>().PickFlowerColors();
+            int vchunks = 3;
+            int hchunks = 3;
+            int vchunk = Game.World.Height / vchunks;
+            int hchunk = Game.World.Width / hchunks;
+            for (var i = 0; i < hchunks; i++)
+            {
+                for (var j = 0; j < vchunks; j++)
+                {
+                    var flower = RandomPaletteHandler.FlowerNames[i * 3 + j].Item1;
+                    int rx = Game.World.Random.Next(hchunk);
+                    int ry = Game.World.Random.Next(vchunk);
+                    int x = i * hchunk + rx;
+                    int y = j * vchunk + ry;
+                    Debug.WriteLine("planting flowers centered at " + x + " " + y);
+                    for (var dx = x-6; dx < x+6; dx++)
+                    {
+                        for (var dy = y-6; dy < y+6; dy++)
+                        {
+                            double d = Math.Sqrt((dx - x) * (dx - x) + (dy - y) * (dy - y));
+                            double r = Game.World.Random.NextDouble();
+                            if (d <= 6.0 && d/4.0<r)
+                            {
+                                if (dx > 0 && dx < Game.World.Width-1 && dy > 0 && dy < Game.World.Height - 1 && Game.World.Features[dx, dy, Game.World.GetGroundLevel(dx, dy)] == null && !Game.World.Covers[dx, dy, Game.World.GetGroundLevel(dx, dy)].Liquid)
+                                {
+                                    var f = RandomPaletteHandler.SpawnFlower(flower);
+                                    f.Place(dx, dy, Game.World.GetGroundLevel(dx, dy));
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            }
+
+        }
         protected void placeSoils()
         {
             int soil = 1;

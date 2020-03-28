@@ -11,7 +11,8 @@
 - Additional spacebar selection clicks register too quickly
 * should be able to overlay partial construct using same building (fixed I think)
 * Right now there's really weird treatment of abandoned build or dig tasks (probably fixed)
-- We need Particle emitter constructors that can do colors and stuff
+- We need 
+emitter constructors that can do colors and stuff
 - Maybe research tasks should show turns when there are no ingredients
 - Zombies somehow can get stuck highlighted, so can structures.
 - Easy way to count zombies?

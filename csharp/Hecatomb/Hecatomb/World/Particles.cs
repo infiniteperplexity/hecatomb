@@ -156,6 +156,10 @@ namespace Hecatomb
         
         public void Remove()
         {
+            if (!Placed)
+            {
+                return;
+            }
             Game.World.Particles[X, Y, Z] = Game.World.Particles[X, Y, Z].Where(p=>p!=this).ToList();
             X = -1;
             Y = -1;

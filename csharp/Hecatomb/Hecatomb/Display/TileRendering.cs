@@ -157,9 +157,10 @@ namespace Hecatomb
                 else if (cover.Liquid)
                 {
                     // deeper liquid
-                    if (zview == -1 && coverb.Liquid && Tiles[x, y, z - 1] != Terrain.UpSlopeTile)
+                    if (zview == -1 && coverb == cover && Tiles[x, y, z - 1] != Terrain.UpSlopeTile)
                     {
-                        sym = '\u2235';
+                        //sym = '\u2235';
+                        sym = '.';
                     }
                     // submerged terrain
                     else
@@ -221,9 +222,20 @@ namespace Hecatomb
                     }
                 }
                 // cover overrides terrain for liquids, solids, and floor tiles; e.g. not a grassy slope
-                else if (cover.Liquid || cover.Solid || terrain == Terrain.FloorTile)
+                else if (cover.Solid || terrain == Terrain.FloorTile)
                 {
                     fg = fg ?? cover.FG;
+                }
+                else if (cover.Liquid)
+                {
+                    if (zview == -1 && coverb == cover)
+                    {
+                        fg = fg ?? "BELOWFG";
+                    }
+                    else
+                    {
+                        fg = fg ?? cover.FG;
+                    }
                 }
                 else
                 {

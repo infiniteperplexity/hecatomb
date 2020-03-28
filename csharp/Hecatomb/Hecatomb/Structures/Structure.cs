@@ -323,7 +323,7 @@ namespace Hecatomb
                 foreach (string res in stored.Keys)
                 {
                     var r = Resource.Types[res];
-                    menu.MenuTop.Add("{" + r.ListColor + "}- " + Resource.Format((res, stored[res])));
+                    menu.MenuTop.Add("{" + Resource.GetListColor(res) + "}- " + Resource.Format((res, stored[res])));
                 }
             }
             Game.InfoPanel.Dirty = true;
