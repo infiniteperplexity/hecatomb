@@ -18,13 +18,20 @@ namespace Hecatomb
             AddListener<TurnBeginEvent>(OnTurnBegin);
         }
 
+        public List<Feature> GetFlowersOfType(string s)
+        {
+            return Game.World.Features.Where<Feature>((Feature f) => f.TypeName=="Flower" && f.GetComponent<RandomPaletteComponent>().RandomPaletteType == s).ToList();
+        }
+
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnBeginEvent te = (TurnBeginEvent)ge;
-            int nTurns = 10;
-            int chance = 5;
-            if (te.Turn%nTurns==0)
+            
+            int grassTurns = 10;     
+            if (te.Turn%grassTurns==0)
             {
+                // grass
+                int grassChance = 5;
                 for (int x=1; x<Game.World.Width-1; x++)
                 {
                     for (int y = 1; y < Game.World.Width - 1; y++)
@@ -32,7 +39,7 @@ namespace Hecatomb
                         int z = Game.World.GetGroundLevel(x, y);
                         if (Game.World.Outdoors[x, y, z]==2 && (Game.World.Terrains[x, y, z] == Terrain.FloorTile || Game.World.Terrains[x, y, z] == Terrain.UpSlopeTile) && Game.World.Covers[x, y, z] == Cover.NoCover && Game.World.Features[x, y, z]==null)
                         {
-                            if (Game.World.Random.Arbitrary(chance, OwnSeed()) == 0)
+                            if (Game.World.Random.Arbitrary(grassChance, OwnSeed()) == 0)
                             //if (Game.World.Random.Next(chance)==0)
                             {
                                 Game.World.Covers[x, y, z] = Cover.Grass;
@@ -41,56 +48,49 @@ namespace Hecatomb
                     }
                 }
             }
+            int flowerTurns = 25;
+            if (te.Turn%flowerTurns==0)
+            {
+                var flowers = new Dictionary<string, List<Feature>>();
+                foreach (var tuple in RandomPaletteHandler.FlowerNames)
+                {
+                    flowers[tuple.Item1] = new List<Feature>();
+                }
+                foreach (Feature f in Game.World.Features)
+                {
+                    if (f.TypeName == "Flower")
+                    {
+                        flowers[f.GetComponent<RandomPaletteComponent>().RandomPaletteType].Add(f);
+                    }
+                }
+                foreach (var tuple in RandomPaletteHandler.FlowerNames)
+                { 
+                    if (Game.World.Random.Next(2)==0)
+                    {
+                        var list = flowers[tuple.Item1].OrderBy((Feature f) => Game.World.Random.Arbitrary(f.OwnSeed())).ToList();
+                        if (list.Count > 0 && list.Count <= 24)
+                        {
+                            Feature f = list[0];
+                            Coord? c = Tiles.NearbyTile(f.X, f.Y, f.Z, max: 2, min: 1, valid: (x, y, z) =>
+                            {
+                                return (
+                                    Game.World.Features[x, y, z] == null
+                                    && Game.World.Terrains[x, y, z] == Terrain.FloorTile
+                                );
+                            });
+                            if (c != null)
+                            {
+                                Coord cc = (Coord)c;
+                                Feature f1 = RandomPaletteHandler.SpawnFlower(tuple.Item1);
+                                Debug.WriteLine($"placing a new flower at {cc.X} {cc.Y} {cc.Z}");
+                                f1.Place(cc.X, cc.Y, cc.Z);
+                            }
+                        }
+                    }   
+                }
+            }
+            
             return ge;
         }
     }
 }
-
-
-//onTurnBegin: function()
-//{
-//    if (HTomb.Time.dailyCycle.turn % 50 !== 0)
-//    {
-//        return;
-//    }
-//    for (let x = 1; x < LEVELW - 1; x++)
-//    {
-//        for (let y = 1; y < LEVELH - 1; y++)
-//        {
-//            if (ROT.RNG.getUniform() >= 0.1)
-//            {
-//                continue;
-//            }
-//            let z = HTomb.Tiles.groundLevel(x, y);
-//            // don't grow over slopes or features I guess
-//            if (HTomb.World.tiles[z][x][y] !== HTomb.Tiles.FloorTile || HTomb.World.covers[z][x][y] !== HTomb.Covers.NoCover || HTomb.World.features[coord(x, y, z)])
-//            {
-//                continue;
-//            }
-
-//            if (z === 54)
-//            {
-//                if (ROT.RNG.getUniformInt(1, 2) === 1)
-//                {
-//                    var n = HTomb.Tiles.countNeighborsWhere(x, y, z, function(x, y, z) {
-//                        return (HTomb.World.covers[z][x][y] === HTomb.Covers.Grass);
-//                    });
-//    if (n > 0)
-//    {
-//        HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
-//    }
-//} else {
-//              HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
-//            }
-//          }
-//          if (z<54) {
-//            var n = HTomb.Tiles.countNeighborsWhere(x, y, z, function(x, y, z) {
-//              return (HTomb.World.covers[z][x][y] === HTomb.Covers.Grass);
-//            });
-//            if (n>0) {
-//              HTomb.World.covers[z][x][y] = HTomb.Covers.Grass;
-//            }
-//          } else {
-//            HTomb.World.covers[z][x][y] = HTomb.Covers.Snow;
-//          }
-//        }

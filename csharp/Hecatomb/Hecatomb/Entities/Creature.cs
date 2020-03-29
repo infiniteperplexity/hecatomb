@@ -321,5 +321,10 @@ namespace Hecatomb
             return base.GetDisplayName();
         }
 
+        public static Coord? FindPlace(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true)
+        {
+            return Tiles.NearbyTile(x, y, z, max: max, min: min, valid: (fx, fy, fz) => { return (Creatures[fx, fy, fz] == null); });
+        }
+
     }
 }

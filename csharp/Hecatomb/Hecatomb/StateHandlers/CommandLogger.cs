@@ -139,6 +139,12 @@ namespace Hecatomb
                 task.Makes = g.Makes;
                 task.SelectTile(c);
             }
+            else if (g.Command == "FarmingTask")
+            {
+                var task = t.GetTask("FarmingTask");
+                task.Makes = g.Makes;
+                task.SelectTile(c);
+            }
             else
             {
                 Debug.WriteLine("Apparently I forgot to code the " + g.Command + " command?");

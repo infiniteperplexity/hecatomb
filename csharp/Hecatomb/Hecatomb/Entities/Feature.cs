@@ -74,5 +74,15 @@ namespace Hecatomb
             }
             return base.GetDisplayName();
         }
+
+        // are these good defaults?
+        public static Coord? FindPlace(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, int expand = 0)
+        {
+            return Tiles.NearbyTile(x, y, z, max: max, min: min, groundLevel: groundLevel, expand: expand, valid: (fx, fy, fz) => { return 
+                (Features[fx, fy, fz] == null)
+                && (!Covers[fx, fy, fz].Liquid)
+                && (Terrains[fx, fy, fz] == Terrain.FloorTile)
+                ; });
+        }
     }
 }

@@ -181,24 +181,15 @@ namespace Hecatomb
                     int ry = Game.World.Random.Next(vchunk);
                     int x = i * hchunk + rx;
                     int y = j * vchunk + ry;
-                    Debug.WriteLine("planting flowers centered at " + x + " " + y);
-                    for (var dx = x-6; dx < x+6; dx++)
-                    {
-                        for (var dy = y-6; dy < y+6; dy++)
-                        {
-                            double d = Math.Sqrt((dx - x) * (dx - x) + (dy - y) * (dy - y));
-                            double r = Game.World.Random.NextDouble();
-                            if (d <= 6.0 && d/4.0<r)
-                            {
-                                if (dx > 0 && dx < Game.World.Width-1 && dy > 0 && dy < Game.World.Height - 1 && Game.World.Features[dx, dy, Game.World.GetGroundLevel(dx, dy)] == null && !Game.World.Covers[dx, dy, Game.World.GetGroundLevel(dx, dy)].Liquid)
-                                {
-                                    var f = RandomPaletteHandler.SpawnFlower(flower);
-                                    f.Place(dx, dy, Game.World.GetGroundLevel(dx, dy));
-                                }
-                            }
-                        }
-                    }
                     
+                    Coord? cc = Feature.FindPlace(x, y, 0, max: 8, expand: 32);
+                    if (cc != null)
+                    {
+                        Coord c = (Coord)cc;
+                        Debug.WriteLine("planting " + flower + " at " + c.X + " " + c.Y);
+                        var f = RandomPaletteHandler.SpawnFlower(flower);
+                        f.Place(c.X, c.Y, c.Z);
+                    } 
                 }
             }
 

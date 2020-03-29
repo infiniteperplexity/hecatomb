@@ -155,6 +155,15 @@
 				"Components" : {
 					"CustomizedComponent": {}
 				}
+			},
+			{
+				"Type" : "Sapling",
+				"Name": "sapling",
+				"FG" : "#55A033",
+				"Symbol" : "\u2698",
+				"Components" : {
+					"Harvestable": { "Yields": {}}
+				}
 			}
 
 		]

@@ -75,6 +75,7 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FarmingTask.cs" />
     <Compile Include="Structures\Apothecary.cs" />
     <Compile Include="Tasks\ColorizeTask.cs" />
     <Compile Include="Components\RandomPaletteComponent.cs" />

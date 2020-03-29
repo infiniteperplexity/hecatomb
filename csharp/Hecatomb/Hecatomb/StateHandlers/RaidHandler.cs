@@ -48,7 +48,7 @@ namespace Hecatomb
             raidWorld.Player.Place(32, 32, 1);
             foreach (Creature cr in MainWorld.GetState<TaskHandler>().Minions)
             {
-                cr.PlaceNear(32, 32, 1);
+                //cr.PlaceNear(32, 32, 1);
             }
             TurnHandler.HandleVisibility();
         }

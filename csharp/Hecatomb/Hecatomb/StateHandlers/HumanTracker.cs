@@ -230,21 +230,25 @@ namespace Hecatomb
             for (int i = 0; i < PastEncounters + 1; i++)
             {
                 string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
-                var bandit = Entity.Spawn<Creature>(creature);
-                bandit.PlaceNear(x0, y0, 0, max: 5);
-                MyCreatures.Add(bandit);
-                TargetPlayer(bandit);
-                // do they occasionally get placed one step underground?
-                Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
-                if (i==0)
-                {
-                    Item loot = Item.SpawnNewResource("Gold", 1);
-                    bandit.GetComponent<Inventory>().Item = loot;
-                }
-            }
-            
-            // this would be a good time to calculate all the paths, yes?
 
+                Coord? cc = Creature.FindPlace(x0, y0, 0);
+                if (cc != null)
+                {
+                    Coord c = (Coord)cc;
+                    var bandit = Entity.Spawn<Creature>(creature);
+                    bandit.Place(c.X, c.Y, c.Z);
+                    MyCreatures.Add(bandit);
+                    TargetPlayer(bandit);
+                    // do they occasionally get placed one step underground?
+                    Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
+                    if (i == 0)
+                    {
+                        Item loot = Item.SpawnNewResource("Gold", 1);
+                        bandit.GetComponent<Inventory>().Item = loot;
+                    }
+                }
+                
+            }
             PastEncounters += 1;
         }
         

@@ -468,11 +468,11 @@ namespace Hecatomb
 		}
 
 
-        public static Coord NearbyTile(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        public static Coord? NearbyTile(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null, int maxTries = 500, int expand = 0)
         {
             valid = valid ?? ((int x1, int y1, int z1) => true);
             int tries = 0;
-            int maxTries = 1000;
+
             Coord c = new Coord(x, y, z);
             while (tries<maxTries)
             {
@@ -495,17 +495,21 @@ namespace Hecatomb
                 }
                 
             }
-            throw new Exception("Didn't find a valid tile!");
+            if (expand > max)
+            {
+                return NearbyTile(x, y, z, max: max + 1, min: min, groundLevel: groundLevel, valid: valid, expand: expand);
+            }
+            return null;
         }
 
-        public static Coord NearbyTile(Coord c, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        public static Coord? NearbyTile(Coord c, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null, int expand = 0)
         {
-            return NearbyTile(c.X, c.Y, c.Z, max: max, min: min, groundLevel: groundLevel, valid: valid);
+            return NearbyTile(c.X, c.Y, c.Z, max: max, min: min, groundLevel: groundLevel, valid: valid, expand: expand);
         }
 
-        public static Coord NearbyTile(TileEntity t, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null)
+        public static Coord? NearbyTile(TileEntity t, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool> valid = null, int expand = 0)
         {
-            return NearbyTile(t.X, t.Y, t.Z, max: max, min: min, groundLevel: groundLevel, valid: valid);
+            return NearbyTile(t.X, t.Y, t.Z, max: max, min: min, groundLevel: groundLevel, valid: valid, expand: expand);
         }
     }	
 }

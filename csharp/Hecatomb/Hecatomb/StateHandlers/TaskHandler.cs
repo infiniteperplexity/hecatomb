@@ -26,6 +26,7 @@ namespace Hecatomb
                 "ConstructTask", 
                 "FurnishTask", 
                 "ColorizeTask",
+                "FarmingTask",
                 "ButcherTask", 
                 "MendingTask", 
                 "ClaimTask", 

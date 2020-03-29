@@ -1,11 +1,4 @@
-﻿- swapped trade goods for gold
-- made it so graves appear only on a checkerboard
-
-newer ideas:
-- make spiders leave webs randomly
-- 
-
-
+﻿
 What does a thorough test look like?
 - Max out the tech tree and build all the things.
 - Fight the bandits, cast spells at them, and use traps.
@@ -40,11 +33,13 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
-- Okay...cautiously going back to a normal PRNG for choosing randomized trades, because the non-randomness of the other one was extremely obvious
+* add flower growth to growth handler
+- does the hover for furnish fixture format the names wrong
+* Okay...cautiously going back to a normal PRNG for choosing randomized trades, because the non-randomness of the other one was extremely obvious
 - go back and put more restrictions on random colors at some point
 - try to get rid of the triple initiation for state handlers
 * dye colors get reinitialized between items and features
-- add planting tasks for trees and flowers
+* add planting tasks for trees and flowers
 - some dye colors are hard to read on the menu
 - how shall we handle background dyes
 - how are we going to dye plain tiles with no features?
