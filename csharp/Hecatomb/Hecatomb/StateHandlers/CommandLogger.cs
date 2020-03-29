@@ -133,11 +133,12 @@ namespace Hecatomb
                 var task = market.AvailableTrades[g.N];
                 task.ChooseFromMenu();
             }
-            else if (g.Command == "ColorizeTask")
+            else if (g.Command == "DyeTask")
             {
-                var task = t.GetTask("ColorizeTask");
+                var task = (DyeTask) t.GetTask("DyeTask");
                 task.Makes = g.Makes;
-                task.SelectTile(c);
+                task.Background = (g.N == 1) ? true : false;
+                task.SelectZone(g.Squares);
             }
             else if (g.Command == "FarmingTask")
             {
