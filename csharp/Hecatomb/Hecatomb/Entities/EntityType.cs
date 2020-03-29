@@ -26,6 +26,7 @@ namespace Hecatomb
 		public string BG;
 		public char Symbol;
         public bool Solid;
+		public bool Plural;
 
 		public Dictionary<string, string> Components;
 		/// <summary>
@@ -47,6 +48,7 @@ namespace Hecatomb
 			e.FG = FG;
 			e.Symbol = Symbol;
 			e.BG = BG;
+			e.Plural = Plural;
 		}
 		public void Typify(TypedEntity e)
 		{
@@ -55,6 +57,7 @@ namespace Hecatomb
 			e.FG = FG;
 			e.BG = BG;
 			e.Symbol = Symbol;
+			e.Plural = Plural;
             if (e is Feature)
             {
                 (e as Feature).Solid = Solid;
@@ -79,6 +82,7 @@ namespace Hecatomb
             e.FG = FG;
             e.BG = BG;
             e.Symbol = Symbol;
+			e.Plural = Plural;
             if (e is Feature)
             {
                 (e as Feature).Solid = Solid;
@@ -109,6 +113,7 @@ namespace Hecatomb
 				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
+				et.Plural = (t["Plural"] == null) ? false : (bool)t["Plural"];
 				foreach (JProperty comp in (JToken) t["Components"])
 				{
 					string name = (string) comp.Name;
@@ -120,32 +125,18 @@ namespace Hecatomb
 			obj = JObject.Parse(json);
 			foreach (var t in obj["Types"])
 			{
-				EntityType et = new EntityType((string) t["Type"]);
-				et.Name = (string) t["Name"];
-				et.FG = (string) t["FG"];
-				et.Symbol = (char) t["Symbol"];
-                if (t["Solid"] != null)
-                {
-                    et.Solid = (bool)t["Solid"];
-                }
-				foreach (JProperty comp in (JToken) t["Components"])
+				EntityType et = new EntityType((string)t["Type"]);
+				et.Name = (string)t["Name"];
+				et.FG = (string)t["FG"];
+				et.Symbol = (char)t["Symbol"];
+				et.Plural = (t["Plural"] == null) ? false : (bool)t["Plural"];
+				if (t["Solid"] != null)
 				{
-					string name = (string) comp.Name;
-					et.Components[name] = comp.Value.ToString();
+					et.Solid = (bool)t["Solid"];
 				}
-			}
-			f = @"Content/Items.json";
-			json = File.ReadAllText(f);
-			obj = JObject.Parse(json);
-			foreach (var t in obj["Types"])
-			{
-				EntityType et = new EntityType((string) t["Type"]);
-				et.Name = (string) t["Name"];
-				et.FG = (string) t["FG"];
-				et.Symbol = (char) t["Symbol"];
-				foreach (JProperty comp in (JToken) t["Components"])
+				foreach (JProperty comp in (JToken)t["Components"])
 				{
-					string name = (string) comp.Name;
+					string name = (string)comp.Name;
 					et.Components[name] = comp.Value.ToString();
 				}
 			}

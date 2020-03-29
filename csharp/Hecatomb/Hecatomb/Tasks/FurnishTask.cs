@@ -67,6 +67,10 @@ namespace Hecatomb
                     task.Makes = f;
                     //task.MenuName = "furnish " + feat.Name;
                     task.MenuName = feat.Describe(article: false);
+                    if (task.Makes=="Masonry")
+                    {
+                        task.MenuName = "tiled stone floor";
+                    }
                     list.Add(task);
                 }
             }
@@ -84,7 +88,7 @@ namespace Hecatomb
 		{
 			MenuName = "build or repair a fixture";
             Priority = 4;
-            Fixtures = new string[] {"Door", "TiledFloor", "Ramp", "SpearTrap" };
+            Fixtures = new string[] {"Door", "Masonry", "Ramp", "SpearTrap" };
             PrereqStructures = new List<string> { "Workshop" };
             BG = "yellow";
 		}

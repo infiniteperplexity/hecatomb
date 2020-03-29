@@ -40,6 +40,7 @@ namespace Hecatomb
             Entity = e;
         }
 
+        // this method is kind of a disaster and doesn't work at all...what to do???
         public void AddToMockEntity(TypedEntity e)
         {
             // if it's a plain old Component subclass, use its own type as the key

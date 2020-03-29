@@ -181,7 +181,7 @@ namespace Hecatomb
                     int ry = Game.World.Random.Next(vchunk);
                     int x = i * hchunk + rx;
                     int y = j * vchunk + ry;
-                    
+                    // could require that it be a bit farther from the player
                     Coord? cc = Feature.FindPlace(x, y, 0, max: 8, expand: 32);
                     if (cc != null)
                     {

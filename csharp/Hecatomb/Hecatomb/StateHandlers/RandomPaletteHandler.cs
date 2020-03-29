@@ -39,7 +39,7 @@ namespace Hecatomb
             // consider all possible colors
             for (int i = 0; i < 0xFFFFFF; i++)
             {
-                bool tooGreen = (Colors.GetGreenness(i) >= 160);
+                bool tooGreen = (Colors.GetGreenness(i) >= 128);
                 bool tooGray = (Colors.GetLightness(i) < 0xBB && Colors.GetBrightness(i) < 50);
                 bool tooDark = Colors.GetLightness(i) < 128;
                 //f (!tooGray && !tooGreen && !tooDark)
@@ -73,10 +73,10 @@ namespace Hecatomb
                     lowestDifference = Math.Min(lowestDifference, Math.Abs(r - r1) + Math.Abs(g - g1) + Math.Abs(b - b1));
                 }
                 tries += 1;
-                //if (lowestDifference > 64 || tries > stopChecking)
-                //{
+                if (lowestDifference > 64 || tries > stopChecking)
+                {
                     picks.Add(PossibleFlowerColors[i]);
-                //}
+                }
             }
             for (int i = 0; i < FlowerNames.Count; i++)
             {
@@ -104,6 +104,14 @@ namespace Hecatomb
             Feature f = Entity.Spawn<Feature>("Flower");
             f.GetComponent<RandomPaletteComponent>().RandomPaletteType = s;
             f.GetComponent<Harvestable>().Yields[s] = 1;
+            return f;
+        }
+
+        // this is so ad hoc...
+        public static Feature MockFlower(string s)
+        {
+            Feature f = Entity.Mock<Feature>("Flower");
+            f.Name = FlowerDictionary[s];
             return f;
         }
     }

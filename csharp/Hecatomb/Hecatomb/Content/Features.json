@@ -81,19 +81,6 @@
 				}
 			},
 			{
-				"Type" : "TiledFloor",
-				"Name": "tiled stone floor",
-				"FG" : "FLOORFG",
-				"Symbol" : ".",
-				"Components" : {
-					"Fixture":	{
-						"Labor": 1,
-						"Structures": ["Workshop"]
-					},
-					"TiledFloorFeatureComponent": {}
-				}
-			},
-			{
 				"Type" : "Door",
 				"Name": "door",
 				"FG" : "brown",
@@ -148,12 +135,16 @@
 				}
 			},
 			{
-				"Type" : "CustomizedTile",
-				"Name": "you are seeing this in error",
-				"FG" : "red",
-				"Symbol" : "X",
+				"Type" : "Masonry",
+				"Name": "masonry",
+				"Symbol" : " ",
+				"Plural" : "true",
 				"Components" : {
-					"CustomizedComponent": {}
+					"Harvestable": { "Yields": {}},
+					"Fixture":	{
+						"Labor": 1,
+						"Structures": ["Workshop"]
+					},
 				}
 			},
 			{

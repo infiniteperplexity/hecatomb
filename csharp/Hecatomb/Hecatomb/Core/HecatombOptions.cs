@@ -8,6 +8,7 @@ namespace Hecatomb
 {
     public class HecatombOptions
     {
+        public bool NoErrorLog;
         public bool Explored;
         public bool Visible;
         public bool NoIngredients;
@@ -34,20 +35,22 @@ namespace Hecatomb
 
         public HecatombOptions()
         {
+            NoErrorLog = false;
+            NoErrorLog = true;
             ReconstructGames = false;
             //ReconstructGames = true;
             FullScreen = false;
             //FullScreen = true;
             Explored = false;
-            Explored = true;
+            //Explored = true;
             Visible = false;
-            Visible = true;
+            //Visible = true;
             NoIngredients = false;
-            //NoIngredients = true;
+            NoIngredients = true;
             NoTutorial = false;
-            //NoTutorial = true;
+            NoTutorial = true;
             NoStartupScreen = false;
-            //NoStartupScreen = true;
+            NoStartupScreen = true;
             NoHumanAttacks = false;
             //NoHumanAttacks = true;
             NoNatureAttacks = false;

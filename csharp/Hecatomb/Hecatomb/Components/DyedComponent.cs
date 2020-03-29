@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Hecatomb
 {
-    class CustomizedComponent : Component
+    class DyedComponent : Component
     {
         public string FG;
         public string BG;
-        public string Symbol;
     }
 }

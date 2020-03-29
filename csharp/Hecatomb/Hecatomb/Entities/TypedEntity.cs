@@ -107,7 +107,6 @@ namespace Hecatomb
             c.AddToEntity(this);
             return (T) c;
         }
-
         
         public override string GetDisplayName()
         {
@@ -151,7 +150,7 @@ namespace Hecatomb
                 }
                 //return Game.Colors.Interpolate(rotten, FG, decay);
             }
-            var cc = TryComponent<CustomizedComponent>();
+            var cc = TryComponent<DyedComponent>();
             if (cc?.FG != null)
             {
                 return cc.FG;
@@ -182,7 +181,7 @@ namespace Hecatomb
                     return "yellow";
                 }
             }
-            var cc = TryComponent<CustomizedComponent>();
+            var cc = TryComponent<DyedComponent>();
             if (cc?.BG != null)
             {
                 return cc.BG;

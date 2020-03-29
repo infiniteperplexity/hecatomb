@@ -75,11 +75,11 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FarmingTask.cs" />
+    <Compile Include="Tasks\FarmingTask.cs" />
     <Compile Include="Structures\Apothecary.cs" />
-    <Compile Include="Tasks\ColorizeTask.cs" />
+    <Compile Include="Tasks\DyeTask.cs" />
     <Compile Include="Components\RandomPaletteComponent.cs" />
-    <Compile Include="Components\CustomizedComponent.cs" />
+    <Compile Include="Components\DyedComponent.cs" />
     <Compile Include="StateHandlers\RandomPaletteHandler.cs" />
     <Compile Include="StateHandlers\SpiderHandler.cs" />
     <Compile Include="StateHandlers\CommandLogger.cs" />
@@ -140,7 +140,6 @@
     <Compile Include="Controls\SplashControls.cs" />
     <Compile Include="Tasks\ForbidTask.cs" />
     <Compile Include="Controls\TextEntryControls.cs" />
-    <Compile Include="Components\TiledFloorFeatureComponent.cs" />
     <Compile Include="Tasks\TradeTask.cs" />
     <Compile Include="Utilities\ICallStrings.cs" />
     <Compile Include="Tasks\ButcherTask.cs" />

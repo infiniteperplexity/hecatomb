@@ -33,6 +33,9 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- Building fixtures under water removes water, even though that logic is meant to remove grass
+- Show the latest message on default screens, not just message log.
+- AddToMockEntity is a dummy method that totally doesn't work
 * add flower growth to growth handler
 - does the hover for furnish fixture format the names wrong
 * Okay...cautiously going back to a normal PRNG for choosing randomized trades, because the non-randomness of the other one was extremely obvious

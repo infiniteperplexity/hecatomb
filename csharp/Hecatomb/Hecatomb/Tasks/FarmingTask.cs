@@ -12,7 +12,15 @@ namespace Hecatomb
     {
         public override string GetDisplayName()
         {
-            Feature f = Entity.Mock<Feature>(Makes);
+            Feature f;
+            if (RandomPaletteHandler.FlowerDictionary.ContainsKey(Makes))
+            {
+                f = RandomPaletteHandler.MockFlower(Makes);
+            }
+            else
+            {
+                f = Entity.Mock<Feature>(Makes);
+            }
             return $"plant {f.Describe()}";
         }
 
@@ -56,7 +64,7 @@ namespace Hecatomb
             MenuName = "plant a seedling";
             Priority = 4;
             PrereqStructures = new List<string> { "Apothecary" };
-            BG = "lime";
+            BG = "dark green";
         }
 
         public override void Start()
@@ -68,12 +76,15 @@ namespace Hecatomb
         {
             Feature f;
             var handler = Game.World.GetState<RandomPaletteHandler>();
+            Debug.WriteLine(Makes);
             if (RandomPaletteHandler.FlowerDictionary.ContainsKey(Makes))
             {
+                Debug.WriteLine("flag 0");
                 f = RandomPaletteHandler.SpawnFlower(Makes);
             }
             else
             {
+                Debug.WriteLine("flag 1");
                 f = Entity.Spawn<Feature>(Makes);
             }
             f.Place(X, Y, Z);

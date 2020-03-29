@@ -58,19 +58,19 @@ namespace Hecatomb
                 fg = "SHADOWFG";
             }
             // a visible creature
-            if (Creatures[c] != null && visible)
+            if (Creatures[c] != null && Creatures[c].Symbol != ' ' && visible)
             {
                 sym = Creatures[c].Symbol;
                 fg = fg ?? Creatures[c].GetCalculatedFG();
             }
             // a visible creature above
-            else if (zview == +1 && Creatures[ca] != null && (visible || va))
+            else if (zview == +1 && Creatures[ca] != null && Creatures[ca].Symbol != ' ' && (visible || va))
             {
                 sym = Creatures[ca].Symbol;
                 fg = fg ?? "WALLFG";
             }
             // a visible creature below
-            else if (zview == -1 && Creatures[cb] != null && (visible || vb))
+            else if (zview == -1 && Creatures[cb] != null && Creatures[cb].Symbol!=' ' && (visible || vb))
             {
                 sym = Creatures[cb].Symbol;
                 // a submerged creature below
@@ -91,10 +91,36 @@ namespace Hecatomb
                 fg = Items[c].GetCalculatedFG();
             }
             // features
-            else if (Features[c] != null)
+            else if (Features[c] != null && Features[c].Symbol != ' ' && Features[c].GetCalculatedFG() != null)
             {
                 sym = Features[c].Symbol;
                 fg = fg ?? Features[c].GetCalculatedFG();
+            }
+            // used mostly for masonry
+            else if (Features[c] != null && Features[c].Symbol != ' ' && Features[c].GetCalculatedFG() == null)
+            {
+                sym = Features[c].Symbol;
+                if (cover.Liquid)
+                {
+                    fg = cover.FG;
+                }
+                else
+                {
+                    fg = terrain.FG;
+                }
+            }
+            // used mostly for masonry
+            else if (Features[c] != null && Features[c].Symbol == ' ' && Features[c].GetCalculatedFG() != null)
+            {
+                fg = Features[c].GetCalculatedFG();
+                if (cover.Liquid)
+                {
+                    sym = cover.Symbol;
+                }
+                else
+                {
+                    sym = terrain.Symbol;
+                }
             }
             // items above
             else if (zview == +1 && Items[ca] != null)
@@ -119,13 +145,13 @@ namespace Hecatomb
                 }
             }
             // feature above
-            else if (zview == +1 && Features[ca] != null)
+            else if (zview == +1 && Features[ca] != null && Features[ca].Symbol != ' ')
             {
                 sym = Features[ca].Symbol;
                 fg = fg ?? "WALLFG";
             }
-            // feature below
-            else if (zview == -1 && Features[cb] != null)
+            // feature belowb
+            else if (zview == -1 && Features[cb] != null && Features[cb].Symbol != ' ')
             {
                 sym = Features[cb].Symbol;
                 // submerged feature
