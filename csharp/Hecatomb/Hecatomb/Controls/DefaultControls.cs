@@ -121,6 +121,17 @@ namespace Hecatomb
                         MenuTop.Add("{" + Resource.GetListColor(res) + "} - " + Resource.Format((res, total[res])));
                     }
                 }
+                var messages = Game.World.GetState<MessageHandler>().MessageHistory;
+                if (messages.Count > 0)
+                {
+                    MenuTop.Add(" ");
+                    var txt = messages[0];
+                    if (!txt.Colors.ContainsKey(0))
+                    {
+                        txt = new ColoredText("{cyan}" + txt.Text);
+                    }
+                    MenuTop.Add(txt);
+                }
             }
         }
 	}

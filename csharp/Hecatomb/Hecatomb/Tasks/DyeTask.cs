@@ -224,7 +224,7 @@ namespace Hecatomb
 
         public override void SelectZone(List<Coord> squares)
         {
-            CommandLogger.LogCommand(command: "DyeTask", makes: Makes, squares: squares, N: (Background == true) ? 1 : 0);
+            CommandLogger.LogCommand(command: "DyeTask", makes: Makes, squares: squares, n: (Background == true) ? 1 : 0);
             var handler = Game.World.GetState<RandomPaletteHandler>();
             foreach (Coord c in squares)
             {
