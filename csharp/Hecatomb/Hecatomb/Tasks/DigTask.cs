@@ -79,7 +79,7 @@ namespace Hecatomb
 					tiles[X, Y, Z-1] = up;
                     covers[X, Y, Z] = none;
                     covers[X, Y, Z - 1].Mine(X, Y, Z - 1);
-                    covers[X, Y, Z-1] = none;
+                    Cover.ClearCover(X, Y, Z - 1);
                     evnt = "Pit";
                     
                 } else if (tb==up)
@@ -112,7 +112,7 @@ namespace Hecatomb
 				tiles[X, Y, Z] = floor;
                 covers[X, Y, Z] = none;
                 tiles[X, Y, Z + 1] = empty;
-                covers[X, Y, Z + 1] = none;
+                Cover.ClearCover(X, Y, Z + 1);
                 evnt = "Level";
                 foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {

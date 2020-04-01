@@ -221,8 +221,8 @@ namespace Hecatomb
             RaiseZombieSpell.BreakTombstone(f);    
             Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
             Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
-            Game.World.Covers[X, Y, Z] = Cover.NoCover;
-            Game.World.Covers[X, Y, Z - 1] = Cover.NoCover;
+            Cover.ClearCover(X, Y, Z);
+            Cover.ClearCover(X, Y, Z - 1);
             base.Finish();
             Game.World.ValidateOutdoors();
         } 

@@ -154,8 +154,8 @@ namespace Hecatomb
             incomplete.Despawn();
 			Feature f = Entity.Spawn<Feature>("StructureFeature");
             f.Place(X, Y, Z);
-            Game.World.Covers[X, Y, Z] = Cover.NoCover;
-			f.Symbol = s.Symbols[FeatureIndex];
+            Cover.ClearCover(X, Y, Z);
+            f.Symbol = s.Symbols[FeatureIndex];
             f.Name = Structure.Name;
 			f.FG = s.FGs[FeatureIndex];
             //f.BG = sc.BGs[FeatureIndex];

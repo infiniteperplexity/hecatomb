@@ -82,8 +82,8 @@ namespace Hecatomb
             }
             Game.World.Terrains[x, y, z] = Terrain.DownSlopeTile;
             Game.World.Terrains[x, y, z - 1] = Terrain.UpSlopeTile;
-            Game.World.Covers[x, y, z] = Cover.NoCover;
-            Game.World.Covers[x, y, z - 1] = Cover.NoCover;
+            Cover.ClearCover(x, y, z);
+            Cover.ClearCover(x, y, z-1);
             Creature ghoul = Entity.Spawn<Creature>("HungryGhoul");
             ghoul.Place(x, y, z - 1);
             if (Game.World.Random.Arbitrary(10, OwnSeed()) == 0)

@@ -153,7 +153,8 @@
 				"FG" : "#55A033",
 				"Symbol" : "\u2698",
 				"Components" : {
-					"Harvestable": { "Yields": {}}
+					"Harvestable": { "Yields": {}},
+					"GrowthComponent": {"Makes" : "ClubTree", "Turns": 50}
 				}
 			}
 

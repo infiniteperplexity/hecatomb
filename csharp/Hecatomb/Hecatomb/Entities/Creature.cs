@@ -127,6 +127,7 @@ namespace Hecatomb
             Game.World.Creatures[x0, y0, z0] = null;
         }
 
+
         public override void Destroy(string cause = null)
         {
             int x = X;
@@ -141,7 +142,7 @@ namespace Hecatomb
             base.Destroy(cause: cause);
             if (!decaying)
             {
-                Item.SpawnCorpse().Place(x, y, z);
+                Item.SpawnCorpse(TypeName).Place(x, y, z);
             }
             else
             {

@@ -76,16 +76,17 @@ namespace Hecatomb
         {
             Feature f;
             var handler = Game.World.GetState<RandomPaletteHandler>();
-            Debug.WriteLine(Makes);
             if (RandomPaletteHandler.FlowerDictionary.ContainsKey(Makes))
             {
-                Debug.WriteLine("flag 0");
                 f = RandomPaletteHandler.SpawnFlower(Makes);
             }
             else
             {
-                Debug.WriteLine("flag 1");
                 f = Entity.Spawn<Feature>(Makes);
+                if (Makes == "Sapling" && Game.World.Random.Arbitrary(OwnSeed())<0.5)
+                {
+                    f.GetComponent<GrowthComponent>().Makes = "SpadeTree";
+                }
             }
             f.Place(X, Y, Z);
             base.Finish();

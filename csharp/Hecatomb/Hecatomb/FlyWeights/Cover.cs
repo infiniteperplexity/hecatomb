@@ -282,6 +282,11 @@ namespace Hecatomb
                     Item.PlaceNewResource("Rock", 1, x, y, z);
                 }
             }
+            ClearCover(x, y, z);
+        }
+
+        public static void ClearCover(int x, int y, int z)
+        {
             if (!Game.World.Covers[x, y, z].Liquid) // not sure how to deal with liquids here
             {
                 Game.World.Covers[x, y, z] = Cover.NoCover;

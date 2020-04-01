@@ -62,6 +62,7 @@ namespace Hecatomb
             return SpawnCorpse("Human");
         }
 
+
         public static Item SpawnCorpse(string creatureType)
         {
             // when you harvest a tombstone, it creatures a human corpse?
@@ -262,6 +263,7 @@ namespace Hecatomb
             Despawn();
         }
 
+        [JsonIgnore] Creature cachedMock;
         public override string Describe(
             bool article = true,
             bool definite = false,
@@ -270,8 +272,10 @@ namespace Hecatomb
         {
             string name = Hecatomb.Resource.Types[Resource].Name;
             string str = "";
+            
             if (Resource == "Corpse")
             {
+                //cachedMock = (cachedMock == null) ? Entity.Mock<Creature>(CorpseType) : cachedMock;
                 if (TotalDecay > 0)
                 {
                     double frac = (double)Decay / (double)TotalDecay;
@@ -287,6 +291,18 @@ namespace Hecatomb
                     {
                         str = "corpse";
                     }
+                    //if (frac < 0.25)
+                    //{
+                    //    str = "severely rotted " + cachedMock.Name + " corpse";
+                    //}
+                    //else if (frac < 0.5)
+                    //{
+                    //    str = "rotted " + cachedMock.Name + " corpse";
+                    //}
+                    //else
+                    //{
+                    //    str = cachedMock.Name + " corpse";
+                    //}
                 }
                 if (article)
                 {

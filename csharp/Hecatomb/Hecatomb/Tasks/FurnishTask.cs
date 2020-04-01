@@ -98,7 +98,8 @@ namespace Hecatomb
             Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
             Feature incomplete = Game.World.Features[X, Y, Z];
 			incomplete.Despawn();
-            Game.World.Covers[X, Y, Z] = Cover.NoCover;
+            // maybe some features should allow grass to stay?
+            Cover.ClearCover(X, Y, Z);
 			Feature finished = Entity.Spawn<Feature>(Makes);
 			finished.Place(X, Y, Z);
 			base.Finish();
@@ -127,7 +128,7 @@ namespace Hecatomb
 		{
 			var co = Game.Controls;
 			co.MenuMiddle.Clear();
-			co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {3} at {0} {1} {2}", c.X, c.Y, c.Z, Makes)};
+			co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {3} at {0} {1} {2}", c.X, c.Y, c.Z, Entity.Mock<Feature>(Makes).Name) };
 		}
 
         public override void SelectTile(Coord c)

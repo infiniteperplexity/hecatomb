@@ -156,7 +156,7 @@ namespace Hecatomb
                 {
                     var masonry = Entity.Spawn<Feature>("Masonry");
                     masonry.Place(X, Y, Z);
-                    Game.World.Covers[X, Y, Z] = Cover.NoCover;
+                    Cover.ClearCover(X, Y, Z);
                     f = masonry;
                 }
                 var dyed = f.TryComponent<DyedComponent>();

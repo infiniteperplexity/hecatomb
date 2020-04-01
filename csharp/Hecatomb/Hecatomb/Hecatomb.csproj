@@ -75,6 +75,7 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\GrowthComponent.cs" />
     <Compile Include="Tasks\FarmingTask.cs" />
     <Compile Include="Structures\Apothecary.cs" />
     <Compile Include="Tasks\DyeTask.cs" />

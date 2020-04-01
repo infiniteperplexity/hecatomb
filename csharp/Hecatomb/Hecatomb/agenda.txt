@@ -33,24 +33,26 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+* Saplings will never become trees
+- Should we allow pageUp to scroll through messages?
 - Possibly should add the text alerts to the tutorial
 - Building fixtures under water removes water, even though that logic is meant to remove grass
 - Show the latest message on default screens, not just message log.
 - AddToMockEntity is a dummy method that totally doesn't work
 * add flower growth to growth handler
-- does the hover for furnish fixture format the names wrong
+* does the hover for furnish fixture format the names wrong...yes, fixed
 * Okay...cautiously going back to a normal PRNG for choosing randomized trades, because the non-randomness of the other one was extremely obvious
 - go back and put more restrictions on random colors at some point
 - try to get rid of the triple initiation for state handlers
 * dye colors get reinitialized between items and features
 * add planting tasks for trees and flowers
 - some dye colors are hard to read on the menu
-- how shall we handle background dyes
+* how shall we handle background dyes
 - how are we going to dye plain tiles with no features?
 - Is it risky to double up names of flowers with resources?
 - add dyes to Black Market potential trades
 * add an apothecary to support dyeing
-- Should we highlight achievements in magenta when there is a new one?
+* Should we highlight achievements in magenta when there is a new one?
 * Deep water uses the wrong glyph
 * Did a zombie stepto an air space to harvest a web, when the slope got dug out from under it?
 * Add in a bunch of achievements
@@ -63,7 +65,7 @@ Fresh issues list starting on 2/14/2020:
 	- Or maybe I should just get rid of incomplete excavations?
 	- I'm not sure how I deal with features that can't be harvested.
 - Slaughterhouse should be able to disassemble zombies.
-- Should we be able to fight in message mode?  The whole idea of that doesn't really work unless we track whether we're in camera mode, and maybe have the message thing as an overlay?
+* Should we be able to fight in message mode?  The whole idea of that doesn't really work unless we track whether we're in camera mode, and maybe have the message thing as an overlay?
 - Give a message for defeating bandits, dryads, et cetera?
 - want some use for spider corpses
 - Should rotting be a little slower?
