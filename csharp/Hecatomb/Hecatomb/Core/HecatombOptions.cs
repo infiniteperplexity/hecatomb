@@ -66,7 +66,7 @@ namespace Hecatomb
             NoSpiders = false;
             //NoSpiders = true;
             NoGhouls = false;
-            //NoGhouls = true;
+            NoGhouls = true;
             NoBatCaves = false;
             //NoBatCaves = true;
             NoLairs = false;

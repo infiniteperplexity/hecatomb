@@ -33,6 +33,7 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- make bandits into grave robbers?
 - there's no way to refresh a rotten zombie, nor to slaughter one you don't want any more
 * zombies made from corpses start out rotten
 * game crashes if the selected creature dies.

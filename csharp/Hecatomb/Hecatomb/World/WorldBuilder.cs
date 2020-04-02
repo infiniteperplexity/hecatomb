@@ -365,9 +365,67 @@ namespace Hecatomb
             {
                 for (int y = 0; y < Game.World.Height; y += chunk)
                 {
-                    int nplaced = 0;
+                    
                     int tries = 0;
-                    int ntries = 1000;
+                    int ntries = 100;
+                    // maybe place a mausoleum
+                    if (world.Random.Next(3) == 0)
+                    {
+                        bool placed = false;
+                        while (!placed && tries < ntries)
+                        {
+                            tries += 1;
+                            int x0 = x + world.Random.Next(16);
+                            int y0 = y + world.Random.Next(16);
+                            if (x0 > 2 && y0 > 2 && x0 < world.Width - 3 && y0 < world.Width - 3)
+                            {
+                                // don't put mausoleums close to the center
+                                if (Tiles.QuickDistance(x0, y0, 0, world.Width/2, world.Height/2, 0) < 25)
+                                {
+                                    break;
+                                }
+                                int z = world.GetGroundLevel(x0, y0);
+                                if (world.Features[x0, y0, z] == null && x0 % 2 != y0 % 2 && !world.Covers[x0, y0, z].Liquid)
+                                {
+                                    bool valid = true;
+                                    for (int i = x0-2; i<=x0+2; i++)
+                                    {
+                                        for (int j = y0-2; j <= y0+2; j++)
+                                        {
+                                            if (world.Terrains[i, j, z] != Terrain.FloorTile || world.Features[i, j, z] != null || world.Covers[i, j, z].Liquid)
+                                            {
+                                                valid = false;
+                                            }
+                                        }
+                                    }
+                                    if (valid)
+                                    {
+                                        Feature f;
+                                        f = Entity.Spawn<Feature>("Mausoleum");
+                                        f.Place(x0, y0, z);
+                                        f = Entity.Spawn<Feature>("Grave");
+                                        f.Place(x0 + 1, y0, z);
+                                        f = Entity.Spawn<Feature>("Grave");
+                                        f.Place(x0 - 1, y0, z);
+                                        f = Entity.Spawn<Feature>("Grave");
+                                        f.Place(x0, y0 + 1, z);
+                                        f = Entity.Spawn<Feature>("Grave");
+                                        f.Place(x0, y0 - 1, z);
+                                        placed = true;
+
+                                    }
+                                }
+                            }
+                            if (tries > ntries)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    int nplaced = 0;
+                    tries = 0;
+                    ntries = 1000;
+                    // place multiple graves
                     while (nplaced < nper && tries < ntries)
                     {
                         tries += 1;

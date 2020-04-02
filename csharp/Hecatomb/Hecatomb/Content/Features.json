@@ -63,7 +63,18 @@
 				"Symbol" : "\u271D",
 				"Components" : {
 					"Harvestable": {
-						"Yields": {"Corpse": 1, "Gold": 0.1}
+						"Yields": {"Corpse": 1}
+					}
+				}
+			},
+			{
+				"Type" : "Mausoleum",
+				"Name": "mausoleum",
+				"FG" : "WALLFG",
+				"Symbol" : "\u271F",
+				"Components" : {
+					"Harvestable": {
+						"Yields": {"Gold": 1}
 					}
 				}
 			},
