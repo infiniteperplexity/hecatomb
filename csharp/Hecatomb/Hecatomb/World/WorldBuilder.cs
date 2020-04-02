@@ -30,10 +30,12 @@ namespace Hecatomb
             float hscale = 2f;
             float vscale = 5f;
             var ElevationNoise = new FastNoise(seed: world.Random.Next(1024));
-            var VegetationNoise = new FastNoise(seed: world.Random.Next(1024));
-            for (int i = 0; i < world.Width; i++) {
-                for (int j = 0; j < world.Height; j++) {
-                    for (int k = 0; k < world.Depth; k++) {
+            for (int i = 0; i < world.Width; i++)
+            {
+                for (int j = 0; j < world.Height; j++)
+                {
+                    for (int k = 0; k < world.Depth; k++)
+                    {
                         int elev = GroundLevel + (int)(vscale * ElevationNoise.GetSimplexFractal(hscale * i, hscale * j));
                         if (i == 0 || i == world.Width - 1 || j == 0 || j == world.Height - 1)
                         {
@@ -71,77 +73,14 @@ namespace Hecatomb
                         }
                     }
                 }
-                
+
             }
+            makeSlopes();
             placeSoils();
             placeOres();
             plantFlowers();
-            for (int i = 1; i < world.Width - 1; i++) {
-                for (int j = 1; j < world.Height - 1; j++) {
-                    int k = world.GetGroundLevel(i, j);
-                    List<Coord> neighbors = Tiles.GetNeighbors8(i, j, k);
-                    bool slope = false;
-                    foreach (Coord c in neighbors)
-                    {
-                        if (world.GetTile(c.X, c.Y, c.Z) == Terrain.WallTile)
-                        {
-                            slope = true;
-                            break;
-                        }
-                    }
-
-                    if (slope)
-                    {
-                        world.Terrains[i, j, k] = Terrain.UpSlopeTile;
-                        if (world.GetTile(i, j, k + 1) == Terrain.EmptyTile)
-                        {
-                            world.Terrains[i, j, k + 1] = Terrain.DownSlopeTile;
-                        }
-                    } else {
-                        if (!Game.Options.NoSpiders)
-                        {
-                            if (world.Random.Next(200) == 1)
-                            {
-                                var s = Entity.Spawn<Creature>("Spider");
-                                //s.GetComponent<Actor>().Asleep = true;
-                                //preload this
-                                s.GetCachedActor();
-                                s.Place(i, j, k);
-                            }
-                        }
-                        float plants = vscale * VegetationNoise.GetSimplexFractal(hscale * i, hscale * j);
-                        if (plants > 1.0f)
-                        {
-                            if (world.Random.Next(2) == 1 && Game.World.Features[i, j, k] == null)
-                            {
-                                Feature tree;
-                                if (world.Covers[i, j, k].Liquid)
-                                {
-                                    tree = Entity.Spawn<Feature>("Seaweed"); ;
-                                }
-                                else if (world.Random.Next(2) == 1)
-                                {
-                                    tree = Entity.Spawn<Feature>("ClubTree");
-                                }
-                                else
-                                {
-                                    tree = Entity.Spawn<Feature>("SpadeTree");
-                                }
-                                tree.Place(i, j, k);
-                            }
-                        }
-                        else
-                        {
-                            Func<int, int, int, bool> downslopes = (int x, int y, int zz) => (world.GetTile(x, y, zz) == Terrain.DownSlopeTile);
-                            if (Game.World.Features[i, j, k] == null && world.Random.Next(25) == 0 && i%2 == j%2 && !world.Covers[i, j, k].Liquid && Tiles.GetNeighbors8(i, j, k, where: downslopes).Count == 0)
-                            {
-                                Feature grave = Entity.Spawn<Feature>("Grave");
-                                grave.Place(i, j, k);
-                            }
-                        }
-                    }
-                }
-            }
+            placeGraves();
+            plantTrees();
             if (!Game.Options.NoBatCaves)
             {
                 //world.GetState<CaveVaultTracker>().PlaceBatCaves();
@@ -160,9 +99,101 @@ namespace Hecatomb
                 world.GetState<VaultHandler>().DigCaverns(25);
                 world.GetState<VaultHandler>().DigCaverns(40);
             }
+            placeSpiders();
             World.WorldSafeToDraw = true;
         }
 
+        public void setElevations()
+        {
+
+        }
+        public void placeSpiders()
+        {
+            var world = Game.World;
+            for (int i = 1; i < world.Width - 1; i++)
+            {
+                for (int j = 1; j < world.Height - 1; j++)
+                {
+                    int k = world.GetGroundLevel(i, j);
+                    if (!Game.Options.NoSpiders)
+                    {
+                        if (world.Random.Next(200) == 1)
+                        {
+                            var s = Entity.Spawn<Creature>("Spider");
+                            s.GetCachedActor();
+                            s.Place(i, j, k);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void plantTrees()
+        {
+            float hscale = 2f;
+            float vscale = 5f;
+            var world = Game.World;
+            var VegetationNoise = new FastNoise(seed: world.Random.Next(1024));
+            for (int i = 1; i < world.Width - 1; i++)
+            {
+                for (int j = 1; j < world.Height - 1; j++)
+                {
+                    int k = world.GetGroundLevel(i, j);
+                    float plants = vscale * VegetationNoise.GetSimplexFractal(hscale * i, hscale * j);
+                    if (plants > 1.0f)
+                    {
+                        if (world.Random.Next(2) == 1 && world.Terrains[i, j, k] == Terrain.FloorTile && Game.World.Features[i, j, k] == null)
+                        {
+                            Feature tree;
+                            if (world.Covers[i, j, k].Liquid)
+                            {
+                                tree = Entity.Spawn<Feature>("Seaweed"); ;
+                            }
+                            else if (world.Random.Next(2) == 1)
+                            {
+                                tree = Entity.Spawn<Feature>("ClubTree");
+                            }
+                            else
+                            {
+                                tree = Entity.Spawn<Feature>("SpadeTree");
+                            }
+                            tree.Place(i, j, k);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        public void makeSlopes()
+        {
+            var world = Game.World;
+            for (int i = 1; i < world.Width - 1; i++)
+            {
+                for (int j = 1; j < world.Height - 1; j++)
+                {
+                    int k = world.GetGroundLevel(i, j);
+                    List<Coord> neighbors = Tiles.GetNeighbors8(i, j, k);
+                    bool slope = false;
+                    foreach (Coord c in neighbors)
+                    {
+                        if (world.GetTile(c.X, c.Y, c.Z) == Terrain.WallTile)
+                        {
+                            slope = true;
+                            break;
+                        }
+                    }
+                    if (slope)
+                    {
+                        world.Terrains[i, j, k] = Terrain.UpSlopeTile;
+                        if (world.GetTile(i, j, k + 1) == Terrain.EmptyTile)
+                        {
+                            world.Terrains[i, j, k + 1] = Terrain.DownSlopeTile;
+                        }
+                    }
+                }
+            }
+        }
 
         protected void plantFlowers()
         {
@@ -189,7 +220,7 @@ namespace Hecatomb
                         Debug.WriteLine("planting " + flower + " at " + c.X + " " + c.Y);
                         var f = RandomPaletteHandler.SpawnFlower(flower);
                         f.Place(c.X, c.Y, c.Z);
-                    } 
+                    }
                 }
             }
 
@@ -250,7 +281,7 @@ namespace Hecatomb
                             }
                         }
                         Game.World.Covers[x, y, z - i] = c;
-                        if (c == Cover.Soil && Game.World.Random.Next(16)==0)
+                        if (c == Cover.Soil && Game.World.Random.Next(16) == 0)
                         {
                             c = Cover.FlintCluster;
                         }
@@ -273,10 +304,10 @@ namespace Hecatomb
             int chunk = 16;
             int nper = 5;
             Dictionary<Cover, List<Cover>> ores = new Dictionary<Cover, List<Cover>>();
-            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.CoalSeam, Cover.FlintCluster};
+            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.CoalSeam, Cover.FlintCluster };
             ores[Cover.Limestone] = new List<Cover>() { Cover.CopperVein, Cover.TinVein, Cover.CoalSeam };
             ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.SilverVein };
-            ores[Cover.Granite] = new List<Cover>() {  Cover.GoldVein, Cover.SilverVein, Cover.TitaniumVein, Cover.CobaltVein};
+            ores[Cover.Granite] = new List<Cover>() { Cover.GoldVein, Cover.SilverVein, Cover.TitaniumVein, Cover.CobaltVein };
             ores[Cover.Bedrock] = new List<Cover>() { Cover.CobaltVein, Cover.TitaniumVein, Cover.AdamantVein, Cover.ThoriumVein };
             for (int z = 1; z < Game.World.Depth - 1; z++)
             {
@@ -317,61 +348,50 @@ namespace Hecatomb
                                     y0 = y1;
                                 }
                             }
-                            
+
                         }
                     }
                 }
             }
         }
 
-        protected void oldPlaceOres(int n)
+        protected void placeGraves()
         {
-            int nveins = n;
-            int segmax = 5;
-            int segmin = 2;
-            int seglen = 3;
-            Dictionary<Cover, List<Cover>> ores = new Dictionary<Cover, List<Cover>>();
-            ores[Cover.Soil] = new List<Cover>() { Cover.FlintCluster, Cover.FlintCluster, Cover.CoalSeam };
-            ores[Cover.Limestone] = new List<Cover>() { Cover.CopperVein, Cover.CopperVein, Cover.CopperVein, Cover.TinVein, Cover.CoalSeam, Cover.CoalSeam };
-            ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.IronVein, Cover.IronVein };
-            ores[Cover.Granite] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.GoldVein, Cover.IronVein, Cover.SilverVein };
-            ores[Cover.Bedrock] = new List<Cover>() { Cover.TitaniumVein, Cover.CobaltVein, Cover.AdamantVein, Cover.ThoriumVein };
-            for (int z = 1; z < Game.World.Depth - 1; z++)
+            var world = Game.World;
+            Func<int, int, int, bool> downslopes = (int x, int y, int zz) => (world.GetTile(x, y, zz) == Terrain.DownSlopeTile);
+            int chunk = 16;
+            int nper = 3;
+            for (int x = 0; x < Game.World.Width; x += chunk)
             {
-                for (int i = 0; i < nveins; i++)
+                for (int y = 0; y < Game.World.Height; y += chunk)
                 {
-                    int x0 = Game.World.Random.Next(1, Game.World.Width - 2);
-                    int y0 = Game.World.Random.Next(1, Game.World.Height - 2);
-                    Cover c = Game.World.Covers[x0, y0, z];
-                    if (ores.ContainsKey(c))
+                    int nplaced = 0;
+                    int tries = 0;
+                    int ntries = 1000;
+                    while (nplaced < nper && tries < ntries)
                     {
-                        var choices = ores[c];
-                        Cover choice = choices[Game.World.Random.Next(choices.Count)];
-                        double displace = Game.World.Random.NextDouble() * 256;
-                        double angle = Game.World.Random.NextDouble() * 2 * Math.PI;
-                        int segs = Game.World.Random.Next(segmin, segmax);
-                        for (int j = 0; j < segs; j++)
+                        tries += 1;
+                        int x0 = x + world.Random.Next(16);
+                        int y0 = y + world.Random.Next(16);
+                        if (x0 > 0 && y0 > 0 && x0 < world.Width - 1 && y0 < world.Width - 1)
                         {
-                            int x1 = x0 + (int)(Math.Cos(angle) * seglen);
-                            int y1 = y0 + (int)(Math.Sin(angle) * seglen);
-                            List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
-                            foreach (var coord in line)
+                            int z = world.GetGroundLevel(x0, y0);
+                            if (world.Features[x0, y0, z] == null && x0 % 2 == y0 % 2 && !world.Covers[x0, y0, z].Liquid && Tiles.GetNeighbors8(x0, y0, z, where: downslopes).Count == 0)
                             {
-                                (int x, int y, int _) = coord;
-                                if (x > 0 && x < Game.World.Width - 2 && y > 0 && y < Game.World.Height - 2)
-                                {
-                                    if (Game.World.Random.Next(3) > 0 && Game.World.Covers[x, y, z].Solid)
-                                    {
-                                        Game.World.Covers[x, y, z] = choice;
-                                    }
-                                }
+                                Feature grave = Entity.Spawn<Feature>("Grave");
+                                grave.Place(x0, y0, z);
+                                nplaced += 1;
                             }
-                            x0 = x1;
-                            y0 = y1;
+                        }
+                        if (tries > ntries)
+                        {
+                            break;
                         }
                     }
+
                 }
             }
+
         }
     }
 

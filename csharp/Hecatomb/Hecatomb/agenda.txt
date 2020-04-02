@@ -33,6 +33,8 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- there's no way to refresh a rotten zombie, nor to slaughter one you don't want any more
+* zombies made from corpses start out rotten
 * game crashes if the selected creature dies.
 * Saplings will never become trees
 - Should we allow pageUp to scroll through messages?
@@ -49,7 +51,7 @@ Fresh issues list starting on 2/14/2020:
 * add planting tasks for trees and flowers
 - some dye colors are hard to read on the menu
 * how shall we handle background dyes
-- how are we going to dye plain tiles with no features?
+* how are we going to dye plain tiles with no features?
 - Is it risky to double up names of flowers with resources?
 - add dyes to Black Market potential trades
 * add an apothecary to support dyeing

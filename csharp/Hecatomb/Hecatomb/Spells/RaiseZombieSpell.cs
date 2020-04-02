@@ -114,7 +114,8 @@ namespace Hecatomb
                 int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
                 //int randomDecay = Game.World.Random.Next(500);
                 zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
-                zombie.GetComponent<Decaying>().Decay = 4 * i.Decay + randomDecay;
+                // need to keep an eye on how this mapping works
+                zombie.GetComponent<Decaying>().Decay = 10*i.Decay + randomDecay;
                 i.Despawn();
                 Status.PushMessage("The corpse stirs to obey your commands.");
                 GetState<TaskHandler>().Minions.Add(zombie);
