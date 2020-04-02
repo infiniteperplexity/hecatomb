@@ -77,6 +77,8 @@ namespace Hecatomb
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
+                // some chance of non-human zombie?
+                zombie.Species = "Human";
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z - 1);
                 int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
@@ -106,6 +108,7 @@ namespace Hecatomb
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 Creature zombie = Entity.Spawn<Creature>("Zombie");
+                zombie.Species = i.CorpseSpecies;
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z);
                 int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());

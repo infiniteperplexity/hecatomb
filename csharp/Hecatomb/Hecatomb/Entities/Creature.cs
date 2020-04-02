@@ -16,6 +16,8 @@ namespace Hecatomb
     {
         private Actor cachedActor;
 
+        public string Species;
+
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
             if (x1 == -1)
@@ -142,7 +144,7 @@ namespace Hecatomb
             base.Destroy(cause: cause);
             if (!decaying)
             {
-                Item.SpawnCorpse(TypeName).Place(x, y, z);
+                Item.SpawnCorpse(Species).Place(x, y, z);
             }
             else
             {
@@ -289,37 +291,51 @@ namespace Hecatomb
             }
         }
 
+        public override char GetCalculatedSymbol()
+        {
+            if (TypeName == "Zombie" && Species != "Human")
+            {
+                return Hecatomb.Species.Types[Species].Symbol;
+            }
+            return base.GetCalculatedSymbol();
+        }
+
         public override string GetDisplayName()
         {
+            string name = base.GetDisplayName();
+            if (Species != TypeName && Species != "Human")
+            {
+                name = Hecatomb.Species.Types[Species].Name + " " + name;
+            }
             var defend = TryComponent<Defender>();
             int wounds = (defend == null) ? 0 : defend.Wounds;
             var decay = TryComponent<Decaying>();
             double rotten = (decay == null) ? 1.0 : decay.GetFraction();
             if (wounds >= 6)
             {
-                return ("severely wounded " + base.GetDisplayName());
+                return ("severely wounded " + name);
             }
             else if (rotten < 0.25)
             {
-                return ("severely rotted " + base.GetDisplayName());
+                return ("severely rotted " + name);
             }
             else if (wounds >= 4)
             {
-                return ("wounded " + base.GetDisplayName());
+                return ("wounded " + name);
             }
             else if (rotten < 0.5)
             {
-                return ("rotted " + base.GetDisplayName());
+                return ("rotted " + name);
             }
             else if (wounds >= 2)
             {
-                return ("slightly wounded " + base.GetDisplayName());
+                return ("slightly wounded " + name);
             }
             else if (rotten < 0.75)
             {
-                return ("slightly rotted " + base.GetDisplayName());
+                return ("slightly rotted " + name);
             }
-            return base.GetDisplayName();
+            return name;
         }
 
         public static Coord? FindPlace(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true)

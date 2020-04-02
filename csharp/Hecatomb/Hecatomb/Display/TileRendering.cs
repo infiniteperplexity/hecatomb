@@ -58,21 +58,21 @@ namespace Hecatomb
                 fg = "SHADOWFG";
             }
             // a visible creature
-            if (Creatures[c] != null && Creatures[c].Symbol != ' ' && visible)
+            if (Creatures[c] != null && Creatures[c].GetCalculatedSymbol() != ' ' && visible)
             {
-                sym = Creatures[c].Symbol;
+                sym = Creatures[c].GetCalculatedSymbol();
                 fg = fg ?? Creatures[c].GetCalculatedFG();
             }
             // a visible creature above
-            else if (zview == +1 && Creatures[ca] != null && Creatures[ca].Symbol != ' ' && (visible || va))
+            else if (zview == +1 && Creatures[ca] != null && Creatures[ca].GetCalculatedSymbol() != ' ' && (visible || va))
             {
-                sym = Creatures[ca].Symbol;
+                sym = Creatures[ca].GetCalculatedSymbol();
                 fg = fg ?? "WALLFG";
             }
             // a visible creature below
-            else if (zview == -1 && Creatures[cb] != null && Creatures[cb].Symbol!=' ' && (visible || vb))
+            else if (zview == -1 && Creatures[cb] != null && Creatures[cb].GetCalculatedSymbol() != ' ' && (visible || vb))
             {
-                sym = Creatures[cb].Symbol;
+                sym = Creatures[cb].GetCalculatedSymbol();
                 // a submerged creature below
                 if (coverb.Liquid)
                 {
@@ -91,15 +91,15 @@ namespace Hecatomb
                 fg = Items[c].GetCalculatedFG();
             }
             // features
-            else if (Features[c] != null && Features[c].Symbol != ' ' && Features[c].GetCalculatedFG() != null)
+            else if (Features[c] != null && Features[c].GetCalculatedSymbol() != ' ' && Features[c].GetCalculatedFG() != null)
             {
-                sym = Features[c].Symbol;
+                sym = Features[c].GetCalculatedSymbol();
                 fg = fg ?? Features[c].GetCalculatedFG();
             }
             // used mostly for masonry
-            else if (Features[c] != null && Features[c].Symbol != ' ' && Features[c].GetCalculatedFG() == null)
+            else if (Features[c] != null && Features[c].GetCalculatedSymbol() != ' ' && Features[c].GetCalculatedFG() == null)
             {
-                sym = Features[c].Symbol;
+                sym = Features[c].GetCalculatedSymbol();
                 if (cover.Liquid)
                 {
                     fg = cover.FG;
@@ -110,7 +110,7 @@ namespace Hecatomb
                 }
             }
             // used mostly for masonry
-            else if (Features[c] != null && Features[c].Symbol == ' ' && Features[c].GetCalculatedFG() != null)
+            else if (Features[c] != null && Features[c].GetCalculatedSymbol() == ' ' && Features[c].GetCalculatedFG() != null)
             {
                 fg = Features[c].GetCalculatedFG();
                 if (cover.Liquid)
@@ -145,15 +145,15 @@ namespace Hecatomb
                 }
             }
             // feature above
-            else if (zview == +1 && Features[ca] != null && Features[ca].Symbol != ' ')
+            else if (zview == +1 && Features[ca] != null && Features[ca].GetCalculatedSymbol() != ' ')
             {
-                sym = Features[ca].Symbol;
+                sym = Features[ca].GetCalculatedSymbol();
                 fg = fg ?? "WALLFG";
             }
             // feature belowb
-            else if (zview == -1 && Features[cb] != null && Features[cb].Symbol != ' ')
+            else if (zview == -1 && Features[cb] != null && Features[cb].GetCalculatedSymbol() != ' ')
             {
-                sym = Features[cb].Symbol;
+                sym = Features[cb].GetCalculatedSymbol();
                 // submerged feature
                 if (coverb.Liquid)
                 {

@@ -76,6 +76,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\GrowthComponent.cs" />
+    <Compile Include="FlyWeights\Species.cs" />
     <Compile Include="Tasks\FarmingTask.cs" />
     <Compile Include="Structures\Apothecary.cs" />
     <Compile Include="Tasks\DyeTask.cs" />

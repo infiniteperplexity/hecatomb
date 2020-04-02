@@ -60,7 +60,7 @@ namespace Hecatomb
             ShowDebugSpells = false;
             //ShowDebugSpells = true;
             NoManaCost = false;
-            //NoManaCost = true;
+            NoManaCost = true;
             WorkBonus = 0;
             //WorkBonus = 5;
             NoSpiders = false;

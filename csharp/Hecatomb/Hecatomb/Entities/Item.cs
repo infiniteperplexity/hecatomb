@@ -15,7 +15,7 @@ namespace Hecatomb
         public int Quantity;
         public int Claimed;
         public string Resource;
-        public string CorpseType;
+        public string CorpseSpecies;
         public int Decay;
         public int TotalDecay;
         [JsonIgnore]
@@ -68,7 +68,7 @@ namespace Hecatomb
             // when you harvest a tombstone, it creatures a human corpse?
             Item item = Entity.Spawn<Item>();
             item.Resource = "Corpse";
-            item.CorpseType = creatureType;
+            item.CorpseSpecies = creatureType;
             item.TotalDecay = 250;
             item.Decay = item.TotalDecay;
             Game.World.Events.Subscribe<TurnBeginEvent>(item, item.CorpseDecays);
@@ -275,13 +275,13 @@ namespace Hecatomb
             
             if (Resource == "Corpse")
             {
-                if (CorpseType == "Human")
+                if (CorpseSpecies == "Human")
                 {
                     str = "corpse";
                 }
                 else
                 {
-                    cachedMock = (cachedMock == null) ? Entity.Mock<Creature>(CorpseType) : cachedMock;
+                    cachedMock = (cachedMock == null) ? Entity.Mock<Creature>(CorpseSpecies) : cachedMock;
                     str = cachedMock.Name + " corpse";
                 }
 

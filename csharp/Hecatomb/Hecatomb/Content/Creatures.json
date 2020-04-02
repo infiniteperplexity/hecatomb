@@ -6,6 +6,7 @@
 				"Name": "necromancer",
 				"FG" : "magenta",
 				"Symbol" : "@",
+				"Species" : "Human",
 				"Components" : {
 					"Actor" : {},
 					"Senses": {},
@@ -80,6 +81,7 @@
 				"Type" : "AngryPeasant",
 				"Name" : "peasant",
 				"FG" : "brown",
+				"Species" : "Human",
 				"Symbol" : "@",
 				"Components" : {
 					"Actor": {
@@ -117,6 +119,7 @@
 			{
 				"Type" : "HumanBandit",
 				"Name" : "human bandit",
+				"Species" : "Human",
 				"FG" : "brown",
 				"Symbol" : "@",
 				"Components" : {

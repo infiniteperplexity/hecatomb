@@ -21,6 +21,7 @@ namespace Hecatomb
 		public static Dictionary<string, EntityType> Types = new Dictionary<string, EntityType>();
 		public string TypeName;
 		public string Name;
+		public string Species;
 //		public string[] Components;
 		public string FG;
 		public string BG;
@@ -45,6 +46,11 @@ namespace Hecatomb
 		{
 			e.TypeName = TypeName;
 			e.Name = Name;
+			if (e is Creature)
+			{
+				Creature cr = (Creature)e;
+				cr.Species = Species;
+			}
 			e.FG = FG;
 			e.Symbol = Symbol;
 			e.BG = BG;
@@ -54,6 +60,11 @@ namespace Hecatomb
 		{
 			e.TypeName = TypeName;
 			e.Name = Name;
+			if (e is Creature)
+			{
+				Creature cr = (Creature)e;
+				cr.Species = Species;
+			}
 			e.FG = FG;
 			e.BG = BG;
 			e.Symbol = Symbol;
@@ -79,6 +90,11 @@ namespace Hecatomb
         {
             e.TypeName = TypeName;
             e.Name = Name;
+			if (e is Creature)
+			{
+				Creature cr = (Creature)e;
+				cr.Species = Species;
+			}
             e.FG = FG;
             e.BG = BG;
             e.Symbol = Symbol;
@@ -113,6 +129,7 @@ namespace Hecatomb
 				et.Name = (string) t["Name"];
 				et.FG = (string) t["FG"];
 				et.Symbol = (char) t["Symbol"];
+				et.Species = (t["Species"] != null) ? (string)t["Species"] : (string)t["Type"];
 				et.Plural = (t["Plural"] == null) ? false : (bool)t["Plural"];
 				foreach (JProperty comp in (JToken) t["Components"])
 				{

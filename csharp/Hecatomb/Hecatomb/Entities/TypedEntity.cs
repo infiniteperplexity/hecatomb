@@ -117,6 +117,12 @@ namespace Hecatomb
             }
             return base.GetDisplayName();
         }
+
+        public virtual char GetCalculatedSymbol()
+        {
+            return Symbol;
+        }
+
         public string GetCalculatedFG()
         {
             //string rotten = "#774422";
