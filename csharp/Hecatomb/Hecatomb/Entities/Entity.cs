@@ -157,6 +157,11 @@ namespace Hecatomb
 			Game.World.Events.UnsubscribeAll(this);
             Entities.Remove(EID);
             EID = -1;
+            if (ControlContext.Selection == this)
+            {
+                ControlContext.Selection = null;
+                ControlContext.Reset();
+            }
         }
 
         public virtual int OwnSeed()

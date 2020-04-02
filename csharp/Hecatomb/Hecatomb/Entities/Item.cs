@@ -275,34 +275,27 @@ namespace Hecatomb
             
             if (Resource == "Corpse")
             {
-                //cachedMock = (cachedMock == null) ? Entity.Mock<Creature>(CorpseType) : cachedMock;
+                if (CorpseType == "Human")
+                {
+                    str = "corpse";
+                }
+                else
+                {
+                    cachedMock = (cachedMock == null) ? Entity.Mock<Creature>(CorpseType) : cachedMock;
+                    str = cachedMock.Name + " corpse";
+                }
+
                 if (TotalDecay > 0)
                 {
                     double frac = (double)Decay / (double)TotalDecay;
                     if (frac < 0.25)
                     {
-                        str = "severely rotted corpse";
+                        str = "severely rotted " + str;
                     }
                     else if (frac < 0.5)
                     {
-                        str = "rotted corpse";
+                        str = "rotted " + str;
                     }
-                    else
-                    {
-                        str = "corpse";
-                    }
-                    //if (frac < 0.25)
-                    //{
-                    //    str = "severely rotted " + cachedMock.Name + " corpse";
-                    //}
-                    //else if (frac < 0.5)
-                    //{
-                    //    str = "rotted " + cachedMock.Name + " corpse";
-                    //}
-                    //else
-                    //{
-                    //    str = cachedMock.Name + " corpse";
-                    //}
                 }
                 if (article)
                 {

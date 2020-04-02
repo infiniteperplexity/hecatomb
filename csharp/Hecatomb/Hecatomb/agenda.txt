@@ -33,6 +33,7 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- game crashes if the selected creature dies.
 * Saplings will never become trees
 - Should we allow pageUp to scroll through messages?
 - Possibly should add the text alerts to the tutorial
