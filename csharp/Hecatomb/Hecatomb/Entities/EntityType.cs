@@ -46,11 +46,12 @@ namespace Hecatomb
 		{
 			e.TypeName = TypeName;
 			e.Name = Name;
-			if (e is Creature)
-			{
-				Creature cr = (Creature)e;
-				cr.Species = Species;
-			}
+			/// oh god...the system is so fucked
+			//if (e is Creature)
+			//{
+			//	Creature cr = (Creature)e;
+			//	cr.Species = Species;
+			//}
 			e.FG = FG;
 			e.Symbol = Symbol;
 			e.BG = BG;

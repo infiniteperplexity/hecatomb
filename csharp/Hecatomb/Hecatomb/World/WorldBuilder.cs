@@ -385,7 +385,7 @@ namespace Hecatomb
                                     break;
                                 }
                                 int z = world.GetGroundLevel(x0, y0);
-                                if (world.Features[x0, y0, z] == null && x0 % 2 != y0 % 2 && !world.Covers[x0, y0, z].Liquid)
+                                if (world.Features[x0, y0, z] == null && !world.Covers[x0, y0, z].Liquid)
                                 {
                                     bool valid = true;
                                     for (int i = x0-2; i<=x0+2; i++)
@@ -403,14 +403,14 @@ namespace Hecatomb
                                         Feature f;
                                         f = Entity.Spawn<Feature>("Mausoleum");
                                         f.Place(x0, y0, z);
-                                        f = Entity.Spawn<Feature>("Grave");
-                                        f.Place(x0 + 1, y0, z);
-                                        f = Entity.Spawn<Feature>("Grave");
-                                        f.Place(x0 - 1, y0, z);
-                                        f = Entity.Spawn<Feature>("Grave");
-                                        f.Place(x0, y0 + 1, z);
-                                        f = Entity.Spawn<Feature>("Grave");
-                                        f.Place(x0, y0 - 1, z);
+                                        world.Terrains[x0 + 1, y0, z] = Terrain.UpSlopeTile;
+                                        world.Terrains[x0 + 1, y0, z + 1] = Terrain.DownSlopeTile;
+                                        world.Terrains[x0 - 1, y0, z] = Terrain.UpSlopeTile;
+                                        world.Terrains[x0 - 1, y0, z + 1] = Terrain.DownSlopeTile;
+                                        world.Terrains[x0, y0 + 1, z] = Terrain.UpSlopeTile;
+                                        world.Terrains[x0, y0 + 1, z + 1] = Terrain.DownSlopeTile;
+                                        world.Terrains[x0, y0 - 1 , z] = Terrain.UpSlopeTile;
+                                        world.Terrains[x0, y0 - 1, z + 1] = Terrain.DownSlopeTile;
                                         placed = true;
 
                                     }
@@ -434,7 +434,7 @@ namespace Hecatomb
                         if (x0 > 0 && y0 > 0 && x0 < world.Width - 1 && y0 < world.Width - 1)
                         {
                             int z = world.GetGroundLevel(x0, y0);
-                            if (world.Features[x0, y0, z] == null && x0 % 2 == y0 % 2 && !world.Covers[x0, y0, z].Liquid && Tiles.GetNeighbors8(x0, y0, z, where: downslopes).Count == 0)
+                            if (world.Terrains[x0, y0, z] == Terrain.FloorTile && world.Features[x0, y0, z] == null && x0 % 2 == y0 % 2 && !world.Covers[x0, y0, z].Liquid && Tiles.GetNeighbors8(x0, y0, z, where: downslopes).Count == 0)
                             {
                                 Feature grave = Entity.Spawn<Feature>("Grave");
                                 grave.Place(x0, y0, z);

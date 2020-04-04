@@ -142,7 +142,19 @@ namespace Hecatomb
             }
             bool decaying = (TryComponent<Decaying>() != null);
             base.Destroy(cause: cause);
-            if (!decaying)
+            if (Species == "Dryad")
+            {
+                if (Features[x, y, z] == null && Terrains[x, y, z] == Terrain.FloorTile)
+                {
+                    Feature f = Entity.Spawn<Feature>("Sapling");
+                    if (Game.World.Random.Arbitrary(OwnSeed()) < 0.5)
+                    {
+                        f.GetComponent<GrowthComponent>().Makes = "SpadeTree";
+                    }
+                    f.Place(x, y, z);
+                }
+            }
+            else if (!decaying)
             {
                 Item.SpawnCorpse(Species).Place(x, y, z);
             }

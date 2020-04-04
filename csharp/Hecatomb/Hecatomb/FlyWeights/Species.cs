@@ -45,5 +45,11 @@ namespace Hecatomb
 			name: "spider",
 			symbol: 's'
 		);
+
+		public static readonly Species Dryad = new Species(
+			type: "Dryad",
+			name: "dryad",
+			symbol: 'n'
+		);
 	}
 }

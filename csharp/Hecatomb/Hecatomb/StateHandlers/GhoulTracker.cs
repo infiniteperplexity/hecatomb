@@ -40,19 +40,20 @@ namespace Hecatomb
                     int y0 = Game.World.Height / 2;
                     int z0 = Game.World.GetGroundLevel(x0, y0);
                     // only if you're far from the center
-                    if (Tiles.QuickDistance(x, y, z, x0, y0, z0)>=25)
+                    foreach (Feature f in Game.World.Features.ToList())
                     {
-                        foreach (Feature f in Game.World.Features.ToList())
+                        if (f.TypeName=="Mausoleum")
                         {
-                            if (f.TypeName=="Grave" && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <=8)
+                            if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 4)
                             {
-                                if (Game.World.Random.Arbitrary(500, OwnSeed()) == 0 && Game.World.Tasks[f.X, f.Y, f.Z] == null)
-                                //if (Game.World.Random.Next(500)==0 && Game.World.Tasks[f.X, f.Y, f.Z]==null)
-                                {
-                                    EmergeGhoul(f);
-                                }
+                                EmergeGhoul(f);
+                            }
+                            else if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 8 && Game.World.Random.Arbitrary(3, OwnSeed())==0)
+                            {
+                                EmergeGhoul(f);
                             }
                         }
+
                     }
                 }
             }
@@ -86,11 +87,7 @@ namespace Hecatomb
             Cover.ClearCover(x, y, z-1);
             Creature ghoul = Entity.Spawn<Creature>("HungryGhoul");
             ghoul.Place(x, y, z - 1);
-            if (Game.World.Random.Arbitrary(10, OwnSeed()) == 0)
-            //if (Game.World.Random.Next(10) == 0)
-            {
-                ghoul.GetComponent<Inventory>().Item = Item.SpawnNewResource("Gold", 1);
-            }
+            ghoul.GetComponent<Inventory>().Item = Item.SpawnNewResource("Gold", 1);
             if (Game.Visible.Contains(new Coord(x, y, z)) || Game.Options.Visible)
             {
                 Game.InfoPanel.PushMessage("{red}A ravenous ghoul bursts forth from its grave!");

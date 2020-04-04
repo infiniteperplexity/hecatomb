@@ -36,7 +36,7 @@ namespace Hecatomb
                 {
                     TreesKilled += 1;
                     TreesSince += 1;
-                    if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Arbitrary(20, OwnSeed()) == 0)
+                    if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Arbitrary(0, OwnSeed()) == 0)
                     //if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Next(20) == 0)
                     {
                         NatureAttack(f.X, f.Y, f.Z);

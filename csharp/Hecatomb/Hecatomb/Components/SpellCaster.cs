@@ -96,6 +96,7 @@ namespace Hecatomb
             Sanity = 20;
 			Spells = new List<string>() {
                 "RaiseZombieSpell",
+                "SacrificeMinionSpell",
                 "CondenseEctoplasmSpell",
                 "SiphonFleshSpell",
                 "ShadowHopSpell",

@@ -101,7 +101,7 @@ namespace Hecatomb
             {
                 researched.Add(Makes);
             }
-            Game.InfoPanel.PushMessage("{magenta}Research on " + Describe(article: false) + " completed!");
+            Game.InfoPanel.PushMessage("{magenta}Research on " + Research.Types[Makes].Name + " complete!");
             if (Makes == "FlintTools")
             {
                 Game.World.Events.Publish(new AchievementEvent() { Action = "ResearchFlintTools" });

@@ -56,6 +56,10 @@ namespace Hecatomb
             {
                 (s.GetSpell("RaiseZombieSpell") as RaiseZombieSpell).SelectTile(c);
             }
+            else if (g.Command == "SacrificeMinion")
+            {
+                (s.GetSpell("SacrificeMinionSpell") as SacrificeMinionSpell).SelectTile(c);
+            }
             else if (g.Command == "SiphonFlesh")
             {
                 (s.GetSpell("SiphonFleshSpell") as SiphonFleshSpell).SelectTile(c);

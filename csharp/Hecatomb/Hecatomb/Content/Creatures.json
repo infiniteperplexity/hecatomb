@@ -73,8 +73,14 @@
 					"Senses": {},
 					"Movement": {},
 					"Inventory": {},
-					"Attacker": {},
-					"Defender": {}
+					"Attacker": {
+						"Damage": 1,
+						"Accuracy": 1
+					},
+					"Defender": {
+						"Evasion": 1
+					},
+					"Decaying": {}
 				}
 			},
 			{
@@ -248,6 +254,7 @@
 			{
 				"Type" : "RagingDryad",
 				"Name" : "raging dryad",
+				"Species": "Dryad",
 				"FG" : "green",
 				"Symbol" : "n",
 				"Components" : {

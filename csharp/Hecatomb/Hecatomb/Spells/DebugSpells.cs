@@ -93,7 +93,7 @@ namespace Hecatomb
 
         public void SelectTile(Coord c)
         {
-            Creature bandit = Entity.Spawn<Creature>("HumanBandit");
+            Creature bandit = Entity.Spawn<Creature>("RagingDryad");
             bandit.Place(c.X, c.Y, c.Z);
         }
 

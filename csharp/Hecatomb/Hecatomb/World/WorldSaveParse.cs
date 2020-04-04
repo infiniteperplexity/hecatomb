@@ -264,6 +264,7 @@ namespace Hecatomb
                     if (te is TypedEntity)
                     {
                         TypedEntity tye = (TypedEntity)te;
+                        // will this sometimes do the wrong thing?
                         EntityType.Types[tye.TypeName].Standardize(tye);
                         GlyphFields gf = Glyphs[eid];
                         if (gf.Symbol!=default(char))

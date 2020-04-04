@@ -33,12 +33,14 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- the ad hoc solution for making zombie species work after restoring a game is an abortion and must be killed with fire for the next release
+- the system for deciding whether to leave a corpse is stupid
 - make bandits into grave robbers?
-- there's no way to refresh a rotten zombie, nor to slaughter one you don't want any more
+* there's no way to refresh a rotten zombie, nor to slaughter one you don't want any more
 * zombies made from corpses start out rotten
 * game crashes if the selected creature dies.
 * Saplings will never become trees
-- Should we allow pageUp to scroll through messages?
+* Should we allow pageUp to scroll through messages?
 - Possibly should add the text alerts to the tutorial
 * Building fixtures under water removes water, even though that logic is meant to remove grass
 * Show the latest message on default screens, not just message log.
