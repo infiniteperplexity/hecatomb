@@ -376,8 +376,11 @@ namespace Hecatomb
                     // I think this happens sometimes while saving or restoring
                     return;
                 }
-                Item item = (Item)Entities[eid];
-                item.Claimed -= Claims[eid];
+                if (Entities.ContainsKey(eid))
+                {
+                    Item item = (Item)Entities[eid];
+                    item.Claimed -= Claims[eid];
+                }
             }
             Claims.Clear();
         }

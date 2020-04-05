@@ -68,6 +68,7 @@ namespace Hecatomb
             }
             // we are awkwardly using "validTile" for two different things which I'm sure will cause problems
             else if (corpse != null && Tasks[c]!=this)
+                // why do we check Tasks[c]!=this?  
             {
                 return true;
             }

@@ -76,5 +76,14 @@ namespace Hecatomb
                 actor.Patrol(p.X, p.Y, p.Z);
             }         
         }
+
+        public override void Despawn()
+        {
+            if (Task.Unbox() != null)
+            {
+                Task.Unbox().Unassign();
+            }
+            base.Despawn();
+        }
 	}
 }

@@ -33,6 +33,13 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- some kind of crash happened when i cast siphon flesh in the middle of a fight with dryads
+- somehow a weird task got assign on the sanctum...lie
+- does zombies dying unassign their tasks?
+- we get out of memory errors when saving or restoring sometimes
+- somehow I got stuck ina  weird UI trap where I seemed to have the default controls but still have a miion selected and be centering on the minions.
+* I think spiders still don't attack when you cast a spell at them?
+- messages should probably age off the main screen
 - the ad hoc solution for making zombie species work after restoring a game is an abortion and must be killed with fire for the next release
 - the system for deciding whether to leave a corpse is stupid
 - make bandits into grave robbers?

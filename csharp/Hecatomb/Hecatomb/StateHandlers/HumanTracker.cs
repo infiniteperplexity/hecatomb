@@ -229,7 +229,8 @@ namespace Hecatomb
             EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
             for (int i = 0; i < PastEncounters + 1; i++)
             {
-                string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
+                //string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
+                string creature = "HumanBandit";
 
                 Coord? cc = Creature.FindPlace(x0, y0, 0);
                 if (cc != null)

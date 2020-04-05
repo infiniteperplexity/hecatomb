@@ -85,11 +85,8 @@ namespace Hecatomb
                  
                     if (d2.Wounds > 0)
                     {
+                        cr.GetComponent<Actor>().Provoke(Caster);
                         int heal = Math.Min(d2.Wounds, 20 - d1.Wounds);
-                        if (!Caster.GetComponent<Actor>().IsFriendly(cr))
-                        {
-                            Caster.GetComponent<Actor>().Provoke(cr);
-                        }
                         d1.Wounds += heal;
                         d2.Wounds -= heal;
                         Game.InfoPanel.PushMessage($"You siphon flesh and blood from {cr.Describe()} to mend your wounds.");
@@ -99,6 +96,7 @@ namespace Hecatomb
                         emitter2.Place(cr.X, cr.Y, cr.Z);
                         base.Cast();
                         d1.ResolveWounds();
+                        
                     }   
                 }
             }

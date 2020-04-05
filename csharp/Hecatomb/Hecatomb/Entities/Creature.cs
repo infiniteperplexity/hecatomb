@@ -317,7 +317,10 @@ namespace Hecatomb
             string name = base.GetDisplayName();
             if (Species != TypeName && Species != "Human")
             {
-                name = Hecatomb.Species.Types[Species].Name + " " + name;
+                if (Hecatomb.Species.Types.ContainsKey(Species))
+                {
+                    name = Hecatomb.Species.Types[Species].Name + " " + name;
+                }   
             }
             var defend = TryComponent<Defender>();
             int wounds = (defend == null) ? 0 : defend.Wounds;

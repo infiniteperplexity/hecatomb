@@ -13,6 +13,7 @@ using Newtonsoft.Json.Serialization;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Hecatomb
 {
@@ -129,7 +130,10 @@ namespace Hecatomb
             settings.Converters.Add(new HecatombConverter());
             settings.Formatting = Formatting.Indented;
             settings.NullValueHandling = NullValueHandling.Ignore;
+
+            // okay...this could be a circular reference or else a string that's just too big
             var json = JsonConvert.SerializeObject(jsonready, settings);
+            
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
             System.IO.File.WriteAllText(path + @"\saves\" + Game.GameName + ".json", json);
