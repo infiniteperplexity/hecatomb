@@ -168,7 +168,7 @@ namespace Hecatomb
 				{
                     
 					Actor actor = (Actor) e;
-                    if (actor.Asleep)
+                    if (actor.Inactive)
                     {
                         continue;
                     }

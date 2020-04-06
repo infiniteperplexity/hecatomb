@@ -103,8 +103,10 @@ namespace Hecatomb
                 Place(c.X, c.Y, c.Z);
                 return;
             }
-            Status.PushMessage($"{Describe()} was crushed by the crowd!");
-            Destroy();
+            Creature cr = Creatures[x, y, z];
+            Status.PushMessage($"{cr.Describe(capitalized: true)} was crushed by the crowd!");
+            cr.Destroy();
+            Place(x, y, z);
         }
 
         public override void Fall()
@@ -305,7 +307,9 @@ namespace Hecatomb
 
         public override char GetCalculatedSymbol()
         {
-            if (TypeName == "Zombie" && Species != "Human")
+            // ad hoc check to prevent references to undefined species
+            // ad hoc check to prevent references to undefined species
+            if (TypeName == "Zombie" && Species != "Human" && Hecatomb.Species.Types.ContainsKey(Species))
             {
                 return Hecatomb.Species.Types[Species].Symbol;
             }

@@ -165,17 +165,6 @@ namespace Hecatomb
                     }
                 }
             }
-            // randomly place trade goods if we aren't too close to the center
-            int goodsBounds = 12;
-            int half = Game.World.Width / 2;
-            if ((x < half - goodsBounds || x > half + goodsBounds) && (y < half - goodsBounds || y > half + goodsBounds))
-            {
-                if (Game.World.Random.Arbitrary(10, seed+1) == 0)
-                //if (Game.World.Random.Next(10) == 0)
-                {
-                    Item.PlaceNewResource("Gold", 1, x, y, z - 1);
-                }
-            }
         }
     }
 

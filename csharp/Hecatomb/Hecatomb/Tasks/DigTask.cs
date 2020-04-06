@@ -99,11 +99,19 @@ namespace Hecatomb
                 }
                 foreach (Coord c in Tiles.GetNeighbors8(X, Y, Z - 1))
                 {
-                    Explored.Add(c);
+                    // only add the minerals below?
+                    if (covers[c.X, c.Y, c.Z].Mineral != null)
+                    {
+                        Explored.Add(c);
+                    }
                 }
                 foreach (Coord c in Tiles.GetNeighbors10(X, Y, Z))
                 {
-                    Explored.Add(c);
+                    // only add the minerals below?
+                    if (covers[c.X, c.Y, c.Z].Mineral != null || c.Z >= Z)
+                    {
+                        Explored.Add(c);
+                    }
                 }
             }
 			else if (t==up)

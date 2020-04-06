@@ -174,12 +174,31 @@ namespace Hecatomb
 
         public int Arbitrary(int i, int seed)
         {
-            return (int) Math.Floor(Arbitrary(seed) * i);
+            // somehow this occasionally escapes the bounds
+            int n = (int) Math.Floor(Arbitrary(seed) * i);
+            if (n < 0)
+            {
+                n = 0;
+            }
+            else if (n >= i)
+            {
+                n = i-1;
+            }
+            return n;
         }
 
         public int Arbitrary(int i, int j, int seed)
         {
-            return (int)Math.Floor(Arbitrary(seed) * j) + i;
+            int n = (int)Math.Floor(Arbitrary(seed) * j) + i;
+            if (n < i)
+            {
+                n = i;
+            }
+            else if (n >= j)
+            {
+                n = j-1;
+            }
+            return n;
         }
 
         public void PrintTrace()

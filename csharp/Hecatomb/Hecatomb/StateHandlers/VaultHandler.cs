@@ -70,7 +70,7 @@ namespace Hecatomb
                 Creature cr = Game.World.Creatures[c];
                 if (cr!=null)
                 {
-                    cr.GetComponent<Actor>().Asleep = false;
+                    cr.GetComponent<Actor>().Inactive = false;
                 }
             }
             Game.SplashPanel.Splash(new List<ColoredText> {
@@ -85,26 +85,29 @@ namespace Hecatomb
             foreach (Coord tile in VaultTiles)
             {
                 var (x, y, z) = tile;
-                string creature;
-                creature = "VampireBat";
-                //if (z >= 43)
-                //    creature = "VampireBat";
-                //else if (z >= 37)
-                //    creature = "FlourescentJelly";
-                //else if (z >= 31)
-                //    creature = "TroglodyteWarrior";
-                //else if (z >= 25)
-                //    creature = "BasaltElemental";
-                //else if (z >= 19)
-                //    creature = "NoctilucantOoze";
-                //else if (z >= 13)
-                //    creature = "TrollChampion";
-                //else
-                //    creature = "BasaltElemental";
+                if (Game.World.Creatures[x, y, z] == null)
+                {
+                    string creature;
+                    creature = "VampireBat";
+                    //if (z >= 43)
+                    //    creature = "VampireBat";
+                    //else if (z >= 37)
+                    //    creature = "FlourescentJelly";
+                    //else if (z >= 31)
+                    //    creature = "TroglodyteWarrior";
+                    //else if (z >= 25)
+                    //    creature = "BasaltElemental";
+                    //else if (z >= 19)
+                    //    creature = "NoctilucantOoze";
+                    //else if (z >= 13)
+                    //    creature = "TrollChampion";
+                    //else
+                    //    creature = "BasaltElemental";
 
-                var bat = Entity.Spawn<Creature>(creature);
-                bat.GetComponent<Actor>().Asleep = true;
-                bat.Place(x, y, z);
+                    var bat = Entity.Spawn<Creature>(creature);
+                    bat.GetComponent<Actor>().Inactive = true;
+                    bat.Place(x, y, z);
+                }
             }
         }
 
@@ -146,6 +149,7 @@ namespace Hecatomb
                 Deepest = de.Z;
                 foreach (Vault v in Vaults)
                 {
+                    // maybe se should do it a little later?
                     if (!v.Populated && v.Z >= Deepest - 3)
                     {
                         v.Populate();

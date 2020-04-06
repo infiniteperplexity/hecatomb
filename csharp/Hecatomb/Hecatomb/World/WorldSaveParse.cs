@@ -90,7 +90,7 @@ namespace Hecatomb
 	{
 
         //https://blog.maskalik.com/asp-net/json-net-implement-custom-serialization/
-        public string Stringify()
+        public void Stringify()
 		{
             int[,,] terrainFIDs = new int[Width, Height, Depth];
             int[,,] coverFIDs = new int[Width, Height, Depth];
@@ -132,39 +132,19 @@ namespace Hecatomb
             settings.NullValueHandling = NullValueHandling.Ignore;
 
             // okay...this could be a circular reference or else a string that's just too big
-            var json = JsonConvert.SerializeObject(jsonready, settings);
-            
+            //var json = JsonConvert.SerializeObject(jsonready, settings);
+
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            System.IO.Directory.CreateDirectory(path + @"\saves");
-            System.IO.File.WriteAllText(path + @"\saves\" + Game.GameName + ".json", json);
-            return json;
+            System.IO.Directory.CreateDirectory(path + @"\saves");           
+            using (TextWriter writer = File.CreateText(path + @"\saves\" + Game.GameName + ".json"))
+            {
+                var serializer = JsonSerializer.Create(settings);
+                serializer.Serialize(writer, jsonready);
+            }
+
+            //System.IO.File.WriteAllText(path + @"\saves\" + Game.GameName + ".json", json);
+            //return json;
 		}
-
-        //public static void SerializeToStream(MyObject obj, Stream stream)
-        //{
-        //    var settings = GetJsonSerializerSettings();
-        //    settings.Formatting = Formatting.Indented;
-        //    var serializer = JsonSerializer.Create(settings);
-
-        //    using (var sw = new StreamWriter(stream))
-        //    using (var jsonTextWriter = new JsonTextWriter(sw))
-        //    {
-        //        serializer.Serialize(jsonTextWriter, obj);
-        //    }
-        //}
-
-
-        //public static object DeserializeFromStream(Stream stream)
-        //{
-        //    var serializer = new JsonSerializer();
-
-        //    using (var sr = new StreamReader(stream))
-        //    using (var jsonTextReader = new JsonTextReader(sr))
-        //    {
-        //        return serializer.Deserialize(jsonTextReader);
-        //    }
-        //}
-
 
     //public void Parse(string json)
     public void Parse(string filename)	
@@ -177,13 +157,14 @@ namespace Hecatomb
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
             string json = System.IO.File.ReadAllText(path + @"\saves\" + Game.GameName + ".json");
-            JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
-            //using (StreamReader stream = File.OpenText(filename))
-            //using (JsonTextReader reader = new JsonTextReader(stream))
-            //{
-             //   JsonSerializer serializer = JsonSerializer.Create(settings);
-              //  parsed = (JObject)serializer.Deserialize(reader);
-            //}
+            //JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
+            JObject parsed;
+            using (StreamReader stream = File.OpenText(filename))
+            using (JsonTextReader reader = new JsonTextReader(stream))
+            {
+                JsonSerializer serializer = JsonSerializer.Create(settings);
+                parsed = (JObject)serializer.Deserialize(reader);
+            }
             //var serializer = new JsonSerializer();
             // *** Random Seed ***
             Random = parsed["random"].ToObject<StatefulRandom>();

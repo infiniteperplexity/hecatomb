@@ -79,7 +79,7 @@ namespace Hecatomb
 
         public override void Despawn()
         {
-            if (Task.Unbox() != null)
+            if (Task?.Unbox() != null)
             {
                 Task.Unbox().Unassign();
             }

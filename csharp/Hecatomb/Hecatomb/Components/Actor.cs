@@ -25,7 +25,7 @@ namespace Hecatomb
         public int CurrentPoints;
         public Teams Team;
         public bool Acted;
-        public bool Asleep;
+        public bool Inactive;
         [JsonIgnore]
         Movement cachedMovement;
         [JsonIgnore]
@@ -71,7 +71,7 @@ namespace Hecatomb
 
         public void Act()
         {
-            if (Asleep)
+            if (Inactive)
             {
                 Spend();
                 return;
@@ -286,6 +286,7 @@ namespace Hecatomb
             
             int r = Game.World.Random.Arbitrary(4, OwnSeed());
             //int r = Game.World.Random.Next(4);
+
             Coord d = Movement.Directions4[r];
             int x1 = Entity.X + d.X;
             int y1 = Entity.Y + d.Y;
@@ -411,7 +412,7 @@ namespace Hecatomb
         private bool reachableHostileCreature(int x, int y, int z)
         {
             Creature cr = Creatures[x, y, z];
-            if (cr != null && IsHostile(cr) && CachedMovement.CanReach(cr))
+            if (cr != null && IsHostile(cr) && !cr.GetComponent<Actor>().Inactive && CachedMovement.CanReach(cr))
             {
                 return true;
             }

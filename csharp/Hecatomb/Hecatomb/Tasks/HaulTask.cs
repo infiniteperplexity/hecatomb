@@ -30,14 +30,12 @@ namespace Hecatomb
         {
             if (Claims.Count==0)
             {
-                // okay I think I had this logic worked out wrong but it's fixed now
                 if (Worker == null)
                 {
-                    Debug.WriteLine("okay this is genuinely strange");
-                    return "messed up haul task";
+                    // so this can happen if the creature dies
+                    return $"haul {Hecatomb.Resource.Types[Resource].Name}";
                 }
                 var carried = $"carried by {Worker.Describe()} at {Worker.X} {Worker.Y} {Worker.Z}";
-                //return $"haul {Hecatomb.Resource.Types[Resource].Name} "+carried;
                 return $"haul {Hecatomb.Resource.Types[Resource].Name}";
             }
             Item item = Entity.FromEID(Claims.Keys.ToList()[0]) as Item;

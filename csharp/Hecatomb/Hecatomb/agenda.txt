@@ -33,6 +33,14 @@ Of these, what I really like are:
 
 
 Fresh issues list starting on 2/14/2020:
+- the pathfinding issue for vaults is more serious than we're allowing for, honestly...actually it's the visibility computation!
+	- maybe vaults are just a fundamentally horrible idea and we should never populate them until they're actually breached?
+- should we make our own creatures avoid pathfinding *to* asleep creatures? we're getting bad performance when vaults are opened
+- okay...so...there's some issues with exploration and digging...you want to be able to see the ore below...maybe only explore the ore?
+- there's kind of a clusterfuck when you get near a vault...you can see unexplored stuff, stuff slows down, et cetera.
+* weird-ish stuff happens when a minion working on a haul task dies...I think it's okay to leave though
+* we had something placed on top of something else while generating vaults...or was that while digging down into a vault?
+- alright, so I realized the displacement-upon-fall thing is actually reasonably likely to hit those fallback conditions when something falls into a narrow hole
 - some kind of crash happened when i cast siphon flesh in the middle of a fight with dryads
 - somehow a weird task got assign on the sanctum...lie
 - does zombies dying unassign their tasks?
