@@ -7,7 +7,7 @@ namespace Hecatomb8
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        SpriteBatch? spriteBatch;
 
         public Game1()
         {
