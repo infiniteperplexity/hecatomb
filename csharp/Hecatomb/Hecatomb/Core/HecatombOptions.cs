@@ -68,9 +68,9 @@ namespace Hecatomb
             NoGhouls = false;
             //NoGhouls = true;
             NoBatCaves = false;
-            //NoBatCaves = true;
+            NoBatCaves = true;
             NoLairs = false;
-            //NoLairs = true;
+            NoLairs = true;
             NoCaverns = false;
             //NoCaverns = true;
             IgnoreHardness = false;
