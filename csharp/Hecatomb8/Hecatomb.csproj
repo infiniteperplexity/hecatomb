@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F2602397-F701-46BE-8F94-96480ED7D3A8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hecatomb</RootNamespace>
+    <AssemblyName>Hecatomb</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MonoGamePlatform>Windows</MonoGamePlatform>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>5888975DE16DDD25DF0EF6EE1ED8D379BCC2311D</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Hecatomb_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Components\GrowthComponent.cs" />
+    <Compile Include="FlyWeights\Species.cs" />
+    <Compile Include="Spells\SacrificeMinionSpell.cs" />
+    <Compile Include="Tasks\FarmingTask.cs" />
+    <Compile Include="Structures\Apothecary.cs" />
+    <Compile Include="Tasks\DyeTask.cs" />
+    <Compile Include="Components\RandomPaletteComponent.cs" />
+    <Compile Include="Components\DyedComponent.cs" />
+    <Compile Include="StateHandlers\RandomPaletteHandler.cs" />
+    <Compile Include="StateHandlers\SpiderHandler.cs" />
+    <Compile Include="StateHandlers\CommandLogger.cs" />
+    <Compile Include="Core\BuildHandler.cs" />
+    <Compile Include="Controls\MenuCameraControls.cs" />
+    <Compile Include="Spells\CrashDebugSpell.cs" />
+    <Compile Include="Controls\ReconstructControls.cs" />
+    <Compile Include="TextFile.cs" />
+    <Compile Include="Controls\ConfirmationControls.cs" />
+    <Compile Include="Controls\AbstractCameraControls.cs" />
+    <Compile Include="Display\CommandsPanel.cs" />
+    <Compile Include="Display\FullScreenPanel.cs" />
+    <Compile Include="Display\InformationPanel.cs" />
+    <Compile Include="Display\MainPanel.cs" />
+    <Compile Include="Controls\ListViewControls.cs" />
+    <Compile Include="StateHandlers\MessageHandler.cs" />
+    <Compile Include="Display\InterfacePanel.cs" />
+    <Compile Include="Controls\MessageLogControls.cs" />
+    <Compile Include="Controls\ExamineTileControls.cs" />
+    <Compile Include="PanelWidget.cs" />
+    <Compile Include="Spells\DebugSpells.cs" />
+    <Compile Include="Display\SplashPanel.cs" />
+    <Compile Include="Tasks\MendingTask.cs" />
+    <Compile Include="Tasks\RallyTask.cs" />
+    <Compile Include="StateHandlers\LongCreatureComponent.cs" />
+    <Compile Include="StateHandlers\FootprintManager.cs" />
+    <Compile Include="StateHandlers\DebuggingListener.cs" />
+    <Compile Include="StateHandlers\LiquidHandler.cs" />
+    <Compile Include="Spells\ParticleTestDebugSpell.cs" />
+    <Compile Include="Spells\SevereDamageSpellDebug.cs" />
+    <Compile Include="StateHandlers\NatureHandler.cs" />
+    <Compile Include="Tasks\ClaimTask.cs" />
+    <Compile Include="Structures\Chirurgeon.cs" />
+    <Compile Include="Structures\Forge.cs" />
+    <Compile Include="Structures\Library.cs" />
+    <Compile Include="Structures\StoneMason.cs" />
+    <Compile Include="Structures\Treasury.cs" />
+    <Compile Include="TheFixer.cs" />
+    <Compile Include="Utilities\CellularAutomaton.cs" />
+    <Compile Include="Components\LeaderComponent.cs" />
+    <Compile Include="Creatures.cs" />
+    <Compile Include="Components\DoorFeatureComponent.cs" />
+    <Compile Include="Controls\FrozenControls.cs" />
+    <Compile Include="Components\Decaying.cs" />
+    <Compile Include="Utilities\Maze.cs" />
+    <Compile Include="StateHandlers\GhoulTracker.cs" />
+    <Compile Include="Components\IncompleteFixtureComponent.cs" />
+    <Compile Include="StateHandlers\LairHandler.cs" />
+    <Compile Include="Spells\LaunchRaidSpell.cs" />
+    <Compile Include="StateHandlers\RaidHandler.cs" />
+    <Compile Include="Tasks\RepairTask.cs" />
+    <Compile Include="StateHandlers\GrowthHandler.cs" />
+    <Compile Include="NewEntity.cs" />
+    <Compile Include="Core\SaveGameFile.cs" />
+    <Compile Include="Spells\RemoveCreatureDebugSpell.cs" />
+    <Compile Include="StateHandlers\TeamHandler.cs" />
+    <Compile Include="Spells\SummonBanditsDebugSpell.cs" />
+    <Compile Include="Controls\SplashControls.cs" />
+    <Compile Include="Tasks\ForbidTask.cs" />
+    <Compile Include="Controls\TextEntryControls.cs" />
+    <Compile Include="Tasks\TradeTask.cs" />
+    <Compile Include="Utilities\ICallStrings.cs" />
+    <Compile Include="Tasks\ButcherTask.cs" />
+    <Compile Include="Components\Defender.cs" />
+    <Compile Include="Entities\Item.cs" />
+    <Compile Include="Tasks\MurderTask.cs" />
+    <Compile Include="Tasks\PatrolTask.cs" />
+    <Compile Include="Structures\Slaughterhouse.cs" />
+    <Compile Include="Spells\CondenseEctoplasmSpell.cs" />
+    <Compile Include="Spells\SiphonFleshSpell.cs" />
+    <Compile Include="Spells\RaiseZombieSpell.cs" />
+    <Compile Include="StateHandlers\TaskHandler.cs" />
+    <Compile Include="Entities\TaskField.cs" />
+    <Compile Include="Entities\TileEntityField.cs" />
+    <Compile Include="Components\RampFeatureComponent.cs" />
+    <Compile Include="Components\Fixture.cs" />
+    <Compile Include="FlyWeights\Research.cs" />
+    <Compile Include="Tasks\HaulTask.cs" />
+    <Compile Include="Structures\BlackMarket.cs" />
+    <Compile Include="StateHandlers\AchievementHandler.cs" />
+    <Compile Include="Components\Attacker.cs" />
+    <Compile Include="Structures\GuardPost.cs" />
+    <Compile Include="Components\Inventory.cs" />
+    <Compile Include="Tasks\BuildTask.cs" />
+    <Compile Include="Tasks\ConstructTask.cs" />
+    <Compile Include="Tasks\DigTask.cs" />
+    <Compile Include="Tasks\FurnishTask.cs" />
+    <Compile Include="Tasks\UndesignateTask.cs" />
+    <Compile Include="Entities\Feature.cs" />
+    <Compile Include="FlyWeights\Cover.cs" />
+    <Compile Include="Core\DebugConsole.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="StateHandlers\StateHandler.cs" />
+    <Compile Include="StateHandlers\TutorialHandler.cs" />
+    <Compile Include="Entities\EntityField.cs" />
+    <Compile Include="Core\HecatombOptions.cs" />
+    <Compile Include="Components\Harvestable.cs" />
+    <Compile Include="Tasks\HarvestTask.cs" />
+    <Compile Include="Display\ColoredText.cs" />
+    <Compile Include="Tasks\ResearchTask.cs" />
+    <Compile Include="Components\SpearTrapComponent.cs" />
+    <Compile Include="Core\HecatombAliases.cs" />
+    <Compile Include="StateHandlers\HumanTracker.cs" />
+    <Compile Include="Events\GameEvents.cs" />
+    <Compile Include="StateHandlers\PathHandler.cs" />
+    <Compile Include="Tasks\Task.cs" />
+    <Compile Include="Structures\Structure.cs" />
+    <Compile Include="Entities\Creature.cs" />
+    <Compile Include="Components\StructuralComponent.cs" />
+    <Compile Include="Entities\TypedEntity.cs" />
+    <Compile Include="Entities\TypedEntityField.cs" />
+    <Compile Include="Spells\ShadowHopSpell.cs" />
+    <Compile Include="Utilities\RecursiveBacktracker.cs" />
+    <Compile Include="StateHandlers\ResearchHandler.cs" />
+    <Compile Include="FlyWeights\Resource.cs" />
+    <Compile Include="Structures\Sanctum.cs" />
+    <Compile Include="Controls\StaticMenuControls.cs" />
+    <Compile Include="Structures\Stockpile.cs" />
+    <Compile Include="Components\Component.cs" />
+    <Compile Include="Entities\EntityType.cs" />
+    <Compile Include="Entities\TileEntity.cs" />
+    <Compile Include="StateHandlers\VaultHandler.cs" />
+    <Compile Include="WindowsTextBox.cs" />
+    <Compile Include="World\StatefulRandom.cs" />
+    <Compile Include="World\WorldSaveParse.cs" />
+    <Compile Include="Components\SpellCaster.cs" />
+    <Compile Include="Controls\ControlContext.cs" />
+    <Compile Include="Controls\DefaultControls.cs" />
+    <Compile Include="Controls\MenuChoiceControls.cs" />
+    <Compile Include="Controls\CameraControls.cs" />
+    <Compile Include="Controls\SelectBoxControls.cs" />
+    <Compile Include="Controls\SelectZoneControls.cs" />
+    <Compile Include="Controls\SelectTileControls.cs" />
+    <Compile Include="Components\Minion.cs" />
+    <Compile Include="FlyWeights\FlyWeight.cs" />
+    <Compile Include="Events\EventHandler.cs" />
+    <Compile Include="Display\FontFallbacks.cs" />
+    <Compile Include="Display\Camera.cs" />
+    <Compile Include="Display\Colors.cs" />
+    <Compile Include="World\Particles.cs" />
+    <Compile Include="Spells\Spell.cs" />
+    <Compile Include="Display\TileRendering.cs" />
+    <Compile Include="Core\Tiles.cs" />
+    <Compile Include="Components\Actor.cs" />
+    <Compile Include="Components\Movement.cs" />
+    <Compile Include="Components\Senses.cs" />
+    <Compile Include="World\FastNoise.cs" />
+    <Compile Include="Core\HecatombCommands.cs" />
+    <Compile Include="World\World.cs" />
+    <Compile Include="Utilities\SparseArray3D.cs" />
+    <Compile Include="FlyWeights\Terrain.cs" />
+    <Compile Include="StateHandlers\TimeHandler.cs" />
+    <Compile Include="StateHandlers\TurnHandler.cs" />
+    <Compile Include="Core\Game.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structures\Workshop.cs" />
+    <Compile Include="Utilities\TypeDictionary.cs" />
+    <Compile Include="World\WorldBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ShadowCaster">
+      <HintPath>..\packages\ShadowCaster.1.0.2\lib\ShadowCaster.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="agenda.txt" />
+    <Content Include="Content\ASCII_icon.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\necromancer.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="glyphs.txt" />
+    <Content Include="Icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="issues.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="Content\Content.mgcb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MonoGameContentReference>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="Content\Creatures.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Features.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Items.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Hecatomb_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

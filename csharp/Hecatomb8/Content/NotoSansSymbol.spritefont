@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file contains an xml description of a font, and will be read by the XNA
+Framework Content Pipeline. Follow the comments to customize the appearance
+of the font in your game, and to change the characters which are available to draw
+with.
+-->
+<XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
+  <Asset Type="Graphics:FontDescription">
+
+    <!--
+    Modify this string to change the font that will be imported.
+    -->
+    <FontName>NotoSansSymbols-Regular.ttf</FontName>
+
+    <!--
+    Size is a float value, measured in points. Modify this value to change
+    the size of the font.
+    -->
+    <Size>18</Size>
+
+    <!--
+    Spacing is a float value, measured in pixels. Modify this value to change
+    the amount of spacing in between characters.
+    -->
+    <Spacing>1</Spacing>
+
+    <!--
+    UseKerning controls the layout of the font. If this value is true, kerning information
+    will be used when placing characters.
+    -->
+    <UseKerning>true</UseKerning>
+
+    <!--
+    Style controls the style of the font. Valid entries are "Regular", "Bold", "Italic",
+    and "Bold, Italic", and are case sensitive.
+    -->
+    <Style>Regular</Style>
+
+    <!--
+    If you uncomment this line, the default character will be substituted if you draw
+    or measure text that contains characters which were not included in the font.
+    -->
+    <!-- <DefaultCharacter>*</DefaultCharacter> -->
+
+    <!--
+    CharacterRegions control what letters are available in the font. Every
+    character from Start to End will be built and made available for drawing. The
+    default range is from 32, (ASCII space), to 126, ('~'), covering the basic Latin
+    character set. The characters are ordered according to the Unicode standard.
+    See the documentation for more information.
+    -->
+    <CharacterRegions>
+      <CharacterRegion>
+        <Start>&#x2190;</Start><!-- Arrows -->
+        <End>&#x2199;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2160;</Start><!-- Number Forms -->
+        <End>&#x21AB;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2460;</Start><!-- Enclosed Alphanumerics -->
+        <End>&#x24FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x271D;</Start><!-- (partial) Dingbats -->
+        <End>&#x2721;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x260A;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x260D;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2624;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x262F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2638;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x263B;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x263D;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x2653;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2669;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x267E;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2690;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x269D;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26A2;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26A9;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26AD;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26BC;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26CE;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26CE;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x26E2;</Start><!-- (partial) Misc Symbols -->
+        <End>&#x26FF;</End>
+      </CharacterRegion>
+    </CharacterRegions>
+  </Asset>
+</XnaContent>

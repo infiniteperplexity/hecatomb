@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file contains an xml description of a font, and will be read by the XNA
+Framework Content Pipeline. Follow the comments to customize the appearance
+of the font in your game, and to change the characters which are available to draw
+with.
+-->
+<XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
+  <Asset Type="Graphics:FontDescription">
+
+    <!--
+    Modify this string to change the font that will be imported.
+    -->
+    <FontName>NotoSans-Regular.ttf</FontName>
+
+    <!--
+    Size is a float value, measured in points. Modify this value to change
+    the size of the font.
+    -->
+    <Size>18</Size>
+
+    <!--
+    Spacing is a float value, measured in pixels. Modify this value to change
+    the amount of spacing in between characters.
+    -->
+    <Spacing>1</Spacing>
+
+    <!--
+    UseKerning controls the layout of the font. If this value is true, kerning information
+    will be used when placing characters.
+    -->
+    <UseKerning>true</UseKerning>
+
+    <!--
+    Style controls the style of the font. Valid entries are "Regular", "Bold", "Italic",
+    and "Bold, Italic", and are case sensitive.
+    -->
+    <Style>Regular</Style>
+
+    <!--
+    If you uncomment this line, the default character will be substituted if you draw
+    or measure text that contains characters which were not included in the font.
+    -->
+    <!-- <DefaultCharacter>*</DefaultCharacter> -->
+
+    <!--
+    CharacterRegions control what letters are available in the font. Every
+    character from Start to End will be built and made available for drawing. The
+    default range is from 32, (ASCII space), to 126, ('~'), covering the basic Latin
+    character set. The characters are ordered according to the Unicode standard.
+    See the documentation for more information.
+    -->
+    <CharacterRegions>
+      <CharacterRegion>
+        <Start>&#x0020;</Start><!-- Basic Latin -->
+        <End>&#x007E;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x00A0;</Start><!-- Latin-1 Supplement -->
+        <End>&#x00FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0100;</Start><!-- Latin Extended A -->
+        <End>&#x017F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0180;</Start><!-- Latin Extended B -->
+        <End>&#x024F;</End>
+      </CharacterRegion>
+        <CharacterRegion>
+        <Start>&#x0250;</Start><!-- IPA Extensions -->
+        <End>&#x02AF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x02B0;</Start><!-- Spacing Modifiers -->
+        <End>&#x02FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0370;</Start><!-- Greek and Coptic -->
+        <End>&#x03FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0400;</Start><!-- Cyrillic -->
+        <End>&#x04FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0500;</Start><!-- Cyrillic Supplement -->
+        <End>&#x051D;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0591;</Start><!-- Hebrew -->
+        <End>&#x05F4;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x0600;</Start><!-- Arabic -->
+        <End>&#x06FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x1D00;</Start><!-- Phonetic Extensions -->
+        <End>&#x1D7F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x1D80;</Start><!-- Phonetic Extensions Supplement-->
+        <End>&#x1DBF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x1E00;</Start><!-- Latin Extended Additional-->
+        <End>&#x1EF9;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x1F00;</Start><!-- Greek Extended -->
+        <End>&#x1FFF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2012;</Start><!-- General Punctuation -->
+        <End>&#x205E;</End>
+      </CharacterRegion>
+        <CharacterRegion>
+        <Start>&#x20A0;</Start><!-- Currency -->
+        <End>&#x20BF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2100;</Start><!-- Letter Like Symbols -->
+        <End>&#x214F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2500;</Start><!-- Box Drawing -->
+        <End>&#x256C;</End>
+      </CharacterRegion>
+        <CharacterRegion>
+        <Start>&#x2580;</Start><!-- Block Elements -->
+        <End>&#x2593;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2C60;</Start><!-- Latin Extended C -->
+        <End>&#x2C7F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xA720;</Start><!-- Latin Extended D -->
+        <End>&#xA7FF;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xFB00;</Start><!-- Alphabetical Presentation -->
+        <End>&#xFB4F;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xFB50;</Start><!-- Arabic Presentation A -->
+        <End>&#xFDFD;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#xFE70;</Start><!-- Arabic Presentation B -->
+        <End>&#xFEFC;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2202;</Start><!-- (partial) Mathematical Operators -->
+        <End>&#x2217;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2220;</Start><!-- (partial) Mathematical Operators -->
+        <End>&#x2298;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x229A;</Start><!-- (partial) Mathematical Operators -->
+        <End>&#x22C3;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#x2302;</Start><!-- (partial) Misc Techincal -->
+        <End>&#x2302;</End>
+      </CharacterRegion>
+    <CharacterRegion>
+        <Start>&#x2E17;</Start><!-- (partial) Supplemental Punctuation -->
+        <End>&#x2E17;</End>
+      </CharacterRegion>
+    </CharacterRegions>
+  </Asset>
+</XnaContent>
