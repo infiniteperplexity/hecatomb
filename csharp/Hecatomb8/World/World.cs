@@ -210,6 +210,7 @@ namespace Hecatomb
             {
                 Item.PlaceNewResource(res.Item1, res.Item2, x, y, z);
             }
+            World.WorldSafeToDraw = true;
             return p;
         }
 		

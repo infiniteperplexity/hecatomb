@@ -7,10 +7,27 @@
 
   <PropertyGroup>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <MonoGameContentReference Include="**\*.mgcb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Icon.bmp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icon.bmp">
+          <LogicalName>Icon.bmp</LogicalName>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+
+
+
+
+
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +36,21 @@
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.8.0.13" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="ShadowCaster" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

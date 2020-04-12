@@ -100,7 +100,6 @@ namespace Hecatomb
                 world.GetState<VaultHandler>().DigCaverns(40);
             }
             placeSpiders();
-            World.WorldSafeToDraw = true;
         }
 
         public void setElevations()

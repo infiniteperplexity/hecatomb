@@ -82,7 +82,8 @@ namespace Hecatomb
             {
                 foreach (var panel in list)
                 {
-                    if (panel.Dirty && panel.Active)
+                    if (panel.Active)
+                  //      if (panel.Dirty && panel.Active)
                     {
                         panel.Draw();
                         panel.Dirty = false;
