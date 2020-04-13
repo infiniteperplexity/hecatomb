@@ -49,7 +49,7 @@ namespace Hecatomb
             }
             var list = new List<IMenuListable>();
             var structures = Hecatomb.Structure.ListAsStrings();
-            var researched = Game.World.GetState<ResearchHandler>().Researched;
+            var researched = OldGame.World.GetState<ResearchHandler>().Researched;
             foreach (string st in Structures)
             {
                 var structure = (Structure)Hecatomb.Entity.Mock(Type.GetType("Hecatomb." + st));
@@ -133,14 +133,14 @@ namespace Hecatomb
         public override void Start()
 		{
 			base.Start();
-            Feature f = Game.World.Features[X, Y, Z];
+            Feature f = OldGame.World.Features[X, Y, Z];
 			f.FG = Structure.Entity.FGs[FeatureIndex];
             f.Name = "incomplete " + Structure.Name;
             f.GetComponent<IncompleteFixtureComponent>().Structure = Structure;
         }
 		public override void Finish()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
             Structure s = Structure.Entity;
             if (s.Features.Count==0)
             {
@@ -149,7 +149,7 @@ namespace Hecatomb
                     s.Features.Add(null);
                 }
             }
-			Feature incomplete = Game.World.Features[X, Y, Z];
+			Feature incomplete = OldGame.World.Features[X, Y, Z];
             var x = incomplete.GetComponent<IncompleteFixtureComponent>();
             incomplete.Despawn();
 			Feature f = Entity.Spawn<Feature>("StructureFeature");
@@ -200,7 +200,7 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             if (Makes==null)
 			{
                 var menu = new MenuChoiceControls(this);
@@ -221,7 +221,7 @@ namespace Hecatomb
         public override void BoxHover(Coord c, List<Coord> squares)
         {
             base.BoxHover(c, squares);
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {0} in this area.", Mock().Name) };
         }
@@ -231,8 +231,8 @@ namespace Hecatomb
             CommandLogger.LogCommand(command: "ConstructTask", squares: squares, makes: Makes);
             foreach (Coord s in squares)
             {
-                Feature f = Game.World.Features[s.X, s.Y, s.Z];
-                Task t = Game.World.Tasks[s.X, s.Y, s.Z];
+                Feature f = OldGame.World.Features[s.X, s.Y, s.Z];
+                Task t = OldGame.World.Tasks[s.X, s.Y, s.Z];
                 if (t == null && f != null)
                 {
                     if (f.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == Makes)

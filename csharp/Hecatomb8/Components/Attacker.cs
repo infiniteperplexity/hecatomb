@@ -28,26 +28,26 @@ namespace Hecatomb
             {
                 Attacker = this,
                 Defender = t.TryComponent<Defender>(),
-                Roll = Game.World.Random.Arbitrary(20, OwnSeed()) + 1,
+                Roll = OldGame.World.Random.Arbitrary(20, OwnSeed()) + 1,
                 //Roll = Game.World.Random.Next(20)+1,
             };
             Defender defender = attack.Defender;
 
             if (Entity.TryComponent<Minion>() != null)
             {
-                attack.AccuracyModifier += Game.World.GetState<ResearchHandler>().GetMinionAccuracy();
-                attack.DamageModifier += Game.World.GetState<ResearchHandler>().GetMinionDamage();
+                attack.AccuracyModifier += OldGame.World.GetState<ResearchHandler>().GetMinionAccuracy();
+                attack.DamageModifier += OldGame.World.GetState<ResearchHandler>().GetMinionDamage();
             }
             if (defender.Entity.TryComponent<Minion>() != null)
             {
-                attack.EvasionModifier += Game.World.GetState<ResearchHandler>().GetMinionEvasion();
-                attack.ToughnessModifier += Game.World.GetState<ResearchHandler>().GetMinionToughness();
-                attack.ArmorModifier += Game.World.GetState<ResearchHandler>().GetMinionArmor();
+                attack.EvasionModifier += OldGame.World.GetState<ResearchHandler>().GetMinionEvasion();
+                attack.ToughnessModifier += OldGame.World.GetState<ResearchHandler>().GetMinionToughness();
+                attack.ArmorModifier += OldGame.World.GetState<ResearchHandler>().GetMinionArmor();
             }
 
 
 
-            Game.World.Events.Publish(attack);
+            OldGame.World.Events.Publish(attack);
             int evade = defender.Evasion - defender.Wounds + attack.EvasionModifier;
             // at this point in the JS code, we aggro the defender in most cases
             //            Debug.WriteLine(

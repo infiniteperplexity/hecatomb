@@ -94,7 +94,7 @@ namespace Hecatomb
         {
             if (EID == -1)
             {
-                return -1 + Game.World.Turns.Turn;
+                return -1 + OldGame.World.Turns.Turn;
             }
             else
             {

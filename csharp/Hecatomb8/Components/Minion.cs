@@ -72,7 +72,7 @@ namespace Hecatomb
             Actor actor = Entity.GetComponent<Actor>();
             if (!actor.Acted)
             {
-                var p = Game.World.Player;
+                var p = OldGame.World.Player;
                 actor.Patrol(p.X, p.Y, p.Z);
             }         
         }

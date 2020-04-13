@@ -47,16 +47,16 @@ namespace Hecatomb
                 Coord c = (Coord)cc;
                 Caster.GetComponent<Movement>().StepTo(c.X, c.Y, c.Z);
                 Caster.GetComponent<Actor>().Spend();
-                Game.Camera.Center(c.X, c.Y, c.Z);
+                OldGame.Camera.Center(c.X, c.Y, c.Z);
                 ControlContext.Reset();
                 ParticleEmitter emitter2 = new ParticleEmitter();
                 emitter2.Place(c.X, c.Y, c.Z);
                 base.Cast();
-                Game.InfoPanel.PushMessage("You vanish and reappear nearby.");
+                OldGame.InfoPanel.PushMessage("You vanish and reappear nearby.");
             }
             else
             {
-                Game.InfoPanel.PushMessage("The spell fizzles.");
+                OldGame.InfoPanel.PushMessage("The spell fizzles.");
             }
         }
     }

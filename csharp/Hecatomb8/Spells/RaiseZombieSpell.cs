@@ -48,12 +48,12 @@ namespace Hecatomb
         {
             if (GetCost() > Component.Sanity)
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
                 Debug.WriteLine("cannot cast spell");
             }
             else
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
                 var c = new SelectTileControls(this);
                 c.MenuSelectable = false;
                 c.SelectedMenuCommand = "Spells";
@@ -64,14 +64,14 @@ namespace Hecatomb
         public void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "RaiseZombie", x: c.X, y: c.Y, z: c.Z);
-            Feature f = Game.World.Features[c.X, c.Y, c.Z];
-            if ((Game.World.Explored.Contains(c) || Options.Explored) && f != null && f.TypeName == "Grave")
+            Feature f = OldGame.World.Features[c.X, c.Y, c.Z];
+            if ((OldGame.World.Explored.Contains(c) || Options.Explored) && f != null && f.TypeName == "Grave")
             { 
-                Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
-                Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
-                if (Game.World.GetState<TaskHandler>().Minions.Count >= 3)
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
+                OldGame.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
+                if (OldGame.World.GetState<TaskHandler>().Minions.Count >= 3)
                 {
-                    Game.World.Events.Publish(new AchievementEvent() { Action = "RaiseFourthZombie" });
+                    OldGame.World.Events.Publish(new AchievementEvent() { Action = "RaiseFourthZombie" });
                 }
                 Cast();
                 ParticleEmitter emitter = new ParticleEmitter();
@@ -81,11 +81,11 @@ namespace Hecatomb
                 zombie.Species = "Human";
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z - 1);
-                int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
+                int randomDecay = OldGame.World.Random.Arbitrary(500, c.OwnSeed());
                 //int randomDecay = Game.World.Random.Next(500);
                 zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
                 zombie.GetComponent<Decaying>().Decay += randomDecay;
-                if (!Game.World.Terrains[c.X, c.Y, c.Z - 1].Solid && Game.World.Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)))
+                if (!OldGame.World.Terrains[c.X, c.Y, c.Z - 1].Solid && OldGame.World.Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)))
                 {
                     Status.PushMessage("The zombie burrows downward into the space below.");
                     BreakTombstone(f);
@@ -100,10 +100,10 @@ namespace Hecatomb
                 return;
             }
             Item i = Items[c.X, c.Y, c.Z];
-            if ((Game.World.Explored.Contains(c) || Options.Explored) && i != null && i.Resource=="Corpse")
+            if ((OldGame.World.Explored.Contains(c) || Options.Explored) && i != null && i.Resource=="Corpse")
             {   
-                Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
-                Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
+                OldGame.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
                 Cast();
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
@@ -111,7 +111,7 @@ namespace Hecatomb
                 zombie.Species = i.CorpseSpecies;
                 zombie.GetComponent<Actor>().Team = Teams.Friendly;
                 zombie.Place(c.X, c.Y, c.Z);
-                int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
+                int randomDecay = OldGame.World.Random.Arbitrary(500, c.OwnSeed());
                 //int randomDecay = Game.World.Random.Next(500);
                 zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
                 // need to keep an eye on how this mapping works
@@ -130,18 +130,18 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Feature f = Game.World.Features[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            Feature f = OldGame.World.Features[x, y, z];
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (f != null && f.TypeName == "Grave")
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
             }
             else
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
             }
         }
 
@@ -155,10 +155,10 @@ namespace Hecatomb
                 int x1 = c.X;
                 int y1 = c.Y;
                 int z1 = c.Z;
-                f = Game.World.Features[x1, y1, z1];
-                if (Game.World.Features[x1, y1, z1] == null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
+                f = OldGame.World.Features[x1, y1, z1];
+                if (OldGame.World.Features[x1, y1, z1] == null && !OldGame.World.Terrains[x1, y1, z1].Solid && !OldGame.World.Terrains[x1, y1, z1].Fallable)
                 {
-                    if (Game.World.Random.Arbitrary(2, seed) == 0)
+                    if (OldGame.World.Random.Arbitrary(2, seed) == 0)
                     //if (Game.World.Random.Next(2) == 0)
                     {
                         Item.PlaceNewResource("Rock", 1, x1, y1, z1);
@@ -182,7 +182,7 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            Feature f = Game.World.Features[c];
+            Feature f = OldGame.World.Features[c];
             if (f == null)
             {
                 return false;
@@ -195,12 +195,12 @@ namespace Hecatomb
         }
         public override void Start()
         {
-            Game.World.Events.Publish(new SensoryEvent() { X = X, Y = Y, Z = Z, Sight = "You hear an ominous stirring from under the ground..." });
-            Feature f = Game.World.Features[X, Y, Z];
+            OldGame.World.Events.Publish(new SensoryEvent() { X = X, Y = Y, Z = Z, Sight = "You hear an ominous stirring from under the ground..." });
+            Feature f = OldGame.World.Features[X, Y, Z];
             if (f == null)
             {
                 base.Start();
-                f = Game.World.Features[X, Y, Z];
+                f = OldGame.World.Features[X, Y, Z];
                 f.Symbol = '\u2717';
                 f.FG = "white";
             }
@@ -208,16 +208,16 @@ namespace Hecatomb
         public override void Finish()
         {
 
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
-            Game.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = X, Y = Y, Z = Z });
-            Feature f = Game.World.Features[X, Y, Z];
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
+            OldGame.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = X, Y = Y, Z = Z });
+            Feature f = OldGame.World.Features[X, Y, Z];
             RaiseZombieSpell.BreakTombstone(f);    
-            Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
-            Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
+            OldGame.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
+            OldGame.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
             Cover.ClearCover(X, Y, Z);
             Cover.ClearCover(X, Y, Z - 1);
             base.Finish();
-            Game.World.ValidateOutdoors();
+            OldGame.World.ValidateOutdoors();
         } 
     }
   

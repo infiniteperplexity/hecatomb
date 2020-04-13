@@ -48,7 +48,7 @@ namespace Hecatomb
 		
         public void Poll()
         {
-            Debug.WriteLine($"Turn: {Game.World.Turns.Turn}, Last: {Game.World.Random.Last}, Calls: {Game.World.Random.Calls}, Seed: {Game.World.Random.Seed}");
+            Debug.WriteLine($"Turn: {OldGame.World.Turns.Turn}, Last: {OldGame.World.Random.Last}, Calls: {OldGame.World.Random.Calls}, Seed: {OldGame.World.Random.Seed}");
         }
 
         [JsonIgnore] TurnHandler _cached;
@@ -62,7 +62,7 @@ namespace Hecatomb
                 }
                 else
                 {
-                    _cached = Game.World.GetState<TurnHandler>();
+                    _cached = OldGame.World.GetState<TurnHandler>();
                     return _cached;
                 }
             }

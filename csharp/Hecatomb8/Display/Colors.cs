@@ -134,7 +134,7 @@ namespace Hecatomb
 
         public static (int, int, int) SplitRGB(string s)
         {
-            Color c = Game.Colors[s];
+            Color c = OldGame.Colors[s];
             return (c.R, c.G, c.B);
         }
 

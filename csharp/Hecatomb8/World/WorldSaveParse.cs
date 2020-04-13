@@ -108,7 +108,7 @@ namespace Hecatomb
             var turns = GetState<TurnHandler>();
             var jsonready = new
             {
-                buildDate = Game.BuildDate.ToString(),
+                buildDate = OldGame.BuildDate.ToString(),
                 random = Random,
                 player = Player.EID,
                 turnQueue = turns.QueueAsIDs(turns.Queue),
@@ -136,7 +136,7 @@ namespace Hecatomb
 
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");           
-            using (TextWriter writer = File.CreateText(path + @"\saves\" + Game.GameName + ".json"))
+            using (TextWriter writer = File.CreateText(path + @"\saves\" + OldGame.GameName + ".json"))
             {
                 var serializer = JsonSerializer.Create(settings);
                 serializer.Serialize(writer, jsonready);
@@ -156,7 +156,7 @@ namespace Hecatomb
             //JObject parsed;
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            string json = System.IO.File.ReadAllText(path + @"\saves\" + Game.GameName + ".json");
+            string json = System.IO.File.ReadAllText(path + @"\saves\" + OldGame.GameName + ".json");
             //JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
             JObject parsed;
             using (StreamReader stream = File.OpenText(filename))
@@ -310,10 +310,10 @@ namespace Hecatomb
             TurnHandler.HandleVisibility();
             InterfacePanel.DirtifyUsualPanels();
             World.WorldSafeToDraw = true;
-            if (Game.Options.ReseedRandom)
+            if (OldGame.Options.ReseedRandom)
             {
                 int r = System.DateTime.Now.Millisecond;
-                Game.World.Random = new StatefulRandom(r);
+                OldGame.World.Random = new StatefulRandom(r);
                 Debug.WriteLine($"Changed random seed to {r}");
             }
         }

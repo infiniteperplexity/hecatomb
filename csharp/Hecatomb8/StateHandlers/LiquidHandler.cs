@@ -31,9 +31,9 @@ namespace Hecatomb
             {
                 foreach (Coord c in Tiles.GetNeighbors26(de.X, de.Y, de.Z))
                 {
-                    if (Game.World.Covers[c.X, c.Y, c.Z].Liquid)
+                    if (OldGame.World.Covers[c.X, c.Y, c.Z].Liquid)
                     {
-                        Flood(c.X, c.Y, c.Z, liquid: Game.World.Covers[c.X, c.Y, c.Z].TypeName);
+                        Flood(c.X, c.Y, c.Z, liquid: OldGame.World.Covers[c.X, c.Y, c.Z].TypeName);
                     }
                 }
             }
@@ -56,14 +56,14 @@ namespace Hecatomb
         {
             //if (Game.World.Covers[x, y, z] == Cover.NoCover)
             //{
-            Game.World.Covers[x, y, z] = Cover.Types[liquid];
+            OldGame.World.Covers[x, y, z] = Cover.Types[liquid];
             //}
             var neighbors = Tiles.GetNeighbors6(x, y, z);
             foreach (var tile in neighbors)
             {
                 var (x1, y1, z1) = tile;
                 // colliding liquids should get handled someday
-                if (z1 <= z && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Covers[x1, y1, z1].Liquid)
+                if (z1 <= z && !OldGame.World.Terrains[x1, y1, z1].Solid && !OldGame.World.Covers[x1, y1, z1].Liquid)
                 {
                     // flood instantly downward
                     if (z1 < z)

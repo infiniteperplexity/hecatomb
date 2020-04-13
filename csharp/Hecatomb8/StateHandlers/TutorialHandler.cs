@@ -46,44 +46,44 @@ namespace Hecatomb
             var list = new List<ColoredText>();
             if (Current.Name == "Log")
             {
-                list = list.Concat(Game.Controls.MenuTop).ToList();
+                list = list.Concat(OldGame.Controls.MenuTop).ToList();
                 list.Add(" ");
                 list.Add("{yellow}Tutorial: Casting spells / creating zombies.");
                 list.Add(" ");
                 list.Add("{cyan}Press escape to return to the main view.");
                 list[0] = "{cyan}Esc) Go back.";
             }
-            else if ((Current.Name == "ChooseDigTiles" || Current.Name == "ChooseBuildTiles") && Game.Controls is SelectZoneControls)
+            else if ((Current.Name == "ChooseDigTiles" || Current.Name == "ChooseBuildTiles") && OldGame.Controls is SelectZoneControls)
             {
                 list = Current.ControlText.ToList();
                 list = list.Concat(Current.InstructionsText).ToList();
-                if (!(Game.Controls as SelectZoneControls).FirstCorner.Equals(default(Coord)))
+                if (!(OldGame.Controls as SelectZoneControls).FirstCorner.Equals(default(Coord)))
                 {
                     list[2] = "{yellow}Select second corner with keys or mouse.";
                 }
                 if (Current.ShowTimeAndSanity > -1)
                 {
-                    var ins = Game.Time.GetTimeText();
+                    var ins = OldGame.Time.GetTimeText();
                     ins.Add(" ");
-                    ins.Add(Game.World.Player.GetComponent<SpellCaster>().GetSanityText());
+                    ins.Add(OldGame.World.Player.GetComponent<SpellCaster>().GetSanityText());
                     list.InsertRange(Current.ShowTimeAndSanity, ins);
                 }
             }
-            else if (!Current.RequiresDefaultControls || Game.Controls is DefaultControls)
+            else if (!Current.RequiresDefaultControls || OldGame.Controls is DefaultControls)
             {
                 list = Current.ControlText.ToList();
                 list = list.Concat(Current.InstructionsText).ToList();
                 if (Current.ShowTimeAndSanity > -1)
                 {
-                    var ins = Game.Time.GetTimeText();
+                    var ins = OldGame.Time.GetTimeText();
                     ins.Add(" ");
-                    ins.Add(Game.World.Player.GetComponent<SpellCaster>().GetSanityText());
+                    ins.Add(OldGame.World.Player.GetComponent<SpellCaster>().GetSanityText());
                     list.InsertRange(Current.ShowTimeAndSanity, ins);
                 }
             }
-            else if (Game.Controls == Game.CameraControls)
+            else if (OldGame.Controls == OldGame.CameraControls)
             {
-                list = list.Concat(Game.Controls.MenuTop).ToList();
+                list = list.Concat(OldGame.Controls.MenuTop).ToList();
                 list.Add(" ");
                 list = list.Concat(OffTutorialCamera).ToList();
                 //if (Current.ShowTimeAndSanity > -1)
@@ -94,13 +94,13 @@ namespace Hecatomb
                 //    list.InsertRange(Current.ShowTimeAndSanity, ins);
                 //}
             }
-            else if (Game.Controls is ExamineTileControls)
+            else if (OldGame.Controls is ExamineTileControls)
             {
-                list = list.Concat(Game.Controls.MenuTop).ToList();
+                list = list.Concat(OldGame.Controls.MenuTop).ToList();
             }
             else
             {
-                list = list.Concat(Game.Controls.MenuTop).ToList();
+                list = list.Concat(OldGame.Controls.MenuTop).ToList();
                 list.Add(" ");
                 list = list.Concat(OffTutorialText).ToList();
             }
@@ -800,7 +800,7 @@ namespace Hecatomb
                         if (t.Action=="ZombieEmerges")
                         {
                             //in the unusual circumstance that there are no rocks available, skip to the end of the tutorial
-                            if (Game.World.Player.GetComponent<Movement>().CanFindResources(new Dictionary<string, int>() {{"Rock", 1}}))
+                            if (OldGame.World.Player.GetComponent<Movement>().CanFindResources(new Dictionary<string, int>() {{"Rock", 1}}))
                             {
                                 NextState();
                             }
@@ -1181,7 +1181,7 @@ namespace Hecatomb
 		
 		public GameEvent HandleEvent(GameEvent g)
 		{
-            if (!Game.World.StateHandlers.ContainsKey("TutorialHandler"))
+            if (!OldGame.World.StateHandlers.ContainsKey("TutorialHandler"))
             {
                 Activate();
             }

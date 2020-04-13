@@ -18,11 +18,11 @@ namespace Hecatomb
 	{
 		public void Activate()
 		{
-			if (Game.World.StateHandlers.ContainsKey(GetType().Name))
+			if (OldGame.World.StateHandlers.ContainsKey(GetType().Name))
 			{
-				Game.World.StateHandlers[GetType().Name].Despawn();
+				OldGame.World.StateHandlers[GetType().Name].Despawn();
 			}
-			Game.World.StateHandlers[GetType().Name] = this;
+			OldGame.World.StateHandlers[GetType().Name] = this;
 		}
 	}
 }

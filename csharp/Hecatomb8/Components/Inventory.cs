@@ -46,7 +46,7 @@ namespace Hecatomb
             {
                 if (Item.Unbox().Resource == "Gold")
                 {
-                    Game.World.Events.Publish(new AchievementEvent() { Action = "FoundGold" });
+                    OldGame.World.Events.Publish(new AchievementEvent() { Action = "FoundGold" });
                 }
                 Item.Place(x, y, z);
                 Item = null;

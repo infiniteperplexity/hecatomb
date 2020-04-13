@@ -67,13 +67,13 @@ namespace Hecatomb
             Awakened = true;
             foreach (Coord c in VaultTiles)
             {
-                Creature cr = Game.World.Creatures[c];
+                Creature cr = OldGame.World.Creatures[c];
                 if (cr!=null)
                 {
                     cr.GetComponent<Actor>().Inactive = false;
                 }
             }
-            Game.SplashPanel.Splash(new List<ColoredText> {
+            OldGame.SplashPanel.Splash(new List<ColoredText> {
                Messages[MessageId]
             },
             logText: "{red}" + Messages[MessageId]);
@@ -85,7 +85,7 @@ namespace Hecatomb
             foreach (Coord tile in VaultTiles)
             {
                 var (x, y, z) = tile;
-                if (Game.World.Creatures[x, y, z] == null)
+                if (OldGame.World.Creatures[x, y, z] == null)
                 {
                     string creature;
                     creature = "VampireBat";
@@ -181,17 +181,17 @@ namespace Hecatomb
 
         public void DigCaverns(int z)
         {
-            var cells = new CellularAutomaton(Game.World.Width, Game.World.Height);
+            var cells = new CellularAutomaton(OldGame.World.Width, OldGame.World.Height);
             cells.Initialize(p: 0.4);
             cells.DoSteps(birth: 45678, steps: 2);
-            for (int x = 1; x < Game.World.Width - 1; x++)
+            for (int x = 1; x < OldGame.World.Width - 1; x++)
             {
-                for (int y = 1; y < Game.World.Height - 1; y++)
+                for (int y = 1; y < OldGame.World.Height - 1; y++)
                 {
                     if (!cells.Cells[x, y, 0])
                     {
-                        Game.World.Terrains[x, y, z] = Terrain.FloorTile;
-                        Game.World.Covers[x, y, z] = Cover.NoCover;
+                        OldGame.World.Terrains[x, y, z] = Terrain.FloorTile;
+                        OldGame.World.Covers[x, y, z] = Cover.NoCover;
                     }
                 }
             }
@@ -206,7 +206,7 @@ namespace Hecatomb
                 var neighbors = Tiles.GetNeighbors8(x, y, z);
                 foreach (var n in neighbors)
                 {
-                    if (!Game.World.Terrains[n.X, n.Y, n.Z].Solid && !zones.ContainsKey(n))
+                    if (!OldGame.World.Terrains[n.X, n.Y, n.Z].Solid && !zones.ContainsKey(n))
                     {
                         flood(n.X, n.Y);
                     }
@@ -214,12 +214,12 @@ namespace Hecatomb
             };
 
             // fill out the zones...there's a problem in that you can't breach two zones at once...
-            for (int x = 1; x < Game.World.Width - 1; x++)
+            for (int x = 1; x < OldGame.World.Width - 1; x++)
             {
-                for (int y = 1; y < Game.World.Height - 1; y++)
+                for (int y = 1; y < OldGame.World.Height - 1; y++)
                 {
                     var c = new Coord(x, y, z);
-                    if (!Game.World.Terrains[x, y, z].Solid && !zones.ContainsKey(c))
+                    if (!OldGame.World.Terrains[x, y, z].Solid && !zones.ContainsKey(c))
                     {
                         flood(x, y);
                         zone += 1;
@@ -262,8 +262,8 @@ namespace Hecatomb
             {
                 for (int i = 0; i < ncaves; i++)
                 {
-                    int x0 = Game.World.Random.Next(1 + border, Game.World.Width - 2 - border);
-                    int y0 = Game.World.Random.Next(1 + border, Game.World.Height - 2 - border);
+                    int x0 = OldGame.World.Random.Next(1 + border, OldGame.World.Width - 2 - border);
+                    int y0 = OldGame.World.Random.Next(1 + border, OldGame.World.Height - 2 - border);
                     Coord c = new Coord(x0, y0, z);
                     // a marker for now
                     //Game.World.Covers[x0, y0, z] = Cover.Bedrock;
@@ -275,10 +275,10 @@ namespace Hecatomb
                         {
                             int x1 = x0 + dx;
                             int y1 = y0 + dy;
-                            if (Tiles.QuickDistance(x1, y1, z, x0, y0, z) <= 2 && Game.World.Terrains[x1, y1, z].Solid)
+                            if (Tiles.QuickDistance(x1, y1, z, x0, y0, z) <= 2 && OldGame.World.Terrains[x1, y1, z].Solid)
                             {
-                                Game.World.Terrains[x1, y1, z] = Terrain.FloorTile;
-                                Game.World.Covers[x1, y1, z] = Cover.NoCover;
+                                OldGame.World.Terrains[x1, y1, z] = Terrain.FloorTile;
+                                OldGame.World.Covers[x1, y1, z] = Cover.NoCover;
                                 v.VaultTiles.Add(new Coord(x1, y1, z));
                             }
                         }

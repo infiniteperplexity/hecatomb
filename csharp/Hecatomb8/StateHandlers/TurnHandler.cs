@@ -85,8 +85,8 @@ namespace Hecatomb
         public void NextTurn()
         {
             
-            Game.Controls.RefreshContent();
-            Creature p = Game.World.Player;
+            OldGame.Controls.RefreshContent();
+            Creature p = OldGame.World.Player;
             PlayerActed = false;
             Turn += 1;
             if (Turn % 10 == 0)
@@ -104,18 +104,18 @@ namespace Hecatomb
                     Day += 1;
                 }
             }
-            Game.World.Events.Publish(new TutorialEvent() { Action = "TurnBegin" });
-            Game.World.Events.Publish(new TurnBeginEvent() { Turn = Turn });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "TurnBegin" });
+            OldGame.World.Events.Publish(new TurnBeginEvent() { Turn = Turn });
             if (Minute == 0)
             {
                 if (Hour == DawnHour)
                 {
-                    Game.InfoPanel.PushMessage("{yellow}The sun is coming up.");
+                    OldGame.InfoPanel.PushMessage("{yellow}The sun is coming up.");
                     PhaseSymbol = PhaseSymbols["Twilight"];
                 }
                 else if (Hour == DuskHour)
                 {
-                    Game.InfoPanel.PushMessage("{yellow}Night is falling.");
+                    OldGame.InfoPanel.PushMessage("{yellow}Night is falling.");
                     PhaseSymbol = PhaseSymbols["Twilight"];
                 }
                 else if (Hour == DawnHour + 1)
@@ -159,7 +159,7 @@ namespace Hecatomb
             //}
             InterfacePanel.DirtifyUsualPanels();
 
-            Creature[] actors = Game.World.Creatures.ToArray();
+            Creature[] actors = OldGame.World.Creatures.ToArray();
 			Queue.Clear();
 			Deck.Clear();
 			foreach (Entity e in Entities.Values)
@@ -230,14 +230,14 @@ namespace Hecatomb
             }
             else
             {
-                Game.World.Events.Publish(new TurnEndEvent() { Turn = Turn });
+                OldGame.World.Events.Publish(new TurnEndEvent() { Turn = Turn });
                 NextTurn();
             }
         }
 
         public void AfterPlayerActed()
         {
-            Actor actor = Game.World.Player.GetComponent<Actor>();
+            Actor actor = OldGame.World.Player.GetComponent<Actor>();
             if (actor.CurrentPoints > 0)
             {
                 Deck.Enqueue(actor);
@@ -274,36 +274,36 @@ namespace Hecatomb
 
         public static void HandleVisibility()
         {
-            if (!Game.ForegroundPanel.Active)
+            if (!OldGame.ForegroundPanel.Active)
             {
                 InterfacePanel.DirtifyUsualPanels();
                 var m = Mouse.GetState();
                 Controls?.HandleHover(m.X, m.Y);
             }
             TheFixer.CheckStates();
-            Game.World.ValidateLighting();
+            OldGame.World.ValidateLighting();
             if (!(Controls is CameraControls))
             {
                 if (ControlContext.Selection is Creature)
                 {
                     Creature c = (Creature)ControlContext.Selection;
-                    Game.Camera.Center(c.X, c.Y, c.Z);
+                    OldGame.Camera.Center(c.X, c.Y, c.Z);
                 }
                 else
                 {
-                    Game.Camera.Center(Player.X, Player.Y, Player.Z);
+                    OldGame.Camera.Center(Player.X, Player.Y, Player.Z);
                 }
                 
             }
-            Game.Visible = Game.World.Player.GetComponent<Senses>().GetFOV();
+            OldGame.Visible = OldGame.World.Player.GetComponent<Senses>().GetFOV();
             foreach (Creature c in GetState<TaskHandler>().Minions)
             {
                 Senses s = c.GetComponent<Senses>();
-                Game.Visible.UnionWith(s.GetFOV());
+                OldGame.Visible.UnionWith(s.GetFOV());
             }
-            foreach (var t in Game.Visible)
+            foreach (var t in OldGame.Visible)
             {
-                Game.World.Explored.Add(t);
+                OldGame.World.Explored.Add(t);
             }
         }
     }

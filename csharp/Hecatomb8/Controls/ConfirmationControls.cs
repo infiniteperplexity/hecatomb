@@ -26,7 +26,7 @@ namespace Hecatomb
             AlwaysPaused = true;
             MenuSelectable = false;
             Header = header;
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
             KeyMap[Keys.Escape] = GoBack;
             KeyMap[Keys.Y] = confirmed;
             KeyMap[Keys.N] = GoBack;
@@ -35,9 +35,9 @@ namespace Hecatomb
 
         public void GoBack()
         {
-            if (Game.MainPanel.IntroState)
+            if (OldGame.MainPanel.IntroState)
             {
-                Game.game.BackToTitle();
+                OldGame.game.BackToTitle();
             }
             else
             {
@@ -52,7 +52,7 @@ namespace Hecatomb
                 "{orange}Y) Yes.",
                 "{orange}N) No."
             };
-            Game.InfoPanel.Dirty = true;
+            OldGame.InfoPanel.Dirty = true;
         }
 
         public override void HandleClick(int x, int y)

@@ -39,25 +39,25 @@ namespace Hecatomb
         private int cachedTurn;
         public override ColoredText ListOnMenu()
         {
-            if (cachedMenuListing != null && cachedTurn == Game.World.Turns.Turn)
+            if (cachedMenuListing != null && cachedTurn == OldGame.World.Turns.Turn)
             {
                 return cachedMenuListing;
             }
             if (Ingredients.Count == 0)
             {
                 cachedMenuListing = $"Trade for {Resource.Format(Trading)}";
-                cachedTurn = Game.World.Turns.Turn;
+                cachedTurn = OldGame.World.Turns.Turn;
                 return cachedMenuListing;
             }
             else
             {
                 bool available = false;
-                if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
+                if (OldGame.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
                 {
                     available = true;
                 }
                 cachedMenuListing = (((available) ? "{white}" : "{gray}") + Resource.Format(Trading) + " for " + " ($: " + Resource.Format(Ingredients) + ")");
-                cachedTurn = Game.World.Turns.Turn;
+                cachedTurn = OldGame.World.Turns.Turn;
                 return cachedMenuListing;
             }
         }
@@ -66,7 +66,7 @@ namespace Hecatomb
         {
             int menuIndex = (Structure.Unbox() as BlackMarket).AvailableTrades.IndexOf(this);    
             // wait is this actually a condition we want?
-            if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
+            if (OldGame.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
             {
                 int x = Structure.X;
                 int y = Structure.Y;
@@ -82,7 +82,7 @@ namespace Hecatomb
                 t.LaborCost = LaborCost;
                 t.Place(x, y, z);
             }
-            if (!Game.ReconstructMode)
+            if (!OldGame.ReconstructMode)
             {
                 var c = new MenuChoiceControls(Structure.Unbox());
                 c.SelectedMenuCommand = "Jobs";
@@ -119,7 +119,7 @@ namespace Hecatomb
         {
             Labor -= (1 + Options.WorkBonus);
             Unassign();
-            Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);
+            OldGame.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
@@ -143,7 +143,7 @@ namespace Hecatomb
                 int n = Trading[resource];
                 Item.PlaceNewResource(resource, n, X, Y, Z);
             }
-            Game.World.Events.Publish(new AchievementEvent() { Action = "FinishedTrade" });
+            OldGame.World.Events.Publish(new AchievementEvent() { Action = "FinishedTrade" });
             Complete();
         }
 

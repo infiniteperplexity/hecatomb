@@ -36,7 +36,7 @@ namespace Hecatomb
         public void ScrollDown()
         {
             int maxVisible = 4;
-            if (SelectedMessage < Game.World.GetState<MessageHandler>().MessageHistory.Count - maxVisible)
+            if (SelectedMessage < OldGame.World.GetState<MessageHandler>().MessageHistory.Count - maxVisible)
             {
                 SelectedMessage += 1;
             }
@@ -46,9 +46,9 @@ namespace Hecatomb
         public void PushMessage(ColoredText ct)
         {
             int MaxArchive = 100;
-            var m = Game.World.GetState<MessageHandler>();
+            var m = OldGame.World.GetState<MessageHandler>();
             m.MessageHistory.Insert(0, ct);
-            while (Game.World.GetState<MessageHandler>().MessageHistory.Count > MaxArchive)
+            while (OldGame.World.GetState<MessageHandler>().MessageHistory.Count > MaxArchive)
             {
                 m.MessageHistory.RemoveAt(MaxArchive);
             }
@@ -78,27 +78,27 @@ namespace Hecatomb
 
         public override void Draw()
         {
-            Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-            var cp = Game.MenuPanel;
+            OldGame.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            var cp = OldGame.MenuPanel;
             var k = Keyboard.GetState();
             var lines = new List<ColoredText>();
-            if (Game.World != null && !Game.Time.Frozen && Game.World.GetState<TutorialHandler>().Visible)
+            if (OldGame.World != null && !OldGame.Time.Frozen && OldGame.World.GetState<TutorialHandler>().Visible)
             {
-                lines = lines.Concat(Game.World.GetState<TutorialHandler>().GetText()).ToList();
+                lines = lines.Concat(OldGame.World.GetState<TutorialHandler>().GetText()).ToList();
             }
             else
             {
-                lines = lines.Concat(Game.Controls.MenuTop).ToList();
+                lines = lines.Concat(OldGame.Controls.MenuTop).ToList();
             }
-            if (Game.Controls.MenuMiddle.Count > 0)
+            if (OldGame.Controls.MenuMiddle.Count > 0)
             {
                 lines.Add(" ");
-                lines = lines.Concat(Game.Controls.MenuMiddle).ToList();
+                lines = lines.Concat(OldGame.Controls.MenuMiddle).ToList();
             }
-            if (Game.Controls.MenuBottom.Count > 0)
+            if (OldGame.Controls.MenuBottom.Count > 0)
             {
                 lines.Add(" ");
-                lines = lines.Concat(Game.Controls.MenuBottom).ToList();
+                lines = lines.Concat(OldGame.Controls.MenuBottom).ToList();
             }
             DrawLines(lines);
         }

@@ -14,7 +14,7 @@ namespace Hecatomb
         public ReconstructControls()
         {
             Throttle = 150;
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
             KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
             KeyMap[Keys.J] = Commands.ChooseTask;
@@ -42,11 +42,11 @@ namespace Hecatomb
         {
             if (ControlDown)
             {
-                Game.World.GetState<CommandLogger>().StepForward();
+                OldGame.World.GetState<CommandLogger>().StepForward();
             }
             else if (ShiftDown)
             {
-                Game.World.GetState<CommandLogger>().StepForward();
+                OldGame.World.GetState<CommandLogger>().StepForward();
                 // this is a dead end...causes all kinds of problems
                 //Game.World.GetState<CommandLogger>().AsyncSteps(10);
             }
@@ -56,16 +56,16 @@ namespace Hecatomb
                 //HandleClick(m.X, m.Y);
                 SelectTile();
                 // unless we selected something, step forward anyway
-                if (Game.Controls is ReconstructControls)
+                if (OldGame.Controls is ReconstructControls)
                 {
-                    Game.World.GetState<CommandLogger>().StepForward();
+                    OldGame.World.GetState<CommandLogger>().StepForward();
                 }
             }
         }
 
         public void LeaveReconstruction()
         {
-            Game.ReconstructMode = false;
+            OldGame.ReconstructMode = false;
             ControlContext.Reset();
         }
 
@@ -77,20 +77,20 @@ namespace Hecatomb
                 "{yellow}Navigate (Tab: Leave Reconstruction)",
                 " "
              };
-            if (Game.World != null && Game.World.Player != null)
+            if (OldGame.World != null && OldGame.World.Player != null)
             {
-                var p = Game.World.Player;
-                var time = Game.Time.GetTimeText();
+                var p = OldGame.World.Player;
+                var time = OldGame.Time.GetTimeText();
                 MenuTop.Add(time[0]);
                 MenuTop.Add(time[1]);
                 MenuTop.Add(" ");
                 MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
-                if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                if (OldGame.World.GetState<TaskHandler>().Minions.Count > 0)
                 {
                     MenuTop.Add(" ");
                     MenuTop.Add("Minions:");
                     var types = new Dictionary<string, int>();
-                    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                    foreach (var minion in OldGame.World.GetState<TaskHandler>().Minions)
                     {
                         Creature c = (Creature)minion;
                         if (!types.ContainsKey(c.TypeName))

@@ -18,7 +18,7 @@ namespace Hecatomb
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game : Microsoft.Xna.Framework.Game
+    public class OldGame : Microsoft.Xna.Framework.Game
     {
         public static HecatombOptions Options;
         public static World World;
@@ -51,7 +51,7 @@ namespace Hecatomb
         public static string DefaultGameName;
         public Texture2D startup;
 
-        public static global::Hecatomb.Game game;
+        public static global::Hecatomb.OldGame game;
         public static DateTime BuildDate;
 
         public static bool ReconstructMode;
@@ -59,23 +59,23 @@ namespace Hecatomb
 
 
         [STAThread]
-        static void Main()
+        static void OldMain()
         {
        
-            BuildDate = BuildHandler.GetBuildDate();
+            //BuildDate = BuildHandler.GetBuildDate();
             Go();
         }
         public static void Go()
         {
 
-            game = new Game();
-            game.Run();
+            //game = new Game();
+            //game.Run();
 
             //			using (game = new Game())
             //                game.Run();
         }
 
-        public Game()
+        public OldGame()
         {
             Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -173,10 +173,10 @@ namespace Hecatomb
                 Time.Frozen = false;
                 if (ReconstructMode)
                 {
-                    var tutorial = Game.World.GetState<TutorialHandler>();
+                    var tutorial = OldGame.World.GetState<TutorialHandler>();
                     if (tutorial.Visible)
                     {
-                        Game.World.Events.Publish(new TutorialEvent() { Action = "HideTutorial" });
+                        OldGame.World.Events.Publish(new TutorialEvent() { Action = "HideTutorial" });
                     }
                     tutorial.Visible = false;
                     var logger = World.GetState<CommandLogger>();
@@ -205,7 +205,7 @@ namespace Hecatomb
                 {
                     ControlContext.Set(DefaultControls);
                 }
-                Game.World.Random.Poll();
+                OldGame.World.Random.Poll();
             }
             catch (Exception e)
             {
@@ -224,7 +224,7 @@ namespace Hecatomb
             //string[] files = Directory.GetFiles(archiveFolder, "*.zip");
 
             MainPanel.IntroState = false;
-            Game.GameName = "GameWorld";
+            OldGame.GameName = "GameWorld";
             TheFixer.Purge();
             ControlContext.Reset();
             ForegroundPanel.Splash(new List<ColoredText>{
@@ -249,8 +249,8 @@ namespace Hecatomb
         public void RestartGame()
         {
             MainPanel.IntroState = false;
-            Game.GameName = "GameWorld";
-            Game.SplashPanel.Splash(new List<ColoredText>()
+            OldGame.GameName = "GameWorld";
+            OldGame.SplashPanel.Splash(new List<ColoredText>()
             {
                 $"Starting new game..."
             }, frozen: true);
@@ -349,14 +349,14 @@ namespace Hecatomb
                 var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
                 System.IO.Directory.CreateDirectory(path + @"\logs");
                 var body = new List<string>();
-                body.Add("Build Date:" + "\"" + Game.BuildDate.ToString() + "\"");
+                body.Add("Build Date:" + "\"" + OldGame.BuildDate.ToString() + "\"");
                 body.Add(" ");
                 body.Add(e.ToString());
                 string json = "";
-                if (Game.World != null)
+                if (OldGame.World != null)
                 {
                     json = CommandLogger.DumpLog();
-                    body[0] += (", Seed: " + "\"" + Game.World.Random.Seed + "\"");
+                    body[0] += (", Seed: " + "\"" + OldGame.World.Random.Seed + "\"");
                     body.Add(" ");
                     body.Add("Logged Commands:");
                     body.Add(json);

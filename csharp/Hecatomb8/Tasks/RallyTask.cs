@@ -19,7 +19,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
             c.MenuSelectable = false;
             c.SelectedMenuCommand = "Jobs";
@@ -29,16 +29,16 @@ namespace Hecatomb
         public override void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "RallyTask", x: c.X, y: c.Y, z: c.Z);
-            if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+            if (OldGame.World.Tasks[c.X, c.Y, c.Z] == null)
             {
-                var rallies = Game.World.Tasks.Where((Task t) => t is RallyTask).ToList();
+                var rallies = OldGame.World.Tasks.Where((Task t) => t is RallyTask).ToList();
                 foreach(var rally in rallies)
                 {
                     rally.Cancel();
                 }
                 RallyTask task = Spawn<RallyTask>();
                 task.Place(c.X, c.Y, c.Z);
-                Game.World.Events.Subscribe<ActEvent>(task, task.OnAct);
+                OldGame.World.Events.Subscribe<ActEvent>(task, task.OnAct);
                 
             }
         }

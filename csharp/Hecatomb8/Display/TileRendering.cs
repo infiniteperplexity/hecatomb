@@ -17,28 +17,28 @@ namespace Hecatomb
             {
                 return (' ', "black");
             }
-            var Creatures = Game.World.Creatures;
-            var Items = Game.World.Items;
-            var Features = Game.World.Features;
-            var Tiles = Game.World.Terrains;
+            var Creatures = OldGame.World.Creatures;
+            var Items = OldGame.World.Items;
+            var Features = OldGame.World.Features;
+            var Tiles = OldGame.World.Terrains;
             Terrain terrain = Tiles[x, y, z];
-            Cover cover = Game.World.Covers[x, y, z];
-            Cover coverb = Game.World.Covers[x, y, z - 1];
-            List<Particle> pl = Game.World.Particles[x, y, z];
+            Cover cover = OldGame.World.Covers[x, y, z];
+            Cover coverb = OldGame.World.Covers[x, y, z - 1];
+            List<Particle> pl = OldGame.World.Particles[x, y, z];
             Particle particle = (pl.Count > 0) ? pl[0] : null;
             Coord c = new Coord(x, y, z);
             Coord ca = new Coord(x, y, z + 1);
             Coord cb = new Coord(x, y, z - 1);
-            bool visible = Game.Visible.Contains(c) || Game.Options.Visible;
-            bool va = Game.Visible.Contains(ca) || Game.Options.Visible;
-            bool vb = Game.Visible.Contains(cb) || Game.Options.Visible;
+            bool visible = OldGame.Visible.Contains(c) || OldGame.Options.Visible;
+            bool va = OldGame.Visible.Contains(ca) || OldGame.Options.Visible;
+            bool vb = OldGame.Visible.Contains(cb) || OldGame.Options.Visible;
             int zview = terrain.ZView;
             char sym;
             string fg = null;
-            if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !OldGame.Options.Explored)
             {
                 // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
-                if (Game.World.Terrains[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
+                if (OldGame.World.Terrains[x, y, z + 1] == Terrain.FloorTile && OldGame.World.Explored.Contains(new Coord(x, y, z + 1)))
                 {
                     return (Terrain.WallTile.Symbol, "SHADOWFG");
                 }
@@ -170,7 +170,7 @@ namespace Hecatomb
                 // *** Symbol ***
 
                 // explored tunnel below a floor
-                if (terrain == Terrain.FloorTile && (Game.World.Explored.Contains(cb) || Options.Explored) && !Tiles[x, y, z - 1].Solid)
+                if (terrain == Terrain.FloorTile && (OldGame.World.Explored.Contains(cb) || Options.Explored) && !Tiles[x, y, z - 1].Solid)
                 {
                     sym = '\u25E6';
                 }
@@ -274,30 +274,30 @@ namespace Hecatomb
             }
             if (useLighting)
             {
-                int lighting = Game.World.GetLighting(x, y, z);
+                int lighting = OldGame.World.GetLighting(x, y, z);
                 if (!visible)
                 {
                     return (sym, fg);
                 }
-                return (sym, Game.Colors.Shade(fg, lighting));
+                return (sym, OldGame.Colors.Shade(fg, lighting));
             }
             return (sym, fg);
         }
 
         public static string GetBackground(int x, int y, int z)
         {
-            List<Particle> pl = Game.World.Particles[x, y, z];
+            List<Particle> pl = OldGame.World.Particles[x, y, z];
             Particle p = (pl.Count > 0) ? pl[0] : null;
-            Terrain t = Game.World.Terrains[x, y, z];
-            Terrain tb = Game.World.Terrains[x, y, z - 1];
-            Cover cv = Game.World.Covers[x, y, z];
-            Cover cb = Game.World.Covers[x, y, z - 1];
-            Creature cr = Game.World.Creatures[x, y, z];
-            Feature f = Game.World.Features[x, y, z];
-            Item it = Game.World.Items[x, y, z];
+            Terrain t = OldGame.World.Terrains[x, y, z];
+            Terrain tb = OldGame.World.Terrains[x, y, z - 1];
+            Cover cv = OldGame.World.Covers[x, y, z];
+            Cover cb = OldGame.World.Covers[x, y, z - 1];
+            Creature cr = OldGame.World.Creatures[x, y, z];
+            Feature f = OldGame.World.Features[x, y, z];
+            Item it = OldGame.World.Items[x, y, z];
             var c = new Coord(x, y, z);
-            Resource res = (it==null) ? null : res = Resource.Types[Game.World.Items[c].Resource];
-            Task task = Game.World.Tasks[x, y, z];
+            Resource res = (it==null) ? null : res = Resource.Types[OldGame.World.Items[c].Resource];
+            Task task = OldGame.World.Tasks[x, y, z];
             // particle
             if (p != null && p.BG != null)
             {
@@ -308,7 +308,7 @@ namespace Hecatomb
             {
                 return (task.BG ?? task.BG);
             }
-            else if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
+            else if (!OldGame.World.Explored.Contains(c) && !OldGame.Options.Explored)
             {
                 return "black";
             }
@@ -348,8 +348,8 @@ namespace Hecatomb
                 }
                 else
                 {
-                    Cover cb2 = Game.World.Covers[x, y, z - 2];
-                    if (Game.World.Terrains[x, y, z - 1].ZView ==-1 && cb2.Liquid)
+                    Cover cb2 = OldGame.World.Covers[x, y, z - 2];
+                    if (OldGame.World.Terrains[x, y, z - 1].ZView ==-1 && cb2.Liquid)
                     {
                         return cb2.DarkBG;
                     }

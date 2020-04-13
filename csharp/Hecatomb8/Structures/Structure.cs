@@ -39,7 +39,7 @@ namespace Hecatomb
                 foreach (Feature f in Features)
                 {
                     var (x, y, z) = f;
-                    Task t = Game.World.Tasks[x, y, z];
+                    Task t = OldGame.World.Tasks[x, y, z];
                     if (t is ResearchTask)
                     {
                         return (ResearchTask)t;
@@ -193,7 +193,7 @@ namespace Hecatomb
             {
                 order.Add(i);
             }
-            order = order.OrderBy(s => Game.World.Random.Arbitrary(OwnSeed())).ToList();
+            order = order.OrderBy(s => OldGame.World.Random.Arbitrary(OwnSeed())).ToList();
             //order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
             // if there is an existing pile
             foreach (int i in order)
@@ -258,7 +258,7 @@ namespace Hecatomb
             else
             {
                 var list = new List<IMenuListable>();
-                var researched = Game.World.GetState<ResearchHandler>().Researched;
+                var researched = OldGame.World.GetState<ResearchHandler>().Researched;
                 foreach (string s in Researches)
                 {
                     bool valid = true;
@@ -326,7 +326,7 @@ namespace Hecatomb
                     menu.MenuTop.Add("{" + Resource.GetListColor(res) + "}- " + Resource.Format((res, stored[res])));
                 }
             }
-            Game.InfoPanel.Dirty = true;
+            OldGame.InfoPanel.Dirty = true;
             //InterfacePanel.DirtifySidePanels();
             menu.KeyMap[Keys.Escape] =
                 () =>
@@ -395,18 +395,18 @@ namespace Hecatomb
                 {
                     //ControlContext.Set(new MenuChoiceControls((Structure)structures[0]));
                     ControlContext.Set(new MenuCameraControls((Structure)structures[0]));
-                    Game.Camera.CenterOnSelection(); ;
+                    OldGame.Camera.CenterOnSelection(); ;
                 }
                 else
                 {
                     //ControlContext.Set(new MenuChoiceControls((Structure)structures[n+1]));
                     ControlContext.Set(new MenuCameraControls((Structure)structures[n + 1]));
-                    Game.Camera.CenterOnSelection();
+                    OldGame.Camera.CenterOnSelection();
                 }
             }
             else
             {
-                Game.Camera.CenterOnSelection();
+                OldGame.Camera.CenterOnSelection();
             }
         }
         public void BuildInSquares(List<Coord> squares)
@@ -420,8 +420,8 @@ namespace Hecatomb
             for (int i = 0; i < Squares.Count; i++)
             { 
                 Coord s = Squares[i];
-                Feature f = Game.World.Features[s.X, s.Y, s.Z];
-                if (Game.World.Tasks[s.X, s.Y, s.Z] != null)
+                Feature f = OldGame.World.Features[s.X, s.Y, s.Z];
+                if (OldGame.World.Tasks[s.X, s.Y, s.Z] != null)
                 {
                     return;
                 }
@@ -445,9 +445,9 @@ namespace Hecatomb
             for (int i = 0; i < Squares.Count; i++)
             {
                 Coord s = Squares[i];
-                if (Game.World.Tasks[s.X, s.Y, s.Z] == null)
+                if (OldGame.World.Tasks[s.X, s.Y, s.Z] == null)
                 {
-                    Feature f = Game.World.Features[s.X, s.Y, s.Z];
+                    Feature f = OldGame.World.Features[s.X, s.Y, s.Z];
                     if (f == null || f.TypeName=="IncompleteFeature")
                     {
                         ConstructTask tc = Entity.Spawn<ConstructTask>();
@@ -492,7 +492,7 @@ namespace Hecatomb
                 bool exists = false;
                 foreach (Coord s in Squares)
                 {
-                    Feature f = Game.World.Features[s.X, s.Y, s.Z];
+                    Feature f = OldGame.World.Features[s.X, s.Y, s.Z];
                     if (f != null && f != despawning)
                     {
                         var sc = f.TryComponent<StructuralComponent>();
@@ -512,7 +512,7 @@ namespace Hecatomb
                             }
                         }
                     }
-                    Task t = Game.World.Tasks[s.X, s.Y, s.Z];
+                    Task t = OldGame.World.Tasks[s.X, s.Y, s.Z];
                     if (t!=null && t!=despawning && t is ConstructTask)
                     {
                         if (t.Makes==this.ClassName)

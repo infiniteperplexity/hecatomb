@@ -63,7 +63,7 @@ namespace Hecatomb
             int stopChecking = 1000;
             while (picks.Count< 9)
             {
-                int i = Game.World.Random.Next(PossibleFlowerColors.Count);
+                int i = OldGame.World.Random.Next(PossibleFlowerColors.Count);
                 int j = PossibleFlowerColors[i];
                 var (r, g, b) = Colors.SplitRGB(j);
                 int lowestDifference = 0xFF + 0xFF + 0xFF;

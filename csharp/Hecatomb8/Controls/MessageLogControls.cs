@@ -25,7 +25,7 @@ namespace Hecatomb
         {
             MenuSelectable = false;
             RefreshContent();
-            Game.MenuPanel.Dirty = true;
+            OldGame.MenuPanel.Dirty = true;
         }
 
         public void ExitLogMode()
@@ -35,7 +35,7 @@ namespace Hecatomb
         }
         public override void RefreshContent()
         {
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
             KeyMap[Keys.Space] = WaitOrReconstruct;
             KeyMap[Keys.Escape] = ExitLogMode;
             KeyMap[Keys.L] = ExitLogMode;   
@@ -43,7 +43,7 @@ namespace Hecatomb
             KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
             KeyMap[Keys.Z] = Commands.ChooseSpell;
             KeyMap[Keys.J] = Commands.ChooseTask;
-            int MaxVisible = Math.Min(Game.World.GetState<MessageHandler>().MessageHistory.Count, 4);
+            int MaxVisible = Math.Min(OldGame.World.GetState<MessageHandler>().MessageHistory.Count, 4);
             var controls = new List<ColoredText>()
             {
                 "{orange}**Esc) Back**.",
@@ -51,7 +51,7 @@ namespace Hecatomb
                 "{yellow}Message Log:",
                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             };
-            var list = Game.World.GetState<MessageHandler>().MessageHistory.GetRange(Game.InfoPanel.SelectedMessage, MaxVisible).ToList();
+            var list = OldGame.World.GetState<MessageHandler>().MessageHistory.GetRange(OldGame.InfoPanel.SelectedMessage, MaxVisible).ToList();
             for (int i = 0; i < list.Count; i++)
             {
                 list[i] = new ColoredText(list[i]);

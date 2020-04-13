@@ -23,7 +23,7 @@ namespace Hecatomb
         // I briefly thought of doing it with Cover, which lines up well with how ores work...but ores have fixed backgrounds (and symbols, for that matter)
         public override string GetDisplayName()
         {
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             if (Makes == "Undye")
             {
                 return "undye";
@@ -33,7 +33,7 @@ namespace Hecatomb
 
         public override string GetHoverName()
         {
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             if (Makes == "Undye")
             {
                 return "undye";
@@ -43,10 +43,10 @@ namespace Hecatomb
 
         public override ColoredText ListOnMenu()
         {
-            if (cachedMenuListing == null && Ingredients.Count != 0 && Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
+            if (cachedMenuListing == null && Ingredients.Count != 0 && OldGame.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
             {
-                var handler = Game.World.GetState<RandomPaletteHandler>();
-                if (Game.Options.NoIngredients)
+                var handler = OldGame.World.GetState<RandomPaletteHandler>();
+                if (OldGame.Options.NoIngredients)
                 {
                     cachedMenuListing = ("{" + handler.GetFlowerColor(Makes) + "}" + MenuName);
                 }
@@ -71,7 +71,7 @@ namespace Hecatomb
                 return;
             }
             menu.Header = "Dye a tile or feature:";
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             var list = new List<IMenuListable>();
             if (Makes == null)
             {
@@ -132,8 +132,8 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            Feature f = Game.World.Features[X, Y, Z];
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            Feature f = OldGame.World.Features[X, Y, Z];
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             if (Makes == "Undye")
             {
                 if (f!=null && f.TryComponent<DyedComponent>()!=null)
@@ -174,13 +174,13 @@ namespace Hecatomb
                     dyed.FG = handler.FlowerColors[Makes];
                 }
             }
-            Game.World.Events.Publish(new AchievementEvent() { Action = "FinishDyeTask" });
+            OldGame.World.Events.Publish(new AchievementEvent() { Action = "FinishDyeTask" });
             Complete();
         }
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             if (Makes == null)
             {
                 var c = new MenuChoiceControls(this);
@@ -206,9 +206,9 @@ namespace Hecatomb
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             string txt;
             if (!ValidTile(c))
             {
@@ -225,12 +225,12 @@ namespace Hecatomb
         public override void SelectZone(List<Coord> squares)
         {
             CommandLogger.LogCommand(command: "DyeTask", makes: Makes, squares: squares, n: (Background == true) ? 1 : 0);
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             foreach (Coord c in squares)
             {
-                if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+                if (OldGame.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
                 {
-                    Feature f = Game.World.Features[c];
+                    Feature f = OldGame.World.Features[c];
                     var task = Hecatomb.Entity.Spawn<DyeTask>();
                     task.Ingredients = new Dictionary<string, int>() { { Makes, 1 } };
                     task.Makes = Makes;
@@ -242,12 +242,12 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !OldGame.Options.Explored)
             {
                 return false;
             }
-            Feature f = Game.World.Features[c];
-            Terrain t = Game.World.Terrains[c.X, c.Y, c.Z];
+            Feature f = OldGame.World.Features[c];
+            Terrain t = OldGame.World.Terrains[c.X, c.Y, c.Z];
             if (Makes == "Undye" && (f == null || f.TryComponent<DyedComponent>()==null))
             {
                 return false;

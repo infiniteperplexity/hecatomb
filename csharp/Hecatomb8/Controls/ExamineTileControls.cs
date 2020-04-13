@@ -28,7 +28,7 @@ namespace Hecatomb
 
         public override void RefreshContent()
         {
-            MenuTop = Game.World.GetTileDetails(tile);
+            MenuTop = OldGame.World.GetTileDetails(tile);
         }
 
         public override void HoverTile(Coord c)

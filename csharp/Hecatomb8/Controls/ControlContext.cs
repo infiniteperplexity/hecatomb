@@ -52,8 +52,8 @@ namespace Hecatomb
 
         public static void Initialize(ControlContext c)
         {
-            Game.Controls = c;
-            Game.LastControls = c;
+            OldGame.Controls = c;
+            OldGame.LastControls = c;
         }
         public static void Set(ControlContext c)
         {
@@ -63,54 +63,54 @@ namespace Hecatomb
 
         public static void SetWithoutRedraw(ControlContext c)
         {
-            Game.Controls.CleanUp();
-            Game.LastControls = Game.Controls;
-            Game.Controls = c;
+            OldGame.Controls.CleanUp();
+            OldGame.LastControls = OldGame.Controls;
+            OldGame.Controls = c;
         }
 
         public static void Reset()
         {
-            var old = Game.Controls;
-            Game.Controls.CleanUp();
-            if (Game.ReconstructMode)
+            var old = OldGame.Controls;
+            OldGame.Controls.CleanUp();
+            if (OldGame.ReconstructMode)
             {
-                Game.Controls = Game.ReconstructControls;
+                OldGame.Controls = OldGame.ReconstructControls;
             }
             else if (LogMode)
             {
-                Game.Commands.ShowLog();
+                OldGame.Commands.ShowLog();
             }
             else if (MovingCamera)
             {
-                Game.Controls = Game.CameraControls;
+                OldGame.Controls = OldGame.CameraControls;
             }
             else
             {
-                Game.Controls = Game.DefaultControls;
+                OldGame.Controls = OldGame.DefaultControls;
             }
-            if (Game.World != null)
+            if (OldGame.World != null)
             {
-                Game.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Game.Controls });
-                Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
+                OldGame.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = OldGame.Controls });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             }
-            Game.LastControls = Game.Controls;
-            Game.Controls.RefreshContent();
+            OldGame.LastControls = OldGame.Controls;
+            OldGame.Controls.RefreshContent();
             InterfacePanel.DirtifyUsualPanels();
-            Game.SplashPanel.Active = false;
-            Game.ForegroundPanel.Active = false;
-            Game.Time.Frozen = false;
+            OldGame.SplashPanel.Active = false;
+            OldGame.ForegroundPanel.Active = false;
+            OldGame.Time.Frozen = false;
         }
         
         public virtual void Back()
         {
-            var old = Game.Controls;
-            Game.Controls = Game.LastControls;
-            if (Game.World!=null)
+            var old = OldGame.Controls;
+            OldGame.Controls = OldGame.LastControls;
+            if (OldGame.World!=null)
             {
-                Game.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Game.Controls });
-                Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
+                OldGame.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = OldGame.Controls });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             }  
-            Game.LastControls = (MovingCamera) ? Game.CameraControls : Game.DefaultControls;
+            OldGame.LastControls = (MovingCamera) ? OldGame.CameraControls : OldGame.DefaultControls;
             InterfacePanel.DirtifyUsualPanels();
             //Game.ForegroundPanel.Active = false;
         }
@@ -125,20 +125,20 @@ namespace Hecatomb
             var panel = InterfacePanel.GetPanel(x, y);
             if (panel is MainPanel)
         	{
-         		int Size = Game.MainPanel.CharWidth;
-	        	int Padding = Game.MainPanel.XPad;
-	        	Camera Camera = Game.Camera;
+         		int Size = OldGame.MainPanel.CharWidth;
+	        	int Padding = OldGame.MainPanel.XPad;
+	        	Camera Camera = OldGame.Camera;
                 if ((x - panel.X0 - Padding) / (Size + Padding) < Camera.Width)
                 {
                     Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
                     OnTileClick(tile);
                 }
         	}
-        	else if (x>=Game.MenuPanel.X0) 
+        	else if (x>=OldGame.MenuPanel.X0) 
         	{
         		OnMenuClick(x, y);
         	}
-        	else if (y>=Game.InfoPanel.Y0)
+        	else if (y>=OldGame.InfoPanel.Y0)
         	{
         		OnStatusClick(x, y);
         	}
@@ -158,13 +158,13 @@ namespace Hecatomb
         public virtual void HandleHover(int x, int y)
         {
          
-            if (Game.World == null)
+            if (OldGame.World == null)
             {
                 return;
             }
             if (Cursor.X > -1)
             {
-                Game.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
+                OldGame.MainPanel.DirtifyTile(Cursor.X, Cursor.Y, Cursor.Z);
                 Cursor.Remove();
             }
             var panel = InterfacePanel.GetPanel(x, y);
@@ -173,7 +173,7 @@ namespace Hecatomb
                 //Debug.WriteLine($"here we are on the main panel {x} {y}");
                 int Size = panel.CharWidth;
                 int Padding = panel.XPad;
-	        	Camera Camera = Game.Camera;
+	        	Camera Camera = OldGame.Camera;
                 if ((x - panel.X0 - Padding) / (Size + Padding) < Camera.Width)
                 {
                     Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
@@ -199,29 +199,29 @@ namespace Hecatomb
 
         public virtual void ClickTile(Coord c)
         {
-            if (Game.World==null)
+            if (OldGame.World==null)
             {
                 return;
             }
             var (x, y, z) = c;
-            Creature cr = Game.World.Creatures[x, y, z];
-            bool visible = Game.Visible.Contains(c);
+            Creature cr = OldGame.World.Creatures[x, y, z];
+            bool visible = OldGame.Visible.Contains(c);
             // this functionality should probably be defined in HecatombCommands
             if (cr != null && visible)
             {
                 //ControlContext.Set(new MenuChoiceControls(cr));
                 ControlContext.Set(new MenuCameraControls(cr));
-                Game.Camera.CenterOnSelection();
+                OldGame.Camera.CenterOnSelection();
                 return;
             }
-            Feature fr = Game.World.Features[x, y, z];
+            Feature fr = OldGame.World.Features[x, y, z];
             if (fr?.TryComponent<StructuralComponent>() != null)
             {
                 if (fr.GetComponent<StructuralComponent>().Structure.Placed)
                 {
                     var s = fr.GetComponent<StructuralComponent>().Structure.Unbox();
                     ControlContext.Set(new MenuCameraControls(s));
-                    Game.Camera.CenterOnSelection();
+                    OldGame.Camera.CenterOnSelection();
                     //ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
                 }
                 return;
@@ -232,11 +232,11 @@ namespace Hecatomb
 
         public virtual void HoverTile(Coord c)
         {
-            if (Game.World != null)
+            if (OldGame.World != null)
             {
                 Cursor.Place(c.X, c.Y, c.Z);
-                Game.MainPanel.DirtifyTile(c);
-                Game.World.ShowTileDetails(c);
+                OldGame.MainPanel.DirtifyTile(c);
+                OldGame.World.ShowTileDetails(c);
             }
         }
         
@@ -303,7 +303,7 @@ namespace Hecatomb
 		}
 		public void HandleInput()
 		{
-			if (!Game.game.IsActive)
+			if (!OldGame.game.IsActive)
 			{
 				return;
 			}
@@ -313,7 +313,7 @@ namespace Hecatomb
             ShiftDown = (k.IsKeyDown(Keys.LeftShift) || k.IsKeyDown(Keys.RightShift));
             DateTime now = DateTime.Now;
         	double sinceInputBegan = now.Subtract(InputBegan).TotalMilliseconds;
-        	Coord c = new Coord(Game.Camera.XOffset, Game.Camera.YOffset, Game.Camera.Z);
+        	Coord c = new Coord(OldGame.Camera.XOffset, OldGame.Camera.YOffset, OldGame.Camera.Z);
         	if (!m.Equals(OldMouse))
         	{
         		HandleHover(m.X, m.Y);
@@ -401,7 +401,7 @@ namespace Hecatomb
 
         public static void CenterCursor()
         {
-            Cursor.Place(Game.Camera.XOffset + Game.Camera.Width/2, Game.Camera.YOffset + Game.Camera.Height/2, Game.Camera.Z);
+            Cursor.Place(OldGame.Camera.XOffset + OldGame.Camera.Width/2, OldGame.Camera.YOffset + OldGame.Camera.Height/2, OldGame.Camera.Z);
         }
 
         public static void HideCursor()
@@ -413,7 +413,7 @@ namespace Hecatomb
         }
         public virtual void SelectTile()
         {
-            Camera Camera = Game.Camera;
+            Camera Camera = OldGame.Camera;
             if (Cursor.X == -1 || Cursor.Y == -1)
             {
                 return;
@@ -463,13 +463,13 @@ namespace Hecatomb
         // this gets used in a variety of constructs to prevent messing up the reconstruction from logs
         public void WaitOrReconstruct()
         {
-            if (Game.ReconstructMode)
+            if (OldGame.ReconstructMode)
             {
-                Game.World.GetState<CommandLogger>().StepForward();
+                OldGame.World.GetState<CommandLogger>().StepForward();
             }
             else
             {
-                Game.Commands.Wait();
+                OldGame.Commands.Wait();
             }
         }
     }	

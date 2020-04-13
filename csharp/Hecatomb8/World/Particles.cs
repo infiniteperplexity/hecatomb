@@ -50,7 +50,7 @@ namespace Hecatomb
             T0 = DateTime.Now;
             Rate = 10;
             LifeSpan = 650;
-            Game.World.Emitters.Add(this);
+            OldGame.World.Emitters.Add(this);
             LastEmit = DateTime.Now;
             FG = "black";
             V = 16;
@@ -73,7 +73,7 @@ namespace Hecatomb
             millis = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
             if (millis>LifeSpan)
             {
-                Game.World.Emitters.Remove(this);
+                OldGame.World.Emitters.Remove(this);
             }
         }
         
@@ -90,7 +90,7 @@ namespace Hecatomb
             LastEmit = DateTime.Now;
             Particle p = new Particle()
             {
-                Symbol = Symbols[Game.World.Random.StatelessNext(Symbols.Length)],
+                Symbol = Symbols[OldGame.World.Random.StatelessNext(Symbols.Length)],
                 FG = FG,
                 X0 = X,
                 Y0 = Y,
@@ -101,7 +101,7 @@ namespace Hecatomb
                 LifeSpan = LifeSpan,
 //              D = (float) Game.World.Random.Next(1,4),
                 D = D,
-                Angle = (float) (Game.World.Random.StatelessDouble()*2*Math.PI)
+                Angle = (float) (OldGame.World.Random.StatelessDouble()*2*Math.PI)
             };
             p.Place(X, Y, Z);
         }
@@ -151,7 +151,7 @@ namespace Hecatomb
             X = _x;
             Y = _y;
             Z = _z;
-            Game.World.Particles[_x, _y, _z] = Game.World.Particles[_x,_y,_z].Concat(new Particle[] {this}).ToList();
+            OldGame.World.Particles[_x, _y, _z] = OldGame.World.Particles[_x,_y,_z].Concat(new Particle[] {this}).ToList();
         }
         
         public void Remove()
@@ -160,7 +160,7 @@ namespace Hecatomb
             {
                 return;
             }
-            Game.World.Particles[X, Y, Z] = Game.World.Particles[X, Y, Z].Where(p=>p!=this).ToList();
+            OldGame.World.Particles[X, Y, Z] = OldGame.World.Particles[X, Y, Z].Where(p=>p!=this).ToList();
             X = -1;
             Y = -1;
             Z = -1;
@@ -175,7 +175,7 @@ namespace Hecatomb
                 return;
             }
             int T = (int) DateTime.Now.Subtract(T0).TotalMilliseconds;
-            Game.MainPanel.DirtifyTile(X, Y, Z);
+            OldGame.MainPanel.DirtifyTile(X, Y, Z);
             if (T>LifeSpan && LifeSpan!=int.MaxValue)
             {
                 Remove();
@@ -186,7 +186,7 @@ namespace Hecatomb
             int y = Y0 + (int) (Math.Sin(Angle)*(D+V*t + 0.5*A*t*t));
             int z = Z0 + (int) (Math.Sin(Incline)*(D+V*t + 0.5*A*t*t));
             Place(x, y, z);
-            Game.MainPanel.DirtifyTile(x, y, z);
+            OldGame.MainPanel.DirtifyTile(x, y, z);
         }
     }
 	// is there a good way to handle emitting with random symbols?  well...we need emitters...
@@ -206,7 +206,7 @@ namespace Hecatomb
             Symbols = new char[] { '\u2022' };
             Rate = 10;
             LifeSpan = 50;
-            Game.World.Emitters.Add(this);
+            OldGame.World.Emitters.Add(this);
             FG = "red";
 
         }

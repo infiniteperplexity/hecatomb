@@ -22,7 +22,7 @@ namespace Hecatomb
         public override void HandleKeyDown(Keys key)
         {
             base.HandleKeyDown(key);
-            Camera c = Game.Camera;
+            Camera c = OldGame.Camera;
             Z = c.Z;
             XOffset = c.XOffset;
             YOffset = c.YOffset;
@@ -31,7 +31,7 @@ namespace Hecatomb
 
         public AbstractCameraControls() : base()
         {
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
             KeyMap[Keys.Up] = Commands.MoveCameraNorth;
             KeyMap[Keys.Down] = Commands.MoveCameraSouth;
             KeyMap[Keys.Left] = Commands.MoveCameraWest;
@@ -52,7 +52,7 @@ namespace Hecatomb
         {
             if (Cursor.X > -1)
             {
-                Coord tile = new Coord(Cursor.X, Cursor.Y, Game.Camera.Z);
+                Coord tile = new Coord(Cursor.X, Cursor.Y, OldGame.Camera.Z);
                 OnTileHover(tile);
             }
         }

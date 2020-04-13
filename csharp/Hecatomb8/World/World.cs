@@ -165,8 +165,8 @@ namespace Hecatomb
             Debug.WriteLine("nearby surface coal: " + surfaceCoal);
             while (surfaceFlint < 15)
             {
-                int rx = x - 15 + Game.World.Random.Next(31);
-                int ry = y - 15 + Game.World.Random.Next(31);
+                int rx = x - 15 + OldGame.World.Random.Next(31);
+                int ry = y - 15 + OldGame.World.Random.Next(31);
                 if (Covers[rx, ry, GetGroundLevel(rx, ry) - 1] == Cover.Soil)
                 {
                     Covers[rx, ry, GetGroundLevel(rx, ry) - 1] = Cover.FlintCluster;
@@ -175,8 +175,8 @@ namespace Hecatomb
             }
             while (surfaceCoal < 15)
             {
-                int rx = x - 15 + Game.World.Random.Next(31);
-                int ry = y - 15 + Game.World.Random.Next(31);
+                int rx = x - 15 + OldGame.World.Random.Next(31);
+                int ry = y - 15 + OldGame.World.Random.Next(31);
                 if (Covers[rx, ry, GetGroundLevel(rx, ry) - 1] == Cover.Soil)
                 {
                     Covers[rx, ry, GetGroundLevel(rx, ry) - 1] = Cover.CoalSeam;
@@ -205,8 +205,8 @@ namespace Hecatomb
                 }
             }
             //*****
-            Game.Camera.Center(x, y, z);
-            foreach (var res in Game.Options.FreeStuff)
+            OldGame.Camera.Center(x, y, z);
+            foreach (var res in OldGame.Options.FreeStuff)
             {
                 Item.PlaceNewResource(res.Item1, res.Item2, x, y, z);
             }
@@ -313,7 +313,7 @@ namespace Hecatomb
                 " "
             };
             TileEntity t;
-            if (Explored.Contains(c) || Game.Options.Explored)
+            if (Explored.Contains(c) || OldGame.Options.Explored)
             {
                 text.Add("Terrain: " + Terrains[x, y, z].Name);
                 if (Covers[x, y, z] != Cover.NoCover)
@@ -353,7 +353,7 @@ namespace Hecatomb
                 }
             }
             change = text.Count;
-            if (Explored.Contains(above) || Game.Options.Explored)
+            if (Explored.Contains(above) || OldGame.Options.Explored)
             {
                 text.Add("Above: " + Terrains[x, y, za].Name);
                 if (Covers[x, y, za] != Cover.NoCover)
@@ -391,7 +391,7 @@ namespace Hecatomb
                     text.Add("Above: " + (t as Task).GetHoverName());
                 }
             }
-            if (Explored.Contains(below) || Game.Options.Explored)
+            if (Explored.Contains(below) || OldGame.Options.Explored)
             {
                 text.Add("Below: " + Terrains[x, y, zb].Name);
                 if (Covers[x, y, zb] != Cover.NoCover)
@@ -438,7 +438,7 @@ namespace Hecatomb
 		public void ShowTileDetails(Coord c)
 		{
             var text = GetTileDetails(c);
-            Game.Controls.MenuBottom = text;
+            OldGame.Controls.MenuBottom = text;
 			//for (int i=0; i<text.Count; i++)
 			//{
    //             Game.Controls.MenuBottom[i].Colors[0] = (i<change) ? main : other;
@@ -528,7 +528,7 @@ namespace Hecatomb
         public int GetLighting(int x, int y, int z)
         {
             int lighting = Turns.LightLevel;
-            int outdoors = Game.World.Outdoors[x, y, z];
+            int outdoors = OldGame.World.Outdoors[x, y, z];
             if (outdoors == 0)
             {
                 lighting = 0;

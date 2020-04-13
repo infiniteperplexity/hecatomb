@@ -81,7 +81,7 @@ namespace Hecatomb
                     chance /= 2;
                 }
             }
-            if (Game.World.Random.Arbitrary(chance, OwnSeed())==0)
+            if (OldGame.World.Random.Arbitrary(chance, OwnSeed())==0)
             //if (Game.World.Random.Next(chance)==0)
             {
                 Sanity = Math.Min(max, Sanity + 1);

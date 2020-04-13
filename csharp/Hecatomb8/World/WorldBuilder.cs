@@ -81,12 +81,12 @@ namespace Hecatomb
             plantFlowers();
             placeGraves();
             plantTrees();
-            if (!Game.Options.NoBatCaves)
+            if (!OldGame.Options.NoBatCaves)
             {
                 //world.GetState<CaveVaultTracker>().PlaceBatCaves();
                 world.GetState<VaultHandler>().PlaceBatCaves();
             }
-            if (!Game.Options.NoLairs)
+            if (!OldGame.Options.NoLairs)
             {
                 int nLairs = 3;
                 for (int i = 0; i < nLairs; i++)
@@ -94,7 +94,7 @@ namespace Hecatomb
                     world.GetState<LairHandler>().PlaceLair();
                 }
             }
-            if (!Game.Options.NoCaverns)
+            if (!OldGame.Options.NoCaverns)
             {
                 world.GetState<VaultHandler>().DigCaverns(25);
                 world.GetState<VaultHandler>().DigCaverns(40);
@@ -108,13 +108,13 @@ namespace Hecatomb
         }
         public void placeSpiders()
         {
-            var world = Game.World;
+            var world = OldGame.World;
             for (int i = 1; i < world.Width - 1; i++)
             {
                 for (int j = 1; j < world.Height - 1; j++)
                 {
                     int k = world.GetGroundLevel(i, j);
-                    if (!Game.Options.NoSpiders)
+                    if (!OldGame.Options.NoSpiders)
                     {
                         if (world.Random.Next(200) == 1)
                         {
@@ -131,7 +131,7 @@ namespace Hecatomb
         {
             float hscale = 2f;
             float vscale = 5f;
-            var world = Game.World;
+            var world = OldGame.World;
             var VegetationNoise = new FastNoise(seed: world.Random.Next(1024));
             for (int i = 1; i < world.Width - 1; i++)
             {
@@ -141,7 +141,7 @@ namespace Hecatomb
                     float plants = vscale * VegetationNoise.GetSimplexFractal(hscale * i, hscale * j);
                     if (plants > 1.0f)
                     {
-                        if (world.Random.Next(2) == 1 && world.Terrains[i, j, k] == Terrain.FloorTile && Game.World.Features[i, j, k] == null)
+                        if (world.Random.Next(2) == 1 && world.Terrains[i, j, k] == Terrain.FloorTile && OldGame.World.Features[i, j, k] == null)
                         {
                             Feature tree;
                             if (world.Covers[i, j, k].Liquid)
@@ -166,7 +166,7 @@ namespace Hecatomb
 
         public void makeSlopes()
         {
-            var world = Game.World;
+            var world = OldGame.World;
             for (int i = 1; i < world.Width - 1; i++)
             {
                 for (int j = 1; j < world.Height - 1; j++)
@@ -197,18 +197,18 @@ namespace Hecatomb
         protected void plantFlowers()
         {
             // make sure the stupid thing does it here, just in case
-            Game.World.GetState<RandomPaletteHandler>().PickFlowerColors();
+            OldGame.World.GetState<RandomPaletteHandler>().PickFlowerColors();
             int vchunks = 3;
             int hchunks = 3;
-            int vchunk = Game.World.Height / vchunks;
-            int hchunk = Game.World.Width / hchunks;
+            int vchunk = OldGame.World.Height / vchunks;
+            int hchunk = OldGame.World.Width / hchunks;
             for (var i = 0; i < hchunks; i++)
             {
                 for (var j = 0; j < vchunks; j++)
                 {
                     var flower = RandomPaletteHandler.FlowerNames[i * 3 + j].Item1;
-                    int rx = Game.World.Random.Next(hchunk);
-                    int ry = Game.World.Random.Next(vchunk);
+                    int rx = OldGame.World.Random.Next(hchunk);
+                    int ry = OldGame.World.Random.Next(vchunk);
                     int x = i * hchunk + rx;
                     int y = j * vchunk + ry;
                     // could require that it be a bit farther from the player
@@ -252,15 +252,15 @@ namespace Hecatomb
             {
                 layers.Add(Cover.Bedrock);
             }
-            for (int x = 1; x < Game.World.Width - 1; x++)
+            for (int x = 1; x < OldGame.World.Width - 1; x++)
             {
-                for (int y = 1; y < Game.World.Height - 1; y++)
+                for (int y = 1; y < OldGame.World.Height - 1; y++)
                 {
-                    int z = Game.World.GetGroundLevel(x, y) - 1;
+                    int z = OldGame.World.GetGroundLevel(x, y) - 1;
                     for (int i = 0; z - i > 0; i++)
                     {
                         Cover c = layers[i];
-                        if (Game.World.Random.Next(20) == 0)
+                        if (OldGame.World.Random.Next(20) == 0)
                         {
                             if (i < soil)
                             {
@@ -279,8 +279,8 @@ namespace Hecatomb
                                 c = Cover.Bedrock;
                             }
                         }
-                        Game.World.Covers[x, y, z - i] = c;
-                        if (c == Cover.Soil && Game.World.Random.Next(16) == 0)
+                        OldGame.World.Covers[x, y, z - i] = c;
+                        if (c == Cover.Soil && OldGame.World.Random.Next(16) == 0)
                         {
                             c = Cover.FlintCluster;
                         }
@@ -288,7 +288,7 @@ namespace Hecatomb
 
                 }
             }
-            Game.World.ValidateOutdoors();
+            OldGame.World.ValidateOutdoors();
         }
         protected void oldPlaceOres()
         {
@@ -308,25 +308,25 @@ namespace Hecatomb
             ores[Cover.Basalt] = new List<Cover>() { Cover.IronVein, Cover.IronVein, Cover.SilverVein };
             ores[Cover.Granite] = new List<Cover>() { Cover.GoldVein, Cover.SilverVein, Cover.TitaniumVein, Cover.CobaltVein };
             ores[Cover.Bedrock] = new List<Cover>() { Cover.CobaltVein, Cover.TitaniumVein, Cover.AdamantVein, Cover.ThoriumVein };
-            for (int z = 1; z < Game.World.Depth - 1; z++)
+            for (int z = 1; z < OldGame.World.Depth - 1; z++)
             {
-                for (int x = 0; x < Game.World.Width; x += chunk)
+                for (int x = 0; x < OldGame.World.Width; x += chunk)
                 {
-                    for (int y = 0; y < Game.World.Height; y += chunk)
+                    for (int y = 0; y < OldGame.World.Height; y += chunk)
                     {
                         for (int i = 0; i < nper; i++)
                         {
-                            int x0 = x + Game.World.Random.Next(16);
-                            int y0 = y + Game.World.Random.Next(16);
-                            Cover c = Game.World.Covers[x0, y0, z];
+                            int x0 = x + OldGame.World.Random.Next(16);
+                            int y0 = y + OldGame.World.Random.Next(16);
+                            Cover c = OldGame.World.Covers[x0, y0, z];
                             if (ores.ContainsKey(c))
                             {
                                 //int rj = Game.World.Random.Next(ores[c].Count);
                                 int rj = i % ores[c].Count;
                                 Cover choice = ores[c][rj];
-                                double displace = Game.World.Random.NextDouble() * 256;
-                                double angle = Game.World.Random.NextDouble() * 2 * Math.PI;
-                                int segs = Game.World.Random.Next(segmin, segmax);
+                                double displace = OldGame.World.Random.NextDouble() * 256;
+                                double angle = OldGame.World.Random.NextDouble() * 2 * Math.PI;
+                                int segs = OldGame.World.Random.Next(segmin, segmax);
                                 for (int j = 0; j < segs; j++)
                                 {
                                     int x1 = x0 + (int)(Math.Cos(angle) * seglen);
@@ -335,11 +335,11 @@ namespace Hecatomb
                                     foreach (var coord in line)
                                     {
                                         (int _x, int _y, int _) = coord;
-                                        if (_x > 0 && _x < Game.World.Width - 2 && _y > 0 && _y < Game.World.Height - 2)
+                                        if (_x > 0 && _x < OldGame.World.Width - 2 && _y > 0 && _y < OldGame.World.Height - 2)
                                         {
-                                            if (Game.World.Random.Next(3) > 0 && Game.World.Covers[_x, _y, z].Solid)
+                                            if (OldGame.World.Random.Next(3) > 0 && OldGame.World.Covers[_x, _y, z].Solid)
                                             {
-                                                Game.World.Covers[_x, _y, z] = choice;
+                                                OldGame.World.Covers[_x, _y, z] = choice;
                                             }
                                         }
                                     }
@@ -356,13 +356,13 @@ namespace Hecatomb
 
         protected void placeGraves()
         {
-            var world = Game.World;
+            var world = OldGame.World;
             Func<int, int, int, bool> downslopes = (int x, int y, int zz) => (world.GetTile(x, y, zz) == Terrain.DownSlopeTile);
             int chunk = 16;
             int nper = 3;
-            for (int x = 0; x < Game.World.Width; x += chunk)
+            for (int x = 0; x < OldGame.World.Width; x += chunk)
             {
-                for (int y = 0; y < Game.World.Height; y += chunk)
+                for (int y = 0; y < OldGame.World.Height; y += chunk)
                 {
                     
                     int tries = 0;
@@ -479,7 +479,7 @@ namespace Hecatomb
                     }
                 }
             }
-            Game.Camera.Center(16, 16, 1);
+            OldGame.Camera.Center(16, 16, 1);
             // need to handle exploration and visibility
             // need to handle special AI for intro drones, that sleeps to start and randomly wakes up
             // hide the player on another level maybe?

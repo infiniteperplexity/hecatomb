@@ -204,7 +204,7 @@ namespace Hecatomb
                     }
                 }
             }
-            List<Item> owned = Game.World.Items.Where(i => i.Owned).ToList();
+            List<Item> owned = OldGame.World.Items.Where(i => i.Owned).ToList();
             Movement m = Worker.GetComponent<Movement>();
             owned = owned.Where(it => m.CanReach(it)).ToList();
             owned = owned.OrderBy(it => { return Tiles.QuickDistance(X, Y, Z, it.X, it.Y, it.Z); }).ToList();
@@ -480,7 +480,7 @@ namespace Hecatomb
 
         public virtual void Start()
         {
-            Feature f = Game.World.Features[X, Y, Z];
+            Feature f = OldGame.World.Features[X, Y, Z];
             if (f != null)
             {
                 if (f.TryComponent<IncompleteFixtureComponent>() != null)
@@ -534,7 +534,7 @@ namespace Hecatomb
         {
             foreach (Coord c in squares)
             {
-                if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+                if (OldGame.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
                 {
                     Task task = Spawn<Task>(this.GetType());
                     task.Makes = Makes;
@@ -567,7 +567,7 @@ namespace Hecatomb
         // IMenuListable
         public virtual void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectZoneControls(this);
             c.MenuSelectable = false;
             c.SelectedMenuCommand = "Jobs";

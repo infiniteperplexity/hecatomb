@@ -35,7 +35,7 @@ namespace Hecatomb
             menu.Header = "Plant a seedling:";
             var list = new List<IMenuListable>();
             var structures = Structure.ListAsStrings();
-            var researched = Game.World.GetState<ResearchHandler>().Researched;
+            var researched = OldGame.World.GetState<ResearchHandler>().Researched;
             // only if we have the prerequisite structures / technologies...
             var task = Hecatomb.Entity.Mock<FarmingTask>();
             task.Makes = "Sapling";
@@ -75,7 +75,7 @@ namespace Hecatomb
         public override void Finish()
         {
             Feature f;
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             if (RandomPaletteHandler.FlowerDictionary.ContainsKey(Makes))
             {
                 f = RandomPaletteHandler.SpawnFlower(Makes);
@@ -83,7 +83,7 @@ namespace Hecatomb
             else
             {
                 f = Entity.Spawn<Feature>(Makes);
-                if (Makes == "Sapling" && Game.World.Random.Arbitrary(OwnSeed())<0.5)
+                if (Makes == "Sapling" && OldGame.World.Random.Arbitrary(OwnSeed())<0.5)
                 {
                     f.GetComponent<GrowthComponent>().Makes = "SpadeTree";
                 }
@@ -94,7 +94,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             if (Makes == null)
             {
                 var c = new MenuChoiceControls(this);
@@ -113,7 +113,7 @@ namespace Hecatomb
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Plant seedling at {0} {1} {2}", c.X, c.Y, c.Z) };
         }
@@ -121,7 +121,7 @@ namespace Hecatomb
         public override void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "FarmingTask", makes: Makes, x: c.X, y: c.Y, z: c.Z);
-            if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+            if (OldGame.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
                 Task task = Entity.Spawn<FarmingTask>();
                 task.Ingredients = new Dictionary<string, int>();

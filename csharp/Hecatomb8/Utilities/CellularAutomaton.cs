@@ -22,7 +22,7 @@ namespace Hecatomb
             Width = width;
             Height = height;
             Depth = depth;
-            random = Game.World.Random;
+            random = OldGame.World.Random;
         }
 
         public void Initialize(double p=0.4)

@@ -22,8 +22,8 @@ namespace Hecatomb
 
         public override string GetDisplayName()
         {
-            var tiles = Game.World.Terrains;
-            var covers = Game.World.Covers;
+            var tiles = OldGame.World.Terrains;
+            var covers = OldGame.World.Covers;
             Terrain t = tiles[X, Y, Z];
             Terrain floor = Terrain.FloorTile;
             Terrain wall = Terrain.WallTile;
@@ -49,7 +49,7 @@ namespace Hecatomb
 		public override void Start()
 		{
 			base.Start();
-			Feature f = Game.World.Features[X, Y, Z];
+			Feature f = OldGame.World.Features[X, Y, Z];
             f.Name = "incomplete excavation";
             f.GetComponent<IncompleteFixtureComponent>().Makes = "Excavation";
 			f.Symbol = '\u2717';
@@ -57,12 +57,12 @@ namespace Hecatomb
 		}
 		public override void Finish()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "DigTaskComplete" });
-			Game.World.Features[X, Y, Z].Despawn();
-			var tiles = Game.World.Terrains;
-            var covers = Game.World.Covers;
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "DigTaskComplete" });
+			OldGame.World.Features[X, Y, Z].Despawn();
+			var tiles = OldGame.World.Terrains;
+            var covers = OldGame.World.Covers;
 			Terrain t = tiles[X, Y, Z];
-            Terrain tb = Game.World.GetTile(X, Y, Z - 1);
+            Terrain tb = OldGame.World.GetTile(X, Y, Z - 1);
             Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;
 			Terrain up = Terrain.UpSlopeTile;
@@ -152,14 +152,14 @@ namespace Hecatomb
                     Explored.Add(c);
                 }
             }
-            Game.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z, EventType = evnt});
+            OldGame.World.Events.Publish(new DigEvent() { X = X, Y = Y, Z = Z, EventType = evnt});
             base.Finish();
-            Game.World.ValidateOutdoors();
+            OldGame.World.ValidateOutdoors();
 		}
 		
 		public override void ChooseFromMenu()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
             var c = new SelectZoneControls(this);
             c.MenuSelectable = false;
             c.SelectedMenuCommand = "Jobs";
@@ -168,9 +168,9 @@ namespace Hecatomb
 		
 		public override void TileHover(Coord c)
 		{
-			var co = Game.Controls;
+			var co = OldGame.Controls;
             co.MenuMiddle.Clear();
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
                 co.MenuMiddle = new List<ColoredText>() {"{yellow}Unexplored tile."};
             }
@@ -185,7 +185,7 @@ namespace Hecatomb
 		}
 		public override void TileHover(Coord c, List<Coord> squares)
 		{
-			var co = Game.Controls;
+			var co = OldGame.Controls;
 			co.MenuMiddle.Clear();
             int priority = 0;
             foreach (Coord square in squares)
@@ -193,10 +193,10 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Terrains[x, y, z];
-                Feature f = Game.World.Features[x, y, z];
-                Task ta = Game.World.Tasks[x, y, z];
-                if (Game.World.Explored.Contains(square) || Options.Explored)
+                Terrain t = OldGame.World.Terrains[x, y, z];
+                Feature f = OldGame.World.Features[x, y, z];
+                Task ta = OldGame.World.Tasks[x, y, z];
+                if (OldGame.World.Explored.Contains(square) || Options.Explored)
                 {
                     // right now, incomplete dig tasks are the absolute top priority.  is that really what we want? or should they count the same as the terrain they're on?
                     if (f?.TypeName == "IncompleteFeature" && ta == null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
@@ -273,10 +273,10 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Terrains[x, y, z];
-                Feature f = Game.World.Features[x, y, z];
-                Task ta = Game.World.Tasks[x, y, z];
-                if (Game.World.Explored.Contains(square) || Options.Explored)
+                Terrain t = OldGame.World.Terrains[x, y, z];
+                Feature f = OldGame.World.Features[x, y, z];
+                Task ta = OldGame.World.Tasks[x, y, z];
+                if (OldGame.World.Explored.Contains(square) || Options.Explored)
                 {
                     // right now, incomplete dig tasks are the absolute top priority.  is that really what we want? or should they count the same as the terrain they're on?
                     if (f?.TypeName == "IncompleteFeature" && ta == null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
@@ -311,25 +311,25 @@ namespace Hecatomb
             }
             foreach (Coord square in squares)
             {
-                if (Game.World.Tasks[square.X, square.Y, square.Z] != null)
+                if (OldGame.World.Tasks[square.X, square.Y, square.Z] != null)
                 {
                     continue;
                 }
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Terrains[x, y, z];
-                Feature f = Game.World.Features[x, y, z];
-                if (Game.World.Explored.Contains(square) || Options.Explored)
+                Terrain t = OldGame.World.Terrains[x, y, z];
+                Feature f = OldGame.World.Features[x, y, z];
+                if (OldGame.World.Explored.Contains(square) || Options.Explored)
                 {
                     // complete existing dig task
                     if (priority == 7 && f?.TypeName == "IncompleteFeature" && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
                     {
                         Entity.Spawn<DigTask>().Place(x, y, z);
                     }
-                    else if (priority == 6 && Game.World.Features[x, y, z]?.TryComponent<Harvestable>() != null && Game.World.Features[x, y, z]?.TryComponent<StructuralComponent>()==null)
+                    else if (priority == 6 && OldGame.World.Features[x, y, z]?.TryComponent<Harvestable>() != null && OldGame.World.Features[x, y, z]?.TryComponent<StructuralComponent>()==null)
                     {
-                        Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
+                        OldGame.World.Events.Publish(new TutorialEvent() { Action = "DesignateHarvestTask" });
                         Entity.Spawn<HarvestTask>().Place(x, y, z);
                     }
                     else if (priority == 2 && ((f?.TryComponent<IncompleteFixtureComponent>() != null && f?.GetComponent<IncompleteFixtureComponent>().Makes != "Excavation") || f?.TryComponent<Fixture>() != null || f?.TryComponent<StructuralComponent>() != null))
@@ -344,8 +344,8 @@ namespace Hecatomb
                         if (f == null)
                         {
                             // should I cancel existing tasks?
-                            if (Game.World.Tasks[x, y, z] == null)
-                                Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
+                            if (OldGame.World.Tasks[x, y, z] == null)
+                                OldGame.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
                             Entity.Spawn<DigTask>().Place(x, y, z);
                         }
                     }
@@ -353,8 +353,8 @@ namespace Hecatomb
                 else if (priority == 1 || priority == 5)
                 {
                     // should I cancel existing tasks?
-                    if (Game.World.Tasks[x, y, z] == null)
-                        Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
+                    if (OldGame.World.Tasks[x, y, z] == null)
+                        OldGame.World.Events.Publish(new TutorialEvent() { Action = "DesignateDigTask" });
                     Entity.Spawn<DigTask>().Place(x, y, z);
                 }
             }
@@ -366,12 +366,12 @@ namespace Hecatomb
             // what about non-harvestable, i.e. owned features?
             // maybe make those the very lowest priority?
             // in order to avoid giving away unexplored terrain, always allow designation
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
                 return true;
             }
-            Terrain t = Game.World.Terrains[x, y, z];
-            Terrain tb = Game.World.Terrains[x, y, z];
+            Terrain t = OldGame.World.Terrains[x, y, z];
+            Terrain tb = OldGame.World.Terrains[x, y, z];
             // can't dig an empty tile no matter what
             if (t==Terrain.EmptyTile)
             {
@@ -379,7 +379,7 @@ namespace Hecatomb
             }
             // I think this is the correct priority for harvesting
             // oh wait, I made this a separate task...urgh...
-            Feature f = Game.World.Features[x, y, z];
+            Feature f = OldGame.World.Features[x, y, z];
             if (f!=null)
             {
                 if (f.TryComponent<Harvestable>()!=null)
@@ -420,17 +420,17 @@ namespace Hecatomb
 
         public bool TooHard(Coord c)
         {
-            Terrain tn = Game.World.Terrains[c.X, c.Y, c.Z];
+            Terrain tn = OldGame.World.Terrains[c.X, c.Y, c.Z];
             int hardness;
             if (tn == Terrain.WallTile || tn == Terrain.UpSlopeTile)
             {
-                hardness = Game.World.Covers[c.X, c.Y, c.Z].Hardness;
+                hardness = OldGame.World.Covers[c.X, c.Y, c.Z].Hardness;
             }
             else
             {
-                hardness = Game.World.Covers[c.X, c.Y, c.Z - 1].Hardness;
+                hardness = OldGame.World.Covers[c.X, c.Y, c.Z - 1].Hardness;
             }
-            if (Game.Options.IgnoreHardness || Game.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
+            if (OldGame.Options.IgnoreHardness || OldGame.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
             {
                 return false;
             }

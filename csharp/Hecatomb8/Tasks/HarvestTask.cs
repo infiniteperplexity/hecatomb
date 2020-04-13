@@ -21,7 +21,7 @@ namespace Hecatomb
 
         public override string GetDisplayName()
         {
-            Feature f = Game.World.Features[X, Y, Z];
+            Feature f = OldGame.World.Features[X, Y, Z];
             if (f?.TryComponent<Harvestable>() != null)
             {
                 return $"harvest {f.Name}";
@@ -64,7 +64,7 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            Feature f = Game.World.Features[X, Y, Z];
+            Feature f = OldGame.World.Features[X, Y, Z];
             Harvestable h = f.TryComponent<Harvestable>();
             if (h!=null)
             {
@@ -75,13 +75,13 @@ namespace Hecatomb
                 if (f.TypeName=="Grave")
                 {
                     // basically, if there's an explored tunnel underneath, it's more convenient if we don't dig a hole
-                    if (Game.World.Terrains[X, Y, Z - 1] == Terrain.WallTile || !Game.World.Explored.Contains(new Coord(X, Y, Z)))
+                    if (OldGame.World.Terrains[X, Y, Z - 1] == Terrain.WallTile || !OldGame.World.Explored.Contains(new Coord(X, Y, Z)))
                     {
-                        Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
-                        Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
+                        OldGame.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
+                        OldGame.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
                         Cover.ClearCover(X, Y, Z);
                         Cover.ClearCover(X, Y, Z - 1);
-                        Game.World.ValidateOutdoors();
+                        OldGame.World.ValidateOutdoors();
                     }
                 }
             }

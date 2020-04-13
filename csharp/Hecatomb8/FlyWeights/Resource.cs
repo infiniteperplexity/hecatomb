@@ -38,7 +38,7 @@ namespace Hecatomb
         {
             if (RandomPaletteHandler.FlowerDictionary.ContainsKey(resource))
             {
-                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
+                return OldGame.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
             }
             return Types[resource].ListColor;
         }
@@ -46,7 +46,7 @@ namespace Hecatomb
         {
             if (RandomPaletteHandler.FlowerDictionary.ContainsKey(resource))
             {
-                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
+                return OldGame.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
             }
             return Types[resource].FG;
         }

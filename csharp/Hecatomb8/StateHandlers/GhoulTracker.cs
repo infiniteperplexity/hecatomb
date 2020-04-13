@@ -19,7 +19,7 @@ namespace Hecatomb
 
         public GameEvent OnStep(GameEvent ge)
         {
-            if (Game.Options.NoGhouls)
+            if (OldGame.Options.NoGhouls)
             {
                 return ge;
             }
@@ -32,15 +32,15 @@ namespace Hecatomb
                 {
                     var (x, y, z) = cr;
                     // only do this if you're walking on the surface
-                    if (z != Game.World.GetGroundLevel(x, y))
+                    if (z != OldGame.World.GetGroundLevel(x, y))
                     {
                         return ge;
                     }
-                    int x0 = Game.World.Width / 2;
-                    int y0 = Game.World.Height / 2;
-                    int z0 = Game.World.GetGroundLevel(x0, y0);
+                    int x0 = OldGame.World.Width / 2;
+                    int y0 = OldGame.World.Height / 2;
+                    int z0 = OldGame.World.GetGroundLevel(x0, y0);
                     // only if you're far from the center
-                    foreach (Feature f in Game.World.Features.ToList())
+                    foreach (Feature f in OldGame.World.Features.ToList())
                     {
                         if (f.TypeName=="Mausoleum")
                         {
@@ -48,7 +48,7 @@ namespace Hecatomb
                             {
                                 EmergeGhoul(f);
                             }
-                            else if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 8 && Game.World.Random.Arbitrary(3, OwnSeed())==0)
+                            else if (Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z) <= 8 && OldGame.World.Random.Arbitrary(3, OwnSeed())==0)
                             {
                                 EmergeGhoul(f);
                             }
@@ -71,26 +71,26 @@ namespace Hecatomb
                 int x1 = c.X;
                 int y1 = c.Y;
                 int z1 = c.Z;
-                f = Game.World.Features[x1, y1, z1];
-                if (Game.World.Features[x1, y1, z1] == null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
+                f = OldGame.World.Features[x1, y1, z1];
+                if (OldGame.World.Features[x1, y1, z1] == null && !OldGame.World.Terrains[x1, y1, z1].Solid && !OldGame.World.Terrains[x1, y1, z1].Fallable)
                 {
-                    if (Game.World.Random.Arbitrary(2, OwnSeed()) == 0)
+                    if (OldGame.World.Random.Arbitrary(2, OwnSeed()) == 0)
                     //if (Game.World.Random.Next(2) == 0)
                     {
                         Item.PlaceNewResource("Rock", 1, x1, y1, z1, owned: false);
                     }
                 }
             }
-            Game.World.Terrains[x, y, z] = Terrain.DownSlopeTile;
-            Game.World.Terrains[x, y, z - 1] = Terrain.UpSlopeTile;
+            OldGame.World.Terrains[x, y, z] = Terrain.DownSlopeTile;
+            OldGame.World.Terrains[x, y, z - 1] = Terrain.UpSlopeTile;
             Cover.ClearCover(x, y, z);
             Cover.ClearCover(x, y, z-1);
             Creature ghoul = Entity.Spawn<Creature>("HungryGhoul");
             ghoul.Place(x, y, z - 1);
             ghoul.GetComponent<Inventory>().Item = Item.SpawnNewResource("Gold", 1);
-            if (Game.Visible.Contains(new Coord(x, y, z)) || Game.Options.Visible)
+            if (OldGame.Visible.Contains(new Coord(x, y, z)) || OldGame.Options.Visible)
             {
-                Game.InfoPanel.PushMessage("{red}A ravenous ghoul bursts forth from its grave!");
+                OldGame.InfoPanel.PushMessage("{red}A ravenous ghoul bursts forth from its grave!");
             }
         }
     }

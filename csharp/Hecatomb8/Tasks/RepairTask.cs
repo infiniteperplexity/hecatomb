@@ -25,7 +25,7 @@ namespace Hecatomb
 
         public override string GetDisplayName()
         {
-            Feature f = Game.World.Features[X, Y, Z];
+            Feature f = OldGame.World.Features[X, Y, Z];
             return "repair " + f.Describe();
         }
 
@@ -35,7 +35,7 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            Feature f = Game.World.Features[X, Y, Z];
+            Feature f = OldGame.World.Features[X, Y, Z];
             if (f != null && f.TryComponent<Defender>() != null)
             {
                 f.GetComponent<Defender>().Wounds = 0;
@@ -57,11 +57,11 @@ namespace Hecatomb
             // what about non-harvestable, i.e. owned features?
             // maybe make those the very lowest priority?
             // in order to avoid giving away unexplored terrain, always allow designation
-            if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !OldGame.Options.Explored)
             {
                 return false;
             }
-            Feature f = Game.World.Features[x, y, z];
+            Feature f = OldGame.World.Features[x, y, z];
             if (f == null)
             {
                 return false;
@@ -86,11 +86,11 @@ namespace Hecatomb
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             if (ValidTile(c))
             {
-                Feature f = Game.World.Features[c];
+                Feature f = OldGame.World.Features[c];
                 co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Repair or complete {3} at {0} {1} {2}", c.X, c.Y, c.Z, f.Describe()) };
             }
             else
@@ -106,9 +106,9 @@ namespace Hecatomb
         }
         public override void SelectTile(Coord c)
         {
-            if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+            if (OldGame.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
-                Feature f = Game.World.Features[c.X, c.Y, c.Z];
+                Feature f = OldGame.World.Features[c.X, c.Y, c.Z];
                 if (f.TryComponent<IncompleteFixtureComponent>() != null)
                 {
                     var ifc = f.GetComponent<IncompleteFixtureComponent>();
@@ -135,7 +135,7 @@ namespace Hecatomb
                 {
                     base.SelectTile(c);
                     Debug.WriteLine("tried to place a repair task");
-                    Task task = Game.World.Tasks[c.X, c.Y, c.Z];
+                    Task task = OldGame.World.Tasks[c.X, c.Y, c.Z];
                     task.Ingredients = GetRepairIngredients(f);
                 }
                 // a structure that wasn't completely finished

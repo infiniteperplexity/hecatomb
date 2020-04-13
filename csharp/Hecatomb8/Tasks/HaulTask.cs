@@ -131,7 +131,7 @@ namespace Hecatomb
                     Structure s = f.GetComponent<StructuralComponent>().Structure;
                     if (s.GetStored().Count >= 4)
                     {
-                        Game.World.Events.Publish(new AchievementEvent() { Action = "FullyStocked" });
+                        OldGame.World.Events.Publish(new AchievementEvent() { Action = "FullyStocked" });
                     }
                 }
 

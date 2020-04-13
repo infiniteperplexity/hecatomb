@@ -22,7 +22,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
             c.MenuSelectable = false;
             c.SelectedMenuCommand = "Jobs";
@@ -31,7 +31,7 @@ namespace Hecatomb
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             if (!Explored.Contains(c) && !Options.Explored)
             {

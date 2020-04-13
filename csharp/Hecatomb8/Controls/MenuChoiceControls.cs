@@ -75,10 +75,10 @@ namespace Hecatomb
         public override void RefreshContent()
         {
             Chooser.BuildMenu(this);
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
 			KeyMap[Keys.Space] = () =>
 			{
-				if (Game.World != null)
+				if (OldGame.World != null)
 				{
 					Commands.Wait();
 				}

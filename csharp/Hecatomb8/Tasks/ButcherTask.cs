@@ -39,9 +39,9 @@ namespace Hecatomb
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
                 co.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
@@ -80,7 +80,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectZoneControls(this);
             c.MenuSelectable = false;
             c.SelectedMenuCommand = "Jobs";
@@ -167,7 +167,7 @@ namespace Hecatomb
             // I guess this can in theory be null, and somehow someone reached it.
             if (corpse.Resource == "Corpse")
             {
-                Game.World.Events.Publish(new AchievementEvent() { Action = "ButcherCorpse" });
+                OldGame.World.Events.Publish(new AchievementEvent() { Action = "ButcherCorpse" });
                 Item.PlaceNewResource("Flesh", 1, X, Y, Z);
                 Item.PlaceNewResource("Bone", 1, X, Y, Z);
                 base.Finish();

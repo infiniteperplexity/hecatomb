@@ -25,19 +25,19 @@ namespace Hecatomb
         public override void Draw()
         {
             // eventually want some kind of brief freeze to keep from instantly closing this
-            Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            OldGame.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             Vector2 v;
             v = new Vector2(X0, Y0);
-            Game.Sprites.DrawString(Font, new string('=', 55), v, Game.Colors["yellow"]);
+            OldGame.Sprites.DrawString(Font, new string('=', 55), v, OldGame.Colors["yellow"]);
             for (var i = 1; i <= 11; i++)
             {
                 v = new Vector2(X0, Y0 + CharHeight * i);
-                Game.Sprites.DrawString(Font, "#", v, Game.Colors["yellow"]);
+                OldGame.Sprites.DrawString(Font, "#", v, OldGame.Colors["yellow"]);
                 v = new Vector2(X0 + CharHeight * 30 + 7, Y0 + CharHeight * i);
-                Game.Sprites.DrawString(Font, "#", v, Game.Colors["yellow"]);
+                OldGame.Sprites.DrawString(Font, "#", v, OldGame.Colors["yellow"]);
             }
             v = new Vector2(X0, Y0 + CharHeight * 12);
-            Game.Sprites.DrawString(Font, new string('=', 55), v, Game.Colors["yellow"]);
+            OldGame.Sprites.DrawString(Font, new string('=', 55), v, OldGame.Colors["yellow"]);
             DrawLines(CurrentText);
         }
 
@@ -47,7 +47,7 @@ namespace Hecatomb
             Dirty = true;
             if (logText != null)
             {
-                Game.InfoPanel.PushMessage(logText);
+                OldGame.InfoPanel.PushMessage(logText);
             }
             if (!frozen)
             {

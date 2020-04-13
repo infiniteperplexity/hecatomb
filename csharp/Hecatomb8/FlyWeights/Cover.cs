@@ -52,13 +52,13 @@ namespace Hecatomb
 
         public string Shimmer()
         {
-            var c = Game.Colors[BG];
+            var c = OldGame.Colors[BG];
             int r = c.R;
             int g = c.G;
             int b = c.B;
-            r = (int)Game.World.Random.StatelessNormal(r, r / 16f);
-            g = (int)Game.World.Random.StatelessNormal(g, g / 16f);
-            b = (int)Game.World.Random.StatelessNormal(b, b / 16f);
+            r = (int)OldGame.World.Random.StatelessNormal(r, r / 16f);
+            g = (int)OldGame.World.Random.StatelessNormal(g, g / 16f);
+            b = (int)OldGame.World.Random.StatelessNormal(b, b / 16f);
             return ("#" + r.ToString("X2") + g.ToString("X2") + b.ToString("X2"));
         }
         public static readonly Cover NoCover = new Cover(
@@ -276,7 +276,7 @@ namespace Hecatomb
             }
             else if (this.Solid)
             {
-                if (Game.World.Random.Arbitrary(4, new Coord(x, y, z).OwnSeed())==0)
+                if (OldGame.World.Random.Arbitrary(4, new Coord(x, y, z).OwnSeed())==0)
                 //if (Game.World.Random.Next(4)==0)
                 {
                     Item.PlaceNewResource("Rock", 1, x, y, z);
@@ -287,9 +287,9 @@ namespace Hecatomb
 
         public static void ClearCover(int x, int y, int z)
         {
-            if (!Game.World.Covers[x, y, z].Liquid) // not sure how to deal with liquids here
+            if (!OldGame.World.Covers[x, y, z].Liquid) // not sure how to deal with liquids here
             {
-                Game.World.Covers[x, y, z] = Cover.NoCover;
+                OldGame.World.Covers[x, y, z] = Cover.NoCover;
             }
         }
     }

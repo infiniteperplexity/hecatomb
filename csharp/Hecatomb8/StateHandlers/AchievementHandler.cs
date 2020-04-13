@@ -96,7 +96,7 @@ namespace Hecatomb
                 if (achievement.Condition(ae) && !Achieved.Contains(achievement.Name))
                 //if (achievement.Condition(ae) && !achievement.Unlocked)
                 {
-                    Game.InfoPanel.PushMessage("{magenta}Achievement unlocked: " + achievement.Name + " " + achievement.Description);
+                    OldGame.InfoPanel.PushMessage("{magenta}Achievement unlocked: " + achievement.Name + " " + achievement.Description);
                     //achievement.Unlocked = true;
                     Achieved.Add(achievement.Name);
                 }

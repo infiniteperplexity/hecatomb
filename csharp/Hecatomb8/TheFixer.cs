@@ -42,7 +42,7 @@ namespace Hecatomb
 
         public static void CheckStates()
         {
-            foreach (Entity e in Game.World.Entities.Values.Where((Entity ent) => ent is Minion))
+            foreach (Entity e in OldGame.World.Entities.Values.Where((Entity ent) => ent is Minion))
             {
                 Minion minion = (Minion)e;
                 var task = minion.Task;
@@ -58,7 +58,7 @@ namespace Hecatomb
                     }
                 }
             }
-            foreach (Task t in Game.World.Tasks.ToList())
+            foreach (Task t in OldGame.World.Tasks.ToList())
             {
                 if (t.Worker != null)
                 {

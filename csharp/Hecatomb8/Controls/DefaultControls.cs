@@ -25,7 +25,7 @@ namespace Hecatomb
 		{
             // probably want to change how clicking works on panels.
             
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
             KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
 			KeyMap[Keys.Up] = Commands.MoveNorthCommand;
 			KeyMap[Keys.Down] = Commands.MoveSouthCommand;
@@ -71,20 +71,20 @@ namespace Hecatomb
                 "{yellow}Avatar (Tab: Navigate)",
                 " "
 			};
-            if (Game.World != null && Game.World.Player != null)
+            if (OldGame.World != null && OldGame.World.Player != null)
             {
-                var p = Game.World.Player;
-                var time = Game.Time.GetTimeText();
+                var p = OldGame.World.Player;
+                var time = OldGame.Time.GetTimeText();
                 MenuTop.Add(time[0]);
                 MenuTop.Add(time[1]);
                 MenuTop.Add(" ");
                 MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
-                if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                if (OldGame.World.GetState<TaskHandler>().Minions.Count > 0)
                 {
                     MenuTop.Add(" ");
                     MenuTop.Add("Minions:");
                     var types = new Dictionary<string, int>();
-                    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                    foreach (var minion in OldGame.World.GetState<TaskHandler>().Minions)
                     {
                         Creature c = (Creature)minion;
                         if (!types.ContainsKey(c.TypeName))
@@ -121,7 +121,7 @@ namespace Hecatomb
                         MenuTop.Add("{" + Resource.GetListColor(res) + "} - " + Resource.Format((res, total[res])));
                     }
                 }
-                var messages = Game.World.GetState<MessageHandler>().MessageHistory;
+                var messages = OldGame.World.GetState<MessageHandler>().MessageHistory;
                 if (messages.Count > 0)
                 {
                     MenuTop.Add(" ");

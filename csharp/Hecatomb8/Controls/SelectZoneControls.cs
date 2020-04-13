@@ -68,7 +68,7 @@ namespace Hecatomb
 			foreach(Particle p in Highlights)
 			{
 				Coord s = new Coord(p.X, p.Y, p.Z);
-				Game.MainPanel.DirtifyTile(s);
+				OldGame.MainPanel.DirtifyTile(s);
 				p.Remove();
 				
 			}
@@ -88,7 +88,7 @@ namespace Hecatomb
 				{
 					Coord s = new Coord(x, y, z);
 					Squares.Add(s);
-					Game.MainPanel.DirtifyTile(s);
+					OldGame.MainPanel.DirtifyTile(s);
 					Highlight h = new Highlight(Selector.GetHighlightColor());
 					h.Place(s.X, s.Y, s.Z);
 					Highlights.Add(h);

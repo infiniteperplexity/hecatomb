@@ -28,7 +28,7 @@ namespace Hecatomb
         public GameEvent OnDestroy(GameEvent ge)
         {
             DestroyEvent de = (DestroyEvent)ge;
-            if (de.Entity is Feature && Game.Options.NoNatureAttacks == false)
+            if (de.Entity is Feature && OldGame.Options.NoNatureAttacks == false)
             {
                 
                 Feature f = (Feature)de.Entity;
@@ -36,7 +36,7 @@ namespace Hecatomb
                 {
                     TreesKilled += 1;
                     TreesSince += 1;
-                    if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Arbitrary(0, OwnSeed()) == 0)
+                    if (TreesKilled > 20 && TreesSince >= 8 && OldGame.World.Random.Arbitrary(0, OwnSeed()) == 0)
                     //if (TreesKilled > 20 && TreesSince >= 8 && Game.World.Random.Next(20) == 0)
                     {
                         NatureAttack(f.X, f.Y, f.Z);
@@ -54,13 +54,13 @@ namespace Hecatomb
         public void NatureAttack(int x, int y, int z)
         {
             TreesSince = 0;
-            Game.SplashPanel.Splash(new List<ColoredText> {
+            OldGame.SplashPanel.Splash(new List<ColoredText> {
                "Your wanton deforestation has attracted the attention of nature's defenders!"
             },
             logText: "{red}You have angered nature's defenders!");
 
             var trees = Features.Where((Feature f) => ((f.TypeName == "ClubTree" || f.TypeName == "SpadeTree") && Tiles.QuickDistance(x, y, z, f.X, f.Y, f.Z)<25)).ToList();
-            trees = trees.OrderBy((Feature f) => Game.World.Random.Arbitrary(f.OwnSeed())).ToList();
+            trees = trees.OrderBy((Feature f) => OldGame.World.Random.Arbitrary(f.OwnSeed())).ToList();
             for (int i = 0; i<PastNatureAttacks+2; i++)
             {
                 if (i>trees.Count-1)

@@ -41,7 +41,7 @@ namespace Hecatomb
             Creature zombie = Entity.Spawn<Creature>("Zombie");
             zombie.GetComponent<Actor>().Team = Teams.Friendly;
             zombie.Place(c.X, c.Y, c.Z);
-            int randomDecay = Game.World.Random.Next(500);
+            int randomDecay = OldGame.World.Random.Next(500);
             zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
             zombie.GetComponent<Decaying>().Decay += randomDecay;
             GetState<TaskHandler>().Minions.Add(zombie);
@@ -52,18 +52,18 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Feature f = Game.World.Features[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            Feature f = OldGame.World.Features[x, y, z];
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (f != null && f.TypeName == "Grave")
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
             }
             else
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
             }
         }
     }
@@ -102,18 +102,18 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Feature f = Game.World.Features[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            Feature f = OldGame.World.Features[x, y, z];
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (f != null && f.TypeName == "Grave")
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
             }
             else
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
             }
         }
     }
@@ -170,7 +170,7 @@ namespace Hecatomb
         {
             //Item.SpawnCorpse().Place(c.X, c.Y, c.Z);
             string item = "Rock";
-            if (Game.World.Random.Next(2) == 0)
+            if (OldGame.World.Random.Next(2) == 0)
             {
                 item = "Wood";
             }
@@ -206,7 +206,7 @@ namespace Hecatomb
         static int NextFlower = 0;
         public void SelectTile(Coord c)
         {
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = OldGame.World.GetState<RandomPaletteHandler>();
             var s = RandomPaletteHandler.FlowerNames[NextFlower].Item1;
             Feature f = RandomPaletteHandler.SpawnFlower(s);
             f.Place(c.X, c.Y, c.Z);  

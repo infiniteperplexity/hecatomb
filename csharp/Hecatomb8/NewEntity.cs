@@ -67,7 +67,7 @@ namespace Hecatomb
             ge.Spawned = true;
             foreach (Type type in ge.Listeners.Keys)
             {
-                Game.World.Events.Subscribe(type, ge, ge.Listeners[type]);
+                OldGame.World.Events.Subscribe(type, ge, ge.Listeners[type]);
             }
             return ge;
         }
@@ -85,7 +85,7 @@ namespace Hecatomb
             t.Spawned = true;
             foreach (Type type in t.Listeners.Keys)
             {
-                Game.World.Events.Subscribe(type, t, t.Listeners[type]);
+                OldGame.World.Events.Subscribe(type, t, t.Listeners[type]);
             }
             return t;
         }

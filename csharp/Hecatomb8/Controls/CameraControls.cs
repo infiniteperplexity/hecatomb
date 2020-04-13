@@ -19,7 +19,7 @@ namespace Hecatomb
 	{
 		public CameraControls() : base()
 		{
-			var Commands = Game.Commands;
+			var Commands = OldGame.Commands;
             KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
             KeyMap[Keys.J] = Commands.ChooseTask;
@@ -49,7 +49,7 @@ namespace Hecatomb
         {
             if (ControlDown)
             {
-                Game.Commands.Wait();
+                OldGame.Commands.Wait();
             }
             else
             {
@@ -57,9 +57,9 @@ namespace Hecatomb
                 //HandleClick(m.X, m.Y);
                 SelectTile();
                 // unless we selected something, wait anyway
-                if (Game.Controls is CameraControls)
+                if (OldGame.Controls is CameraControls)
                 {
-                    Game.Commands.Wait();
+                    OldGame.Commands.Wait();
                 }
             }
         }
@@ -72,20 +72,20 @@ namespace Hecatomb
                 "{yellow}Navigate (Tab: Avatar)",
                 " "
              };
-            if (Game.World != null && Game.World.Player != null)
+            if (OldGame.World != null && OldGame.World.Player != null)
             {
-                var p = Game.World.Player;
-                var time = Game.Time.GetTimeText();
+                var p = OldGame.World.Player;
+                var time = OldGame.Time.GetTimeText();
                 MenuTop.Add(time[0]);
                 MenuTop.Add(time[1]);
                 MenuTop.Add(" ");
                 MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
-                if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                if (OldGame.World.GetState<TaskHandler>().Minions.Count > 0)
                 {
                     MenuTop.Add(" ");
                     MenuTop.Add("Minions:");
                     var types = new Dictionary<string, int>();
-                    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                    foreach (var minion in OldGame.World.GetState<TaskHandler>().Minions)
                     {
                         Creature c = (Creature)minion;
                         if (!types.ContainsKey(c.TypeName))
@@ -122,7 +122,7 @@ namespace Hecatomb
                         MenuTop.Add("{" + Resource.GetListColor(res) + "} - " + Resource.Format((res, total[res])));
                     }
                 }
-                var messages = Game.World.GetState<MessageHandler>().MessageHistory;
+                var messages = OldGame.World.GetState<MessageHandler>().MessageHistory;
                 if (messages.Count > 0)
                 {
                     MenuTop.Add(" ");

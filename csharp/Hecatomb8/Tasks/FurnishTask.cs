@@ -34,7 +34,7 @@ namespace Hecatomb
             menu.Header = "Furnish a fixture:";
             var list = new List<IMenuListable>();
             var structures = Structure.ListAsStrings();
-            var researched = Game.World.GetState<ResearchHandler>().Researched;
+            var researched = OldGame.World.GetState<ResearchHandler>().Researched;
             // only if we have the prerequisite structures / technologies...
             foreach (string f in Fixtures)
             {
@@ -56,7 +56,7 @@ namespace Hecatomb
                         valid = false;
                     }
                 }
-                if (valid || Game.Options.NoIngredients)
+                if (valid || OldGame.Options.NoIngredients)
                 {
                     var task = Hecatomb.Entity.Mock<FurnishTask>();
                     var feat = Entity.Mock<Feature>(f);
@@ -95,8 +95,8 @@ namespace Hecatomb
 			
 		public override void Finish()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
-            Feature incomplete = Game.World.Features[X, Y, Z];
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
+            Feature incomplete = OldGame.World.Features[X, Y, Z];
 			incomplete.Despawn();
             // maybe some features should allow grass to stay?
             Cover.ClearCover(X, Y, Z);
@@ -107,7 +107,7 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             if (Makes==null)
 			{
                 var c = new MenuChoiceControls(this);
@@ -126,7 +126,7 @@ namespace Hecatomb
 		
 		public override void TileHover(Coord c)
 		{
-			var co = Game.Controls;
+			var co = OldGame.Controls;
 			co.MenuMiddle.Clear();
 			co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {3} at {0} {1} {2}", c.X, c.Y, c.Z, Entity.Mock<Feature>(Makes).Name) };
 		}
@@ -134,9 +134,9 @@ namespace Hecatomb
         public override void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "FurnishTask", makes: Makes, x: c.X, y: c.Y, z: c.Z);
-            if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+            if (OldGame.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
-                Feature f = Game.World.Features[c];
+                Feature f = OldGame.World.Features[c];
                 Defender d = f?.TryComponent<Defender>();
                 if (f != null && d != null && f.TypeName == Makes && d.Wounds > 0)
                 {
@@ -163,7 +163,7 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            Feature f = Game.World.Features[c];
+            Feature f = OldGame.World.Features[c];
            Defender d = f?.TryComponent<Defender>();
             if (f != null && d != null && f.TypeName == Makes && d.Wounds > 0)
             {

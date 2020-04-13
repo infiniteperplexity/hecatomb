@@ -13,21 +13,21 @@ namespace Hecatomb
         {
             get
             {
-                return Game.MainPanel;
+                return OldGame.MainPanel;
             }
         }
         public static CommandsPanel Menu
         {
             get
             {
-                return Game.MenuPanel;
+                return OldGame.MenuPanel;
             }
         }
         public static InformationPanel Status
         {
             get
             {
-                return Game.InfoPanel;
+                return OldGame.InfoPanel;
             }
         }
 
@@ -35,7 +35,7 @@ namespace Hecatomb
         {
             get
             {
-                return Game.SplashPanel;
+                return OldGame.SplashPanel;
             }
         }
 
@@ -43,21 +43,21 @@ namespace Hecatomb
         {
             get
             {
-                return Game.Controls;
+                return OldGame.Controls;
             }
         }
         public static HecatombCommmands Commands
         {
             get
             {
-                return Game.Commands;
+                return OldGame.Commands;
             }
         }
         public static Colors Colors
         {
             get
             {
-                return Game.Colors;
+                return OldGame.Colors;
             }
         }
 
@@ -66,7 +66,7 @@ namespace Hecatomb
         {
             get
             {
-                return Game.Options;
+                return OldGame.Options;
             }
         }
 
@@ -74,77 +74,77 @@ namespace Hecatomb
         {
             get
             {
-                return Game.World;
+                return OldGame.World;
             }
         }
         public static Creature Player
         {
             get
             {
-                return Game.World.Player;
+                return OldGame.World.Player;
             }
         }
         public static HashSet<Coord> Explored
         {
             get
             {
-                return Game.World.Explored;
+                return OldGame.World.Explored;
             }
         }
         public static Terrain[,,] Terrains
         {
             get
             {
-                return Game.World.Terrains;
+                return OldGame.World.Terrains;
             }
         }
         public static Cover[,,] Covers
         {
             get
             {
-                return Game.World.Covers;
+                return OldGame.World.Covers;
             }
         }
         public static SparseArray3D<Creature> Creatures
         {
             get
             {
-                return Game.World.Creatures;
+                return OldGame.World.Creatures;
             }
         }
         public static SparseArray3D<Feature> Features
         {
             get
             {
-                return Game.World.Features;
+                return OldGame.World.Features;
             }
         }
         public static SparseArray3D<Task> Tasks
         {
             get
             {
-                return Game.World.Tasks;
+                return OldGame.World.Tasks;
             }
         }
         public static SparseArray3D<Item> Items
         {
             get
             {
-                return Game.World.Items;
+                return OldGame.World.Items;
             }
         }
         public static SparseJaggedArray3D<Particle> Particles
         {
             get
             {
-                return Game.World.Particles;
+                return OldGame.World.Particles;
             }
         }
         public static AchievementHandler Achievements
         {
             get
             {
-                return Game.World.GetState<AchievementHandler>();
+                return OldGame.World.GetState<AchievementHandler>();
             }
         }
         public static Dictionary<int, Entity> Entities
@@ -158,28 +158,28 @@ namespace Hecatomb
         {
             get
             {
-                return Game.World.GetState<ResearchHandler>();
+                return OldGame.World.GetState<ResearchHandler>();
             }
         }
         public static TutorialHandler Tutorial
         {
             get
             {
-                return Game.World.GetState<TutorialHandler>();
+                return OldGame.World.GetState<TutorialHandler>();
             }
         }
         public static TurnHandler Turns
         {
             get
             {
-                return Game.World.Turns;
+                return OldGame.World.Turns;
             }
         }
         public static TimeHandler Time
         {
             get
             {
-                return Game.Time;
+                return OldGame.Time;
             }
         }
 
@@ -223,7 +223,7 @@ namespace Hecatomb
 
         public static T GetState<T>() where T : StateHandler, new()
         {
-            return Game.World.GetState<T>();
+            return OldGame.World.GetState<T>();
         }
     }
 }

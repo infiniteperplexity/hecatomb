@@ -31,7 +31,7 @@ namespace Hecatomb
             //    extraSeed = AvailableTrades[0].OwnSeed();
             //}
             //int r = Game.World.Random.Arbitrary(PotentialTrades.Count, (OwnSeed() + extraSeed));
-            int r = Game.World.Random.Next(PotentialTrades.Count);
+            int r = OldGame.World.Random.Next(PotentialTrades.Count);
             TradeTask newTrade = Entity.Mock<TradeTask>();
             newTrade.Ingredients = PotentialTrades[r].Ingredients;
             newTrade.Trading = PotentialTrades[r].Trading;
@@ -46,7 +46,7 @@ namespace Hecatomb
         public override GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnBeginEvent turn = (TurnBeginEvent)ge;
-            if (Game.World.Random.Arbitrary(100,OwnSeed())==0)
+            if (OldGame.World.Random.Arbitrary(100,OwnSeed())==0)
             //if (Game.World.Random.Next(100)==0)
             {
                 AddTrade();
@@ -143,7 +143,7 @@ namespace Hecatomb
                 foreach (Feature f in Features)
                 {
                     var (x, y, z) = f;
-                    Task t = Game.World.Tasks[x, y, z];
+                    Task t = OldGame.World.Tasks[x, y, z];
                     if (t is TradeTask)
                     {
                         return (TradeTask)t;
@@ -203,7 +203,7 @@ namespace Hecatomb
                     "(Backspace/Del to Cancel)"
                 };
             }
-            Game.InfoPanel.Dirty = true;
+            OldGame.InfoPanel.Dirty = true;
             menu.KeyMap[Keys.Escape] =
                () =>
                {
@@ -219,7 +219,7 @@ namespace Hecatomb
         {
             if (Trading != null)
             {
-                Task t = Game.World.Tasks[X, Y, Z];
+                Task t = OldGame.World.Tasks[X, Y, Z];
                 t?.Cancel();
                 Trading = null;
             }

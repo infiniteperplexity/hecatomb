@@ -47,9 +47,9 @@ namespace Hecatomb
         public List<ColoredText> GetTimeText()
         {
             var list = new List<ColoredText>();
-            var t = Game.World.Turns;
+            var t = OldGame.World.Turns;
             // should probably show the speed when unpaused
-            list.Add((Game.Time.AutoPausing || Game.Time.PausedAfterLoad) ? "{yellow}Paused" : "{yellow}Speed: " + Speeds[SpeedIndex].Item3);
+            list.Add((OldGame.Time.AutoPausing || OldGame.Time.PausedAfterLoad) ? "{yellow}Paused" : "{yellow}Speed: " + Speeds[SpeedIndex].Item3);
             string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
             //string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
             list.Add(time);
@@ -62,7 +62,7 @@ namespace Hecatomb
                 SpeedIndex += 1;
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
-                Game.InfoPanel.PushMessage($"Game speed decreased to {num}:{denom}");
+                OldGame.InfoPanel.PushMessage($"Game speed decreased to {num}:{denom}");
                 InterfacePanel.DirtifySidePanels();
             }
         }
@@ -74,7 +74,7 @@ namespace Hecatomb
                 SpeedIndex -= 1;
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
-                Game.InfoPanel.PushMessage($"Game speed increased to {num}:{denom}");
+                OldGame.InfoPanel.PushMessage($"Game speed increased to {num}:{denom}");
                 InterfacePanel.DirtifySidePanels();
             }
         }
@@ -92,15 +92,15 @@ namespace Hecatomb
                 return;
             }
 			// this will happen almost continually
-			foreach (ParticleEmitter e in Game.World.Emitters.ToList())
+			foreach (ParticleEmitter e in OldGame.World.Emitters.ToList())
 			{
 				e.Update();
 			}
-			foreach (Particle p in Game.World.Particles.ToList())
+			foreach (Particle p in OldGame.World.Particles.ToList())
 			{	
 				p.Update();
 			}
-			if (PausedAfterLoad || AutoPausing || Game.Controls.AlwaysPaused)
+			if (PausedAfterLoad || AutoPausing || OldGame.Controls.AlwaysPaused)
 			{
 				return;
 			}
@@ -109,7 +109,7 @@ namespace Hecatomb
             decimal fraction = (decimal) Speeds[SpeedIndex].Item1 / (decimal) Speeds[SpeedIndex].Item2;
             if (millis > 1000*fraction)
 			{
-				Game.Commands.AutoWait();
+				OldGame.Commands.AutoWait();
 			}
 			
 		}

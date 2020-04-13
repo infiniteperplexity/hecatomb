@@ -20,37 +20,37 @@ namespace Hecatomb
 
         public override void Draw()
         {
-            Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            OldGame.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             int total = 0;
             int margin = 4 * CharWidth; 
-            for (int i = 0; i < Game.Controls.MenuCommands.Count; i++)
+            for (int i = 0; i < OldGame.Controls.MenuCommands.Count; i++)
             {
-                if (Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+                if (OldGame.World != null && OldGame.World.GetState<TutorialHandler>().Visible)
                 {
-                    var text = Game.World.GetState<TutorialHandler>().Current.MenuCommands[i];
+                    var text = OldGame.World.GetState<TutorialHandler>().Current.MenuCommands[i];
                     var color = (text.Colors.ContainsKey(0)) ? text.Colors[0] : "white";
                     int adjust = (i == 0) ? -4 * CharWidth : 0;
                     var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
                     var bump = margin + adjust + text.Length * CharWidth + margin;
-                    Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
+                    OldGame.Sprites.DrawString(Font, text, v, OldGame.Colors[color]);
                     total += bump;
                 }
                 else
                 {
-                    var command = Game.Controls.MenuCommands[i];
+                    var command = OldGame.Controls.MenuCommands[i];
                     var text = command.Item2;
                     var color = "white";
                     //if (command.Item1 == Game.Controls.SelectedMenuCommand)
-                    if (Game.Controls.IsMenuSelected(command.Item1))   
+                    if (OldGame.Controls.IsMenuSelected(command.Item1))   
                     {
                         color = "yellow";
                     }
-                    else if (command.Item1 == "Tutorial" && Game.World != null && Game.World.GetState<TutorialHandler>().Visible)
+                    else if (command.Item1 == "Tutorial" && OldGame.World != null && OldGame.World.GetState<TutorialHandler>().Visible)
                     {
                         color = "cyan";
                     }
                     //else if (!Game.Controls.MenuSelectable)
-                    else if (!Game.Controls.IsMenuSelectable(command.Item1))
+                    else if (!OldGame.Controls.IsMenuSelectable(command.Item1))
                     {
                         color = "gray";
                     }
@@ -58,14 +58,14 @@ namespace Hecatomb
                     //{
                     //    color = "orange";
                     //}
-                    else if (command.Item1 == "Log" && Game.World.GetState<MessageHandler>().Unread)
+                    else if (command.Item1 == "Log" && OldGame.World.GetState<MessageHandler>().Unread)
                     {
-                        color = Game.World.GetState<MessageHandler>().UnreadColor;
+                        color = OldGame.World.GetState<MessageHandler>().UnreadColor;
                     }
                     int adjust = (i == 0) ? -4 * CharWidth : 0;
                     var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
                     var bump = margin + adjust + text.Length * CharWidth + margin;
-                    Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
+                    OldGame.Sprites.DrawString(Font, text, v, OldGame.Colors[color]);
                     total += bump;
                 }
             }

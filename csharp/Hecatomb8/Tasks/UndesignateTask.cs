@@ -23,7 +23,7 @@ namespace Hecatomb
 		
 		public override void ChooseFromMenu()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectZoneControls(this);
             c.SelectedMenuCommand = "Jobs";
             c.MenuSelectable = false;
@@ -32,13 +32,13 @@ namespace Hecatomb
 			
 		public override void TileHover(Coord c)
 		{
-			var co = Game.Controls;
+			var co = OldGame.Controls;
 			co.MenuMiddle.Clear();
 			co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Undesignate from {0} {1} {2}", c.X, c.Y, c.Z)};
 		}
 		public override void TileHover(Coord c, List<Coord> squares)
 		{
-			var co = Game.Controls;
+			var co = OldGame.Controls;
 			co.MenuMiddle.Clear();
 			co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Undesignate to {0} {1} {2}", c.X, c.Y, c.Z)};
 		}

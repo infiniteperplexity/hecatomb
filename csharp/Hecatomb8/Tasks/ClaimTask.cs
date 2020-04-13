@@ -33,13 +33,13 @@ namespace Hecatomb
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Toggle item claims from {0} {1} {2}", c.X, c.Y, c.Z) };
         }
         public override void TileHover(Coord c, List<Coord> squares)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Toggle item claims to {0} {1} {2}", c.X, c.Y, c.Z) };
         }
@@ -61,7 +61,7 @@ namespace Hecatomb
                         item.Owned = false;
                         if (item.Claimed > 0)
                         {
-                            foreach (var task in Game.World.Tasks.ToList())
+                            foreach (var task in OldGame.World.Tasks.ToList())
                             {
                                 if (task.Claims.ContainsKey(item.EID))
                                 {

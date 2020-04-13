@@ -33,8 +33,8 @@ namespace Hecatomb
         public Coord(int n)
         {
             int m = n;
-            int w = Game.World.Width;
-            int h = Game.World.Height;
+            int w = OldGame.World.Width;
+            int h = OldGame.World.Height;
             X = 0;
             Y = 0;
             Z = 0;
@@ -83,8 +83,8 @@ namespace Hecatomb
 
         public static int Numberize(int x, int y, int z)
         {
-            int w = Game.World.Width;
-            int h = Game.World.Height;
+            int w = OldGame.World.Width;
+            int h = OldGame.World.Height;
             return h * w * z + h * x + y;
         }
 
@@ -95,7 +95,7 @@ namespace Hecatomb
 
         public int OwnSeed()
         {
-            return X * Game.World.Width * Game.World.Height + Y * Game.World.Height + Z + Game.World.Turns.Turn;
+            return X * OldGame.World.Width * OldGame.World.Height + Y * OldGame.World.Height + Z + OldGame.World.Turns.Turn;
         }
 
         public bool Equals(Coord c)
@@ -383,7 +383,7 @@ namespace Hecatomb
             int y1 = cr.Y;
             int z1 = cr.Z;
             cr.Remove();
-            if (Game.World.Creatures[x1, y1, z1] != null)
+            if (OldGame.World.Creatures[x1, y1, z1] != null)
             {
                 Debug.WriteLine("how on earth did this happen?");
             }
@@ -401,10 +401,10 @@ namespace Hecatomb
 
         public bool CanStand(int x1, int y1, int z1)
         {
-            if (x1 < 0 || x1 >= Game.World.Width || y1 < 0 || y1 >= Game.World.Height || z1 < 0 || z1 >= Game.World.Depth) {
+            if (x1 < 0 || x1 >= OldGame.World.Width || y1 < 0 || y1 >= OldGame.World.Height || z1 < 0 || z1 >= OldGame.World.Depth) {
                 return false;
             }
-            Terrain tile = Game.World.Terrains[x1, y1, z1];
+            Terrain tile = OldGame.World.Terrains[x1, y1, z1];
             // non-phasers can't go through a solid wall
             if (!Phases && tile.Solid) {
                 return false;
@@ -415,7 +415,7 @@ namespace Hecatomb
             }
             if (CachedActor.Team == Teams.Friendly)
             {
-                Task t = Game.World.Tasks[x1, y1, z1];
+                Task t = OldGame.World.Tasks[x1, y1, z1];
                 if (t != null && t is ForbidTask)
                 {
                     return false;
@@ -424,7 +424,7 @@ namespace Hecatomb
             if (CachedActor.Team != Teams.Friendly)
             {
                 // doors block non-allied creatures
-                Feature f = Game.World.Features[x1, y1, z1];
+                Feature f = OldGame.World.Features[x1, y1, z1];
                 if (f != null && f.Solid && !Phases)
                 {
                     return false;
@@ -475,12 +475,12 @@ namespace Hecatomb
                 return false;
             }
             // non-flyers need a slope in order to go up
-            Terrain t0 = Game.World.Terrains[x0, y0, z0];
+            Terrain t0 = OldGame.World.Terrains[x0, y0, z0];
             if (dz == +1 && !Flies && t0.ZWalk != +1)
             {
                 return false;
             }
-            Terrain tile = Game.World.Terrains[x1, y1, z1];
+            Terrain tile = OldGame.World.Terrains[x1, y1, z1];
             // non-phasers can't go through a ceiling
             if (!Phases)
             {
@@ -507,7 +507,7 @@ namespace Hecatomb
             {
                 return false;
             }
-            if (Game.World.Creatures[x1, y1, z1] != null)
+            if (OldGame.World.Creatures[x1, y1, z1] != null)
             {
                 return false;
             }
@@ -521,12 +521,12 @@ namespace Hecatomb
             //{
             //    return 12;
             //}
-            Cover cv = Game.World.Covers[x1, y1, z1];
+            Cover cv = OldGame.World.Covers[x1, y1, z1];
             if (cv.Liquid)
             {
                 return 2;
             }
-            Terrain t = Game.World.Terrains[x1, y1, z1];
+            Terrain t = OldGame.World.Terrains[x1, y1, z1];
             if (t == Terrain.UpSlopeTile || t == Terrain.DownSlopeTile)
             {
                 return 2;
@@ -559,11 +559,11 @@ namespace Hecatomb
                     return true;
                 }
             }
-            else if (dz==+1 && dx==0 && dy==0 && Game.World.Terrains[x1, y1, z1].ZView == -1)
+            else if (dz==+1 && dx==0 && dy==0 && OldGame.World.Terrains[x1, y1, z1].ZView == -1)
             {
                 return true;
             }
-            else if (dz==-1 && dx == 0 && dy == 0 && Game.World.Terrains[x0, y0, z0].ZView == -1)
+            else if (dz==-1 && dx == 0 && dy == 0 && OldGame.World.Terrains[x0, y0, z0].ZView == -1)
             {
                 return true;
             }
@@ -614,12 +614,12 @@ namespace Hecatomb
 
         public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
         {
-            if (Game.Options.NoIngredients && !alwaysNeedsIngredients)
+            if (OldGame.Options.NoIngredients && !alwaysNeedsIngredients)
             {
                 return true;
             }
             Dictionary<string, int> needed = new Dictionary<string, int>(resources);
-            List<Item> items = Game.World.Items.Where(
+            List<Item> items = OldGame.World.Items.Where(
                 it => { return (needed.ContainsKey(it.Resource) && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
             ).ToList();
             foreach (Item item in items)
@@ -639,11 +639,11 @@ namespace Hecatomb
 
         public bool CanFindResource(string resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
         {
-            if (Game.Options.NoIngredients)
+            if (OldGame.Options.NoIngredients)
             {
                 return true;
             }
-            List<Item> items = Game.World.Items.Where(
+            List<Item> items = OldGame.World.Items.Where(
                 it => { return (it.Resource == resource && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
             ).ToList();
             int needed = need;

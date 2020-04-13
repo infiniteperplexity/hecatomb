@@ -70,9 +70,9 @@ namespace Hecatomb
 			Placed = true;
 			if (fireEvent)
 			{
-				Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
+				OldGame.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
 			}
-            if (Game.World.Terrains[X, Y, Z].Fallable)
+            if (OldGame.World.Terrains[X, Y, Z].Fallable)
             {
                 Fall();
             }
@@ -86,7 +86,7 @@ namespace Hecatomb
 		
 		public virtual void Remove()
 		{
-			Game.World.Events.Publish(new RemoveEvent() {Entity = this, X = X, Y = Y, Z = Z});
+			OldGame.World.Events.Publish(new RemoveEvent() {Entity = this, X = X, Y = Y, Z = Z});
 			X = -1;
 			Y = -1;
 			Z = -1;
@@ -95,7 +95,7 @@ namespace Hecatomb
 		
 		public virtual void Destroy(string cause = null)
 		{
-            Game.World.Events.Publish(new DestroyEvent() { Entity = this, Cause = cause});
+            OldGame.World.Events.Publish(new DestroyEvent() { Entity = this, Cause = cause});
             Remove();
 			Despawn();
 
@@ -162,7 +162,7 @@ namespace Hecatomb
 
 		public override int OwnSeed()
 		{
-			return EID + X * Game.World.Width * Game.World.Height + Y * Game.World.Height + Z + Game.World.Turns.Turn;
+			return EID + X * OldGame.World.Width * OldGame.World.Height + Y * OldGame.World.Height + Z + OldGame.World.Turns.Turn;
 		}
 	}
 }

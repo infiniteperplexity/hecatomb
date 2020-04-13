@@ -14,7 +14,7 @@ namespace Hecatomb
     {
         public static bool[,,] Generate(int width, int height)
         {
-            var random = Game.World.Random;
+            var random = OldGame.World.Random;
             // the last dimension is (right, bottom)
             var maze = new bool[width, height, 2];
             for (int i = 0; i < width; i++)

@@ -40,13 +40,13 @@ namespace Hecatomb
         public void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "SacrificeMinion", x: c.X, y: c.Y, z: c.Z);
-            Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
+            Creature cr = OldGame.World.Creatures[c.X, c.Y, c.Z];
 
-            if (cr != null && (Game.World.Explored.Contains(c) || Options.Explored))
+            if (cr != null && (OldGame.World.Explored.Contains(c) || Options.Explored))
             {
                 if (cr != Caster && cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
                 {
-                    Game.InfoPanel.PushMessage("You withdraw magical power from the minion.");
+                    OldGame.InfoPanel.PushMessage("You withdraw magical power from the minion.");
                     ParticleEmitter emitter1 = new ParticleEmitter();
                     emitter1.Place(Caster.X, Caster.Y, Caster.Z);
                     ParticleEmitter emitter2 = new ParticleEmitter();
@@ -63,15 +63,15 @@ namespace Hecatomb
             int y = c.Y;
             int z = c.Z;
             Creature cr = Creatures[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (cr != null)
             {
                 if (cr != Caster && cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Sacrifice {0} to restore sanity.", cr.Describe()) };
+                    OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Sacrifice {0} to restore sanity.", cr.Describe()) };
                 }
             }
         }

@@ -42,7 +42,7 @@ namespace Hecatomb
             rt.LaborCost = LaborCost;
             rt.Ingredients = new Dictionary<string, int>(Ingredients);
             rt.Place(x, y, z);
-            if (!Game.ReconstructMode)
+            if (!OldGame.ReconstructMode)
             {
                 var c = new MenuChoiceControls(Structure.Unbox());
                 c.SelectedMenuCommand = "Jobs";
@@ -71,7 +71,7 @@ namespace Hecatomb
         {
             Labor -= (1 + Options.WorkBonus);
             Unassign();
-            Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);  
+            OldGame.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);  
         }
 
         public override void Cancel()
@@ -96,15 +96,15 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            var researched = Game.World.GetState<ResearchHandler>().Researched;
+            var researched = OldGame.World.GetState<ResearchHandler>().Researched;
             if (!researched.Contains(Makes))
             {
                 researched.Add(Makes);
             }
-            Game.InfoPanel.PushMessage("{magenta}Research on " + Research.Types[Makes].Name + " complete!");
+            OldGame.InfoPanel.PushMessage("{magenta}Research on " + Research.Types[Makes].Name + " complete!");
             if (Makes == "FlintTools")
             {
-                Game.World.Events.Publish(new AchievementEvent() { Action = "ResearchFlintTools" });
+                OldGame.World.Events.Publish(new AchievementEvent() { Action = "ResearchFlintTools" });
             }
             Complete();
         }

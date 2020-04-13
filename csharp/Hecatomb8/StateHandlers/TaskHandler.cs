@@ -50,11 +50,11 @@ namespace Hecatomb
                 {
                     if (dse.Cause == "Decay")
                     {
-                        Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has rotted away, leaving naught but bones.");
+                        OldGame.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has rotted away, leaving naught but bones.");
                     }
                     else
                     {
-                        Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has perished!");
+                        OldGame.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has perished!");
                     }
                 }
             }

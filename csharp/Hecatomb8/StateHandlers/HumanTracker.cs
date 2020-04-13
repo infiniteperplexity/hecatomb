@@ -149,7 +149,7 @@ namespace Hecatomb
                     actor.Target = null;
                     if (!FrustrationAnnounced)
                     {
-                        Game.SplashPanel.Splash(new List<ColoredText> { "Unable to penetrate your defenses, the bandits grow frustrated and break off the siege." });
+                        OldGame.SplashPanel.Splash(new List<ColoredText> { "Unable to penetrate your defenses, the bandits grow frustrated and break off the siege." });
                         FrustrationAnnounced = true;
                     }
                     LeaveTheMap(cr);
@@ -166,7 +166,7 @@ namespace Hecatomb
             {
                 return ge;
             }
-            if (TurnsSince > 1500 && Game.World.Random.Arbitrary(100,OwnSeed()) == 0)
+            if (TurnsSince > 1500 && OldGame.World.Random.Arbitrary(100,OwnSeed()) == 0)
             //if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
             {             
                 BanditAttack();
@@ -180,8 +180,8 @@ namespace Hecatomb
             Frustration = 0;
             TurnsSince = 0;
             MyCreatures.Clear();
-            bool xwall = (Game.World.Random.Arbitrary(2, OwnSeed()) == 0);
-            bool zero = (Game.World.Random.Arbitrary(2, OwnSeed()+1) == 0);
+            bool xwall = (OldGame.World.Random.Arbitrary(2, OwnSeed()) == 0);
+            bool zero = (OldGame.World.Random.Arbitrary(2, OwnSeed()+1) == 0);
             //bool xwall = (Game.World.Random.Next(2)==0);
             //bool zero = (Game.World.Random.Next(2) == 0);
             string dir = "";
@@ -193,7 +193,7 @@ namespace Hecatomb
             {
                 dir = (zero) ? "northern" : "southern";
             }
-            Game.SplashPanel.Splash(new List<ColoredText> {
+            OldGame.SplashPanel.Splash(new List<ColoredText> {
                "A gang of bandits has been spotted near the " + dir + " border of your domain.",
                " ",
                 "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
@@ -202,31 +202,31 @@ namespace Hecatomb
             int x0, y0;
             if (xwall)
             {
-                x0 = (zero) ? 1 : Game.World.Width - 2;
-                y0 = Game.World.Random.Arbitrary((Game.World.Height - 2),OwnSeed()) + 1;
+                x0 = (zero) ? 1 : OldGame.World.Width - 2;
+                y0 = OldGame.World.Random.Arbitrary((OldGame.World.Height - 2),OwnSeed()) + 1;
                 //y0 = Game.World.Random.Next(Game.World.Height - 2) + 1;
                 if (debugCloser)
                 {
                     x0 = (zero) ? 75 : 180;
-                    y0 = Game.World.Random.Next(Game.World.Height - 75) + 75;
+                    y0 = OldGame.World.Random.Next(OldGame.World.Height - 75) + 75;
                 }
             }
             else
             {
-                y0 = (zero) ? 1 : Game.World.Height - 2;
-                x0 = Game.World.Random.Arbitrary(Game.World.Width - 2, OwnSeed()+1) + 1;
+                y0 = (zero) ? 1 : OldGame.World.Height - 2;
+                x0 = OldGame.World.Random.Arbitrary(OldGame.World.Width - 2, OwnSeed()+1) + 1;
                 //x0 = Game.World.Random.Next(Game.World.Width - 2) + 1;
                 if (debugCloser)
                 {
                     y0 = (zero) ? 75 : 180;
-                    x0 = Game.World.Random.Next(Game.World.Width - 75) + 75;
+                    x0 = OldGame.World.Random.Next(OldGame.World.Width - 75) + 75;
                 }
             }
             // for repeatable testing
             //x0 = 12;
             //y0 = 12;
 
-            EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
+            EntryTile = new Coord(x0, y0, OldGame.World.GetGroundLevel(x0, y0));
             for (int i = 0; i < PastEncounters + 1; i++)
             {
                 //string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";

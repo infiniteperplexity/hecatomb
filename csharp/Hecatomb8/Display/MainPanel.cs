@@ -25,7 +25,7 @@ namespace Hecatomb
             CharHeight = 18;
             XPad = 3;
             YPad = 3;
-            BG = new Texture2D(Game.Graphics.GraphicsDevice, CharWidth + XPad, CharHeight + YPad);
+            BG = new Texture2D(OldGame.Graphics.GraphicsDevice, CharWidth + XPad, CharHeight + YPad);
             Color[] bgdata = new Color[(CharWidth + XPad) * (CharHeight + YPad)];
             for (int i = 0; i < bgdata.Length; ++i)
             {
@@ -36,7 +36,7 @@ namespace Hecatomb
             string[] fonts = new string[] { "NotoSans", "NotoSansSymbol", "NotoSansSymbol2", "Cambria" };
             foreach (string s in fonts)
             {
-                SpriteFont font = Game.MyContentManager.Load<SpriteFont>(s);
+                SpriteFont font = OldGame.MyContentManager.Load<SpriteFont>(s);
                 Fonts.Add(font);
             }
             fontCache = new Dictionary<char, ValueTuple<Vector2, SpriteFont>>();
@@ -55,18 +55,18 @@ namespace Hecatomb
 
         public void DrawDirty()
         {
-            if (Game.World == null || !World.WorldSafeToDraw)
+            if (OldGame.World == null || !World.WorldSafeToDraw)
             {
                 return;
             }
             OldDirtyTiles.UnionWith(NextDirtyTiles);
             foreach (Coord c in OldDirtyTiles)
             {
-                var glyph = Tiles.GetGlyph(c.X, c.Y, Game.Camera.Z);
+                var glyph = Tiles.GetGlyph(c.X, c.Y, OldGame.Camera.Z);
 
-                int x = c.X - Game.Camera.XOffset;
-                int y = c.Y - Game.Camera.YOffset;
-                if (x >= 0 && x < Game.Camera.Width && y >= 0 && y < Game.Camera.Height)
+                int x = c.X - OldGame.Camera.XOffset;
+                int y = c.Y - OldGame.Camera.YOffset;
+                if (x >= 0 && x < OldGame.Camera.Width && y >= 0 && y < OldGame.Camera.Height)
                 {
                     DrawGlyph(x, y, glyph.Item1, glyph.Item2, glyph.Item3);
                 }
@@ -78,7 +78,7 @@ namespace Hecatomb
         }
         public override void Draw()
         {
-            Game.Graphics.GraphicsDevice.Clear(Color.Black);
+            OldGame.Graphics.GraphicsDevice.Clear(Color.Black);
             if (IntroState)
             {
                 for (int j = 0; j < IntroLines.Length; j++)
@@ -106,19 +106,19 @@ namespace Hecatomb
                 }
                 return;
             }
-            if (Game.World == null || !World.WorldSafeToDraw)
+            if (OldGame.World == null || !World.WorldSafeToDraw)
             {
-                for (int i = 0; i < Game.Camera.Width; i++)
+                for (int i = 0; i < OldGame.Camera.Width; i++)
                 {
-                    for (int j = 0; j < Game.Camera.Height; j++)
+                    for (int j = 0; j < OldGame.Camera.Height; j++)
                     {
-                        Game.Sprites.Draw(BG, new Vector2(X0 + XPad + (1 + i) * (CharWidth + XPad), Y0 + YPad + (1 + j) * (CharHeight + YPad)), Color.Black);
+                        OldGame.Sprites.Draw(BG, new Vector2(X0 + XPad + (1 + i) * (CharWidth + XPad), Y0 + YPad + (1 + j) * (CharHeight + YPad)), Color.Black);
                     }
                 }
                 return;
             }
-            Camera Camera = Game.Camera;
-            var grid = Game.World.Terrains;
+            Camera Camera = OldGame.Camera;
+            var grid = OldGame.World.Terrains;
             int z = Camera.Z;
             //ValueTuple<char, string, string> glyph;
             for (int i = 0; i < Camera.Width; i++)
@@ -139,24 +139,24 @@ namespace Hecatomb
             var (measure, font) = resolveFont(c);
             int xOffset = 11 - (int)measure.X / 2;
             int yOffset = (int)measure.Y;
-            Color cfg = (fg == null) ? Color.Red : Game.Colors[fg];
-            Color cbg = (bg == null) ? Color.Red : Game.Colors[bg];
+            Color cfg = (fg == null) ? Color.Red : OldGame.Colors[fg];
+            Color cbg = (bg == null) ? Color.Red : OldGame.Colors[bg];
             var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
             var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
             //var vbg = new Vector2(Padding + (i) * (Size + Padding), Padding + (j) * (Size + Padding));
             //var vfg = new Vector2(xOffset + Padding + (i) * (Size + Padding), yOffset + Padding + (j) * (Size + Padding));
-            Game.Sprites.Draw(BG, vbg, cbg);
+            OldGame.Sprites.Draw(BG, vbg, cbg);
             if (c == '\u02C7')
             {
-                Game.Sprites.DrawString(Fonts[0], "^", vfg + (new Vector2(-2, 0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+                OldGame.Sprites.DrawString(Fonts[0], "^", vfg + (new Vector2(-2, 0)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
             }
             else if (c == '\u2235')
             {
-                Game.Sprites.DrawString(Fonts[1], "\u26EC", vfg + (new Vector2(-3, -5)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
+                OldGame.Sprites.DrawString(Fonts[1], "\u26EC", vfg + (new Vector2(-3, -5)), cfg, 0f, Vector2.Zero, 1f, SpriteEffects.FlipVertically, 0f);
             }
             else
             {
-                Game.Sprites.DrawString(font, s, vfg, cfg);
+                OldGame.Sprites.DrawString(font, s, vfg, cfg);
             }
         }
 

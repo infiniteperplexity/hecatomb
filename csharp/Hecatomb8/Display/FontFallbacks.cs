@@ -24,7 +24,7 @@ namespace Hecatomb
 			Fonts = new List<SpriteFont>();
 			foreach(string s in fonts)
 			{
-				SpriteFont font = Game.MyContentManager.Load<SpriteFont>(s);
+				SpriteFont font = OldGame.MyContentManager.Load<SpriteFont>(s);
 				Fonts.Add(font);
 			}
 			measureCache = new Dictionary<char, Vector2>();

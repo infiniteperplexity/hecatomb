@@ -41,9 +41,9 @@ namespace Hecatomb
         public void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "SiphonFlesh", x: c.X, y: c.Y, z: c.Z);
-            Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
+            Creature cr = OldGame.World.Creatures[c.X, c.Y, c.Z];
 
-            if (cr!=null && (Game.World.Explored.Contains(c) || Options.Explored))
+            if (cr!=null && (OldGame.World.Explored.Contains(c) || Options.Explored))
             {
                 if (cr == Caster)
                 {
@@ -68,7 +68,7 @@ namespace Hecatomb
                     }
                     if (siphon > 0)
                     {
-                        Game.InfoPanel.PushMessage("You siphon your own flesh and blood to heal your minion.");
+                        OldGame.InfoPanel.PushMessage("You siphon your own flesh and blood to heal your minion.");
                         ParticleEmitter emitter1 = new ParticleEmitter();
                         emitter1.Place(Caster.X, Caster.Y, Caster.Z);
                         ParticleEmitter emitter2 = new ParticleEmitter();
@@ -89,7 +89,7 @@ namespace Hecatomb
                         int heal = Math.Min(d2.Wounds, 20 - d1.Wounds);
                         d1.Wounds += heal;
                         d2.Wounds -= heal;
-                        Game.InfoPanel.PushMessage($"You siphon flesh and blood from {cr.Describe()} to mend your wounds.");
+                        OldGame.InfoPanel.PushMessage($"You siphon flesh and blood from {cr.Describe()} to mend your wounds.");
                         ParticleEmitter emitter1 = new ParticleEmitter();
                         emitter1.Place(Caster.X, Caster.Y, Caster.Z);
                         ParticleEmitter emitter2 = new ParticleEmitter();
@@ -112,23 +112,23 @@ namespace Hecatomb
             int y = c.Y;
             int z = c.Z;
             Creature cr = Creatures[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (cr != null)
             {
                 if (cr==Caster)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target yourself") };
+                    OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target yourself") };
                 }
                 else if (cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
+                    OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
                 }
                 else
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
+                    OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
                 }
             }
         }

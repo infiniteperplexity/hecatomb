@@ -19,7 +19,7 @@ namespace Hecatomb
             public EventHandler()
             {
                 ListenerTypes = new Dictionary<string, Dictionary<int, Func<GameEvent, GameEvent>>>();
-                var events = typeof(Game).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameEvent))).ToList();
+                var events = typeof(OldGame).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameEvent))).ToList();
                 foreach (var e in events)
                 {
                     ListenerTypes[e.Name] = new Dictionary<int, Func<GameEvent, GameEvent>>();

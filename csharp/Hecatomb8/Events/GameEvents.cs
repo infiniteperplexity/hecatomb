@@ -129,9 +129,9 @@ namespace Hecatomb
             }
             Coord c = new Coord(X, Y, Z);
             // should make this an actual event
-            if (Game.Visible.Contains(c))
+            if (OldGame.Visible.Contains(c))
             {
-                Game.InfoPanel.PushMessage(Sight);
+                OldGame.InfoPanel.PushMessage(Sight);
             }
             else
             {
@@ -151,7 +151,7 @@ namespace Hecatomb
                     }
                     if (audible)
                     {
-                        Game.InfoPanel.PushMessage(Sound);
+                        OldGame.InfoPanel.PushMessage(Sound);
                     }
                 }
             }

@@ -36,9 +36,9 @@ namespace Hecatomb
 
         public void SubmitCommand(GameCommand g)
         {
-            var commands = Game.Commands;
-            var s = Game.World.Player.GetComponent<SpellCaster>();
-            var t = Game.World.GetState<TaskHandler>();
+            var commands = OldGame.Commands;
+            var s = OldGame.World.Player.GetComponent<SpellCaster>();
+            var t = OldGame.World.GetState<TaskHandler>();
             var c = new Coord(g.X, g.Y, g.Z);
             if (g.Command == "Wait")
             {
@@ -128,12 +128,12 @@ namespace Hecatomb
             {
                 var task = (ResearchTask) t.GetTask("ResearchTask");
                 task.Makes = g.Makes;
-                task.Structure = Game.World.Features[c].GetComponent<StructuralComponent>().Structure;
+                task.Structure = OldGame.World.Features[c].GetComponent<StructuralComponent>().Structure;
                 task.ChooseFromMenu();
             }
             else if (g.Command == "TradeTask")
             {
-                var market = (BlackMarket) Game.World.Features[c].GetComponent<StructuralComponent>().Structure;
+                var market = (BlackMarket) OldGame.World.Features[c].GetComponent<StructuralComponent>().Structure;
                 var task = market.AvailableTrades[g.N];
                 task.ChooseFromMenu();
             }
@@ -163,9 +163,9 @@ namespace Hecatomb
 
         public static void LogCommand(string command = "NoCommand", int n = -1, string makes = null, int x = -1, int y = -1, int z = -1, List<Coord> squares = null)
         {
-            int turn = Game.World.GetState<TurnHandler>().Turn;
+            int turn = OldGame.World.GetState<TurnHandler>().Turn;
             //Game.World.Random.Poll();
-            if (Game.ReconstructMode)
+            if (OldGame.ReconstructMode)
             {
                 //return;
                 //Debug.WriteLine("Explicit command interrupted reconstruction");
@@ -183,12 +183,12 @@ namespace Hecatomb
                 //,
                 //Calls = Game.World.Random.Calls
             };
-            Game.World.GetState<CommandLogger>().LoggedCommands.Add(c);
+            OldGame.World.GetState<CommandLogger>().LoggedCommands.Add(c);
         }
 
         public static string DumpLog()
         {
-            return JsonConvert.SerializeObject(Game.World.GetState<CommandLogger>().LoggedCommands);
+            return JsonConvert.SerializeObject(OldGame.World.GetState<CommandLogger>().LoggedCommands);
         }
 
         public static void RebuildFromFile()
@@ -215,14 +215,14 @@ namespace Hecatomb
 
         public void FinishMenu(MenuChoiceControls menu)
         {
-            menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = Game.Controls.Back;
+            menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = OldGame.Controls.Back;
         }
 
         public void StepForward()
         {
             if (CommandQueue.Count == 0)
             {
-                Game.ReconstructMode = false;
+                OldGame.ReconstructMode = false;
                 ControlContext.Reset();
                 return;
             }
@@ -239,7 +239,7 @@ namespace Hecatomb
             //Debug.WriteLine(CommandQueue.Count + " commands left in the queue.");
             if (CommandQueue.Count == 0)
             {
-                Game.ReconstructMode = false;
+                OldGame.ReconstructMode = false;
                 //ControlContext.Reset();
             }
             ControlContext.Reset();
@@ -254,7 +254,7 @@ namespace Hecatomb
                 while(steps < n)
                 {
                     Thread.Sleep(delay);
-                    if (Game.World.Turns.PlayerActed)
+                    if (OldGame.World.Turns.PlayerActed)
                     {
                         try
                         {
@@ -325,7 +325,7 @@ namespace Hecatomb
             }
             LoggedCommands = JsonConvert.DeserializeObject<List<GameCommand>>(json);
             Debug.WriteLine("there were " + LoggedCommands.Count + " logged commands");
-            if (col.Count == 0 || col[0].ToString() != '"' + Game.BuildDate.ToString() + '"')
+            if (col.Count == 0 || col[0].ToString() != '"' + OldGame.BuildDate.ToString() + '"')
             {
                 ControlContext.Set(new ConfirmationControls(
                     "Warning: This crash report was created under a different build of Hecatomb and reconstructing it may cause unexpected results.  Really reconstruct the game?"
@@ -339,17 +339,17 @@ namespace Hecatomb
 
         public void ReconstructGame()
         {
-            Game.GameName = Name;
-            Game.SplashPanel.Splash(new List<ColoredText>()
+            OldGame.GameName = Name;
+            OldGame.SplashPanel.Splash(new List<ColoredText>()
             {
                 $"Reconstructing {Name}..."
             }, frozen: true);
             Debug.WriteLine("reconstructing the game");
             ControlContext.Set(new FrozenControls());
-            Game.ReconstructMode = true;
-            Game.FixedSeed = Seed;
+            OldGame.ReconstructMode = true;
+            OldGame.FixedSeed = Seed;
 
-            Game.game.StartGame();
+            OldGame.game.StartGame();
         }
     }
 }

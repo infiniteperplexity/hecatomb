@@ -72,7 +72,7 @@ namespace Hecatomb
             ge.Spawned = true;
             foreach (Type type in ge.Listeners.Keys)
             {
-                Game.World.Events.Subscribe(type, ge, ge.Listeners[type]);
+                OldGame.World.Events.Subscribe(type, ge, ge.Listeners[type]);
             }
             return ge;
         }
@@ -90,7 +90,7 @@ namespace Hecatomb
             t.Spawned = true;
             foreach (Type type in t.Listeners.Keys)
             {
-                Game.World.Events.Subscribe(type, t, t.Listeners[type]);
+                OldGame.World.Events.Subscribe(type, t, t.Listeners[type]);
             }
             return t;
         }
@@ -152,9 +152,9 @@ namespace Hecatomb
 
         public virtual void Despawn()
 		{
-			Game.World.Events.Publish(new DespawnEvent {Entity = this});
+			OldGame.World.Events.Publish(new DespawnEvent {Entity = this});
 			Spawned = false;
-			Game.World.Events.UnsubscribeAll(this);
+			OldGame.World.Events.UnsubscribeAll(this);
             Entities.Remove(EID);
             EID = -1;
             if (ControlContext.Selection == this)
@@ -166,7 +166,7 @@ namespace Hecatomb
 
         public virtual int OwnSeed()
         {
-            return EID + Game.World.Turns.Turn;
+            return EID + OldGame.World.Turns.Turn;
         }
 	}
 }

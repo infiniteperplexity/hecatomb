@@ -85,14 +85,14 @@ namespace Hecatomb
                 return;
             }
 
-            Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity , Step = "BeforeAlert"});
+            OldGame.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity , Step = "BeforeAlert"});
 
             if (!Acted)
             {
                 Alert();
             }
 
-            Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeVandalism" });
+            OldGame.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeVandalism" });
 
             if (!Acted)
             {
@@ -100,7 +100,7 @@ namespace Hecatomb
             }
 
 
-            Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeWander" });
+            OldGame.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeWander" });
 
             if (!Acted)
             {
@@ -284,7 +284,7 @@ namespace Hecatomb
         public void WalkRandom()
         {
             
-            int r = Game.World.Random.Arbitrary(4, OwnSeed());
+            int r = OldGame.World.Random.Arbitrary(4, OwnSeed());
             //int r = Game.World.Random.Next(4);
 
             Coord d = Movement.Directions4[r];
@@ -363,7 +363,7 @@ namespace Hecatomb
                                     if (squares.Count > 0)
                                     {
                                         // choose a square randomly from that list
-                                        int r = Game.World.Random.Arbitrary(squares.Count, OwnSeed()+1);
+                                        int r = OldGame.World.Random.Arbitrary(squares.Count, OwnSeed()+1);
                                         //int r = Game.World.Random.Next(squares.Count);
                                         var s = squares[r];
                                         move.Displace(cr, s.X, s.Y, s.Z);
@@ -379,7 +379,7 @@ namespace Hecatomb
 
                             }
                             //if (Game.World.Random.NextDouble() < 0.5)
-                            if (Game.World.Random.Arbitrary(OwnSeed()+2) < 0.5)
+                            if (OldGame.World.Random.Arbitrary(OwnSeed()+2) < 0.5)
                             {
                                 m.Displace(cr);
                                 return true;

@@ -63,7 +63,7 @@ namespace Hecatomb
 			}
 			foreach (Coord s in Squares)
 			{
-				Game.MainPanel.DirtifyTile(s);
+				OldGame.MainPanel.DirtifyTile(s);
 				Highlight h = new Highlight(Selector.GetHighlightColor());
 				h.Place(s.X, s.Y, s.Z);
 				Highlights.Add(h);
@@ -76,7 +76,7 @@ namespace Hecatomb
 			Selector.BoxHover(c, Squares);
             // this might get changed to a different panel
             InterfacePanel.DirtifySidePanels();
-            Game.World.ShowTileDetails(c);
+            OldGame.World.ShowTileDetails(c);
 		}
 		
 		private void Clean()
@@ -84,7 +84,7 @@ namespace Hecatomb
 			foreach(Particle p in Highlights)
 			{
 				Coord s = new Coord(p.X, p.Y, p.Z);
-				Game.MainPanel.DirtifyTile(s);
+				OldGame.MainPanel.DirtifyTile(s);
 				p.Remove();
 				
 			}

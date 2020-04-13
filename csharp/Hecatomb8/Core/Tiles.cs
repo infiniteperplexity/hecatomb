@@ -24,11 +24,11 @@ namespace Hecatomb
         }
 		private static bool defaultStandable(int x1, int y1, int z1)
 		{
-			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth)
+			if (x1<0 || x1>=OldGame.World.Width || y1<0 || y1>=OldGame.World.Height || z1<0 || z1>=OldGame.World.Depth)
 			{
       			return false;
     		}
-			Terrain t = Game.World.Terrains[x1,y1,z1];
+			Terrain t = OldGame.World.Terrains[x1,y1,z1];
 			return (!t.Solid && !t.Fallable);
 		}
 
@@ -38,11 +38,11 @@ namespace Hecatomb
         }
         private static bool defaultMovable(int x0, int y0, int z0, int x1, int y1, int z1)
 		{
-			if (x1<0 || x1>=Game.World.Width || y1<0 || y1>=Game.World.Height || z1<0 || z1>=Game.World.Depth)
+			if (x1<0 || x1>=OldGame.World.Width || y1<0 || y1>=OldGame.World.Height || z1<0 || z1>=OldGame.World.Depth)
 			{
       			return false;
     		}
-			Terrain t = Game.World.Terrains[x1,y1,z1];
+			Terrain t = OldGame.World.Terrains[x1,y1,z1];
 			return (!t.Solid && !t.Fallable);
 		}
 		
@@ -59,8 +59,8 @@ namespace Hecatomb
             )
 		{      
 
-            var misses = Game.World.GetState<PathHandler>().PathMisses;
-            var hits = Game.World.GetState<PathHandler>().PathHits;
+            var misses = OldGame.World.GetState<PathHandler>().PathMisses;
+            var hits = OldGame.World.GetState<PathHandler>().PathHits;
             if (useCache && misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
 			{
                 Debug.WriteLine("respected cached pathfinding failure");
@@ -185,7 +185,7 @@ namespace Hecatomb
             TileEntity fromEntity = null,
             TileEntity toEntity = null
 		) {
-            StatefulRandom r = Game.World.Random;
+            StatefulRandom r = OldGame.World.Random;
             int seedEID = (fromEntity == null) ? -1 : fromEntity.EID;
             //			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
             // default value for the cost estimation heuristic
@@ -448,22 +448,22 @@ namespace Hecatomb
 
         public static Coord ToCamera(int x, int y)
 		{
-			Camera Camera = Game.Camera;
+			Camera Camera = OldGame.Camera;
 			return new Coord(x-Camera.XOffset, y-Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToCamera(Coord c)
 		{
-			Camera Camera = Game.Camera;
+			Camera Camera = OldGame.Camera;
 			return new Coord(c.X-Camera.XOffset, c.Y-Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToAbsolute(int x, int y)
 		{
-			Camera Camera = Game.Camera;
+			Camera Camera = OldGame.Camera;
 			return new Coord(x+Camera.XOffset, y+Camera.YOffset, Camera.Z);
 		}
 		public static Coord ToAbsolute(Coord c)
 		{
-			Camera Camera = Game.Camera;
+			Camera Camera = OldGame.Camera;
 			return new Coord(c.X+Camera.XOffset, c.Y+Camera.YOffset, Camera.Z);
 		}
 
@@ -478,17 +478,17 @@ namespace Hecatomb
             {
                 tries += 1;
                 
-                int i = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+tries);
-                int j = Game.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+1+tries);
+                int i = OldGame.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+tries);
+                int j = OldGame.World.Random.Arbitrary(-max, max + 1, c.OwnSeed()+1+tries);
                 //int i = Game.World.Random.Next(-max, max + 1);
                 //int j = Game.World.Random.Next(-max, max + 1);
-                if (i+x>Game.World.Width-2 || i+x<1 || j+y>Game.World.Height-2 || j+y<1)
+                if (i+x>OldGame.World.Width-2 || i+x<1 || j+y>OldGame.World.Height-2 || j+y<1)
                 {
                     continue;
                 }
                 i += x;
                 j += y;
-                int k = (groundLevel) ? Game.World.GetGroundLevel(i, j) : z;
+                int k = (groundLevel) ? OldGame.World.GetGroundLevel(i, j) : z;
                 if (valid(i, j, k) && Tiles.QuickDistance(x, y, z, i, j, z) <= max && Tiles.QuickDistance(x, y, z, i, j, z) >= min)
                 {
                     return new Coord(i, j, k);

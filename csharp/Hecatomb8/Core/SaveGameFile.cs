@@ -48,7 +48,7 @@ namespace Hecatomb
             //Debug.WriteLine(col[0].ToString());
             //Debug.WriteLine(col[1].ToString());
             //Debug.WriteLine(Game.BuildDate.ToString());
-            if (col.Count == 0 || col[0].ToString() != "\"buildDate\"" || col[1].ToString() != '"' + Game.BuildDate.ToString() + '"')
+            if (col.Count == 0 || col[0].ToString() != "\"buildDate\"" || col[1].ToString() != '"' + OldGame.BuildDate.ToString() + '"')
             {
                 ControlContext.Set(new ConfirmationControls(
                     "Warning: This save file was created under a different build of Hecatomb and restoring it may cause unexpected results.  Really restore the game?"
@@ -62,8 +62,8 @@ namespace Hecatomb
 
         public void RestoreGame()
         {
-            Game.GameName = Name;
-            Game.SplashPanel.Splash(new List<ColoredText>()
+            OldGame.GameName = Name;
+            OldGame.SplashPanel.Splash(new List<ColoredText>()
             {
                 $"Restoring {Name}..."
             }, frozen: true);

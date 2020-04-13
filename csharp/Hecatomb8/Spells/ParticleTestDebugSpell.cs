@@ -39,7 +39,7 @@ namespace Hecatomb
 
         public void SelectTile(Coord c)
         {
-            int z = Game.World.GetGroundLevel(c.X, c.Y);
+            int z = OldGame.World.GetGroundLevel(c.X, c.Y);
             ParticleEmitter emitter = new ParticleEmitter();
             Debug.WriteLine($"Emitting particles at Z={z}");
             emitter.Place(c.X, c.Y, z);
@@ -51,23 +51,23 @@ namespace Hecatomb
             int y = c.Y;
             int z = c.Z;
             Creature cr = Creatures[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (cr != null)
             {
                 if (cr == Caster)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target yourself") };
+                    OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target yourself") };
                 }
                 else if (cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
+                    OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
                 }
                 else
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
+                    OldGame.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
                 }
             }
         }

@@ -36,7 +36,7 @@ namespace Hecatomb
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             var cr = Creatures[c];
             if (cr != null && cr.TryComponent<Minion>() != null)

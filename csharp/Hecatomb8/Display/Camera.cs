@@ -29,8 +29,8 @@ namespace Hecatomb
 		{
 			int xhalf = Width/2;
 			int yhalf = Height/2;
-			XOffset = Math.Min(Math.Max(0, x-xhalf), Game.World.Width-Width);
-			YOffset = Math.Min(Math.Max(0, y-yhalf), Game.World.Height-Height);
+			XOffset = Math.Min(Math.Max(0, x-xhalf), OldGame.World.Width-Width);
+			YOffset = Math.Min(Math.Max(0, y-yhalf), OldGame.World.Height-Height);
 			Z = _z;
 		}
 
@@ -39,7 +39,7 @@ namespace Hecatomb
             if (ControlContext.Selection != null && ControlContext.Selection.Placed)
             {
                 var (x, y, z) = ControlContext.Selection;
-                Game.Camera.Center(x, y, z);
+                OldGame.Camera.Center(x, y, z);
                 ControlContext.Cursor.Place(x, y, z);
             }    
         }

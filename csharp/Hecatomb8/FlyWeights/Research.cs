@@ -28,17 +28,17 @@ namespace Hecatomb
         {
             get
             {
-                return Game.World.GetState<ResearchHandler>().Researched.Contains(Name);
+                return OldGame.World.GetState<ResearchHandler>().Researched.Contains(Name);
             }
             set
             {
                 if (value == false)
                 {
-                    Game.World.GetState<ResearchHandler>().Researched.Remove(Name);
+                    OldGame.World.GetState<ResearchHandler>().Researched.Remove(Name);
                 }
                 else if (value == true)
                 {
-                    Game.World.GetState<ResearchHandler>().Researched.Add(Name);
+                    OldGame.World.GetState<ResearchHandler>().Researched.Add(Name);
                 }
             }
         }

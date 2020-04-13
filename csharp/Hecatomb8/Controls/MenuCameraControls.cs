@@ -18,7 +18,7 @@ namespace Hecatomb
         public override void RefreshContent()
         {
             Chooser.BuildMenu(this);
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
             KeyMap[Keys.Space] = Commands.Wait;
             KeyMap[Keys.Escape] = Reset;
             MenuTop = new List<ColoredText>() {
@@ -55,13 +55,13 @@ namespace Hecatomb
 
         public void SelectOrWait()
         {
-            if (Game.ReconstructMode)
+            if (OldGame.ReconstructMode)
             {
-                Game.World.GetState<CommandLogger>().StepForward();
+                OldGame.World.GetState<CommandLogger>().StepForward();
             }
             else if (ControlDown)
             {
-                Game.Commands.Wait();
+                OldGame.Commands.Wait();
             }
             else
             {
@@ -70,9 +70,9 @@ namespace Hecatomb
                 SelectTile();
                 // unless we selected something, wait anyway
                 //if (Game.Controls is MenuCameraControls)
-                if (Game.Controls == this)
+                if (OldGame.Controls == this)
                 {
-                    Game.Commands.Wait();
+                    OldGame.Commands.Wait();
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace Hecatomb
         {
             if (Cursor.X > -1)
             {
-                Coord tile = new Coord(Cursor.X, Cursor.Y, Game.Camera.Z);
+                Coord tile = new Coord(Cursor.X, Cursor.Y, OldGame.Camera.Z);
                 OnTileHover(tile);
             }
         }
@@ -89,7 +89,7 @@ namespace Hecatomb
         public override void HandleKeyDown(Keys key)
         {
             base.HandleKeyDown(key);
-            Camera c = Game.Camera;
+            Camera c = OldGame.Camera;
             AbstractCameraControls.Z = c.Z;
             AbstractCameraControls.XOffset = c.XOffset;
             AbstractCameraControls.YOffset = c.YOffset;

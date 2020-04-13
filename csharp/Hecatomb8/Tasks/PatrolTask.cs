@@ -20,7 +20,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
             c.SelectedMenuCommand = "Jobs";
             c.MenuSelectable = false;

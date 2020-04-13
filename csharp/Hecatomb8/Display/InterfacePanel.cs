@@ -50,14 +50,14 @@ namespace Hecatomb
             Zindex = 0;
             PixelWidth = w;
             PixelHeight = h;
-            Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
+            Font = OldGame.MyContentManager.Load<SpriteFont>("PTMono");
             CharHeight = 16;
             CharWidth = 9;
             XPad = 0;
             YPad = 0;
             RightMargin = 1;
             LeftMargin = 1;
-            BG = new Texture2D(Game.Graphics.GraphicsDevice, w, h);
+            BG = new Texture2D(OldGame.Graphics.GraphicsDevice, w, h);
             Color[] bgdata = new Color[w * h];
             for (int i = 0; i < bgdata.Length; ++i)
             {
@@ -95,7 +95,7 @@ namespace Hecatomb
         // draw a blank panel
         public virtual void Draw()
         {
-            var bg = new Texture2D(Game.Graphics.GraphicsDevice, PixelWidth - 2, PixelHeight - 2);
+            var bg = new Texture2D(OldGame.Graphics.GraphicsDevice, PixelWidth - 2, PixelHeight - 2);
             Color cbg = Color.DarkGray;
             Color[] bgdata = new Color[(PixelWidth - 2) * (PixelHeight - 2)];
             for (int i = 0; i < bgdata.Length; ++i)
@@ -104,7 +104,7 @@ namespace Hecatomb
             }
             bg.SetData(bgdata);
             var vbg = new Vector2(X0 + 1, Y0 + 1);
-            Game.Sprites.Draw(bg, vbg, cbg);
+            OldGame.Sprites.Draw(bg, vbg, cbg);
         }
 
 
@@ -157,7 +157,7 @@ namespace Hecatomb
                     if ((y+1) * CharHeight < PixelHeight)
                     {
                         v = new Vector2(leftMargin + X0 + CharWidth * LeftMargin + x * CharWidth, topMargin + TopMargin * CharHeight + Y0 + y * CharHeight);
-                        Game.Sprites.DrawString(Font, text.Substring(j, 1), v, Game.Colors[fg]);
+                        OldGame.Sprites.DrawString(Font, text.Substring(j, 1), v, OldGame.Colors[fg]);
                     }
                     x += 1;
                 }
@@ -187,7 +187,7 @@ namespace Hecatomb
         {
             if (Panels.Count > 0)
             {
-                Game.Controls?.RefreshContent();
+                OldGame.Controls?.RefreshContent();
                 foreach (var panel in Panels[0])
                 {
                     if (!(panel is MainPanel))
@@ -203,7 +203,7 @@ namespace Hecatomb
 
             if (Panels.Count > 0)
             {
-                Game.Controls?.RefreshContent();
+                OldGame.Controls?.RefreshContent();
                 foreach (var panel in Panels[0])
                 {
                     panel.Dirty = true;

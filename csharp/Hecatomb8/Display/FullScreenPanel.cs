@@ -23,7 +23,7 @@ namespace Hecatomb
         public override void Draw()
         {
             // eventually want some kind of brief freeze to keep from instantly closing this
-            Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            OldGame.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             DrawLines(CurrentText);
         }
         public void Splash(List<ColoredText> lines, bool frozen = false)

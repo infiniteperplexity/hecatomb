@@ -100,15 +100,15 @@ namespace Hecatomb
                 Dictionary<string, object> details = new Dictionary<string, object>();
                 if (m.CanPass(c.X, c.Y, c.Z))
                 {
-                    Game.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
+                    OldGame.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
                     m.StepTo(c.X, c.Y, c.Z);
                     Act();
                     return;
                 }
-                Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
+                Creature cr = OldGame.World.Creatures[c.X, c.Y, c.Z];
                 if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
                 {
-                    Game.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
+                    OldGame.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
                     m.Displace(cr);
                     Act();
                     return;
@@ -125,7 +125,7 @@ namespace Hecatomb
         public void moveVerticalCommand(int dz)
         {
             CommandLogger.LogCommand(command: "MoveVertical", z: dz);
-            Creature p = Game.World.Player;
+            Creature p = OldGame.World.Player;
             int x1 = p.X;
             int y1 = p.Y;
             int z1 = p.Z + dz;
@@ -136,10 +136,10 @@ namespace Hecatomb
             }
             if (!m.CanPass(x1, y1, z1))
             {
-                Creature cr = Game.World.Creatures[x1, y1, z1];
+                Creature cr = OldGame.World.Creatures[x1, y1, z1];
                 if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
                 {
-                    Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
+                    OldGame.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
                     m.Displace(cr);
                     Act();
                 }
@@ -154,7 +154,7 @@ namespace Hecatomb
             }
             else
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
                 m.StepTo(x1, y1, z1);
                 Act();
                 return;
@@ -209,7 +209,7 @@ namespace Hecatomb
             {
                 dz *= 10;
             }
-            Game.Camera.Z = Math.Max(Math.Min(Game.Camera.Z + dz, Game.World.Depth - 2), 1);
+            OldGame.Camera.Z = Math.Max(Math.Min(OldGame.Camera.Z + dz, OldGame.World.Depth - 2), 1);
             ControlContext.CenterCursor();
             InterfacePanel.DirtifyUsualPanels();
         }
@@ -220,49 +220,49 @@ namespace Hecatomb
                 dx *= 10;
                 dy *= 10;
             }
-            Camera c = Game.Camera;
+            Camera c = OldGame.Camera;
             int xhalf = c.Width / 2;
             int yhalf = c.Height / 2;
-            c.XOffset = Math.Min(Math.Max(1, c.XOffset + dx), Game.World.Width - c.Width - 1);
-            c.YOffset = Math.Min(Math.Max(1, c.YOffset + dy), Game.World.Height - c.Height - 1);
+            c.XOffset = Math.Min(Math.Max(1, c.XOffset + dx), OldGame.World.Width - c.Width - 1);
+            c.YOffset = Math.Min(Math.Max(1, c.YOffset + dy), OldGame.World.Height - c.Height - 1);
             ControlContext.CenterCursor();
             InterfacePanel.DirtifyUsualPanels();
         }
 
         public void ChooseTask()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
             var tasks = GetState<TaskHandler>();
             tasks.PurgeCache();
-            Game.Controls = new MenuChoiceControls(tasks);
-            Game.Controls.MenuSelectable = false;
-            Game.Controls.SelectedMenuCommand = "Jobs";
+            OldGame.Controls = new MenuChoiceControls(tasks);
+            OldGame.Controls.MenuSelectable = false;
+            OldGame.Controls.SelectedMenuCommand = "Jobs";
             InterfacePanel.DirtifySidePanels();
         }
 
         public void ChooseSpell()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
-            Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
-            Game.Controls.MenuSelectable = false;
-            Game.Controls.SelectedMenuCommand = "Spells";
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
+            OldGame.Controls = new MenuChoiceControls(OldGame.World.Player.GetComponent<SpellCaster>());
+            OldGame.Controls.MenuSelectable = false;
+            OldGame.Controls.SelectedMenuCommand = "Spells";
             InterfacePanel.DirtifySidePanels();
         }
 
         public void ShowAchievements()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowAchievements" });
-            Game.Controls = new ListViewControls(Game.World.GetState<AchievementHandler>());
-            Game.Controls.MenuSelectable = false;
-            Game.Controls.SelectedMenuCommand = "Achievements";
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ShowAchievements" });
+            OldGame.Controls = new ListViewControls(OldGame.World.GetState<AchievementHandler>());
+            OldGame.Controls.MenuSelectable = false;
+            OldGame.Controls.SelectedMenuCommand = "Achievements";
             InterfacePanel.DirtifySidePanels();
         }
 
         public void ShowResearch()
         {
-            Game.Controls = new ListViewControls(Game.World.GetState<ResearchHandler>());
-            Game.Controls.MenuSelectable = false;
-            Game.Controls.SelectedMenuCommand = "Research";
+            OldGame.Controls = new ListViewControls(OldGame.World.GetState<ResearchHandler>());
+            OldGame.Controls.MenuSelectable = false;
+            OldGame.Controls.SelectedMenuCommand = "Research";
             //Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("R: Research");
             InterfacePanel.DirtifySidePanels();
         }
@@ -270,12 +270,12 @@ namespace Hecatomb
 
         public void ShowLog()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
-            Game.Controls = new MessageLogControls();
-            Game.Controls.MenuSelectable = false;
-            Game.Controls.SelectedMenuCommand = "Log";
-            Game.World.GetState<MessageHandler>().Unread = false;
-            Game.World.GetState<MessageHandler>().UnreadColor = "white";
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
+            OldGame.Controls = new MessageLogControls();
+            OldGame.Controls.MenuSelectable = false;
+            OldGame.Controls.SelectedMenuCommand = "Log";
+            OldGame.World.GetState<MessageHandler>().Unread = false;
+            OldGame.World.GetState<MessageHandler>().UnreadColor = "white";
             ControlContext.LogMode = true;
             InterfacePanel.DirtifySidePanels();
         }
@@ -283,7 +283,7 @@ namespace Hecatomb
         public void AutoWait()
         {
             CommandLogger.LogCommand(command: "Wait");
-            Game.World.Player.GetComponent<Actor>().Wait();
+            OldGame.World.Player.GetComponent<Actor>().Wait();
             Act();
         }
 
@@ -291,9 +291,9 @@ namespace Hecatomb
         {
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            if (File.Exists(path + @"\saves\" + Game.GameName + ".json"))
+            if (File.Exists(path + @"\saves\" + OldGame.GameName + ".json"))
             {
-                ControlContext.Set(new ConfirmationControls("Really overwrite " + Game.GameName + ".json?", SaveGameCommand));
+                ControlContext.Set(new ConfirmationControls("Really overwrite " + OldGame.GameName + ".json?", SaveGameCommand));
             }
             else
             {
@@ -302,9 +302,9 @@ namespace Hecatomb
         }
         public void SaveGameCommand()
         {
-            Game.SplashPanel.Splash(new List<ColoredText>()
+            OldGame.SplashPanel.Splash(new List<ColoredText>()
             {
-                $"Saving {Game.GameName}..."
+                $"Saving {OldGame.GameName}..."
             }, frozen: true);
             Debug.WriteLine("saving the game");
             Thread thread = new Thread(SaveGameProcess);
@@ -315,12 +315,12 @@ namespace Hecatomb
         {
             try
             {
-                Game.World.Stringify();
+                OldGame.World.Stringify();
                 ControlContext.Reset();
             }
             catch (Exception e)
             {
-                Game.HandleException(e);
+                OldGame.HandleException(e);
             }
         }
 
@@ -329,21 +329,21 @@ namespace Hecatomb
             try
             {
                 //string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
-                if (Game.World == null)
+                if (OldGame.World == null)
                 {
-                    Game.World = new World(256, 256, 64);
+                    OldGame.World = new World(256, 256, 64);
                 }
                 //Game.World.Parse(json);
                 var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
                 System.IO.Directory.CreateDirectory(path + @"\saves");
-                Game.World.Parse(path + @"\saves\" + Game.GameName + ".json");
+                OldGame.World.Parse(path + @"\saves\" + OldGame.GameName + ".json");
                 // we need some kind of failure handling...
-                Game.MainPanel.IntroState = false;
+                OldGame.MainPanel.IntroState = false;
                 ControlContext.Reset();
             }
             catch (Exception e)
             {
-                Game.HandleException(e);
+                OldGame.HandleException(e);
             }
         }
 
@@ -361,10 +361,10 @@ namespace Hecatomb
                 (Keys.Escape, "Cancel.", ControlContext.Reset),
                 (Keys.S, "Save game.", SaveGameCommandCheckFileName),
                 (Keys.A, "Save as...", SaveGameAsCommand),
-                (Keys.R, "Restore game.", Game.game.RestoreGameWithConfirmation),
+                (Keys.R, "Restore game.", OldGame.game.RestoreGameWithConfirmation),
                 //(Keys.D, "Delete game.", Game.game.StartGame),
-                (Keys.N, "New game.", Game.game.StartGameWithConfirmation),
-                (Keys.Q, "Quit.", Game.game.BackToTitleWithConfirmation)
+                (Keys.N, "New game.", OldGame.game.StartGameWithConfirmation),
+                (Keys.Q, "Quit.", OldGame.game.BackToTitleWithConfirmation)
             };
             if (Options.ReconstructGames)
             {
@@ -384,18 +384,18 @@ namespace Hecatomb
             Action<string> saveGameAs = (string name) =>
             {
                 //could check legality of name here?
-                Game.GameName = name;
+                OldGame.GameName = name;
                 SaveGameCommandCheckFileName();
             };
             ControlContext.Set(new TextEntryControls("Type a name for your saved game.", saveGameAs));
-            (Controls as TextEntryControls).CurrentText = Game.GameName;
+            (Controls as TextEntryControls).CurrentText = OldGame.GameName;
         }
 
         public void TogglePause()
         {        
-            Game.World.Events.Publish(new TutorialEvent() { Action = "TogglePause" });
-            Game.Time.PausedAfterLoad = false;
-            Game.Time.AutoPausing = !Game.Time.AutoPausing;
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "TogglePause" });
+            OldGame.Time.PausedAfterLoad = false;
+            OldGame.Time.AutoPausing = !OldGame.Time.AutoPausing;
             InterfacePanel.DirtifySidePanels();
         }
 
@@ -403,23 +403,23 @@ namespace Hecatomb
         {
             if (!ControlContext.MovingCamera)
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "CameraMode" });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "CameraMode" });
             }
             else
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "MainMode" });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "MainMode" });
             }
             ControlContext.MovingCamera = !ControlContext.MovingCamera;
             if (ControlContext.MovingCamera)
             {
-                Game.Controls = Game.CameraControls;
+                OldGame.Controls = OldGame.CameraControls;
             }
             else
             {
-                Game.Controls = Game.DefaultControls;
+                OldGame.Controls = OldGame.DefaultControls;
             }
-            Creature p = Game.World.Player;
-            Game.Camera.Center(p.X, p.Y, p.Z);
+            Creature p = OldGame.World.Player;
+            OldGame.Camera.Center(p.X, p.Y, p.Z);
             InterfacePanel.DirtifyUsualPanels();
         }
 
@@ -430,15 +430,15 @@ namespace Hecatomb
 
         public void HoverCamera()
         {
-            Game.Controls.CameraHover();
+            OldGame.Controls.CameraHover();
         }
 
         public void ToggleTutorial()
         {
-            var tutorial = Game.World.GetState<TutorialHandler>();
+            var tutorial = OldGame.World.GetState<TutorialHandler>();
             if (tutorial.Visible)
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "HideTutorial" });
+                OldGame.World.Events.Publish(new TutorialEvent() { Action = "HideTutorial" });
             }
             tutorial.Visible = !tutorial.Visible;
             InterfacePanel.DirtifySidePanels();
@@ -446,13 +446,13 @@ namespace Hecatomb
 
         public void ScrollUpCommand()
         {
-            Game.InfoPanel.ScrollUp();
+            OldGame.InfoPanel.ScrollUp();
             InterfacePanel.DirtifySidePanels();
         }
 
         public void ScrollDownCommand()
         {
-            Game.InfoPanel.ScrollDown();
+            OldGame.InfoPanel.ScrollDown();
             InterfacePanel.DirtifySidePanels();
         }
 
@@ -472,7 +472,7 @@ namespace Hecatomb
             if (structures.Count > 0)
             {
                 ControlContext.Set(new MenuCameraControls(structures[0]));
-                Game.Camera.CenterOnSelection();
+                OldGame.Camera.CenterOnSelection();
                 //ControlContext.Set(new MenuChoiceControls(structures[0]));
             }
         }
@@ -483,7 +483,7 @@ namespace Hecatomb
             if (minions.Count > 0)
             {
                 ControlContext.Set(new MenuCameraControls((Creature)minions[0]));
-                Game.Camera.CenterOnSelection();
+                OldGame.Camera.CenterOnSelection();
                 //ControlContext.Set(new MenuChoiceControls((Creature)minions[0]));
             }
         }
@@ -492,22 +492,22 @@ namespace Hecatomb
         {
             // I don't really like doing this but it's just for debugging so it's probably okay
             Options.NoStartupScreen = false;
-            if (Game.Options.Invincible)
+            if (OldGame.Options.Invincible)
             {
-                Game.SplashPanel.Splash(new List<ColoredText> {
+                OldGame.SplashPanel.Splash(new List<ColoredText> {
                     "The spark of life fades from your fallen corpse and your soul slips away to darker realms.",
                     " ",
                     "Your depraved ambition has come to an end...or it would have, if you weren't invincible for debugging purposes."
                 });
-                Game.World.Player.GetComponent<Defender>().Wounds = 0;
+                OldGame.World.Player.GetComponent<Defender>().Wounds = 0;
             }
             else
             {
-                Game.SplashPanel.Splash(new List<ColoredText> {
+                OldGame.SplashPanel.Splash(new List<ColoredText> {
                     "The spark of life fades from your fallen corpse and your soul slips away to darker realms.",
                     " ",
                     "Your depraved ambition has come to an end."
-                }, callback: Game.game.BackToTitle);
+                }, callback: OldGame.game.BackToTitle);
             }
             
         }

@@ -71,7 +71,7 @@ namespace Hecatomb
             item.CorpseSpecies = creatureType;
             item.TotalDecay = 250;
             item.Decay = item.TotalDecay;
-            Game.World.Events.Subscribe<TurnBeginEvent>(item, item.CorpseDecays);
+            OldGame.World.Events.Subscribe<TurnBeginEvent>(item, item.CorpseDecays);
             return item;
         }
 
@@ -103,10 +103,10 @@ namespace Hecatomb
         }
         public override void Place(int x1, int y1, int z1, bool fireEvent = true)
         {
-            Item e = Game.World.Items[x1, y1, z1];
+            Item e = OldGame.World.Items[x1, y1, z1];
             if (e == null)
             {
-                Game.World.Items[x1, y1, z1] = this;
+                OldGame.World.Items[x1, y1, z1] = this;
                 base.Place(x1, y1, z1, fireEvent);
             }
             else if (e.Resource == Resource && e.Quantity < e.StackSize)
@@ -132,7 +132,7 @@ namespace Hecatomb
             int y0 = Y;
             int z0 = Z;
             base.Remove();
-            Game.World.Items[x0, y0, z0] = null;
+            OldGame.World.Items[x0, y0, z0] = null;
         }
 
         public Item Take(int n)
@@ -204,7 +204,7 @@ namespace Hecatomb
         {
             int MaxDistance = 2;
             List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
-            order = order.OrderBy(s => Game.World.Random.Arbitrary(OwnSeed()+s)).ToList();
+            order = order.OrderBy(s => OldGame.World.Random.Arbitrary(OwnSeed()+s)).ToList();
             //order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
             Queue<Coord> queue = new Queue<Coord>();
             if (Terrains[x, y, z] == Terrain.DownSlopeTile)
@@ -255,7 +255,7 @@ namespace Hecatomb
                         continue;
                     }
                 }
-                Game.World.Events.Publish(new SensoryEvent($"{Describe(capitalized: true)} got displaced to {c.X} {c.Y} {c.Z}.",c.X, c.Y, c.Z));
+                OldGame.World.Events.Publish(new SensoryEvent($"{Describe(capitalized: true)} got displaced to {c.X} {c.Y} {c.Z}.",c.X, c.Y, c.Z));
                 Place(c.X, c.Y, c.Z);
                 return;
             }

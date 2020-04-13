@@ -28,7 +28,7 @@ namespace Hecatomb
 
         public override string GetDisplayName()
         {
-            var tiles = Game.World.Terrains;
+            var tiles = OldGame.World.Terrains;
             Terrain t = tiles[X, Y, Z];
             Terrain floor = Terrain.FloorTile;
             Terrain wall = Terrain.WallTile;
@@ -44,7 +44,7 @@ namespace Hecatomb
         public override void Start()
 		{
 			base.Start();
-			Feature f = Game.World.Features[X, Y, Z];
+			Feature f = OldGame.World.Features[X, Y, Z];
             f.Name = "incomplete construction";
             f.GetComponent<IncompleteFixtureComponent>().Makes = "Construction";
             f.Symbol = '\u2692';
@@ -52,10 +52,10 @@ namespace Hecatomb
 		}
 		public override void Finish()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "BuildTaskComplete" });
-			Game.World.Features[X, Y, Z].Despawn();
-            Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
-            var tiles = Game.World.Terrains;
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "BuildTaskComplete" });
+			OldGame.World.Features[X, Y, Z].Despawn();
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
+            var tiles = OldGame.World.Terrains;
 			Terrain t = tiles[X, Y, Z];	
 			Terrain floor = Terrain.FloorTile;
 			Terrain wall = Terrain.WallTile;
@@ -65,8 +65,8 @@ namespace Hecatomb
 			if (t==floor || t==up)
 			{
 				tiles[X, Y, Z] = wall;
-                Game.World.Covers[X, Y, Z] = Cover.Soil;
-				Terrain ta = Game.World.GetTile(X, Y, Z+1);
+                OldGame.World.Covers[X, Y, Z] = Cover.Soil;
+				Terrain ta = OldGame.World.GetTile(X, Y, Z+1);
 				if (ta==empty || ta==down)
 				{
 					tiles[X, Y, Z+1] = floor;
@@ -77,12 +77,12 @@ namespace Hecatomb
 				tiles[X, Y, Z] = floor;
 			}
 			base.Finish();
-            Game.World.ValidateOutdoors();
+            OldGame.World.ValidateOutdoors();
 		}
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             if (ValidTile(c))
             {
@@ -95,7 +95,7 @@ namespace Hecatomb
         }
         public override void TileHover(Coord c, List<Coord> squares)
         {
-            var co = Game.Controls;
+            var co = OldGame.Controls;
             co.MenuMiddle.Clear();
             int priority = 0;
             foreach (Coord square in squares)
@@ -103,9 +103,9 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Terrains[x, y, z];
-                Feature f = Game.World.Features[x, y, z];
-                if (Game.World.Explored.Contains(square) || Options.Explored)
+                Terrain t = OldGame.World.Terrains[x, y, z];
+                Feature f = OldGame.World.Features[x, y, z];
+                if (OldGame.World.Explored.Contains(square) || Options.Explored)
                 {
                     if (f != null && f.TryComponent<IncompleteFixtureComponent>()!=null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
                     {
@@ -149,9 +149,9 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                Terrain t = Game.World.Terrains[x, y, z];
-                Feature f = Game.World.Features[x, y, z];
-                if (Game.World.Explored.Contains(square) || Options.Explored)
+                Terrain t = OldGame.World.Terrains[x, y, z];
+                Feature f = OldGame.World.Features[x, y, z];
+                if (OldGame.World.Explored.Contains(square) || Options.Explored)
                 {
                     if (f != null && f.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Excavation")
                     {
@@ -172,12 +172,12 @@ namespace Hecatomb
                 int x = square.X;
                 int y = square.Y;
                 int z = square.Z;
-                if (Game.World.Tasks[x, y, z] != null)
+                if (OldGame.World.Tasks[x, y, z] != null)
                 {
                     continue;
                 }
-                Terrain t = Game.World.Terrains[x, y, z];
-                Feature f = Game.World.Features[x, y, z];
+                Terrain t = OldGame.World.Terrains[x, y, z];
+                Feature f = OldGame.World.Features[x, y, z];
                 if (f?.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == "Construction")
                 {
                     Entity.Spawn<BuildTask>().Place(x, y, z);
@@ -193,8 +193,8 @@ namespace Hecatomb
                       || (priority == 1 && t == Terrain.FloorTile || t == Terrain.UpSlopeTile))
                 {
                     // should I cancel existing tasks?
-                    if (Game.World.Tasks[x, y, z] == null && Game.World.Features[x, y, z]==null)
-                        Game.World.Events.Publish(new TutorialEvent() { Action = "DesignateBuildTask" });
+                    if (OldGame.World.Tasks[x, y, z] == null && OldGame.World.Features[x, y, z]==null)
+                        OldGame.World.Events.Publish(new TutorialEvent() { Action = "DesignateBuildTask" });
                     Entity.Spawn<BuildTask>().Place(x, y, z);
                 }
             }
@@ -203,7 +203,7 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
 		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseBuildTask" });
+            OldGame.World.Events.Publish(new TutorialEvent() { Action = "ChooseBuildTask" });
             var c = new SelectZoneControls(this);
             c.MenuSelectable = false;
             c.SelectedMenuCommand = "Jobs";
@@ -212,8 +212,8 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            Feature f = Game.World.Features[c.X, c.Y, c.Z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            Feature f = OldGame.World.Features[c.X, c.Y, c.Z];
+            if (!OldGame.World.Explored.Contains(c) && !Options.Explored)
             {
                 return false;
             }
@@ -227,7 +227,7 @@ namespace Hecatomb
                 return false;
             }
             // can't build on a wall tile
-            if (Game.World.Terrains[c.X, c.Y, c.Z] == Terrain.WallTile)
+            if (OldGame.World.Terrains[c.X, c.Y, c.Z] == Terrain.WallTile)
             {
                 return false;
             }

@@ -25,7 +25,7 @@ namespace Hecatomb
                 Debug.WriteLine("What on earth just happened?");
                 Debug.WriteLine(this.Describe());
             }
-            Creature e = Game.World.Creatures[x1, y1, z1];
+            Creature e = OldGame.World.Creatures[x1, y1, z1];
 
             if (e == null)
             {
@@ -33,7 +33,7 @@ namespace Hecatomb
                 //{
                 //    Debug.Print("about to try placing {0} at {1} {2} {3} without firing an event", this, x1, y1, z1);
                 //}
-                Game.World.Creatures[x1, y1, z1] = this;
+                OldGame.World.Creatures[x1, y1, z1] = this;
                 base.Place(x1, y1, z1, fireEvent);
 
             }
@@ -52,7 +52,7 @@ namespace Hecatomb
         {
             int MaxDistance = 2;
             List<int> order = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
-            order = order.OrderBy(s => Game.World.Random.Arbitrary(OwnSeed() + s)).ToList();
+            order = order.OrderBy(s => OldGame.World.Random.Arbitrary(OwnSeed() + s)).ToList();
             //order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
             Queue<Coord> queue = new Queue<Coord>();
             if (Terrains[x, y, z] == Terrain.DownSlopeTile)
@@ -99,7 +99,7 @@ namespace Hecatomb
                     }
                     continue;
                 }
-                Game.World.Events.Publish(new SensoryEvent($"{Describe(capitalized: true)} got displaced to {c.X} {c.Y} {c.Z}.", c.X, c.Y, c.Z));
+                OldGame.World.Events.Publish(new SensoryEvent($"{Describe(capitalized: true)} got displaced to {c.X} {c.Y} {c.Z}.", c.X, c.Y, c.Z));
                 Place(c.X, c.Y, c.Z);
                 return;
             }
@@ -128,7 +128,7 @@ namespace Hecatomb
             int y0 = Y;
             int z0 = Z;
             base.Remove();
-            Game.World.Creatures[x0, y0, z0] = null;
+            OldGame.World.Creatures[x0, y0, z0] = null;
         }
 
 
@@ -137,9 +137,9 @@ namespace Hecatomb
             int x = X;
             int y = Y;
             int z = Z;
-            if (this == Game.World.Player)
+            if (this == OldGame.World.Player)
             {
-                Game.Commands.PlayerDies();
+                OldGame.Commands.PlayerDies();
                 return;
             }
             bool decaying = (TryComponent<Decaying>() != null);
@@ -149,7 +149,7 @@ namespace Hecatomb
                 if (Features[x, y, z] == null && Terrains[x, y, z] == Terrain.FloorTile)
                 {
                     Feature f = Entity.Spawn<Feature>("Sapling");
-                    if (Game.World.Random.Arbitrary(OwnSeed()) < 0.5)
+                    if (OldGame.World.Random.Arbitrary(OwnSeed()) < 0.5)
                     {
                         f.GetComponent<GrowthComponent>().Makes = "SpadeTree";
                     }
@@ -207,15 +207,15 @@ namespace Hecatomb
             }
             if (this == Player)
             {
-                var p = Game.World.Player;
+                var p = OldGame.World.Player;
                 menu.MenuTop.Add(" ");
                 menu.MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
-                if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                if (OldGame.World.GetState<TaskHandler>().Minions.Count > 0)
                 {
                     menu.MenuTop.Add(" ");
                     menu.MenuTop.Add("Minions:");
                     var types = new Dictionary<string, int>();
-                    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                    foreach (var minion in OldGame.World.GetState<TaskHandler>().Minions)
                     {
                         Creature c = (Creature)minion;
                         if (!types.ContainsKey(c.TypeName))
@@ -265,18 +265,18 @@ namespace Hecatomb
                 if (minions.Count>0)
                 {
                     ControlContext.Set(new MenuCameraControls((Creature)minions[0]));
-                    Game.Camera.CenterOnSelection();
+                    OldGame.Camera.CenterOnSelection();
                 }
                 else
                 {
                     ControlContext.Set(new MenuCameraControls(Player));
-                    Game.Camera.CenterOnSelection();
+                    OldGame.Camera.CenterOnSelection();
                 }
             }
             else if (TryComponent<Minion>()==null)
             {
                 ControlContext.Set(new MenuCameraControls(Player));
-                Game.Camera.CenterOnSelection();
+                OldGame.Camera.CenterOnSelection();
             }
             else
             {
@@ -293,14 +293,14 @@ namespace Hecatomb
                 {
                     //ControlContext.Set(new MenuChoiceControls(Player));
                     ControlContext.Set(new MenuCameraControls(Player));
-                    Game.Camera.CenterOnSelection();
+                    OldGame.Camera.CenterOnSelection();
                 }
                 else
                 {
                     //ControlContext.Set(new MenuChoiceControls((Creature)minions[n+1]));
 
                     ControlContext.Set(new MenuCameraControls((Creature)minions[n + 1]));
-                    Game.Camera.CenterOnSelection();
+                    OldGame.Camera.CenterOnSelection();
                 }
             }
         }

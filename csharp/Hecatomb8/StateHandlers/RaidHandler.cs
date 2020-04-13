@@ -16,7 +16,7 @@ namespace Hecatomb
             int Width = 64;
             int Height = 64;
             int Depth = 3;
-            MainWorld = Game.World;
+            MainWorld = OldGame.World;
             World raidWorld = new World(Width, Height, Depth);
             var terrains = raidWorld.Terrains;
             var covers = raidWorld.Covers;
@@ -43,8 +43,8 @@ namespace Hecatomb
             raidWorld.Turns.Turn = MainWorld.Turns.Turn;
             raidWorld.Player = MainWorld.Player;
             //raidWorld.StateHandlers["RaidHandler"] = this;
-            Game.World.Player.Remove();
-            Game.World = raidWorld;
+            OldGame.World.Player.Remove();
+            OldGame.World = raidWorld;
             raidWorld.Player.Place(32, 32, 1);
             foreach (Creature cr in MainWorld.GetState<TaskHandler>().Minions)
             {

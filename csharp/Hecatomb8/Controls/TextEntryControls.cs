@@ -79,11 +79,11 @@ namespace Hecatomb
         {
             AlwaysPaused = true;
             MenuSelectable = false;
-            CurrentText = Game.GameName;
+            CurrentText = OldGame.GameName;
             Header = header;
             MaxTextLength = 25;
             Throttle = 250;
-            var Commands = Game.Commands;
+            var Commands = OldGame.Commands;
             KeyMap[Keys.Escape] = Reset;
             KeyMap[Keys.Enter] = ()=> { submit(CurrentText); };
             KeyMap[Keys.Back] = Backspace;
@@ -141,7 +141,7 @@ namespace Hecatomb
                 (CurrentText+"_"),
                 "{cyan}Press Enter when finished."
             };
-            Game.InfoPanel.Dirty = true;
+            OldGame.InfoPanel.Dirty = true;
         }
 
         public override void HandleClick(int x, int y)

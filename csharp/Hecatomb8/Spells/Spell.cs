@@ -103,7 +103,7 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Game.Controls.MenuMiddle = new List<ColoredText>() { "Spawn a test ghoul here." };
+            OldGame.Controls.MenuMiddle = new List<ColoredText>() { "Spawn a test ghoul here." };
         }
 
 
