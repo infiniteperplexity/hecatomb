@@ -4,6 +4,17 @@ What does a thorough test look like?
 - Fight the bandits, cast spells at them, and use traps.
 
 
+So what would our approach be to refactoring the game?  Let's make this a wishlist.
+- I think you basically just start by backing up Game.cs, start that again from scratch, and go from there.
+- Let's take a look at this example code.  So, they've got a Global object.
+- So what is it I'm actually looking to improve on here?
+	- I want to take full advantage of the new null protections.
+	- I want to totally shut down race conditions.
+	- In my dreams, I log all game and interface events.
+		- It's clear what a game event is.  An interface event is a little less clear.
+	- I could try improve on some of the more intricate systems, like spawning, serializing, events, and so on.
+	- I have some specific things I want to change, like getting rid of the JSON-loading text-key nonsnese.
+
 
 Hecatomb brainstorm: The game isn't very fun once you reach the "waiting for bandit siege" stage.
 1) I could just make the bandit siege much easier.  Make it so there's only one bandit, for example.
