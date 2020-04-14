@@ -45,7 +45,7 @@ namespace Hecatomb8
         List<SpriteFont> Fonts;
         Dictionary<char, (Vector2, SpriteFont)> fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
         // this is actually kind of an insidious loophole because when you initialize an array 
-        (Vector2 fgv, Vector2 bgv, SpriteFont spriteFont, string symbol, Color fg, Color bg)[,] NextGlyphs;
+        DrawableGlyph?[,] NextGlyphs;
 
         public GamePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c)
         {
@@ -70,8 +70,28 @@ namespace Hecatomb8
                 Fonts.Add(font);
             }
             fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
-            NextGlyphs = new (Vector2 fgv, Vector2 bgv, SpriteFont spriteFont, string symbol, Color fg, Color bg)[25, 25];
-        }   
+            NextGlyphs = new DrawableGlyph?[25, 25];
+        }
+
+        // in a better world, this would be a Record Type
+        class DrawableGlyph
+        {
+            public Vector2 fgv;
+            public Vector2 bgv;
+            public SpriteFont spriteFont;
+            public string symbol;
+            public Color fg;
+            public Color bg;
+            public DrawableGlyph(Vector2 fv, Vector2 bv, SpriteFont sf, string s, Color f, Color b)
+            {
+                fgv = fv;
+                bgv = bv;
+                spriteFont = sf;
+                symbol = s;
+                fg = f;
+                bg = b;
+            }
+        }
 
         public void PrepareGlyphs()
         {
@@ -98,7 +118,7 @@ namespace Hecatomb8
                         int yOffset = (int)measure.Y;
                         var bgv = new Vector2(/*X0 + */XPad + (1 + i) * (CharWidth + XPad), /*Y0 + */YPad + (1 + j) * (CharHeight + YPad));
                         var fgv = new Vector2(/*X0 + */xOffset + XPad + i * (CharWidth + XPad), /*Y0 + */yOffset + YPad + j * (CharHeight + YPad));
-                        NextGlyphs[i, j] = (fgv, bgv, Fonts[0], str, fg, bg);
+                        NextGlyphs[i, j] = new DrawableGlyph(fgv, bgv, Fonts[0], str, fg, bg);
                     }
                     else
                     {
@@ -116,7 +136,10 @@ namespace Hecatomb8
                 for (int j = 0; j < 25; j++)
                 {
                     var glyph = NextGlyphs[i, j];
-                    Sprites.Draw(BG, glyph.bgv, glyph.bg);
+                    if (glyph != null)
+                    {
+                        Sprites.Draw(BG, glyph.bgv, glyph.bg);
+                    }
                 }
             }
             for (int i = 0; i < 25; i++)
@@ -124,9 +147,8 @@ namespace Hecatomb8
                 for (int j = 0; j < 25; j++)
                 {
                     var glyph = NextGlyphs[i, j];
-                    if (glyph != default)
+                    if (glyph != null)
                     {
-                        // this logic will eventually become more complex
                         Sprites.DrawString(glyph.spriteFont, glyph.symbol, glyph.fgv, glyph.fg);
                     }
                 }
