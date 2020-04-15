@@ -54,8 +54,11 @@ namespace Hecatomb8
         protected override void Initialize()
         {
             base.Initialize();
-            var w = new WorldGenStrategy();
-            w.Generate();
+            var world = new World(256, 256, 64);
+            GameState.World = world;
+            var ws = new WorldStrategy();
+            ws.Generate();
+            
         }
         protected override void LoadContent()
         {

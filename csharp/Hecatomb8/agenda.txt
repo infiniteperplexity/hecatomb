@@ -8,3 +8,10 @@
 		- It's clear what a game event is.  An interface event is a little less clear.
 	- I could try improve on some of the more intricate systems, like spawning, serializing, events, and so on.
 	- I have some specific things I want to change, like getting rid of the JSON-loading text-key nonsnese.
+
+
+4/14/2020
+
+So we have the "minimal MCV" thing down now.  So what's next?
+- We want to generate the world
+- We want to implement the normal controls

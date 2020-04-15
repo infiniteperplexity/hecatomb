@@ -8,10 +8,11 @@ namespace Hecatomb8
     {
         // a locator class for global game state stuff
         // nothing should alter the game world without going through here
+
+        public static World? World;
+        public static Creature? Player;
         
-        public static bool WorldExists;
-        public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
-        public static TileEntity? Player;
+        
 
 
         // what if we went crazy and modified this only with a single method called Update()?

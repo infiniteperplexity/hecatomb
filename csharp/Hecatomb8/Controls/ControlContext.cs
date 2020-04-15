@@ -47,12 +47,15 @@ namespace Hecatomb8
         public void MovePlayer(int dx, int dy, int dz)
         {
             var p = GameState.Player;
-            if (p is null || !p.Placed())
+            if (p is null || !p.Placed)
             {
                 return;
             }
             // LogSomeKindOfCommand
-            p.Place((int)p.X! + dx, (int)p.Y! + dy, (int)p.Z! + dz);
+            var (x, y, z) = ((int)p.X!, (int)p.Y!, (int)p.Z!);
+            // blocking movement off the map will be handled some time in the future
+            // so will blocking other kinds of illegal movement
+            p.PlaceInEmptyTile(new Constrained<int>((int)p.X! + dx), new Constrained<int>((int)p.Y! + dy), new Constrained<int>((int)p.Z! + dz));
             PlayerActed();
         }
 

@@ -73,6 +73,8 @@ namespace Hecatomb8
             NextGlyphs = new DrawableGlyph?[25, 25];
         }
 
+
+
         // in a better world, this would be a Record Type
         class DrawableGlyph
         {
@@ -100,7 +102,7 @@ namespace Hecatomb8
                 for (int j = 0; j < 25; j++)
                 {
                     // we should probably make worldExists into a nullable field to force this check
-                    if (GameState.WorldExists)
+                    if (GameState.World != null)
                     {
                         var symbol = '.';
                         var bg = Color.Black;

@@ -46,17 +46,19 @@ namespace Hecatomb8
 			dict = new Dictionary<int, T>();
 		}
 
-		public T? this[int x, int y, int z]
+
+
+		public T? this[Constrained<int> x, Constrained<int> y, Constrained<int> z]
 		{
 			get
 			{
-				if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
+				if (x.Unbox() < 0 || x.Unbox() >= _x || y.Unbox() < 0 || y.Unbox() >= _y || z.Unbox() < 0 || z.Unbox() >= _z)
 				{
-					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
+					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x.Unbox(), y.Unbox(), z.Unbox()));
 				}
 				else
 				{
-					int n = z * _x * _y + x * _y + y;
+					int n = z.Unbox() * _x * _y + x.Unbox() * _y + y.Unbox();
 					if (dict.ContainsKey(n))
 					{
 						return dict[n];
@@ -69,13 +71,13 @@ namespace Hecatomb8
 			}
 			set
 			{
-				if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
+				if (x.Unbox() < 0 || x.Unbox() >= _x || y.Unbox() < 0 || y.Unbox() >= _y || z.Unbox() < 0 || z.Unbox() >= _z)
 				{
-					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
+					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x.Unbox(), y.Unbox(), z.Unbox()));
 				}
 				else
 				{
-					int n = z * _x * _y + x * _y + y;
+					int n = z.Unbox() * _x * _y + x.Unbox() * _y + y.Unbox();
 					if (value == null)
 					{
 						if (dict[n] != null)
@@ -93,39 +95,39 @@ namespace Hecatomb8
 
 
 		// an experiment with named tuples
-		public T? this[(int x, int y, int z) c]
-		{
-			get
-			{
-				return this[c.x, c.y, c.z];
-			}
-			set
-			{
-				this[c.x, c.y, c.z] = value;
-			}
-		}
+		//public T? this[(int x, int y, int z) c]
+		//{
+		//	get
+		//	{
+		//		return this[c.x, c.y, c.z];
+		//	}
+		//	set
+		//	{
+		//		this[c.x, c.y, c.z] = value;
+		//	}
+		//}
 
-		public T? this[Coord c]
-		{
-			get
-			{
-				return this[c.X, c.Y, c.Z];
-			}
-			set
-			{
-				this[c.X, c.Y, c.Z] = value;
-			}
-		}
+		//public T? this[Coord c]
+		//{
+		//	get
+		//	{
+		//		return this[c.X, c.Y, c.Z];
+		//	}
+		//	set
+		//	{
+		//		this[c.X, c.Y, c.Z] = value;
+		//	}
+		//}
 
-		public bool ContainsKey(int x, int y, int z)
+		public bool ContainsKey(Constrained<int> x, Constrained<int> y, Constrained<int> z)
 		{
-			if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
+			if (x.Unbox() < 0 || x.Unbox() >= _x || y.Unbox() < 0 || y.Unbox() >= _y || z.Unbox() < 0 || z.Unbox() >= _z)
 			{
-				throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
+				throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x.Unbox(), y.Unbox(), z.Unbox()));
 			}
 			else
 			{
-				return dict.ContainsKey(z * _x * _y + x * _y + y);
+				return dict.ContainsKey(z.Unbox() * _x * _y + x.Unbox() * _y + y.Unbox());
 			}
 		}
 
