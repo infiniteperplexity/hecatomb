@@ -18,6 +18,8 @@ namespace Hecatomb8
         public Grid3D<Cover> Covers;
         public readonly Dictionary<int, Entity> Entities;
         public readonly SparseArray3D<Creature> Creatures;
+        public readonly SparseArray3D<Feature> Features;
+        public readonly SparseArray3D<Item> Items;
         public readonly StatefulRandom Random;
 
         public World(int width, int height, int depth, int seed = 0)
@@ -29,6 +31,8 @@ namespace Hecatomb8
             Terrains = new Grid3D<Terrain>(width, height, depth);
             Covers = new Grid3D<Cover>(width, height, depth);
             Creatures = new SparseArray3D<Creature>(width, height, depth);
+            Features = new SparseArray3D<Feature>(width, height, depth);
+            Items = new SparseArray3D<Item>(width, height, depth);
             Random = new StatefulRandom(seed);
         }
 

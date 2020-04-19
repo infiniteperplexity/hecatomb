@@ -30,7 +30,7 @@ namespace Hecatomb8
             InterfaceState.Controls = new ControlContext();
             InterfaceState.Camera = new Camera(47, 33);
             InterfaceState.Colors = new Colors();
-            InterfaceState.MainPanel = new GamePanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera);             
+            InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera);             
         }
 
         // *** Default MonoGame stuff ***

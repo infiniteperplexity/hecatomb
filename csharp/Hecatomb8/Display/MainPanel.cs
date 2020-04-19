@@ -10,38 +10,14 @@ using System.Diagnostics;
 
 namespace Hecatomb8
 {
-    public class GamePanel
+    public class MainPanel : InterfacePanel
     {
-        SpriteBatch Sprites;
-        GraphicsDevice Graphics;
-        int X0;
-        int Y0;
-        int CharWidth;
-        int CharHeight;
-        int XPad;
-        int YPad;
-        Texture2D BG;
         List<SpriteFont> Fonts;
         Dictionary<char, (Vector2, SpriteFont)> fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
         DrawableGlyph?[,] NextGlyphs;
 
-        public GamePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, Camera cam)
+        public MainPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, Camera cam) : base(g, sb, c)
         {
-            Graphics = g;
-            Sprites = sb;
-            X0 = 0;
-            Y0 = 0;
-            CharWidth = 18;
-            CharHeight = 18;
-            XPad = 3;
-            YPad = 3;
-            BG = new Texture2D(Graphics, CharWidth + XPad, CharHeight + YPad);
-            Color[] bgdata = new Color[(CharWidth + XPad) * (CharHeight + YPad)];
-            for (int i = 0; i < bgdata.Length; ++i)
-            {
-                bgdata[i] = Color.White;
-            }
-            BG.SetData(bgdata);
             Fonts = new List<SpriteFont>();
             string[] fonts = new string[] { "NotoSans", "NotoSansSymbol", "NotoSansSymbol2", "Cambria" };
             foreach (string s in fonts)
@@ -96,7 +72,7 @@ namespace Hecatomb8
             }
         }
 
-        public void Draw()
+        public override void Draw()
         {
             var camera = InterfaceState.Camera!;
             // draw tile backgrounds

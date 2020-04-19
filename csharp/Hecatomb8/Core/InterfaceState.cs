@@ -7,8 +7,8 @@ namespace Hecatomb8
     // what if we modified this only with a method called Update?
     static class InterfaceState
     {
-        static GamePanel? mainPanel;
-        public static GamePanel MainPanel { get => mainPanel!; set => mainPanel = value; }
+        static MainPanel? mainPanel;
+        public static MainPanel MainPanel { get => mainPanel!; set => mainPanel = value; }
         static ControlContext? controls;
         public static ControlContext Controls { get => controls!; set => controls = value; }
         public static Camera? Camera;
