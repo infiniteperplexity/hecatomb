@@ -35,7 +35,7 @@
     <PackageReference Include="MonoGame.Extended" Version="3.7.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.8.0.13" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="ShadowCaster" Version="1.0.2" />
+    <PackageReference Include="ShadowCaster" Version="1.0.2" NoWarn="NU1701" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,10 +51,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\" />
   </ItemGroup>
 
 </Project>

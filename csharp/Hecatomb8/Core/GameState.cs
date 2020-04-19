@@ -10,7 +10,7 @@ namespace Hecatomb8
         // nothing should alter the game world without going through here
 
         public static World? World;
-        public static Creature? Player;
+        
         
         
 

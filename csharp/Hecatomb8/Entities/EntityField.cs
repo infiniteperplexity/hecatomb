@@ -10,10 +10,12 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb8
 {
     //using static HecatombAliases;
+    // An EntityField is a wrapper for an Entity.  It's there largely to avoid circular references while serializing
+
     public class EntityField<T> where T : Entity
     {
         public int? EID;
-        // "briefly" because it's safest to 
+        // I have named this "UnboxBriefly" because if you only ever use it immediately after unboxing, you are protected from errors caused by despawning
         public T? UnboxBriefly()
         {
             if (EID == null)

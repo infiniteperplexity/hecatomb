@@ -2,6 +2,7 @@
 
 namespace Hecatomb8
 {
+	// Terrain flyweights represent the topology of a single tile - flat, a slope, et cetera.
 	public class Terrain : FlyWeight<Terrain>
 	{
 		public readonly string Name;
@@ -62,6 +63,7 @@ namespace Hecatomb8
 			zview: -1
 		);
 
+		// A FloorTile should always have a wall or void tile underneath
 		public static readonly Terrain FloorTile = new Terrain(
 			type: "FloorTile",
 			name: "floor",
@@ -80,6 +82,7 @@ namespace Hecatomb8
 			solid: true
 		);
 
+		// An UpSlopeTile will usually have a DownSlopeTile above it and can never have an EmptyTile above it
 		public static readonly Terrain UpSlopeTile = new Terrain(
 			type: "UpSlopeTile",
 			name: "upward slope",
@@ -90,6 +93,7 @@ namespace Hecatomb8
 			slope: +1
 		);
 
+		// A DownSlopeTile will always have an UpSlopeTile beneath it
 		public static readonly Terrain DownSlopeTile = new Terrain(
 			type: "DownSlopeTile",
 			name: "downward slope",
@@ -100,6 +104,7 @@ namespace Hecatomb8
 			slope: -1
 		);
 
+		// I could use this as a placeholder in certain circumstances but it's a bad idea
 		public static readonly Terrain OutOfBoundsTile = new Terrain(
 			type: "OutOfBoundsTile",
 			name: "out of bounds",

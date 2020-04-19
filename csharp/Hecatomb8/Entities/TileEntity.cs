@@ -5,11 +5,16 @@ using System.Diagnostics;
 
 namespace Hecatomb8
 {
-    abstract class TileEntity : Entity
+    // A TileEntity is any entity, like a creature, item, or task, that resides in one tile.  Generally you can only have one entity of each type in a tile.
+    public abstract class TileEntity : Entity
     {
-        char _symbol = '@';
+        protected char _symbol = ' ';
+        protected string? _fg;
+        protected string? _bg;
         protected (int x, int y, int z)? _coord;
         public char Symbol { get => _symbol; }
+        public string? FG { get => _fg; }
+        public string? BG { get => _bg; }
         public int? X { get => _coord?.x; }
         public int? Y { get => _coord?.y; }
         public int? Z { get => _coord?.z; }
@@ -18,9 +23,9 @@ namespace Hecatomb8
 
 
         // do I need this in order to appease the warning
-        public virtual void PlaceInEmptyTile(Constrained<int> x, Constrained<int> y, Constrained<int> z)
+        public virtual void PlaceInValidEmptyTile(int x, int y, int z)
         {
-            _coord = (x.Unbox(), y.Unbox(), z.Unbox());
+            _coord = (x, y, z);
         }
 
 
@@ -29,6 +34,11 @@ namespace Hecatomb8
             x = X;
             y = Y;
             z = Z;
+        }
+
+        public virtual string Describe()
+        {
+            return this.GetType().Name;
         }
     }
 

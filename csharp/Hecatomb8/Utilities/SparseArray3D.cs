@@ -3,36 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Hecatomb8
-{
-	// Coord represents a 3-dimensional coordinate.  This won't live here permanently, it's just here for now to enable 
-	public struct Coord
-	{
-		public int X;
-		public int Y;
-		public int Z;
-
-		public Coord(int _x, int _y, int _z)
-		{
-			// should this include a catch to prevent out-of-bands errors?
-			X = _x;
-			Y = _y;
-			Z = _z;
-		}
-
-		public void Deconstruct(out int x, out int y, out int z)
-		{
-			x = X;
-			y = Y;
-			z = Z;
-		}
-
-		public bool Equals(Coord c)
-			=> X == c.X && Y == c.Y && Z == c.Z;
-	}
-
-
+{ 
+	// Sparse three-dimensional arrays the size of the world
 	public class SparseArray3D<T> : IEnumerable<T> where T: class
 	{
+
+
 		private Dictionary<int, T> dict;
 		public readonly int _x;
 		public readonly int _y;
@@ -46,53 +22,47 @@ namespace Hecatomb8
 			dict = new Dictionary<int, T>();
 		}
 
-
-
-		public T? this[Constrained<int> x, Constrained<int> y, Constrained<int> z]
+		public T? GetWithBoundsChecked(int x, int y, int z)
 		{
-			get
+			if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
 			{
-				if (x.Unbox() < 0 || x.Unbox() >= _x || y.Unbox() < 0 || y.Unbox() >= _y || z.Unbox() < 0 || z.Unbox() >= _z)
-				{
-					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x.Unbox(), y.Unbox(), z.Unbox()));
-				}
-				else
-				{
-					int n = z.Unbox() * _x * _y + x.Unbox() * _y + y.Unbox();
-					if (dict.ContainsKey(n))
-					{
-						return dict[n];
-					}
-					else
-					{
-						return null;
-					}
-				}
+				throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 			}
-			set
+			else
 			{
-				if (x.Unbox() < 0 || x.Unbox() >= _x || y.Unbox() < 0 || y.Unbox() >= _y || z.Unbox() < 0 || z.Unbox() >= _z)
+				int n = z * _x * _y + x * _y + y;
+				if (dict.ContainsKey(n))
 				{
-					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x.Unbox(), y.Unbox(), z.Unbox()));
+					return dict[n];
 				}
 				else
 				{
-					int n = z.Unbox() * _x * _y + x.Unbox() * _y + y.Unbox();
-					if (value == null)
-					{
-						if (dict[n] != null)
-						{
-							dict.Remove(n);
-						}
-					}
-					else
-					{
-						dict[n] = value;
-					}
+					return null;
 				}
 			}
 		}
-
+		public void SetWithBoundsChecked(int x, int y, int z, T? t)
+		{
+			if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
+			{
+				throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
+			}
+			else
+			{
+				int n = z * _x * _y + x * _y + y;
+				if (t == null)
+				{
+					if (dict.ContainsKey(n))
+					{
+						dict.Remove(n);
+					}
+				}
+				else
+				{
+					dict[n] = t;
+				}
+			}
+		}
 
 		// an experiment with named tuples
 		//public T? this[(int x, int y, int z) c]
@@ -119,15 +89,16 @@ namespace Hecatomb8
 		//	}
 		//}
 
-		public bool ContainsKey(Constrained<int> x, Constrained<int> y, Constrained<int> z)
+		// I could maybe lay off the Constrained<int>s here, since you're going to have to constrain them later anyway
+		public bool ContainsKey(int x, int y, int z)
 		{
-			if (x.Unbox() < 0 || x.Unbox() >= _x || y.Unbox() < 0 || y.Unbox() >= _y || z.Unbox() < 0 || z.Unbox() >= _z)
+			if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
 			{
-				throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x.Unbox(), y.Unbox(), z.Unbox()));
+				throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 			}
 			else
 			{
-				return dict.ContainsKey(z.Unbox() * _x * _y + x.Unbox() * _y + y.Unbox());
+				return dict.ContainsKey(z * _x * _y + x * _y + y);
 			}
 		}
 

@@ -18,7 +18,7 @@ namespace Hecatomb8
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class NewGame : Microsoft.Xna.Framework.Game
+    public class HecatombGame : Microsoft.Xna.Framework.Game
     {
 
         void LoadHecatombContent()
@@ -26,8 +26,11 @@ namespace Hecatomb8
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
+            InterfaceState.Commands = new HecatombCommands();
             InterfaceState.Controls = new ControlContext();
-            InterfaceState.MainPanel = new GamePanel(GraphicsDevice, sprites!, Content);
+            InterfaceState.Camera = new Camera(47, 33);
+            InterfaceState.Colors = new Colors();
+            InterfaceState.MainPanel = new GamePanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera);             
         }
 
         // *** Default MonoGame stuff ***
@@ -40,13 +43,13 @@ namespace Hecatomb8
         public static void Go()
         {
 
-            var game = new NewGame();
-            using (game = new NewGame())
+            var game = new HecatombGame();
+            using (game = new HecatombGame())
             {
                 game.Run();
             }
         }
-        public NewGame()
+        public HecatombGame()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -56,8 +59,9 @@ namespace Hecatomb8
             base.Initialize();
             var world = new World(256, 256, 64);
             GameState.World = world;
-            var ws = new WorldStrategy();
+            var ws = new BuildWorldStrategy();
             ws.Generate();
+            InterfaceState.Controls.PlayerIsReady();
             
         }
         protected override void LoadContent()

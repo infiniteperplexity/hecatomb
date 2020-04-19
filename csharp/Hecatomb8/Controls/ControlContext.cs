@@ -6,18 +6,25 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb8
 {
+    // A ControlContext represents an input state or an interrelated cluster of input states for the game
+    // The parent class will soon get set to abstract, but it will implement some default functionality that can be inherited
     class ControlContext
     {
         Dictionary<Keys, Action> keyMap;
 
         public ControlContext()
         {
+            var commands = InterfaceState.Commands;
             keyMap = new Dictionary<Keys, Action>()
             {
-                [Keys.W] = () => MovePlayer(0, -1, 0),
-                [Keys.A] = () => MovePlayer(-1, 0, 0),
-                [Keys.S] = () => MovePlayer(0, +1, 0),
-                [Keys.D] = () => MovePlayer(+1, 0, 0)
+                [Keys.W] = commands!.MoveNorthCommand,
+                [Keys.A] = commands!.MoveWestCommand,
+                [Keys.S] = commands!.MoveSouthCommand,
+                [Keys.D] = commands!.MoveEastCommand,
+                [Keys.Up] = commands!.MoveNorthCommand,
+                [Keys.Left] = commands!.MoveWestCommand,
+                [Keys.Down] = commands!.MoveSouthCommand,
+                [Keys.Right] = commands!.MoveEastCommand
             };
         }
         public void HandleInput()
@@ -44,28 +51,16 @@ namespace Hecatomb8
             }
         }
 
-        public void MovePlayer(int dx, int dy, int dz)
+
+        public void PlayerHasActed()
         {
-            var p = GameState.Player;
-            if (p is null || !p.Placed)
-            {
-                return;
-            }
-            // LogSomeKindOfCommand
-            var (x, y, z) = ((int)p.X!, (int)p.Y!, (int)p.Z!);
-            // blocking movement off the map will be handled some time in the future
-            // so will blocking other kinds of illegal movement
-            p.PlaceInEmptyTile(new Constrained<int>((int)p.X! + dx), new Constrained<int>((int)p.Y! + dy), new Constrained<int>((int)p.Z! + dz));
-            PlayerActed();
+            PlayerIsReady();
         }
 
-        public void PlayerActed()
+        public void PlayerIsReady()
         {
-            PlayerReady();
-        }
-
-        public void PlayerReady()
-        {
+            var p = GameState.World!.Player;
+            InterfaceState.Camera!.Center((int)p.X!, (int)p.Y!, (int)p.Z!);
             InterfaceState.ReadyForInput = true;
         }
     }

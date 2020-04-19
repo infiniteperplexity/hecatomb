@@ -2,27 +2,43 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
-    abstract class ComposedEntity : TileEntity
+    // ComposedEntity are entity, such as creature or features, that can have Components attached to add additional behaviors
+    public abstract class ComposedEntity : TileEntity
     {
-        Dictionary<string, EntityField<Component>>? Components;
+        Dictionary<string, EntityField<Component>>? _components;
+        [JsonIgnore] protected List<Component> Components;
 
-        public Component GetComponent<T>() where T : Component
+        protected ComposedEntity() : base()
+        {
+            Components = new List<Component>();
+            //Components.Add(new Movement());
+        }
+
+        public void SpawnComponents()
+        {
+            foreach (var c in Components)
+            {
+                AddComponent(Entity.Spawn<Component>(c));
+            }
+        }
+        public T GetComponent<T>() where T : Component
         {
             string t = typeof(T).Name;
-            if (Components is null || !Components.ContainsKey(t))
+            if (_components is null || !_components.ContainsKey(t))
             {
                 throw new InvalidOperationException($"{this} has no component of type {t}");
             }
-            return Components![t].UnboxBriefly()!;
+            return (T)_components![t].UnboxBriefly()!;
         }
 
         public bool HasComponent<T>() where T : Component
         {
             string t = typeof(T).Name;
-            if (Components is null || !Components.ContainsKey(t))
+            if (_components is null || !_components.ContainsKey(t))
             {
                 return false;
             }
@@ -31,11 +47,12 @@ namespace Hecatomb8
 
         public void AddComponent(Component c)
         {
-            if (Components is null)
+            if (_components is null)
             {
-                Components = new Dictionary<string, EntityField<Component>>();
+                _components = new Dictionary<string, EntityField<Component>>();
             }
-            Components[c.GetType().Name] = c;
+            _components[c.GetType().Name] = c;
+            c.AddToEntity(this);
         }
     }
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Hecatomb8
 {
-    class Movement : Component
+    class GameEvent
     {
     }
 }

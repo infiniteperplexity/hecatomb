@@ -6,5 +6,10 @@ namespace Hecatomb8
 {
     class Necromancer : Creature
     {
+        public Necromancer()
+        {
+            _symbol = '@';
+            _fg = "magenta";
+        }
     }
 }

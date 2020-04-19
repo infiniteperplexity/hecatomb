@@ -20,6 +20,7 @@ namespace Hecatomb
 		public string ClassName;
 		[JsonIgnore] public bool Spawned;
         [JsonIgnore] public Dictionary<Type, Func<GameEvent, GameEvent>> Listeners;
+        //[JsonIgnore] public List<Component> ;
 	
         static Entity()
         {

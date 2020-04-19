@@ -15,7 +15,6 @@ namespace Hecatomb8
         public static List<T> Enumerated = new List<T>();
         // FlyWeights are indexed by string for convenient access
         public string TypeName;
-        //public static Dictionary<string, T> Types = new Dictionary<string, T>();
 
         public FlyWeight(string s)
         {
@@ -23,9 +22,9 @@ namespace Hecatomb8
             FID = Enumerated.Count;
             Enumerated.Add((T)this);
             TypeName = s;
-            //Types[s] = (T)this;
         }
 
+        //// I don't think we actually need this after getting rid of the string keys 
         //static FlyWeight()
         //{
         //    foreach (FieldInfo f in typeof(T).GetFields())
