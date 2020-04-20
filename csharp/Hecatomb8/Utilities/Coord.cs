@@ -19,11 +19,49 @@ namespace Hecatomb8
             Z = _z;
         }
 
+        public Coord(int n)
+        {
+            int m = n;
+            int w = GameState.World!.Width;
+            int h = GameState.World!.Height;
+            X = 0;
+            Y = 0;
+            Z = 0;
+            while (m - w * h >= 0)
+            {
+                m -= w * h;
+                Z += 1;
+            }
+            while (m - h >= 0)
+            {
+                m -= h;
+                X += 1;
+            }
+            Y = m;
+        }
+
         public void Deconstruct(out int x, out int y, out int z)
         {
             x = X;
             y = Y;
             z = Z;
+        }
+
+        public static int Numberize(int x, int y, int z)
+        {
+            int w = GameState.World!.Width;
+            int h = GameState.World!.Height;
+            return h * w * z + h * x + y;
+        }
+
+        public int Numberize()
+        {
+            return Numberize(X, Y, Z);
+        }
+
+        public int OwnSeed()
+        {
+            return X * GameState.World!.Width * GameState.World!.Height + Y * GameState.World!.Height + Z + GameState.World!.GetState<TurnHandler>().Turn;
         }
 
         public bool Equals(Coord c)

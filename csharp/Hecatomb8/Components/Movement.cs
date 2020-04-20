@@ -185,29 +185,24 @@ namespace Hecatomb8
             return true;
         }
 
-        //public float MovementCost(int x0, int y0, int z0, int x1, int y1, int z1)
-        //{
-        //    //Feature f = Game.World.Features[x1, y1, z1];
-        //    //if (f != null && f.Solid && CachedActor.Team != Teams.Friendly)
-        //    //{
-        //    //    return 12;
-        //    //}
-        //    Cover cv = Game.World.Covers[x1, y1, z1];
-        //    if (cv.Liquid)
-        //    {
-        //        return 2;
-        //    }
-        //    Terrain t = Game.World.Terrains[x1, y1, z1];
-        //    if (t == Terrain.UpSlopeTile || t == Terrain.DownSlopeTile)
-        //    {
-        //        return 2;
-        //    }
-        //    if (z1 > z0)
-        //    {
-        //        return 3;
-        //    }
-        //    return 1;
-        //}
+        public float GetMoveCostBounded(int x0, int y0, int z0, int x1, int y1, int z1)
+        {
+            Cover cv = GameState.World!.Covers.GetWithBoundsChecked(x1, y1, z1);
+            if (cv.Liquid)
+            {
+                return 2;
+            }
+            Terrain t = GameState.World!.Terrains.GetWithBoundsChecked(x1, y1, z1);
+            if (t == Terrain.UpSlopeTile || t == Terrain.DownSlopeTile)
+            {
+                return 2;
+            }
+            if (z1 > z0)
+            {
+                return 3;
+            }
+            return 1;
+        }
 
         public void StepToValidEmptyTile(int x1, int y1, int z1)
         {
@@ -218,33 +213,34 @@ namespace Hecatomb8
         }
 
         // tentative...this does not allow (1) diagonal work/attacks or (2) digging upward...could handle the latter with ramps
-        //public bool CouldTouch(int x0, int y0, int z0, int x1, int y1, int z1)
-        //{
-        //    int dz = z1 - z0;
-        //    int dx = x1 - x0;
-        //    int dy = y1 - y0;
-        //    if (dz == 0)
-        //    {
-        //        if (Math.Abs(dx) <= 1 && Math.Abs(dy) <= 1)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    else if (dz == +1 && dx == 0 && dy == 0 && Game.World.Terrains[x1, y1, z1].ZView == -1)
-        //    {
-        //        return true;
-        //    }
-        //    else if (dz == -1 && dx == 0 && dy == 0 && Game.World.Terrains[x0, y0, z0].ZView == -1)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
+        public bool CouldTouchBounded(int x0, int y0, int z0, int x1, int y1, int z1)
+        {
+            int dz = z1 - z0;
+            int dx = x1 - x0;
+            int dy = y1 - y0;
+            if (dz == 0)
+            {
+                if (Math.Abs(dx) <= 1 && Math.Abs(dy) <= 1)
+                {
+                    return true;
+                }
+            }
+            else if (dz == +1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x1, y1, z1).ZView == -1)
+            {
+                return true;
+            }
+            else if (dz == -1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x0, y0, z0).ZView == -1)
+            {
+                return true;
+            }
+            return false;
+        }
 
-        //public bool CanTouch(int x1, int y1, int z1)
-        //{
-        //    return CouldTouch(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
-        //}
+        public bool CanTouchBounded(int x1, int y1, int z1)
+        {
+            var (x, y, z) = Entity.UnboxBriefly()!;
+            return CouldTouchBounded((int)x!, (int)y!, (int)z!, x1, y1, z1);
+        }
 
 
 
