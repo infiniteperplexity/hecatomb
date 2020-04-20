@@ -30,13 +30,13 @@ namespace Hecatomb8
         public int BottomMargin;
         public List<(string text, Vector2 v, Color color)> DrawableLines;
 
-        public InterfacePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c)
+        public InterfacePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y)
         {
             Font = c.Load<SpriteFont>("PTMono");
             Graphics = g;
             Sprites = sb;
-            X0 = 0;
-            Y0 = 0;
+            X0 = x;
+            Y0 = y;
             CharWidth = 18;
             CharHeight = 18;
             XPad = 3;
@@ -58,7 +58,7 @@ namespace Hecatomb8
                 Sprites.DrawString(Font, line.text, line.v, line.color);
             }
         }
-        public void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
+        public virtual void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
         {
             DrawableLines.Clear();
             Vector2 v;

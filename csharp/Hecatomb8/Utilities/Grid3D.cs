@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Hecatomb8
 {
-    class Grid3D<T>
+    public class Grid3D<T>
     {
         T[,,] grid;
 

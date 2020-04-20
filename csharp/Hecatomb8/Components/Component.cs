@@ -7,7 +7,7 @@ namespace Hecatomb8
     // A component is an entity, attached to a creature or feature, that provides a chunk of interrelated functionality, such as movement, decision-making, et cetera
     public class Component : Entity
     {
-        protected EntityField<TileEntity> Entity;
+        public EntityField<TileEntity> Entity;
 
         protected Component()
         {

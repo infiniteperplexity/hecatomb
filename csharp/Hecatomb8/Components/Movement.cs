@@ -100,9 +100,9 @@ namespace Hecatomb8
             //    }
             //}
             var e = Entity.UnboxBriefly();
-            int dx = x1 - (int)e.X!;
-            int dy = y1 - (int)e.Y!;
-            int dz = z1 - (int)e.Z!;
+            int dx = x1 - (int)e!.X!;
+            int dy = y1 - (int)e!.Y!;
+            int dz = z1 - (int)e!.Z!;
             // rare: check whether the square itself is allowed
             if (dx == 0 && dy == 0 && dz == 0)
             {

@@ -27,10 +27,11 @@ namespace Hecatomb8
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
             InterfaceState.Commands = new HecatombCommands();
-            InterfaceState.Controls = new ControlContext();
+            InterfaceState.Controls = new DefaultControls();
             InterfaceState.Camera = new Camera(47, 33);
             InterfaceState.Colors = new Colors();
-            InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera);             
+            InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20);   
+            InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0);    
         }
 
         // *** Default MonoGame stuff ***
@@ -61,7 +62,7 @@ namespace Hecatomb8
             GameState.World = world;
             var ws = new BuildWorldStrategy();
             ws.Generate();
-            InterfaceState.Controls.PlayerIsReady();
+            InterfaceState.PlayerIsReady();
             
         }
         protected override void LoadContent()

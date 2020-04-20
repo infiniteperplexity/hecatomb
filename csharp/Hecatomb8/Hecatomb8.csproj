@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Icon.bmp" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Icon.bmp">
           <LogicalName>Icon.bmp</LogicalName>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

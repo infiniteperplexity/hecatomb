@@ -21,7 +21,7 @@ namespace Hecatomb8
         {
             //Turns.PlayerActed = true;
             //Time.Acted();
-            InterfaceState.Controls.PlayerHasActed();
+            GameState.World!.GetState<TurnHandler>().AfterPlayerActed();
         }
 
         public void Wait()

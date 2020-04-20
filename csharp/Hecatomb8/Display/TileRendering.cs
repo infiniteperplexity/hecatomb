@@ -301,12 +301,12 @@ namespace Hecatomb8
             Cover cv = GameState.World!.Covers.GetWithBoundsChecked(x, y, z);
             Cover cb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
 
-            var visible = true;
-            var va = true;
-            var vb = true;
+            //var visible = true;
+            //var va = true;
+            //var vb = true;
             var explored = true;
-            var exa = true;
-            var exb = true;
+            //var exa = true;
+            //var exb = true;
 
 
             //Task task = Game.World.Tasks[x, y, z];

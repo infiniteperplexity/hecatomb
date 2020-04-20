@@ -15,3 +15,22 @@
 So we have the "minimal MCV" thing down now.  So what's next?
 - We want to generate the world
 - We want to implement the normal controls
+
+4/18/2020
+
+Things are kind of a little bit recognizable, in that we have a panel handling the drawing, the ability to run around on the surface, and glyphs that look kind of okay.
+So what are some upcoming chunks of functionality to add?
+- I think I want to start by - instead of adding fun stuff - set up the general "game" structure.
+- Then work on the turn structure.
+- I think we want to save Tasks and Components as long as possible.  Those are by far where the most screw-ups happen.  Hopefully that's where all the groundwork
+I'm laying pays off.
+
+4/19/2020
+
+Okay, I schlepped for a bit.  I really actually kind of want to go outside.
+Alright, what's next?  Let's toss some ideas out there...
+ - Camera mode.
+ - Get trees and graves up in there.
+ - Cast spells to summon zombies.
+ - Zombies wander around and pathfind.
+ - Set up the "new game" framework.  Yeah...let's get that going.

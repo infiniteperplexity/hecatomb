@@ -24,7 +24,7 @@ namespace Hecatomb8
 
         public bool Spawned
         {
-            get => (EID is null);
+            get => !(EID is null);
         }
 
         // until an Entity is "Spawned", it doesn't really exist in the game world
@@ -43,7 +43,7 @@ namespace Hecatomb8
             return t;
         }
 
-        // take an existing Entity hanging out in limbo, and spawn it
+        // take an existing Entity that doesn't yet "exist" in the world, and spawn it
         public static T Spawn<T>(T t) where T : Entity
         {
             int n = MaxEID + 1;
@@ -56,6 +56,32 @@ namespace Hecatomb8
                 ce.SpawnComponents();
             }
             return t;
+        }
+
+
+        public static Entity Spawn(Type type)
+        {
+            var maybe = Activator.CreateInstance(type);
+            if (maybe == null)
+            {
+                throw new InvalidOperationException($"Couldn't spawn entity of type {type}, is usually caused by a problem in the constructor.");
+            }
+            var t = (Entity)maybe;
+            int n = MaxEID + 1;
+            t!.EID = n;
+            MaxEID = n;
+            GameState.World!.Entities[n] = t;
+            if (t is ComposedEntity)
+            {
+                var ce = (ComposedEntity)(Object)t;
+                ce.SpawnComponents();
+            }
+            return t;
+        }
+
+        public static T Spawn<T>(Type t) where T : Entity
+        {
+            return (T)Spawn(t);
         }
     }
 }

@@ -8,9 +8,10 @@ namespace Hecatomb8
 {
     // A ControlContext represents an input state or an interrelated cluster of input states for the game
     // The parent class will soon get set to abstract, but it will implement some default functionality that can be inherited
-    class ControlContext
+    public abstract class ControlContext
     {
-        Dictionary<Keys, Action> keyMap;
+        protected Dictionary<Keys, Action> keyMap;
+        public List<ColoredText> MenuTop;
 
         public ControlContext()
         {
@@ -26,6 +27,7 @@ namespace Hecatomb8
                 [Keys.Down] = commands!.MoveSouthCommand,
                 [Keys.Right] = commands!.MoveEastCommand
             };
+            MenuTop = new List<ColoredText>();
         }
         public void HandleInput()
         {
@@ -49,19 +51,6 @@ namespace Hecatomb8
                     }
                 }
             }
-        }
-
-
-        public void PlayerHasActed()
-        {
-            PlayerIsReady();
-        }
-
-        public void PlayerIsReady()
-        {
-            var p = GameState.World!.Player;
-            InterfaceState.Camera!.Center((int)p.X!, (int)p.Y!, (int)p.Z!);
-            InterfaceState.ReadyForInput = true;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Hecatomb8
         public void Generate()
         {
             var world = GameState.World!;
+            world.SpawnHandlers();
             setElevations();
             makeSlopes();
             world.Player = Entity.Spawn<Necromancer>();
@@ -21,6 +22,12 @@ namespace Hecatomb8
             else
             {
                 throw new Exception("Player can't be placed.");
+            }
+            var zombie = Entity.Spawn<Zombie>();
+            z = world.GetBoundedGroundLevel(5, 5);
+            if (!world.Creatures.ContainsKey(5, 5, z))
+            {
+                zombie.PlaceInValidEmptyTile(5, 5, z);
             }
         }
 

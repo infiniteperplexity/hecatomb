@@ -11,6 +11,7 @@ namespace Hecatomb8
         protected Creature()
         {
             Components.Add(new Movement());
+            Components.Add(new Actor());
         }
         public override void PlaceInValidEmptyTile(int x, int y, int z)
         {

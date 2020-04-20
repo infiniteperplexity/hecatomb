@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Hecatomb8
 {
-    class Item : TileEntity
+    public class Item : TileEntity
     {
         public int Claimed;
         public override void PlaceInValidEmptyTile(int x, int y, int z)

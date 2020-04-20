@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Hecatomb8
 {
     // This is the top level container object for all the game state data
-    class World
+    public class World
     {
         public readonly int Width;
         public readonly int Height;
@@ -20,6 +21,8 @@ namespace Hecatomb8
         public readonly SparseArray3D<Creature> Creatures;
         public readonly SparseArray3D<Feature> Features;
         public readonly SparseArray3D<Item> Items;
+        public readonly SparseArray3D<Task> Tasks;
+        public Dictionary<string, StateHandler> StateHandlers;
         public readonly StatefulRandom Random;
 
         public World(int width, int height, int depth, int seed = 0)
@@ -33,7 +36,31 @@ namespace Hecatomb8
             Creatures = new SparseArray3D<Creature>(width, height, depth);
             Features = new SparseArray3D<Feature>(width, height, depth);
             Items = new SparseArray3D<Item>(width, height, depth);
+            Tasks = new SparseArray3D<Task>(width, height, depth);
+            StateHandlers = new Dictionary<string, StateHandler>();
             Random = new StatefulRandom(seed);
+        }
+
+        public T GetState<T>() where T : StateHandler, new()
+        {
+            string s = typeof(T).Name;
+            if (!StateHandlers.ContainsKey(s))
+            {
+                var handler = Entity.Spawn<T>();
+                StateHandlers[s] = handler;
+
+            }
+            return (T)StateHandlers[s];
+        }
+
+        public void SpawnHandlers()
+        {
+            List<Type> handlers = typeof(StateHandler).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(StateHandler))).ToList();
+            foreach (var type in handlers)
+            {
+                var handler = Entity.Spawn<StateHandler>(type);
+                StateHandlers[type.Name] = handler;
+            }
         }
 
         public int GetBoundedGroundLevel(int x, int y)
@@ -49,10 +76,6 @@ namespace Hecatomb8
                 {
                     return i;
                 }
-                //if (Terrains[x,y,i].Solid)
-                //{
-                //	return i+1;
-                //}
             }
             return 1;
         }

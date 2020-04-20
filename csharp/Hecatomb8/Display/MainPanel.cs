@@ -15,8 +15,9 @@ namespace Hecatomb8
         List<SpriteFont> Fonts;
         Dictionary<char, (Vector2, SpriteFont)> fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
         DrawableGlyph?[,] NextGlyphs;
+        public string[] IntroLines;
 
-        public MainPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, Camera cam) : base(g, sb, c)
+        public MainPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, Camera cam, int x, int y) : base(g, sb, c, x, y)
         {
             Fonts = new List<SpriteFont>();
             string[] fonts = new string[] { "NotoSans", "NotoSansSymbol", "NotoSansSymbol2", "Cambria" };
@@ -27,6 +28,7 @@ namespace Hecatomb8
             }
             fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
             NextGlyphs = new DrawableGlyph?[cam.Width, cam.Height];
+            IntroLines = System.IO.File.ReadAllLines(@"Content/ASCII_icon.txt");
         }
 
 
@@ -58,16 +60,50 @@ namespace Hecatomb8
             {
                 for (int j = 0; j < camera.Height; j++)
                 {
-                    int x = i + camera.XOffset;
-                    int y = j + camera.YOffset;
-                    var (sym, fg, bg) = Tiles.GetGlyphWithBoundsChecked(x, y, camera.Z);
-                    var str = sym.ToString();
-                    var (measure, font) = resolveFont(sym);
-                    int xOffset = 11 - (int)measure.X / 2;
-                    int yOffset = (int)measure.Y;
-                    var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
-                    var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
-                    NextGlyphs[i, j] = new DrawableGlyph(vfg, vbg, font, str, InterfaceState.Colors![fg], InterfaceState.Colors![bg]);
+                    // display the intro screen if the world has not been generated
+                    if (GameState.World is null)
+                    {
+                        if (j >= IntroLines.Length || i * 2  >= IntroLines[0].Length)
+                        {
+                            continue;
+                        }
+                        char sym = IntroLines[j][i * 2];
+                        string fg = "white";
+                        string bg = "black";
+                        var str = sym.ToString();
+                        var (measure, font) = resolveFont(sym);
+                        int xOffset = 11 - (int)measure.X / 2;
+                        int yOffset = (int)measure.Y;
+                        var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
+                        var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
+                        if (sym == ' ')
+                        {
+                            continue;
+                        }
+                        else if (sym == 'z')
+                        {
+                            fg = "lime green";
+                        }
+                        else if (sym == '@')
+                        {
+                            fg = "magenta";
+                        }
+                        NextGlyphs[i, j] = new DrawableGlyph(vfg, vbg, font, str, InterfaceState.Colors![fg], InterfaceState.Colors![bg]);
+                    }
+                    // otherwise, display tiles
+                    else
+                    {
+                        int x = i + camera.XOffset;
+                        int y = j + camera.YOffset;
+                        var (sym, fg, bg) = Tiles.GetGlyphWithBoundsChecked(x, y, camera.Z);
+                        var str = sym.ToString();
+                        var (measure, font) = resolveFont(sym);
+                        int xOffset = 11 - (int)measure.X / 2;
+                        int yOffset = (int)measure.Y;
+                        var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
+                        var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
+                        NextGlyphs[i, j] = new DrawableGlyph(vfg, vbg, font, str, InterfaceState.Colors![fg], InterfaceState.Colors![bg]);
+                    }
                 }
             }
         }

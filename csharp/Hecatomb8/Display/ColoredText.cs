@@ -26,7 +26,7 @@ namespace Hecatomb8
         {
             Colors = new SortedList<int, string>();
             string txt = s;
-            Match m = null;
+            Match? m = null;
             while (true)
             {
                 //Random r = new Random();
