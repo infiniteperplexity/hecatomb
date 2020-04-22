@@ -24,7 +24,7 @@ namespace Hecatomb8
         public void NextTurn()
         {
             Turn += 1;
-            
+            Debug.WriteLine($"Turn {Turn}");
             ActorDeck.Clear();
             ActorQueue.Clear();
             foreach (var e in Entities.Values)
@@ -52,7 +52,7 @@ namespace Hecatomb8
                     if (actor.Spawned)
                     {
                         var cr = actor.Entity.UnboxBriefly()!;
-                        Debug.WriteLine($"Let's pretend like this {cr.Describe()} just did something.");
+                        //Debug.WriteLine($"Let's pretend like this {cr.Describe()} just did something.");
                     }
                     else
                     {
@@ -78,6 +78,7 @@ namespace Hecatomb8
 
         public void AfterPlayerActed()
         {
+            Time.LastUpdate = DateTime.Now;
             //Actor actor = Game.World.Player.GetComponent<Actor>();
             //if (actor.CurrentPoints > 0)
             //{

@@ -53,8 +53,8 @@ namespace Hecatomb
             Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
             CharHeight = 16;
             CharWidth = 9;
-            XPad = 0;
-            YPad = 0;
+            XPad = 3;
+            YPad = 3;
             RightMargin = 1;
             LeftMargin = 1;
             BG = new Texture2D(Game.Graphics.GraphicsDevice, w, h);

@@ -84,13 +84,13 @@ namespace Hecatomb8
                 return GameState.World!.Player!;
             }
         }
-        //public static HashSet<Coord> Explored
-        //{
-        //    get
-        //    {
-        //        return Game.World.Explored;
-        //    }
-        //}
+        public static HashSet<Coord> Explored
+        {
+            get
+            {
+                return GameState.World!.Explored;
+            }
+        }
         public static Grid3D<Terrain> Terrains
         {
             get

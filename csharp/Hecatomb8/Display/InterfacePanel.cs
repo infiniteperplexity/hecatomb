@@ -5,11 +5,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using System.Diagnostics;
 
 namespace Hecatomb8
 {
     public class InterfacePanel
     {
+        public bool Dirty;
         protected SpriteBatch Sprites;
         protected GraphicsDevice Graphics;
         protected int X0;
@@ -32,15 +34,18 @@ namespace Hecatomb8
 
         public InterfacePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y)
         {
+            Dirty = true;
             Font = c.Load<SpriteFont>("PTMono");
             Graphics = g;
             Sprites = sb;
             X0 = x;
             Y0 = y;
-            CharWidth = 18;
-            CharHeight = 18;
+            CharHeight = 16;
+            CharWidth = 9;
             XPad = 3;
             YPad = 3;
+            PixelHeight = 700;
+            PixelWidth = 280;
             BG = new Texture2D(Graphics, CharWidth + XPad, CharHeight + YPad);
             Color[] bgdata = new Color[(CharWidth + XPad) * (CharHeight + YPad)];
             for (int i = 0; i < bgdata.Length; ++i)
@@ -53,13 +58,23 @@ namespace Hecatomb8
 
         public virtual void Draw()
         {
+            
             foreach (var line in DrawableLines)
             {
                 Sprites.DrawString(Font, line.text, line.v, line.color);
             }
         }
-        public virtual void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
+
+        public virtual void Prepare()
         {
+
+        }
+        public void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
+        {
+            if (!Dirty)
+            {
+                return;
+            }
             DrawableLines.Clear();
             Vector2 v;
             // ouput column
@@ -114,6 +129,7 @@ namespace Hecatomb8
                 }
                 y++;
             }
+            Dirty = false;
         }
     }
 }

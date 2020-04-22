@@ -14,7 +14,7 @@ namespace Hecatomb8
             setElevations();
             makeSlopes();
             world.Player = Entity.Spawn<Necromancer>();
-            var (x, y, z) = (1, 1, world.GetBoundedGroundLevel(1, 1));
+            var (x, y, z) = (25, 25, world.GetBoundedGroundLevel(1, 1));
             if (!world.Creatures.ContainsKey(x, y, z))
             {
                 world.Player.PlaceInValidEmptyTile(x, y, z);

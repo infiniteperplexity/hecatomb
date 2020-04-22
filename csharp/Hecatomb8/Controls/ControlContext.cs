@@ -10,8 +10,32 @@ namespace Hecatomb8
     // The parent class will soon get set to abstract, but it will implement some default functionality that can be inherited
     public abstract class ControlContext
     {
+
+        static KeyboardState OldKeyboard;
+        static MouseState OldMouse;
+        static bool ControlDown;
+        static bool ShiftDown;
+        static DateTime InputBegan;
+        static ControlContext? LastInputCycleControls;
+        static Coord? LastInputCycleCamera;
+
+
         protected Dictionary<Keys, Action> keyMap;
         public List<ColoredText> MenuTop;
+        // throttle input between keys
+        int Throttle = 200;
+        // throttle input after switching contexts
+        int StartThrottle = 750;
+        protected bool HasKeyDefault = false;
+        public bool AllowsUnpause = true;
+
+        static ControlContext()
+        {
+            //Cursor = new Highlight("cyan");
+            OldKeyboard = Keyboard.GetState();
+            OldMouse = Mouse.GetState();
+            InputBegan = DateTime.Now;
+        }
 
         public ControlContext()
         {
@@ -25,147 +49,129 @@ namespace Hecatomb8
                 [Keys.Up] = commands!.MoveNorthCommand,
                 [Keys.Left] = commands!.MoveWestCommand,
                 [Keys.Down] = commands!.MoveSouthCommand,
-                [Keys.Right] = commands!.MoveEastCommand
+                [Keys.Right] = commands!.MoveEastCommand,
+                [Keys.Space] = commands!.Wait
             };
             MenuTop = new List<ColoredText>();
         }
+
+
         public void HandleInput()
         {
-            // avoid accidental desynching
-            if (!InterfaceState.ReadyForInput)
-            {
-                return;
-            }
+            // avoid accidental desynching...although is this necessary because of the main Update loop?
+            //if (!InterfaceState.ReadyForInput)
+            //{
+            //    return;
+            //}
             var m = Mouse.GetState();
             var k = Keyboard.GetState();
-            var keys = k.GetPressedKeys();
-            if (keys.Length>0)
+            ControlDown = (k.IsKeyDown(Keys.LeftControl) || k.IsKeyDown(Keys.RightControl));
+            ShiftDown = (k.IsKeyDown(Keys.LeftShift) || k.IsKeyDown(Keys.RightShift));
+            DateTime now = DateTime.Now;
+            double sinceInputBegan = now.Subtract(InputBegan).TotalMilliseconds;
+            // this should be safe even if the world has not be created
+            Coord c = new Coord(InterfaceState.Camera!.XOffset, InterfaceState.Camera!.YOffset, InterfaceState.Camera!.Z);
+            if (!m.Equals(OldMouse))
             {
-                foreach (var key in keys)
+                HandleHover(m.X, m.Y);
+            }
+            // might handle these two cases separately
+            else if (!c.Equals(LastInputCycleCamera))
+            {
+                CameraHover();
+            }
+            LastInputCycleCamera = c;
+            int throttle = (LastInputCycleControls == this) ? Throttle : StartThrottle;
+            if (IsKeyboardSubset(k) && sinceInputBegan < throttle && m.LeftButton == OldMouse.LeftButton && m.RightButton == OldMouse.RightButton)
+            {
+                if (!m.Equals(OldMouse))
                 {
-                    if (keyMap.ContainsKey(key))
+                    HandleHover(m.X, m.Y);
+                }
+                return;
+            }
+            LastInputCycleControls = this;
+            OldMouse = m;
+            Keys[] oldKeys = OldKeyboard.GetPressedKeys();
+            OldKeyboard = k;
+
+            InputBegan = now;
+            Keys[] keys = k.GetPressedKeys();
+            bool gotKey = false;
+            // a splash screen escapes on any key...this may not be a good way to handle it
+            if (HasKeyDefault && keys.Length > 0)
+            {
+                HandleKeyDefault();
+                gotKey = true;
+            }
+            // prioritize newly pressed keys
+            if (!gotKey)
+            {
+                foreach (Keys key in keys)
+                {
+                    if (keyMap.ContainsKey(key) && !Array.Exists(oldKeys, ky => ky == key))
                     {
-                        
-                        keyMap[key]();
+                        HandleKeyDown(key);
+                        gotKey = true;
                         break;
                     }
                 }
             }
+            // then check already-pressed keys
+            if (!gotKey)
+            {
+                foreach (Keys key in keys)
+                {
+                    if (keyMap.ContainsKey(key))
+                    {
+                        HandleKeyDown(key);
+                        gotKey = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!gotKey && m.LeftButton == ButtonState.Pressed)
+            {
+                HandleClick(m.X, m.Y);
+            }
+        }
+
+        public static bool IsKeyboardSubset(KeyboardState k)
+        {
+            var oldKeys = OldKeyboard.GetPressedKeys();
+            foreach (var key in k.GetPressedKeys())
+            {
+                if (Array.IndexOf(oldKeys, key) == -1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public virtual void HandleKeyDown(Keys key)
+        {
+            keyMap[key]();
+        }
+
+        public virtual void HandleKeyDefault()
+        {
+
+        }
+
+        public virtual void HandleClick(int x, int y)
+        {
+
+        }
+
+        public virtual void HandleHover(int x, int y)
+        {
+
+        }
+
+        public virtual void CameraHover()
+        {
+           
         }
     }
 }
-
-
-//public ControlContext()
-//{
-//	Throttle = 200;
-//	if (OldControls == null)
-//	{
-//		OldControls = this;
-//	}
-//	KeyMap = new Dictionary<Keys, Action>();
-//	MenuTop = new List<ColoredText>();
-//	MenuMiddle = new List<ColoredText>();
-//	MenuBottom = new List<ColoredText>();
-//	OnTileClick = ClickTile;
-//	OnTileHover = HoverTile;
-//	OnMenuClick = MenuClick;
-//	OnMenuHover = MenuHover;
-//	OnStatusClick = StatusClick;
-//	OnStatusHover = StatusHover;
-//	MenuCommands = new List<(string, string)>();
-//	MenuSelectable = true;
-//	MenuCommands.Add(("Tutorial", "?) Tutorial"));
-//	MenuCommands.Add(("Spells", "Z) Spells"));
-//	MenuCommands.Add(("Jobs", "J) Jobs"));
-//	MenuCommands.Add(("Log", "L) Log"));
-//	MenuCommands.Add(("Research", "R) Research"));
-//	MenuCommands.Add(("Achievements", "V) Achievements"));
-//}
-
-//public virtual void HandleKeyDown(Keys key)
-//{
-//	KeyMap[key]();
-//}
-//public void HandleInput()
-//{
-//	if (!Game.game.IsActive)
-//	{
-//		return;
-//	}
-//	var m = Mouse.GetState();
-//	var k = Keyboard.GetState();
-//	ControlDown = (k.IsKeyDown(Keys.LeftControl) || k.IsKeyDown(Keys.RightControl));
-//	ShiftDown = (k.IsKeyDown(Keys.LeftShift) || k.IsKeyDown(Keys.RightShift));
-//	DateTime now = DateTime.Now;
-//	double sinceInputBegan = now.Subtract(InputBegan).TotalMilliseconds;
-//	Coord c = new Coord(Game.Camera.XOffset, Game.Camera.YOffset, Game.Camera.Z);
-//	if (!m.Equals(OldMouse))
-//	{
-//		HandleHover(m.X, m.Y);
-//	}
-//	// might handle these two cases separately
-//	else if (!c.Equals(OldCamera))
-//	{
-//		CameraHover();
-//	}
-//	OldCamera = c;
-//	//if (!Redrawn)
-//	int throttle = (OldControls == this) ? Throttle : StartThrottle;
-//	// we need to make it so unpressing one key does not trigger this
-//	if (IsKeyboardSubset(k) && sinceInputBegan < throttle && m.LeftButton == OldMouse.LeftButton && m.RightButton == OldMouse.RightButton)
-//	//if (k.Equals(OldKeyboard) && sinceInputBegan<throttle && m.LeftButton==OldMouse.LeftButton && m.RightButton==OldMouse.RightButton)
-//	{
-//		if (!m.Equals(OldMouse))
-//		{
-//			HandleHover(m.X, m.Y);
-//		}
-//		return;
-//	}
-//	Redrawn = false;
-
-//	OldControls = this;
-//	OldMouse = m;
-//	Keys[] oldKeys = OldKeyboard.GetPressedKeys();
-//	OldKeyboard = k;
-//	InputBegan = now;
-//	Keys[] keys = k.GetPressedKeys();
-//	bool gotKey = false;
-//	// a splash screen escapes on any key...this may not be a good way to handle it
-//	if (UseKeyFallback && keys.Length > 0)
-//	{
-//		HandleKeyFallback();
-//		gotKey = true;
-//	}
-//	// prioritize newly pressed keys
-//	if (!gotKey)
-//	{
-//		foreach (Keys key in keys)
-//		{
-//			if (KeyMap.ContainsKey(key) && !Array.Exists(oldKeys, ky => ky == key))
-//			{
-//				HandleKeyDown(key);
-//				gotKey = true;
-//				break;
-//			}
-//		}
-//	}
-//	// then check already-pressed keys
-//	if (!gotKey)
-//	{
-//		foreach (Keys key in keys)
-//		{
-//			if (KeyMap.ContainsKey(key))
-//			{
-//				HandleKeyDown(key);
-//				gotKey = true;
-//				break;
-//			}
-//		}
-//	}
-
-//	if (!gotKey && m.LeftButton == ButtonState.Pressed)
-//	{
-//		HandleClick(m.X, m.Y);
-//	}
-//}

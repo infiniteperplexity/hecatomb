@@ -19,6 +19,10 @@ namespace Hecatomb8
 
         public MainPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, Camera cam, int x, int y) : base(g, sb, c, x, y)
         {
+            CharWidth = 18;
+            CharHeight = 18;
+            PixelHeight = 700;
+            PixelWidth = 994;
             Fonts = new List<SpriteFont>();
             string[] fonts = new string[] { "NotoSans", "NotoSansSymbol", "NotoSansSymbol2", "Cambria" };
             foreach (string s in fonts)
@@ -27,8 +31,15 @@ namespace Hecatomb8
                 Fonts.Add(font);
             }
             fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
+            BG = new Texture2D(Graphics, CharWidth + XPad, CharHeight + YPad);
+            Color[] bgdata = new Color[(CharWidth + XPad) * (CharHeight + YPad)];
+            for (int i = 0; i < bgdata.Length; ++i)
+            {
+                bgdata[i] = Color.White;
+            }
+            BG.SetData(bgdata);
             NextGlyphs = new DrawableGlyph?[cam.Width, cam.Height];
-            IntroLines = System.IO.File.ReadAllLines(@"Content/ASCII_icon.txt");
+            IntroLines = System.IO.File.ReadAllLines(@"Content/ASCII_icon.txt");       
         }
 
 
@@ -53,8 +64,17 @@ namespace Hecatomb8
             }
         }
 
+        public override void Prepare()
+        {
+            PrepareGlyphs();
+        }
+
         public void PrepareGlyphs()
         {
+            if (!Dirty)
+            {
+                return;
+            }
             var camera = InterfaceState.Camera!;
             for (int i = 0; i < camera.Width; i++)
             {
@@ -106,6 +126,7 @@ namespace Hecatomb8
                     }
                 }
             }
+            Dirty = false;
         }
 
         public override void Draw()

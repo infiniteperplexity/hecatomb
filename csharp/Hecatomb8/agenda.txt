@@ -34,3 +34,8 @@ Alright, what's next?  Let's toss some ideas out there...
  - Cast spells to summon zombies.
  - Zombies wander around and pathfind.
  - Set up the "new game" framework.  Yeah...let's get that going.
+
+ 4/20/2020
+ Alright, so I have time passing...but I think I may have noticed a weakness in the system...
+ ...ready for input can be triggered by input, but it can also be triggered by time passing...is that a real issue?
+ ...I think maybe not, because I doubt the update loops can overlap, and the time passing portion of the loop always completes before the input portion of the loop, right?

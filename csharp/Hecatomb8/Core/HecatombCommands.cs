@@ -30,6 +30,11 @@ namespace Hecatomb8
             //Player.GetComponent<Actor>().Wait();
             Act();
         }
+
+        public void AutoWait()
+        {
+            Wait();
+        }
         public void MoveNorthCommand()
         {
             moveHorizontalCommand(+0, -1);

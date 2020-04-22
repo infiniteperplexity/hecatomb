@@ -12,6 +12,7 @@ namespace Hecatomb8
         {
             Components.Add(new Movement());
             Components.Add(new Actor());
+            Components.Add(new Senses());
         }
         public override void PlaceInValidEmptyTile(int x, int y, int z)
         {

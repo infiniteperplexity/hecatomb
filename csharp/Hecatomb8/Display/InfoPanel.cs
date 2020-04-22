@@ -10,6 +10,7 @@ using System.Threading;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
 
     public class InformationPanel : InterfacePanel
     {
@@ -26,9 +27,9 @@ namespace Hecatomb8
             RightMargin = 0;
         }
 
-        public override void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
+        public override void Prepare()
         {
-            lines = lines.Concat(InterfaceState.Controls.MenuTop).ToList();
+            PrepareLines(Controls.MenuTop);
         }       
     }
     //public void ScrollUp()

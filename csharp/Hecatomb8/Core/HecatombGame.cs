@@ -27,12 +27,19 @@ namespace Hecatomb8
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
             InterfaceState.Commands = new HecatombCommands();
-            InterfaceState.Controls = new DefaultControls();
+            var commands = new List<(Keys, ColoredText, Action)>() {
+                (Keys.N, "New game.", GameManager.StartGame),
+                (Keys.R, "Restore game.", GameManager.RestoreGame),
+                (Keys.Q, "Quit.", GameManager.QuitGame)
+            };
+            InterfaceState.SetControls(new StaticMenuControls("{yellow}Welcome to Hecatomb!", commands));
             InterfaceState.Camera = new Camera(47, 33);
             InterfaceState.Colors = new Colors();
             InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20);   
-            InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0);    
+            InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0);
+            InterfaceState.DefaultControls = new DefaultControls();
         }
+       
 
         // *** Default MonoGame stuff ***
         GraphicsDeviceManager graphics;
@@ -57,13 +64,10 @@ namespace Hecatomb8
         }
         protected override void Initialize()
         {
+            IsMouseVisible = true;
             base.Initialize();
-            var world = new World(256, 256, 64);
-            GameState.World = world;
-            var ws = new BuildWorldStrategy();
-            ws.Generate();
-            InterfaceState.PlayerIsReady();
             
+
         }
         protected override void LoadContent()
         {
@@ -75,8 +79,12 @@ namespace Hecatomb8
         }
         protected override void Update(GameTime gameTime)
         {
+            if (GameState.World != null)
+            {
+                Time.Update();
+            }
             InterfaceState.HandleInput();
-            InterfaceState.PrepareSprites();
+            InterfaceState.PreparePanels();
             base.Update(gameTime);
         }
         protected override void Draw(GameTime gameTime)

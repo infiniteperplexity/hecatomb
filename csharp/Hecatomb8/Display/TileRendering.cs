@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace Hecatomb8
 {
@@ -25,23 +26,26 @@ namespace Hecatomb8
             Cover coverb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
             //List<Particle> pl = Game.World.Particles[x, y, z];
             //Particle particle = (pl.Count > 0) ? pl[0] : null;
-            //Coord c = new Coord(x, y, z);
-            //Coord ca = new Coord(x, y, z + 1);
-            //Coord cb = new Coord(x, y, z - 1);
-            //bool visible = Game.Visible.Contains(c) || Game.Options.Visible;
-            //bool va = Game.Visible.Contains(ca) || Game.Options.Visible;
-            //bool vb = Game.Visible.Contains(cb) || Game.Options.Visible;
+            Coord c = new Coord(x, y, z);
+            Coord ca = new Coord(x, y, z + 1);
+            Coord cb = new Coord(x, y, z - 1);
+            bool visible = InterfaceState.PlayerVisible.Contains(c) || HecatombOptions.Visible;
+            bool va = InterfaceState.PlayerVisible.Contains(ca) || HecatombOptions.Visible;
+            bool vb = InterfaceState.PlayerVisible.Contains(cb) || HecatombOptions.Visible;
             int slope = terrain.Slope;
             char sym;
             string? fg = null;
-            var visible = true;
-            var va = true;
-            var vb = true;
-            var explored = true;
-            var exa = true;
-            var exb = true;
+
+            //var explored = true;
+            //var exa = true;
+            //var exb = true;
+
+            var explored = GameState.World!.Explored.Contains(c) || HecatombOptions.Explored;
+            var exa = GameState.World.Explored.Contains(ca) || HecatombOptions.Explored;
+            var exb = GameState.World.Explored.Contains(cb) || HecatombOptions.Explored;
+
             if (!explored)
-            {
+            { 
                 // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
                 if (ta == Terrain.FloorTile && exa)
                 {
@@ -298,16 +302,12 @@ namespace Hecatomb8
             Terrain terrain = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z);
             Terrain ta = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z + 1);
             Terrain tb = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z - 1);
-            Cover cv = GameState.World!.Covers.GetWithBoundsChecked(x, y, z);
-            Cover cb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
+            Cover cva = GameState.World!.Covers.GetWithBoundsChecked(x, y, z);
+            Cover cvb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
 
-            //var visible = true;
-            //var va = true;
-            //var vb = true;
-            var explored = true;
-            //var exa = true;
-            //var exb = true;
-
+            Coord c = new Coord(x, y, z);
+            var explored = GameState.World.Explored.Contains(c) || HecatombOptions.Explored;
+            //var explored = true;
 
             //Task task = Game.World.Tasks[x, y, z];
             // particle
@@ -345,20 +345,20 @@ namespace Hecatomb8
             {
                 return it.BG;
             }
-            else if (cv != Cover.NoCover)
+            else if (cva != Cover.NoCover)
             {
-                return cv.BG;
+                return cva.BG;
             }
             else if (terrain.ZView == -1)
             {
-                if (cb.Liquid)
+                if (cvb.Liquid)
                 {
-                    return cb.FG;
+                    return cvb.FG;
                     //return cb.Shimmer();
                 }
-                else if (cb != Cover.NoCover)
+                else if (cvb != Cover.NoCover)
                 {
-                    return cb.DarkBG;
+                    return cvb.DarkBG;
                 }
                 else
                 {

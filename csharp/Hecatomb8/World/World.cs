@@ -6,7 +6,7 @@ using System.Linq;
 namespace Hecatomb8
 {
     // This is the top level container object for all the game state data
-    public class World
+    public partial class World
     {
         public readonly int Width;
         public readonly int Height;
@@ -15,6 +15,7 @@ namespace Hecatomb8
         //public int[,,] Outdoors;
 
         public Creature? Player;
+        public HashSet<Coord> Explored;
         public Grid3D<Terrain> Terrains;
         public Grid3D<Cover> Covers;
         public readonly Dictionary<int, Entity> Entities;
@@ -31,6 +32,7 @@ namespace Hecatomb8
             Height = height;
             Depth = depth;
             Entities = new Dictionary<int, Entity>();
+            Explored = new HashSet<Coord>();
             Terrains = new Grid3D<Terrain>(width, height, depth);
             Covers = new Grid3D<Cover>(width, height, depth);
             Creatures = new SparseArray3D<Creature>(width, height, depth);
