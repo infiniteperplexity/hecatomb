@@ -180,5 +180,76 @@ namespace Hecatomb8
             //    return;
             //}
         }
+
+        public void MoveCameraNorth()
+        {
+            moveCameraHorizontal(+0, -1);
+        }
+        public void MoveCameraSouth()
+        {
+            moveCameraHorizontal(+0, +1);
+        }
+        public void MoveCameraEast()
+        {
+            moveCameraHorizontal(+1, +0);
+        }
+        public void MoveCameraWest()
+        {
+            moveCameraHorizontal(-1, +0);
+        }
+        public void MoveCameraUp()
+        {
+            moveCameraVertical(+1);
+        }
+        public void MoveCameraDown()
+        {
+            moveCameraVertical(-1);
+        }
+        public void MoveCameraNorthWest()
+        {
+            moveCameraHorizontal(-1, -1);
+        }
+        public void MoveCameraNorthEast()
+        {
+            moveCameraHorizontal(+1, -1);
+        }
+        public void MoveCameraSouthEast()
+        {
+            moveCameraHorizontal(+1, +1);
+        }
+        public void MoveCameraSouthWest()
+        {
+            moveCameraHorizontal(-1, +1);
+        }
+
+
+        private void moveCameraVertical(int dz)
+        {
+            if (ControlContext.ShiftDown)
+            {
+                dz *= 10;
+            }
+            var camera = InterfaceState.Camera!;
+            camera.Z = Math.Max(Math.Min(camera.Z + dz, GameState.World!.Depth - 2), 1);
+            //ControlContext.CenterCursor();
+            InterfaceState.DirtifyMainPanel();
+            InterfaceState.DirtifyTextPanels();
+        }
+        private void moveCameraHorizontal(int dx, int dy)
+        {
+            if (ControlContext.ShiftDown)
+            {
+                dx *= 10;
+                dy *= 10;
+            }
+            Camera c = InterfaceState.Camera!;
+            int xhalf = c.Width / 2;
+            int yhalf = c.Height / 2;
+            c.XOffset = Math.Min(Math.Max(1, c.XOffset + dx), GameState.World!.Width - c.Width - 1);
+            c.YOffset = Math.Min(Math.Max(1, c.YOffset + dy), GameState.World!.Height - c.Height - 1);
+            //ControlContext.CenterCursor();
+            InterfaceState.DirtifyMainPanel();
+            InterfaceState.DirtifyTextPanels();
+        }
     }
 }

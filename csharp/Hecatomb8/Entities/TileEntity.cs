@@ -11,6 +11,8 @@ namespace Hecatomb8
         protected char _symbol = ' ';
         protected string? _fg;
         protected string? _bg;
+        protected string _name = "";
+        public string Name { get => _name; }
         protected (int x, int y, int z)? _coord;
         public char Symbol { get => _symbol; }
         public string? FG { get => _fg; }
@@ -28,6 +30,11 @@ namespace Hecatomb8
             _coord = (x, y, z);
         }
 
+        public virtual void Remove()
+        {
+            _coord = null;
+        }
+
 
         public void Deconstruct(out int? x, out int? y, out int? z)
         {
@@ -39,6 +46,15 @@ namespace Hecatomb8
         public virtual string Describe()
         {
             return this.GetType().Name;
+        }
+
+        public override void Despawn()
+        {
+            if (Placed)
+            {
+                Remove();
+            }
+            base.Despawn();
         }
     }
 

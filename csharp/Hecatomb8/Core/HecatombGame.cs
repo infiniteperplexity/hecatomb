@@ -30,7 +30,7 @@ namespace Hecatomb8
             var commands = new List<(Keys, ColoredText, Action)>() {
                 (Keys.N, "New game.", GameManager.StartGame),
                 (Keys.R, "Restore game.", GameManager.RestoreGame),
-                (Keys.Q, "Quit.", GameManager.QuitGame)
+                (Keys.Q, "Quit.", QuitGame)
             };
             InterfaceState.SetControls(new StaticMenuControls("{yellow}Welcome to Hecatomb!", commands));
             InterfaceState.Camera = new Camera(47, 33);
@@ -66,9 +66,8 @@ namespace Hecatomb8
         {
             IsMouseVisible = true;
             base.Initialize();
-            
-
         }
+
         protected override void LoadContent()
         {
             sprites = new SpriteBatch(GraphicsDevice);
@@ -95,6 +94,12 @@ namespace Hecatomb8
             sprites!.End();
             base.Draw(gameTime);
         }
+
+        public void QuitGame()
+        {
+            Exit();
+        }
+
         protected override void OnExiting(Object sender, EventArgs args)
         {
             base.OnExiting(sender, args);

@@ -83,5 +83,16 @@ namespace Hecatomb8
         {
             return (T)Spawn(t);
         }
+
+        public virtual void Despawn()
+        {
+            if (EID != null)
+            {
+                if (GameState.World!.Entities.ContainsKey((int)EID))
+                {
+                    GameState.World!.Entities.Remove((int)EID);
+                }
+            }
+        }
     }
 }

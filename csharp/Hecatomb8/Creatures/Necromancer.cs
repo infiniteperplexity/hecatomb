@@ -8,6 +8,7 @@ namespace Hecatomb8
     {
         public Necromancer()
         {
+            _name = "necromancer";
             _symbol = '@';
             _fg = "magenta";
         }

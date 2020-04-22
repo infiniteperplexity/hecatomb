@@ -8,6 +8,7 @@ namespace Hecatomb8
     {
         public Zombie()
         {
+            _name = "zombie";
             _symbol = 'z';
             _fg = "lime green";
         }

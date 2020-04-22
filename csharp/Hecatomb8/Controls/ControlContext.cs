@@ -13,8 +13,8 @@ namespace Hecatomb8
 
         static KeyboardState OldKeyboard;
         static MouseState OldMouse;
-        static bool ControlDown;
-        static bool ShiftDown;
+        public static bool ControlDown;
+        public static bool ShiftDown;
         static DateTime InputBegan;
         static ControlContext? LastInputCycleControls;
         static Coord? LastInputCycleCamera;

@@ -25,7 +25,7 @@ namespace Hecatomb8
 
         public static void RestoreGame() { }
 
-        public static void QuitGame() { }
+
 
     }
 }
