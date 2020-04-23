@@ -68,14 +68,14 @@ namespace Hecatomb8
 		{
 			Chooser.BuildMenu(this);
 			var Commands = InterfaceState.Commands!;
-			keyMap[Keys.Space] = () =>
+			KeyMap[Keys.Space] = () =>
 			{
 				if (GameState.World != null)
 				{
 					Commands.Wait();
 				}
 			};
-			keyMap[Keys.Escape] = InterfaceState.ResetControls;
+			KeyMap[Keys.Escape] = InterfaceState.ResetControls;
 			MenuTop = new List<ColoredText>() {
 				"{orange}**Esc: Cancel**.",
 				" ",
@@ -83,7 +83,7 @@ namespace Hecatomb8
 			};
 			for (int i = 0; i < Choices.Count; i++)
 			{
-				keyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
+				KeyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
 				ColoredText ct = new ColoredText(alphabet[i] + ") ") + Choices[i].ListOnMenu();
 				MenuTop.Add(ct);
 			}

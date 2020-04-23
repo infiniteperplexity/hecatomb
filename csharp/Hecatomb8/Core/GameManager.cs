@@ -6,15 +6,19 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.Diagnostics;
+using System.Reflection;
+using System.IO;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     public static class GameManager
     {
         public static string GameName = "NewGame";
+        public static DateTime BuildDate = GetBuildDate();
         public static void StartGameWithConfirmation()
         {
-            ControlContext.Set(new ConfirmationControls("Really quit the current game?", StartGame));
+            InterfaceState.SetControls(new ConfirmationControls("Really quit the current game?", StartGame));
         }
 
 
@@ -29,48 +33,47 @@ namespace Hecatomb8
             InterfaceState.PlayerIsReady();
         }
 
-        public static void RestoreGame() { }
-
         public static void SaveGameCheckFileName()
         {
-            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            if (File.Exists(path + @"\saves\" + Game.GameName + ".json"))
+            if (File.Exists(path + @"\saves\" + GameName + ".json"))
             {
-                ControlContext.Set(new ConfirmationControls("Really overwrite " + Game.GameName + ".json?", SaveGameCommand));
+                InterfaceState.SetControls(new ConfirmationControls("Really overwrite " + GameName + ".json?", SaveGame));
             }
             else
             {
-                SaveGameCommand();
+                SaveGame();
             }
         }
         public static void SaveGame()
         {
-            Game.SplashPanel.Splash(new List<ColoredText>()
-            {
-                $"Saving {Game.GameName}..."
-            }, frozen: true);
+            //Game.SplashPanel.Splash(new List<ColoredText>()
+            //{
+            //    $"Saving {Game.GameName}..."
+            //}, frozen: true);
             Debug.WriteLine("saving the game");
-            Thread thread = new Thread(SaveGameProcess);
-            thread.Start();
+            SaveGameProcess();
+            //Thread thread = new Thread(SaveGameProcess);
+            //thread.Start();
         }
 
         public static void SaveGameProcess()
         {
             try
             {
-                Game.World.Stringify();
-                ControlContext.Reset();
+                GameState.World!.Stringify();
+                InterfaceState.ResetControls();
             }
             catch (Exception e)
             {
-                Game.HandleException(e);
+                HandleException(e);
             }
         }
 
         public static void RestoreGameWithConfirmation()
         {
-            ControlContext.Set(new ConfirmationControls("Really quit the current game?", RestoreGame));
+            InterfaceState.SetControls(new ConfirmationControls("Really quit the current game?", RestoreGame));
         }
 
         public static void RestoreGameProcess()
@@ -78,21 +81,20 @@ namespace Hecatomb8
             try
             {
                 //string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
-                if (Game.World == null)
+                if (GameState.World == null)
                 {
-                    Game.World = new World(256, 256, 64);
+                    GameState.World = new World(256, 256, 64);
                 }
-                //Game.World.Parse(json);
-                var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+                var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
                 System.IO.Directory.CreateDirectory(path + @"\saves");
-                Game.World.Parse(path + @"\saves\" + Game.GameName + ".json");
                 // we need some kind of failure handling...
-                Game.MainPanel.IntroState = false;
-                ControlContext.Reset();
+                GameState.World!.Parse(path + @"\saves\" + GameName + ".json");
+                
+                InterfaceState.ResetControls();
             }
             catch (Exception e)
             {
-                Game.HandleException(e);
+                HandleException(e);
             }
         }
 
@@ -100,7 +102,7 @@ namespace Hecatomb8
         {
             //throw new Exception("test exception");
             // I guess maybe a Save File should have an object representation?
-            ControlContext.Set(new MenuChoiceControls(new SaveGameChooser()));
+            InterfaceState.SetControls(new MenuChoiceControls(new SaveGameFile()));
         }
 
         public static void SaveGameAs()
@@ -108,23 +110,65 @@ namespace Hecatomb8
             Action<string> saveGameAs = (string name) =>
             {
                 //could check legality of name here?
-                Game.GameName = name;
-                SaveGameCommandCheckFileName();
+                GameName = name;
+                SaveGameCheckFileName();
             };
-            ControlContext.Set(new TextEntryControls("Type a name for your saved game.", saveGameAs));
-            (Controls as TextEntryControls).CurrentText = Game.GameName;
+            InterfaceState.SetControls(new TextEntryControls("Type a name for your saved game.", saveGameAs));
+            (Controls as TextEntryControls)!.CurrentText = GameName;
         }
 
         public static void BackToTitleWithConfirmation()
         {
-            ControlContext.Set(new ConfirmationControls("Really quit the current game?", BackToTitle));
+            InterfaceState.SetControls(new ConfirmationControls("Really quit the current game?", BackToTitle));
         }
 
         public static void BackToTitle()
         {
-            SplashPanel.Active = false;
+            //SplashPanel.Active = false;
             SetUpTitle();
         }
 
+        public static void SetUpTitle()
+        {
+            var commands = new List<(Keys, ColoredText, Action)>() {
+                (Keys.N, "New game.", GameManager.StartGame),
+                (Keys.R, "Restore game.", GameManager.RestoreGame),
+                (Keys.Q, "Quit.", HecatombGame.QuitHook!)
+            };
+            InterfaceState.SetControls(new StaticMenuControls("{yellow}Welcome to Hecatomb!", commands));
+        }
+
+        public static void HandleException(Exception e)
+        {
+
+        }
+
+        public static DateTime GetLinkerTimestampUtc(Assembly assembly)
+        {
+            var location = assembly.Location;
+            return GetLinkerTimestampUtc(location);
+        }
+
+        public static DateTime GetLinkerTimestampUtc(string filePath)
+        {
+            const int peHeaderOffset = 60;
+            const int linkerTimestampOffset = 8;
+            var bytes = new byte[2048];
+
+            using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                file.Read(bytes, 0, bytes.Length);
+            }
+
+            var headerPos = BitConverter.ToInt32(bytes, peHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(bytes, headerPos + linkerTimestampOffset);
+            var dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return dt.AddSeconds(secondsSince1970);
+        }
+
+        public static DateTime GetBuildDate()
+        {
+            return GetLinkerTimestampUtc(Assembly.GetExecutingAssembly());
+        }
     }
 }

@@ -24,8 +24,8 @@ namespace Hecatomb8
 		{
 			AllowsUnpause = false;
 			Selector = i;
-			keyMap[Keys.Space] = SelectTile;
-			keyMap[Keys.Escape] = () =>
+			KeyMap[Keys.Space] = SelectTile;
+			KeyMap[Keys.Escape] = () =>
 			{
 				Clean();
 				InterfaceState.RewindControls();
@@ -117,8 +117,8 @@ namespace Hecatomb8
 			Highlights.Clear();
 			InterfaceState.DirtifyMainPanel();
 			InterfaceState.DirtifyTextPanels();
-			keyMap[Keys.Escape] = InterfaceState.RewindControls;
-			keyMap[Keys.Escape] = InterfaceState.ResetControls;
+			KeyMap[Keys.Escape] = InterfaceState.RewindControls;
+			KeyMap[Keys.Escape] = InterfaceState.ResetControls;
 		}
 
 		private void Clean()

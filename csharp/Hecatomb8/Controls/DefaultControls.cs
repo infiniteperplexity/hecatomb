@@ -11,7 +11,7 @@ namespace Hecatomb8
         public DefaultControls()
         {
             var commands = InterfaceState.Commands;
-            keyMap = new Dictionary<Keys, Action>()
+            KeyMap = new Dictionary<Keys, Action>()
             {
                 [Keys.Tab] = commands!.ToggleMovingCamera,
                 [Keys.W] = commands!.MoveNorthCommand,
@@ -24,7 +24,8 @@ namespace Hecatomb8
                 [Keys.Right] = commands!.MoveEastCommand,
                 [Keys.Space] = commands!.Wait,
                 [Keys.J] = commands!.ChooseTask,
-                [Keys.Z] = commands!.ChooseSpell
+                [Keys.Z] = commands!.ChooseSpell,
+                [Keys.Escape] = commands!.SystemMenuCommand
         };
             MenuTop = new List<ColoredText>();
             RefreshContent();

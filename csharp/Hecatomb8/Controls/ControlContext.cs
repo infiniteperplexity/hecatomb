@@ -23,12 +23,12 @@ namespace Hecatomb8
         
 
 
-        protected Dictionary<Keys, Action> keyMap;
+        public Dictionary<Keys, Action> KeyMap;
         public List<ColoredText> MenuTop;
         // throttle input between keys
-        int Throttle = 200;
+        protected int Throttle = 200;
         // throttle input after switching contexts
-        int StartThrottle = 750;
+        protected int StartThrottle = 750;
         protected bool HasKeyDefault = false;
         public bool AllowsUnpause = true;
 
@@ -42,7 +42,7 @@ namespace Hecatomb8
 
         public ControlContext()
         {
-            keyMap = new Dictionary<Keys, Action>();
+            KeyMap = new Dictionary<Keys, Action>();
             MenuTop = new List<ColoredText>();
         }
 
@@ -104,7 +104,7 @@ namespace Hecatomb8
             {
                 foreach (Keys key in keys)
                 {
-                    if (keyMap.ContainsKey(key) && !Array.Exists(oldKeys, ky => ky == key))
+                    if (KeyMap.ContainsKey(key) && !Array.Exists(oldKeys, ky => ky == key))
                     {
                         HandleKeyDown(key);
                         gotKey = true;
@@ -117,7 +117,7 @@ namespace Hecatomb8
             {
                 foreach (Keys key in keys)
                 {
-                    if (keyMap.ContainsKey(key))
+                    if (KeyMap.ContainsKey(key))
                     {
                         HandleKeyDown(key);
                         gotKey = true;
@@ -146,7 +146,7 @@ namespace Hecatomb8
         }
         public virtual void HandleKeyDown(Keys key)
         {
-            keyMap[key]();
+            KeyMap[key]();
         }
 
         public virtual void HandleKeyDefault()

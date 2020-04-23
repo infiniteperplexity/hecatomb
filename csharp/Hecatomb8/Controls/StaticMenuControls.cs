@@ -30,7 +30,7 @@ namespace Hecatomb8
                 {
                     var key = choices[i].Item1;
                     ColoredText ct = choices[i].Item2;
-                    keyMap[key] = choices[i].Item3;
+                    KeyMap[key] = choices[i].Item3;
                     string s = key.ToString();
                     ct.Text = (s + ") " + ct.Text);
                     MenuTop.Add(ct);

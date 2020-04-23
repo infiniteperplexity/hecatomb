@@ -26,20 +26,20 @@ namespace Hecatomb8
         public AbstractCameraControls() : base()
         {
             var Commands = InterfaceState.Commands!;
-            keyMap[Keys.Up] = Commands.MoveCameraNorth;
-            keyMap[Keys.Down] = Commands.MoveCameraSouth;
-            keyMap[Keys.Left] = Commands.MoveCameraWest;
-            keyMap[Keys.Right] = Commands.MoveCameraEast;
-            keyMap[Keys.W] = Commands.MoveCameraNorth;
-            keyMap[Keys.S] = Commands.MoveCameraSouth;
-            keyMap[Keys.A] = Commands.MoveCameraWest;
-            keyMap[Keys.D] = Commands.MoveCameraEast;
-            keyMap[Keys.Q] = Commands.MoveCameraNorthWest;
-            keyMap[Keys.E] = Commands.MoveCameraNorthEast;
-            keyMap[Keys.X] = Commands.MoveCameraSouthWest;
-            keyMap[Keys.C] = Commands.MoveCameraSouthEast;
-            keyMap[Keys.OemComma] = Commands.MoveCameraUp;
-            keyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
+            KeyMap[Keys.Up] = Commands.MoveCameraNorth;
+            KeyMap[Keys.Down] = Commands.MoveCameraSouth;
+            KeyMap[Keys.Left] = Commands.MoveCameraWest;
+            KeyMap[Keys.Right] = Commands.MoveCameraEast;
+            KeyMap[Keys.W] = Commands.MoveCameraNorth;
+            KeyMap[Keys.S] = Commands.MoveCameraSouth;
+            KeyMap[Keys.A] = Commands.MoveCameraWest;
+            KeyMap[Keys.D] = Commands.MoveCameraEast;
+            KeyMap[Keys.Q] = Commands.MoveCameraNorthWest;
+            KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
+            KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
+            KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
+            KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
+            KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
         }
         public override void CameraHover()
         {

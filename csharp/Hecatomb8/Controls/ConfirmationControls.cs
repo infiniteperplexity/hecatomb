@@ -12,46 +12,44 @@ namespace Hecatomb8
         public string Header;
         public ConfirmationControls(ColoredText header, Action confirmed) : base()
         {
-            AlwaysPaused = true;
-            MenuSelectable = false;
+            AllowsUnpause = true;
+            //MenuSelectable = false;
             Header = header;
-            var Commands = Game.Commands;
             KeyMap[Keys.Escape] = GoBack;
             KeyMap[Keys.Y] = confirmed;
             KeyMap[Keys.N] = GoBack;
             RefreshContent();
         }
 
-        public void Go
-
+        public void GoBack()
         {
-            if (Game.MainPanel.IntroState)
+            if (GameState.World is null)
             {
-                Game.game.BackToTitle();
+                GameManager.BackToTitle();
             }
             else
             {
-                Back();
-}
+                InterfaceState.ResetControls();
+            }
         }
 
         public override void RefreshContent()
-{
-    MenuTop = new List<ColoredText>() {
-                "{orange}**" + Header + "**.",
-                "{orange}Y) Yes.",
-                "{orange}N) No."
-            };
-    Game.InfoPanel.Dirty = true;
-}
+        {
+            MenuTop = new List<ColoredText>() {
+                        "{orange}**" + Header + "**.",
+                        "{orange}Y) Yes.",
+                        "{orange}N) No."
+                    };
+            InterfaceState.DirtifyTextPanels();
+        }
 
-public override void HandleClick(int x, int y)
-{
+        public override void HandleClick(int x, int y)
+        {
 
-}
-public override void HandleHover(int x, int y)
-{
+        }
+        public override void HandleHover(int x, int y)
+        {
 
-}
+        }
     }
 }

@@ -12,10 +12,11 @@ namespace Hecatomb8
         {
             var Commands = InterfaceState.Commands!;
             //KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
-            keyMap[Keys.Tab] = Commands.ToggleMovingCamera;
+            KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
             //KeyMap[Keys.J] = Commands.ChooseTask;
-            keyMap[Keys.Z] = Commands.ChooseSpell;
-            keyMap[Keys.J] = Commands.ChooseTask;
+            KeyMap[Keys.Z] = Commands.ChooseSpell;
+            KeyMap[Keys.J] = Commands.ChooseTask;
+            KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             //KeyMap[Keys.Z] = Commands.ChooseSpell;
             //KeyMap[Keys.L] = Commands.ShowLog;
             //KeyMap[Keys.V] = Commands.ShowAchievements;

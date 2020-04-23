@@ -20,25 +20,20 @@ namespace Hecatomb8
     /// </summary>
     public class HecatombGame : Microsoft.Xna.Framework.Game
     {
-
+        public static Action? QuitHook;
         void LoadHecatombContent()
         {
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
             InterfaceState.Commands = new HecatombCommands();
-            var commands = new List<(Keys, ColoredText, Action)>() {
-                (Keys.N, "New game.", GameManager.StartGame),
-                (Keys.R, "Restore game.", GameManager.RestoreGame),
-                (Keys.Q, "Quit.", QuitGame)
-            };
-            InterfaceState.SetControls(new StaticMenuControls("{yellow}Welcome to Hecatomb!", commands));
             InterfaceState.Camera = new Camera(47, 33);
             InterfaceState.Colors = new Colors();
             InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20);   
             InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0);
             InterfaceState.DefaultControls = new DefaultControls();
             InterfaceState.CameraControls = new CameraControls();
+            GameManager.SetUpTitle();
         }
        
 
@@ -60,6 +55,7 @@ namespace Hecatomb8
         }
         public HecatombGame()
         {
+            QuitHook = Exit;
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
@@ -94,11 +90,6 @@ namespace Hecatomb8
             InterfaceState.DrawInterfacePanels();
             sprites!.End();
             base.Draw(gameTime);
-        }
-
-        public void QuitGame()
-        {
-            Exit();
         }
 
         protected override void OnExiting(Object sender, EventArgs args)
