@@ -57,10 +57,14 @@ namespace Hecatomb8
                     return (' ', "black");
                 }
             }
-            //if (particle != null && particle.Symbol != default(char))
-            //{
-            //    return (particle.Symbol, particle.FG);
-            //}
+
+            List<Particle> pl = InterfaceState.Particles![x, y, z];
+            Particle? particle = (pl.Count > 0) ? pl[0] : null;
+
+            if (particle != null && particle.Symbol != default(char))
+            {
+                return (particle.Symbol, particle.FG);
+            }
             // if the tile is not visible, the foreground will be in shadow
             if (!visible)
             {
@@ -293,8 +297,8 @@ namespace Hecatomb8
 
         public static string GetBackgroundWithBoundsChecked(int x, int y, int z)
         {
-            //List<Particle> pl = Game.World.Particles[x, y, z];
-            //Particle p = (pl.Count > 0) ? pl[0] : null;
+            List<Particle> pl = InterfaceState.Particles![x, y, z];
+            Particle? p = (pl.Count > 0) ? pl[0] : null;
             Coord c = new Coord(x, y, z);
             if (c == InterfaceState.Cursor)
             {
@@ -314,12 +318,11 @@ namespace Hecatomb8
 
             Task? task = GameState.World!.Tasks.GetWithBoundsChecked(x, y, z);
             // particle
-            //if (p != null && p.BG != null)
-            //{
-            //    return p.BG;
-            //}
-            //else
-            if (task != null)
+            if (p != null && p.BG != null)
+            {
+                return p.BG;
+            }
+            else if (task != null)
             {
                 return task!.BG!;
             }

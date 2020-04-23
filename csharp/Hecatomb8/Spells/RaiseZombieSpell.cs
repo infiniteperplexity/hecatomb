@@ -10,6 +10,7 @@ namespace Hecatomb8
         public RaiseZombieSpell() : base()
         {
             MenuName = "raise zombie";
+            _cost = 0;
         }
 
         public override void ChooseFromMenu()
@@ -34,11 +35,11 @@ namespace Hecatomb8
             if ((GameState.World!.Explored.Contains(c) || HecatombOptions.Explored) && Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z) is null)
             {
                 Cast();
-                //    ParticleEmitter emitter = new ParticleEmitter();
-                //    emitter.Place(c.X, c.Y, c.Z);
-                var zombie = Entity.Spawn<Zombie>();
-                zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
-                InterfaceState.Commands!.Act();
+                ParticleEmitter emitter = new ParticleEmitter();
+                emitter.Place(c.X, c.Y, c.Z);
+                //var zombie = Entity.Spawn<Zombie>();
+                //zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                //InterfaceState.Commands!.Act();
             }
         }
 

@@ -52,6 +52,7 @@ namespace Hecatomb8
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
                 //InterfaceState.InfoPanel.PushMessage($"Game speed decreased to {num}:{denom}");
+                InterfaceState.DirtifyTextPanels();
                 //InterfacePanel.DirtifySidePanels();
             }
         }
@@ -64,7 +65,7 @@ namespace Hecatomb8
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
                 //InterfaceState.InfoPanel.PushMessage($"Game speed increased to {num}:{denom}");
-                //InterfacePanel.DirtifySidePanels();
+                InterfaceState.DirtifyTextPanels();
             }
         }
 
@@ -75,14 +76,14 @@ namespace Hecatomb8
                 return;
             }
             // this will happen almost continually
-            //foreach (ParticleEmitter e in Game.World.Emitters.ToList())
-            //{
-            //    e.Update();
-            //}
-            //foreach (Particle p in Game.World.Particles.ToList())
-            //{
-            //    p.Update();
-            //}
+            foreach (ParticleEmitter e in InterfaceState.Emitters.ToList())
+            {
+                e.Update();
+            }
+            foreach (var p in InterfaceState.Particles!)
+            {
+                p.Update();
+            }
             if (/*PausedAfterLoad || */ AutoPausing || !InterfaceState.Controls.AllowsUnpause)
             {
                 return;

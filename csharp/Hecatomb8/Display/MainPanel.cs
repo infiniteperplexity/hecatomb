@@ -69,61 +69,80 @@ namespace Hecatomb8
             PrepareGlyphs();
         }
 
+        public void PrepareGlyph(int i, int j, int z)
+        {
+            var camera = InterfaceState.Camera!;
+            if (GameState.World is null)
+            {
+                if (j >= IntroLines.Length || i * 2 >= IntroLines[0].Length)
+                {
+                    return;
+                }
+                char sym = IntroLines[j][i * 2];
+                string fg = "white";
+                string bg = "black";
+                var str = sym.ToString();
+                var (measure, font) = resolveFont(sym);
+                int xOffset = 11 - (int)measure.X / 2;
+                int yOffset = (int)measure.Y;
+                var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
+                var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
+                if (sym == ' ')
+                {
+                    return;
+                }
+                else if (sym == 'z')
+                {
+                    fg = "lime green";
+                }
+                else if (sym == '@')
+                {
+                    fg = "magenta";
+                }
+                NextGlyphs[i, j] = new DrawableGlyph(vfg, vbg, font, str, InterfaceState.Colors![fg], InterfaceState.Colors![bg]);
+            }
+            // otherwise, display tiles
+            else
+            {
+                int x = i + camera.XOffset;
+                int y = j + camera.YOffset;
+                var (sym, fg, bg) = Tiles.GetGlyphWithBoundsChecked(x, y, z);
+                var str = sym.ToString();
+                var (measure, font) = resolveFont(sym);
+                int xOffset = 11 - (int)measure.X / 2;
+                int yOffset = (int)measure.Y;
+                var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
+                var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
+                NextGlyphs[i, j] = new DrawableGlyph(vfg, vbg, font, str, InterfaceState.Colors![fg], InterfaceState.Colors![bg]);
+            }
+        }
+
         public void PrepareGlyphs()
         {
-            if (!Dirty)
-            {
-                return;
-            }
             var camera = InterfaceState.Camera!;
+            if (!Dirty && InterfaceState.NextDirtyTiles.Count > 0)
+            {
+                InterfaceState.OldDirtyTiles.UnionWith(InterfaceState.NextDirtyTiles);
+                foreach (Coord c in InterfaceState.OldDirtyTiles)
+                {
+                    int x = c.X - camera.XOffset;
+                    int y = c.Y - camera.YOffset;
+                    if (x >= 0 && x < camera.Width && y >= 0 && y < camera.Height && c.Z == camera.Z)
+                    {
+                        PrepareGlyph(x, y, camera.Z);
+                    }
+                }
+                var swap = InterfaceState.OldDirtyTiles;
+                InterfaceState.OldDirtyTiles = InterfaceState.NextDirtyTiles;
+                InterfaceState.NextDirtyTiles = swap;
+                InterfaceState.NextDirtyTiles.Clear();
+                return;
+            }         
             for (int i = 0; i < camera.Width; i++)
             {
                 for (int j = 0; j < camera.Height; j++)
                 {
-                    // display the intro screen if the world has not been generated
-                    if (GameState.World is null)
-                    {
-                        if (j >= IntroLines.Length || i * 2  >= IntroLines[0].Length)
-                        {
-                            continue;
-                        }
-                        char sym = IntroLines[j][i * 2];
-                        string fg = "white";
-                        string bg = "black";
-                        var str = sym.ToString();
-                        var (measure, font) = resolveFont(sym);
-                        int xOffset = 11 - (int)measure.X / 2;
-                        int yOffset = (int)measure.Y;
-                        var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
-                        var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
-                        if (sym == ' ')
-                        {
-                            continue;
-                        }
-                        else if (sym == 'z')
-                        {
-                            fg = "lime green";
-                        }
-                        else if (sym == '@')
-                        {
-                            fg = "magenta";
-                        }
-                        NextGlyphs[i, j] = new DrawableGlyph(vfg, vbg, font, str, InterfaceState.Colors![fg], InterfaceState.Colors![bg]);
-                    }
-                    // otherwise, display tiles
-                    else
-                    {
-                        int x = i + camera.XOffset;
-                        int y = j + camera.YOffset;
-                        var (sym, fg, bg) = Tiles.GetGlyphWithBoundsChecked(x, y, camera.Z);
-                        var str = sym.ToString();
-                        var (measure, font) = resolveFont(sym);
-                        int xOffset = 11 - (int)measure.X / 2;
-                        int yOffset = (int)measure.Y;
-                        var vbg = new Vector2(X0 + XPad + i * (CharWidth + XPad), Y0 + YPad + j * (CharHeight + YPad));
-                        var vfg = new Vector2(X0 + xOffset + XPad + i * (CharWidth + XPad), Y0 + yOffset + YPad + j * (CharHeight + YPad));
-                        NextGlyphs[i, j] = new DrawableGlyph(vfg, vbg, font, str, InterfaceState.Colors![fg], InterfaceState.Colors![bg]);
-                    }
+                    PrepareGlyph(i, j, camera.Z);
                 }
             }
             Dirty = false;

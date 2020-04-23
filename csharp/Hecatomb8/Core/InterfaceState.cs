@@ -23,6 +23,10 @@ namespace Hecatomb8
         public static Colors? Colors;
         public static HecatombCommands? Commands;
         public static HashSet<Coord> PlayerVisible = new HashSet<Coord>();
+        public static ListArray3D<Particle>? Particles;
+        public static List<ParticleEmitter> Emitters = new List<ParticleEmitter>();
+        public static HashSet<Coord> OldDirtyTiles = new HashSet<Coord>();
+        public static HashSet<Coord> NextDirtyTiles = new HashSet<Coord>();
         public static bool MovingCamera = false;
         public static Coord? Cursor;
         public static string CursorColor = "cyan";
@@ -58,6 +62,15 @@ namespace Hecatomb8
             HandlePlayerVisibility();
             // may want to refactor this out
             //InterfaceState.ReadyForInput = true;
+        }
+
+        public static void DirtifyTile(int x, int y, int z)
+        {
+            NextDirtyTiles.Add(new Coord(x, y, z));
+        }
+        public static void DirtifyTile(Coord c)
+        {
+            NextDirtyTiles.Add(c);
         }
 
         public static void DirtifyMainPanel()

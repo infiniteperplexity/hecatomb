@@ -41,6 +41,7 @@ namespace Hecatomb8
             Tasks = new SparseArray3D<Task>(width, height, depth);
             StateHandlers = new Dictionary<string, StateHandler>();
             Random = new StatefulRandom(seed);
+            InterfaceState.Particles = new ListArray3D<Particle>(width, height, depth);
         }
 
         public T GetState<T>() where T : StateHandler, new()
