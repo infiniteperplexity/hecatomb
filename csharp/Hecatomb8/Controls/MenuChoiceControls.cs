@@ -57,6 +57,8 @@ namespace Hecatomb8
 
 		public MenuChoiceControls(IChoiceMenu chooser) : base()
 		{
+			Header = "";
+			Choices = new List<IMenuListable>();
 			AllowsUnpause = false;
 			Chooser = chooser;
 			RefreshContent();

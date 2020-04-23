@@ -191,8 +191,12 @@ namespace Hecatomb8
             }
             else
             {
-                Debug.WriteLine("here we are");
-                InterfaceState.Cursor = null;
+                if (InterfaceState.Cursor != null)
+                {
+                    InterfaceState.Cursor = null;
+                    InterfaceState.DirtifyMainPanel();
+                }
+                
             }
         }
 

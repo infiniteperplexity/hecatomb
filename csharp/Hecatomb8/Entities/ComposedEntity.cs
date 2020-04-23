@@ -47,10 +47,15 @@ namespace Hecatomb8
 
         public void AddComponent(Component c)
         {
+            if (!Spawned)
+            {
+                throw new InvalidOperationException("Using Component.Add in the constructor, not AddComponent.");
+            }
             if (_components is null)
             {
                 _components = new Dictionary<string, EntityField<Component>>();
             }
+            
             _components[c.GetType().Name] = c;
             c.AddToEntity(this);
         }

@@ -23,8 +23,9 @@ namespace Hecatomb8
                 [Keys.Down] = commands!.MoveSouthCommand,
                 [Keys.Right] = commands!.MoveEastCommand,
                 [Keys.Space] = commands!.Wait,
-                [Keys.J] = commands!.ChooseTask
-            };
+                [Keys.J] = commands!.ChooseTask,
+                [Keys.Z] = commands!.ChooseSpell
+        };
             MenuTop = new List<ColoredText>();
             RefreshContent();
         }

@@ -23,12 +23,12 @@ namespace Hecatomb8
             {
                 throw new Exception("Player can't be placed.");
             }
-            var zombie = Entity.Spawn<Zombie>();
-            z = world.GetBoundedGroundLevel(5, 5);
-            if (!world.Creatures.ContainsKey(5, 5, z))
-            {
-                zombie.PlaceInValidEmptyTile(5, 5, z);
-            }
+            //var zombie = Entity.Spawn<Zombie>();
+            //z = world.GetBoundedGroundLevel(5, 5);
+            //if (!world.Creatures.ContainsKey(5, 5, z))
+            //{
+            //    zombie.PlaceInValidEmptyTile(5, 5, z);
+            //}
         }
 
         void setElevations()

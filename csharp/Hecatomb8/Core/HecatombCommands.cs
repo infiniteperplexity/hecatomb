@@ -12,7 +12,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Hecatomb8
 {
-    //using static HecatombAliases;
+    using static HecatombAliases;
 
     public class HecatombCommands
     {
@@ -286,6 +286,16 @@ namespace Hecatomb8
             InterfaceState.SetControls(new MenuChoiceControls(tasks));
             //Game.Controls.MenuSelectable = false;
             //Game.Controls.SelectedMenuCommand = "Jobs";
+            InterfaceState.DirtifyTextPanels();
+        }
+
+        public void ChooseSpell()
+        {
+            //Game.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
+            var spells = Player.GetComponent<SpellCaster>();
+            InterfaceState.SetControls(new MenuChoiceControls(spells));
+            //Game.Controls.MenuSelectable = false;
+            //Game.Controls.SelectedMenuCommand = "Spells";
             InterfaceState.DirtifyTextPanels();
         }
     }

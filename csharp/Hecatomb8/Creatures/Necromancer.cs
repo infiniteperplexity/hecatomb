@@ -11,6 +11,13 @@ namespace Hecatomb8
             _name = "necromancer";
             _symbol = '@';
             _fg = "magenta";
+            Components.Add(new SpellCaster()
+                {
+                    Spells = new List<Type>() {
+                        typeof(RaiseZombieSpell)
+                    }
+                }
+            );
         }
     }
 }

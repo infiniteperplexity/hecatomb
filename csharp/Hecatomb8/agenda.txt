@@ -1,4 +1,9 @@
-﻿So what would our approach be to refactoring the game?  Let's make this a wishlist.
+﻿
+C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb8
+gci . *.cs -Recurse | select-string . | Group Filename | Measure-Object Count -Sum -Min -Max -Average
+
+
+So what would our approach be to refactoring the game?  Let's make this a wishlist.
 - I think you basically just start by backing up Game.cs, start that again from scratch, and go from there.
 - Let's take a look at this example code.  So, they've got a Global object.
 - So what is it I'm actually looking to improve on here?

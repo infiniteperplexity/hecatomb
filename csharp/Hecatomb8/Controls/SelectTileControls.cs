@@ -30,17 +30,17 @@ namespace Hecatomb8
 			};
 		}
 
-		//public override void HoverTile(Coord c)
-		//{
-		//	base.HoverTile(c);
-		//	Selector.TileHover(c);
-		//	InterfacePanel.DirtifySidePanels();
-		//}
+		public override void HoverTile(Coord c)
+		{
+			base.HoverTile(c);
+			Selector.TileHover(c);
+			InterfaceState.DirtifyTextPanels();
+		}
 
-		//public override void ClickTile(Coord c)
-		//{
-		//	Selector.SelectTile(c);
-		//	Reset();
-		//}
+		public override void ClickTile(Coord c)
+		{
+			Selector.SelectTile(c);
+			InterfaceState.ResetControls();
+		}
 	}
 }

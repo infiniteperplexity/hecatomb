@@ -67,6 +67,17 @@ namespace Hecatomb8
         public bool Equals(Coord c)
             => X == c.X && Y == c.Y && Z == c.Z;
 
+        //public override bool Equals(Object o)
+        //{
+        //    if (o is Coord)
+        //    {
+        //        Coord c = (Coord)o;
+        //        return (X == c.X && Y == c.Y && Z == c.Z);
+        //    }
+        //    return false;
+        //}
+            
+
         public static bool operator ==(Coord one, Coord two)
         {
             return one.Equals(two);

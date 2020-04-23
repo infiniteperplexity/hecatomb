@@ -101,16 +101,5 @@ namespace Hecatomb8
         {
 
         }
-
-        public Task GetTask(Type t)
-        {
-            return (Task)Activator.CreateInstance(t);
-        }
-
-        public Task GetTask(String s)
-        {
-            Type t = Type.GetType("Hecatomb." + s);
-            return (Task)Activator.CreateInstance(t);
-        }
     }
 }

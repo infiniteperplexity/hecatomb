@@ -14,7 +14,7 @@ namespace Hecatomb8
             //KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             keyMap[Keys.Tab] = Commands.ToggleMovingCamera;
             //KeyMap[Keys.J] = Commands.ChooseTask;
-            //KeyMap[Keys.Z] = Commands.ChooseSpell;
+            keyMap[Keys.Z] = Commands.ChooseSpell;
             keyMap[Keys.J] = Commands.ChooseTask;
             //KeyMap[Keys.Z] = Commands.ChooseSpell;
             //KeyMap[Keys.L] = Commands.ShowLog;

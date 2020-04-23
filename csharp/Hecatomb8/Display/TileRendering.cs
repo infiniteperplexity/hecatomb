@@ -312,7 +312,7 @@ namespace Hecatomb8
             
             var explored = GameState.World.Explored.Contains(c) || HecatombOptions.Explored;
 
-            Task task = GameState.World!.Tasks.GetWithBoundsChecked(x, y, z);
+            Task? task = GameState.World!.Tasks.GetWithBoundsChecked(x, y, z);
             // particle
             //if (p != null && p.BG != null)
             //{
@@ -321,7 +321,7 @@ namespace Hecatomb8
             //else
             if (task != null)
             {
-                return (task.BG ?? task.BG);
+                return task!.BG!;
             }
             else if (!explored)
             {

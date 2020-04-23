@@ -619,7 +619,7 @@ namespace Hecatomb8
 
         public virtual string GetHighlightColor()
         {
-            return BG;
+            return BG!;
         }
     }
 }
