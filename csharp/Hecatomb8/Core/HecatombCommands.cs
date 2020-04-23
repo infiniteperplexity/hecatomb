@@ -298,5 +298,23 @@ namespace Hecatomb8
             //Game.Controls.SelectedMenuCommand = "Spells";
             InterfaceState.DirtifyTextPanels();
         }
+
+        public void SystemMenuCommand()
+        {
+            //Time.Frozen = true;
+            var commands = new List<(Keys, ColoredText, Action)>() {
+                (Keys.Escape, "Cancel.", InterfaceState.ResetControls),
+                (Keys.S, "Save game.", GameManager.SaveGameCheckFileName),
+                (Keys.A, "Save as...", GameManager.SaveGameAs),
+                (Keys.R, "Restore game.", GameManager.RestoreGameWithConfirmation),
+                (Keys.N, "New game.", GameManager.StartGameWithConfirmation),
+                (Keys.Q, "Quit.", GameManager.BackToTitleWithConfirmation)
+            };
+            //if (Options.ReconstructGames)
+            //{
+            //    commands.Add((Keys.C, "Reconstruct game from log.", ReconstructGameCommand));
+            //}
+            InterfaceState.SetControls(new StaticMenuControls(" ", commands));
+        }
     }
 }

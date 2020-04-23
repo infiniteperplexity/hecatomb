@@ -63,7 +63,7 @@ namespace Hecatomb8
 
             if (particle != null && particle.Symbol != default(char))
             {
-                return (particle.Symbol, particle.FG);
+                return (particle!.Symbol!, particle!.FG!);
             }
             // if the tile is not visible, the foreground will be in shadow
             if (!visible)

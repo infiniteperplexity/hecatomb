@@ -253,5 +253,23 @@ namespace Hecatomb8
             }
         }
 
+        public virtual void CleanUp()
+        {
+
+        }
+
+        
+        public virtual void SelectTile()
+        {
+            Camera Camera = InterfaceState.Camera!;
+            var cursor = InterfaceState.Cursor;
+            if (cursor is null)
+            {
+                return;
+            }
+            Coord tile = (Coord)cursor!;
+            ClickTile(tile);
+        }
+
     }
 }

@@ -16,7 +16,7 @@ namespace Hecatomb8
         public static InformationPanel InfoPanel { get => infoPanel!; set => infoPanel = value; }
         static ControlContext? controls;
         public static ControlContext Controls { get => controls!;}
-        static ControlContext? BackControls;
+        static ControlContext? ParentControls;
         public static DefaultControls? DefaultControls;
         public static CameraControls? CameraControls;
         public static Camera? Camera;
@@ -122,6 +122,23 @@ namespace Hecatomb8
             }
         }
 
+        public static void RewindControls()
+        {
+            var old = Controls;
+            controls = ParentControls;
+            if (GameState.World!= null)
+            {
+                //Game.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Game.Controls });
+                //Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
+            }
+            // I have no idea why typecasting is needed here
+            ParentControls = (MovingCamera) ? (ControlContext)CameraControls! : DefaultControls;
+            Controls.RefreshContent();
+            DirtifyMainPanel();
+            DirtifyTextPanels();
+            //Game.ForegroundPanel.Active = false;
+        }
+
         public static void ResetControls()
         {
             //var old = Controls;
@@ -138,18 +155,18 @@ namespace Hecatomb8
             
             if (MovingCamera)
             {
-                SetControls(CameraControls!);
+                controls = CameraControls!;
             }
             else
             {
-                SetControls(DefaultControls!);
+                controls = DefaultControls!;
             }
             //if (Game.World != null)
             //{
             //    Game.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Game.Controls });
             //    Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
             //}
-            BackControls = Controls;
+            ParentControls = Controls;
             Controls.RefreshContent();
             DirtifyMainPanel();
             DirtifyTextPanels();       
@@ -175,6 +192,16 @@ namespace Hecatomb8
                 }
             }
             return null;
+        }
+
+        public static void CenterCursor()
+        {
+            Cursor = new Coord(Camera!.XOffset + Camera.Width / 2, Camera.YOffset + Camera.Height / 2, Camera.Z);
+        }
+
+        public static void HideCursor()
+        {
+            Cursor = null;
         }
     }
 }

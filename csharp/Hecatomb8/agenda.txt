@@ -44,3 +44,7 @@ Alright, what's next?  Let's toss some ideas out there...
  Alright, so I have time passing...but I think I may have noticed a weakness in the system...
  ...ready for input can be triggered by input, but it can also be triggered by time passing...is that a real issue?
  ...I think maybe not, because I doubt the update loops can overlap, and the time passing portion of the loop always completes before the input portion of the loop, right?
+
+
+ 4/23/2020
+ - Particles are buggy in some weird way, but I bet I can fix that.  Right now they work kinda, and I want to get Save and Restore Game imeplemented.

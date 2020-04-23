@@ -18,19 +18,20 @@ namespace Hecatomb8
 		ISelectsZone Selector;
 		public Coord FirstCorner;
 		List<Coord> Squares;
-		//List<Particle> Highlights;
+		List<Particle> Highlights;
 
 		public SelectZoneControls(ISelectsZone i)
 		{
 			AllowsUnpause = false;
 			Selector = i;
-			//KeyMap[Keys.Space] = SelectTile;
-			//KeyMap[Keys.Escape] = () => {
-			//	Clean();
-			//	Back();
-			//};
+			keyMap[Keys.Space] = SelectTile;
+			keyMap[Keys.Escape] = () =>
+			{
+				Clean();
+				InterfaceState.RewindControls();
+			};
 			Squares = new List<Coord>();
-			//Highlights = new List<Particle>();
+			Highlights = new List<Particle>();
 			MenuTop = new List<ColoredText>() {
 				 "{orange}**Esc: Cancel.**",
 				" ",
@@ -55,14 +56,14 @@ namespace Hecatomb8
 
 		public void DrawSquareZone(Coord c)
 		{
-			//foreach (Particle p in Highlights)
-			//{
-			//	Coord s = new Coord(p.X, p.Y, p.Z);
-			//	Game.MainPanel.DirtifyTile(s);
-			//	p.Remove();
+			foreach (Particle p in Highlights)
+			{
+				Coord s = new Coord(p.X, p.Y, p.Z);
+				InterfaceState.DirtifyTile(s);
+				p.Remove();
 
-			//}
-			//Highlights.Clear();
+			}
+			Highlights.Clear();
 			Squares.Clear();
 			int x0 = FirstCorner.X;
 			int y0 = FirstCorner.Y;
@@ -78,10 +79,10 @@ namespace Hecatomb8
 				{
 					Coord s = new Coord(x, y, z);
 					Squares.Add(s);
-					//InterfaceState.MainPanel.DirtifyTile(s);
-					//Highlight h = new Highlight(Selector.GetHighlightColor());
-					//h.Place(s.X, s.Y, s.Z);
-					//Highlights.Add(h);
+					InterfaceState.DirtifyTile(s);
+					Highlight h = new Highlight(Selector.GetHighlightColor());
+					h.Place(s.X, s.Y, s.Z);
+					Highlights.Add(h);
 				}
 			}
 		}
@@ -113,19 +114,19 @@ namespace Hecatomb8
 			FirstCorner = default(Coord);
 			MenuTop[2] = "{yellow}Select first corner with keys or mouse.";
 			Clean();
-			//Highlights.Clear();
+			Highlights.Clear();
 			InterfaceState.DirtifyMainPanel();
 			InterfaceState.DirtifyTextPanels();
-			//keyMap[Keys.Escape] = Back;
+			keyMap[Keys.Escape] = InterfaceState.RewindControls;
 			keyMap[Keys.Escape] = InterfaceState.ResetControls;
 		}
 
 		private void Clean()
 		{
-			//foreach (Particle p in Highlights)
-			//{
-			//	p.Remove();
-			//}
+			foreach (Particle p in Highlights)
+			{
+				p.Remove();
+			}
 			InterfaceState.DirtifyMainPanel();
 			InterfaceState.DirtifyTextPanels();
 		}
@@ -133,7 +134,7 @@ namespace Hecatomb8
 		{
 			Selector.SelectZone(Squares);
 			Clean();
-			//Highlights.Clear();
+			Highlights.Clear();
 			Squares.Clear();
 			InterfaceState.ResetControls();
 		}
