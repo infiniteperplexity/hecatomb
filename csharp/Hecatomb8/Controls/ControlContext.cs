@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     // A ControlContext represents an input state or an interrelated cluster of input states for the game
     // The parent class will soon get set to abstract, but it will implement some default functionality that can be inherited
     public abstract class ControlContext
@@ -18,6 +19,8 @@ namespace Hecatomb8
         static DateTime InputBegan;
         static ControlContext? LastInputCycleControls;
         static Coord? LastInputCycleCamera;
+        
+        
 
 
         protected Dictionary<Keys, Action> keyMap;
@@ -39,22 +42,14 @@ namespace Hecatomb8
 
         public ControlContext()
         {
-            var commands = InterfaceState.Commands;
-            keyMap = new Dictionary<Keys, Action>()
-            {
-                [Keys.W] = commands!.MoveNorthCommand,
-                [Keys.A] = commands!.MoveWestCommand,
-                [Keys.S] = commands!.MoveSouthCommand,
-                [Keys.D] = commands!.MoveEastCommand,
-                [Keys.Up] = commands!.MoveNorthCommand,
-                [Keys.Left] = commands!.MoveWestCommand,
-                [Keys.Down] = commands!.MoveSouthCommand,
-                [Keys.Right] = commands!.MoveEastCommand,
-                [Keys.Space] = commands!.Wait
-            };
+            keyMap = new Dictionary<Keys, Action>();
             MenuTop = new List<ColoredText>();
         }
 
+        public virtual void RefreshContent()
+        {
+
+        }
 
         public void HandleInput()
         {
@@ -161,17 +156,98 @@ namespace Hecatomb8
 
         public virtual void HandleClick(int x, int y)
         {
+            var panel = InterfaceState.GetPanel(x, y);
+            if (panel is null)
+            {
+                return;
+            }
+            if (panel is MainPanel)
+            {
+                int Size = InterfaceState.MainPanel.CharWidth;
+                int Padding = InterfaceState.MainPanel.XPad;
+                Camera Camera = InterfaceState.Camera!;
+                if ((x - panel.X0 - Padding) / (Size + Padding) < Camera.Width)
+                {
+                    Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
+                    ClickTile(tile);
+                }
+            }
 
         }
 
         public virtual void HandleHover(int x, int y)
         {
-
+            var panel = InterfaceState.GetPanel(x, y);
+            if (panel is MainPanel)
+            {
+                int Size = InterfaceState.MainPanel.CharWidth;
+                int Padding = InterfaceState.MainPanel.XPad;
+                Camera Camera = InterfaceState.Camera!;
+                if ((x - panel.X0 - Padding) / (Size + Padding) < Camera.Width)
+                {
+                    Coord tile = new Coord((x - panel.X0 - Padding) / (Size + Padding) + Camera.XOffset, (y - panel.Y0 - Padding) / (Size + Padding) + Camera.YOffset, Camera.Z);
+                    HoverTile(tile);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("here we are");
+                InterfaceState.Cursor = null;
+            }
         }
 
         public virtual void CameraHover()
         {
            
         }
+
+        public virtual void ClickTile(Coord c)
+        {
+            if (GameState.World is null)
+            {
+                return;
+            }
+            var (x, y, z) = c;
+            Creature? cr = Creatures.GetWithBoundsChecked(x, y, z);
+            bool visible = InterfaceState.PlayerVisible.Contains(c);
+            // this functionality should probably be defined in HecatombCommands
+            if (cr != null && visible)
+            {
+                //ControlContext.Set(new MenuChoiceControls(cr));
+                //ControlContext.Set(new MenuCameraControls(cr));
+                //Game.Camera.CenterOnSelection();
+                //return;
+            }
+            Feature? fr = GameState.World!.Features.GetWithBoundsChecked(x, y, z);
+            //if (fr?.TryComponent<StructuralComponent>() != null)
+            //{
+            //    if (fr.GetComponent<StructuralComponent>().Structure.Placed)
+            //    {
+            //        var s = fr.GetComponent<StructuralComponent>().Structure.Unbox();
+            //        ControlContext.Set(new MenuCameraControls(s));
+            //        Game.Camera.CenterOnSelection();
+            //        //ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
+            //    }
+            //    return;
+            //}
+            Debug.WriteLine($"Clicked {c.X} {c.Y} {c.Z}");
+        }
+
+        public virtual void HoverTile(Coord c)
+        {
+            if (GameState.World != null)
+            {
+                
+                if (InterfaceState.Cursor != c)
+                {
+                    InterfaceState.Cursor = c;
+                    InterfaceState.DirtifyMainPanel();
+                }
+                //Cursor.Place(c.X, c.Y, c.Z);
+                //Game.MainPanel.DirtifyTile(c);
+                //Game.World.ShowTileDetails(c);
+            }
+        }
+
     }
 }

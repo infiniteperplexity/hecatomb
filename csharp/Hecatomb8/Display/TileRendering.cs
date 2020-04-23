@@ -32,7 +32,7 @@ namespace Hecatomb8
             bool visible = InterfaceState.PlayerVisible.Contains(c) || HecatombOptions.Visible;
             bool va = InterfaceState.PlayerVisible.Contains(ca) || HecatombOptions.Visible;
             bool vb = InterfaceState.PlayerVisible.Contains(cb) || HecatombOptions.Visible;
-            int slope = terrain.Slope;
+            int zview = terrain.ZView;
             char sym;
             string? fg = null;
 
@@ -74,13 +74,13 @@ namespace Hecatomb8
                 fg = fg ?? cr.FG;
             }
             // a visible creature above
-            else if (slope == +1 && cra != null && cra.Symbol != ' ' && (visible || va))
+            else if (zview == +1 && cra != null && cra.Symbol != ' ' && (visible || va))
             {
                 sym = cra.Symbol;
                 fg = fg ?? "WALLFG";
             }
             // a visible creature below
-            else if (slope == -1 && crb != null &&crb.Symbol != ' ' && (visible || vb))
+            else if (zview == -1 && crb != null &&crb.Symbol != ' ' && (visible || vb))
             {
                 sym = crb.Symbol;
                 // a submerged creature below
@@ -132,13 +132,13 @@ namespace Hecatomb8
                 }
             }
             // items above
-            else if (slope == +1 && ita != null)
+            else if (zview == +1 && ita != null)
             {
                 sym = ita.Symbol;
                 fg = fg ?? "WALLFG";
             }
             // items below
-            else if (slope == -1 && itb != null)
+            else if (zview == -1 && itb != null)
             {
                 sym = itb.Symbol;
                 // submerged item
@@ -152,13 +152,13 @@ namespace Hecatomb8
                 }
             }
             // feature above
-            else if (slope == +1 && fra != null && fra.Symbol != ' ')
+            else if (zview == +1 && fra != null && fra.Symbol != ' ')
             {
                 sym = fra.Symbol;
                 fg = fg ?? "WALLFG";
             }
             // feature belowb
-            else if (slope == -1 && frb != null && frb.Symbol != ' ')
+            else if (zview == -1 && frb != null && frb.Symbol != ' ')
             {
                 sym = frb.Symbol;
                 // submerged feature
@@ -190,7 +190,7 @@ namespace Hecatomb8
                 else if (cover.Liquid)
                 {
                     // deeper liquid
-                    if (slope == -1 && coverb == cover && tb != Terrain.UpSlopeTile)
+                    if (zview == -1 && coverb == cover && tb != Terrain.UpSlopeTile)
                     {
                         //sym = '\u2235';
                         sym = '.';
@@ -205,7 +205,7 @@ namespace Hecatomb8
                 else if (cover == Cover.NoCover)
                 {
                     // surface of liquid
-                    if (slope == -1 && coverb.Liquid)
+                    if (zview == -1 && coverb.Liquid)
                     {
                         sym = coverb.Symbol;
                     }
@@ -261,7 +261,7 @@ namespace Hecatomb8
                 }
                 else if (cover.Liquid)
                 {
-                    if (slope == -1 && coverb == cover)
+                    if (zview == -1 && coverb == cover)
                     {
                         fg = fg ?? "BELOWFG";
                     }
@@ -295,7 +295,11 @@ namespace Hecatomb8
         {
             //List<Particle> pl = Game.World.Particles[x, y, z];
             //Particle p = (pl.Count > 0) ? pl[0] : null;
-
+            Coord c = new Coord(x, y, z);
+            if (c == InterfaceState.Cursor)
+            {
+                return "cyan";
+            }
             var cr = GameState.World!.Creatures.GetWithBoundsChecked(x, y, z);
             var fr = GameState.World!.Features.GetWithBoundsChecked(x, y, z);
             var it = GameState.World!.Items.GetWithBoundsChecked(x, y, z);
@@ -305,30 +309,24 @@ namespace Hecatomb8
             Cover cva = GameState.World!.Covers.GetWithBoundsChecked(x, y, z);
             Cover cvb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
 
-            Coord c = new Coord(x, y, z);
+            
             var explored = GameState.World.Explored.Contains(c) || HecatombOptions.Explored;
-            //var explored = true;
 
-            //Task task = Game.World.Tasks[x, y, z];
+            Task task = GameState.World!.Tasks.GetWithBoundsChecked(x, y, z);
             // particle
             //if (p != null && p.BG != null)
             //{
             //    return p.BG;
             //}
-            // this should event
-            //else if (task != null)
-            //{
-            //    return (task.BG ?? task.BG);
-            //}
             //else
-            if (!explored)
+            if (task != null)
+            {
+                return (task.BG ?? task.BG);
+            }
+            else if (!explored)
             {
                 return "black";
             }
-            //else if (!Game.Visible.Contains(c) && !Game.Options.Visible)
-            //{
-            //    return "black";
-            //}
             else if (cr != null && (cr.BG != null))
             {
                 return cr.BG;
@@ -353,8 +351,7 @@ namespace Hecatomb8
             {
                 if (cvb.Liquid)
                 {
-                    return cvb.FG;
-                    //return cb.Shimmer();
+                    return cvb.Shimmer();
                 }
                 else if (cvb != Cover.NoCover)
                 {

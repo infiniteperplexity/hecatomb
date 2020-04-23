@@ -251,5 +251,42 @@ namespace Hecatomb8
             InterfaceState.DirtifyMainPanel();
             InterfaceState.DirtifyTextPanels();
         }
+
+        public void ToggleMovingCamera()
+        {
+            if (!InterfaceState.MovingCamera)
+            {
+                //Game.World.Events.Publish(new TutorialEvent() { Action = "CameraMode" });
+            }
+            else
+            {
+                //Game.World.Events.Publish(new TutorialEvent() { Action = "MainMode" });
+            }
+            InterfaceState.MovingCamera = !InterfaceState.MovingCamera;
+            if (InterfaceState.MovingCamera)
+            {
+                InterfaceState.SetControls(InterfaceState.CameraControls!);
+            }
+            else
+            {
+                InterfaceState.SetControls(InterfaceState.DefaultControls!);
+            }
+            Creature p = GameState.World!.Player!;
+            InterfaceState.Camera!.Center((int)p.X!, (int)p.Y!, (int)p.Z!);
+            InterfaceState.DirtifyMainPanel();
+            InterfaceState.DirtifyTextPanels();
+        }
+
+
+        public void ChooseTask()
+        {
+            //Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
+            var tasks = GameState.World!.GetState<TaskHandler>();
+            //tasks.PurgeCache();
+            InterfaceState.SetControls(new MenuChoiceControls(tasks));
+            //Game.Controls.MenuSelectable = false;
+            //Game.Controls.SelectedMenuCommand = "Jobs";
+            InterfaceState.DirtifyTextPanels();
+        }
     }
 }

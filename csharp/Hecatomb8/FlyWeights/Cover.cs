@@ -39,17 +39,17 @@ namespace Hecatomb8
             Resource = resource;
         }
 
-        //public string Shimmer()
-        //{
-        //    var c = Game.Colors[BG];
-        //    int r = c.R;
-        //    int g = c.G;
-        //    int b = c.B;
-        //    r = (int)GameState.World!.Random.StatelessNormal(r, r / 16f);
-        //    g = (int)GameState.World!.Random.StatelessNormal(g, g / 16f);
-        //    b = (int)GameState.World!.Random.StatelessNormal(b, b / 16f);
-        //    return ("#" + r.ToString("X2") + g.ToString("X2") + b.ToString("X2"));
-        //}
+        public string Shimmer()
+        {
+            var c = InterfaceState.Colors![BG];
+            int r = c.R;
+            int g = c.G;
+            int b = c.B;
+            r = (int)GameState.World!.Random.StatelessNormal(r, r / 16f);
+            g = (int)GameState.World!.Random.StatelessNormal(g, g / 16f);
+            b = (int)GameState.World!.Random.StatelessNormal(b, b / 16f);
+            return ("#" + r.ToString("X2") + g.ToString("X2") + b.ToString("X2"));
+        }
         public static readonly Cover NoCover = new Cover(
             type: "NoCover",
             name: "no cover",

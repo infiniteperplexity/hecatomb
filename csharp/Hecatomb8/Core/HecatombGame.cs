@@ -38,6 +38,7 @@ namespace Hecatomb8
             InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20);   
             InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0);
             InterfaceState.DefaultControls = new DefaultControls();
+            InterfaceState.CameraControls = new CameraControls();
         }
        
 

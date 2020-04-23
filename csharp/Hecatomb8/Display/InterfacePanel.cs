@@ -14,12 +14,12 @@ namespace Hecatomb8
         public bool Dirty;
         protected SpriteBatch Sprites;
         protected GraphicsDevice Graphics;
-        protected int X0;
-        protected int Y0;
-        protected int CharWidth;
-        protected int CharHeight;
-        protected int XPad;
-        protected int YPad;
+        public int X0;
+        public int Y0;
+        public int CharWidth;
+        public int CharHeight;
+        public int XPad;
+        public int YPad;
         protected Texture2D BG;
         public int Zindex;
         public int PixelWidth;

@@ -108,7 +108,6 @@ namespace Hecatomb
             }
             return false;
         }
-        public virtual void Designate() {}
 
         // assignment
         public virtual bool CanAssign(Creature c)

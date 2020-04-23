@@ -67,6 +67,16 @@ namespace Hecatomb8
         public bool Equals(Coord c)
             => X == c.X && Y == c.Y && Z == c.Z;
 
+        public static bool operator ==(Coord one, Coord two)
+        {
+            return one.Equals(two);
+        }
+
+        public static bool operator !=(Coord one, Coord two)
+        {
+            return !one.Equals(two);
+        }
+
         public readonly static Coord North = new Coord(+0, -1, +0);
         public readonly static Coord South = new Coord(+0, +1, +0);
         public readonly static Coord East = new Coord(+1, +0, +0);

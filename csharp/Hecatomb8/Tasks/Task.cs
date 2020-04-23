@@ -12,7 +12,7 @@ namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    public abstract class Task : TileEntity /*, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone*/
+    public abstract class Task : TileEntity, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
     {
         // subclass properties
         [JsonIgnore] public int WorkRange;
@@ -108,7 +108,6 @@ namespace Hecatomb8
         //    }
         //    return false;
         //}
-        public virtual void Designate() { }
 
         // assignment
         //public virtual bool CanAssign(Creature c)
@@ -618,9 +617,9 @@ namespace Hecatomb8
             //return cachedMenuListing;
         }
 
-        //public virtual string GetHighlightColor()
-        //{
-        //    return BG;
-        //}
+        public virtual string GetHighlightColor()
+        {
+            return BG;
+        }
     }
 }

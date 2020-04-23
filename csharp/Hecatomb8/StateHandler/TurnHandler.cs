@@ -24,7 +24,6 @@ namespace Hecatomb8
         public void NextTurn()
         {
             Turn += 1;
-            Debug.WriteLine($"Turn {Turn}");
             ActorDeck.Clear();
             ActorQueue.Clear();
             foreach (var e in Entities.Values)
