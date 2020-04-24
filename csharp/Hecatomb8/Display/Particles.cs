@@ -38,7 +38,6 @@ namespace Hecatomb8
             };
             T0 = DateTime.Now;
             Rate = 10;
-            LifeSpan = 650;
             InterfaceState.Emitters.Add(this);
             LastEmit = DateTime.Now;
             FG = "black";

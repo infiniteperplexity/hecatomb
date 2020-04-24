@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Hecatomb8
 {
@@ -85,6 +86,7 @@ namespace Hecatomb8
 					Highlights.Add(h);
 				}
 			}
+			//Debug.WriteLine("Particles: " + InterfaceState.Particles.ToList().Count);
 		}
 
 		public override void ClickTile(Coord c)

@@ -25,6 +25,7 @@ namespace Hecatomb8
         public readonly SparseArray3D<Task> Tasks;
         public Dictionary<string, StateHandler> StateHandlers;
         public StatefulRandom Random;
+        public EventSystem Events;
 
         public World(int width, int height, int depth, int seed = 0)
         {
@@ -40,6 +41,7 @@ namespace Hecatomb8
             Items = new SparseArray3D<Item>(width, height, depth);
             Tasks = new SparseArray3D<Task>(width, height, depth);
             StateHandlers = new Dictionary<string, StateHandler>();
+            Events = new EventSystem();
             Random = new StatefulRandom(seed);
             InterfaceState.Particles = new ListArray3D<Particle>(width, height, depth);
         }

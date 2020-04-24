@@ -59,8 +59,8 @@ namespace Hecatomb8
             }
 
             List<Particle> pl = InterfaceState.Particles![x, y, z];
+            
             Particle? particle = (pl.Count > 0) ? pl[0] : null;
-
             if (particle != null && particle.Symbol != default(char))
             {
                 return (particle!.Symbol!, particle!.FG!);

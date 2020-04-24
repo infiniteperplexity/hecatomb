@@ -22,13 +22,17 @@ namespace Hecatomb8
         }
 
 
-        public static void StartGame() {
+        public static void StartGame()
+        {
+            HecatombGame.DeferUntilAfterDraw(StartGameProcess);
+        }
+
+        public static void StartGameProcess()
+        {
             var world = new World(256, 256, 64);
             GameState.World = world;
             var ws = new BuildWorldStrategy();
-            Debug.WriteLine("flag 0");
             ws.Generate();
-            Debug.WriteLine("flag 1");
             InterfaceState.SetControls(InterfaceState.DefaultControls!);
             InterfaceState.PlayerIsReady();
         }
@@ -53,7 +57,7 @@ namespace Hecatomb8
             //    $"Saving {Game.GameName}..."
             //}, frozen: true);
             Debug.WriteLine("saving the game");
-            SaveGameProcess();
+            HecatombGame.DeferUntilAfterDraw(SaveGameProcess);
             //Thread thread = new Thread(SaveGameProcess);
             //thread.Start();
         }

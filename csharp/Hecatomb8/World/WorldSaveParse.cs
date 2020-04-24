@@ -86,9 +86,9 @@ namespace Hecatomb8
                 player = Player!.EID,
                 //turnQueue = turns.QueueAsIDs(turns.Queue),
                 //turnDeck = turns.QueueAsIDs(turns.Deck),
-                //entities = Entities,
+                entities = Entities,
                 explored = Explored,
-                //events = Events.StringifyListeners(),
+                events = Events.StringifyListeners(),
                 tiles = terrainFIDs,
                 covers = coverFIDs
 
@@ -164,27 +164,16 @@ namespace Hecatomb8
             int pid = (int)parsed["player"]!;
             Entity.MaxEID = -1;
             Dictionary<int, Coord?> Placements = new Dictionary<int, Coord?>();
-            //foreach (var child in parsed["entities"]!.Values())
-            //{
-            //    // will this handle Player?  It's such a terrible way I do that...
-            //    string t = (string)child["ClassName"];
-            //    Type T = Type.GetType("Hecatomb." + t);
-            //    Entity ge = (Entity)child.ToObject(T);
-            //    Entities[ge.EID] = ge;
-            //    Entity.MaxEID = Math.Max(Entity.MaxEID, ge.EID);
-            //    ge.Spawned = true;
-
-            //    if (ge is StateHandler)
-            //    {
-            //        if (ge is TurnHandler)
-            //        {
-            //            var th = (TurnHandler)ge;
-            //            th.Queue = th.QueueAsActors(parsed["turnQueue"].ToObject<Queue<int>>());
-            //            th.Deck = th.QueueAsActors(parsed["turnDeck"].ToObject<Queue<int>>());
-            //        }
-            //        (ge as StateHandler).Activate();
-            //    }
-            //}
+            foreach (var child in parsed["entities"]!.Values())
+            {
+                // will this handle Player?  It's such a terrible way I do that...
+                string t = (string)child["ClassName"]!;
+                Type T = Type.GetType("Hecatomb." + t)!;
+                Entity ge = (Entity)child.ToObject(T)!;
+                Entities[(int)ge.EID!] = ge;
+                Entity.MaxEID = Math.Max(Entity.MaxEID, (int)ge.EID);
+                // we might have to do some sort of reactivation for statehandlers but I hope not
+            }
             // okay, this gets weird...so...
             foreach (int eid in Placements.Keys.ToList())
             {
@@ -196,7 +185,7 @@ namespace Hecatomb8
                     Coord? c = Placements[eid];
                     if (c != null)
                     {
-                        // we need to place without firing events
+                        // we need to place without firing events...why do we fire events in the first place?  maybe that should only be for more specific types of placement
                         te.PlaceInValidEmptyTile(((Coord)c).X, ((Coord)c).Y, ((Coord)c).Z);
                     }
                 }
@@ -211,22 +200,22 @@ namespace Hecatomb8
 
             // *** Event Listeners ***
             var events = parsed.GetValue("events")!.ToObject<Dictionary<string, Dictionary<int, string>>>();
-            //foreach (string type in events!.Keys)
-            //{
-            //    var listeners = events[type];
-            //    if (Events.ListenerTypes.ContainsKey(type))
-            //    {
-            //        Events.ListenerTypes[type].Clear();
-            //    }
-            //    else
-            //    {
-            //        Events.ListenerTypes[type] = new Dictionary<int, Func<GameEvent, GameEvent>>();
-            //    }
-            //    foreach (int eid in listeners.Keys)
-            //    {
-            //        Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>)Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
-            //    }
-            //}
+            foreach (string type in events!.Keys)
+            {
+                var listeners = events[type];
+                if (Events.ListenerTypes.ContainsKey(type))
+                {
+                    Events.ListenerTypes[type].Clear();
+                }
+                else
+                {
+                    Events.ListenerTypes[type] = new Dictionary<int, Func<GameEvent, GameEvent>>();
+                }
+                foreach (int eid in listeners.Keys)
+                {
+                    Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>)Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
+                }
+            }
             InterfaceState.HandlePlayerVisibility();
             InterfaceState.DirtifyMainPanel();
             InterfaceState.DirtifyTextPanels();

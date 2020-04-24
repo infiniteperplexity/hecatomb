@@ -10,15 +10,15 @@ namespace Hecatomb8
     class ListArray3D<T> : IEnumerable<T>
     {
 		private Dictionary<int, List<T>> dict;
-		public readonly int X;
-		public readonly int Y;
-		public readonly int Z;
+		public readonly int _x;
+		public readonly int _y;
+		public readonly int _z;
 
 		public ListArray3D(int x, int y, int z)
 		{
-			X = x;
-			Y = y;
-			Z = z;
+			_x = x;
+			_y = y;
+			_z = z;
 			dict = new Dictionary<int, List<T>>();
 		}
 
@@ -26,48 +26,30 @@ namespace Hecatomb8
 		{
 			get
 			{
-				if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z)
+				if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
 				{
 					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 				}
 				else
 				{
-					int n = Z * x * y + X * y + Y;
-					List<T> value;
-					if (dict.ContainsKey(n))
+					int n = z * _x * _y + x * _y + y;
+					if (!dict.ContainsKey(n))
 					{
-
+						dict[n] = new List<T>();
 					}
-					if (dict.TryGetValue(n, out value!))
-					{
-						return value;
-					}
-					else
-					{
-						return new List<T>();
-					}
+					return dict[n];
 				}
 			}
 			set
 			{
-				if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z)
+				if (x < 0 || x >= _x || y < 0 || y >= _y || z < 0 || z >= _z)
 				{
 					throw new IndexOutOfRangeException(String.Format("{0} {1} {2}", x, y, z));
 				}
 				else
 				{
-					int n = Z * x * y + X * y + Y;
-					if (value == null || value.Count == 0)
-					{
-						if (dict.ContainsKey(n))
-						{
-							dict.Remove(n);
-						}
-					}
-					else
-					{
-						dict[n] = value;
-					}
+					int n = z * _x * _y + x * _y + y;
+					dict[n] = value;
 				}
 			}
 		}

@@ -10,15 +10,15 @@ namespace Hecatomb8
     class TurnHandler : StateHandler
     {
         public int Turn;
-        public Queue<Actor> ActorDeck;
+        public Queue<int> ActorDeck;
         // have not yet acted and have points remaining
-        public Queue<Actor> ActorQueue;
+        public Queue<int> ActorQueue;
 
         public TurnHandler()
         {
             Turn = 0;
-            ActorDeck = new Queue<Actor>();
-            ActorQueue = new Queue<Actor>();
+            ActorDeck = new Queue<int>();
+            ActorQueue = new Queue<int>();
         }
 
         public void NextTurn()
@@ -30,7 +30,7 @@ namespace Hecatomb8
             {
                 if (e is Actor)
                 {
-                    ActorQueue.Enqueue((Actor) e);
+                    ActorQueue.Enqueue((int)e.EID!);
                 }
             }
             ProcessActorQueue();
@@ -40,7 +40,7 @@ namespace Hecatomb8
         {
             while (ActorQueue.Count > 0)
             {
-                Actor actor = ActorQueue.Dequeue();
+                Actor actor = (Actor) Entities[ActorQueue.Dequeue()];
                 if (actor.Entity.UnboxBriefly() == Player)
                 {
                     InterfaceState.PlayerIsReady();

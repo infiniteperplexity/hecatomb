@@ -71,11 +71,7 @@ namespace Hecatomb8
             //{
             //    $"Restoring {Name}..."
             //}, frozen: true);
-            //Debug.WriteLine("restoring the game");
-            //ControlContext.Set(new FrozenControls());
-            //Thread thread = new Thread(Commands.RestoreGameProcess);
-            //thread.Start();
-            GameManager.RestoreGameProcess();
+            HecatombGame.DeferUntilAfterDraw(GameManager.RestoreGameProcess);
         }
 
         public void BuildMenu(MenuChoiceControls menu)

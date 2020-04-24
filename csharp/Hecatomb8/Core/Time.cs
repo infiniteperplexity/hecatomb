@@ -84,19 +84,15 @@ namespace Hecatomb8
             {
                 p.Update();
             }
-            if (/*PausedAfterLoad || */ AutoPausing || !InterfaceState.Controls.AllowsUnpause)
+            if (AutoPausing || !InterfaceState.Controls.AllowsUnpause)
             {
                 return;
             }
             DateTime now = DateTime.Now;
             int millis = (int)now.Subtract(LastUpdate).TotalMilliseconds;
             decimal fraction = (decimal)Speeds[SpeedIndex].numerator / (decimal)Speeds[SpeedIndex].denominator;
-            //if (millis > 1000 * fraction && InterfaceState.ReadyForInput)
             if (millis > 1000 * fraction)
             {
-                // this stuff may be completely unnecessary because both are contained in the main Update loop...
-                //InterfaceState.ReadyForInput = false;
-                // this seems incredibly dangerous...can we protect it by ensuring we are ready for input?
                 InterfaceState.Commands!.AutoWait();
             }
 

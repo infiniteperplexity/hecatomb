@@ -21,6 +21,8 @@ namespace Hecatomb8
     public class HecatombGame : Microsoft.Xna.Framework.Game
     {
         public static Action? QuitHook;
+        public static Action? Deferred;
+        public static bool DrawnSinceDefer;
         void LoadHecatombContent()
         {
             graphics.PreferredBackBufferWidth = 1280;
@@ -73,8 +75,19 @@ namespace Hecatomb8
         protected override void UnloadContent()
         {
         }
+
+        public static void DeferUntilAfterDraw(Action action)
+        {
+            DrawnSinceDefer = false;
+            Deferred = action;
+        }
         protected override void Update(GameTime gameTime)
         {
+            if (Deferred != null && DrawnSinceDefer)
+            {
+                Deferred!();
+                Deferred = null;
+            }
             if (GameState.World != null)
             {
                 Time.Update();
@@ -85,6 +98,7 @@ namespace Hecatomb8
         }
         protected override void Draw(GameTime gameTime)
         {
+            DrawnSinceDefer = true;
             sprites!.Begin();
             graphics.GraphicsDevice.Clear(Color.Black);
             InterfaceState.DrawInterfacePanels();

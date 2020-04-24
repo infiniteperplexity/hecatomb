@@ -69,6 +69,7 @@ namespace Hecatomb8
             PrepareGlyphs();
         }
 
+        // i and j refer to camera positions, not world coordinates
         public void PrepareGlyph(int i, int j, int z)
         {
             var camera = InterfaceState.Camera!;
@@ -120,7 +121,20 @@ namespace Hecatomb8
         public void PrepareGlyphs()
         {
             var camera = InterfaceState.Camera!;
-            if (!Dirty && InterfaceState.NextDirtyTiles.Count > 0)
+            if (Dirty)
+            {
+                for (int i = 0; i < camera.Width; i++)
+                {
+                    for (int j = 0; j < camera.Height; j++)
+                    {
+                        PrepareGlyph(i, j, camera.Z);
+                    }
+                }
+                Dirty = false;
+                InterfaceState.OldDirtyTiles.Clear();
+                InterfaceState.NextDirtyTiles.Clear();
+            }
+            else if (InterfaceState.NextDirtyTiles.Count > 0)
             {
                 InterfaceState.OldDirtyTiles.UnionWith(InterfaceState.NextDirtyTiles);
                 foreach (Coord c in InterfaceState.OldDirtyTiles)
@@ -136,16 +150,7 @@ namespace Hecatomb8
                 InterfaceState.OldDirtyTiles = InterfaceState.NextDirtyTiles;
                 InterfaceState.NextDirtyTiles = swap;
                 InterfaceState.NextDirtyTiles.Clear();
-                return;
-            }         
-            for (int i = 0; i < camera.Width; i++)
-            {
-                for (int j = 0; j < camera.Height; j++)
-                {
-                    PrepareGlyph(i, j, camera.Z);
-                }
             }
-            Dirty = false;
         }
 
         public override void Draw()

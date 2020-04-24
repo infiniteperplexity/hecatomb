@@ -47,4 +47,16 @@ Alright, what's next?  Let's toss some ideas out there...
 
 
  4/23/2020
- - Particles are buggy in some weird way, but I bet I can fix that.  Right now they work kinda, and I want to get Save and Restore Game imeplemented.
+ - Particles are buggy in some weird way, but I bet I can fix that later.  Right now they work kinda, and I want to get Save and Restore Game imeplemented.
+ - Alright, so in theory I've implemented saving and restoring games.  But we all know in practice when I run this, a bunch of stuff is going to go wrong.
+    - First off, there will probably be at least a few straight-up crashes, some related to null references and others related to...well...Json null references.
+    - Second, there definitely be serialization problems, were the state doesn't get serialized the way you'd hope it would.  In fact, I realized I totally don't parse Entities correctly; they need to pick class based on a field.
+ - But I don't know that I want to tackle all that tonight.  It's already eight and there's a couple of other projects I'm thinking of tackling.
+ - Lets talk about some other pockets of functionality:
+    - Serialization.
+    - Fleshing out the interface.
+    - Tasks and Actors
+    - Tutorial
+    - Restoring content
+    - Structures
+- Maybe tonight let's try to hunt down the particles issue
