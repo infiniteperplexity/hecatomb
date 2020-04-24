@@ -10,8 +10,8 @@ namespace Hecatomb8
     {
         public int Seed;
         public long Calls;
-        private Random random;
-        private Random stateless;
+        private Random? random;
+        private Random? stateless;
 
 
         public static int GetTimeSeed()
@@ -26,6 +26,11 @@ namespace Hecatomb8
         {
             Seed = seed;
             Calls = calls;
+            Initialize();
+        }
+
+        public void Initialize()
+        {
             random = new Random(Seed);
             for (int i = 0; i < Calls; i++)
             {
@@ -37,38 +42,38 @@ namespace Hecatomb8
         public int Next(int i)
         {
             Calls += 1;
-            int next = random.Next(i);
+            int next = random!.Next(i);
             return next;
         }
 
         public int Next(int i, int j)
         {
             Calls += 1;
-            int next = random.Next(i, j);
+            int next = random!.Next(i, j);
             return next;
         }
 
         public int StatelessNext(int i)
         {
-            int next = stateless.Next(i);
+            int next = stateless!.Next(i);
             return next;
         }
 
         public int StatelessNext(int i, int j)
         {
-            int next = stateless.Next(i, j);
+            int next = stateless!.Next(i, j);
             return next;
         }
 
         public double NextDouble()
         {
             Calls += 1;
-            return random.NextDouble();
+            return random!.NextDouble();
         }
 
         public double StatelessDouble()
         {
-            return stateless.NextDouble();
+            return stateless!.NextDouble();
         }
 
         public double NextNormal(float u, float std)
@@ -86,8 +91,8 @@ namespace Hecatomb8
 
         public double StatelessNormal(float u, float std)
         {
-            double u1 = 1.0 - stateless.NextDouble();
-            double u2 = 1.0 - stateless.NextDouble();
+            double u1 = 1.0 - stateless!.NextDouble();
+            double u2 = 1.0 - stateless!.NextDouble();
             double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
             return (u + std * randStdNormal);
         }

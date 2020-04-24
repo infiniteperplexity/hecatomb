@@ -49,6 +49,11 @@ namespace Hecatomb8
 
         public static void SetControls(ControlContext c)
         {
+            if (Controls != null)
+            {
+                controls!.CleanUp();
+            }
+            ParentControls = controls;
             controls = c;
             DirtifyMainPanel();
             DirtifyTextPanels();

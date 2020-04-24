@@ -24,7 +24,7 @@ namespace Hecatomb8
         public readonly SparseArray3D<Item> Items;
         public readonly SparseArray3D<Task> Tasks;
         public Dictionary<string, StateHandler> StateHandlers;
-        public readonly StatefulRandom Random;
+        public StatefulRandom Random;
 
         public World(int width, int height, int depth, int seed = 0)
         {

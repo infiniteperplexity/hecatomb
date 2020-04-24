@@ -9,7 +9,7 @@ namespace Hecatomb8
     
     public class Entity
     {
-        static int MaxEID = -1;
+        public static int MaxEID = -1;
         public int? EID;
         public string ClassName;
         [JsonIgnore] Dictionary<Type, Func<GameEvent, GameEvent>> Listeners;
