@@ -11,56 +11,103 @@ using System.IO;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    //public class HecatombConverter : JsonConverter
-    //{
-    //    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-    //    {
-    //        if (value!.GetType().GetGenericTypeDefinition() == typeof(EntityField<>))
-    //        {
-    //            Type type = value!.GetType();
-    //            FieldInfo fi = type.GetField("EID")!;
-    //            int? eid = (int?) fi.GetValue(value!);
-    //            JObject.FromObject(eid!).WriteTo(writer);
-    //        }
-    //        else if (value!.GetType().GetGenericTypeDefinition() == typeof(FlyWeight<>))
-    //        {
-    //            Type type = value!.GetType();
-    //            FieldInfo fi = type.GetField("FID")!;
-    //            int? fid = (int?)fi.GetValue(value!);
-    //            JObject.FromObject(fid!).WriteTo(writer);
-    //        }
-    //    }
+    public class HecatombConverter : JsonConverter
+    {
+        static JsonSerializer SubSerializer;
+        static HecatombConverter()
+        {
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new FlyWeightConverter());
+            SubSerializer = JsonSerializer.Create(settings);
+        }
+        public static void Test()
+        {
+            //var settings = new JsonSerializerSettings();
+            //settings.Converters.Add(new HecatombConverter());
+            //JObject j = JObject.FromObject(Player!);
+            //Debug.WriteLine(j);
+            //var c = JsonConvert.DeserializeObject<Entity>(j.ToString(), settings)!;
+            //Debug.WriteLine(c);
+            //var p = JsonConvert.DeserializeObject<Necromancer>(j.ToString(), settings)!;
+            //Debug.WriteLine(p.GetComponent<SpellCaster>().EID);
+            //Debug.WriteLine(p.coverTest);
+            //Debug.WriteLine(Object.ReferenceEquals(p.coverTest, Cover.Water));
+        }
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            JObject.FromObject(value!).WriteTo(writer);
+        }
 
-    //    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-    //    {
-    //        JObject job = JObject.Load(reader);
-    //        if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
-    //        {
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                int fid = (int)job["FID"]!;
+                var method = objectType.GetMethod("GetByNumber")!;
+                var fw = method.Invoke(null, new object[] { fid })!;
+                return fw;
+            }
+            else if (typeof(Entity).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                string s = (string)job["Class"]!;
+                Type t = Type.GetType("Hecatomb8." + s)!;
+                object ent = SubSerializer.Deserialize(new JTokenReader(job), t)!;
+                return ent;
+            }
+            else
+            {
+                return existingValue!;
+            }
+        }
 
-    //        }
-    //        else if (typeof(Entity).IsAssignableFrom(objectType) && existingValue is int)
-    //        { 
-                
-    //        }
-    //        else
-    //        {
-    //            return existingValue!;
-    //        }
-    //    }
+        public override bool CanConvert(Type objectType)
+        {
+            if (typeof(Entity).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            else if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
 
-    //    public override bool CanConvert(Type objectType)
-    //    {
-    //        if (typeof(Entity).IsAssignableFrom(objectType))
-    //        {
-    //            return true;
-    //        }
-    //        else if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
-    //        {
-    //            return true;
-    //        }
-    //        return false;
-    //    }
-    //}
+    public class FlyWeightConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            JObject.FromObject(value!).WriteTo(writer);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                int fid = (int)job["FID"]!;
+                var method = objectType.GetMethod("GetByNumber")!;
+                var fw = method.Invoke(null, new object[] { fid })!;
+                return fw;
+            }
+            else
+            {
+                return existingValue!;
+            }
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
     public partial class World
     {
         public void Stringify()
@@ -84,8 +131,6 @@ namespace Hecatomb8
                 buildDate = GameManager.BuildDate.ToString(),
                 random = Random,
                 player = Player!.EID,
-                //turnQueue = turns.QueueAsIDs(turns.Queue),
-                //turnDeck = turns.QueueAsIDs(turns.Deck),
                 entities = Entities,
                 explored = Explored,
                 events = Events.StringifyListeners(),
@@ -94,7 +139,7 @@ namespace Hecatomb8
 
             };
             JsonSerializerSettings settings = new JsonSerializerSettings();
-            //settings.Converters.Add(new HecatombConverter());
+            settings.Converters.Add(new HecatombConverter());
             settings.Formatting = Formatting.Indented;
             settings.NullValueHandling = NullValueHandling.Ignore;
 
@@ -109,10 +154,9 @@ namespace Hecatomb8
 
         public void Parse(string filename)
         {
-
             //Reset();
             JsonSerializerSettings settings = new JsonSerializerSettings();
-            //settings.Converters.Add(new HecatombConverter());
+            settings.Converters.Add(new HecatombConverter());
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
             string json = System.IO.File.ReadAllText(path + @"\saves\" + GameManager.GameName + ".json");
@@ -160,44 +204,31 @@ namespace Hecatomb8
                     Entities[eid].Despawn();
                 }
             }
+            Entity.MaxEID = -1;
             // may want to double check that everything has been cleared?
             int pid = (int)parsed["player"]!;
-            Entity.MaxEID = -1;
-            Dictionary<int, Coord?> Placements = new Dictionary<int, Coord?>();
+            Dictionary<int, Entity> entities = new Dictionary<int, Entity>();
             foreach (var child in parsed["entities"]!.Values())
             {
-                // will this handle Player?  It's such a terrible way I do that...
-                string t = (string)child["ClassName"]!;
-                Type T = Type.GetType("Hecatomb." + t)!;
-                Entity ge = (Entity)child.ToObject(T)!;
-                Entities[(int)ge.EID!] = ge;
-                Entity.MaxEID = Math.Max(Entity.MaxEID, (int)ge.EID);
-                // we might have to do some sort of reactivation for statehandlers but I hope not
-            }
-            // okay, this gets weird...so...
-            foreach (int eid in Placements.Keys.ToList())
-            {
-                Entity e = Entities[eid];
+                var e = JsonConvert.DeserializeObject<Entity>(child.ToString(), settings)!;
+                Entities[(int)e!.EID!] = e;
                 if (e is TileEntity)
                 {
                     TileEntity te = (TileEntity)e;
-
-                    Coord? c = Placements[eid];
+                    Coord c = (Coord)te._coord!;
                     if (c != null)
                     {
                         // we need to place without firing events...why do we fire events in the first place?  maybe that should only be for more specific types of placement
                         te.PlaceInValidEmptyTile(((Coord)c).X, ((Coord)c).Y, ((Coord)c).Z);
                     }
                 }
+                Entity.MaxEID = Math.Max(Entity.MaxEID, (int)e.EID);
+                // we might have to do some sort of reactivation for statehandlers but I hope not
             }
             //ValidateOutdoors();
             // *** Player ***
-
             Player = (Creature)Entities[pid];
             Explored = parsed.GetValue("explored")!.ToObject<HashSet<Coord>>()!;
-
-
-
             // *** Event Listeners ***
             var events = parsed.GetValue("events")!.ToObject<Dictionary<string, Dictionary<int, string>>>();
             foreach (string type in events!.Keys)
@@ -216,9 +247,7 @@ namespace Hecatomb8
                     Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>)Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
                 }
             }
-            InterfaceState.HandlePlayerVisibility();
-            InterfaceState.DirtifyMainPanel();
-            InterfaceState.DirtifyTextPanels();
+            InterfaceState.PlayerIsReady();
             //if (Game.Options.ReseedRandom)
             //{
             //    int r = System.DateTime.Now.Millisecond;

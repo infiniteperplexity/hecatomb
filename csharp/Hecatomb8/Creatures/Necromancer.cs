@@ -6,6 +6,8 @@ namespace Hecatomb8
 {
     class Necromancer : Creature
     {
+        public Cover coverTest = Cover.Water;
+
         public Necromancer()
         {
             _name = "necromancer";

@@ -24,16 +24,23 @@ namespace Hecatomb8
             TypeName = s;
         }
 
-        //// I don't think we actually need this after getting rid of the string keys 
-        //static FlyWeight()
-        //{
-        //    foreach (FieldInfo f in typeof(T).GetFields())
-        //    {
-        //        if (f.IsStatic)
-        //        {
-        //            f.GetValue(null);
-        //        }
-        //    }
-        //}
+        public static T GetByNumber(int i)
+        {
+            return Enumerated[i];
+        }
+
+        static FlyWeight()
+        {
+            // FlyWeight instances are stored as static members of the derived FlyWeight class
+            // the static constructor uses reflection to make sure they are initialized before the indexers are accessed
+            // this may or may not be the best way of doing things
+            foreach (FieldInfo f in typeof(T).GetFields())
+            {
+                if (f.IsStatic)
+                {
+                    f.GetValue(null);
+                }
+            }
+        }
     }
 }

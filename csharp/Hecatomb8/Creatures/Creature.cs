@@ -7,7 +7,6 @@ namespace Hecatomb8
 {
     public class Creature : ComposedEntity
     {
-
         protected Creature()
         {
             Components.Add(new Movement());

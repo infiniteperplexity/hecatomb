@@ -11,14 +11,14 @@ namespace Hecatomb8
     {
         public static int MaxEID = -1;
         public int? EID;
-        public string ClassName;
+        public string Class;
         [JsonIgnore] Dictionary<Type, Func<GameEvent, GameEvent>> Listeners;
 
         //public bool Exists;
 
         protected Entity()
         {
-            ClassName = this.GetType().Name;
+            Class = this.GetType().Name;
             Listeners = new Dictionary<Type, Func<GameEvent, GameEvent>>();
         }
 

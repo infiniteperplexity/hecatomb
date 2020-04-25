@@ -30,6 +30,7 @@ namespace Hecatomb8
         public int TopMargin;
         public int RightMargin;
         public int BottomMargin;
+        public bool Active;
         public List<(string text, Vector2 v, Color color)> DrawableLines;
 
         public InterfacePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y)
@@ -54,6 +55,7 @@ namespace Hecatomb8
             }
             BG.SetData(bgdata);
             DrawableLines = new List<(string, Vector2, Color)>();
+            Active = true;
         }
 
         public virtual void Draw()

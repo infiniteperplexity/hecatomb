@@ -25,7 +25,8 @@ namespace Hecatomb8
                 [Keys.Space] = commands!.Wait,
                 [Keys.J] = commands!.ChooseTask,
                 [Keys.Z] = commands!.ChooseSpell,
-                [Keys.Escape] = commands!.SystemMenuCommand
+                [Keys.Escape] = commands!.SystemMenuCommand,
+                [Keys.T] = HecatombConverter.Test
         };
             MenuTop = new List<ColoredText>();
             RefreshContent();
