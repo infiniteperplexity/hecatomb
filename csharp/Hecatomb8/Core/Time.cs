@@ -34,17 +34,17 @@ namespace Hecatomb8
             LastUpdate = DateTime.Now;
         }
 
-        static List<ColoredText> GetTimeText()
+        public static List<ColoredText> GetTimeText()
         {
             var list = new List<ColoredText>();
-            var t = GameState.World!.GetState<TurnHandler>().Turn;
+            var t = GameState.World!.GetState<TurnHandler>();
             // should probably show the speed when unpaused
             list.Add((Time.AutoPausing /*|| Time.PausedAfterLoad*/) ? "{yellow}Paused" : "{yellow}Speed: " + Speeds[SpeedIndex].display);
-            //string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
-            //list.Add(time);
+            string time = "\u263C " + t.Day.ToString().PadLeft(4, '0') + ':' + t.Hour.ToString().PadLeft(2, '0') + ':' + t.Minute.ToString().PadLeft(2, '0');
+            list.Add(time);
             return list;
         }
-        static void SlowDown()
+        public static void SlowDown()
         {
             if (SpeedIndex < Speeds.Count - 1)
             {
@@ -57,7 +57,7 @@ namespace Hecatomb8
             }
         }
 
-        static void SpeedUp()
+        public static void SpeedUp()
         {
             if (SpeedIndex > 0)
             {

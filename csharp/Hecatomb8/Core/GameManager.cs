@@ -24,6 +24,19 @@ namespace Hecatomb8
 
         public static void StartGame()
         {
+            InterfaceState.Splash(new List<ColoredText>() {
+                "{yellow}Welcome to Hecatomb!",
+                " ",
+                "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                " ",
+                "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                " ",
+                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
+                " ",
+                "(Building world...please wait.)",
+                },
+                fullScreen: true
+            );
             HecatombGame.DeferUntilAfterDraw(StartGameProcess);
         }
 
@@ -33,7 +46,21 @@ namespace Hecatomb8
             GameState.World = world;
             var ws = new BuildWorldStrategy();
             ws.Generate();
-            InterfaceState.SetControls(InterfaceState.DefaultControls!);
+            InterfaceState.Splash(new List<ColoredText>() {
+                "{yellow}Welcome to Hecatomb!",
+                " ",
+                "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                " ",
+                "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                " ",
+                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
+                " ",
+                "{orange}(Press Space Bar to continue.)",
+                },
+                fullScreen: true,
+                callback: InterfaceState.ResetControls
+            );
+            //InterfaceState.SetControls(InterfaceState.DefaultControls!);
             InterfaceState.PlayerIsReady();
         }
 
@@ -93,7 +120,6 @@ namespace Hecatomb8
                 System.IO.Directory.CreateDirectory(path + @"\saves");
                 // we need some kind of failure handling...
                 GameState.World!.Parse(path + @"\saves\" + GameName + ".json");
-                
                 InterfaceState.ResetControls();
             }
             catch (Exception e)
@@ -129,6 +155,7 @@ namespace Hecatomb8
         public static void BackToTitle()
         {
             //SplashPanel.Active = false;
+            GameState.World = null;
             SetUpTitle();
         }
 

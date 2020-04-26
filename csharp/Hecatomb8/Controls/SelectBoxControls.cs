@@ -32,7 +32,7 @@ namespace Hecatomb8
 			//	Clean();
 			//	Back();
 			//};
-			MenuTop = new List<ColoredText>() {
+			InfoTop = new List<ColoredText>() {
 				 "{orange}**Esc: Cancel.**",
 				" ",
 				"{yellow}Select an area with keys or mouse."

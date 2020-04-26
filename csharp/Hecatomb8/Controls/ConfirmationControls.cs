@@ -35,7 +35,7 @@ namespace Hecatomb8
 
         public override void RefreshContent()
         {
-            MenuTop = new List<ColoredText>() {
+            InfoTop = new List<ColoredText>() {
                         "{orange}**" + Header + "**.",
                         "{orange}Y) Yes.",
                         "{orange}N) No."

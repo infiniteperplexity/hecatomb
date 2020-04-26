@@ -184,10 +184,10 @@ namespace Hecatomb8
         //}
 
         // spawning methods
-        
-        //public static T GetState<T>() where T : StateHandler, new()
-        //{
-        //    return Game.World.GetState<T>();
-        //}
+
+        public static T GetState<T>() where T : StateHandler, new()
+        {
+            return GameState.World!.GetState<T>();
+        }
     }
 }

@@ -65,8 +65,13 @@ namespace Hecatomb8
         }
         public void FinishMenu(MenuChoiceControls menu)
         {
-            //menu.MenuTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());
-            //menu.MenuTop.Insert(1, " ");
+            menu.InfoTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());
+            menu.InfoTop.Insert(1, " ");
+        }
+
+        public ColoredText GetSanityText()
+        {
+            return $"Sanity: {Sanity}/{MaxSanity}";
         }
     }
 }

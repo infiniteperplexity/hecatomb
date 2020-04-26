@@ -6,12 +6,70 @@ using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
+    using static Coord;
     public class Movement : Component
     {
         public bool Walks;
         public bool Flies;
         public bool Swims;
         public bool Phases;
+
+        // this next structure describes the "fallback" directions for movement when a creature tries and fails to move in a certain direction
+        public static Dictionary<Coord, Coord[][]> Fallbacks = new Dictionary<Coord, Coord[][]> {
+            {North, new Coord[][]
+            {
+                new [] {North},
+                new [] {UpNorth, DownNorth},
+                new [] {NorthEast, NorthWest},
+                new [] {UpNorthEast, UpNorthWest, DownNorthEast, DownNorthWest},
+                new [] {Up, Down},
+                new [] {East, West, UpEast, UpWest, DownEast, DownWest},
+                new [] {SouthEast, SouthWest, UpSouthEast, UpSouthWest, DownSouthEast, DownSouthWest},
+                new [] {UpSouth , DownSouth},
+                new [] {South}
+            }},
+            {NorthEast, new Coord[][]
+            {
+                new [] {NorthEast},
+                new [] {UpNorthEast, DownNorthEast},
+                new [] {Up, Down},
+                new [] {North, East, UpNorth, UpEast, DownNorth, DownEast},
+                new [] {UpNorthWest, DownNorthWest, UpSouthEast, UpSouthWest, NorthWest, SouthEast},
+                new [] {West, South, UpWest, DownWest, UpSouth, DownSouth},
+                new [] {UpSouthWest, DownSouthWest},
+                new [] {SouthWest}
+            }},
+            {UpNorth, new Coord[][]
+            {
+                new [] {UpNorth},
+                new [] {UpNorthWest, UpNorthEast},
+                new [] {NorthWest, NorthEast, Up, UpEast, UpWest},
+                new [] {East, West},
+                new [] {DownNorth, DownNorthWest, DownNorthEast, UpSouthWest, UpSouthEast},
+                new [] {DownEast, DownWest, SouthEast, SouthWest, UpSouth, Down, South},
+                new [] {DownSouthEast, DownSouthWest},
+                new [] {DownSouth}
+            }},
+            {Up, new Coord[][]
+            {
+                new [] {Up},
+                new [] {UpNorth, UpSouth, UpEast, UpWest, UpNorthEast, UpNorthWest, UpSouthWest, UpSouthEast},
+                new [] {East, West, North, South, NorthEast, SouthWest, NorthWest, SouthEast},
+                new [] {DownNorth, DownSouth, DownEast, DownWest, DownSouthEast, DownSouthWest, DownNorthEast, DownNorthWest},
+                new [] {Down}
+            }},
+            {UpNorthEast, new Coord[][]
+            {
+                new [] {UpNorthEast},
+                new [] {UpNorth, UpEast, NorthEast},
+                new [] {UpSouthEast, UpNorthWest, Up, North, East},
+                new [] {SouthEast, NorthWest, DownNorthEast},
+                new [] {DownNorth, DownEast, UpSouth, UpWest},
+                new [] {DownSouthEast, DownNorthWest, Down, South, West, UpSouthWest},
+                new [] {DownSouth, DownWest, SouthWest},
+                new [] {DownSouthWest}
+            }}
+        };
 
         public Movement()
         {
@@ -206,9 +264,10 @@ namespace Hecatomb8
 
         public void StepToValidEmptyTile(int x1, int y1, int z1)
         {
+            // this is where you'd fire some kind of event
             Entity.UnboxBriefly()!.PlaceInValidEmptyTile(x1, y1, z1);
-            //Actor a = Entity.GetComponent<Actor>();
-            //a.Spend(16);
+            Actor a = Entity.UnboxBriefly()!.GetComponent<Actor>();
+            a.Spend(16);
             //CachedActor.Spend(16);
         }
 

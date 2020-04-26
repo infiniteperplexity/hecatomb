@@ -33,7 +33,7 @@ namespace Hecatomb8
         public bool Active;
         public List<(string text, Vector2 v, Color color)> DrawableLines;
 
-        public InterfacePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y)
+        public InterfacePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y, int w, int h)
         {
             Dirty = true;
             Font = c.Load<SpriteFont>("PTMono");
@@ -41,14 +41,14 @@ namespace Hecatomb8
             Sprites = sb;
             X0 = x;
             Y0 = y;
+            PixelWidth = w;
+            PixelHeight = h;
             CharHeight = 16;
             CharWidth = 9;
             XPad = 3;
             YPad = 3;
-            PixelHeight = 700;
-            PixelWidth = 280;
-            BG = new Texture2D(Graphics, CharWidth + XPad, CharHeight + YPad);
-            Color[] bgdata = new Color[(CharWidth + XPad) * (CharHeight + YPad)];
+            BG = new Texture2D(g, h, w);
+            Color[] bgdata = new Color[PixelWidth * PixelHeight];
             for (int i = 0; i < bgdata.Length; ++i)
             {
                 bgdata[i] = Color.White;
@@ -60,7 +60,7 @@ namespace Hecatomb8
 
         public virtual void Draw()
         {
-            
+            //Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             foreach (var line in DrawableLines)
             {
                 Sprites.DrawString(Font, line.text, line.v, line.color);
@@ -71,7 +71,7 @@ namespace Hecatomb8
         {
 
         }
-        public void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
+        public virtual void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
         {
             if (!Dirty)
             {

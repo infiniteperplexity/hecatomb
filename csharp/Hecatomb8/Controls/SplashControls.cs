@@ -16,6 +16,8 @@ namespace Hecatomb8
     public class SplashControls : ControlContext
     {
         public Action? MyCallback;
+        public List<ColoredText> SplashText = new List<ColoredText>();
+        public bool IsFullScreen;
         public SplashControls()
         {
             //MenuSelectable = false;
@@ -27,10 +29,6 @@ namespace Hecatomb8
             {
                 MyCallback();
             }
-            else
-            {
-                InterfaceState.ResetControls();
-            }
         }
 
         public override void HandleHover(int x, int y)
@@ -41,10 +39,6 @@ namespace Hecatomb8
             if (MyCallback != null)
             {
                 MyCallback();
-            }
-            else
-            {
-                InterfaceState.ResetControls();
             }
         }
 

@@ -35,8 +35,14 @@ namespace Hecatomb8
 
         public void ChooseFromMenu()
         {
-            //RestoreGame();
-            CheckBuildDate();
+            if (GameState.World != null)
+            {
+                InterfaceState.SetControls(new ConfirmationControls("Really quit the current game?", CheckBuildDate));
+            }
+            else
+            {
+                CheckBuildDate();
+            }
         }
 
         public void CheckBuildDate()
@@ -67,10 +73,11 @@ namespace Hecatomb8
         public void RestoreGame()
         {
             GameManager.GameName = Name!;
-            //Game.SplashPanel.Splash(new List<ColoredText>()
-            //{
-            //    $"Restoring {Name}..."
-            //}, frozen: true);
+            InterfaceState.Splash(new List<ColoredText>() {
+                    $"Restoring {Name}..."
+                },
+                fullScreen: true
+            );
             HecatombGame.DeferUntilAfterDraw(GameManager.RestoreGameProcess);
         }
 

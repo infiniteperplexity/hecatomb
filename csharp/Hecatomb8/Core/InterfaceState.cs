@@ -14,6 +14,12 @@ namespace Hecatomb8
         public static MainPanel MainPanel { get => mainPanel!; set => mainPanel = value; }
         static InformationPanel? infoPanel;
         public static InformationPanel InfoPanel { get => infoPanel!; set => infoPanel = value; }
+        static MenuPanel? menuPanel;
+        public static MenuPanel MenuPanel { get => menuPanel!; set => menuPanel = value; }
+        static FullScreenPanel? foregroundPanel;
+        public static FullScreenPanel ForegroundPanel { get => foregroundPanel!; set => foregroundPanel = value; }
+        static PopupPanel? popupPanel;
+        public static PopupPanel PopupPanel { get => popupPanel!; set => popupPanel = value; }
         static ControlContext? controls;
         public static ControlContext Controls { get => controls!;}
         static ControlContext? ParentControls;
@@ -38,13 +44,38 @@ namespace Hecatomb8
         }
         public static void PreparePanels()
         {
-            mainPanel!.Prepare();
-            infoPanel!.Prepare();
+            if (foregroundPanel!.Active)
+            {
+                foregroundPanel!.Prepare();
+            }
+            else if (popupPanel!.Active)
+            {
+                popupPanel!.Prepare();
+            }
+            else
+            {
+                mainPanel!.Prepare();
+                infoPanel!.Prepare();
+                menuPanel!.Prepare();
+            }
         }
+
         public static void DrawInterfacePanels()
         {
-            mainPanel!.Draw();
-            infoPanel!.Draw();
+            if (foregroundPanel!.Active)
+            {
+                foregroundPanel!.Draw();
+            }
+            else if (popupPanel!.Active)
+            {
+                popupPanel!.Draw();
+            }
+            else
+            {
+                mainPanel!.Draw();
+                infoPanel!.Draw();
+                menuPanel!.Draw();
+            }          
         }
 
         public static void SetControls(ControlContext c)
@@ -91,6 +122,10 @@ namespace Hecatomb8
             if (InterfaceState.InfoPanel != null)
             {
                 InterfaceState.InfoPanel.Dirty = true;
+            }
+            if (InterfaceState.MenuPanel != null)
+            {
+                InterfaceState.MenuPanel.Dirty = true;
             }
         }
         public static void HandlePlayerVisibility()
@@ -156,8 +191,9 @@ namespace Hecatomb8
             //{
             //    Game.Commands.ShowLog();
             //}
-            //else 
-            
+            //else  
+            foregroundPanel!.Active = false;
+            popupPanel!.Active = false;
             if (MovingCamera)
             {
                 controls = CameraControls!;
@@ -174,7 +210,9 @@ namespace Hecatomb8
             ParentControls = Controls;
             Controls.RefreshContent();
             DirtifyMainPanel();
-            DirtifyTextPanels();       
+            DirtifyTextPanels();
+            InterfaceState.MainPanel.PrepareGlyphs();
+            InterfaceState.InfoPanel.Prepare();
             //Game.SplashPanel.Active = false;
             //Game.ForegroundPanel.Active = false;
             //Game.Time.Frozen = false;
@@ -207,6 +245,26 @@ namespace Hecatomb8
         public static void HideCursor()
         {
             Cursor = null;
+        }
+
+        public static void Splash(List<ColoredText> lines, Action? callback = null, bool fullScreen = false, ColoredText? logText = null)
+        {
+            var splash = new SplashControls();
+            splash.SplashText = lines;
+            splash.MyCallback = callback;
+            splash.IsFullScreen = fullScreen;
+            // push a message to the log
+            SetControls(splash);
+            if (fullScreen)
+            {
+                InterfaceState.ForegroundPanel.Active = true;
+                InterfaceState.ForegroundPanel.Dirty = true;
+            }
+            else
+            {
+                InterfaceState.PopupPanel.Active = true;
+                InterfaceState.PopupPanel.Dirty = true;
+            }
         }
     }
 }

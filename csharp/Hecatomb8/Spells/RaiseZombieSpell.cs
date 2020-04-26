@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace Hecatomb8
 {
@@ -37,9 +38,10 @@ namespace Hecatomb8
                 Cast();
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
-                //var zombie = Entity.Spawn<Zombie>();
-                //zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
-                //InterfaceState.Commands!.Act();
+                var zombie = Entity.Spawn<Zombie>();
+                zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                //Debug.WriteLine(zombie.GetComponent<Actor>().EID);
+                InterfaceState.Commands!.Act();
             }
         }
 

@@ -19,6 +19,7 @@ namespace Hecatomb8
 
         public void Act()
         {
+            Player.GetComponent<Actor>().Spend();
             //Turns.PlayerActed = true;
             //Time.Acted();
             GameState.World!.GetState<TurnHandler>().AfterPlayerActed();
@@ -306,7 +307,8 @@ namespace Hecatomb8
                 (Keys.Escape, "Cancel.", InterfaceState.ResetControls),
                 (Keys.S, "Save game.", GameManager.SaveGameCheckFileName),
                 (Keys.A, "Save as...", GameManager.SaveGameAs),
-                (Keys.R, "Restore game.", GameManager.RestoreGameWithConfirmation),
+                //(Keys.R, "Restore game.", GameManager.RestoreGameWithConfirmation),
+                (Keys.R, "Restore game.", GameManager.RestoreGame),
                 (Keys.N, "New game.", GameManager.StartGameWithConfirmation),
                 (Keys.Q, "Quit.", GameManager.BackToTitleWithConfirmation)
             };

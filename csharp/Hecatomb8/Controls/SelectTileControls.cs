@@ -23,7 +23,7 @@ namespace Hecatomb8
 			Selector = i;
 			//keyMap[Keys.Escape] = Back;
 			//keyMap[Keys.Space] = SelectTile;
-			MenuTop = new List<ColoredText>() {
+			InfoTop = new List<ColoredText>() {
 				 "{orange}**Esc: Cancel.**",
 				" ",
 				  "{yellow}Select a tile with keys or mouse."

@@ -129,7 +129,7 @@ namespace Hecatomb8
 
         public override void RefreshContent()
         {
-            MenuTop = new List<ColoredText>() {
+            InfoTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
                 " ",
                 ("{yellow}"+Header),

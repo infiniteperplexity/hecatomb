@@ -16,13 +16,12 @@ namespace Hecatomb8
         Dictionary<char, (Vector2, SpriteFont)> fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
         DrawableGlyph?[,] NextGlyphs;
         public string[] IntroLines;
+        protected Texture2D CharBG;
 
-        public MainPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, Camera cam, int x, int y) : base(g, sb, c, x, y)
+        public MainPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, Camera cam, int x, int y, int w, int h) : base(g, sb, c, x, y, w, h)
         {
             CharWidth = 18;
             CharHeight = 18;
-            PixelHeight = 700;
-            PixelWidth = 994;
             Fonts = new List<SpriteFont>();
             string[] fonts = new string[] { "NotoSans", "NotoSansSymbol", "NotoSansSymbol2", "Cambria" };
             foreach (string s in fonts)
@@ -31,13 +30,13 @@ namespace Hecatomb8
                 Fonts.Add(font);
             }
             fontCache = new Dictionary<char, (Vector2, SpriteFont)>();
-            BG = new Texture2D(Graphics, CharWidth + XPad, CharHeight + YPad);
+            CharBG = new Texture2D(Graphics, CharWidth + XPad, CharHeight + YPad);
             Color[] bgdata = new Color[(CharWidth + XPad) * (CharHeight + YPad)];
             for (int i = 0; i < bgdata.Length; ++i)
             {
                 bgdata[i] = Color.White;
             }
-            BG.SetData(bgdata);
+            CharBG.SetData(bgdata);
             NextGlyphs = new DrawableGlyph?[cam.Width, cam.Height];
             IntroLines = System.IO.File.ReadAllLines(@"Content/ASCII_icon.txt");       
         }
@@ -118,9 +117,14 @@ namespace Hecatomb8
             }
         }
 
-        public void PrepareGlyphs()
+        public void ClearGlyphs()
         {
             var camera = InterfaceState.Camera!;
+            NextGlyphs = new DrawableGlyph?[camera.Width, camera.Height];
+        }
+        public void PrepareGlyphs()
+        {
+            var camera = InterfaceState.Camera!;    
             if (Dirty)
             {
                 for (int i = 0; i < camera.Width; i++)
@@ -155,6 +159,7 @@ namespace Hecatomb8
 
         public override void Draw()
         {
+            //Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             var camera = InterfaceState.Camera!;
             // draw tile backgrounds
             for (int i = 0; i < camera.Width; i++)
@@ -164,7 +169,7 @@ namespace Hecatomb8
                     var glyph = NextGlyphs[i, j];
                     if (glyph != null)
                     {
-                        Sprites.Draw(BG, glyph.bgv, glyph.bg);
+                        Sprites.Draw(CharBG, glyph.bgv, glyph.bg);
                     }
                 }
             }

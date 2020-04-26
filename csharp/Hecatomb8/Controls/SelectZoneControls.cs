@@ -33,7 +33,7 @@ namespace Hecatomb8
 			};
 			Squares = new List<Coord>();
 			Highlights = new List<Particle>();
-			MenuTop = new List<ColoredText>() {
+			InfoTop = new List<ColoredText>() {
 				 "{orange}**Esc: Cancel.**",
 				" ",
 				  "{yellow}Select first corner with keys or mouse."
@@ -104,7 +104,7 @@ namespace Hecatomb8
 		public void SelectFirstCorner(Coord c)
 		{
 			FirstCorner = c;
-			MenuTop[2] = "{yellow}Select second corner with keys or mouse.";
+			InfoTop[2] = "{yellow}Select second corner with keys or mouse.";
 			//			KeyMap[Keys.Escape] = BackToFirstSquare;
 			InterfaceState.DirtifyMainPanel();
 			InterfaceState.DirtifyTextPanels();
@@ -114,7 +114,7 @@ namespace Hecatomb8
 		{
 			// not currently used
 			FirstCorner = default(Coord);
-			MenuTop[2] = "{yellow}Select first corner with keys or mouse.";
+			InfoTop[2] = "{yellow}Select first corner with keys or mouse.";
 			Clean();
 			Highlights.Clear();
 			InterfaceState.DirtifyMainPanel();

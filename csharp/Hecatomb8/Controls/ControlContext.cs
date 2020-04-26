@@ -24,13 +24,21 @@ namespace Hecatomb8
 
 
         public Dictionary<Keys, Action> KeyMap;
-        public List<ColoredText> MenuTop;
+        public List<ColoredText> InfoTop;
+        public List<ColoredText> InfoMiddle;
+        public List<ColoredText> InfoBottom;
         // throttle input between keys
         protected int Throttle = 200;
         // throttle input after switching contexts
         protected int StartThrottle = 750;
         protected bool HasKeyDefault = false;
         public bool AllowsUnpause = true;
+
+
+        public bool HideMenu;
+        public bool MenuSelectable;
+        public string? SelectedMenuCommand;
+        public List<(string command, string text)> MenuCommands;
 
         static ControlContext()
         {
@@ -43,7 +51,16 @@ namespace Hecatomb8
         public ControlContext()
         {
             KeyMap = new Dictionary<Keys, Action>();
-            MenuTop = new List<ColoredText>();
+            InfoTop = new List<ColoredText>();
+            InfoMiddle = new List<ColoredText>();
+            InfoBottom = new List<ColoredText>();
+            MenuCommands = new List<(string command, string text)>();
+            MenuCommands.Add(("Tutorial", "?) Tutorial"));
+            MenuCommands.Add(("Spells", "Z) Spells"));
+            MenuCommands.Add(("Jobs", "J) Jobs"));
+            MenuCommands.Add(("Log", "L) Log"));
+            MenuCommands.Add(("Research", "R) Research"));
+            MenuCommands.Add(("Achievements", "V) Achievements"));
         }
 
         public virtual void RefreshContent()
@@ -269,6 +286,30 @@ namespace Hecatomb8
             }
             Coord tile = (Coord)cursor!;
             ClickTile(tile);
+        }
+
+        public bool IsMenuSelected(string s)
+        {
+            if (SelectedMenuCommand == s)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public virtual bool IsMenuSelectable(string s)
+        {
+            if (MenuSelectable)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

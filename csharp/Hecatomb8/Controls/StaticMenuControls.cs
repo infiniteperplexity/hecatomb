@@ -13,18 +13,18 @@ namespace Hecatomb8
         {
             //AlwaysPaused = true;
             //MenuSelectable = false;
-            MenuTop = new List<ColoredText>();
+            InfoTop = new List<ColoredText>();
             if (header != " ")
             {
-                MenuTop.Add(header);
-                MenuTop.Add(" ");
+                InfoTop.Add(header);
+                InfoTop.Add(" ");
             }
             for (int i = 0; i < choices.Count; i++)
             {
                 // allow for blank lines by setting the third item equal to null
                 if (choices[i].Item3 == null)
                 {
-                    MenuTop.Add(" ");
+                    InfoTop.Add(" ");
                 }
                 else
                 {
@@ -33,7 +33,7 @@ namespace Hecatomb8
                     KeyMap[key] = choices[i].Item3;
                     string s = key.ToString();
                     ct.Text = (s + ") " + ct.Text);
-                    MenuTop.Add(ct);
+                    InfoTop.Add(ct);
                 }
             }
         }

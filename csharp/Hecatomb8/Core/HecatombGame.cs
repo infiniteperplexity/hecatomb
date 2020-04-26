@@ -22,6 +22,7 @@ namespace Hecatomb8
     {
         public static Action? QuitHook;
         public static Action? Deferred;
+
         public static bool DrawnSinceDefer;
         void LoadHecatombContent()
         {
@@ -31,14 +32,15 @@ namespace Hecatomb8
             InterfaceState.Commands = new HecatombCommands();
             InterfaceState.Camera = new Camera(47, 33);
             InterfaceState.Colors = new Colors();
-            InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20);   
-            InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0);
+            InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20, 700, 994);   
+            InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0, 700, 280);
+            InterfaceState.MenuPanel = new MenuPanel(GraphicsDevice, sprites!, Content, 286, 0, 1280, 20);
             InterfaceState.DefaultControls = new DefaultControls();
             InterfaceState.CameraControls = new CameraControls();
+            InterfaceState.ForegroundPanel = new FullScreenPanel(GraphicsDevice, sprites!, Content, 0, 0, 1280, 720);
+            InterfaceState.PopupPanel = new PopupPanel(GraphicsDevice, sprites!, Content, 35 + 276, 150, 16 * 31, 16 * 13);
             GameManager.SetUpTitle();
         }
-       
-
         // *** Default MonoGame stuff ***
         GraphicsDeviceManager graphics;
         SpriteBatch? sprites;
@@ -83,24 +85,29 @@ namespace Hecatomb8
         }
         protected override void Update(GameTime gameTime)
         {
-            if (Deferred != null && DrawnSinceDefer)
-            {
-                Deferred!();
-                Deferred = null;
-            }
+            //if (Deferred != null && DrawnSinceDefer)
+            //{
+            //    Deferred!();
+            //    Deferred = null;
+            //}
             if (GameState.World != null)
             {
                 Time.Update();
             }
             InterfaceState.HandleInput();
             InterfaceState.PreparePanels();
+            if (Deferred != null && DrawnSinceDefer)
+            {
+                Deferred!();
+                Deferred = null;
+            }
             base.Update(gameTime);
         }
         protected override void Draw(GameTime gameTime)
         {
             DrawnSinceDefer = true;
-            sprites!.Begin();
             graphics.GraphicsDevice.Clear(Color.Black);
+            sprites!.Begin();
             InterfaceState.DrawInterfacePanels();
             sprites!.End();
             base.Draw(gameTime);

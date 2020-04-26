@@ -76,7 +76,7 @@ namespace Hecatomb8
 				}
 			};
 			KeyMap[Keys.Escape] = InterfaceState.ResetControls;
-			MenuTop = new List<ColoredText>() {
+			InfoTop = new List<ColoredText>() {
 				"{orange}**Esc: Cancel**.",
 				" ",
 				("{yellow}"+Header)
@@ -85,7 +85,7 @@ namespace Hecatomb8
 			{
 				KeyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
 				ColoredText ct = new ColoredText(alphabet[i] + ") ") + Choices[i].ListOnMenu();
-				MenuTop.Add(ct);
+				InfoTop.Add(ct);
 			}
 			Chooser.FinishMenu(this);
 		}
