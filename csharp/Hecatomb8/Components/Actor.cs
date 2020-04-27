@@ -65,7 +65,7 @@ namespace Hecatomb8
                 Spend();
                 return;
             }
-            var entity = Entity.UnboxBriefly();
+            var entity = Entity.UpdateNullity().UnboxIfNotNull();
             if (entity is null || !entity.Spawned || !entity.Placed)
             {
                 return;
@@ -110,7 +110,7 @@ namespace Hecatomb8
 
         public void Patrol(int x1, int y1, int z1)
         {
-            var (x, y, z) = Entity.UnboxBriefly()!;
+            var (x, y, z) = Entity.UpdateNullity().UnboxIfNotNull()!;
             int d = (int)Tiles.Distance((int)x!, (int)y!, (int)z!, x1, y1, z1);
             if (d >= 5)
             {
@@ -155,7 +155,7 @@ namespace Hecatomb8
         
         public void WalkToward(TileEntity t, bool useLast = false)
         {
-            Movement m = Entity.UnboxBriefly()!.GetComponent<Movement>();
+            Movement m = Entity.UpdateNullity().UnboxIfNotNull()!.GetComponent<Movement>();
             LinkedList<Coord> path = Tiles.FindPath(m, t, useLast: useLast, movable: m.CouldMoveBounded, standable: m.CanStandBounded);
             if (path.Count == 0)
             {
@@ -170,7 +170,7 @@ namespace Hecatomb8
 
         public void WalkToward(int x, int y, int z, bool useLast = false)
         {
-            Movement m = Entity.UnboxBriefly()!.GetComponent<Movement>();
+            Movement m = Entity.UpdateNullity().UnboxIfNotNull()!.GetComponent<Movement>();
             LinkedList<Coord> path = Tiles.FindPath(m, x, y, z, useLast: useLast, movable: m.CouldMoveBounded, standable: m.CanStandBounded);
             if (path.Count == 0)
             {
@@ -280,7 +280,7 @@ namespace Hecatomb8
 
         public void WalkAway(int x1, int y1, int z1)
         {
-            var (x0, y0, z0) = Entity.UnboxBriefly()!;
+            var (x0, y0, z0) = Entity.UpdateNullity().UnboxIfNotNull()!;
             List<Coord> line = Tiles.GetLine((int)x0!, (int)y0!, x1, y1);
             if (line.Count <= 1)
             {
@@ -288,7 +288,7 @@ namespace Hecatomb8
             }
             else
             {
-                Movement m = Entity.UnboxBriefly()!.GetComponent<Movement>();
+                Movement m = Entity.UpdateNullity().UnboxIfNotNull()!.GetComponent<Movement>();
                 //Movement m = CachedMovement;
                 int x = line[0].X - (int)x0!;
                 int y = line[0].Y - (int)y0!;
@@ -307,7 +307,7 @@ namespace Hecatomb8
             int r = GameState.World!.Random.Next(4);
 
             Coord d = Coord.Directions4[r];
-            var (x, y, z) = Entity.UnboxBriefly()!;
+            var (x, y, z) = Entity.UpdateNullity().UnboxIfNotNull()!;
             int x1 = (int)x! + d.X;
             int y1 = (int)y! + d.Y;
             int z1 = (int)z! + d.Z;
@@ -321,15 +321,15 @@ namespace Hecatomb8
 
         public bool TryStepTo(int x1, int y1, int z1)
         {
-            Movement m = Entity.UnboxBriefly()!.GetComponent<Movement>();
+            Movement m = Entity.UpdateNullity().UnboxIfNotNull()!.GetComponent<Movement>();
             // okay what's up here?
-            var (_x, _y, _z) = Entity.UnboxBriefly()!;
+            var (_x, _y, _z) = Entity.UnboxIfNotNull()!;
             int x = x1 - (int)_x!;
             int y = y1 - (int)_y!;
             int z = z1 - (int)_z!;
             if (x == 0 && y == 0 && z == 0)
             {
-                Debug.WriteLine($"{Entity.UnboxBriefly()!.Describe()} tried to step on itself for some reason.");
+                Debug.WriteLine($"{Entity.UnboxIfNotNull()!.Describe()} tried to step on itself for some reason.");
             }
             Coord c = new Coord(x, y, z);
             Creature cr;

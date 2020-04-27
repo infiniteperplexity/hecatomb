@@ -8,6 +8,7 @@ namespace Hecatomb8
     {
         public static bool Visible;
         public static bool Explored;
+        public static bool NoTutorial;
 
 
         static HecatombOptions()
@@ -16,6 +17,7 @@ namespace Hecatomb8
             //Visible = true;
             Explored = false;
             //Explored = true;
+            NoTutorial = false;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Hecatomb8
     {
         public int? EID;
         // I have named this "UnboxBriefly" because if you only ever use it immediately after unboxing, you are protected from errors caused by despawning
-        public T? UnboxBriefly()
+        public T? UnboxIfNotNull()
         {
             if (EID == null)
             {
@@ -25,13 +25,24 @@ namespace Hecatomb8
             int eid = (int)EID;
             if (!GameState.World!.Entities.ContainsKey(eid))
             {
-                // do I actually ever rely on this for cleanup? if it works it's potentially very useful
-                EID = null;
                 return null;
             }
             return (T)GameState.World!.Entities[eid];
         }
 
+        public EntityField<T> UpdateNullity()
+        {
+            if (EID is null)
+            {
+                return this;
+            }
+            int eid = (int)EID;
+            if (!GameState.World!.Entities.ContainsKey(eid))
+            {
+                EID = null;
+            }
+            return this;
+        }
         public static implicit operator EntityField<T>(T t)
         {
             return new EntityField<T>() { EID = t.EID };

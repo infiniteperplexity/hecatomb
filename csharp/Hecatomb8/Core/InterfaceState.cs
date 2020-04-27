@@ -130,6 +130,10 @@ namespace Hecatomb8
         }
         public static void HandlePlayerVisibility()
         {
+            if (GameState.World is null || GameState.World.Player is null || !GameState.World.Player.Placed)
+            {
+                return;
+            }
             //if (!Game.ForegroundPanel.Active)
             //{
             //    InterfacePanel.DirtifyUsualPanels();
@@ -138,18 +142,19 @@ namespace Hecatomb8
             //}
             //TheFixer.CheckStates();
             //Game.World.ValidateLighting();
-            //if (!(Controls is CameraControls))
-            //{
-            //    if (ControlContext.Selection is Creature)
-            //    {
-            //        Creature c = (Creature)ControlContext.Selection;
-            //        Game.Camera.Center(c.X, c.Y, c.Z);
-            //    }
-            //    else
-            //    {
-            //        Game.Camera.Center(Player.X, Player.Y, Player.Z);
-            //    }
-            //}
+            if (!(Controls is CameraControls))
+            {
+                if (Controls.SelectedEntity is Creature && Controls.SelectedEntity.Placed)
+                {
+                    Creature c = (Creature)Controls.SelectedEntity;
+                    Camera!.Center((int)c.X!, (int)c.Y!, (int)c.Z!);
+                }
+                else
+                {
+                    var (x, y, z) = GameState.World!.Player!;
+                    Camera!.Center((int)x!, (int)y!, (int)z!);
+                }
+            }
             PlayerVisible = GameState.World!.Player!.GetComponent<Senses>().GetFOV();
             //foreach (Creature c in GetState<TaskHandler>().Minions)
             //{
@@ -264,6 +269,16 @@ namespace Hecatomb8
             {
                 InterfaceState.PopupPanel.Active = true;
                 InterfaceState.PopupPanel.Dirty = true;
+            }
+        }
+
+        public static void CenterCameraOnSelection()
+        {
+            if (Controls.SelectedEntity != null && Controls.SelectedEntity.Placed)
+            {
+                var (x, y, z) = Controls.SelectedEntity;
+                Camera!.Center((int)x!, (int)y!, (int)z!);
+                Cursor = new Coord((int)x!, (int)y!, (int)z!);
             }
         }
     }

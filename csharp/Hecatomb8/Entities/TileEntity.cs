@@ -44,7 +44,7 @@ namespace Hecatomb8
             z = Z;
         }
 
-        public virtual string Describe()
+        public virtual string Describe(bool capitalized = false)
         {
             return this.GetType().Name;
         }

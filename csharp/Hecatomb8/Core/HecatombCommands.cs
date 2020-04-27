@@ -81,15 +81,12 @@ namespace Hecatomb8
             //CommandLogger.LogCommand(command: "MoveHorizontal", x: dx, y: dy);
             Creature p = GameState.World!.Player!;
             var m = p.GetComponent<Movement>();
-            //var m = p.TryComponent<Movement>();
-            //if (m == var p = GameState.World!.Player;
             if (p is null || !p.Placed)
             {
                 return;
             }
             // LogSomeKindOfCommand
             var (x, y, z) = ((int)p.X!, (int)p.Y!, (int)p.Z!);
-            // blocking movement off the map will be handled some time in the future
             // so will blocking other kinds of illegal movement
             Coord[] moves = new Coord[]
             {
@@ -101,7 +98,8 @@ namespace Hecatomb8
             {
                 if (m.CanPassBounded(c.X, c.Y, c.Z))
                 {
-                    p.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                    Publish(new TutorialEvent() { Action = (c.Z == p.Z) ? "Move" : "Climb" });
+                    m.StepToValidEmptyTile(c.X, c.Y, c.Z);
                     Act();
                     return;
                 }
@@ -232,7 +230,7 @@ namespace Hecatomb8
             }
             var camera = InterfaceState.Camera!;
             camera.Z = Math.Max(Math.Min(camera.Z + dz, GameState.World!.Depth - 2), 1);
-            //ControlContext.CenterCursor();
+            InterfaceState.CenterCursor();
             InterfaceState.DirtifyMainPanel();
             InterfaceState.DirtifyTextPanels();
         }
@@ -248,7 +246,7 @@ namespace Hecatomb8
             int yhalf = c.Height / 2;
             c.XOffset = Math.Min(Math.Max(1, c.XOffset + dx), GameState.World!.Width - c.Width - 1);
             c.YOffset = Math.Min(Math.Max(1, c.YOffset + dy), GameState.World!.Height - c.Height - 1);
-            //ControlContext.CenterCursor();
+            InterfaceState.CenterCursor();
             InterfaceState.DirtifyMainPanel();
             InterfaceState.DirtifyTextPanels();
         }
@@ -281,7 +279,7 @@ namespace Hecatomb8
 
         public void ChooseTask()
         {
-            //Game.World.Events.Publish(new TutorialEvent() { Action = "ShowJobs" });
+            Publish(new TutorialEvent() { Action = "ShowJobs" });
             var tasks = GameState.World!.GetState<TaskHandler>();
             //tasks.PurgeCache();
             InterfaceState.SetControls(new MenuChoiceControls(tasks));
@@ -292,7 +290,7 @@ namespace Hecatomb8
 
         public void ChooseSpell()
         {
-            //Game.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
+            Publish(new TutorialEvent() { Action = "ShowSpells" });
             var spells = Player.GetComponent<SpellCaster>();
             InterfaceState.SetControls(new MenuChoiceControls(spells));
             //Game.Controls.MenuSelectable = false;
@@ -317,6 +315,50 @@ namespace Hecatomb8
             //    commands.Add((Keys.C, "Reconstruct game from log.", ReconstructGameCommand));
             //}
             InterfaceState.SetControls(new StaticMenuControls(" ", commands));
+        }
+
+        public void ShowStructures()
+        {
+            //var structures = Structure.ListStructures();
+            //if (structures.Count > 0)
+            //{
+                //ControlContext.Set(new MenuCameraControls(structures[0]));
+                //Game.Camera.CenterOnSelection();
+                //ControlContext.Set(new MenuChoiceControls(structures[0]));
+            //}
+        }
+
+        public void ShowMinions()
+        {
+            InterfaceState.SetControls(new MenuChoiceControls(Player));
+            //var minions = GetState<TaskHandler>().Minions;
+            //if (minions.Count > 0)
+            //{
+            //    ControlContext.Set(new MenuCameraControls((Creature)minions[0]));
+            //    Game.Camera.CenterOnSelection();
+            //    //ControlContext.Set(new MenuChoiceControls((Creature)minions[0]));
+            //}
+        }
+
+        public void ShowLog()
+        {
+            GameState.World!.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
+            InterfaceState.SetControls(new MenuChoiceControls(GetState<GameLog>()));
+            //Game.Controls.MenuSelectable = false;
+            //Game.Controls.SelectedMenuCommand = "Log";
+            GetState<GameLog>().MarkAsRead();
+            InterfaceState.DirtifyTextPanels();
+        }
+
+        public void ToggleTutorial()
+        {
+            var tutorial = GetState<TutorialHandler>();
+            if (tutorial.Visible)
+            {
+                Publish(new TutorialEvent() { Action = "HideTutorial" });
+            }
+            tutorial.Visible = !tutorial.Visible;
+            InterfaceState.DirtifyTextPanels();
         }
     }
 }

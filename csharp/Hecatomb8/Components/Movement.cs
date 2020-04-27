@@ -157,7 +157,7 @@ namespace Hecatomb8
             //        return false;
             //    }
             //}
-            var e = Entity.UnboxBriefly();
+            var e = Entity.UpdateNullity().UnboxIfNotNull();
             int dx = x1 - (int)e!.X!;
             int dy = y1 - (int)e!.Y!;
             int dz = z1 - (int)e!.Z!;
@@ -226,7 +226,7 @@ namespace Hecatomb8
 
         public bool CanMoveBounded(int x1, int y1, int z1)
         {
-            var e = Entity.UnboxBriefly()!;
+            var e = Entity.UpdateNullity().UnboxIfNotNull()!;
             return CouldMoveBounded((int)e.X!, (int)e.Y!, (int)e.Z!, x1, y1, z1);
         }
 
@@ -265,8 +265,8 @@ namespace Hecatomb8
         public void StepToValidEmptyTile(int x1, int y1, int z1)
         {
             // this is where you'd fire some kind of event
-            Entity.UnboxBriefly()!.PlaceInValidEmptyTile(x1, y1, z1);
-            Actor a = Entity.UnboxBriefly()!.GetComponent<Actor>();
+            Entity.UpdateNullity().UnboxIfNotNull()!.PlaceInValidEmptyTile(x1, y1, z1);
+            Actor a = Entity.UpdateNullity().UnboxIfNotNull()!.GetComponent<Actor>();
             a.Spend(16);
             //CachedActor.Spend(16);
         }
@@ -297,7 +297,7 @@ namespace Hecatomb8
 
         public bool CanTouchBounded(int x1, int y1, int z1)
         {
-            var (x, y, z) = Entity.UnboxBriefly()!;
+            var (x, y, z) = Entity.UpdateNullity().UnboxIfNotNull()!;
             return CouldTouchBounded((int)x!, (int)y!, (int)z!, x1, y1, z1);
         }
 

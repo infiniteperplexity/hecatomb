@@ -14,48 +14,48 @@ namespace Hecatomb8
 
     class TaskHandler : StateHandler, IChoiceMenu
     {
-        //public List<TypedEntityField<Creature>> Minions;
+        public List<EntityField<Creature>> Minions;
         [JsonIgnore] public Type[] Tasks;
 
         public TaskHandler() : base()
         {
-            //Minions = new List<TypedEntityField<Creature>>();
+            Minions = new List<EntityField<Creature>>();
             Tasks = new[] {
                 typeof(DigTask),
                 typeof(UndesignateTask)
             };
-            //AddListener<DestroyEvent>(OnDestroy);
-            //AddListener<DespawnEvent>(OnDespawn);
+            AddListener<DestroyEvent>(OnDestroy);
+            AddListener<DespawnEvent>(OnDespawn);
         }
 
-        //public GameEvent OnDestroy(GameEvent ge)
-        //{
-        //    DestroyEvent dse = (DestroyEvent)ge;
-        //    // I'm not sure if lists of TypedEntityFields can use Contains...
-        //    foreach (var m in Minions)
-        //    {
-        //        if (m.Unbox() == dse.Entity)
-        //        {
-        //            if (dse.Cause == "Decay")
-        //            {
-        //                Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has rotted away, leaving naught but bones.");
-        //            }
-        //            else
-        //            {
-        //                Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has perished!");
-        //            }
-        //        }
-        //    }
-        //    return ge;
-        //}
+        public GameEvent OnDestroy(GameEvent ge)
+        {
+            DestroyEvent dse = (DestroyEvent)ge;
+            // I'm not sure if lists of TypedEntityFields can use Contains...
+            foreach (var m in Minions)
+            {
+                //if (m.Unbox() == dse.Entity)
+                //{
+                //    if (dse.Cause == "Decay")
+                //    {
+                //        Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has rotted away, leaving naught but bones.");
+                //    }
+                //    else
+                //    {
+                //        Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has perished!");
+                //    }
+                //}
+            }
+            return ge;
+        }
 
-        //public GameEvent OnDespawn(GameEvent ge)
-        //{
-        //    // I could potentially make these lists a special thing that always listens?
-        //    DespawnEvent dse = (DespawnEvent)ge;
-        //    Minions = Minions.Where((TypedEntityField<Creature> c) => c.Entity != dse.Entity).ToList();
-        //    return ge;
-        //}
+        public GameEvent OnDespawn(GameEvent ge)
+        {
+            // I could potentially make these lists a special thing that always listens?
+            DespawnEvent dse = (DespawnEvent)ge;
+            //Minions = Minions.Where((TypedEntityField<Creature> c) => c.Entity != dse.Entity).ToList();
+            return ge;
+        }
 
         // this causes some issues because we want to cache only until the interface changes
         //protected List<IMenuListable>? cachedChoices;

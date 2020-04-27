@@ -11,6 +11,7 @@ namespace Hecatomb8
 	{
 		void ChooseFromMenu();
 		ColoredText ListOnMenu();
+
 	}
 
 	public interface IChoiceMenu
@@ -19,7 +20,7 @@ namespace Hecatomb8
 		void FinishMenu(MenuChoiceControls menu);
 	}
 
-	public class MenuChoiceControls : ControlContext
+	public class MenuChoiceControls : AbstractCameraControls
 	{
 		public string Header;
 		public IChoiceMenu Chooser;
@@ -52,6 +53,7 @@ namespace Hecatomb8
 			Keys.Y,
 			Keys.Z
 		};
+		
 
 		public static string alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -61,6 +63,14 @@ namespace Hecatomb8
 			Choices = new List<IMenuListable>();
 			AllowsUnpause = false;
 			Chooser = chooser;
+			KeyMap.Remove(Keys.W);
+			KeyMap.Remove(Keys.A);
+			KeyMap.Remove(Keys.S);
+			KeyMap.Remove(Keys.D);
+			KeyMap.Remove(Keys.Q);
+			KeyMap.Remove(Keys.X);
+			KeyMap.Remove(Keys.E);
+			KeyMap.Remove(Keys.C);
 			RefreshContent();
 		}
 
@@ -68,13 +78,7 @@ namespace Hecatomb8
 		{
 			Chooser.BuildMenu(this);
 			var Commands = InterfaceState.Commands!;
-			KeyMap[Keys.Space] = () =>
-			{
-				if (GameState.World != null)
-				{
-					Commands.Wait();
-				}
-			};
+			KeyMap[Keys.Space] = SelectOrWait;
 			KeyMap[Keys.Escape] = InterfaceState.ResetControls;
 			InfoTop = new List<ColoredText>() {
 				"{orange}**Esc: Cancel**.",
@@ -90,6 +94,26 @@ namespace Hecatomb8
 			Chooser.FinishMenu(this);
 		}
 
-
+		public void SelectOrWait()
+		{
+			//if (Game.ReconstructMode)
+			//{
+			//	Game.World.GetState<CommandLogger>().StepForward();
+			//}
+			var commands = InterfaceState.Commands!;
+			if (ControlDown)
+			{
+				commands.Wait();
+			}
+			else
+			{
+				SelectTile();
+				// unless we selected something, wait anyway
+				if (InterfaceState.Controls == this)
+				{
+					commands.Wait();
+				}
+			}
+		}
 	}
 }

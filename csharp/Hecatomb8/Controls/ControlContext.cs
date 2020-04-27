@@ -34,6 +34,7 @@ namespace Hecatomb8
         protected bool HasKeyDefault = false;
         public bool AllowsUnpause = true;
 
+        public TileEntity? SelectedEntity;
 
         public bool HideMenu;
         public bool MenuSelectable;
@@ -219,7 +220,8 @@ namespace Hecatomb8
 
         public virtual void CameraHover()
         {
-           
+            var m = Mouse.GetState();
+            HandleHover(m.X, m.Y);
         }
 
         public virtual void ClickTile(Coord c)
@@ -234,8 +236,7 @@ namespace Hecatomb8
             // this functionality should probably be defined in HecatombCommands
             if (cr != null && visible)
             {
-                //ControlContext.Set(new MenuChoiceControls(cr));
-                //ControlContext.Set(new MenuCameraControls(cr));
+                InterfaceState.SetControls(new MenuChoiceControls(cr));
                 //Game.Camera.CenterOnSelection();
                 //return;
             }
@@ -259,13 +260,15 @@ namespace Hecatomb8
             if (GameState.World != null)
             {
                 
+                if (InterfaceState.Cursor != null)
+                {
+                    InterfaceState.DirtifyTile((Coord)InterfaceState.Cursor);
+                }
                 if (InterfaceState.Cursor != c)
                 {
                     InterfaceState.Cursor = c;
-                    InterfaceState.DirtifyMainPanel();
+                    InterfaceState.DirtifyTile(c);
                 }
-                //Cursor.Place(c.X, c.Y, c.Z);
-                //Game.MainPanel.DirtifyTile(c);
                 //Game.World.ShowTileDetails(c);
             }
         }

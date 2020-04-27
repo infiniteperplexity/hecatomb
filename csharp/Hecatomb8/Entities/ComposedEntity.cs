@@ -32,7 +32,8 @@ namespace Hecatomb8
             {
                 throw new InvalidOperationException($"{this} has no component of type {t}");
             }
-            return (T)_components![t].UnboxBriefly()!;
+            // let's not update nullity here; this could easily get called by the interface
+            return (T)_components![t].UnboxIfNotNull()!;
         }
 
         public bool HasComponent<T>() where T : Component

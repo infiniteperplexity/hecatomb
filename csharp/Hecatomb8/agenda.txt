@@ -60,3 +60,6 @@ Alright, what's next?  Let's toss some ideas out there...
     - Restoring content
     - Structures
 - Maybe tonight let's try to hunt down the particles issue
+
+4/26/2020
+- Okay, so we've got a good portion of the interface stuff done.  Ummm....MessageHandler next?

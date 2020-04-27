@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace Hecatomb8
 {
-    // Note that if I update this functionality, I should consider updating MenuCameraControls as well
     public abstract class AbstractCameraControls : ControlContext
     {
         public static int Z;
@@ -41,13 +40,15 @@ namespace Hecatomb8
             KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
             KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
         }
+
         public override void CameraHover()
         {
-            //if (Cursor.X > -1)
-            //{
-            //    Coord tile = new Coord(Cursor.X, Cursor.Y, Game.Camera.Z);
-            //    OnTileHover(tile);
-            //}
+            var c = InterfaceState.Cursor;
+            if (c != null)
+            {
+                Coord tile = new Coord(((Coord)c)!.X, ((Coord)c)!.Y, InterfaceState.Camera!.Z);
+                HoverTile(tile);
+            }
         }
     }
 }

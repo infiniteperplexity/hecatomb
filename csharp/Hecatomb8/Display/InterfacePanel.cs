@@ -47,7 +47,7 @@ namespace Hecatomb8
             CharWidth = 9;
             XPad = 3;
             YPad = 3;
-            BG = new Texture2D(g, h, w);
+            BG = new Texture2D(g, w, h);
             Color[] bgdata = new Color[PixelWidth * PixelHeight];
             for (int i = 0; i < bgdata.Length; ++i)
             {
@@ -91,8 +91,6 @@ namespace Hecatomb8
             {
                 text = lines[i].Text;
                 colors = lines[i].Colors;
-                // advance by one line for every new line of input
-                //y++;
                 // return to left margin
                 x = 0;
                 // initialize to white
@@ -107,7 +105,7 @@ namespace Hecatomb8
                         {
                             if (text.Substring(j + k, 1) != " ")
                             {
-                                // I have no idea if this spacing is even right
+                                // this spacing seems to generally work but I wouldn't be surprised if it doesn't always
                                 if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 13))
                                 {
                                     j += k;
@@ -124,7 +122,6 @@ namespace Hecatomb8
                     if ((y + 1) * CharHeight < PixelHeight)
                     {
                         v = new Vector2(leftMargin + X0 + CharWidth * LeftMargin + x * CharWidth, topMargin + TopMargin * CharHeight + Y0 + y * CharHeight);
-                        //Sprites.DrawString(Font, text.Substring(j, 1), v, InterfaceState.Colors![fg]);
                         DrawableLines.Add((text.Substring(j, 1), v, InterfaceState.Colors![fg]));
                     }
                     x += 1;

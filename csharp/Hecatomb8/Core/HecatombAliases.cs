@@ -183,7 +183,20 @@ namespace Hecatomb8
         //    }
         //}
 
-        // spawning methods
+        public static void Publish(GameEvent ge)
+        {
+            GameState.World!.Events.Publish(ge);
+        }
+
+        public static void Subscribe(Type t, Entity g, Func<GameEvent, GameEvent> f, float priority = 0)
+        {
+            GameState.World!.Events.Subscribe(t, g, f, priority: priority);
+        }
+
+        public static void PushMessage(ColoredText ct)
+        {
+            GameState.World!.GetState<GameLog>().PushMessage(ct);
+        }
 
         public static T GetState<T>() where T : StateHandler, new()
         {

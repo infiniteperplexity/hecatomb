@@ -11,7 +11,7 @@ namespace Hecatomb8
     {
         public DefaultControls()
         {
-            var commands = InterfaceState.Commands;
+            var commands = InterfaceState.Commands!;
             KeyMap = new Dictionary<Keys, Action>()
             {
                 [Keys.Tab] = commands!.ToggleMovingCamera,
@@ -26,6 +26,10 @@ namespace Hecatomb8
                 [Keys.Space] = commands!.Wait,
                 [Keys.J] = commands!.ChooseTask,
                 [Keys.Z] = commands!.ChooseSpell,
+                [Keys.U] = commands!.ShowStructures,
+                [Keys.M] = commands!.ShowMinions,
+                [Keys.L] = commands!.ShowLog,
+                [Keys.OemQuestion] = commands.ToggleTutorial,
                 [Keys.Escape] = commands!.SystemMenuCommand,
                 [Keys.T] = HecatombConverter.Test
         };

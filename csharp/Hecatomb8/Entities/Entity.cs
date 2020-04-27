@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
-    
+    using static HecatombAliases;
     public class Entity
     {
         public static int MaxEID = -1;
@@ -40,6 +40,10 @@ namespace Hecatomb8
                 var ce = (ComposedEntity) (Object) t;
                 ce.SpawnComponents();
             }
+            foreach (Type type in t.Listeners.Keys)
+            {
+                Subscribe(type, t, t.Listeners[type]);
+            }
             return t;
         }
 
@@ -54,6 +58,10 @@ namespace Hecatomb8
             {
                 var ce = (ComposedEntity)(Object)t;
                 ce.SpawnComponents();
+            }
+            foreach (Type type in t.Listeners.Keys)
+            {
+                Subscribe(type, t, t.Listeners[type]);
             }
             return t;
         }
@@ -76,6 +84,10 @@ namespace Hecatomb8
                 var ce = (ComposedEntity)(Object)t;
                 ce.SpawnComponents();
             }
+            foreach (Type lt in t.Listeners.Keys)
+            {
+                Subscribe(lt, t, t.Listeners[lt]);
+            }
             return t;
         }
 
@@ -93,6 +105,11 @@ namespace Hecatomb8
                     GameState.World!.Entities.Remove((int)EID);
                 }
             }
+        }
+
+        public void AddListener<T>(Func<GameEvent, GameEvent> f)
+        {
+            Listeners[typeof(T)] = f;
         }
     }
 }

@@ -17,25 +17,34 @@ namespace Hecatomb8
         static HecatombConverter()
         {
             var settings = new JsonSerializerSettings();
-            settings.Converters.Add(new FlyWeightConverter());
+            settings.Converters.Add(new SubConverter());
             SubSerializer = JsonSerializer.Create(settings);
         }
         public static void Test()
         {
-            //var settings = new JsonSerializerSettings();
-            //settings.Converters.Add(new HecatombConverter());
-            //JObject j = JObject.FromObject(Player!);
-            //Debug.WriteLine(j);
-            //var c = JsonConvert.DeserializeObject<Entity>(j.ToString(), settings)!;
-            //Debug.WriteLine(c);
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new HecatombConverter());
+            var j = JsonConvert.SerializeObject(Player.GetComponent<SpellCaster>(), settings);
+            Debug.WriteLine(j);
+            var c = JsonConvert.DeserializeObject<SpellCaster>(j.ToString(), settings)!;
             //var p = JsonConvert.DeserializeObject<Necromancer>(j.ToString(), settings)!;
             //Debug.WriteLine(p.GetComponent<SpellCaster>().EID);
-            //Debug.WriteLine(p.coverTest);
-            //Debug.WriteLine(Object.ReferenceEquals(p.coverTest, Cover.Water));
         }
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            JObject.FromObject(value!).WriteTo(writer);
+            if (value is List<Type>)
+            {
+                var list = new List<string>();
+                foreach (Type t in (value as List<Type>)!)
+                {
+                    list.Add(t.Name);
+                }
+                serializer.Serialize(writer, list);
+            }
+            else
+            {
+                JObject.FromObject(value!, SubSerializer).WriteTo(writer);
+            }
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
@@ -56,6 +65,17 @@ namespace Hecatomb8
                 object ent = SubSerializer.Deserialize(new JTokenReader(job), t)!;
                 return ent;
             }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                List<string> slist = JsonConvert.DeserializeObject<List<string>>(job.ToString());
+                var tlist = new List<Type>();
+                foreach (string s in slist)
+                {
+                    tlist.Add(Type.GetType("Hecatomb8." + s)!);
+                }
+                return tlist;
+            }
             else
             {
                 return existingValue!;
@@ -72,19 +92,36 @@ namespace Hecatomb8
             {
                 return true;
             }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
             return false;
         }
     }
 
-    public class FlyWeightConverter : JsonConverter
+    public class SubConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            JObject.FromObject(value!).WriteTo(writer);
+            if (value is List<Type>)
+            {
+                var list = new List<string>();
+                foreach (Type t in (value as List<Type>)!)
+                {
+                    list.Add(t.Name);
+                }
+                serializer.Serialize(writer, list);
+            }
+            else
+            {
+                JObject.FromObject(value!).WriteTo(writer);
+            }
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
+
             if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
             {
                 JObject job = JObject.Load(reader);
@@ -92,6 +129,17 @@ namespace Hecatomb8
                 var method = objectType.GetMethod("GetByNumber")!;
                 var fw = method.Invoke(null, new object[] { fid })!;
                 return fw;
+            }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
+            {
+                JToken job = JToken.Load(reader);
+                List<string> slist = JsonConvert.DeserializeObject<List<string>>(job.ToString());
+                var tlist = new List<Type>();
+                foreach (string s in slist)
+                {
+                    tlist.Add(Type.GetType("Hecatomb8." + s)!);
+                }
+                return tlist;
             }
             else
             {
@@ -102,6 +150,10 @@ namespace Hecatomb8
         public override bool CanConvert(Type objectType)
         {
             if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
             {
                 return true;
             }

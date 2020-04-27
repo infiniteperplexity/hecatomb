@@ -17,7 +17,7 @@ namespace Hecatomb8
         public HashSet<Coord> GetFOV()
         {
             resetVisible();
-            var (x, y, z) = Entity.UnboxBriefly()!;
+            var (x, y, z) = Entity.UpdateNullity().UnboxIfNotNull()!;
             storedZ = (int)z!;
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting((int)x!, (int)y!, Range, cannotSeeThrough, addToVisible);
             foreach (Coord c in Visible.ToList())
