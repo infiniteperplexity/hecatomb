@@ -10,8 +10,10 @@ namespace Hecatomb8
     using static HecatombAliases;
     public class Creature : ComposedEntity, IChoiceMenu
     {
+        Species Species;
         protected Creature()
         {
+            Species = Species.NoSpecies;
             Components.Add(new Movement());
             Components.Add(new Actor());
             Components.Add(new Senses());

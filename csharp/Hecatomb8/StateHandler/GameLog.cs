@@ -83,14 +83,6 @@ namespace Hecatomb8
             menu.KeyMap[Keys.PageUp] = ScrollUp;
             menu.KeyMap[Keys.PageDown] = ScrollDown;
             // add these back in, having removed them in the constructor
-            menu.KeyMap[Keys.W] = Commands.MoveCameraNorth;
-            menu.KeyMap[Keys.S] = Commands.MoveCameraSouth;
-            menu.KeyMap[Keys.A] = Commands.MoveCameraWest;
-            menu.KeyMap[Keys.D] = Commands.MoveCameraEast;
-            menu.KeyMap[Keys.Q] = Commands.MoveCameraNorthWest;
-            menu.KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
-            menu.KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
-            menu.KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
             menu.KeyMap[Keys.Z] = Commands.ChooseSpell;
             menu.KeyMap[Keys.J] = Commands.ChooseTask;
             int MaxVisible = Math.Min(MessageHistory.Count, 4);

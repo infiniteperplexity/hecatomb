@@ -86,12 +86,24 @@ namespace Hecatomb8
 				" ",
 				("{yellow}"+Header)
 			};
+			if (Choices.Count == 0)
+			{
+				KeyMap[Keys.W] = Commands.MoveCameraNorth;
+				KeyMap[Keys.S] = Commands.MoveCameraSouth;
+				KeyMap[Keys.A] = Commands.MoveCameraWest;
+				KeyMap[Keys.D] = Commands.MoveCameraEast;
+				KeyMap[Keys.Q] = Commands.MoveCameraNorthWest;
+				KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
+				KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
+				KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
+			}
 			for (int i = 0; i < Choices.Count; i++)
 			{
 				KeyMap[Alphabet[i]] = Choices[i].ChooseFromMenu;
 				ColoredText ct = new ColoredText(alphabet[i] + ") ") + Choices[i].ListOnMenu();
 				InfoTop.Add(ct);
 			}
+
 			Chooser.FinishMenu(this);
 		}
 

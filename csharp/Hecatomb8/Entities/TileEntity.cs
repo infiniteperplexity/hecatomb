@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     // A TileEntity is any entity, like a creature, item, or task, that resides in one tile.  Generally you can only have one entity of each type in a tile.
     public abstract class TileEntity : Entity
     {
@@ -56,6 +57,13 @@ namespace Hecatomb8
                 Remove();
             }
             base.Despawn();
+        }
+
+        public virtual void Destroy(string? cause = null)
+        {
+            Publish(new DestroyEvent() { Entity = this, Cause = cause });
+            Despawn();
+
         }
     }
 

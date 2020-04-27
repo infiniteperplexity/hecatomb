@@ -76,14 +76,6 @@ namespace Hecatomb8
 
         public void BuildMenu(MenuChoiceControls menu)
         {
-            menu.KeyMap[Keys.W] = Commands.MoveCameraNorth;
-            menu.KeyMap[Keys.S] = Commands.MoveCameraSouth;
-            menu.KeyMap[Keys.A] = Commands.MoveCameraWest;
-            menu.KeyMap[Keys.D] = Commands.MoveCameraEast;
-            menu.KeyMap[Keys.Q] = Commands.MoveCameraNorthWest;
-            menu.KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
-            menu.KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
-            menu.KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
             menu.KeyMap[Keys.Z] = Commands.ChooseSpell;
             menu.KeyMap[Keys.J] = Commands.ChooseTask;
         }
@@ -130,6 +122,8 @@ namespace Hecatomb8
             [JsonIgnore] public Func<AchievementEvent, bool> Condition;
             public Achievement()
             {
+                Name = "Default";
+                Description = "Should be overwritten.";
                 Condition = Nothing;
             }
             public bool Nothing(AchievementEvent a)

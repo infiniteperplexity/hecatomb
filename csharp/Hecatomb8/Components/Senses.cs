@@ -53,7 +53,38 @@ namespace Hecatomb8
             Visible.Add(new Coord(x, y, storedZ));
         }
 
-
+        public static void Announce(int x, int y, int z, ColoredText? sight = null, ColoredText? sound = null, int soundRange = 12)
+        {
+            Coord c = new Coord(x, y, z);
+            if (InterfaceState.PlayerVisible.Contains(c) && sight != null)
+            {
+                PushMessage(sight);
+            }
+            else if (sound != null)
+            {
+                if (Tiles.Distance(x, y, z, (int)Player.X!, (int)Player.Y!, (int)Player.Z!)<=soundRange)
+                {
+                    PushMessage(sound);
+                    return;
+                }
+                foreach (var ef in GetState<TaskHandler>().Minions)
+                {
+                    Creature? maybe = ef.UpdateNullity().UnboxIfNotNull();
+                    if (maybe != null)
+                    {
+                        Creature cr = (Creature)maybe;
+                        if (Tiles.Distance(x, y, z, (int)cr.X!, (int)cr.Y!, (int)cr.Z!) <= soundRange)
+                        {
+                            if (Tiles.Distance(x, y, z, (int)Player.X!, (int)Player.Y!, (int)Player.Z!) <= soundRange)
+                            {
+                                PushMessage(sound);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // some callback-heavy code to find nearby, visible things
         //private Func<int, int, int, bool> storedCallback;

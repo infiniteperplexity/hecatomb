@@ -45,7 +45,11 @@ namespace Hecatomb8
             var world = new World(256, 256, 64);
             GameState.World = world;
             var ws = new BuildWorldStrategy();
-            ws.Generate();
+            bool succeeded = false;
+            while (!succeeded)
+            {
+                succeeded = ws.Generate();
+            }
             InterfaceState.Splash(new List<ColoredText>() {
                 "{yellow}Welcome to Hecatomb!",
                 " ",
