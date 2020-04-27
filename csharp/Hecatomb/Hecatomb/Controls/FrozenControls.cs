@@ -22,7 +22,7 @@ namespace Hecatomb
     {
         public FrozenControls()
         {
-            MenuSelectable = false;
+            MenuCommandsSelectable = false;
         }
         public override void HandleClick(int x, int y)
         {

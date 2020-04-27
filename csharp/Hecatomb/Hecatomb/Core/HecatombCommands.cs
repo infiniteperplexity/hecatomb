@@ -235,7 +235,7 @@ namespace Hecatomb
             var tasks = GetState<TaskHandler>();
             tasks.PurgeCache();
             Game.Controls = new MenuChoiceControls(tasks);
-            Game.Controls.MenuSelectable = false;
+            Game.Controls.MenuCommandsSelectable = false;
             Game.Controls.SelectedMenuCommand = "Jobs";
             InterfacePanel.DirtifySidePanels();
         }
@@ -244,7 +244,7 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowSpells" });
             Game.Controls = new MenuChoiceControls(Game.World.Player.GetComponent<SpellCaster>());
-            Game.Controls.MenuSelectable = false;
+            Game.Controls.MenuCommandsSelectable = false;
             Game.Controls.SelectedMenuCommand = "Spells";
             InterfacePanel.DirtifySidePanels();
         }
@@ -253,7 +253,7 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowAchievements" });
             Game.Controls = new ListViewControls(Game.World.GetState<AchievementHandler>());
-            Game.Controls.MenuSelectable = false;
+            Game.Controls.MenuCommandsSelectable = false;
             Game.Controls.SelectedMenuCommand = "Achievements";
             InterfacePanel.DirtifySidePanels();
         }
@@ -261,7 +261,7 @@ namespace Hecatomb
         public void ShowResearch()
         {
             Game.Controls = new ListViewControls(Game.World.GetState<ResearchHandler>());
-            Game.Controls.MenuSelectable = false;
+            Game.Controls.MenuCommandsSelectable = false;
             Game.Controls.SelectedMenuCommand = "Research";
             //Game.Controls.LinkedCommand = Game.MenuPanel.GetCommand("R: Research");
             InterfacePanel.DirtifySidePanels();
@@ -272,7 +272,7 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
             Game.Controls = new MessageLogControls();
-            Game.Controls.MenuSelectable = false;
+            Game.Controls.MenuCommandsSelectable = false;
             Game.Controls.SelectedMenuCommand = "Log";
             Game.World.GetState<MessageHandler>().Unread = false;
             Game.World.GetState<MessageHandler>().UnreadColor = "white";

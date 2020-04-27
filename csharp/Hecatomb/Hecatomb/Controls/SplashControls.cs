@@ -23,7 +23,7 @@ namespace Hecatomb
         public Action MyCallback;
         public SplashControls()
         {
-            MenuSelectable = false;
+            MenuCommandsSelectable = false;
             UseKeyFallback = true;
         }
         public override void HandleClick(int x, int y)

@@ -21,7 +21,7 @@ namespace Hecatomb
         {
             Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
-            c.MenuSelectable = false;
+            c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
             ControlContext.Set(c);
         }

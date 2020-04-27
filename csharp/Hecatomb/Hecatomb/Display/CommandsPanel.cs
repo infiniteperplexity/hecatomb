@@ -40,7 +40,6 @@ namespace Hecatomb
                     var command = Game.Controls.MenuCommands[i];
                     var text = command.Item2;
                     var color = "white";
-                    //if (command.Item1 == Game.Controls.SelectedMenuCommand)
                     if (Game.Controls.IsMenuSelected(command.Item1))   
                     {
                         color = "yellow";
@@ -49,8 +48,7 @@ namespace Hecatomb
                     {
                         color = "cyan";
                     }
-                    //else if (!Game.Controls.MenuSelectable)
-                    else if (!Game.Controls.IsMenuSelectable(command.Item1))
+                    else if (!Game.Controls.AreMenuCommandsSelectable())
                     {
                         color = "gray";
                     }

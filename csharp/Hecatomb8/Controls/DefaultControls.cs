@@ -11,6 +11,7 @@ namespace Hecatomb8
     {
         public DefaultControls()
         {
+            MenuCommandsSelectable = true;
             var commands = InterfaceState.Commands!;
             KeyMap = new Dictionary<Keys, Action>()
             {

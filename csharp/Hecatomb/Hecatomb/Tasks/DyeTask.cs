@@ -184,21 +184,21 @@ namespace Hecatomb
             if (Makes == null)
             {
                 var c = new MenuChoiceControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
                 ControlContext.Set(c);
             }
             else if (Background == null && Makes != "Undye")
             {
                 var c = new MenuChoiceControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
                 ControlContext.Set(c);
             }
             else
             {
                 var c = new SelectZoneControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
                 ControlContext.Set(c);
             }

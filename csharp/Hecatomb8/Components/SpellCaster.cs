@@ -8,8 +8,8 @@ namespace Hecatomb8
     public class SpellCaster : Component, IChoiceMenu
     {
         public List<Type> Spells;
-        public int Sanity = 10;
-        private int _maxSanity = 10;
+        public int Sanity = 20;
+        private int _maxSanity = 20;
         public int MaxSanity { get => _getMaxSanity(); }
 
         public SpellCaster()
@@ -63,6 +63,22 @@ namespace Hecatomb8
             }
             menu.Choices = spells;
         }
+
+        public T? GetSpell<T>() where T : Spell
+        {
+            foreach (Type t in Spells)
+            {
+                if (t == typeof(T))
+                {
+                    var spell = (T)Activator.CreateInstance(t)!;
+                    spell.Caster = Player;
+                    spell.Component = Player.GetComponent<SpellCaster>();
+                    return spell;
+                }
+            }
+            return null;
+        }
+
         public void FinishMenu(MenuChoiceControls menu)
         {
             menu.InfoTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());

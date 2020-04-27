@@ -46,7 +46,7 @@ namespace Hecatomb
 
         // key, text, selected, selectable
         public bool HideMenu;
-        public bool MenuSelectable;
+        public bool MenuCommandsSelectable;
         public string SelectedMenuCommand;
         public List<(string, string)> MenuCommands;
 
@@ -288,7 +288,7 @@ namespace Hecatomb
 			OnStatusClick = StatusClick;
 			OnStatusHover = StatusHover;
             MenuCommands = new List<(string, string)>();
-            MenuSelectable = true;
+            MenuCommandsSelectable = true;
             MenuCommands.Add(("Tutorial", "?) Tutorial"));
             MenuCommands.Add(("Spells", "Z) Spells"));
             MenuCommands.Add(("Jobs", "J) Jobs"));
@@ -448,9 +448,9 @@ namespace Hecatomb
             }
         }
 
-        public virtual bool IsMenuSelectable(string s)
+        public virtual bool AreMenuCommandsSelectable()
         {
-            if (MenuSelectable)
+            if (MenuCommandsSelectable)
             {
                 return true;
             }

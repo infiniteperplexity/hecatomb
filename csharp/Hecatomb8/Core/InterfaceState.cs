@@ -8,6 +8,7 @@ namespace Hecatomb8
 {
     // a locator class for global interface stuff
     // what if we modified this only with a method called Update?
+    using static HecatombAliases;
     static class InterfaceState
     {
         static MainPanel? mainPanel;
@@ -156,11 +157,15 @@ namespace Hecatomb8
                 }
             }
             PlayerVisible = GameState.World!.Player!.GetComponent<Senses>().GetFOV();
-            //foreach (Creature c in GetState<TaskHandler>().Minions)
-            //{
-            //    Senses s = c.GetComponent<Senses>();
-            //    Game.Visible.UnionWith(s.GetFOV());
-            //}
+            foreach (EntityField<Creature> ef in GetState<TaskHandler>().Minions)
+            {
+                Creature? cr = ef.UnboxIfNotNull();
+                if (cr != null)
+                {
+                    Senses s = cr.GetComponent<Senses>();
+                    PlayerVisible.UnionWith(s.GetFOV());
+                }
+            }
             foreach (var t in PlayerVisible)
             {
                 GameState.World!.Explored.Add(t);
@@ -173,8 +178,8 @@ namespace Hecatomb8
             controls = ParentControls;
             if (GameState.World!= null)
             {
-                //Game.World.Events.Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Game.Controls });
-                //Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
+                Publish(new ContextChangeEvent() { Note = "Back", OldContext = old, NewContext = Controls });
+                Publish(new TutorialEvent() { Action = "Cancel" });
             }
             // I have no idea why typecasting is needed here
             ParentControls = (MovingCamera) ? (ControlContext)CameraControls! : DefaultControls;
@@ -186,7 +191,7 @@ namespace Hecatomb8
 
         public static void ResetControls()
         {
-            //var old = Controls;
+            var old = Controls;
             //Game.Controls.CleanUp();
             //if (Game.ReconstructMode)
             //{
@@ -207,19 +212,17 @@ namespace Hecatomb8
             {
                 controls = DefaultControls!;
             }
-            //if (Game.World != null)
-            //{
-            //    Game.World.Events.Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Game.Controls });
-            //    Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
-            //}
+            if (GameState.World != null)
+            {
+                Publish(new ContextChangeEvent() { Note = "Reset", OldContext = old, NewContext = Controls });
+                Publish(new TutorialEvent() { Action = "Cancel" });
+            }
             ParentControls = Controls;
             Controls.RefreshContent();
             DirtifyMainPanel();
             DirtifyTextPanels();
-            InterfaceState.MainPanel.PrepareGlyphs();
-            InterfaceState.InfoPanel.Prepare();
-            //Game.SplashPanel.Active = false;
-            //Game.ForegroundPanel.Active = false;
+            MainPanel.PrepareGlyphs();
+            InfoPanel.Prepare();
             //Game.Time.Frozen = false;
         }
 
@@ -230,7 +233,8 @@ namespace Hecatomb8
             InterfacePanel[] panels = new InterfacePanel[]
             {
                 MainPanel,
-                InfoPanel
+                InfoPanel,
+                MenuPanel
             };
             foreach (var panel in panels)
             {

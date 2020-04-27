@@ -37,13 +37,12 @@ namespace Hecatomb8
         public TileEntity? SelectedEntity;
 
         public bool HideMenu;
-        public bool MenuSelectable;
+        public bool MenuCommandsSelectable;
         public string? SelectedMenuCommand;
         public List<(string command, string text)> MenuCommands;
 
         static ControlContext()
         {
-            //Cursor = new Highlight("cyan");
             OldKeyboard = Keyboard.GetState();
             OldMouse = Mouse.GetState();
             InputBegan = DateTime.Now;
@@ -302,18 +301,5 @@ namespace Hecatomb8
                 return false;
             }
         }
-
-        public virtual bool IsMenuSelectable(string s)
-        {
-            if (MenuSelectable)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
     }
 }

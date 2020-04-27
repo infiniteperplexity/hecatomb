@@ -23,7 +23,7 @@ namespace Hecatomb
     {
         public MessageLogControls() : base()
         {
-            MenuSelectable = false;
+            MenuCommandsSelectable = false;
             RefreshContent();
             Game.MenuPanel.Dirty = true;
         }

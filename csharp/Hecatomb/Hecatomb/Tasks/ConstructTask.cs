@@ -205,14 +205,14 @@ namespace Hecatomb
 			{
                 var menu = new MenuChoiceControls(this);
                 menu.Header = "Construct a structure:";
-                menu.MenuSelectable = false;
+                menu.MenuCommandsSelectable = false;
                 menu.SelectedMenuCommand = "Jobs";
                 ControlContext.Set(menu);
             }
 			else
 			{
                 var c = new SelectBoxControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
                 ControlContext.Set(c);
 			}

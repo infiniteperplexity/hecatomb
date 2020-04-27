@@ -10,24 +10,14 @@ using System.Threading;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     public class MenuPanel : InterfacePanel
     {
         public MenuPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y, int w, int h) : base(g, sb, c, x, y, w, h)
         {
-
             LeftMargin = 2;
             RightMargin = 2;
         }
-
-        //public override void Draw()
-        //{
-        //    Debug.WriteLine("here we are...");
-        //    Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-        //    foreach (var line in DrawableLines)
-        //    {
-        //        Sprites.DrawString(Font, line.text, line.v, line.color);
-        //    }
-        //}
 
         public override void Prepare()
         {
@@ -35,54 +25,53 @@ namespace Hecatomb8
             {
                 return;
             }
+            DrawableLines.Clear();
             if (GameState.World is null)
             {
                 return;
             }
             int total = 0;
             int margin = 4 * CharWidth;
-            var controls = InterfaceState.Controls;   
+            var controls = InterfaceState.Controls;
             for (int i = 0; i < controls.MenuCommands.Count; i++)
             {
-                //if (GameState.World != null && GameState.World!.GetState<TutorialHandler>().Visible)
-                //{
-                //    var text = Game.World.GetState<TutorialHandler>().Current.MenuCommands[i];
-                //    var color = (text.Colors.ContainsKey(0)) ? text.Colors[0] : "white";
-                //    int adjust = (i == 0) ? -4 * CharWidth : 0;
-                //    var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
-                //    var bump = margin + adjust + text.Length * CharWidth + margin;
-                //    Game.Sprites.DrawString(Font, text, v, Game.Colors[color]);
-                //    total += bump;
-                //}
-                //else
-                //{
-                    var command = controls.MenuCommands[i];
-                    var text = command.text;
-                    var color = "white";
-                    //if (command.Item1 == Game.Controls.SelectedMenuCommand)
-                    if (controls.IsMenuSelected(command.command))
-                    {
-                        color = "yellow";
-                    }
-                    //else if (command.command == "Tutorial" && GameState.World != null && Game.World.GetState<TutorialHandler>().Visible)
-                    //{
-                    //    color = "cyan";
-                    //}
-                    else if (!controls.IsMenuSelectable(command.command))
-                    {
-                        color = "gray";
-                    }
-                    //// I think I might want to get rid of this....
-                    //else if (command.Item1 == "Log" && Game.World.GetState<MessageHandler>().Unread)
-                    //{
-                    //    color = Game.World.GetState<MessageHandler>().UnreadColor;
-                    //}
+                if (GameState.World != null && GameState.World!.GetState<TutorialHandler>().Visible)
+                {
+                    var text = GetState<TutorialHandler>().Current.MenuCommands[i];
+                    var color = (text.Colors.ContainsKey(0)) ? text.Colors[0] : "white";
                     int adjust = (i == 0) ? -4 * CharWidth : 0;
                     var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
                     var bump = margin + adjust + text.Length * CharWidth + margin;
                     DrawableLines.Add((text, v, InterfaceState.Colors![color]));
                     total += bump;
-                //}
+                }
+                else
+                {
+                    var command = controls.MenuCommands[i];
+                    var text = command.text;
+                    var color = "white";
+                    if (controls.IsMenuSelected(command.command))
+                    {
+                        color = "yellow";
+                    }
+                    else if (command.command == "Tutorial" && GameState.World != null && GetState<TutorialHandler>().Visible)
+                    {
+                        color = "cyan";
+                    }
+                    else if (!controls.MenuCommandsSelectable)
+                    {
+                        color = "gray";
+                    }
+                    else if (command.command == "Log" && GetState<GameLog>().Unread)
+                    {
+                        color = GetState<GameLog>().UnreadColor;
+                    }
+                    int adjust = (i == 0) ? -4 * CharWidth : 0;
+                    var v = new Vector2(X0 + total + margin + adjust, Y0 + TopMargin);
+                    var bump = margin + adjust + text.Length * CharWidth + margin;
+                    DrawableLines.Add((text, v, InterfaceState.Colors![color]));
+                    total += bump;
+                }
             }
             Dirty = false;
         }        

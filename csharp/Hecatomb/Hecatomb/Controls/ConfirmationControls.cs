@@ -24,7 +24,7 @@ namespace Hecatomb
         public ConfirmationControls(ColoredText header, Action confirmed) : base()
         {
             AlwaysPaused = true;
-            MenuSelectable = false;
+            MenuCommandsSelectable = false;
             Header = header;
             var Commands = Game.Commands;
             KeyMap[Keys.Escape] = GoBack;
@@ -33,8 +33,7 @@ namespace Hecatomb
             RefreshContent();
         }
 
-        public void Go
-
+        public void GoBack
         {
             if (Game.MainPanel.IntroState)
             {

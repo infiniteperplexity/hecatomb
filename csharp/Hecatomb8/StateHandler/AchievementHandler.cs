@@ -5,14 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb8
 {
-    public class AchievementHandler : StateHandler, IListPopulater
+    using static HecatombAliases;
+    public class AchievementHandler : StateHandler, IChoiceMenu
     {
 
         public List<string> Achieved = new List<string>();
-        [JsonIgnore]public List<Achievement> Achievements;
+        [JsonIgnore] public List<Achievement> Achievements;
 
         public AchievementHandler() : base()
         {
@@ -70,7 +73,21 @@ namespace Hecatomb8
             };
         }
 
-        public List<ColoredText> GetLines()
+
+        public void BuildMenu(MenuChoiceControls menu)
+        {
+            menu.KeyMap[Keys.W] = Commands.MoveCameraNorth;
+            menu.KeyMap[Keys.S] = Commands.MoveCameraSouth;
+            menu.KeyMap[Keys.A] = Commands.MoveCameraWest;
+            menu.KeyMap[Keys.D] = Commands.MoveCameraEast;
+            menu.KeyMap[Keys.Q] = Commands.MoveCameraNorthWest;
+            menu.KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
+            menu.KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
+            menu.KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
+            menu.KeyMap[Keys.Z] = Commands.ChooseSpell;
+            menu.KeyMap[Keys.J] = Commands.ChooseTask;
+        }
+        public void FinishMenu(MenuChoiceControls menu)
         {
             var list = new List<ColoredText>() { "{magenta}Achievements:" };
             foreach (var achieve in Achievements)
@@ -85,7 +102,7 @@ namespace Hecatomb8
                     list.Add("- " + achieve.Name + ": " + achieve.Description);
                 }
             }
-            return list;
+            //return list;
         }
         public GameEvent HandleEvent(GameEvent g)
         {
@@ -96,7 +113,7 @@ namespace Hecatomb8
                 if (achievement.Condition(ae) && !Achieved.Contains(achievement.Name))
                 //if (achievement.Condition(ae) && !achievement.Unlocked)
                 {
-                    Game.InfoPanel.PushMessage("{magenta}Achievement unlocked: " + achievement.Name + " " + achievement.Description);
+                    PushMessage("{magenta}Achievement unlocked: " + achievement.Name + " " + achievement.Description);
                     //achievement.Unlocked = true;
                     Achieved.Add(achievement.Name);
                 }

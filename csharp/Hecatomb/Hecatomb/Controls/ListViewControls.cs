@@ -29,7 +29,7 @@ namespace Hecatomb
 
         public ListViewControls(IListPopulater p) : base()
         {
-            MenuSelectable = false;
+            MenuCommandsSelectable = false;
             populater = p;
             RefreshContent();
         }

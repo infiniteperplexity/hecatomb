@@ -18,6 +18,7 @@ namespace Hecatomb8
             Explored = false;
             //Explored = true;
             NoTutorial = false;
+            //NoTutorial = true;
         }
     }
 }

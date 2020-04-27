@@ -63,3 +63,5 @@ Alright, what's next?  Let's toss some ideas out there...
 
 4/26/2020
 - Okay, so we've got a good portion of the interface stuff done.  Ummm....MessageHandler next?
+- Alright, the tutorial and the messagehandler are working.
+- I'm worried that we're double deducting action points for the player

@@ -14,12 +14,6 @@ namespace Hecatomb8
 
     public class InformationPanel : InterfacePanel
     {
-        //public bool ScrollState;
-        //public bool SummaryState;
-        //public bool HoverState;
-        //public bool TutorialState;
-
-        public int SelectedMessage;
         public InformationPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y, int w, int h) : base(g, sb, c, x, y, w, h)
         {
             LeftMargin = 2;
@@ -51,32 +45,4 @@ namespace Hecatomb8
             PrepareLines(lines);
         }       
     }
-    
-
-    //public override void Draw()
-    //{
-    //    Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-    //    var cp = Game.MenuPanel;
-    //    var k = Keyboard.GetState();
-    //    var lines = new List<ColoredText>();
-    //    if (Game.World != null && !Game.Time.Frozen && Game.World.GetState<TutorialHandler>().Visible)
-    //    {
-    //        lines = lines.Concat(Game.World.GetState<TutorialHandler>().GetText()).ToList();
-    //    }
-    //    else
-    //    {
-    //        lines = lines.Concat(Game.Controls.MenuTop).ToList();
-    //    }
-    //    if (Game.Controls.MenuMiddle.Count > 0)
-    //    {
-    //        lines.Add(" ");
-    //        lines = lines.Concat(Game.Controls.MenuMiddle).ToList();
-    //    }
-    //    if (Game.Controls.MenuBottom.Count > 0)
-    //    {
-    //        lines.Add(" ");
-    //        lines = lines.Concat(Game.Controls.MenuBottom).ToList();
-    //    }
-    //    DrawLines(lines);
-    //}
 }

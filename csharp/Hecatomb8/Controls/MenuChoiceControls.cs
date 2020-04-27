@@ -20,6 +20,7 @@ namespace Hecatomb8
 		void FinishMenu(MenuChoiceControls menu);
 	}
 
+	// sometimes we do it without menu choices, even
 	public class MenuChoiceControls : AbstractCameraControls
 	{
 		public string Header;

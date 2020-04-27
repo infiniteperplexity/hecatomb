@@ -97,6 +97,18 @@ namespace Hecatomb8
             //cachedChoices = tasks;
             menu.Choices = tasks;
         }
+
+        public T? GetTask<T>() where T: Task
+        {
+            foreach (Type t in Tasks)
+            {
+                if (t == typeof(T))
+                {
+                    return (T)Activator.CreateInstance(t)!;
+                }
+            }
+            return null;
+        }
         public void FinishMenu(MenuChoiceControls menu)
         {
 

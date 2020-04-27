@@ -18,7 +18,7 @@ namespace Hecatomb
 		public StaticMenuControls(ColoredText header, List<(Keys, ColoredText, Action)> choices) : base()
         {
             AlwaysPaused = true;
-            MenuSelectable = false;
+            MenuCommandsSelectable = false;
             MenuTop = new List<ColoredText>();
             if (header != " ")
             {

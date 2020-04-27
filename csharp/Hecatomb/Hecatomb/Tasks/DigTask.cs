@@ -161,7 +161,7 @@ namespace Hecatomb
 		{
             Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseDigTask" });
             var c = new SelectZoneControls(this);
-            c.MenuSelectable = false;
+            c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
             ControlContext.Set(c);
         }

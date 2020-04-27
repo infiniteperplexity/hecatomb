@@ -47,7 +47,7 @@ namespace Hecatomb
         {
             var c = new SelectTileControls(this);
             c.SelectedMenuCommand = "Jobs";
-            c.MenuSelectable = false;
+            c.MenuCommandsSelectable = false;
             ControlContext.Set(c);
         }
 

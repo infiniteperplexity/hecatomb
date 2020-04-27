@@ -20,15 +20,13 @@ namespace Hecatomb8
         public void Act()
         {
             Player.GetComponent<Actor>().Spend();
-            //Turns.PlayerActed = true;
-            //Time.Acted();
             GameState.World!.GetState<TurnHandler>().AfterPlayerActed();
         }
 
         public void Wait()
         {
-            //CommandLogger.LogCommand(command: "Wait");
-            //Player.GetComponent<Actor>().Wait();
+            CommandLogger.LogCommand(command: "Wait");
+            // hmmmm a little weird to not call wait...am I double-deducting action points for the player?
             Act();
         }
 
@@ -78,7 +76,7 @@ namespace Hecatomb8
         }
         public void moveHorizontalCommand(int dx, int dy)
         {
-            //CommandLogger.LogCommand(command: "MoveHorizontal", x: dx, y: dy);
+            CommandLogger.LogCommand(command: "MoveHorizontal", x: dx, y: dy);
             Creature p = GameState.World!.Player!;
             var m = p.GetComponent<Movement>();
             if (p is null || !p.Placed)
@@ -143,7 +141,7 @@ namespace Hecatomb8
 
         public void moveVerticalCommand(int dz)
         {
-            //CommandLogger.LogCommand(command: "MoveVertical", z: dz);
+            CommandLogger.LogCommand(command: "MoveVertical", z: dz);
             //Creature p = Game.World!.Player!;
             //int x1 = p.X;
             //int y1 = p.Y;
@@ -255,11 +253,11 @@ namespace Hecatomb8
         {
             if (!InterfaceState.MovingCamera)
             {
-                //Game.World.Events.Publish(new TutorialEvent() { Action = "CameraMode" });
+                Publish(new TutorialEvent() { Action = "CameraMode" });
             }
             else
             {
-                //Game.World.Events.Publish(new TutorialEvent() { Action = "MainMode" });
+                Publish(new TutorialEvent() { Action = "MainMode" });
             }
             InterfaceState.MovingCamera = !InterfaceState.MovingCamera;
             if (InterfaceState.MovingCamera)
@@ -284,7 +282,7 @@ namespace Hecatomb8
             //tasks.PurgeCache();
             InterfaceState.SetControls(new MenuChoiceControls(tasks));
             //Game.Controls.MenuSelectable = false;
-            //Game.Controls.SelectedMenuCommand = "Jobs";
+            InterfaceState.Controls.SelectedMenuCommand = "Jobs";
             InterfaceState.DirtifyTextPanels();
         }
 
@@ -294,7 +292,7 @@ namespace Hecatomb8
             var spells = Player.GetComponent<SpellCaster>();
             InterfaceState.SetControls(new MenuChoiceControls(spells));
             //Game.Controls.MenuSelectable = false;
-            //Game.Controls.SelectedMenuCommand = "Spells";
+            InterfaceState.Controls.SelectedMenuCommand = "Spells";
             InterfaceState.DirtifyTextPanels();
         }
 
@@ -345,7 +343,7 @@ namespace Hecatomb8
             GameState.World!.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
             InterfaceState.SetControls(new MenuChoiceControls(GetState<GameLog>()));
             //Game.Controls.MenuSelectable = false;
-            //Game.Controls.SelectedMenuCommand = "Log";
+            InterfaceState.Controls.SelectedMenuCommand = "Log";
             GetState<GameLog>().MarkAsRead();
             InterfaceState.DirtifyTextPanels();
         }

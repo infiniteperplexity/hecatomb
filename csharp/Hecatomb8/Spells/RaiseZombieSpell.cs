@@ -18,15 +18,14 @@ namespace Hecatomb8
         {
             if (Cost > Component!.Sanity)
             {
-                //Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
-                //Debug.WriteLine("cannot cast spell");
+                Publish(new TutorialEvent() { Action = "Cancel" });
             }
             else
             {
-                //Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
+                Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
                 var c = new SelectTileControls(this);
-                //c.MenuSelectable = false;
-                //c.SelectedMenuCommand = "Spells";
+                c.MenuCommandsSelectable = false;
+                c.SelectedMenuCommand = "Spells";
                 InterfaceState.SetControls(c);
             }
         }
@@ -35,12 +34,18 @@ namespace Hecatomb8
         {
             if ((GameState.World!.Explored.Contains(c) || HecatombOptions.Explored) && Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z) is null)
             {
+                CommandLogger.LogCommand(command: "RaiseZombie", x: c.X, y: c.Y, z: c.Z);
+                Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
+                Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
+                if (GetState<TaskHandler>().Minions.Count >= 3)
+                {
+                    Publish(new AchievementEvent() { Action = "RaiseFourthZombie" });
+                }
                 Cast();
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.Place(c.X, c.Y, c.Z);
                 var zombie = Entity.Spawn<Zombie>();
                 zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
-                //Debug.WriteLine(zombie.GetComponent<Actor>().EID);
                 InterfaceState.Commands!.Act();
             }
         }
@@ -111,22 +116,24 @@ namespace Hecatomb8
 
         public void TileHover(Coord c)
         {
-            //int x = c.X;
-            //int y = c.Y;
-            //int z = c.Z;
-            //Feature f = Game.World.Features[x, y, z];
-            //if (!Game.World.Explored.Contains(c) && !Options.Explored)
-            //{
-            //    Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
-            //}
-            //else if (f != null && f.TypeName == "Grave")
-            //{
-            //    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
-            //}
-            //else
-            //{
-            //    Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
-            //}
+            int x = c.X;
+            int y = c.Y;
+            int z = c.Z;
+            Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            var controls = InterfaceState.Controls;
+            // I need to look for a corpse as well
+            if (!GameState.World!.Explored.Contains(c) && !HecatombOptions.Explored)
+            {
+                controls.InfoMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+            }
+            else if (f is Grave)
+            {
+                controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
+            }
+            else
+            {
+                controls.InfoMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
+            }
         }
 
         //public static void BreakTombstone(Feature f)

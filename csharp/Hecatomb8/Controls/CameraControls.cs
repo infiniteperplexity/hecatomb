@@ -10,6 +10,7 @@ namespace Hecatomb8
     {
         public CameraControls() : base()
         {
+            MenuCommandsSelectable = true;
             var Commands = InterfaceState.Commands!;
             //KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
