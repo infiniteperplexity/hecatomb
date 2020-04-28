@@ -14,12 +14,18 @@ namespace Hecatomb8
         protected string? _fg;
         protected string? _bg;
         protected string? _name;
-        // this needs to be accessible for serialization
         public Coord? _coord;
-        [JsonIgnore] public string? Name { get => _name; }
-        [JsonIgnore] public char Symbol { get => _symbol; }
-        [JsonIgnore] public string? FG { get => _fg; }
-        [JsonIgnore] public string? BG { get => _bg; }
+
+        protected virtual char getSymbol() => _symbol;
+        protected virtual string? getFG() => _fg;
+        protected virtual string? getBG() => _bg;
+        protected virtual string? getName() => _name;
+        // this needs to be accessible for serialization
+        
+        [JsonIgnore] public string? Name { get => getName(); }
+        [JsonIgnore] public char Symbol { get => getSymbol(); }
+        [JsonIgnore] public string? FG { get => getFG(); }
+        [JsonIgnore] public string? BG { get => getBG(); }
         [JsonIgnore] public int? X { get => _coord?.X; }
         [JsonIgnore] public int? Y { get => _coord?.Y; }
         [JsonIgnore] public int? Z { get => _coord?.Z; }

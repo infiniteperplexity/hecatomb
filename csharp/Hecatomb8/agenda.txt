@@ -1,5 +1,5 @@
 ﻿
-C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb8
+cd C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb8
 gci . *.cs -Recurse | select-string . | Group Filename | Measure-Object Count -Sum -Min -Max -Average
 
 
@@ -65,3 +65,28 @@ Alright, what's next?  Let's toss some ideas out there...
 - Okay, so we've got a good portion of the interface stuff done.  Ummm....MessageHandler next?
 - Alright, the tutorial and the messagehandler are working.
 - I'm worried that we're double deducting action points for the player
+
+4/27/2020
+- So...we're going to need to reall go through the player action point stuff and make sure we do it right.  The main thing I'm worried about is that "step to"
+is going to double-deduct action points
+- Oof.  I can feel things building toward a breaking point here.
+
+Okay...take a deep breath...let's talk about...shall we call it...the "cleanup problem."  The cleanup problem, briefly stated, is that when a game entity enters an invalid state - either just not on the map, or
+more commonly, despawned - other objects might be clinging to a reference to it.  Then if they later try to use that reference, it might be unexpectedly null.  So, the current
+way we do this is as follows:
+- For some major purposes, we use the Event system.  But it's hard to catch all of these; that requires signing tons of things up for listeners, and if you miss even a single one it fucks things up.
+- For general use, we have the EntityField system.  That, incidentally, also fixes the circular serialization problem at the same time.
+    - This creates an opportunity to update while unboxing, but that's a bit dangerous, because it's a potential state change based on something that's only supposed to read state.
+    - There's also a lot of temptation to just flatly assume it's spawned, which can be dangerous if you assume wrong.
+    
+    Can we brainstorm any alternatives?
+    - What if we tried to invert all the references; make it so the refered-to items tracked the references?  that sounds like a huge hassle, but it's leading me toward another idea...
+    - What if every entity had a singleton "PointToMe" object associated with it, and we could handle stuff through there?  Hey this is really fucking promising.  Yeah, this is going somewhere.
+    - Then at least, you don't have to worry about the timing of the updates; that will all get handled by the object itself.
+    - You do still have to do a lot of unboxing.  But I guess maybe we can deal.  Now here's a thought...we could call it a ListenedEntityPointer or something, to remind us that we should be listening to it.
+    - Now...yeah...you do still kind of have that same problem...egghh...well...maybe we can make this a multi-part thing.  The ideal thing would be that we can check its nullity really fast...
+    - Well okay...we can make the EntityField thing into singletons really easily, and that at least takes the weird update timing thing off the table.
+    - Now what happens if we call it a ListenerHandleEntityReference instead of an EntityField?  What does that imply our responsibilities are?  We sign up on the listener list for Despawn events?  Are those the only dangerous ones?  I think so.
+    - So...let's think about some kind of three-way handling here.  The only way you could populate the Pointer field is to call upon a third object, which would take that pointing field and the target as its arguments.  Then you would have
+    the ability, via reflection, to automagically nullify the field via reflection whenever the target changes.  That's very much against how this is supposed to work but there you ware.
+    - But...you can kinda sorta reach the same kinda situation by calling it a ListenerHandledEntityField...and handling it.  So...is it *just* despawning we're worried about?

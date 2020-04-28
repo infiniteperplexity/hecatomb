@@ -15,42 +15,53 @@ namespace Hecatomb8
     public abstract class Task : TileEntity, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
     {
         // subclass properties
-        [JsonIgnore] public int WorkRange;
-        public int LaborCost;
-        [JsonIgnore] public string MenuName;
+        [JsonIgnore] public bool WorkSameTile;
+        public int LaborCost; // do not JsonIgnore, this can vary for some subtypes
+        public int Labor;
+        [JsonIgnore] public string MenuDescription;
         // probably don't want strings here...should be types, which is awkward
-        [JsonIgnore] public List<string> PrereqStructures;
-        [JsonIgnore] public bool ShowIngredients;
-        // this does get a little awkward in that we would want it to be strings for serialization
-        public Dictionary<Resource, int> Ingredients;
+        [JsonIgnore] public List<Type> RequiresStructures;
+        //[JsonIgnore] public bool ShowIngredients;
+        public Dictionary<Resource, int> Ingredients; // do not JsonIgnore; this can vary
         // ISelectsBox properties
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
         [JsonIgnore] public int Priority;
         // instance properties
-        public EntityField<Creature> Worker;
+        public ListenerHandledEntityPointer<Creature>? Worker;
         public Dictionary<int, int> Claims;
         // this maybe should always be a Type?...but it should be a string for serialization?
-        public string Makes = "";
-        public int Labor;
+        public Type? Makes;
+        
 
         // constructor
         public Task() : base()
         {
-            MenuName = "default task name";
+            MenuDescription = "default task name";
             _name = "task";
-            Worker = new EntityField<Creature>();
-            WorkRange = 1;
+            WorkSameTile = false;
             LaborCost = 10;
             Labor = LaborCost;
             Priority = 5;
             Ingredients = new Dictionary<Resource, int>();
             Claims = new Dictionary<int, int>();
-            PrereqStructures = new List<string>();
+            RequiresStructures = new List<Type>();
             _bg = "red";
-            ShowIngredients = true;
+            //ShowIngredients = true;
         }
 
+        public GameEvent OnDespawn(GameEvent ge)
+        {
+            if (ge is DespawnEvent)
+            {
+                var de = (DespawnEvent)ge;
+                if (Worker != null && de.Entity == Worker.UnboxBriefly())
+                {
+                    Unassign();
+                }
+            }
+            return ge;
+        }
 
         //public virtual string GetHoverName()
         //{
@@ -82,105 +93,113 @@ namespace Hecatomb8
         // override Despawn from TileEntity
         public override void Despawn()
         {
-            //Unassign();
+            Unassign();
             base.Despawn();
         }
 
-        // designation...by default, allow it only for explored floor tiles
-        //public virtual bool ValidTile(Coord c)
-        //{
-        //    if (!Explored.Contains(c) && !Options.Explored)
-        //    {
-        //        return false;
-        //    }
-        //    if (Features[c] != null && Features[c].TryComponent<IncompleteFixtureComponent>() != null) //is this okay or does it need to be more specific?
-        //    {
-        //        return Features[c].GetComponent<IncompleteFixtureComponent>().Makes == Makes;
-        //        //return false;
-        //    }
-        //    else if (Features[c] != null)
-        //    {
-        //        return false;
-        //    }
-        //    if (Terrains[c.X, c.Y, c.Z] == Terrain.FloorTile)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
+        // ValidTile is a bit of a problem child, because it pulls double duty...it checks where a new task can be assigned, and where an existing one should be canceled
+            // just keep an eye out for that
+        public virtual bool ValidTile(Coord c)
+        {
+            var (x, y, z) = c;
+            Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            // can't do most tasks where you haven't explored   
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
+            {
+                return false;
+            }
+            // can restart tasks with the same incomplete fixture
+            if (f is IncompleteFixture)
+            {
+                return ((f as IncompleteFixture)!.Makes == this.Makes);
+            }
+            // can't do most tasks on a feature
+            else if (f != null)
+            {
+                return false;
+            }
+            // many tasks can only be done on the floor
+            if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z) == Terrain.FloorTile)
+            {
+                return true;
+            }
+            return false;
+        }
 
         // assignment
-        //public virtual bool CanAssign(Creature c)
-        //{
-        //    Coord crd = new Coord(X, Y, Z);
-        //    if (!Explored.Contains(crd) && !Options.Explored)
-        //    {
-        //        return false;
-        //    }
-        //    if (!Placed)
-        //    {
-        //        return false;
-        //    }
-        //    if (!ValidTile(crd))
-        //    {
-        //        Status.PushMessage("Canceling invalid task.");
-        //        Cancel();
-        //        return false;
-        //    }
-        //    Movement m = c.GetComponent<Movement>();
-        //    return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients, alwaysNeedsIngredients: NeedsIngredients());
-        //}
-        //public virtual void AssignTo(Creature c)
-        //{
-        //    c.GetComponent<Minion>().Task = this;
-        //    Worker = c;
-        //    ClaimIngredients();
-        //}
+        public virtual bool CanAssign(Creature c)
+        {
+            // just to be safe
+            if (!Spawned || !Placed)
+            {
+                return false;
+            }    
+            Coord crd = new Coord((int)X!, (int)Y!, (int)Z!);
+            // is this even worth checking?  normally you can't even assign it there
+            if (!Explored.Contains(crd) && !HecatombOptions.Explored)
+            {
+                return false;
+            }
+            if (!ValidTile(crd))
+            {
+                PushMessage("Canceling invalid task.");
+                Cancel();
+                return false;
+            }
+            Movement m = c.GetComponent<Movement>();
+            return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients, alwaysNeedsIngredients: NeedsIngredients());
+        }
+        public virtual void AssignTo(Creature c)
+        {
+            c.GetComponent<Minion>().Task = GetPointer<Task>(c.GetComponent<Minion>().OnDespawn);
+            Worker = c.GetPointer<Creature>(OnDespawn);
+            ClaimIngredients();
+        }
         public virtual void Cancel()
         {
-            //Unassign();
+            Unassign();
             Despawn();
         }
-        //public void Unassign()
-        //{
-        //    if (Worker != null)
-        //    {
-        //        Worker.GetComponent<Minion>().Task = null;
-        //    }
-        //    Worker = null;
-        //    UnclaimIngredients();
-        //}
-        //public virtual bool NeedsIngredients()
-        //{
-        //    return !Options.NoIngredients;
-        //}
+        public void Unassign()
+        {
+            if (Worker != null)
+            {
+                Worker.UnboxBriefly().GetComponent<Minion>().Task = null;
+            }
+            Worker = null;
+            UnclaimIngredients();
+        }
+        // certain tasks, like hauling and such, should require ingredients even if the debug options are set to ignore ingredients
+        public virtual bool NeedsIngredients()
+        {
+            return !HecatombOptions.NoIngredients;
+        }
+
         // ingredients
-        //public bool HasIngredient()
-        //{
-        //    if (!NeedsIngredients())
-        //    {
-        //        return true;
-        //    }
-        //    if (Ingredients.Count == 0)
-        //    {
-        //        return true;
-        //    }
-        //    Inventory inv = Worker.GetComponent<Inventory>();
-        //    if (inv.Item == null)
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        if (inv.Item != null && inv.Item.Unbox() == null)
-        //        {
-        //            Debug.WriteLine("This wasn't supposed to happen");
-        //            Debug.WriteLine(inv.Item.EID);
-        //            Debug.WriteLine(inv.Item.Entity);
-        //        }
-        //        return Ingredients.ContainsKey(inv.Item.Unbox().Resource);
-        //    }
-        //}
+        public bool HasIngredient()
+        {
+            if (!NeedsIngredients())
+            {
+                return true;
+            }
+            if (Ingredients.Count == 0)
+            {
+                return true;
+            }
+            if (Worker is null)
+            {
+                return false;
+            }
+            Inventory inv = Worker.UnboxBriefly().GetComponent<Inventory>();
+            if (inv.Item == null)
+            {
+                return false;
+            }
+            else
+            {
+                return Ingredients.ContainsKey(inv.Item.UnboxBriefly().Resource!);
+            }
+        }
         //public virtual void ClaimIngredients()
         //{
         //    if (!NeedsIngredients())

@@ -18,14 +18,7 @@ namespace Hecatomb8
             placeOres();
             placeGraves();
             plantTrees();
-            world.Player = Entity.Spawn<Necromancer>();
             bool succeeded = tryToPlacePlayer();
-            //var zombie = Entity.Spawn<Zombie>();
-            //z = world.GetBoundedGroundLevel(5, 5);
-            //if (!world.Creatures.ContainsKey(5, 5, z))
-            //{
-            //    zombie.PlaceInValidEmptyTile(5, 5, z);
-            //}
             return succeeded;
         }
 

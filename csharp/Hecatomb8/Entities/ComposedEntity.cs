@@ -9,7 +9,7 @@ namespace Hecatomb8
     // ComposedEntity are entity, such as creature or features, that can have Components attached to add additional behaviors
     public abstract class ComposedEntity : TileEntity
     {
-        public Dictionary<string, EntityField<Component>>? _components;
+        public Dictionary<string, ListenerHandledEntityPointer<Component>>? _components;
         [JsonIgnore] protected List<Component> Components;
 
         protected ComposedEntity() : base()
@@ -54,7 +54,7 @@ namespace Hecatomb8
             }
             if (_components is null)
             {
-                _components = new Dictionary<string, EntityField<Component>>();
+                _components = new Dictionary<string, ListenerHandledEntityPointer<Component>>();
             }
             
             _components[c.GetType().Name] = c;

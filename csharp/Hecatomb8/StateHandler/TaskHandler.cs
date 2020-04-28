@@ -14,12 +14,12 @@ namespace Hecatomb8
 
     class TaskHandler : StateHandler, IChoiceMenu
     {
-        public List<EntityField<Creature>> Minions;
+        public List<ListenerHandledEntityPointer<Creature>> Minions;
         [JsonIgnore] public Type[] Tasks;
 
         public TaskHandler() : base()
         {
-            Minions = new List<EntityField<Creature>>();
+            Minions = new List<ListenerHandledEntityPointer<Creature>>();
             Tasks = new[] {
                 typeof(DigTask),
                 typeof(UndesignateTask)
@@ -49,11 +49,15 @@ namespace Hecatomb8
             return ge;
         }
 
+
+        public void AddMinion(Creature cr)
+        {
+            Minions.Add(cr.GetPointer<Creature>(OnDespawn));
+        }
         public GameEvent OnDespawn(GameEvent ge)
         {
-            // I could potentially make these lists a special thing that always listens?
             DespawnEvent dse = (DespawnEvent)ge;
-            //Minions = Minions.Where((TypedEntityField<Creature> c) => c.Entity != dse.Entity).ToList();
+            Minions = Minions.Where((ListenerHandledEntityPointer<Creature> c) => c.UnboxBriefly() != dse.Entity).ToList();
             return ge;
         }
 

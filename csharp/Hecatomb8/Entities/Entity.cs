@@ -27,8 +27,26 @@ namespace Hecatomb8
             get => !(EID is null);
         }
 
+
+        public static T Mock<T>() where T: Entity, new()
+        {
+            T t = new T();
+            return t;
+        }
+
+
+        public static Entity Mock(Type type)
+        {
+            var maybe = Activator.CreateInstance(type);
+            if (maybe == null)
+            {
+                throw new InvalidOperationException($"Couldn't spawn entity of type {type}, is usually caused by a problem in the constructor.");
+            }
+            var t = (Entity)maybe;
+            return t;
+        }
         // until an Entity is "Spawned", it doesn't really exist in the game world
-        public static T Spawn<T>() where T: Entity, new()
+        public static T Spawn<T>() where T : Entity, new()
         {
             T t = new T();
             int n = MaxEID + 1;
@@ -100,6 +118,7 @@ namespace Hecatomb8
         {
             if (EID != null)
             {
+                Publish(new DespawnEvent() { Entity = this });
                 if (GameState.World!.Entities.ContainsKey((int)EID))
                 {
                     GameState.World!.Entities.Remove((int)EID);
@@ -110,6 +129,11 @@ namespace Hecatomb8
         public void AddListener<T>(Func<GameEvent, GameEvent> f)
         {
             Listeners[typeof(T)] = f;
+        }
+        // request a pointer to this entity, by submitting a listener method you're promising handles this entity despawning
+        public ListenerHandledEntityPointer<T> GetPointer<T>(Func<GameEvent, GameEvent> ge) where T : Entity
+        {
+            return ListenerHandledEntityPointer<T>.CreatePointerFromOwnEntity((T)this);
         }
     }
 }

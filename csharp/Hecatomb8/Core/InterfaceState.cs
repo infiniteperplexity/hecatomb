@@ -157,7 +157,7 @@ namespace Hecatomb8
                 }
             }
             PlayerVisible = GameState.World!.Player!.GetComponent<Senses>().GetFOV();
-            foreach (EntityField<Creature> ef in GetState<TaskHandler>().Minions)
+            foreach (ListenerHandledEntityPointer<Creature> ef in GetState<TaskHandler>().Minions)
             {
                 Creature? cr = ef.UnboxIfNotNull();
                 if (cr != null)
