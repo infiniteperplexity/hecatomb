@@ -9,6 +9,8 @@ namespace Hecatomb8
         public static bool Visible;
         public static bool Explored;
         public static bool NoTutorial;
+        public static bool NoIngredients;
+        public static int WorkBonus;
 
 
         static HecatombOptions()
@@ -19,6 +21,9 @@ namespace Hecatomb8
             //Explored = true;
             NoTutorial = false;
             //NoTutorial = true;
+            NoIngredients = false;
+            //NoIngredients = true;
+            WorkBonus = 0;
         }
     }
 }

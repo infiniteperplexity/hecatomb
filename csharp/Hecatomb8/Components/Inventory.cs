@@ -37,14 +37,14 @@ namespace Hecatomb8
         }
         public void Drop()
         {
-            if (Entity != null && Item != null)
+            if (Entity?.UnboxBriefly() != null && Entity.UnboxBriefly()!.Placed && Item?.UnboxBriefly() != null)
             {
-                var item = Item.UnboxBriefly();
+                var item = Item.UnboxBriefly()!;
                 if (item.Resource == Resource.Gold)
                 {
                     Publish(new AchievementEvent() { Action = "FoundGold" });
                 }
-                var (x, y, z) = Entity.UnboxBriefly();
+                var (x, y, z) = Entity.UnboxBriefly()!.GetVerifiedCoord();
                 item.DropOnValidTile((int)x!, (int)y!, (int)z!);
                 Item = null;
             }

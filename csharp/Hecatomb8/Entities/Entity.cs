@@ -135,5 +135,33 @@ namespace Hecatomb8
         {
             return ListenerHandledEntityPointer<T>.CreatePointerFromOwnEntity((T)this);
         }
+
+        public static T? GetEntity<T>(int? eid) where T: Entity
+        {
+            if (eid is null)
+            {
+                return null;
+            }
+            else if (!Entities.ContainsKey((int)eid))
+            {
+                return null;
+            }
+            else
+            {
+                return (T)Entities[(int)eid];
+            }
+        }
+
+        public static bool Exists(int? eid)
+        {
+            if (eid is null)
+            {
+                return false;
+            }
+            else
+            {
+                return Entities.ContainsKey((int)eid);
+            }
+        }
     }
 }

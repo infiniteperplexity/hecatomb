@@ -147,9 +147,19 @@ namespace Hecatomb8
             //    Debug.WriteLine("respected cached pathfinding failure");
             //    return new LinkedList<Coord>();
             //}
-            int x0 = (int) m.Entity.UpdateNullity().UnboxIfNotNull()!.X!;
-            int y0 = (int) m.Entity.UnboxIfNotNull()!.Y!;
-            int z0 = (int) m.Entity.UnboxIfNotNull()!.Z!;
+            if (!t.Placed)
+            {
+                return new LinkedList<Coord>();
+            }
+            var entity = m.Entity?.UnboxBriefly();
+            if (entity is null || !entity.Placed)
+            {
+                return new LinkedList<Coord>();
+            }
+            var te = (TileEntity)entity;
+            int x0 = (int) te.X!;
+            int y0 = (int) te.Y!;
+            int z0 = (int) te.Z!;
             int x1 = (int) t.X!;
             int y1 = (int) t.Y!;
             int z1 = (int) t.Z!;
@@ -175,7 +185,7 @@ namespace Hecatomb8
                 movable: movable,
                 standable: standable,
                 useLast: useLast,
-                fromEntity: m.Entity.UpdateNullity().UnboxIfNotNull()!,
+                fromEntity: m.Entity!.UnboxBriefly()!,
                 toEntity: t,
                 //cost: cost,
                 maxTries: maxTries
@@ -207,9 +217,14 @@ namespace Hecatomb8
             Func<int, int, int, bool>? standable = null,
             Func<int, int, int, int, int, int, bool>? movable = null)
         {
-            int x0 = (int)m.Entity.UpdateNullity().UnboxIfNotNull()!.X!;
-            int y0 = (int)m.Entity.UnboxIfNotNull()!.Y!;
-            int z0 = (int)m.Entity.UnboxIfNotNull()!.Z!;
+            var entity = m.Entity?.UnboxBriefly();
+            if (entity is null || !entity.Placed)
+            {
+                return new LinkedList<Coord>();
+            }
+            int x0 = (int)entity.X!;
+            int y0 = (int)entity.Y!;
+            int z0 = (int)entity.Z!;
             movable = movable ?? m.CouldMoveBounded;
             standable = standable ?? m.CanStandBounded;
             cost = cost ?? m.GetMoveCostBounded;
@@ -231,7 +246,7 @@ namespace Hecatomb8
                 condition: condition,
                 movable: movable,
                 standable: standable,
-                fromEntity: m.Entity.UpdateNullity().UnboxIfNotNull(),
+                fromEntity: m.Entity!.UnboxBriefly()!,
                 cost: cost,
                 maxTries: maxTries
             );

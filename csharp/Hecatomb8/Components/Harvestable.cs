@@ -16,7 +16,11 @@ namespace Hecatomb8
 
         public void Harvest()
         {
-            var (x, y, z) = Entity.UpdateNullity()!.UnboxIfNotNull()!;
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return;
+            }
+            var (x, y, z) = Entity.UnboxBriefly()!.GetVerifiedCoord();
             Dictionary<Resource, int> resources = new Dictionary<Resource, int>();
             foreach (var key in Yields.Keys)
             {
@@ -41,7 +45,7 @@ namespace Hecatomb8
                     item.DropOnValidTile((int)x!, (int)y!, (int)z!);
                 }
             }
-            Entity.UnboxIfNotNull()!.Destroy();
+            Entity.UnboxBriefly()!.Destroy();
         }
     }
 }

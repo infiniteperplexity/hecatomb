@@ -42,11 +42,11 @@ namespace Hecatomb8
 
         public void Act()
         {
-            if (Entity is null)
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
                 return;
             }
-            Creature cr = (Creature)Entity.UnboxBriefly();
+            Creature cr = (Creature)Entity.UnboxBriefly()!;
             var (x, y, z) = ((int)cr.X!, (int)cr.Y!, (int)cr.Z!);
             Task? existing = Task?.UnboxBriefly();
             // a zombie encased in solid rock, a grave on top, and no zombie emerge task...poor guy needs a zombie emerge task!
@@ -70,7 +70,10 @@ namespace Hecatomb8
                     }
                 }
             }
-            Task?.UnboxBriefly().Act();
+            if (Task?.UnboxBriefly() != null)
+            {
+                Task.UnboxBriefly()!.Act();
+            }
             Actor actor = cr.GetComponent<Actor>();
             if (!actor.Acted)
             {
@@ -81,7 +84,10 @@ namespace Hecatomb8
 
         public override void Despawn()
         {
-            Task?.UnboxBriefly().Unassign();
+            if (Task?.UnboxBriefly() != null)
+            {
+                Task.UnboxBriefly()!.Unassign();
+            }
             base.Despawn();
         }
     }

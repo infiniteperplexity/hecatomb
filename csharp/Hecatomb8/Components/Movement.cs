@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 namespace Hecatomb8
 {
     using static Coord;
+    using static HecatombAliases;
     public class Movement : Component
     {
         public bool Walks;
@@ -125,6 +126,10 @@ namespace Hecatomb8
 
         public bool CanStandBounded(int x1, int y1, int z1)
         {
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return false;
+            }
             if (x1 < 0 || x1 >= GameState.World!.Width || y1 < 0 || y1 >= GameState.World!.Height || z1 < 0 || z1 >= GameState.World!.Depth)
             {
                 return false;
@@ -157,7 +162,7 @@ namespace Hecatomb8
             //        return false;
             //    }
             //}
-            var e = Entity.UpdateNullity().UnboxIfNotNull();
+            var e = Entity.UnboxBriefly()!;
             int dx = x1 - (int)e!.X!;
             int dy = y1 - (int)e!.Y!;
             int dz = z1 - (int)e!.Z!;
@@ -226,7 +231,11 @@ namespace Hecatomb8
 
         public bool CanMoveBounded(int x1, int y1, int z1)
         {
-            var e = Entity.UpdateNullity().UnboxIfNotNull()!;
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return false;
+            }
+            var e = Entity.UnboxBriefly()!;
             return CouldMoveBounded((int)e.X!, (int)e.Y!, (int)e.Z!, x1, y1, z1);
         }
 
@@ -264,9 +273,13 @@ namespace Hecatomb8
 
         public void StepToValidEmptyTile(int x1, int y1, int z1)
         {
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return;
+            }
             // this is where you'd fire some kind of event
-            Entity.UpdateNullity().UnboxIfNotNull()!.PlaceInValidEmptyTile(x1, y1, z1);
-            Actor a = Entity.UpdateNullity().UnboxIfNotNull()!.GetComponent<Actor>();
+            Entity.UnboxBriefly()!.PlaceInValidEmptyTile(x1, y1, z1);
+            Actor a = Entity.UnboxBriefly()!.GetComponent<Actor>();
             a.Spend(16);
             //CachedActor.Spend(16);
         }
@@ -297,7 +310,11 @@ namespace Hecatomb8
 
         public bool CanTouchBounded(int x1, int y1, int z1)
         {
-            var (x, y, z) = Entity.UpdateNullity().UnboxIfNotNull()!;
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return false;
+            }
+            var (x, y, z) = Entity.UnboxBriefly()!;
             return CouldTouchBounded((int)x!, (int)y!, (int)z!, x1, y1, z1);
         }
 
@@ -312,73 +329,82 @@ namespace Hecatomb8
         //    return (int x, int y, int z) => { return CanStand(x, y, z); };
         //}
 
-        //public bool CanReach(int x1, int y1, int z1, bool useLast = true)
-        //{
-        //    int x0 = Entity.X;
-        //    int y0 = Entity.Y;
-        //    int z0 = Entity.Z;
-        //    Func<int, int, int, int, int, int, bool> movable;
-        //    Func<int, int, int, bool> standable;
-        //    movable = CouldMove;
-        //    standable = CanStand;
-        //    var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast, movable: movable, standable: standable);
-        //    Coord? c = (path.Count > 0) ? path.First.Value : (Coord?)null;
-        //    return (c == null) ? false : true;
-        //}
+        public bool CanReachBounded(int x1, int y1, int z1, bool useLast = true)
+        {
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return false;
+            }
+            var e = Entity.UnboxBriefly()!;
+            int x0 = (int)e.X!;
+            int y0 = (int)e.Y!;
+            int z0 = (int)e.Z!;
+            Func<int, int, int, int, int, int, bool> movable;
+            Func<int, int, int, bool> standable;
+            movable = CouldMoveBounded;
+            standable = CanStandBounded;
+            var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast, movable: movable, standable: standable);
+            Coord? c = (path.Count > 0) ? path.First!.Value : (Coord?)null;
+            return (c == null) ? false : true;
+        }
 
 
-        //public bool CanReach(TileEntity t, bool useLast = true, bool useCache = true)
-        //{
-        //    Func<int, int, int, int, int, int, bool> movable;
-        //    Func<int, int, int, bool> standable;
-        //    movable = CouldMove;
-        //    standable = CanStand;
-        //    var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable, useCache: useCache);
-        //    Coord? c = (path.Count > 0) ? path.First.Value : (Coord?)null;
-        //    return (c == null) ? false : true;
-        //}
+        public bool CanReachBounded(TileEntity t, bool useLast = true, bool useCache = true)
+        {
+            if (!t.Placed)
+            {
+                return false;
+            }    
+            Func<int, int, int, int, int, int, bool> movable;
+            Func<int, int, int, bool> standable;
+            movable = CouldMoveBounded;
+            standable = CanStandBounded;
+            var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable, useCache: useCache);
+            Coord? c = (path.Count > 0) ? path.First!.Value : (Coord?)null;
+            return (c == null) ? false : true;
+        }
 
-        //public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
-        //{
-        //    if (Game.Options.NoIngredients && !alwaysNeedsIngredients)
-        //    {
-        //        return true;
-        //    }
-        //    Dictionary<string, int> needed = new Dictionary<string, int>(resources);
-        //    List<Item> items = Game.World.Items.Where(
-        //        it => { return (needed.ContainsKey(it.Resource) && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
-        //    ).ToList();
-        //    foreach (Item item in items)
-        //    {
-        //        if (needed.ContainsKey(item.Resource))
-        //        {
-        //            int n = (respectClaims) ? item.Unclaimed : item.Quantity;
-        //            needed[item.Resource] -= n;
-        //            if (needed[item.Resource] <= 0)
-        //            {
-        //                needed.Remove(item.Resource);
-        //            }
-        //        }
-        //    }
-        //    return (needed.Count == 0);
-        //}
+        public bool CanFindResources(Dictionary<Resource, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
+        {
+            if (HecatombOptions.NoIngredients && !alwaysNeedsIngredients)
+            {
+                return true;
+            }
+            var needed = new Dictionary<Resource, int>(resources);
+            List<Item> items = Items.Where(
+                it => { return (needed.ContainsKey(it.Resource!) && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0) && CanReachBounded(it, useCache: useCache)); }
+            ).ToList();
+            foreach (Item item in items)
+            {
+                if (needed.ContainsKey(item.Resource!))
+                {
+                    int n = (respectClaims) ? item.Unclaimed : item.N;
+                    needed[item.Resource!] -= n;
+                    if (needed[item.Resource!] <= 0)
+                    {
+                        needed.Remove(item.Resource!);
+                    }
+                }
+            }
+            return (needed.Count == 0);
+        }
 
-        //public bool CanFindResource(string resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
-        //{
-        //    if (Game.Options.NoIngredients)
-        //    {
-        //        return true;
-        //    }
-        //    List<Item> items = Game.World.Items.Where(
-        //        it => { return (it.Resource == resource && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
-        //    ).ToList();
-        //    int needed = need;
-        //    foreach (Item item in items)
-        //    {
-        //        int n = (respectClaims) ? item.Unclaimed : item.Quantity;
-        //        needed -= n;
-        //    }
-        //    return (needed <= 0);
-        //}
+        public bool CanFindResource(Resource resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
+        {
+            if (HecatombOptions.NoIngredients)
+            {
+                return true;
+            }
+            List<Item> items = Items.Where(
+                it => { return (it.Resource == resource && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0) && CanReachBounded(it, useCache: useCache)); }
+            ).ToList();
+            int needed = need;
+            foreach (Item item in items)
+            {
+                int n = (respectClaims) ? item.Unclaimed : item.N;
+                needed -= n;
+            }
+            return (needed <= 0);
+        }
     }
 }

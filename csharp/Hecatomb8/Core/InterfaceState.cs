@@ -157,14 +157,10 @@ namespace Hecatomb8
                 }
             }
             PlayerVisible = GameState.World!.Player!.GetComponent<Senses>().GetFOV();
-            foreach (ListenerHandledEntityPointer<Creature> ef in GetState<TaskHandler>().Minions)
+            foreach (Creature cr in GetState<TaskHandler>().GetMinions())
             {
-                Creature? cr = ef.UnboxIfNotNull();
-                if (cr != null)
-                {
-                    Senses s = cr.GetComponent<Senses>();
-                    PlayerVisible.UnionWith(s.GetFOV());
-                }
+                Senses s = cr.GetComponent<Senses>();
+                PlayerVisible.UnionWith(s.GetFOV());
             }
             foreach (var t in PlayerVisible)
             {

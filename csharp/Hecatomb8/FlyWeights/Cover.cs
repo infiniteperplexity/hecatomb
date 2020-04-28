@@ -2,6 +2,7 @@
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     public class Cover : FlyWeight<Cover>
     {
         public readonly string Name;
@@ -274,12 +275,12 @@ namespace Hecatomb8
         //    ClearCover(x, y, z);
         //}
 
-        //public static void ClearGroundCover(int x, int y, int z)
-        //{
-        //    if (!Game.World.Covers[x, y, z].Liquid) // not sure how to deal with liquids here
-        //    {
-        //        Game.World.Covers[x, y, z] = Cover.NoCover;
-        //    }
-        //}
+        public static void ClearGroundCover(int x, int y, int z)
+        {
+            if (!Covers.GetWithBoundsChecked(x, y, z).Liquid) // I guess liquids should not get cleared?
+            {
+                Covers.SetWithBoundsChecked(x, y, z, Cover.NoCover);
+            }
+        }
     }
 }

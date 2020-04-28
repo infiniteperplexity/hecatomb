@@ -12,6 +12,7 @@ namespace Hecatomb8
         public Resource? Resource;
         public int N;
         public int Claimed;
+        public int Unclaimed { get => N - Claimed;}
         public bool Disowned;
         public int StackSize;
 
@@ -145,6 +146,25 @@ namespace Hecatomb8
             item.Resource = r;
             item.N = n;
             return item;
+        }
+
+        public Item Take(int n)
+        {
+            N -= n;
+            Item item = Spawn<Item>();
+            item.Resource = Resource;
+            item.N = n;
+            item.Disowned = Disowned;
+            if (N <= 0)
+            {
+                Despawn();
+            }
+            return item;
+        }
+        public Item TakeClaimed(int n)
+        {
+            Claimed -= n;
+            return Take(n);
         }
     }
 }

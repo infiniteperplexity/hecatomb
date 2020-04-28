@@ -9,13 +9,30 @@ namespace Hecatomb8
     // ComposedEntity are entity, such as creature or features, that can have Components attached to add additional behaviors
     public abstract class ComposedEntity : TileEntity
     {
-        public Dictionary<string, ListenerHandledEntityPointer<Component>>? _components;
+        public Dictionary<string, int>? _components;
         [JsonIgnore] protected List<Component> Components;
 
         protected ComposedEntity() : base()
         {
             Components = new List<Component>();
-            //Components.Add(new Movement());
+        }
+
+        public GameEvent OnDespawn(GameEvent ge)
+        {
+            var de = (DespawnEvent)ge;
+            if (de.Entity!.EID is null)
+            {
+                return ge;
+            }
+            if (_components != null && _components.ContainsValue((int)de.Entity!.EID!))
+            {
+                string t = de.Entity!.GetType().Name;
+                if (_components.ContainsKey(t))
+                {
+                    _components.Remove(t);
+                }
+            }
+            return ge;
         }
 
         public void SpawnComponents()
@@ -32,8 +49,13 @@ namespace Hecatomb8
             {
                 throw new InvalidOperationException($"{this} has no component of type {t}");
             }
+            int eid = _components[t];
+            if (!GameState.World!.Entities.ContainsKey(eid))
+            {
+                throw new InvalidOperationException($"{this} has no component of type {t}");
+            }
             // let's not update nullity here; this could easily get called by the interface
-            return (T)_components![t].UnboxIfNotNull()!;
+            return (T)GameState.World!.Entities[eid];
         }
 
         public bool HasComponent<T>() where T : Component
@@ -54,10 +76,9 @@ namespace Hecatomb8
             }
             if (_components is null)
             {
-                _components = new Dictionary<string, ListenerHandledEntityPointer<Component>>();
+                _components = new Dictionary<string, int>();
             }
-            
-            _components[c.GetType().Name] = c;
+            _components[c.GetType().Name] = (int)c.EID!;
             c.AddToEntity(this);
         }
     }

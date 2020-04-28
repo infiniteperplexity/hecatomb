@@ -8,7 +8,7 @@ namespace Hecatomb8
     {
         public DigTask()
         {
-            MenuName = "dig";
+            MenuDescription = "dig or whatever";
             _bg = "orange";
         }
 

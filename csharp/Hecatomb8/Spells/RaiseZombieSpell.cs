@@ -58,7 +58,7 @@ namespace Hecatomb8
                     zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                     InterfaceState.Commands!.Act();
                 }
-                else if (f is Grave && Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z - 1) is null)
+                else if (f is Grave && Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z - 1) is null && Tasks.GetWithBoundsChecked(c.X, c.Y, c.Z) is null)
                 {
                     Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
                     Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
@@ -79,7 +79,7 @@ namespace Hecatomb8
                     {
                         Task emerge = Entity.Spawn<ZombieEmergeTask>();
                         emerge.AssignTo(zombie);
-                        emerge.Place(c.X, c.Y, c.Z);
+                        emerge.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                     }
                     GetState<TaskHandler>().AddMinion(zombie);
                     zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z - 1);
@@ -121,8 +121,8 @@ namespace Hecatomb8
     {
         public ZombieEmergeTask() : base()
         {
-            Name = "zombie emerging";
-            BG = "orange";
+            MenuDescription = "zombie emerging";
+            _bg = "orange";
         }
         public override void Act()
         {
@@ -131,42 +131,62 @@ namespace Hecatomb8
 
         public override bool ValidTile(Coord c)
         {
-            Feature f = Game.World.Features[c];
-            if (f == null)
+            Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            if (f is Grave)
             {
-                return false;
+                return true;
             }
-            if (f.TypeName != "Grave")
-            {
-                return false;
-            }
-            return true;
+            return false;
         }
         public override void Start()
         {
-            Game.World.Events.Publish(new SensoryEvent() { X = X, Y = Y, Z = Z, Sight = "You hear an ominous stirring from under the ground..." });
-            Feature f = Game.World.Features[X, Y, Z];
-            if (f == null)
+            if (!Placed)
             {
-                base.Start();
-                f = Game.World.Features[X, Y, Z];
-                f.Symbol = '\u2717';
-                f.FG = "white";
+                Unassign();
+                return;
             }
+            var (x, y, z) = GetVerifiedCoord();
+            Senses.Announce(x, y, z, sight: "You hear an ominous stirring from under the ground...");
+            // this code would place an incomplete fixture if there is no grave, but...Makes is null...I don't think that's safe
+            //Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            //if (f is null)
+            //{
+            //    base.Start();
+            //    f = Features.GetWithBoundsChecked(x, y, z);
+                //if (f is IncompleteFixture)
+                //{
+                //    var ifx = (IncompleteFixture)f;
+                //    ifx.IncompleteSymbol = '\u2717';
+                //    ifx.IncompleteFG = "white";
+                //    // it doesn't have a "makes"...
+                //}
+            //}
         }
         public override void Finish()
         {
-
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
-            Game.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = X, Y = Y, Z = Z });
-            Feature f = Game.World.Features[X, Y, Z];
-            RaiseZombieSpell.BreakTombstone(f);
-            Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
-            Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
-            Cover.ClearCover(X, Y, Z);
-            Cover.ClearCover(X, Y, Z - 1);
+            if (!Placed)
+            {
+                base.Finish();
+            }
+            var (X, Y, Z) = GetVerifiedCoord();
+            Publish(new TutorialEvent() { Action = "ZombieEmerges" });
+            Senses.Announce(X, Y, Z, sight: "A zombie bursts forth from the ground!");
+            Feature? f = Features.GetWithBoundsChecked(X, Y, Z);
+            if (f is Grave)
+            {
+                var grave = (Grave)f;
+                grave.Shatter();
+            }    
+            else if (f != null)
+            {
+                f.Destroy();
+            }
+            Terrains.SetWithBoundsChecked(X, Y, Z, Terrain.DownSlopeTile);
+            Terrains.SetWithBoundsChecked(X, Y, Z - 1, Terrain.UpSlopeTile);
+            Cover.ClearGroundCover(X, Y, Z);
+            Cover.ClearGroundCover(X, Y, Z - 1);
             base.Finish();
-            Game.World.ValidateOutdoors();
+            //Game.World.ValidateOutdoors();
         }
     }
 }

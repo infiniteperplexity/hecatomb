@@ -155,7 +155,7 @@ namespace Hecatomb8
             while (ActorQueue.Count > 0)
             {
                 Actor actor = (Actor) Entities[ActorQueue.Dequeue()];
-                if (actor.Entity.UpdateNullity().UnboxIfNotNull() == Player)
+                if (actor.Entity?.UnboxBriefly() == Player)
                 {
                     InterfaceState.PlayerIsReady();
                     return;

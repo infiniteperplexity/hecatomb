@@ -14,12 +14,12 @@ namespace Hecatomb8
 
     class TaskHandler : StateHandler, IChoiceMenu
     {
-        public List<ListenerHandledEntityPointer<Creature>> Minions;
+        public List<int> Minions;
         [JsonIgnore] public Type[] Tasks;
 
         public TaskHandler() : base()
         {
-            Minions = new List<ListenerHandledEntityPointer<Creature>>();
+            Minions = new List<int>();
             Tasks = new[] {
                 typeof(DigTask),
                 typeof(UndesignateTask)
@@ -31,20 +31,17 @@ namespace Hecatomb8
         public GameEvent OnDestroy(GameEvent ge)
         {
             DestroyEvent dse = (DestroyEvent)ge;
-            // I'm not sure if lists of TypedEntityFields can use Contains...
-            foreach (var m in Minions)
+            if (dse.Entity!.EID != null && Minions.Contains((int)dse.Entity.EID))
             {
-                //if (m.Unbox() == dse.Entity)
-                //{
-                //    if (dse.Cause == "Decay")
-                //    {
-                //        Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has rotted away, leaving naught but bones.");
-                //    }
-                //    else
-                //    {
-                //        Game.InfoPanel.PushMessage("{orange}Your " + (dse.Entity as Creature).Describe(article: false) + " has perished!");
-                //    }
-                //}
+                Minions.Remove((int)dse.Entity!.EID);
+                if (dse.Cause == "Decay")
+                {
+                    PushMessage("{orange}Your " + (dse.Entity as Creature)!.Describe(article: false) + " has rotted away, leaving naught but bones.");
+                }
+                else
+                {
+                    PushMessage("{orange}Your " + (dse.Entity as Creature)!.Describe(article: false) + " has perished!");
+                }
             }
             return ge;
         }
@@ -52,12 +49,19 @@ namespace Hecatomb8
 
         public void AddMinion(Creature cr)
         {
-            Minions.Add(cr.GetPointer<Creature>(OnDespawn));
+            if (cr.EID != null)
+            {
+                Minions.Add((int)cr.EID);
+            }
         }
         public GameEvent OnDespawn(GameEvent ge)
         {
             DespawnEvent dse = (DespawnEvent)ge;
-            Minions = Minions.Where((ListenerHandledEntityPointer<Creature> c) => c.UnboxBriefly() != dse.Entity).ToList();
+            if (dse.Entity!.EID is null)
+            {
+                return ge;
+            }
+            Minions = Minions.Where((int eid) => dse.Entity.EID != eid).ToList();
             return ge;
         }
 
@@ -116,6 +120,20 @@ namespace Hecatomb8
         public void FinishMenu(MenuChoiceControls menu)
         {
 
+        }
+
+        public List<Creature> GetMinions()
+        {
+            var minions = new List<Creature>();
+            foreach (int eid in Minions)
+            {
+                Creature? cr = GetEntity<Creature>(eid);
+                if (cr != null)
+                {
+                    minions.Add(cr);
+                }
+            }
+            return minions;
         }
     }
 }

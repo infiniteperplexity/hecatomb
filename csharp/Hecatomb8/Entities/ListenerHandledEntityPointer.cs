@@ -17,11 +17,9 @@ namespace Hecatomb8
     {    
         // this is what gets serialized
         public int _eid;
-        [JsonIgnore] private T Entity;
 
         private ListenerHandledEntityPointer(T t)
         {
-            Entity = t;
             _eid = (int)t.EID!;
         }
 
@@ -29,13 +27,16 @@ namespace Hecatomb8
         {
             return new ListenerHandledEntityPointer<T>(t);
         }
-        public T UnboxBriefly()
+        public T? UnboxBriefly()
         {
-            return Entity;
-        }
-        public void SetEntityDuringDeserialization(T t)
-        {
-            Entity = t;
+            if (!Entities.ContainsKey(_eid))
+            {
+                return null;
+            }
+            else
+            {
+                return (T)Entities[_eid];
+            }
         }
     }
 }

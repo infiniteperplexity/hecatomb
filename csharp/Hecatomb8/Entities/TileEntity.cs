@@ -51,7 +51,12 @@ namespace Hecatomb8
             z = Z;
         }
 
-        public virtual string Describe(bool capitalized = false)
+        public Coord GetVerifiedCoord()
+        {
+            return new Coord((int)X!, (int)Y!, (int)Z!);
+        }
+
+        public virtual string Describe(bool capitalized = false, bool article = true)
         {
             return this.GetType().Name;
         }

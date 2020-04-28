@@ -17,7 +17,12 @@ namespace Hecatomb8
         public HashSet<Coord> GetFOV()
         {
             resetVisible();
-            var (x, y, z) = Entity.UpdateNullity().UnboxIfNotNull()!;
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+
+                return Visible;
+            }
+            var (x, y, z) = Entity.UnboxBriefly()!.GetVerifiedCoord();
             storedZ = (int)z!;
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting((int)x!, (int)y!, Range, cannotSeeThrough, addToVisible);
             foreach (Coord c in Visible.ToList())
@@ -67,19 +72,14 @@ namespace Hecatomb8
                     PushMessage(sound);
                     return;
                 }
-                foreach (var ef in GetState<TaskHandler>().Minions)
+                foreach (var cr in GetState<TaskHandler>().GetMinions())
                 {
-                    Creature? maybe = ef.UpdateNullity().UnboxIfNotNull();
-                    if (maybe != null)
+                    if (Tiles.Distance(x, y, z, (int)cr.X!, (int)cr.Y!, (int)cr.Z!) <= soundRange)
                     {
-                        Creature cr = (Creature)maybe;
-                        if (Tiles.Distance(x, y, z, (int)cr.X!, (int)cr.Y!, (int)cr.Z!) <= soundRange)
+                        if (Tiles.Distance(x, y, z, (int)Player.X!, (int)Player.Y!, (int)Player.Z!) <= soundRange)
                         {
-                            if (Tiles.Distance(x, y, z, (int)Player.X!, (int)Player.Y!, (int)Player.Z!) <= soundRange)
-                            {
-                                PushMessage(sound);
-                                return;
-                            }
+                            PushMessage(sound);
+                            return;
                         }
                     }
                 }
