@@ -106,27 +106,5 @@ namespace Hecatomb8
 
 			Chooser.FinishMenu(this);
 		}
-
-		public void SelectOrWait()
-		{
-			//if (Game.ReconstructMode)
-			//{
-			//	Game.World.GetState<CommandLogger>().StepForward();
-			//}
-			var commands = InterfaceState.Commands!;
-			if (ControlDown)
-			{
-				commands.Wait();
-			}
-			else
-			{
-				SelectTile();
-				// unless we selected something, wait anyway
-				if (InterfaceState.Controls == this)
-				{
-					commands.Wait();
-				}
-			}
-		}
 	}
 }

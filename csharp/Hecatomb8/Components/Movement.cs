@@ -364,7 +364,7 @@ namespace Hecatomb8
             return (c == null) ? false : true;
         }
 
-        public bool CanFindResources(Dictionary<Resource, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
+        public bool CanReachResources(Dictionary<Resource, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
         {
             if (HecatombOptions.NoIngredients && !alwaysNeedsIngredients)
             {
@@ -389,7 +389,7 @@ namespace Hecatomb8
             return (needed.Count == 0);
         }
 
-        public bool CanFindResource(Resource resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
+        public bool CanReachResource(Resource resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
         {
             if (HecatombOptions.NoIngredients)
             {

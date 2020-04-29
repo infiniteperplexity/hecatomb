@@ -152,7 +152,7 @@ namespace Hecatomb8
                 return false;
             }
             Movement m = c.GetComponent<Movement>();
-            return m.CanReachBounded(this, useLast: WorkSameTile) && m.CanFindResources(Ingredients, alwaysNeedsIngredients: NeedsIngredients());
+            return m.CanReachBounded(this, useLast: WorkSameTile) && m.CanReachResources(Ingredients, alwaysNeedsIngredients: NeedsIngredients());
         }
         public virtual void AssignTo(Creature c)
         {
@@ -625,16 +625,42 @@ namespace Hecatomb8
         //protected ColoredText cachedMenuListing;
         public virtual ColoredText ListOnMenu()
         {
-            return MockupTaskName;
+
             //if (cachedMenuListing != null)
             //{
             //    return cachedMenuListing;
             //}
-            //if (Ingredients.Count == 0)
+            if (Ingredients.Count == 0)
+            {
+                return MockupTaskName;
+            }
+            else if (Task.CanFindResources(Ingredients))
+            {
+                return (MockupTaskName + " ($: " + Resource.Format(Ingredients) + ")");
+            }
+            string ingredients = "{gray}" + MockupTaskName + " ($: ";
+            var keys = Ingredients.Keys.ToList();
+            for (int i = 0; i < keys.Count; i++)
+            {
+                Resource resource = keys[i];
+                if (Task.CanFindResource(resource, Ingredients[resource]))
+                {
+                    ingredients += ("{white}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                else
+                {
+                    ingredients += ("{gray}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                if (i < keys.Count - 1)
+                {
+                    ingredients += ", ";
+                }
+            }
+            ingredients += "{gray})";
+            return ingredients;
             //{
             //    cachedMenuListing = MenuName;
             //    return cachedMenuListing;
-            //}
             //else if (Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
             //{
             //    cachedMenuListing = (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
@@ -666,6 +692,49 @@ namespace Hecatomb8
         public virtual string GetHighlightColor()
         {
             return BG!;
+        }
+
+        public static bool CanFindResources(Dictionary<Resource, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false)
+        {
+            if (HecatombOptions.NoIngredients && !alwaysNeedsIngredients)
+            {
+                return true;
+            }
+            var needed = new Dictionary<Resource, int>(resources);
+            List<Item> items = Items.Where(
+                it => { return (needed.ContainsKey(it.Resource!) && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0)); }
+            ).ToList();
+            foreach (Item item in items)
+            {
+                if (needed.ContainsKey(item.Resource!))
+                {
+                    int n = (respectClaims) ? item.Unclaimed : item.N;
+                    needed[item.Resource!] -= n;
+                    if (needed[item.Resource!] <= 0)
+                    {
+                        needed.Remove(item.Resource!);
+                    }
+                }
+            }
+            return (needed.Count == 0);
+        }
+
+        public static bool CanFindResource(Resource resource, int need, bool respectClaims = true, bool ownedOnly = true)
+        {
+            if (HecatombOptions.NoIngredients)
+            {
+                return true;
+            }
+            List<Item> items = Items.Where(
+                it => { return (it.Resource == resource && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0)); }
+            ).ToList();
+            int needed = need;
+            foreach (Item item in items)
+            {
+                int n = (respectClaims) ? item.Unclaimed : item.N;
+                needed -= n;
+            }
+            return (needed <= 0);
         }
     }
 }

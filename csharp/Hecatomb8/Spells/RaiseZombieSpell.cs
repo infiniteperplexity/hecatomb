@@ -14,6 +14,31 @@ namespace Hecatomb8
             _cost = 0;
         }
 
+        protected override int getCost()
+        {
+            var minions = GetState<TaskHandler>().Minions;
+            if (minions.Count == 0)
+            {
+                return 10;
+            }
+            else if (minions.Count == 1)
+            {
+                return 15;
+            }
+            else if (minions.Count == 2)
+            {
+                return 20;
+            }
+            else if (minions.Count == 3)
+            {
+                return 25;
+            }
+            else
+            {
+                return 30;
+            }
+        }
+
         public override void ChooseFromMenu()
         {
             if (Cost > Component!.Sanity)

@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     public static class Time
     {
         //decimal[] Speeds;
@@ -51,9 +52,8 @@ namespace Hecatomb8
                 SpeedIndex += 1;
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
-                //InterfaceState.InfoPanel.PushMessage($"Game speed decreased to {num}:{denom}");
+                PushMessage($"Game speed decreased to {num}:{denom}");
                 InterfaceState.DirtifyTextPanels();
-                //InterfacePanel.DirtifySidePanels();
             }
         }
 
@@ -64,7 +64,7 @@ namespace Hecatomb8
                 SpeedIndex -= 1;
                 int num = Speeds[SpeedIndex].Item2;
                 int denom = Speeds[SpeedIndex].Item1;
-                //InterfaceState.InfoPanel.PushMessage($"Game speed increased to {num}:{denom}");
+                PushMessage($"Game speed increased to {num}:{denom}");
                 InterfaceState.DirtifyTextPanels();
             }
         }

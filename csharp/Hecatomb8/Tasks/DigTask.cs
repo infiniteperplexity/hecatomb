@@ -66,6 +66,7 @@ namespace Hecatomb8
                 var ifx = (IncompleteFixture)f;
                 ifx.Makes = Makes;
                 ifx.IncompleteSymbol = '\u2717';
+                ifx.IncompleteFG = "white";
             }
         }
         public override void Finish()
@@ -507,7 +508,7 @@ namespace Hecatomb8
             }
             Movement m = c.GetComponent<Movement>();
             Debug.WriteLine("going to test reachability");
-            return m.CanReachBounded(this, useLast: (WorkSameTile)) && m.CanFindResources(Ingredients);
+            return m.CanReachBounded(this, useLast: (WorkSameTile)) && m.CanReachResources(Ingredients);
         }
     }
 }

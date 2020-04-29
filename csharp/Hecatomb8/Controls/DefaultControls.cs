@@ -33,7 +33,9 @@ namespace Hecatomb8
                 [Keys.OemQuestion] = commands.ToggleTutorial,
                 [Keys.Escape] = commands!.SystemMenuCommand,
                 [Keys.Enter] = commands!.TogglePause,
-                [Keys.T] = HecatombConverter.Test
+                [Keys.T] = HecatombConverter.Test,
+                [Keys.OemMinus] = Commands.SlowDown,
+                [Keys.OemPlus] = Commands.SpeedUp
         };
             InfoTop = new List<ColoredText>();
             RefreshContent();
@@ -50,7 +52,6 @@ namespace Hecatomb8
             if (GameState.World != null && Player != null)
             {
                 var time = Time.GetTimeText();
-
                 InfoTop.Add(time[0]);
                 InfoTop.Add(time[1]);
                 InfoTop.Add(" ");

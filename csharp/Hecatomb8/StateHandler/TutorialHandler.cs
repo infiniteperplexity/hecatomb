@@ -601,7 +601,9 @@ namespace Hecatomb8
                         }
                         else if (t.Action == "Cancel")
                         {
-                            GotoState("AssignJob");
+                            // due to a change in how interface rewinding works
+                            GotoState("ChooseJob");
+                            //GotoState("AssignJob");
                         }
                     },
                 },
@@ -758,7 +760,9 @@ namespace Hecatomb8
                         }
                         else if (t.Action=="Cancel")
                         {
-                            GotoState("CastSpell2");
+                            // due to a change in how rewind controls works
+                            //GotoState("CastSpell2");
+                            GotoState("ChooseSpell2");
                         }
                     },
                 },
@@ -790,14 +794,14 @@ namespace Hecatomb8
                         if (t.Action=="ZombieEmerges")
                         {
                             //in the unusual circumstance that there are no rocks available, skip to the end of the tutorial
-                            //if (Player.GetComponent<Movement>().CanFindResources(new Dictionary<string, int>() {{"Rock", 1}}))
-                            //{
+                            if (Task.CanFindResources(new Dictionary<Resource, int>() {{Resource.Rock, 1}}))
+                            {
                                 NextState();
-                            //}
-                            //else
-                            //{
-                            //    GotoState("EndOfTutorial");
-                            //}
+                            }
+                            else
+                            {
+                                GotoState("EndOfTutorial");
+                            }
                         }
                     },
                 },
@@ -1022,7 +1026,9 @@ namespace Hecatomb8
                         }
                         else if (t.Action == "Cancel")
                         {
-                            GotoState("AssignJob2");
+                            // due to a change in how interface rewinding works
+                            GotoState("ChooseJob2");
+                            //GotoState("AssignJob2");
                         }
                     },
                 },

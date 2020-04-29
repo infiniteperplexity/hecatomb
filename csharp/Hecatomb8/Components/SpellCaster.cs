@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace Hecatomb8
 {
@@ -15,11 +16,42 @@ namespace Hecatomb8
         public SpellCaster()
         {
             Spells = new List<Type>();
+            AddListener<TurnBeginEvent>(OnTurnBegin);
         }
 
         private int _getMaxSanity()
         {
             return _maxSanity;
+        }
+
+        public GameEvent OnTurnBegin(GameEvent ge)
+        {
+            if (Entity?.UnboxBriefly() is null)
+            {
+                return ge;
+            }
+            int chance = 5;
+            if (MaxSanity > 20)
+            {
+                chance = 7;
+            }
+            //var (x, y, z) = Entity.UnboxBriefly(); ;
+            //var f = Features[x, y, z];
+            //if (f != null && f.TryComponent<StructuralComponent>() != null)
+            //{
+            //    if (f.GetComponent<StructuralComponent>().Structure.Unbox() is Sanctum)
+            //    {
+            //        chance /= 2;
+            //    }
+            //}
+            int r = GameState.World!.Random.Next(chance);
+            if (r==0)
+            {
+                Sanity = Math.Min(MaxSanity, Sanity + 1);
+                Debug.WriteLine("actual sanity is " + Sanity);
+            }
+
+            return ge;
         }
 
         public void BuildMenu(MenuChoiceControls menu)

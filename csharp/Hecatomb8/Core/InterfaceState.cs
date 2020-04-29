@@ -123,6 +123,7 @@ namespace Hecatomb8
             if (InterfaceState.InfoPanel != null)
             {
                 InterfaceState.InfoPanel.Dirty = true;
+                Controls.RefreshContent();
             }
             if (InterfaceState.MenuPanel != null)
             {

@@ -365,5 +365,28 @@ namespace Hecatomb8
             Time.AutoPausing = !Time.AutoPausing;
             InterfaceState.DirtifyTextPanels();
         }
+
+        public void ScrollUpCommand()
+        {
+            GetState<GameLog>().ScrollUp();
+            InterfaceState.DirtifyTextPanels();
+        }
+
+        public void ScrollDownCommand()
+        {
+            GetState<GameLog>().ScrollDown();
+            InterfaceState.DirtifyTextPanels();
+        }
+
+        public void SpeedUp()
+        {
+            Time.SpeedUp();
+        }
+
+        public void SlowDown()
+        {
+            Time.SlowDown();
+        }
+
     }
 }
