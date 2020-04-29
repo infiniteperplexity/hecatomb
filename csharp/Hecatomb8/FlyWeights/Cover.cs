@@ -258,22 +258,25 @@ namespace Hecatomb8
             bg: "FLOORBG",
             darkbg: "BELOWFG"
         );
-        //public void Mine(int x, int y, int z)
-        //{
-        //    if (this.Resource != null)
-        //    {
-        //        Item.PlaceNewResource(this.Resource, 1, x, y, z);
-        //    }
-        //    else if (this.Solid)
-        //    {
-        //        if (Game.World.Random.Arbitrary(4, new Coord(x, y, z).OwnSeed()) == 0)
-        //        //if (Game.World.Random.Next(4)==0)
-        //        {
-        //            Item.PlaceNewResource("Rock", 1, x, y, z);
-        //        }
-        //    }
-        //    ClearCover(x, y, z);
-        //}
+        
+        public static void Mine(int x, int y, int z)
+        {
+            Cover c = Covers.GetWithBoundsChecked(x, y, z);
+            if (c.Resource != null)
+            {
+                var item = Item.SpawnNewResource(c.Resource, 1);
+                item.DropOnValidTile(x, y, z);
+            }
+            else if (c.Solid)
+            {
+                if (GameState.World!.Random.Next(4)==0)
+                {
+                    var item = Item.SpawnNewResource(Resource.Rock, 1);
+                    item.DropOnValidTile(x, y, z);
+                }
+            }
+            ClearGroundCover(x, y, z);
+        }
 
         public static void ClearGroundCover(int x, int y, int z)
         {
