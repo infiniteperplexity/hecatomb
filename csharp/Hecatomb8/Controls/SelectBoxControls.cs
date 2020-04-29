@@ -19,19 +19,20 @@ namespace Hecatomb8
 	{
 		ISelectsBox Selector;
 		List<Coord> Squares;
-		//List<Particle> Highlights;
+		List<Particle> Highlights;
 
 		public SelectBoxControls(ISelectsBox i) : base()
 		{
 			AllowsUnpause = true;
 			Selector = i;
 			Squares = new List<Coord>();
-			//Highlights = new List<Particle>();
-			//KeyMap[Keys.Space] = SelectTile;
-			//KeyMap[Keys.Escape] = () => {
-			//	Clean();
-			//	Back();
-			//};
+			Highlights = new List<Particle>();
+			KeyMap[Keys.Space] = SelectTile;
+			KeyMap[Keys.Escape] = () =>
+			{
+				Clean();
+				InterfaceState.RewindControls();
+			};
 			InfoTop = new List<ColoredText>() {
 				 "{orange}**Esc: Cancel.**",
 				" ",
@@ -42,9 +43,9 @@ namespace Hecatomb8
 
 		private void DrawBox(Coord c)
 		{
-			//Clean();
-			//Highlights.Clear();
-			//Squares.Clear();
+			Clean();
+			Highlights.Clear();
+			Squares.Clear();
 			for (int y = 0; y < Selector.BoxHeight; y++)
 			{
 				for (int x = 0; x < Selector.BoxWidth; x++)
@@ -54,39 +55,38 @@ namespace Hecatomb8
 			}
 			foreach (Coord s in Squares)
 			{
-				//Game.MainPanel.DirtifyTile(s);
-				//Highlight h = new Highlight(Selector.GetHighlightColor());
-				//h.Place(s.X, s.Y, s.Z);
-				//Highlights.Add(h);
+				InterfaceState.DirtifyTile(s);
+				Highlight h = new Highlight(Selector.GetHighlightColor());
+				h.Place(s.X, s.Y, s.Z);
+				Highlights.Add(h);
 			}
 		}
-		//public override void HoverTile(Coord c)
-		//{
-		//	//base.HoverTile(c);
-		//	DrawBox(c);
-		//	Selector.BoxHover(c, Squares);
-		//	// this might get changed to a different panel
-		//	InterfacePanel.DirtifySidePanels();
-		//	Game.World.ShowTileDetails(c);
-		//}
 
-		//private void Clean()
-		//{
-		//	foreach (Particle p in Highlights)
-		//	{
-		//		Coord s = new Coord(p.X, p.Y, p.Z);
-		//		Game.MainPanel.DirtifyTile(s);
-		//		p.Remove();
+		public override void HoverTile(Coord c)
+		{
+			base.HoverTile(c);
+			DrawBox(c);
+			Selector.BoxHover(c, Squares);
+			// this might get changed to a different panel
+			InterfaceState.DirtifyTextPanels();
+			
+		}
 
-		//	}
-		//}
+		private void Clean()
+		{
+			foreach (Particle p in Highlights)
+			{
+				p.Remove();
+			}
+			InterfaceState.DirtifyMainPanel();
+			InterfaceState.DirtifyTextPanels();
+		}
 
-		//public override void ClickTile(Coord c)
-		//{
-		//	Selector.SelectBox(Squares);
-		//	Clean();
-		//	InterfacePanel.DirtifyUsualPanels();
-		//	Reset();
-		//}
+		public override void ClickTile(Coord c)
+		{
+			Selector.SelectBox(Squares);
+			Clean();
+			InterfaceState.ResetControls();
+		}
 	}
 }

@@ -268,7 +268,7 @@ namespace Hecatomb8
                     InterfaceState.Cursor = c;
                     InterfaceState.DirtifyTile(c);
                 }
-                //Game.World.ShowTileDetails(c);
+                InterfaceState.ShowTileDetails(c);
             }
         }
 

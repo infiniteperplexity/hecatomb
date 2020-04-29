@@ -57,13 +57,14 @@ namespace Hecatomb8
                 t.PlaceInValidEmptyTile(x, y, z + 1);
                 t.AssignTo(cr);
             }
+            existing = Task?.UnboxBriefly();
             // if we have no task, find a suitable one to assign
             if (existing is null)
             {
                 // should be safely placed and non-null, if they're in the list in the first place
                 foreach (Task task in Tasks.OrderBy(t => t.Priority).ThenBy(t => Tiles.Distance(x, y, z, (int)t.X!, (int)t.Y!, (int)t.Z!)).ToList())
                 {
-                    if (task.Worker is null && task.CanAssign(cr))
+                    if (task.Worker?.UnboxBriefly() is null && task.CanAssign(cr))
                     {
                         task.AssignTo(cr);
                         break;

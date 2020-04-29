@@ -12,7 +12,7 @@ namespace Hecatomb8
         {
             MenuCommandsSelectable = true;
             var Commands = InterfaceState.Commands!;
-            //KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
+            KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
             KeyMap[Keys.Z] = Commands.ChooseSpell;
             KeyMap[Keys.J] = Commands.ChooseTask;
@@ -23,16 +23,15 @@ namespace Hecatomb8
             KeyMap[Keys.U] = Commands.ShowStructures;
             KeyMap[Keys.M] = Commands.ShowMinions;
             KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
-
-            //KeyMap[Keys.Enter] = Commands.TogglePause;
+            KeyMap[Keys.Enter] = Commands.TogglePause;
             //KeyMap[Keys.OemPipe] = Commands.ShowConsole;
-            //KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
+            KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
             //KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
             //KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
             //KeyMap[Keys.OemMinus] = Commands.SlowDown;
             //KeyMap[Keys.OemPlus] = Commands.SpeedUp;
 
-            //KeyMap[Keys.Space] = SelectOrWait;
+            KeyMap[Keys.Space] = SelectOrWait;
             RefreshContent();
         }
 

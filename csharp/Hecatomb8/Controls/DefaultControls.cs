@@ -32,6 +32,7 @@ namespace Hecatomb8
                 [Keys.L] = commands!.ShowLog,
                 [Keys.OemQuestion] = commands.ToggleTutorial,
                 [Keys.Escape] = commands!.SystemMenuCommand,
+                [Keys.Enter] = commands!.TogglePause,
                 [Keys.T] = HecatombConverter.Test
         };
             InfoTop = new List<ColoredText>();

@@ -21,5 +21,14 @@ namespace Hecatomb8
             GameState.World!.Features.SetWithBoundsChecked(x, y, z, this);
             base.PlaceInValidEmptyTile(x, y, z);
         }
+
+        public override void Remove()
+        {
+            var (_x, _y, _z) = this;
+            if (Placed)
+            {
+                GameState.World!.Features.SetWithBoundsChecked((int)_x!, (int)_y!, (int)_z!, null);
+            }
+        }
     }
 }

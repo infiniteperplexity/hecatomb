@@ -18,7 +18,7 @@ namespace Hecatomb8
         [JsonIgnore] public bool WorkSameTile;
         public int LaborCost; // do not JsonIgnore, this can vary for some subtypes
         public int Labor;
-        [JsonIgnore] public string MenuDescription;
+        [JsonIgnore] public string MockupTaskName;
         // probably don't want strings here...should be types, which is awkward
         [JsonIgnore] public List<Type> RequiresStructures;
         //[JsonIgnore] public bool ShowIngredients;
@@ -37,7 +37,7 @@ namespace Hecatomb8
         // constructor
         public Task() : base()
         {
-            MenuDescription = "default task name";
+            MockupTaskName = "default task name";
             _name = "task";
             WorkSameTile = false;
             LaborCost = 10;
@@ -146,6 +146,7 @@ namespace Hecatomb8
             }
             if (!ValidTile(crd))
             {
+                Debug.WriteLine("canceling invalid task");
                 PushMessage("Canceling invalid task.");
                 Cancel();
                 return false;
@@ -155,8 +156,10 @@ namespace Hecatomb8
         }
         public virtual void AssignTo(Creature c)
         {
+            Debug.WriteLine($"Assigning {Describe()} to {c.Describe()}");
             c.GetComponent<Minion>().Task = GetPointer<Task>(c.GetComponent<Minion>().OnDespawn);
             Worker = c.GetPointer<Creature>(OnDespawn);
+            Debug.WriteLine("Worker is " + Worker);
             ClaimIngredients();
         }
         public virtual void Cancel()
@@ -169,6 +172,7 @@ namespace Hecatomb8
             if (Worker?.UnboxBriefly() != null)
             {
                 Worker.UnboxBriefly()!.GetComponent<Minion>().Task = null;
+                Debug.WriteLine(Worker.UnboxBriefly()!.GetComponent<Minion>().Task);
             }
             Worker = null;
             UnclaimIngredients();
@@ -206,7 +210,7 @@ namespace Hecatomb8
         }
         public virtual void ClaimIngredients()
         {
-            if (Worker?.UnboxBriefly() is null)
+            if (Worker?.UnboxBriefly() is null || !Worker.UnboxBriefly()!.Placed)
             {
                 Unassign();
                 return;
@@ -360,11 +364,6 @@ namespace Hecatomb8
                 Unassign();
                 return;
             }
-            if (Worker.UnboxBriefly()!.GetComponent<Inventory>().Item?.UnboxBriefly() is null)
-            {
-                Unassign();
-                return;
-            }
             if (!NeedsIngredients())
             {
                 return;
@@ -373,7 +372,12 @@ namespace Hecatomb8
             {
                 return;
             }
-            Item item = Worker.UnboxBriefly()!.GetComponent<Inventory>().Item!.UnboxBriefly()!;
+            Item? item = Worker.UnboxBriefly()!.GetComponent<Inventory>().Item?.UnboxBriefly();
+            if (item is null)
+            {
+                Unassign();
+                return;
+            }
             Ingredients[item.Resource!] -= item.N;
             if (Ingredients[item.Resource!] <= 0)
             {
@@ -483,6 +487,7 @@ namespace Hecatomb8
             }
         }
 
+        // why do we check repeatedly whether it's valid?
         public virtual void Work()
         {
             if (!Spawned || !Placed || Worker?.UnboxBriefly() is null || !Worker.UnboxBriefly()!.Placed)
@@ -507,6 +512,7 @@ namespace Hecatomb8
                 return;
             }
             Labor -= (1 + HecatombOptions.WorkBonus);
+            // this is slightly odd timing...spend the action points before the task gets completely finished
             Worker.UnboxBriefly()!.GetComponent<Actor>().Spend();
             if (!ValidTile(new Coord(X, Y, Z)))
             {
@@ -619,7 +625,7 @@ namespace Hecatomb8
         //protected ColoredText cachedMenuListing;
         public virtual ColoredText ListOnMenu()
         {
-            return MenuDescription;
+            return MockupTaskName;
             //if (cachedMenuListing != null)
             //{
             //    return cachedMenuListing;

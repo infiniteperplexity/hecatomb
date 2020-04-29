@@ -69,20 +69,21 @@ namespace Hecatomb8
                     Cast();
                     ParticleEmitter emitter = new ParticleEmitter();
                     emitter.Place(c.X, c.Y, c.Z);
-                    (f as Grave)!.Shatter();
                     var zombie = Entity.Spawn<Zombie>();
+                    GetState<TaskHandler>().AddMinion(zombie);
+                    zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z - 1);
                     if (!Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z - 1).Solid && (Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)) || HecatombOptions.Explored))
                     {
+                        (f as Grave)!.Shatter();
                         Senses.Announce(c.X, c.Y, c.Z, sight: "The zombie emerges into the tunnel below.");
                     }
                     else
                     {
                         Task emerge = Entity.Spawn<ZombieEmergeTask>();
-                        emerge.AssignTo(zombie);
                         emerge.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                        emerge.AssignTo(zombie);    
                     }
-                    GetState<TaskHandler>().AddMinion(zombie);
-                    zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z - 1);
+     
                     InterfaceState.Commands!.Act();
                 }
             }
@@ -121,7 +122,7 @@ namespace Hecatomb8
     {
         public ZombieEmergeTask() : base()
         {
-            MenuDescription = "zombie emerging";
+            MockupTaskName = "zombie emerging";
             _bg = "orange";
         }
         public override void Act()

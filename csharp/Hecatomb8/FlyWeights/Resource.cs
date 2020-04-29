@@ -34,6 +34,27 @@ namespace Hecatomb8
             ListColor = (listColor == null) ? fg : listColor;
         }
 
+
+        public static string Format((Resource, int) vt)
+        {
+            var (r, i) = vt;
+            return (i + " " + r.Name);
+        }
+        public static string Format(Dictionary<Resource, int> d)
+        {
+            if (d.Count == 0)
+            {
+                return "";
+            }
+            List<Resource> list = d.Keys.ToList();
+            string s = Format((list[0], d[list[0]]));
+            for (int i = 1; i < list.Count; i++)
+            {
+                s += (", " + Format((list[i], d[list[i]])));
+            }
+            return s;
+        }
+
         public static readonly Resource Rock = new Resource(
             type: "Rock",
             name: "rock",

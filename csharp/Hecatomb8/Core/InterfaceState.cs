@@ -281,5 +281,151 @@ namespace Hecatomb8
                 Cursor = new Coord((int)x!, (int)y!, (int)z!);
             }
         }
+
+        public static List<ColoredText> GetTileDetails(Coord c)
+        {
+            int x = c.X;
+            int y = c.Y;
+            int z = c.Z;
+            int za = z + 1;
+            int zb = z - 1;
+            Coord above = new Coord(x, y, za);
+            Coord below = new Coord(x, y, zb);
+            string main = "light cyan";
+            string other = "gainsboro";
+            int change = 0;
+            List<ColoredText> text = new List<ColoredText>() {
+                "Tile: " + x + "," + y + ", " + z,
+                " "
+            };
+            TileEntity? t;
+            if (Explored.Contains(c) || HecatombOptions.Explored)
+            {
+                text.Add("Terrain: " + Terrains.GetWithBoundsChecked(x, y, z).Name);
+                if (Covers.GetWithBoundsChecked(x, y, z) != Cover.NoCover)
+                {
+                    text.Add("Cover: " + Covers.GetWithBoundsChecked(x, y, z).Name);
+                }
+                //text.Add("Lighting: " + GetLighting(x, y, z));
+                t = Creatures.GetWithBoundsChecked(x, y, z);
+                if (t != null)
+                {
+                    text.Add("Creature: " + t.Describe());
+                }
+                t = Features.GetWithBoundsChecked(x, y, z);
+                if (t != null)
+                {
+                    text.Add("Feature: " + t.Describe());
+                }
+                t = Items.GetWithBoundsChecked(x, y, z);
+                if (t != null)
+                {
+                    text.Add("Item: " + t.Describe());
+                }
+                t = Tasks.GetWithBoundsChecked(x, y, z);
+                if (t != null)
+                {
+                    //text.Add("Task: " + t.Describe(article: false));
+                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                }
+                text.Add(" ");
+            }
+            else if (Tasks.GetWithBoundsChecked(x, y, z) != null)
+            {
+                t = Tasks.GetWithBoundsChecked(x, y, z);
+                if (t != null)
+                {
+                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients)); ;
+                }
+            }
+            change = text.Count;
+            if (Explored.Contains(above) || HecatombOptions.Explored)
+            {
+                text.Add("Above: " + Terrains.GetWithBoundsChecked(x, y, za).Name);
+                if (Covers.GetWithBoundsChecked(x, y, za) != Cover.NoCover)
+                {
+                    text.Add("Cover: " + Covers.GetWithBoundsChecked(x, y, za).Name);
+                }
+                //text.Add("Lighting: " + GetLighting(x, y, za));
+                t = Creatures.GetWithBoundsChecked(x, y, za);
+                if (t != null)
+                {
+                    text.Add("Creature: " + t.Describe());
+                }
+                t = Features.GetWithBoundsChecked(x, y, za);
+                if (t != null)
+                {
+                    text.Add("Feature: " + t.Describe());
+                }
+                t = Items.GetWithBoundsChecked(x, y, za);
+                if (t != null)
+                {
+                    text.Add("Item: " + t.Describe());
+                }
+                t = Tasks.GetWithBoundsChecked(x, y, za);
+                if (t != null)
+                {
+                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                }
+                text.Add(" ");
+            }
+            else if (Tasks.GetWithBoundsChecked(x, y, za) != null)
+            {
+                t = Tasks.GetWithBoundsChecked(x, y, za);
+                if (t != null)
+                {
+                    text.Add("Above: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                }
+            }
+            if (Explored.Contains(below) || HecatombOptions.Explored)
+            {
+                text.Add("Below: " + Terrains.GetWithBoundsChecked(x, y, zb).Name);
+                if (Covers.GetWithBoundsChecked(x, y, zb) != Cover.NoCover)
+                {
+                    text.Add("Cover: " + Covers.GetWithBoundsChecked(x, y, zb).Name);
+                }
+                //text.Add("Lighting: " + GetLighting(x, y, zb));
+                t = Creatures.GetWithBoundsChecked(x, y, zb);
+                if (t != null)
+                {
+                    text.Add("Creature: " + t.Describe());
+                }
+                t = Features.GetWithBoundsChecked(x, y, zb);
+                if (t != null)
+                {
+                    text.Add("Feature: " + t.Describe());
+                }
+                t = Items.GetWithBoundsChecked(x, y, zb);
+                if (t != null)
+                {
+                    text.Add("Item: " + t.Describe());
+                }
+                t = Tasks.GetWithBoundsChecked(x, y, zb);
+                if (t != null)
+                {
+                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                }
+                text.Add(" ");
+            }
+            else if (Tasks.GetWithBoundsChecked(x, y, zb) != null)
+            {
+                t = Tasks.GetWithBoundsChecked(x, y, zb);
+                if (t != null)
+                {
+                    text.Add("Below: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                }
+            }
+            for (int i = 0; i < text.Count; i++)
+            {
+                text[i].Colors[0] = (i < change) ? main : other;
+            }
+            return text;
+        }
+        public static void ShowTileDetails(Coord c)
+        {
+            var text = GetTileDetails(c);
+            Controls.InfoBottom = text;
+            DirtifyTextPanels();
+        }
     }
 }

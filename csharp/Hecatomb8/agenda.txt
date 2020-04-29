@@ -90,3 +90,12 @@ way we do this is as follows:
     - So...let's think about some kind of three-way handling here.  The only way you could populate the Pointer field is to call upon a third object, which would take that pointing field and the target as its arguments.  Then you would have
     the ability, via reflection, to automagically nullify the field via reflection whenever the target changes.  That's very much against how this is supposed to work but there you ware.
     - But...you can kinda sorta reach the same kinda situation by calling it a ListenerHandledEntityField...and handling it.  So...is it *just* despawning we're worried about?
+
+4/28/2020
+- Okay...so we completed the day's goal of making it all the way through the tutorial.  And we wrote the first supposedly robust "reference web" code.
+- But there are plenty of little bugs even in the tutorial.
+    - But I just fixed several of them.
+    - One issue that's been with us for a while is that tasks get different name formatting under different circumstances and it's hard to keep one's head straight.
+        - We've got the name when it's listed on the menu, which could also be called "StaticName" if we wanted to.
+        - We've got HoverName, which is the actual name plus the formatted ingredients.
+    - Okay got all that cleaned up.

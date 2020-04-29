@@ -15,6 +15,7 @@ namespace Hecatomb8
         protected string? _bg;
         protected string? _name;
         public Coord? _coord;
+        [JsonIgnore]protected bool Plural = false;
 
         protected virtual char getSymbol() => _symbol;
         protected virtual string? getFG() => _fg;
@@ -56,9 +57,45 @@ namespace Hecatomb8
             return new Coord((int)X!, (int)Y!, (int)Z!);
         }
 
-        public virtual string Describe(bool capitalized = false, bool article = true)
+        public virtual string Describe(
+            bool article = true,
+            bool definite = false,
+            bool capitalized = false
+        )
         {
-            return this.GetType().Name;
+            string name = Name ?? "nameless";
+            bool vowel = false;
+            if (name == null)
+            {
+                return "";
+            }
+            if ("aeiou".Contains(char.ToLower(name[0]).ToString()))
+            {
+                vowel = true;
+            }
+            if (article || definite)
+            {
+                if (definite)
+                {
+                    name = "the " + name;
+                }
+                else if (!Plural)
+                {
+                    if (vowel)
+                    {
+                        name = "an " + name;
+                    }
+                    else
+                    {
+                        name = "a " + name;
+                    }
+                }
+            }
+            if (capitalized)
+            {
+                name = char.ToUpper(name[0]) + name.Substring(1);
+            }
+            return name;
         }
 
         public override void Despawn()

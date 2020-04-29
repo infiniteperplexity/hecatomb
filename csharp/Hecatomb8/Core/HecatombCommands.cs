@@ -358,5 +358,12 @@ namespace Hecatomb8
             tutorial.Visible = !tutorial.Visible;
             InterfaceState.DirtifyTextPanels();
         }
+
+        public void TogglePause()
+        {
+            Publish(new TutorialEvent() { Action = "TogglePause" });
+            Time.AutoPausing = !Time.AutoPausing;
+            InterfaceState.DirtifyTextPanels();
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace Hecatomb8
     {
         public BuildTask() : base()
         {
-            MenuDescription = "build floors or walls";
+            MockupTaskName = "build floors or walls";
             Makes = typeof(Construction);
             Ingredients = new Dictionary<Resource, int>
             {
@@ -31,7 +31,7 @@ namespace Hecatomb8
         {
             if (!Spawned || !Placed)
             {
-                return MenuDescription;
+                return MockupTaskName;
             }
             var (x, y, z) = GetVerifiedCoord();
             Terrain t = Terrains.GetWithBoundsChecked(x, y, z);
@@ -239,7 +239,7 @@ namespace Hecatomb8
             // can't build on most features
             if (f != null)
             {
-                if ((f is IncompleteFixture) && (f as IncompleteFixture)!.Makes == typeof(Excavation) || (f as IncompleteFixture)!.Makes == typeof(Construction))
+                if ((f is IncompleteFixture) && ((f as IncompleteFixture)!.Makes == typeof(Excavation) || (f as IncompleteFixture)!.Makes == typeof(Construction)))
                 {
                     return true;
                 }

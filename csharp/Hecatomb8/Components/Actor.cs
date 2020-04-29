@@ -95,7 +95,7 @@ namespace Hecatomb8
             }
             if (cr.HasComponent<Minion>())
             {
-                Patrol(Player);
+                cr.GetComponent<Minion>().Act();
             }
 
             //Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeAlert" });

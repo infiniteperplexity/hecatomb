@@ -16,6 +16,19 @@ namespace Hecatomb8
         public bool Disowned;
         public int StackSize;
 
+        protected override string? getName()
+        {
+            return Resource!.Name;
+        }
+        protected override string? getFG()
+        {
+            return Resource!.FG;
+        }
+        protected override char getSymbol()
+        {
+            return Resource!.Symbol;
+        }
+
         public Item()
         {
             StackSize = 5;
@@ -34,6 +47,15 @@ namespace Hecatomb8
             }
             GameState.World!.Items.SetWithBoundsChecked(x, y, z, this);
             base.PlaceInValidEmptyTile(x, y, z);
+        }
+
+        public override void Remove()
+        {
+            var (_x, _y, _z) = this;
+            if (Placed)
+            {
+                GameState.World!.Items.SetWithBoundsChecked((int)_x!, (int)_y!, (int)_z!, null);
+            }
         }
 
         public void DropOnValidTile(int x, int y, int z)

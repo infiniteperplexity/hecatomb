@@ -144,6 +144,7 @@ namespace Hecatomb8
             {
                 if (e is Actor)
                 {
+                    (e as Actor)!.Regain();
                     ActorQueue.Enqueue((int)e.EID!);
                 }
             }

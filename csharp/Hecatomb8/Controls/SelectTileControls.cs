@@ -21,8 +21,8 @@ namespace Hecatomb8
 		{
 			AllowsUnpause = false;
 			Selector = i;
-			//keyMap[Keys.Escape] = Back;
-			//keyMap[Keys.Space] = SelectTile;
+			KeyMap[Keys.Escape] = InterfaceState.RewindControls;
+			KeyMap[Keys.Space] = SelectTile;
 			InfoTop = new List<ColoredText>() {
 				 "{orange}**Esc: Cancel.**",
 				" ",

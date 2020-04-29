@@ -22,6 +22,7 @@ namespace Hecatomb8
             Minions = new List<int>();
             Tasks = new[] {
                 typeof(DigTask),
+                typeof(BuildTask),
                 typeof(UndesignateTask)
             };
             AddListener<DestroyEvent>(OnDestroy);
@@ -49,6 +50,14 @@ namespace Hecatomb8
 
         public void AddMinion(Creature cr)
         {
+            if (!cr.HasComponent<Minion>())
+            {
+                cr.AddComponent(Entity.Spawn<Minion>());
+            }
+            if (!cr.HasComponent<Inventory>())
+            {
+                cr.AddComponent(Entity.Spawn<Inventory>());
+            }
             if (cr.EID != null)
             {
                 Minions.Add((int)cr.EID);

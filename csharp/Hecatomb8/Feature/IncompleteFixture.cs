@@ -7,8 +7,8 @@ namespace Hecatomb8
     class IncompleteFixture : Feature
     {
         public Type? Makes;
-        public string? IncompleteFG;
-        public char? IncompleteSymbol;
+        public string IncompleteFG = "brown";
+        public char IncompleteSymbol = '\u25AB';
 
         protected override string? getName()
         {
@@ -16,7 +16,11 @@ namespace Hecatomb8
         }
         protected override string? getFG()
         {
-            return (Entity.Mock(Makes!) as TileEntity)!.FG;
+            return IncompleteFG;
+        }
+        protected override char getSymbol()
+        {
+            return IncompleteSymbol;
         }
     }
 }

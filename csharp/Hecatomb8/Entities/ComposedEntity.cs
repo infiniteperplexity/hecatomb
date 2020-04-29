@@ -65,7 +65,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            return false;
+            return true;
         }
 
         public void AddComponent(Component c)

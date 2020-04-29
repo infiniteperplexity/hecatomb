@@ -46,12 +46,14 @@ namespace Hecatomb8
 			{
 				base.HoverTile(c);
 				Selector.TileHover(c);
+				InterfaceState.DirtifyTextPanels();
 			}
 			else
 			{
 				base.HoverTile(c);
 				DrawSquareZone(c);
 				Selector.TileHover(c, Squares);
+				InterfaceState.DirtifyTextPanels();
 			}
 		}
 

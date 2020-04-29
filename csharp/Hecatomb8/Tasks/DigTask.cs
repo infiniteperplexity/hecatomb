@@ -18,7 +18,7 @@ namespace Hecatomb8
     {
         public DigTask() : base()
         {
-            MenuDescription = "dig, harvest, or deconstruct";
+            MockupTaskName = "dig, harvest, or deconstruct";
             Makes = typeof(Excavation);
             _bg = "orange";
         }
@@ -27,7 +27,7 @@ namespace Hecatomb8
         {
             if (!Placed)
             {
-                return MenuDescription;
+                return MockupTaskName;
             }
             var tiles = Terrains;
             var covers = Covers;
@@ -460,6 +460,7 @@ namespace Hecatomb8
             {
                 hardness = Covers.GetWithBoundsChecked(c.X, c.Y, c.Z - 1).Hardness;
             }
+            return false;
             //if (Game.Options.IgnoreHardness || Game.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
             //{
             //    return false;
@@ -479,10 +480,6 @@ namespace Hecatomb8
             {
                 return false;
             }
-            if (!Placed)
-            {
-                return false;
-            }
             if (!ValidTile(crd))
             {
                 if (TooHard(crd))
@@ -494,6 +491,7 @@ namespace Hecatomb8
                     PushMessage("Canceling invalid dig task.");
                 }
                 Cancel();
+                
                 return false;
             }
             // ValidTile produces misleading results if a harvest or deconstruct task could have been placed
@@ -508,6 +506,7 @@ namespace Hecatomb8
                 }
             }
             Movement m = c.GetComponent<Movement>();
+            Debug.WriteLine("going to test reachability");
             return m.CanReachBounded(this, useLast: (WorkSameTile)) && m.CanFindResources(Ingredients);
         }
     }

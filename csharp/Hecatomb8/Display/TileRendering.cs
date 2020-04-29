@@ -279,9 +279,13 @@ namespace Hecatomb8
                     fg = fg ?? terrain.FG;
                 }
             }
-            if (sym == default(char) || fg == null)
+            if (sym == default(char))
             {
-                throw new InvalidOperationException("Got an invalid glyph");
+                sym = 'X';
+            }
+            if (fg is null)
+            {
+                fg = "red";
             }
             //if (useLighting)
             //{

@@ -8,7 +8,7 @@ namespace Hecatomb8
 	{
 		public UndesignateTask() : base()
 		{
-			MenuDescription = "cancel tasks";
+			MockupTaskName = "cancel tasks";
 			_bg = "#6699EE";
 		}
 

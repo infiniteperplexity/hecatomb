@@ -50,5 +50,23 @@ namespace Hecatomb8
                 HoverTile(tile);
             }
         }
+
+        public void SelectOrWait()
+        {
+            var Commands = InterfaceState.Commands!;
+            if (ControlDown)
+            {
+                Commands.Wait();
+            }
+            else
+            {
+                SelectTile();
+                // unless we selected something, wait anyway
+                if (InterfaceState.Controls == this)
+                {
+                    Commands.Wait();
+                }
+            }
+        }
     }
 }
