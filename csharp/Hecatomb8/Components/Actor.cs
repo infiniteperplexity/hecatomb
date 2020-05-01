@@ -13,7 +13,7 @@ namespace Hecatomb8
     public class Actor : Component
     {
         public static int DefaultPoints = 16;
-        public ListenerHandledEntityPointer<TileEntity>? Target;
+        public ListenerHandledEntityHandle<TileEntity>? Target;
         [JsonIgnore] public int ActionPoints;
         public int CurrentPoints;
         //public Teams Team;
@@ -44,7 +44,7 @@ namespace Hecatomb8
 
         private void SetTarget(TileEntity t)
         {
-            Target = t.GetPointer<TileEntity>(OnDespawn);
+            Target = t.GetHandle<TileEntity>(OnDespawn);
         }
 
         public override GameEvent OnDespawn(GameEvent ge)

@@ -147,6 +147,7 @@ namespace Hecatomb8
                 GameName = name;
                 SaveGameCheckFileName();
             };
+            Debug.WriteLine("flag 0");
             InterfaceState.SetControls(new TextEntryControls("Type a name for your saved game.", saveGameAs));
             (Controls as TextEntryControls)!.CurrentText = GameName;
         }
@@ -160,6 +161,7 @@ namespace Hecatomb8
         {
             //SplashPanel.Active = false;
             GameState.World = null;
+            InterfaceState.MainPanel.ClearGlyphs();
             SetUpTitle();
         }
 

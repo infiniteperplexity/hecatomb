@@ -1,20 +1,21 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
 	// Terrain flyweights represent the topology of a single tile - flat, a slope, et cetera.
 	public class Terrain : FlyWeight<Terrain>
 	{
-		public readonly string Name;
-		public readonly char Symbol;
-		public readonly string FG;
-		public readonly string BG;
-		public readonly bool Opaque;
-		public readonly bool Solid;
-		public readonly bool Fallable;
-		public readonly bool Mutable;
-		public readonly int ZView;
-		public readonly int Slope;
+		[JsonIgnore] public readonly string Name;
+		[JsonIgnore] public readonly char Symbol;
+		[JsonIgnore] public readonly string FG;
+		[JsonIgnore] public readonly string BG;
+		[JsonIgnore] public readonly bool Opaque;
+		[JsonIgnore] public readonly bool Solid;
+		[JsonIgnore] public readonly bool Fallable;
+		[JsonIgnore] public readonly bool Mutable;
+		[JsonIgnore] public readonly int ZView;
+		[JsonIgnore] public readonly int Slope;
 
 
 		public Terrain(

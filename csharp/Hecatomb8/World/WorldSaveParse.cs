@@ -183,6 +183,7 @@ namespace Hecatomb8
                 buildDate = GameManager.BuildDate.ToString(),
                 random = Random,
                 player = Player!.EID,
+                handlers = StateHandlers,
                 entities = Entities,
                 explored = Explored,
                 events = Events.StringifyListeners(),
@@ -222,6 +223,7 @@ namespace Hecatomb8
             // *** Random Seed ***
             Random = parsed["random"]!.ToObject<StatefulRandom>()!;
             Random.Initialize();
+            StateHandlers = parsed["handlers"]!.ToObject<Dictionary<string, int>>()!;
             // *** Terrains and Covers ***
             int[,,] tiles = parsed["tiles"]!.ToObject<int[,,]>()!;
             for (int i = 0; i < tiles.GetLength(0); i++)
@@ -264,6 +266,11 @@ namespace Hecatomb8
             {
                 var e = JsonConvert.DeserializeObject<Entity>(child.ToString(), settings)!;
                 Entities[(int)e!.EID!] = e;
+                if (e is TurnHandler)
+                {
+                    var th = (TurnHandler)e;
+                    Debug.WriteLine("turns restored is " + th.Turn);
+                }
                 if (e is TileEntity)
                 {
                     TileEntity te = (TileEntity)e;

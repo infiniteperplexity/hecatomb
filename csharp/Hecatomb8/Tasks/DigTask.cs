@@ -18,7 +18,7 @@ namespace Hecatomb8
     {
         public DigTask() : base()
         {
-            MockupTaskName = "dig, harvest, or deconstruct";
+            _name = "dig, harvest, or deconstruct";
             Makes = typeof(Excavation);
             _bg = "orange";
         }
@@ -27,7 +27,7 @@ namespace Hecatomb8
         {
             if (!Placed)
             {
-                return MockupTaskName;
+                return _name;
             }
             var tiles = Terrains;
             var covers = Covers;

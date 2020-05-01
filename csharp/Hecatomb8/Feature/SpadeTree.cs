@@ -11,7 +11,7 @@ namespace Hecatomb8
             _name = "tree";
             _fg = "#669933";
             _symbol = '\u2660';
-            Components.Add(new Harvestable() { Yields = new Dictionary<Resource, float>() { [Resource.Wood] = 1 } });
+            Components.Add(new Harvestable() { Yields = new JsonArrayDictionary<Resource, float>() { [Resource.Wood] = 1 } });
         }
     }
 }

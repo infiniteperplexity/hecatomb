@@ -23,6 +23,8 @@ namespace Hecatomb8
             Tasks = new[] {
                 typeof(DigTask),
                 typeof(BuildTask),
+                typeof(ConstructTask),
+                typeof(FurnishTask),
                 typeof(UndesignateTask)
             };
             AddListener<DestroyEvent>(OnDestroy);

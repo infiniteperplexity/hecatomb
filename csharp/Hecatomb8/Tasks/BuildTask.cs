@@ -18,9 +18,9 @@ namespace Hecatomb8
     {
         public BuildTask() : base()
         {
-            MockupTaskName = "build floors or walls";
+            _name = "build floors or walls";
             Makes = typeof(Construction);
-            Ingredients = new Dictionary<Resource, int>
+            Ingredients = new JsonArrayDictionary<Resource, int>
             {
                 {Resource.Rock, 1}
             };
@@ -31,7 +31,7 @@ namespace Hecatomb8
         {
             if (!Spawned || !Placed)
             {
-                return MockupTaskName;
+                return _name!;
             }
             var (x, y, z) = GetVerifiedCoord();
             Terrain t = Terrains.GetWithBoundsChecked(x, y, z);
@@ -205,7 +205,7 @@ namespace Hecatomb8
                 {
                     HarvestTask ht = Entity.Spawn<HarvestTask>();
                     ht.PlaceInValidEmptyTile(x, y, z);
-                    ht.Ingredients = new Dictionary<Resource, int>() { { Resource.Rock, 1 } };
+                    ht.Ingredients = new JsonArrayDictionary<Resource, int>() { { Resource.Rock, 1 } };
                 }
                 else if ((priority == 2 && (t == Terrain.EmptyTile || t == Terrain.DownSlopeTile))
                       || (priority == 1 && t == Terrain.FloorTile || t == Terrain.UpSlopeTile))

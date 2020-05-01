@@ -18,17 +18,16 @@ namespace Hecatomb8
         [JsonIgnore] public bool WorkSameTile;
         public int LaborCost; // do not JsonIgnore, this can vary for some subtypes
         public int Labor;
-        [JsonIgnore] public string MockupTaskName;
         // probably don't want strings here...should be types, which is awkward
         [JsonIgnore] public List<Type> RequiresStructures;
         //[JsonIgnore] public bool ShowIngredients;
-        public Dictionary<Resource, int> Ingredients; // do not JsonIgnore; this can vary
+        public JsonArrayDictionary<Resource, int> Ingredients; // do not JsonIgnore; this can vary
         // ISelectsBox properties
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
         [JsonIgnore] public int Priority;
         // instance properties
-        public ListenerHandledEntityPointer<Creature>? Worker;
+        public ListenerHandledEntityHandle<Creature>? Worker;
         public Dictionary<int, int> Claims;
         // this maybe should always be a Type?...but it should be a string for serialization?
         public Type? Makes;
@@ -37,20 +36,19 @@ namespace Hecatomb8
         // constructor
         public Task() : base()
         {
-            MockupTaskName = "default task name";
             _name = "task";
             WorkSameTile = false;
             LaborCost = 10;
             Labor = LaborCost;
             Priority = 5;
-            Ingredients = new Dictionary<Resource, int>();
+            Ingredients = new JsonArrayDictionary<Resource, int>();
             Claims = new Dictionary<int, int>();
             RequiresStructures = new List<Type>();
             _bg = "red";
             //ShowIngredients = true;
         }
 
-        public GameEvent OnDespawn(GameEvent ge)
+        public virtual GameEvent OnDespawn(GameEvent ge)
         {
             if (ge is DespawnEvent)
             {
@@ -157,8 +155,8 @@ namespace Hecatomb8
         public virtual void AssignTo(Creature c)
         {
             Debug.WriteLine($"Assigning {Describe()} to {c.Describe()}");
-            c.GetComponent<Minion>().Task = GetPointer<Task>(c.GetComponent<Minion>().OnDespawn);
-            Worker = c.GetPointer<Creature>(OnDespawn);
+            c.GetComponent<Minion>().Task = GetHandle<Task>(c.GetComponent<Minion>().OnDespawn);
+            Worker = c.GetHandle<Creature>(OnDespawn);
             Debug.WriteLine("Worker is " + Worker);
             ClaimIngredients();
         }
@@ -344,7 +342,7 @@ namespace Hecatomb8
                 }
                 //inv.Item = item.TakeClaimed(Claims[eid]);
                 var it = PickUpIngredient(eid, item);
-                inv.Item = it.GetPointer<Item>(OnDespawn);
+                inv.Item = it.GetHandle<Item>(OnDespawn);
                 // this is a weird way to drop it...
                 swap?.DropOnValidTile(X, Y, Z);
                 Claims.Remove(eid);
@@ -632,13 +630,13 @@ namespace Hecatomb8
             //}
             if (Ingredients.Count == 0)
             {
-                return MockupTaskName;
+                return _name!;
             }
             else if (Task.CanFindResources(Ingredients))
             {
-                return (MockupTaskName + " ($: " + Resource.Format(Ingredients) + ")");
+                return (_name + " ($: " + Resource.Format(Ingredients) + ")");
             }
-            string ingredients = "{gray}" + MockupTaskName + " ($: ";
+            string ingredients = "{gray}" + _name + " ($: ";
             var keys = Ingredients.Keys.ToList();
             for (int i = 0; i < keys.Count; i++)
             {

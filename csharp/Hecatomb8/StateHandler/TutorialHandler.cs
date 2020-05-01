@@ -7,9 +7,6 @@ using Newtonsoft.Json;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    /// <summary>
-    /// Description of TutorialTracker.
-    /// </summary>
     public class TutorialHandler : StateHandler
     {
         public int MoveCount;

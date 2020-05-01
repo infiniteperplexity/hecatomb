@@ -7,7 +7,7 @@ namespace Hecatomb8
     // A component is an entity, attached to a creature or feature, that provides a chunk of interrelated functionality, such as movement, decision-making, et cetera
     public class Component : Entity
     {
-        public ListenerHandledEntityPointer<ComposedEntity>? Entity;
+        public ListenerHandledEntityHandle<ComposedEntity>? Entity;
 
         protected Component()
         {
@@ -15,7 +15,7 @@ namespace Hecatomb8
 
         public void AddToEntity(ComposedEntity t)
         {
-            Entity = t.GetPointer<ComposedEntity>(OnDespawn);
+            Entity = t.GetHandle<ComposedEntity>(OnDespawn);
         }
 
         public virtual GameEvent OnDespawn(GameEvent ge)

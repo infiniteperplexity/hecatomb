@@ -147,7 +147,7 @@ namespace Hecatomb8
     {
         public ZombieEmergeTask() : base()
         {
-            MockupTaskName = "zombie emerging";
+            _name = "zombie emerging";
             _bg = "orange";
         }
         public override void Act()

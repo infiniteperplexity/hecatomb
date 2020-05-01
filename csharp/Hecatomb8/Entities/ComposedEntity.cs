@@ -17,7 +17,7 @@ namespace Hecatomb8
             Components = new List<Component>();
         }
 
-        public GameEvent OnDespawn(GameEvent ge)
+        public virtual GameEvent OnDespawn(GameEvent ge)
         {
             var de = (DespawnEvent)ge;
             if (de.Entity!.EID is null)
@@ -33,6 +33,19 @@ namespace Hecatomb8
                 }
             }
             return ge;
+        }
+
+        public T GetMockComponent<T>() where T: Component
+        {
+            foreach (var c in Components)
+            {
+                if (c is T)
+                {
+                    return (T)c;
+                }
+            }
+            // definitely risking a crash here
+            throw new InvalidOperationException($"{this} has no component of type {typeof(T).Name}");
         }
 
         public void SpawnComponents()

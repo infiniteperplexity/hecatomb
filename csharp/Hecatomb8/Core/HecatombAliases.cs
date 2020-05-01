@@ -193,6 +193,12 @@ namespace Hecatomb8
             GameState.World!.Events.Subscribe(t, g, f, priority: priority);
         }
 
+        public static void Subscribe<T>(Entity g, Func<GameEvent, GameEvent> f, float priority = 0) where T : GameEvent
+        {
+            GameState.World!.Events.Subscribe<T>(g, f, priority: priority);
+        }
+
+
         public static void PushMessage(ColoredText ct)
         {
             GameState.World!.GetState<GameLog>().PushMessage(ct);

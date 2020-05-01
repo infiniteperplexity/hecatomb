@@ -131,9 +131,9 @@ namespace Hecatomb8
             Listeners[typeof(T)] = f;
         }
         // request a pointer to this entity, by submitting a listener method you're promising handles this entity despawning
-        public ListenerHandledEntityPointer<T> GetPointer<T>(Func<GameEvent, GameEvent> ge) where T : Entity
+        public ListenerHandledEntityHandle<T> GetHandle<T>(Func<GameEvent, GameEvent> ge) where T : Entity
         {
-            return ListenerHandledEntityPointer<T>.CreatePointerFromOwnEntity((T)this);
+              return ListenerHandledEntityHandle<T>.CreateHandle((T)this);
         }
 
         public static T? GetEntity<T>(int? eid) where T: Entity

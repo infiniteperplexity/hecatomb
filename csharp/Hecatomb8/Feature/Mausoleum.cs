@@ -11,7 +11,7 @@ namespace Hecatomb8
             _name = "mausoleum";
             _fg = "WALLFG";
             _symbol = '\u271F';
-            Components.Add(new Harvestable() { Yields = new Dictionary<Resource, float>() { [Resource.Gold] = 1, [Resource.Corpse] = 1 } });
+            Components.Add(new Harvestable() { Yields = new JsonArrayDictionary<Resource, float>() { [Resource.Gold] = 1, [Resource.Corpse] = 1 } });
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Hecatomb8
     using static HecatombAliases;
     public class Inventory : Component
     {
-        public ListenerHandledEntityPointer<Item>? Item;
+        public ListenerHandledEntityHandle<Item>? Item;
 
         public Inventory()
         {

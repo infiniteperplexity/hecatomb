@@ -1,19 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
     using static HecatombAliases;
+    [JsonArrayAttribute]
+    public class JsonArrayDictionary<T, S> : Dictionary<T, S> where T : notnull
+    {
+        public JsonArrayDictionary(IDictionary<T, S> i) : base(i)
+        {
+
+        }
+
+        public JsonArrayDictionary() : base()
+        {
+
+        }
+    }
+
     public class Cover : FlyWeight<Cover>
     {
-        public readonly string Name;
-        public readonly char Symbol;
-        public readonly string FG;
-        public readonly string BG;
-        public readonly string DarkBG;
-        public readonly bool Solid;
-        public readonly bool Liquid;
-        public readonly int Hardness;
-        public readonly Resource? Resource;
+        [JsonIgnore] public readonly string Name;
+        [JsonIgnore] public readonly char Symbol;
+        [JsonIgnore] public readonly string FG;
+        [JsonIgnore] public readonly string BG;
+        [JsonIgnore] public readonly string DarkBG;
+        [JsonIgnore] public readonly bool Solid;
+        [JsonIgnore] public readonly bool Liquid;
+        [JsonIgnore] public readonly int Hardness;
+        [JsonIgnore] public readonly Resource? Resource;
 
 
         public Cover(
@@ -286,4 +302,6 @@ namespace Hecatomb8
             }
         }
     }
+
+    
 }

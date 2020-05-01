@@ -14,7 +14,7 @@ namespace Hecatomb8
     {
         public HarvestTask() : base()
         {
-            MockupTaskName = "dig or harvest";
+            _name = "dig or harvest";
             _bg = "orange";
         }
 
@@ -22,13 +22,13 @@ namespace Hecatomb8
         {
             if (!Placed || !Spawned)
             {
-                return MockupTaskName;
+                return _name!;
             }
             var (x, y, z) = GetVerifiedCoord();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             if (f is null)
             {
-                return MockupTaskName;
+                return _name!;
             }
             if (f.HasComponent<Harvestable>())
             {

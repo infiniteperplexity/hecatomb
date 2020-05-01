@@ -40,7 +40,6 @@ namespace Hecatomb8
                         "{orange}Y) Yes.",
                         "{orange}N) No."
                     };
-            InterfaceState.DirtifyTextPanels();
         }
 
         public override void HandleClick(int x, int y)

@@ -13,7 +13,7 @@ namespace Hecatomb8
             _name = "grave";
             _fg = "WALLFG";
             _symbol = '\u271D';
-            Components.Add(new Harvestable() { Yields = new Dictionary<Resource, float>() { [Resource.Corpse] = 1 } });
+            Components.Add(new Harvestable() { Yields = new JsonArrayDictionary<Resource, float>() { [Resource.Corpse] = 1 } });
         }
 
         public void Shatter()

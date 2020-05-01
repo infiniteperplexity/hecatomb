@@ -9,7 +9,7 @@ namespace Hecatomb8
     public class Minion : Component
     {
         // should maybe make this private?  dangerous to assign directly to it
-        public ListenerHandledEntityPointer<Task>? Task;
+        public ListenerHandledEntityHandle<Task>? Task;
 
         public Minion()
         {

@@ -21,8 +21,8 @@ namespace Hecatomb8
             //Explored = true;
             NoTutorial = false;
             //NoTutorial = true;
-            NoIngredients = false;
-            //NoIngredients = true;
+            //NoIngredients = false;
+            NoIngredients = true;
             WorkBonus = 0;
         }
     }

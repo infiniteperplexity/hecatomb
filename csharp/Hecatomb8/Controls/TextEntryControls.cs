@@ -136,7 +136,6 @@ namespace Hecatomb8
                 (CurrentText+"_"),
                 "{cyan}Press Enter when finished."
             };
-            InterfaceState.DirtifyTextPanels();
         }
 
         public override void HandleClick(int x, int y)

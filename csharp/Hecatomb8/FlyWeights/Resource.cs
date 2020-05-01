@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
     public class Resource : FlyWeight<Resource>
     {
-        public string Name;
-        public char Symbol;
-        public string FG;
-        public string? BG;
-        public string ListColor;
-        public int StackSize;
+        [JsonIgnore] public string Name;
+        [JsonIgnore] public char Symbol;
+        [JsonIgnore] public string FG;
+        [JsonIgnore] public string? BG;
+        [JsonIgnore] public string ListColor;
+        [JsonIgnore] public int StackSize;
 
         public Resource(
             string type = "",

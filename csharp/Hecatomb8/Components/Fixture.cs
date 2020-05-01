@@ -14,9 +14,9 @@ namespace Hecatomb8
 
     public class Fixture : Component
     {
-        public Dictionary<string, int> Ingredients = new Dictionary<string, int>();
-        public string[] StructurePrereqs = new string[0];
-        public string[] ResearchPrereqs = new string[0];
+        public JsonArrayDictionary<Resource, int> Ingredients = new JsonArrayDictionary<Resource, int>();
+        public Type[] RequiresStructures = new Type[0];
+        public Research[] RequiresResearch = new Research[0];
         public int Labor = 10;
     }
 }

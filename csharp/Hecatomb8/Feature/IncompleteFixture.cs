@@ -7,6 +7,7 @@ namespace Hecatomb8
     class IncompleteFixture : Feature
     {
         public Type? Makes;
+        public ListenerHandledEntityHandle<Structure>? Structure;
         public string IncompleteFG = "brown";
         public char IncompleteSymbol = '\u25AB';
 

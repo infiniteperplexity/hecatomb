@@ -13,19 +13,26 @@ namespace Hecatomb8
     // this clas is special and that's why it has a really long name
     // 1) the constructor is private; it shoudl only get populated by either calling CreatePointerFromOwnEntity from the pointed-to Entity, or during Deserialization
     // 2) in order to create it, you have to submit a Func<GameEvent, GameEvent>, which should handle despawning and potentially other events
-    public class ListenerHandledEntityPointer<T> where T : Entity
+    public class ListenerHandledEntityHandle<T> where T : Entity
     {    
         // this is what gets serialized
         public int _eid;
 
-        private ListenerHandledEntityPointer(T t)
+
+
+        private ListenerHandledEntityHandle()
+        {
+            // only ever use this for serialization
+        }
+
+        private ListenerHandledEntityHandle(T t)
         {
             _eid = (int)t.EID!;
         }
 
-        public static ListenerHandledEntityPointer<T> CreatePointerFromOwnEntity(T t)
+        public static ListenerHandledEntityHandle<T> CreateHandle(T t)
         {
-            return new ListenerHandledEntityPointer<T>(t);
+            return new ListenerHandledEntityHandle<T>(t);
         }
         public T? UnboxBriefly()
         {
@@ -36,6 +43,18 @@ namespace Hecatomb8
             else
             {
                 return (T)Entities[_eid];
+            }
+        }
+
+        public bool Is(T? t)
+        {
+            if (t is null)
+            {
+                return false;
+            }
+            else
+            {
+                return (t.EID == _eid && Entities.ContainsKey(_eid));
             }
         }
     }

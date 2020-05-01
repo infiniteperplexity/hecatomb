@@ -11,7 +11,7 @@ namespace Hecatomb8
     using static HecatombAliases;
     public class Harvestable : Component
     {
-        public Dictionary<Resource, float> Yields = new Dictionary<Resource, float>();
+        public JsonArrayDictionary<Resource, float> Yields = new JsonArrayDictionary<Resource, float>();
         public int Labor = 10;
 
         public void Harvest()

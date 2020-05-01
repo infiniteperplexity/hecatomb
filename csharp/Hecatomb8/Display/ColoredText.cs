@@ -30,7 +30,7 @@ namespace Hecatomb8
             while (true)
             {
                 //Random r = new Random();
-                //if (r.Next(1000)==0)
+                //if (r.Next(1000) == 0)
                 //{
                 //    throw new Exception("grab a stack trace");
                 //}

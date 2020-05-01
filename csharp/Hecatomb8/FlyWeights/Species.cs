@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
     class Species : FlyWeight<Species>
     {
-        public readonly string Name;
-        public readonly char Symbol;
-        public readonly string FG;
-        public readonly string BG;
+        [JsonIgnore] public readonly string Name;
+        [JsonIgnore] public readonly char Symbol;
+        [JsonIgnore] public readonly string FG;
+        [JsonIgnore] public readonly string BG;
 
         public Species(
            string type,

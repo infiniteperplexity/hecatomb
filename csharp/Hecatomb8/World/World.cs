@@ -23,7 +23,7 @@ namespace Hecatomb8
         public readonly SparseArray3D<Feature> Features;
         public readonly SparseArray3D<Item> Items;
         public readonly SparseArray3D<Task> Tasks;
-        public Dictionary<string, StateHandler> StateHandlers;
+        public Dictionary<string, int> StateHandlers;
         public StatefulRandom Random;
         public EventSystem Events;
 
@@ -40,7 +40,7 @@ namespace Hecatomb8
             Features = new SparseArray3D<Feature>(width, height, depth);
             Items = new SparseArray3D<Item>(width, height, depth);
             Tasks = new SparseArray3D<Task>(width, height, depth);
-            StateHandlers = new Dictionary<string, StateHandler>();
+            StateHandlers = new Dictionary<string, int>();
             Events = new EventSystem();
             Random = new StatefulRandom(seed);
             InterfaceState.Particles = new ListArray3D<Particle>(width, height, depth);
@@ -52,10 +52,10 @@ namespace Hecatomb8
             if (!StateHandlers.ContainsKey(s))
             {
                 var handler = Entity.Spawn<T>();
-                StateHandlers[s] = handler;
+                StateHandlers[s] = (int)handler.EID!;
 
             }
-            return (T)StateHandlers[s];
+            return (T)Entity.GetEntity<T>(StateHandlers[s])!;
         }
 
         public void SpawnHandlers()
@@ -64,7 +64,7 @@ namespace Hecatomb8
             foreach (var type in handlers)
             {
                 var handler = Entity.Spawn<StateHandler>(type);
-                StateHandlers[type.Name] = handler;
+                StateHandlers[type.Name] = (int)handler.EID!;
             }
         }
 
