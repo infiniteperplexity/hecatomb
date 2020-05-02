@@ -16,7 +16,7 @@ namespace Hecatomb8
         public SpellCaster? Component;
         public Creature? Caster;
         public bool DebugginSpell;
-        public Type[] RequiresResearch;
+        public Research[] RequiresResearch;
         public Type[] RequiresStructures;
 
 
@@ -24,7 +24,7 @@ namespace Hecatomb8
         public Spell() : base()
         {
             MenuName = "";
-            RequiresResearch = new Type[0];
+            RequiresResearch = new Research[0];
             RequiresStructures = new Type[0];
             _cost = 10;
         }

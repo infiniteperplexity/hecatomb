@@ -21,10 +21,10 @@ namespace Hecatomb8
         public int X;
         public int Y;
         public int Z;
-        public string Makes;
+        public string? Makes;
         public List<Coord> Squares = new List<Coord>();
     }
-    public class CommandLogger : StateHandler, IChoiceMenu
+    public class CommandLogger : StateHandler, IDisplayInfo
     {
         public List<GameCommand> LoggedCommands;
         [JsonIgnore] public Queue<GameCommand> CommandQueue;
@@ -156,7 +156,7 @@ namespace Hecatomb8
             CommandQueue = new Queue<GameCommand>();
         }
 
-        public static void LogCommand(string command = "NoCommand", int n = -1, string makes = null, int x = -1, int y = -1, int z = -1, List<Coord> squares = null)
+        public static void LogCommand(string command = "NoCommand", int n = -1, string? makes = null, int x = -1, int y = -1, int z = -1, List<Coord>? squares = null)
         {
             int turn = GetState<TurnHandler>().Turn;
             //Game.World.Random.Poll();
@@ -191,7 +191,7 @@ namespace Hecatomb8
 
         }
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             menu.Header = "Choose a crash report:";
@@ -208,7 +208,7 @@ namespace Hecatomb8
             }
         }
 
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
             menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = InterfaceState.RewindControls;
         }

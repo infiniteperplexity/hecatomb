@@ -441,5 +441,48 @@ namespace Hecatomb8
             //			return null;
             return new LinkedList<Coord>();
         }
+
+        public static Coord? NearbyTile(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool>? valid = null, int maxTries = 500, int expand = 0)
+        {
+            valid = valid ?? ((int x1, int y1, int z1) => true);
+            int tries = 0;
+            Coord c = new Coord(x, y, z);
+            while (tries < maxTries)
+            {
+                tries += 1;
+                int i = GameState.World!.Random.Next(-max, max + 1);
+                int j = GameState.World!.Random.Next(-max, max + 1);
+                if (i + x > GameState.World!.Width - 2 || i + x < 1 || j + y > GameState.World!.Height - 2 || j + y < 1)
+                {
+                    continue;
+                }
+                i += x;
+                j += y;
+                int k = (groundLevel) ? GameState.World!.GetBoundedGroundLevel(i, j) : z;
+                if (valid(i, j, k) && Tiles.Distance(x, y, z, i, j, z) <= max && Tiles.Distance(x, y, z, i, j, z) >= min)
+                {
+                    return new Coord(i, j, k);
+                }
+            }
+            if (expand > max)
+            {
+                return NearbyTile(x, y, z, max: max + 1, min: min, groundLevel: groundLevel, valid: valid, expand: expand);
+            }
+            return null;
+        }
+
+        public static Coord? NearbyTile(Coord c, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool>? valid = null, int expand = 0)
+        {
+            return NearbyTile(c.X, c.Y, c.Z, max: max, min: min, groundLevel: groundLevel, valid: valid, expand: expand);
+        }
+
+        public static Coord? NearbyTile(TileEntity t, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool>? valid = null, int expand = 0)
+        {
+            if (!t.Placed)
+            {
+                return null;
+            }
+            return NearbyTile((int)t.X!, (int)t.Y!, (int)t.Z!, max: max, min: min, groundLevel: groundLevel, valid: valid, expand: expand);
+        }
     }
 }

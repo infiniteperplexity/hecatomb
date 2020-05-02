@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    public class Creature : ComposedEntity, IChoiceMenu
+    public class Creature : ComposedEntity, IDisplayInfo
     {
         Species Species;
         protected Creature()
@@ -38,14 +38,14 @@ namespace Hecatomb8
             }
         }
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             // might want to format htis guy a bit...like add coordinates?
             //menu.Header = "Creature: " + Describe();
             menu.Choices = new List<IMenuListable>();
             menu.SelectedEntity = this;
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
             menu.InfoTop.RemoveAt(2);
             menu.InfoTop.Add("Tab) View minions.");

@@ -23,7 +23,7 @@ namespace Hecatomb8
             _bg = "orange";
         }
 
-        protected override string getName()
+        protected override string? getName()
         {
             if (!Placed)
             {

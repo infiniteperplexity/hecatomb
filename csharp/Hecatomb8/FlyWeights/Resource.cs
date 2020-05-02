@@ -186,5 +186,72 @@ namespace Hecatomb8
             symbol: '\u2022',
             fg: "#FF00FF"
         );
+
+        public static List<Resource> Flowers = new List<Resource>
+        {
+            BloodWort,
+            Hyacinth,
+            Nightshade,
+            Asphodel,
+            Wolfsbane,
+            WitchHazel,
+            SpiderLily,
+            GhostOrchid,
+            MorningGlory
+        };
+        public static readonly Resource BloodWort = new Resource(
+            type: "BloodWort",
+            name: "bloodwort",
+            fg: "BloodWort",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Hyacinth = new Resource(
+            type: "Hyacinth",
+            name: "hyacinth",
+            fg: "Hyacinth",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Nightshade = new Resource(
+            type: "Nightshade",
+            name: "nightshade",
+            fg: "Nightshade",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Asphodel = new Resource(
+            type: "Asphodel",
+            name: "asphodel",
+            fg: "Asphodel",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Wolfsbane = new Resource(
+            type: "Wolfsbane",
+            name: "wolfsbane",
+            fg: "Wolfsbane",
+            symbol: '\u2698'
+        );
+        public static readonly Resource WitchHazel = new Resource(
+            type: "WitchHazel",
+            name: "witch hazel",
+            fg: "WitchHazel",
+            symbol: '\u2698'
+        );
+        public static readonly Resource SpiderLily = new Resource(
+            type: "SpiderLily",
+            name: "spider lily",
+            fg: "SpiderLily",
+            symbol: '\u2698'
+        );
+        public static readonly Resource GhostOrchid = new Resource(
+            type: "GhostOrchid",
+            name: "ghost orchid",
+            fg: "GhostOrchid",
+            symbol: '\u2698'
+        );
+        public static readonly Resource MorningGlory = new Resource(
+            type: "MorningGlory",
+            name: "morning glory",
+            fg: "MorningGlory",
+            symbol: '\u2698'
+        );
     }
 }

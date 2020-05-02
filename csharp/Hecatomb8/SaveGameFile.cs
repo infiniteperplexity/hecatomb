@@ -15,7 +15,7 @@ namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    class SaveGameFile : IMenuListable, IChoiceMenu
+    class SaveGameFile : IMenuListable, IDisplayInfo
     {
         public string? Name;
 
@@ -81,7 +81,7 @@ namespace Hecatomb8
             HecatombGame.DeferUntilAfterDraw(GameManager.RestoreGameProcess);
         }
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             menu.Header = "Choose a saved game:";
@@ -98,7 +98,7 @@ namespace Hecatomb8
             }
         }
 
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
             menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = InterfaceState.RewindControls;
         }

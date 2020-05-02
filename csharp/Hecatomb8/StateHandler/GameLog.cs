@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Hecatomb8
 {
 
-    public class GameLog : StateHandler, IChoiceMenu
+    public class GameLog : StateHandler, IDisplayInfo
     {
         public List<ColoredText> MessageHistory;
         public bool Unread;
@@ -71,12 +71,12 @@ namespace Hecatomb8
             }
         }
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             
         }
 
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
             var Commands = InterfaceState.Commands!;
             //KeyMap[Keys.Space] = WaitOrReconstruct;

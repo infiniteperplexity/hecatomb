@@ -76,8 +76,8 @@ namespace Hecatomb8
 
     public class AttackEvent : GameEvent
     {
-        //public Attacker Attacker;
-        //public Defender Defender;
+        public Attacker Attacker;
+        public Defender Defender;
         public int Roll;
         public int EvasionModifier;
         public int DamageModifier;

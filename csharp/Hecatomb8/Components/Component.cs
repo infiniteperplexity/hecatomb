@@ -30,5 +30,22 @@ namespace Hecatomb8
             }
             return ge;
         }
+
+        public void RemoveFromEntity()
+        {
+            if (Entity?.UnboxBriefly() is null)
+            {
+                return;
+            }
+            // if it's a plain old Component subclass, use its own type as the key
+            if (this.GetType().BaseType == typeof(Component))
+            {
+                var components = Entity.UnboxBriefly()!._components;
+                if (components != null && components.ContainsKey(this.GetType().Name))
+                {
+                    components.Remove(this.GetType().Name);
+                }
+            }
+        }
     }
 }

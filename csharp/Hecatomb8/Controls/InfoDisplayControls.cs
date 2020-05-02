@@ -14,17 +14,17 @@ namespace Hecatomb8
 
 	}
 
-	public interface IChoiceMenu
+	public interface IDisplayInfo
 	{
-		void BuildMenu(MenuChoiceControls menu);
-		void FinishMenu(MenuChoiceControls menu);
+		void BuildInfoDisplay(InfoDisplayControls menu);
+		void FinishInfoDisplay(InfoDisplayControls menu);
 	}
 
 	// sometimes we do it without menu choices, even
-	public class MenuChoiceControls : AbstractCameraControls
+	public class InfoDisplayControls : AbstractCameraControls
 	{
 		public string Header;
-		public IChoiceMenu Chooser;
+		public IDisplayInfo Chooser;
 		public List<IMenuListable> Choices;
 		public static List<Keys> Alphabet = new List<Keys> {
 			Keys.A,
@@ -58,7 +58,7 @@ namespace Hecatomb8
 
 		public static string alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-		public MenuChoiceControls(IChoiceMenu chooser) : base()
+		public InfoDisplayControls(IDisplayInfo chooser) : base()
 		{
 			Header = "";
 			Choices = new List<IMenuListable>();
@@ -77,7 +77,7 @@ namespace Hecatomb8
 
 		public override void RefreshContent()
 		{
-			Chooser.BuildMenu(this);
+			Chooser.BuildInfoDisplay(this);
 			var Commands = InterfaceState.Commands!;
 			KeyMap[Keys.Space] = SelectOrWait;
 			KeyMap[Keys.Escape] = InterfaceState.ResetControls;
@@ -104,7 +104,7 @@ namespace Hecatomb8
 				InfoTop.Add(ct);
 			}
 
-			Chooser.FinishMenu(this);
+			Chooser.FinishInfoDisplay(this);
 		}
 	}
 }

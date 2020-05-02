@@ -11,6 +11,7 @@ namespace Hecatomb8
         public static bool NoTutorial;
         public static bool NoIngredients;
         public static int WorkBonus;
+        public static bool Invincible;
 
 
         static HecatombOptions()
@@ -21,9 +22,10 @@ namespace Hecatomb8
             //Explored = true;
             NoTutorial = false;
             //NoTutorial = true;
-            //NoIngredients = false;
-            NoIngredients = true;
+            NoIngredients = false;
+            //NoIngredients = true;
             WorkBonus = 0;
+            Invincible = false;
         }
     }
 }

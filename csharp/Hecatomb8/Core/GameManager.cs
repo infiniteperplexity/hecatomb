@@ -136,7 +136,7 @@ namespace Hecatomb8
         {
             //throw new Exception("test exception");
             // I guess maybe a Save File should have an object representation?
-            InterfaceState.SetControls(new MenuChoiceControls(new SaveGameFile()));
+            InterfaceState.SetControls(new InfoDisplayControls(new SaveGameFile()));
         }
 
         public static void SaveGameAs()

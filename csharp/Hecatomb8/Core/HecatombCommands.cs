@@ -280,7 +280,7 @@ namespace Hecatomb8
             Publish(new TutorialEvent() { Action = "ShowJobs" });
             var tasks = GameState.World!.GetState<TaskHandler>();
             //tasks.PurgeCache();
-            InterfaceState.SetControls(new MenuChoiceControls(tasks));
+            InterfaceState.SetControls(new InfoDisplayControls(tasks));
             //Game.Controls.MenuSelectable = false;
             InterfaceState.Controls.SelectedMenuCommand = "Jobs";
             InterfaceState.DirtifyTextPanels();
@@ -290,7 +290,7 @@ namespace Hecatomb8
         {
             Publish(new TutorialEvent() { Action = "ShowSpells" });
             var spells = Player.GetComponent<SpellCaster>();
-            InterfaceState.SetControls(new MenuChoiceControls(spells));
+            InterfaceState.SetControls(new InfoDisplayControls(spells));
             //Game.Controls.MenuSelectable = false;
             InterfaceState.Controls.SelectedMenuCommand = "Spells";
             InterfaceState.DirtifyTextPanels();
@@ -328,7 +328,7 @@ namespace Hecatomb8
 
         public void ShowMinions()
         {
-            InterfaceState.SetControls(new MenuChoiceControls(Player));
+            InterfaceState.SetControls(new InfoDisplayControls(Player));
             //var minions = GetState<TaskHandler>().Minions;
             //if (minions.Count > 0)
             //{
@@ -341,7 +341,7 @@ namespace Hecatomb8
         public void ShowLog()
         {
             GameState.World!.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
-            InterfaceState.SetControls(new MenuChoiceControls(GetState<GameLog>()));
+            InterfaceState.SetControls(new InfoDisplayControls(GetState<GameLog>()));
             //Game.Controls.MenuSelectable = false;
             InterfaceState.Controls.SelectedMenuCommand = "Log";
             GetState<GameLog>().MarkAsRead();

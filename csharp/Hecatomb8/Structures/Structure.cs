@@ -12,7 +12,7 @@ namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    public abstract class Structure : TileEntity, IChoiceMenu
+    public abstract class Structure : TileEntity, IDisplayInfo
     {
         [JsonIgnore] public string MockUpName;
         [JsonIgnore] public int Width;
@@ -157,99 +157,116 @@ namespace Hecatomb8
                 List<Item> items = Items.OrderBy((Item item) => (Tiles.Distance((int)item.X!, (int)item.Y!, (int)item.Z!, (int)X!, (int)Y!, (int)Z!))).ToList();
                 foreach (Resource resource in StoresResources)
                 {
-                    // if there is no current haul task for that resource (fetch them one at a time)
-                    //if (GetHaulTask(resource) == null)
-                    //{
-                    //    // loop through available items in order of distance
-                    //    foreach (Item item in items)
-                    //    {
-                    //        if (item.Resource == resource && !item.IsStored() && item.Owned && item.Unclaimed > 0 && !item.IsHauled())
-                    //        {
-                    //            TryToSpawnHaulTask(item);
-                    //            // go to next resource
-                    //            break;
-                    //        }
-                    //    }
-                    //}
+                    //if there is no current haul task for that resource (fetch them one at a time)
+                    if (GetHaulTask(resource) == null)
+                        {
+                            // loop through available items in order of distance
+                            foreach (Item item in items)
+                            {
+                                if (item.Resource == resource && !item.IsStored() && !item.Disowned && item.Unclaimed > 0 && !item.IsHauled())
+                                {
+                                    TryToSpawnHaulTask(item);
+                                    // go to next resource
+                                    break;
+                                }
+                            }
+                        }
                 }
             }
             return ge;
         }
-        //public HaulTask GetHaulTask(Resource resource)
-        //{
-        //    foreach (Feature f in Features)
-        //    {
-        //        var (x, y, z) = f;
-        //        HaulTask ht = Tasks[x, y, z] as HaulTask;
-        //        if (ht != null && ht.Ingredients.ContainsKey(resource))
-        //        {
-        //            return ht;
-        //        }
-        //    }
-        //    return null;
-        //}
+        public HaulTask? GetHaulTask(Resource resource)
+        {
+            foreach (int? eid in Features)
+            {
+                var f = GetEntity<Feature>(eid);
+                if (f is null)
+                {
+                    continue;
+                }
+                var (x, y, z) = f.GetVerifiedCoord();
+                HaulTask? ht = Tasks.GetWithBoundsChecked(x, y, z) as HaulTask;
+                if (ht != null && ht.Ingredients.ContainsKey(resource))
+                {
+                    return ht;
+                }
+            }
+            return null;
+        }
 
-        //public void TryToSpawnHaulTask(Item item)
-        //{
-        //    Resource resource = item.Resource!;
-        //    List<int> order = new List<int>();
-        //    for (int i = 0; i < Width * Height; i++)
-        //    {
-        //        order.Add(i);
-        //    }
-        //    order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
-        //    // if there is an existing pile
-        //    foreach (int i in order)
-        //    {
-        //        Feature f = Features[i];
-        //        var (x, y, z) = f;
-        //        Item pile = Items[x, y, z];
-        //        Task task = Tasks[x, y, z]; //unlikely to be a haul task, should be some incidental task
-        //        if (pile != null && pile.Resource == resource && pile.Quantity < pile.StackSize && task == null)
-        //        {
-        //            HaulTask ht = Entity.Spawn<HaulTask>();
-        //            ht.Structure = this;
-        //            ht.Place(x, y, z);
-        //            // this logic seems correct
-        //            int claim = Math.Min(item.Unclaimed, pile.StackSize - pile.Quantity);
-        //            ht.Ingredients[resource] = claim;
-        //            ht.Resource = resource;
-        //            ht.Claims[item.EID] = claim;
-        //            // experimental code (the experiment is to set this to false)
-        //            if (Options.HaulTaskClaims)
-        //            {
-        //                item.Claimed += claim;
-        //            }
-        //            return;
-        //        }
-        //    }
-        //    // if there's no existing pile, repeat almost the same loop
-        //    foreach (int i in order)
-        //    {
-        //        Feature f = Features[i];
-        //        var (x, y, z) = f;
-        //        Item pile = Items[x, y, z];
-        //        Task task = Tasks[x, y, z]; //unlikely to be a haul task, should be some incidental task
-        //        if (pile == null && task == null)
-        //        {
-        //            HaulTask ht = Entity.Spawn<HaulTask>();
-        //            ht.Structure = this;
-        //            ht.Place(x, y, z);
-        //            // this logic seems correct
-        //            int claim = item.Unclaimed; ;
-        //            ht.Ingredients[resource] = claim;
-        //            ht.Resource = resource;
-        //            ht.Claims[item.EID] = claim;
-        //            if (Options.HaulTaskClaims)
-        //            {
-        //                item.Claimed += claim;
-        //            }
-        //            return;
-        //        }
-        //    }
-        //}
+        public void TryToSpawnHaulTask(Item item)
+        {
+            if (!item.Placed || !item.Spawned)
+            {
+                return;
+            }
+            Resource resource = item.Resource!;
+            List<int> order = new List<int>();
+            for (int i = 0; i < Width * Height; i++)
+            {
+                order.Add(i);
+            }
+            order = order.OrderBy(s => GameState.World!.Random.NextDouble()).ToList();
+            // if there is an existing pile
+            foreach (int i in order)
+            {
+                Feature? f = GetEntity<Feature>(Features[i]);
+                if (f is null || !f.Spawned || !f.Placed)
+                {
+                    continue;
+                }
+                var (x, y, z) = f.GetVerifiedCoord();
+                Item? pile = Items.GetWithBoundsChecked(x, y, z);
+                Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
+                if (pile != null && pile.Resource == resource && pile.N < pile.StackSize && task == null)
+                {
+                    HaulTask ht = Entity.Spawn<HaulTask>();
+                    ht.Structure = this.GetHandle<Structure>(ht.OnDespawn);
+                    ht.PlaceInValidEmptyTile(x, y, z);
+                    // this logic seems correct
+                    int claim = Math.Min(item.Unclaimed, pile.StackSize - pile.N);
+                    ht.Ingredients[resource] = claim;
+                    ht.Resource = resource;
+                    ht.Claims[(int)item.EID!] = claim;
+                    // experimental code (the experiment is to set this to false)
+                    //if (Options.HaulTaskClaims)
+                    //{
+                    //    item.Claimed += claim;
+                    //}
+                    return;
+                }
+            }
+            // if there's no existing pile, repeat almost the same loop
+            foreach (int i in order)
+            {
+                Feature? f = GetEntity<Feature>(Features[i]);
+                if (f is null || !f.Placed)
+                {
+                    return;
+                }
+                var (x, y, z) = f.GetVerifiedCoord();
+                Item? pile = Items.GetWithBoundsChecked(x, y, z);
+                Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
+                if (pile == null && task == null)
+                {
+                    HaulTask ht = Entity.Spawn<HaulTask>();
+                    ht.Structure = this.GetHandle<Structure>(ht.OnDespawn);
+                    ht.PlaceInValidEmptyTile(x, y, z);
+                    // this logic seems correct
+                    int claim = item.Unclaimed; ;
+                    ht.Ingredients[resource] = claim;
+                    ht.Resource = resource;
+                    ht.Claims[(int)item.EID!] = claim;
+                    //if (Options.HaulTaskClaims)
+                    //{
+                    //    item.Claimed += claim;
+                    //}
+                    return;
+                }
+            }
+        }
 
-        public virtual void BuildMenu(MenuChoiceControls menu)
+        public virtual void BuildInfoDisplay(InfoDisplayControls menu)
         {
             if (!Placed || !Spawned)
             {
@@ -292,7 +309,7 @@ namespace Hecatomb8
         }
 
         // we are passed Cancel, , (blank header), (choices)
-        public virtual void FinishMenu(MenuChoiceControls menu)
+        public virtual void FinishInfoDisplay(InfoDisplayControls menu)
         {
             menu.InfoTop.Insert(2, "Tab) Next structure.");
             menu.InfoTop.Insert(3, " ");
@@ -399,13 +416,13 @@ namespace Hecatomb8
                 if (n == -1 || n == structures.Count - 1)
                 {
                     //ControlContext.Set(new MenuChoiceControls((Structure)structures[0]));
-                    InterfaceState.SetControls(new MenuChoiceControls((Structure)structures[0]));
+                    InterfaceState.SetControls(new InfoDisplayControls((Structure)structures[0]));
                     InterfaceState.Camera!.CenterOnSelection();
                 }
                 else
                 {
                     //ControlContext.Set(new MenuChoiceControls((Structure)structures[n+1]));
-                    InterfaceState.SetControls(new MenuChoiceControls((Structure)structures[n + 1]));
+                    InterfaceState.SetControls(new InfoDisplayControls((Structure)structures[n + 1]));
                     InterfaceState.Camera!.CenterOnSelection();
                 }
             }

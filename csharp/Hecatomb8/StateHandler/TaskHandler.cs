@@ -12,7 +12,7 @@ namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    class TaskHandler : StateHandler, IChoiceMenu
+    class TaskHandler : StateHandler, IDisplayInfo
     {
         public List<int> Minions;
         [JsonIgnore] public Type[] Tasks;
@@ -83,7 +83,7 @@ namespace Hecatomb8
         //{
         //    cachedChoices = null;
         //}
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             //if (cachedChoices != null)
             //{
@@ -128,7 +128,7 @@ namespace Hecatomb8
             }
             return null;
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
 
         }

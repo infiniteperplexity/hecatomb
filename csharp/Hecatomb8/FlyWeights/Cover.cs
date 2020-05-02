@@ -5,20 +5,6 @@ using Newtonsoft.Json;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    [JsonArrayAttribute]
-    public class JsonArrayDictionary<T, S> : Dictionary<T, S> where T : notnull
-    {
-        public JsonArrayDictionary(IDictionary<T, S> i) : base(i)
-        {
-
-        }
-
-        public JsonArrayDictionary() : base()
-        {
-
-        }
-    }
-
     public class Cover : FlyWeight<Cover>
     {
         [JsonIgnore] public readonly string Name;

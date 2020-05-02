@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    public class SpellCaster : Component, IChoiceMenu
+    public class SpellCaster : Component, IDisplayInfo
     {
         public List<Type> Spells;
         public int Sanity = 20;
@@ -54,7 +54,7 @@ namespace Hecatomb8
             return ge;
         }
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             menu.Header = "Choose a spell:";
             List<IMenuListable> spells = new List<IMenuListable>();
@@ -111,7 +111,7 @@ namespace Hecatomb8
             return null;
         }
 
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
             menu.InfoTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());
             menu.InfoTop.Insert(1, " ");

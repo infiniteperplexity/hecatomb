@@ -188,5 +188,44 @@ namespace Hecatomb8
             Claimed -= n;
             return Take(n);
         }
+
+        public bool IsHauled()
+        {
+            if (!Spawned)
+            {
+                return false;
+            }
+            foreach (var task in Tasks)
+            {
+                if (task is HaulTask && task.Claims.ContainsKey((int)EID!))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsStored()
+        {
+            if (!Placed || !Spawned)
+            {
+                return false;
+            }
+            Feature? f = Features.GetWithBoundsChecked((int)X!, (int)Y!, (int)Z!);
+            if (f is StructuralFeature)
+            {
+                var sf = (f as StructuralFeature);
+
+            }
+            var sc = (f as StructuralFeature)!.Structure?.UnboxBriefly();
+            if (sc != null)
+            {
+                if (sc.StoresResources.Contains(Resource))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

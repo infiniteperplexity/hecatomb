@@ -4,9 +4,11 @@ using System.Reflection;
 using System.Globalization;
 using System.Diagnostics;
 using System;
+using System.Linq;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     public class Colors
     {
 
@@ -70,6 +72,7 @@ namespace Hecatomb8
             get
             {
                 Color result;
+
                 if (colors.TryGetValue(s, out result))
                 {
                     return result;
@@ -81,10 +84,15 @@ namespace Hecatomb8
                     int b = Int32.Parse(s.Substring(5, 2), NumberStyles.HexNumber);
                     return new Color(r, g, b);
                 }
-                else
+                else if (GameState.World != null)
                 {
-                    return Color.Red;
+                    var flowers = Resource.Flowers.Select(f => f.Name);
+                    if (Resource.Flowers.Select(f => f.Name).Contains(s))
+                    {
+                        return this[GetState<PaletteHandler>().FlowerColors[s]];
+                    }
                 }
+                return Color.Red;
             }
             set { colors[s] = value; }
         }

@@ -8,7 +8,7 @@ namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    public class ConstructTask : Task, IChoiceMenu, ISelectsBox
+    public class ConstructTask : Task, IDisplayInfo, ISelectsBox
     {
         public int FeatureIndex;
         public JsonArrayDictionary<Resource, float> Harvests;
@@ -35,7 +35,7 @@ namespace Hecatomb8
         public static Type[] Structures = new Type[] { typeof(Workshop)};
 
         protected List<IMenuListable> cachedChoices;
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             if (cachedChoices != null)
             {
@@ -77,7 +77,7 @@ namespace Hecatomb8
             cachedChoices = list;
             menu.Choices = list;
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
 
         }
@@ -223,7 +223,7 @@ namespace Hecatomb8
             Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             if (Makes == null)
             {
-                var menu = new MenuChoiceControls(this);
+                var menu = new InfoDisplayControls(this);
                 menu.Header = "Construct a structure:";
                 menu.MenuCommandsSelectable = false;
                 menu.SelectedMenuCommand = "Jobs";

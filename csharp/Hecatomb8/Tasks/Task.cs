@@ -31,6 +31,7 @@ namespace Hecatomb8
         public Dictionary<int, int> Claims;
         // this maybe should always be a Type?...but it should be a string for serialization?
         public Type? Makes;
+        [JsonIgnore] protected bool ShowIngredients;
 
 
         // constructor
@@ -45,7 +46,7 @@ namespace Hecatomb8
             Claims = new Dictionary<int, int>();
             RequiresStructures = new List<Type>();
             _bg = "red";
-            //ShowIngredients = true;
+            ShowIngredients = true;
         }
 
         public virtual GameEvent OnDespawn(GameEvent ge)
@@ -154,10 +155,8 @@ namespace Hecatomb8
         }
         public virtual void AssignTo(Creature c)
         {
-            Debug.WriteLine($"Assigning {Describe()} to {c.Describe()}");
             c.GetComponent<Minion>().Task = GetHandle<Task>(c.GetComponent<Minion>().OnDespawn);
             Worker = c.GetHandle<Creature>(OnDespawn);
-            Debug.WriteLine("Worker is " + Worker);
             ClaimIngredients();
         }
         public virtual void Cancel()

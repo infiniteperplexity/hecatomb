@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    public class AchievementHandler : StateHandler, IChoiceMenu
+    public class AchievementHandler : StateHandler, IDisplayInfo
     {
 
         public List<string> Achieved = new List<string>();
@@ -74,12 +74,12 @@ namespace Hecatomb8
         }
 
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             menu.KeyMap[Keys.Z] = Commands.ChooseSpell;
             menu.KeyMap[Keys.J] = Commands.ChooseTask;
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
             var list = new List<ColoredText>() { "{magenta}Achievements:" };
             foreach (var achieve in Achievements)

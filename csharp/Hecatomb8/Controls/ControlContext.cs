@@ -235,7 +235,7 @@ namespace Hecatomb8
             // this functionality should probably be defined in HecatombCommands
             if (cr != null && visible)
             {
-                InterfaceState.SetControls(new MenuChoiceControls(cr));
+                InterfaceState.SetControls(new InfoDisplayControls(cr));
                 //Game.Camera.CenterOnSelection();
                 //return;
             }

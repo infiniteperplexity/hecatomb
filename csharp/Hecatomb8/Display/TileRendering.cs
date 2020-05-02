@@ -304,10 +304,6 @@ namespace Hecatomb8
             List<Particle> pl = InterfaceState.Particles![x, y, z];
             Particle? p = (pl.Count > 0) ? pl[0] : null;
             Coord c = new Coord(x, y, z);
-            if (c == InterfaceState.Cursor)
-            {
-                return "cyan";
-            }
             var cr = GameState.World!.Creatures.GetWithBoundsChecked(x, y, z);
             var fr = GameState.World!.Features.GetWithBoundsChecked(x, y, z);
             var it = GameState.World!.Items.GetWithBoundsChecked(x, y, z);
@@ -325,6 +321,10 @@ namespace Hecatomb8
             if (p != null && p.BG != null)
             {
                 return p.BG;
+            }
+            else if (c == InterfaceState.Cursor)
+            {
+                return "cyan";
             }
             else if (task != null)
             {

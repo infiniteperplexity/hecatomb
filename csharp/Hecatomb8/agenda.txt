@@ -99,3 +99,7 @@ way we do this is as follows:
         - We've got the name when it's listed on the menu, which could also be called "StaticName" if we wanted to.
         - We've got HoverName, which is the actual name plus the formatted ingredients.
     - Okay got all that cleaned up.
+
+5/1/2020
+-I'll need to go through and make sure everyone that has OnDespawn actually subscribes and stuff
+- Fixing all the attacker/defender/team stuff will be a moderate sized task

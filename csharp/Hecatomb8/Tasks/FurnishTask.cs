@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    public class FurnishTask : Task, IChoiceMenu, IMenuListable
+    public class FurnishTask : Task, IDisplayInfo, IMenuListable
     {
         Type[] Fixtures;
 
@@ -21,7 +21,7 @@ namespace Hecatomb8
             return $"furnish {f.Name}";
         }
 
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             menu.Header = "Furnish a fixture:";
             var list = new List<IMenuListable>();
@@ -64,7 +64,7 @@ namespace Hecatomb8
             //list.Add(Hecatomb.Entity.Mock<RepairTask>());
             menu.Choices = list;
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
 
         }
@@ -101,7 +101,7 @@ namespace Hecatomb8
             Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             if (Makes == null)
             {
-                var c = new MenuChoiceControls(this);
+                var c = new InfoDisplayControls(this);
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
                 InterfaceState.SetControls(c);

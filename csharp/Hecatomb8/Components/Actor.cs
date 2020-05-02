@@ -16,7 +16,7 @@ namespace Hecatomb8
         public ListenerHandledEntityHandle<TileEntity>? Target;
         [JsonIgnore] public int ActionPoints;
         public int CurrentPoints;
-        //public Teams Team;
+        public Team Team;
         public bool Acted;
         public bool Active;
         //[JsonIgnore]
@@ -37,6 +37,7 @@ namespace Hecatomb8
         // so I guess this doesn't get reconstituted correctly when restoring a game?
         public Actor() : base()
         {
+            Team = Team.Neutral;
             Active = true;
             ActionPoints = DefaultPoints;
             CurrentPoints = (GetState<TurnHandler>().Turn == 0) ? ActionPoints : 0;

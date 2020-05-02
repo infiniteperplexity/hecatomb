@@ -2,10 +2,26 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json;
 
-// so...we want to get rid of text keys entirely
 namespace Hecatomb8
 {
+    // FlyWeights are sometimes used as the keys for dictionaries, and that confuses the serializer
+    // But it works fine if you make them the keys of a Dictionary subclass with the JsonArrayAttribute
+    [JsonArrayAttribute]
+    public class JsonArrayDictionary<T, S> : Dictionary<T, S> where T : notnull
+    {
+        public JsonArrayDictionary(IDictionary<T, S> i) : base(i)
+        {
+
+        }
+
+        public JsonArrayDictionary() : base()
+        {
+
+        }
+    }
+
     // FlyWeights represent game entities for which every "instance" has exactly the same properties
     // A self-referencing generic class allows something resembling static inheritance
     public class FlyWeight<T> where T : FlyWeight<T>
