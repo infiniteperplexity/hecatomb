@@ -15,6 +15,7 @@ namespace Hecatomb8
 
 	public class SelectTileControls : AbstractCameraControls
 	{
+		public string? Header; // undecided whether to use
 		ISelectsTile Selector;
 
 		public SelectTileControls(ISelectsTile i) : base()

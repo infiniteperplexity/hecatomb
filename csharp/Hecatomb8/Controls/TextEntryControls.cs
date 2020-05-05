@@ -113,6 +113,7 @@ namespace Hecatomb8
                     CurrentText += s;
                 }
                 RefreshContent();
+                InterfaceState.DirtifyTextPanels();
                 // do I need to make the panel dirty?
             };
         }
@@ -125,6 +126,7 @@ namespace Hecatomb8
             }
             CurrentText = CurrentText.Substring(0, CurrentText.Length - 1);
             RefreshContent();
+            InterfaceState.DirtifyTextPanels();
         }
 
         public override void RefreshContent()

@@ -21,8 +21,8 @@ namespace Hecatomb8
         [JsonIgnore] public string[] FGs;
         [JsonIgnore] public string[] BGs;
         public List<int?> Features;
-        [JsonIgnore] public Dictionary<Resource, int>[] Ingredients;
-        [JsonIgnore] public Dictionary<Resource, float>[] Harvests;
+        [JsonIgnore] public Dictionary<Resource, int>[]? Ingredients;
+        [JsonIgnore] public Dictionary<Resource, float>[]? Harvests;
         [JsonIgnore] public Research[] Researches;
         [JsonIgnore] public Research[] RequiresResearch;
         [JsonIgnore] public Type[] RequiresStructures;
@@ -31,7 +31,7 @@ namespace Hecatomb8
         [JsonIgnore] public string UseHint;
 
         [JsonIgnore]
-        public ResearchTask? ResarchTask
+        public ResearchTask? ResearchTask
         {
             get
             {
@@ -42,7 +42,7 @@ namespace Hecatomb8
                     {
                         continue;
                     }
-                    var (x, y, z) = f.GetVerifiedCoord() ;
+                    var (x, y, z) = f.GetValidCoordinate() ;
                     Task? t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t is ResearchTask)
                     {
@@ -61,8 +61,6 @@ namespace Hecatomb8
             Width = 3;
             Height = 3;
             Features = new List<int?>();
-            Ingredients = new Dictionary<Resource, int>[Width * Height];
-            Harvests = new Dictionary<Resource, float>[Width * Height];
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<DespawnEvent>(OnDespawn);
             RequiresResearch = new Research[0];
@@ -126,7 +124,7 @@ namespace Hecatomb8
         public Dictionary<Resource, int> GetIngredients()
         {
             var ingredients = new Dictionary<Resource, int>();
-            foreach (var resources in Ingredients)
+            foreach (var resources in Ingredients ?? new Dictionary<Resource, int>[0])
             {
                 if (resources != null)
                 {
@@ -184,7 +182,7 @@ namespace Hecatomb8
                 {
                     continue;
                 }
-                var (x, y, z) = f.GetVerifiedCoord();
+                var (x, y, z) = f.GetValidCoordinate();
                 HaulTask? ht = Tasks.GetWithBoundsChecked(x, y, z) as HaulTask;
                 if (ht != null && ht.Ingredients.ContainsKey(resource))
                 {
@@ -215,7 +213,7 @@ namespace Hecatomb8
                 {
                     continue;
                 }
-                var (x, y, z) = f.GetVerifiedCoord();
+                var (x, y, z) = f.GetValidCoordinate();
                 Item? pile = Items.GetWithBoundsChecked(x, y, z);
                 Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
                 if (pile != null && pile.Resource == resource && pile.N < pile.StackSize && task == null)
@@ -244,7 +242,7 @@ namespace Hecatomb8
                 {
                     return;
                 }
-                var (x, y, z) = f.GetVerifiedCoord();
+                var (x, y, z) = f.GetValidCoordinate();
                 Item? pile = Items.GetWithBoundsChecked(x, y, z);
                 Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
                 if (pile == null && task == null)
@@ -315,9 +313,9 @@ namespace Hecatomb8
             menu.InfoTop.Insert(3, " ");
             menu.InfoTop.Insert(4, "{yellow}" + Describe(capitalized: true));
             menu.InfoTop.Insert(5, "{light cyan}" + UseHint);
-            if (ResarchTask != null)
+            if (ResearchTask != null)
             {
-                ResearchTask rt = ResarchTask;
+                ResearchTask rt = ResearchTask;
                 menu.InfoTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     " ",
@@ -327,7 +325,8 @@ namespace Hecatomb8
                     "{light cyan}" + UseHint,
                     " ",
                     "Researching " + rt.Researching.Name + " (" + rt.Labor + " turns.)",
-                    "(Backspace/Del to Cancel)"
+                    " ",
+                    "Bksp/Del) Cancel research."
                 };
                 if (rt.Ingredients.Count > 0 && !HecatombOptions.NoIngredients)
                 {
@@ -344,10 +343,9 @@ namespace Hecatomb8
                 }
                 foreach (Resource r in stored.Keys)
                 {
-                    //menu.InfoTop.Add("{" + Resource.GetListColor(r) + "}- " + Resource.Format((res, stored[res])));
+                    menu.InfoTop.Add("{" + r.TextColor + "}- " + Resource.Format((r, stored[r])));
                 }
             }
-            InterfaceState.DirtifyTextPanels();
             menu.KeyMap[Keys.Escape] = InterfaceState.ResetControls;
             menu.KeyMap[Keys.Tab] = NextStructure;
             menu.KeyMap[Keys.Delete] = CancelResearch;
@@ -358,13 +356,13 @@ namespace Hecatomb8
 
         public void CancelResearch()
         {
-            if (ResarchTask != null)
+            if (ResearchTask != null)
             {
                 if (Placed && Spawned)
                 {
                     Task? t = Tasks.GetWithBoundsChecked((int)X!, (int)Y!, (int)Z!);
                     t?.Cancel();
-                    ResarchTask = null;
+                    ResearchTask = null;
                 } 
             }
             InterfaceState.DirtifyTextPanels();
@@ -382,7 +380,7 @@ namespace Hecatomb8
                     {
                         continue;
                     }
-                    var (x, y, z) = f.GetVerifiedCoord();
+                    var (x, y, z) = f.GetValidCoordinate();
                     Item? item = Items.GetWithBoundsChecked(x, y, z);
                     if (item != null && StoresResources.Contains(item.Resource))
                     {
@@ -476,8 +474,8 @@ namespace Hecatomb8
                         tc.Makes = this.GetType();
                         tc.Structure = this.GetHandle<Structure>(tc.OnDespawn);
                         tc.FeatureIndex = i;
-                        tc.Ingredients =  new JsonArrayDictionary<Resource, int>(Ingredients[i]);
-                        tc.Harvests = new JsonArrayDictionary<Resource, float>(Harvests[i]);
+                        tc.Ingredients =  new JsonArrayDictionary<Resource, int>(Ingredients?[i] ?? new Dictionary<Resource, int>());
+                        tc.Harvests = new JsonArrayDictionary<Resource, float>(Harvests?[i] ?? new Dictionary<Resource, float>());
                         tc.PlaceInValidEmptyTile(s.X, s.Y, s.Z);
                     }
                     else if (f is StructuralFeature)
@@ -582,6 +580,15 @@ namespace Hecatomb8
                 }
             }
             return ge;
+        }
+
+        public override void PlaceInValidEmptyTile(int x, int y, int z)
+        {
+            base.PlaceInValidEmptyTile(x, y, z);
+            if (Spawned)
+            {
+                Publish(new AfterPlaceEvent() { Entity = this, X = x, Y = y, Z = z });
+            }
         }
     }
 }

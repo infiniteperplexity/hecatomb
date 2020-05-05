@@ -22,8 +22,10 @@ namespace Hecatomb8
     {
         public static Action? QuitHook;
         public static Action? Deferred;
-
         public static bool DrawnSinceDefer;
+        public static TimeSpan LastUpdateTime;
+        public static TimeSpan? NoUpdateUntil;
+
         void LoadHecatombContent()
         {
             graphics.PreferredBackBufferWidth = 1280;
@@ -32,14 +34,21 @@ namespace Hecatomb8
             InterfaceState.Commands = new HecatombCommands();
             InterfaceState.Camera = new Camera(47, 33);
             InterfaceState.Colors = new Colors();
-            InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20, 700, 994);   
+            InterfaceState.MainPanel = new MainPanel(GraphicsDevice, sprites!, Content, InterfaceState.Camera, 286, 20, 994, 700);   
             InterfaceState.InfoPanel = new InformationPanel(GraphicsDevice, sprites!, Content, 0, 0, 280, 700);
             InterfaceState.MenuPanel = new MenuPanel(GraphicsDevice, sprites!, Content, 286, 0, 1280, 20);
             InterfaceState.DefaultControls = new DefaultControls();
             InterfaceState.CameraControls = new CameraControls();
             InterfaceState.ForegroundPanel = new FullScreenPanel(GraphicsDevice, sprites!, Content, 0, 0, 1280, 720);
-            InterfaceState.PopupPanel = new PopupPanel(GraphicsDevice, sprites!, Content, 35 + 276, 150, 16 * 31, 16 * 13);
-            GameManager.SetUpTitle();
+            InterfaceState.PopupPanel = new PopupPanel(GraphicsDevice, sprites!, Content, 500, 200, 16 * 31, 16 * 13);
+            if (HecatombOptions.NoStartupScreen)
+            {
+                GameManager.StartGame();
+            }
+            else
+            {
+                GameManager.SetUpTitle();
+            }
         }
         // *** Default MonoGame stuff ***
         GraphicsDeviceManager graphics;
@@ -81,25 +90,48 @@ namespace Hecatomb8
         public static void DeferUntilAfterDraw(Action action)
         {
             DrawnSinceDefer = false;
+            if (Deferred != null)
+            {
+                throw new Exception("You can't defer two actions at once.");
+            }
             Deferred = action;
+        }
+
+        public static void Sleep(int millis)
+        {
+            // this gets used correctly in the Splash method, and arguably I should move the rest of the logic to this method as well
+            NoUpdateUntil = LastUpdateTime + new TimeSpan(0, 0, 0, 0, millis);
         }
         protected override void Update(GameTime gameTime)
         {
-            //if (Deferred != null && DrawnSinceDefer)
-            //{
-            //    Deferred!();
-            //    Deferred = null;
-            //}
-            if (GameState.World != null)
+            LastUpdateTime = gameTime.TotalGameTime;
+            if (NoUpdateUntil is null || gameTime.TotalGameTime >= NoUpdateUntil)
             {
-                Time.Update();
+                try
+                {
+                    if (GameState.World != null)
+                    {
+                        Time.Update();
+                    }
+                    InterfaceState.HandleInput();
+                    InterfaceState.PreparePanels();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandling.Handle(e);
+                }
             }
-            InterfaceState.HandleInput();
-            InterfaceState.PreparePanels();
-            if (Deferred != null && DrawnSinceDefer)
+            try
             {
-                Deferred!();
-                Deferred = null;
+                if (Deferred != null && DrawnSinceDefer)
+                {
+                    Deferred!();
+                    Deferred = null;
+                }
+            }
+            catch(Exception e)
+            {
+                ExceptionHandling.Handle(e);
             }
             base.Update(gameTime);
         }

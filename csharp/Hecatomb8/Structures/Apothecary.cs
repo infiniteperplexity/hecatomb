@@ -44,11 +44,7 @@ namespace Hecatomb8
             _name = "apothecary";
             UseHint = "(stores dyes and enables dyeing)";
             RequiresStructures = new[] { typeof(BlackMarket) };
-            //Stores = new string[RandomPaletteHandler.FlowerNames.Count];
-            //for (var i = 0; i < RandomPaletteHandler.FlowerNames.Count; i++)
-            //{
-            //    Stores[i] = RandomPaletteHandler.FlowerNames[i].Item1;
-            //}
+            StoresResources = Resource.Flowers.ToArray();
         }
     }
 }

@@ -15,18 +15,42 @@ namespace Hecatomb8
         {
             Species = Species.NoSpecies;
             Components.Add(new Movement());
-            Components.Add(new Actor());
+            Components.Add(new Actor() { Activities = new List<Activity>() { Activity.Default} });
             Components.Add(new Senses());
         }
         public override void PlaceInValidEmptyTile(int x, int y, int z)
         {
             if (GameState.World!.Creatures.GetWithBoundsChecked(x, y, z) != null)
             {
-                throw new InvalidOperationException($"Can't place {Describe()} at {x} {y} {z} because {GameState.World!.Creatures.GetWithBoundsChecked(x, y, z)!.Describe()} is already there.");
+                if (HecatombOptions.NoisyErrors)
+                {
+                    throw new InvalidOperationException($"Can't place {Describe()} at {x} {y} {z} because {GameState.World!.Creatures.GetWithBoundsChecked(x, y, z)!.Describe()} is already there.");
+                }
+                else
+                {
+                    var cr = GameState.World!.Creatures.GetWithBoundsChecked(x, y, z)!;
+                    if (cr == Player)
+                    {
+                        Despawn();
+                        return;
+                    }
+                    else
+                    {
+                        cr.Despawn();
+                    }
+                }
             }
-            Remove();
-            GameState.World!.Creatures.SetWithBoundsChecked(x, y, z, this);
             base.PlaceInValidEmptyTile(x, y, z);
+            if (Spawned)
+            {
+                GameState.World!.Creatures.SetWithBoundsChecked(x, y, z, this);
+                Publish(new AfterPlaceEvent() { Entity = this, X = x, Y = y, Z = z });
+            }
+        }
+
+        public virtual void Act()
+        {
+
         }
 
         public override void Remove()
@@ -36,6 +60,7 @@ namespace Hecatomb8
             {
                 GameState.World!.Creatures.SetWithBoundsChecked((int)_x!, (int)_y!, (int)_z!, null);
             }
+            base.Remove();
         }
 
         public void BuildInfoDisplay(InfoDisplayControls menu)
@@ -44,6 +69,15 @@ namespace Hecatomb8
             //menu.Header = "Creature: " + Describe();
             menu.Choices = new List<IMenuListable>();
             menu.SelectedEntity = this;
+
+            // we keep this next bit unless we add menu choices
+            var Commands = InterfaceState.Commands!;
+            menu.MenuCommandsSelectable = true;
+            menu.KeyMap[Keys.Z] = Commands.ChooseSpell;
+            menu.KeyMap[Keys.J] = Commands.ChooseTask;
+            menu.KeyMap[Keys.R] = Commands.ShowResearch;
+            menu.KeyMap[Keys.L] = Commands.ShowLog;
+            menu.KeyMap[Keys.V] = Commands.ShowAchievements;
         }
         public void FinishInfoDisplay(InfoDisplayControls menu)
         {
@@ -51,61 +85,35 @@ namespace Hecatomb8
             menu.InfoTop.Add("Tab) View minions.");
             menu.InfoTop.Add(" ");
             menu.InfoTop.Add("{yellow}" + Describe(capitalized: true));
-            //if (HasComponent<Minion>() != null)
-            //{
-            //    menu.InfoTop.Add(" ");
-            //    Task t = GetComponent<Minion>().Task;
-            //    if (t == null)
-            //    {
-            //        menu.MenuTop.Add("No task assigned.");
-            //    }
-            //    else
-            //    {
-            //        menu.MenuTop.Add($"Working on {t.Describe(article: false)} at {t.X} {t.Y} {t.Z}");
-            //    }
-            //}
-            //if (TryComponent<Inventory>() != null)
-            //{
-            //    menu.MenuTop.Add(" ");
-            //    Item item = GetComponent<Inventory>().Item;
-            //    if (item == null)
-            //    {
-            //        menu.MenuTop.Add("Carrying nothing.");
-            //    }
-            //    else
-            //    {
-            //        menu.MenuTop.Add("Carrying " + item.Describe());
-            //    }
-            //}
+            if (HasComponent<Minion>())
+            {
+                menu.InfoTop.Add(" ");
+                Task? t = GetComponent<Minion>().Task?.UnboxBriefly();
+                if (t == null)
+                {
+                    menu.InfoTop.Add("No task assigned.");
+                }
+                else
+                {
+                    menu.InfoTop.Add($"Working on {t.Describe(article: false)} at {t.X} {t.Y} {t.Z}");
+                }
+            }
+            if (HasComponent<Inventory>())
+            {
+                menu.InfoTop.Add(" ");
+                Item? item = GetComponent<Inventory>().Item?.UnboxBriefly();
+                if (item is null)
+                {
+                    menu.InfoTop.Add("Carrying nothing.");
+                }
+                else
+                {
+                    menu.InfoTop.Add("Carrying " + item.Describe());
+                }
+            }
             if (this == Player)
             {
-                var p = Player;
-                menu.InfoTop.Add(" ");
-                menu.InfoTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
-                //if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
-                //{
-                //    menu.MenuTop.Add(" ");
-                //    menu.MenuTop.Add("Minions:");
-                //    var types = new Dictionary<string, int>();
-                //    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
-                //    {
-                //        Creature c = (Creature)minion;
-                //        if (!types.ContainsKey(c.TypeName))
-                //        {
-                //            types[c.TypeName] = 1;
-                //        }
-                //        else
-                //        {
-                //            types[c.TypeName] += 1;
-                //        }
-                //    }
-                //    foreach (var type in types.Keys)
-                //    {
-                //        var mock = Entity.Mock<Creature>(type);
-                //        // might need better handling for when we have multiple zombie types that still share a TypeName?
-                //        menu.MenuTop.Add("{" + mock.FG + "}" + type + ": " + types[type]);
-                //    }
-                //}
+                // originally I was duplicating part of the default display but that's no longer necessary
             }
             menu.KeyMap[Keys.Escape] =
                 () =>

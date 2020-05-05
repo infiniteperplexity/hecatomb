@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Hecatomb8
 {
@@ -60,6 +62,7 @@ namespace Hecatomb8
             {
                 SelectedMessage -= 1;
             }
+            InterfaceState.DirtifyTextPanels();
         }
 
         public void ScrollDown()
@@ -69,6 +72,7 @@ namespace Hecatomb8
             {
                 SelectedMessage += 1;
             }
+            InterfaceState.DirtifyTextPanels();
         }
 
         public void BuildInfoDisplay(InfoDisplayControls menu)
@@ -85,6 +89,8 @@ namespace Hecatomb8
             // add these back in, having removed them in the constructor
             menu.KeyMap[Keys.Z] = Commands.ChooseSpell;
             menu.KeyMap[Keys.J] = Commands.ChooseTask;
+            menu.KeyMap[Keys.R] = Commands.ShowResearch;
+            menu.KeyMap[Keys.V] = Commands.ShowAchievements;
             int MaxVisible = Math.Min(MessageHistory.Count, 4);
             var controls = new List<ColoredText>()
             {

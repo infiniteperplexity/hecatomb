@@ -9,6 +9,8 @@ namespace Hecatomb8
     {
         public ListenerHandledEntityHandle<ComposedEntity>? Entity;
 
+        // So...there's an important to remember you can't populate any list in the constructor if it might get replaced or depopulated
+        // I can't think of any way to enforce that though
         protected Component()
         {
         }

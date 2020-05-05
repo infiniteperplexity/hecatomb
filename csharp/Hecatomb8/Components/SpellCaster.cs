@@ -21,34 +21,38 @@ namespace Hecatomb8
 
         private int _getMaxSanity()
         {
-            return _maxSanity;
+            int calculated = _maxSanity;
+            if (Structure.ListStructureTypes().Contains(typeof(Sanctum)))
+            {
+                calculated += 5;
+            }
+            return calculated;
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
-            if (Entity?.UnboxBriefly() is null)
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
                 return ge;
             }
-            int chance = 5;
+            int chance = 9;
             if (MaxSanity > 20)
             {
-                chance = 7;
+                chance = 5;
             }
-            //var (x, y, z) = Entity.UnboxBriefly(); ;
-            //var f = Features[x, y, z];
-            //if (f != null && f.TryComponent<StructuralComponent>() != null)
-            //{
-            //    if (f.GetComponent<StructuralComponent>().Structure.Unbox() is Sanctum)
-            //    {
-            //        chance /= 2;
-            //    }
-            //}
+            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var f = Features.GetWithBoundsChecked(x, y, z);
+            if (f is StructuralFeature)
+            {
+                if ((f as StructuralFeature)!.Structure?.UnboxBriefly() is Sanctum)
+                {
+                    chance /= 2;
+                }
+            }
             int r = GameState.World!.Random.Next(chance);
             if (r==0)
             {
                 Sanity = Math.Min(MaxSanity, Sanity + 1);
-                Debug.WriteLine("actual sanity is " + Sanity);
             }
 
             return ge;
@@ -59,39 +63,37 @@ namespace Hecatomb8
             menu.Header = "Choose a spell:";
             List<IMenuListable> spells = new List<IMenuListable>();
             // only if we have the prerequisite structures / technologies...
-            //var structures = Structure.ListAsStrings();
-            //var researched = GetState<ResearchHandler>().Researched;
+            var structures = Structure.ListStructureTypes();
+            var researched = GetState<ResearchHandler>().Researched;
             var caster = Player.GetComponent<SpellCaster>();
             foreach (Type sp in Spells)
             {
                 var spell = (Spell)Activator.CreateInstance(sp)!;
-                spell.Caster = Player;
-                spell.Component = caster;
-                spells.Add(spell);
-                //    var spell = GetSpell(sp);
-                //    bool valid = true;
-                //    if (spell.ForDebugging && !Options.ShowDebugSpells)
-                //    {
-                //        valid = false;
-                //    }
-                //    foreach (string s in spell.Researches)
-                //    {
-                //        if (!researched.Contains(s) && !Options.AllSpells)
-                //        {
-                //            valid = false;
-                //        }
-                //    }
-                //    foreach (string s in spell.Structures)
-                //    {
-                //        if (!structures.Contains(s) && !Options.AllSpells)
-                //        {
-                //            valid = false;
-                //        }
-                //    }
-                //    if (valid)
-                //    {
-                //        spells.Add(spell);
-                //    }
+                bool valid = true;
+                if (spell is DebugSpell && !HecatombOptions.ShowDebugSpells)
+                {
+                    valid = false;
+                }
+                foreach (Research r in spell.RequiresResearch)
+                {
+                    if (!researched.Contains(r) && !HecatombOptions.ShowAllSpells)
+                    {
+                        valid = false;
+                    }
+                }
+                foreach (Type t in spell.RequiresStructures)
+                {
+                    if (!structures.Contains(t) && !HecatombOptions.ShowAllSpells)
+                    {
+                        valid = false;
+                    }
+                }
+                if (valid)
+                {
+                    spell.Caster = Player;
+                    spell.Component = caster;
+                    spells.Add(spell);
+                }
             }
             menu.Choices = spells;
         }

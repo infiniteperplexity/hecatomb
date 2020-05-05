@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Hecatomb8
 {
@@ -15,11 +16,14 @@ namespace Hecatomb8
             setElevations();
             makeSlopes();
             placeSoils();
+            plantFlowers();
             placeOres();
             placeGraves();
             plantTrees();
+            world.ValidateOutdoors();
             bool succeeded = tryToPlacePlayer();
-            return succeeded;
+            placeSpiders();
+            return succeeded;           
         }
 
         void setElevations()
@@ -105,6 +109,38 @@ namespace Hecatomb8
                     }
                 }
             }
+        }
+
+        protected void plantFlowers()
+        {
+            var world = GameState.World!;
+            int vchunks = 3;
+            int hchunks = 3;
+            int vchunk = world.Height / vchunks;
+            int hchunk = world.Width / hchunks;
+            for (var i = 0; i < hchunks; i++)
+            {
+                for (var j = 0; j < vchunks; j++)
+                {
+                    var list = Resource.Flowers.ToList();
+                    list = list.OrderBy(f => world.Random.NextDouble()).ToList();
+                    var flower = list[i * 3 + j];
+                    int rx = world.Random.Next(hchunk);
+                    int ry = world.Random.Next(vchunk);
+                    int x = i * hchunk + rx;
+                    int y = j * vchunk + ry;
+                    // could require that it be a bit farther from the player
+                    Coord? cc = Feature.FindPlace(x, y, 0, max: 8, expand: 32);
+                    if (cc != null)
+                    {
+                        Coord c = (Coord)cc;
+                        Debug.WriteLine("planting " + flower + " at " + c.X + " " + c.Y);
+                        var f = Flower.Spawn(flower);
+                        f.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                    }
+                }
+            }
+
         }
 
         protected void placeSoils()
@@ -488,6 +524,30 @@ namespace Hecatomb8
             //    Item.PlaceNewResource(res.Item1, res.Item2, x, y, z);
             //}
             return true;
+        }
+
+        public void placeSpiders()
+        {
+            if (HecatombOptions.NoSpiders)
+            {
+                return;
+            }
+            var world = GameState.World!;
+            for (int i = 1; i < world.Width - 1; i++)
+            {
+                for (int j = 1; j < world.Height - 1; j++)
+                {
+                    int k = world.GetBoundedGroundLevel(i, j);
+                    if (world.Random.Next(200) == 1)
+                    {
+                        if (Creatures.GetWithBoundsChecked(i, j, k) is null)
+                        { 
+                            var s = Entity.Spawn<Spider>();
+                            s.PlaceInValidEmptyTile(i, j, k);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Hecatomb8
         public override void Cast()
         {
             CommandLogger.LogCommand(command: "ShadowHop");
-            var (x, y, z) = Caster!.GetVerifiedCoord();
+            var (x, y, z) = Caster!.GetValidCoordinate();
             ParticleEmitter emitter1 = new ParticleEmitter();
             emitter1.Place(x, y, z);
             var m = Caster.GetComponent<Movement>();
@@ -47,6 +47,7 @@ namespace Hecatomb8
                 Caster.GetComponent<Movement>().StepToValidEmptyTile(c.X, c.Y, c.Z);
                 Caster.GetComponent<Actor>().Spend();
                 InterfaceState.Camera!.Center(c.X, c.Y, c.Z);
+                InterfaceState.HandlePlayerVisibility();
                 InterfaceState.ResetControls();
                 ParticleEmitter emitter2 = new ParticleEmitter();
                 emitter2.Place(c.X, c.Y, c.Z);

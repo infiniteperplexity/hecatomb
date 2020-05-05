@@ -26,17 +26,17 @@ namespace Hecatomb8
         {
             Seed = seed;
             Calls = calls;
-            Initialize();
+            random = new Random(Seed);
+            stateless = new Random();
         }
 
-        public void Initialize()
+        public void Reinitialize()
         {
             random = new Random(Seed);
             for (int i = 0; i < Calls; i++)
             {
                 random.Next();
             }
-            stateless = new Random();
         }
 
         public int Next(int i)

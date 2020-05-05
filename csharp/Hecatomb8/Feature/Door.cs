@@ -16,6 +16,7 @@ namespace Hecatomb8
                 Ingredients = new JsonArrayDictionary<Resource, int>() { { Resource.Wood, 2 } },
                 RequiresStructures = new Type[] { typeof(Workshop) }
             });
+            //Components.Add(new Defender());
         }
     }
 }

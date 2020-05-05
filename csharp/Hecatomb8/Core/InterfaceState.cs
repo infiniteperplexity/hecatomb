@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 
 // this is getting to be a bit of a God Object
 namespace Hecatomb8
@@ -41,7 +42,7 @@ namespace Hecatomb8
 
         public static void HandleInput()
         {
-            controls!.HandleInput();
+            controls?.HandleInput();
         }
         public static void PreparePanels()
         {
@@ -69,6 +70,9 @@ namespace Hecatomb8
             }
             else if (popupPanel!.Active)
             {
+                mainPanel!.Draw();
+                infoPanel!.Draw();
+                menuPanel!.Draw();
                 popupPanel!.Draw();
             }
             else
@@ -95,7 +99,7 @@ namespace Hecatomb8
             DirtifyMainPanel();
             DirtifyTextPanels();
             var p = GameState.World!.Player!;
-            InterfaceState.Camera!.Center((int)p.X!, (int)p.Y!, (int)p.Z!);
+            //InterfaceState.Camera!.Center((int)p.X!, (int)p.Y!, (int)p.Z!);
             HandlePlayerVisibility();
             // may want to refactor this out
             //InterfaceState.ReadyForInput = true;
@@ -136,26 +140,24 @@ namespace Hecatomb8
             {
                 return;
             }
-            //if (!Game.ForegroundPanel.Active)
-            //{
-            //    InterfacePanel.DirtifyUsualPanels();
-            //    var m = Mouse.GetState();
-            //    Controls?.HandleHover(m.X, m.Y);
-            //}
+            if (!PopupPanel.Active && !ForegroundPanel.Active)
+            {
+                DirtifyTextPanels();
+                DirtifyMainPanel();
+                var m = Mouse.GetState();
+                Controls?.HandleHover(m.X, m.Y);
+            }
             //TheFixer.CheckStates();
             //Game.World.ValidateLighting();
-            if (!(Controls is CameraControls))
+            if (Controls?.SelectedEntity is Creature && Controls.SelectedEntity.Placed)
             {
-                if (Controls.SelectedEntity is Creature && Controls.SelectedEntity.Placed)
-                {
-                    Creature c = (Creature)Controls.SelectedEntity;
-                    Camera!.Center((int)c.X!, (int)c.Y!, (int)c.Z!);
-                }
-                else
-                {
-                    var (x, y, z) = GameState.World!.Player!;
-                    Camera!.Center((int)x!, (int)y!, (int)z!);
-                }
+                Creature c = (Creature)Controls.SelectedEntity;
+                Camera!.Center((int)c.X!, (int)c.Y!, (int)c.Z!);
+            }
+            else if (!(Controls is AbstractCameraControls))
+            {
+                var (x, y, z) = GameState.World!.Player!;
+                Camera!.Center((int)x!, (int)y!, (int)z!);
             }
             PlayerVisible = GameState.World!.Player!.GetComponent<Senses>().GetFOV();
             foreach (Creature cr in GetState<TaskHandler>().GetMinions())
@@ -253,13 +255,24 @@ namespace Hecatomb8
             Cursor = null;
         }
 
-        public static void Splash(List<ColoredText> lines, Action? callback = null, bool fullScreen = false, ColoredText? logText = null)
+        public static void Splash(List<ColoredText> lines, Action? callback = null, int? sleep = null, bool fullScreen = false, ColoredText? logText = null)
         {
             var splash = new SplashControls();
             splash.SplashText = lines;
             splash.MyCallback = callback;
             splash.IsFullScreen = fullScreen;
             // push a message to the log
+            if (sleep != null)
+            {
+                HecatombGame.DeferUntilAfterDraw( ()=>
+                {
+                    HandlePlayerVisibility();
+                    MainPanel.PrepareGlyphs();
+                    HecatombGame.Sleep((int)sleep);
+                }
+                );
+
+            }
             SetControls(splash);
             if (fullScreen)
             {
@@ -311,23 +324,22 @@ namespace Hecatomb8
                 t = Creatures.GetWithBoundsChecked(x, y, z);
                 if (t != null)
                 {
-                    text.Add("Creature: " + t.Describe());
+                    text.Add("Creature: " + t.Describe(article: false));
                 }
                 t = Features.GetWithBoundsChecked(x, y, z);
                 if (t != null)
                 {
-                    text.Add("Feature: " + t.Describe());
+                    text.Add("Feature: " + t.Describe(article: false));
                 }
                 t = Items.GetWithBoundsChecked(x, y, z);
                 if (t != null)
                 {
-                    text.Add("Item: " + t.Describe());
+                    text.Add("Item: " + t.Describe(article: false));
                 }
                 t = Tasks.GetWithBoundsChecked(x, y, z);
                 if (t != null)
                 {
-                    //text.Add("Task: " + t.Describe(article: false));
-                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                    text.Add("Task: " + (t as Task)!.DescribeWithIngredients().Text);
                 }
                 text.Add(" ");
             }
@@ -336,7 +348,7 @@ namespace Hecatomb8
                 t = Tasks.GetWithBoundsChecked(x, y, z);
                 if (t != null)
                 {
-                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients)); ;
+                    text.Add("Task: " + (t as Task)!.DescribeWithIngredients().Text);
                 }
             }
             change = text.Count;
@@ -351,22 +363,22 @@ namespace Hecatomb8
                 t = Creatures.GetWithBoundsChecked(x, y, za);
                 if (t != null)
                 {
-                    text.Add("Creature: " + t.Describe());
+                    text.Add("Creature: " + t.Describe(article: false));
                 }
                 t = Features.GetWithBoundsChecked(x, y, za);
                 if (t != null)
                 {
-                    text.Add("Feature: " + t.Describe());
+                    text.Add("Feature: " + t.Describe(article: false));
                 }
                 t = Items.GetWithBoundsChecked(x, y, za);
                 if (t != null)
                 {
-                    text.Add("Item: " + t.Describe());
+                    text.Add("Item: " + t.Describe(article: false));
                 }
                 t = Tasks.GetWithBoundsChecked(x, y, za);
                 if (t != null)
                 {
-                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                    text.Add("Task: " + (t as Task)!.DescribeWithIngredients().Text);
                 }
                 text.Add(" ");
             }
@@ -375,7 +387,7 @@ namespace Hecatomb8
                 t = Tasks.GetWithBoundsChecked(x, y, za);
                 if (t != null)
                 {
-                    text.Add("Above: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                    text.Add("Above: " + (t as Task)!.DescribeWithIngredients().Text);
                 }
             }
             if (Explored.Contains(below) || HecatombOptions.Explored)
@@ -389,22 +401,22 @@ namespace Hecatomb8
                 t = Creatures.GetWithBoundsChecked(x, y, zb);
                 if (t != null)
                 {
-                    text.Add("Creature: " + t.Describe());
+                    text.Add("Creature: " + t.Describe(article: false));
                 }
                 t = Features.GetWithBoundsChecked(x, y, zb);
                 if (t != null)
                 {
-                    text.Add("Feature: " + t.Describe());
+                    text.Add("Feature: " + t.Describe(article: false));
                 }
                 t = Items.GetWithBoundsChecked(x, y, zb);
                 if (t != null)
                 {
-                    text.Add("Item: " + t.Describe());
+                    text.Add("Item: " + t.Describe(article: false));
                 }
                 t = Tasks.GetWithBoundsChecked(x, y, zb);
                 if (t != null)
                 {
-                    text.Add("Task: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                    text.Add("Task: " + (t as Task)!.DescribeWithIngredients().Text );
                 }
                 text.Add(" ");
             }
@@ -413,7 +425,7 @@ namespace Hecatomb8
                 t = Tasks.GetWithBoundsChecked(x, y, zb);
                 if (t != null)
                 {
-                    text.Add("Below: " + t.Describe() + " " + Resource.Format((t as Task)!.Ingredients));
+                    text.Add("Below: " + (t as Task)!.DescribeWithIngredients().Text);
                 }
             }
             for (int i = 0; i < text.Count; i++)

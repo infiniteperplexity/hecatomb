@@ -25,6 +25,15 @@ namespace Hecatomb8
                 typeof(BuildTask),
                 typeof(ConstructTask),
                 typeof(FurnishTask),
+                typeof(DyeTask),
+                typeof(FarmTask),
+                typeof(ButcherTask),
+                typeof(ChirurgyTask),
+                typeof(DisownTask),
+                typeof(MurderTask),
+                typeof(PatrolTask),
+                //typeof(RallyTask),
+                typeof(ForbidTask),
                 typeof(UndesignateTask)
             };
             AddListener<DestroyEvent>(OnDestroy);
@@ -91,28 +100,24 @@ namespace Hecatomb8
             //    return;
             //}
             menu.Header = "Choose a task:";
-            List<IMenuListable> tasks = new List<IMenuListable>();
-            foreach (var t in Tasks)
+            var tasks = new List<IMenuListable>();
+            var structures = Structure.ListStructureTypes();
+            foreach (Type t in Tasks)
             {
-                tasks.Add((Task)Activator.CreateInstance(t)!);
+                bool valid = true;
+                Task task = (Task)Entity.Mock(t);
+                foreach (Type s in task.RequiresStructures)
+                {
+                    if (!structures.Contains(s))
+                    {
+                        valid = false;
+                    }
+                }
+                if (valid || HecatombOptions.NoIngredients)
+                {
+                    tasks.Add(task);
+                }
             }
-            //var structures = Structure.ListAsStrings();
-            //foreach (string t in Tasks)
-            //{
-            //    bool valid = true;
-            //    Task task = GetTask(t);
-            //    foreach (string s in task.PrereqStructures)
-            //    {
-            //        if (!structures.Contains(s))
-            //        {
-            //            valid = false;
-            //        }
-            //    }
-            //    if (valid || Options.NoIngredients)
-            //    {
-            //        tasks.Add(GetTask(t));
-            //    }
-            //}
             //cachedChoices = tasks;
             menu.Choices = tasks;
         }

@@ -7,7 +7,7 @@ namespace Hecatomb8
     using static HecatombAliases;
     class Flower : Feature
     {
-        Resource? Dye;
+        public Resource? Dye;
         public Flower()
         {
             _name = "flower";

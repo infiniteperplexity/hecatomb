@@ -20,6 +20,7 @@ namespace Hecatomb8
             _name = "research";
             Priority = 3;
             _bg = "magenta";
+            AddListener<TurnBeginEvent>(OnTurnBegin);
         }
 
         public override GameEvent OnDespawn(GameEvent ge)
@@ -34,11 +35,11 @@ namespace Hecatomb8
 
         protected override string getName()
         {
-            if (Makes is null)
+            if (Researching is null)
             {
                 return _name!;
             }
-            return $"researching {Makes.Name}";
+            return $"research {Researching.Name}";
         }
 
 
@@ -48,20 +49,22 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = Structure.UnboxBriefly()!.GetVerifiedCoord();
+            var (x, y, z) = Structure.UnboxBriefly()!.GetValidCoordinate();
             if (Tasks.GetWithBoundsChecked(x, y, z) != null)
             {
                 return;
             }
-            CommandLogger.LogCommand(command: "ResearchTask", x: x, y: y, z: z, makes: Makes!.Name);
+            CommandLogger.LogCommand(command: "ResearchTask", x: x, y: y, z: z, makes: Researching!.Name);
             //Research research = Hecatomb.Research.Types[Makes];
             ResearchTask rt = Entity.Spawn<ResearchTask>();
             rt.Structure = Structure;
-            rt.Makes = Makes;
+            rt.Researching = Researching;
             rt.Labor = LaborCost;
             rt.LaborCost = LaborCost;
             rt.Ingredients = new JsonArrayDictionary<Resource, int>(Ingredients);
             rt.PlaceInValidEmptyTile(x, y, z);
+            InterfaceState.DirtifyMainPanel();
+            InterfaceState.DirtifyTextPanels();
             //if (!Game.ReconstructMode)
             //{
             //    var c = new MenuChoiceControls(Structure.Unbox());
@@ -98,7 +101,7 @@ namespace Hecatomb8
         {
             if (Structure?.UnboxBriefly() != null)
             {
-                Structure.UnboxBriefly()!.ResarchTask = null;
+                Structure.UnboxBriefly()!.ResearchTask = null;
             }
             base.Cancel();
         }
@@ -106,39 +109,41 @@ namespace Hecatomb8
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnBeginEvent t = (TurnBeginEvent)ge;
-            if (Labor >= LaborCost)
+            if (Labor < LaborCost)
             {
-                return ge;
-            }
-            Labor -= (1 + HecatombOptions.WorkBonus);
-            if (Labor <= 0)
-            {
-                Finish();
+                Labor -= (1 + HecatombOptions.WorkBonus);
+                if (Labor <= 0)
+                {
+                    Finish();
+                }
             }
             return ge;
         }
-        //public override void Finish()
-        //{
-        //    var researched = GetState<ResearchHandler>().Researched;
-        //    if (!researched.Contains(Makes))
-        //    {
-        //        researched.Add(Makes);
-        //    }
-        //    PushMessage("{magenta}Research on " + Research.Types[Makes].Name + " complete!");
-        //    if (Makes == "FlintTools")
-        //    {
-        //        Publish(new AchievementEvent() { Action = "ResearchFlintTools" });
-        //    }
-        //    Complete();
-        //}
+        public override void Finish()
+        {
+            var researched = GetState<ResearchHandler>().Researched;
+            if (!researched.Contains(Researching))
+            {
+                researched.Add(Researching);
+            }
+            PushMessage("{magenta}Research on " + Researching.Name + " complete!");
+            if (Researching == Research.FlintTools)
+            {
+                Publish(new AchievementEvent() { Action = "ResearchFlintTools" });
+            }
+            Complete();
+        }
 
-        //public override string GetHoverName()
-        //{
-        //    if (Ingredients.Count == 0 || Options.NoIngredients)
-        //    {
-        //        return Describe(article: false) + " (" + Labor + " turns)";
-        //    }
-        //    return (Describe(article: false) + " ($: " + Resource.Format(Ingredients) + ")");
-        //}
+        public override ColoredText DescribeWithIngredients(bool capitalized = false, bool checkAvailable = false)
+        {
+            if (Ingredients.Count > 0)
+            {
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable);
+            }
+            else
+            {
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable) + " (" + Labor + " turns.)";
+            }
+        }
     }
 }

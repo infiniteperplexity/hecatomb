@@ -47,20 +47,23 @@ namespace Hecatomb8
             }
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+            else if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
             {
                 JObject job = JObject.Load(reader);
                 int fid = (int)job["FID"]!;
-                var method = objectType.GetMethod("GetByNumber")!;
-                var fw = method.Invoke(null, new object[] { fid })!;
-                return fw;
+                return FlyWeightParent.LookupTable[objectType][fid];
             }
             else if (typeof(Entity).IsAssignableFrom(objectType))
             {
                 JObject job = JObject.Load(reader);
                 string s = (string)job["Class"]!;
+                //Debug.WriteLine(s);
                 Type t = Type.GetType("Hecatomb8." + s)!;
                 object ent = SubSerializer.Deserialize(new JTokenReader(job), t)!;
                 return ent;
@@ -88,7 +91,7 @@ namespace Hecatomb8
             {
                 return true;
             }
-            else if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            else if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
             {
                 return true;
             }
@@ -119,16 +122,17 @@ namespace Hecatomb8
             }
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-
-            if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+            else if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
             {
                 JObject job = JObject.Load(reader);
                 int fid = (int)job["FID"]!;
-                var method = objectType.GetMethod("GetByNumber")!;
-                var fw = method.Invoke(null, new object[] { fid })!;
-                return fw;
+                return FlyWeightParent.LookupTable[objectType][fid];
             }
             else if (typeof(List<Type>).IsAssignableFrom(objectType))
             {
@@ -149,7 +153,7 @@ namespace Hecatomb8
 
         public override bool CanConvert(Type objectType)
         {
-            if (typeof(FlyWeight<>).IsAssignableFrom(objectType))
+            if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
             {
                 return true;
             }
@@ -164,6 +168,7 @@ namespace Hecatomb8
     {
         public void Stringify()
         {
+            //FlyWeightParent.Touch();
             int[,,] terrainFIDs = new int[Width, Height, Depth];
             int[,,] coverFIDs = new int[Width, Height, Depth];
             for (int i = 0; i < Width; i++)
@@ -207,6 +212,13 @@ namespace Hecatomb8
 
         public void Parse(string filename)
         {
+            Activity.Touch();
+            Cover.Touch();
+            Research.Touch();
+            Resource.Touch();
+            Species.Touch();
+            Team.Touch();
+            Terrain.Touch();
             //Reset();
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
@@ -222,7 +234,7 @@ namespace Hecatomb8
             }
             // *** Random Seed ***
             Random = parsed["random"]!.ToObject<StatefulRandom>()!;
-            Random.Initialize();
+            Random.Reinitialize();
             StateHandlers = parsed["handlers"]!.ToObject<Dictionary<string, int>>()!;
             // *** Terrains and Covers ***
             int[,,] tiles = parsed["tiles"]!.ToObject<int[,,]>()!;
@@ -266,29 +278,7 @@ namespace Hecatomb8
             {
                 var e = JsonConvert.DeserializeObject<Entity>(child.ToString(), settings)!;
                 Entities[(int)e!.EID!] = e;
-                if (e is TurnHandler)
-                {
-                    var th = (TurnHandler)e;
-                    Debug.WriteLine("turns restored is " + th.Turn);
-                }
-                if (e is TileEntity)
-                {
-                    TileEntity te = (TileEntity)e;
-                    Coord c = (Coord)te._coord!;
-                    if (c != null)
-                    {
-                        // we need to place without firing events...why do we fire events in the first place?  maybe that should only be for more specific types of placement
-                        te.PlaceInValidEmptyTile(((Coord)c).X, ((Coord)c).Y, ((Coord)c).Z);
-                    }
-                }
-                Entity.MaxEID = Math.Max(Entity.MaxEID, (int)e.EID);
-                // we might have to do some sort of reactivation for statehandlers but I hope not
             }
-            //ValidateOutdoors();
-            // *** Player ***
-            Player = (Creature)Entities[pid];
-            Explored = parsed.GetValue("explored")!.ToObject<HashSet<Coord>>()!;
-            // *** Event Listeners ***
             var events = parsed.GetValue("events")!.ToObject<Dictionary<string, Dictionary<int, string>>>();
             foreach (string type in events!.Keys)
             {
@@ -306,6 +296,31 @@ namespace Hecatomb8
                     Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>)Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
                 }
             }
+            Events.Suppressed = true;
+            foreach (var e in Entities.Values)
+            { 
+                if (e is TileEntity)
+                {
+                    TileEntity te = (TileEntity)e;
+                    // Items in particular are not always placed
+                    Coord? c = te._coord;
+                    if (c != null)
+                    {
+                        //Debug.WriteLine("placing " + e.Class);
+                        te.PlaceInValidEmptyTile(((Coord)c).X, ((Coord)c).Y, ((Coord)c).Z);
+                    }
+                }
+                Entity.MaxEID = Math.Max(Entity.MaxEID, (int)e.EID!);
+                // we might have to do some sort of reactivation for statehandlers but I hope not
+            }
+            Events.Suppressed = false;
+            //ValidateOutdoors();
+            // *** Player ***
+            Player = (Creature)Entities[pid];
+            Explored = parsed.GetValue("explored")!.ToObject<HashSet<Coord>>()!;
+            // *** Event Listeners ***
+
+            ValidateOutdoors();
             InterfaceState.PlayerIsReady();
             //if (Game.Options.ReseedRandom)
             //{

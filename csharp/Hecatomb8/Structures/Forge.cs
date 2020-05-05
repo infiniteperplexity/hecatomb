@@ -37,7 +37,7 @@ namespace Hecatomb8
             };
             _name = "forge";
             UseHint = "(research metal tools and weapons.)";
-            RequiresResearch = new[] { BronzeWorking };
+            Researches = new[] { BronzeWorking };
             RequiresStructures = new[] { typeof(Workshop) };
         }
     }

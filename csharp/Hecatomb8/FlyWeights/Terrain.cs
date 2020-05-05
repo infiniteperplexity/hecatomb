@@ -18,6 +18,7 @@ namespace Hecatomb8
 		[JsonIgnore] public readonly int Slope;
 
 
+
 		public Terrain(
 			string type = "",
 			string name = "",

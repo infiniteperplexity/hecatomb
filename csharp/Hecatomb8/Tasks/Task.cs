@@ -79,10 +79,21 @@ namespace Hecatomb8
         {
             if (Tasks.GetWithBoundsChecked(x1, y1, z1) != null)
             {
-                throw new InvalidOperationException($"Task placement conflict at {x1} {y1} {z1}");
+                if (HecatombOptions.NoisyErrors)
+                {
+                    throw new InvalidOperationException($"Task placement conflict at {x1} {y1} {z1}");
+                }
+                else
+                {
+                    Tasks.GetWithBoundsChecked(x1, y1, z1)!.Despawn();
+                }
             }
-            Tasks.SetWithBoundsChecked(x1, y1, z1, this);
             base.PlaceInValidEmptyTile(x1, y1, z1);
+            if (Spawned)
+            {
+                Tasks.SetWithBoundsChecked(x1, y1, z1, this);
+                Publish(new AfterPlaceEvent() { Entity = this, X = x1, Y = y1, Z = z1 });
+            }
         }
         // override Remove from TileEntity
         public override void Remove()
@@ -92,6 +103,7 @@ namespace Hecatomb8
             {
                 GameState.World!.Tasks.SetWithBoundsChecked((int)_x!, (int)_y!, (int)_z!, null);
             }
+            base.Remove();
         }
         // override Despawn from TileEntity
         public override void Despawn()
@@ -169,7 +181,6 @@ namespace Hecatomb8
             if (Worker?.UnboxBriefly() != null)
             {
                 Worker.UnboxBriefly()!.GetComponent<Minion>().Task = null;
-                Debug.WriteLine(Worker.UnboxBriefly()!.GetComponent<Minion>().Task);
             }
             Worker = null;
             UnclaimIngredients();
@@ -236,7 +247,7 @@ namespace Hecatomb8
 
             Movement m = Worker.UnboxBriefly()!.GetComponent<Movement>();
             owned = owned.Where(it => m.CanReachBounded(it)).ToList();
-            var (X, Y, Z) = Worker.UnboxBriefly()!.GetVerifiedCoord();
+            var (X, Y, Z) = Worker.UnboxBriefly()!.GetValidCoordinate();
             owned = owned.OrderBy(it => { return Tiles.Distance(X, Y, Z, (int)it.X!, (int)it.Y!, (int)it.Z!); }).ToList();
             foreach (Item item in owned)
             {
@@ -329,7 +340,7 @@ namespace Hecatomb8
                 Claims.Remove(eid);
                 return;
             }
-            var (X, Y, Z) = Worker.UnboxBriefly()!.GetVerifiedCoord();
+            var (X, Y, Z) = Worker.UnboxBriefly()!.GetValidCoordinate();
             if (item.X == X && item.Y == Y && item.Z == Z && !HasIngredient())
             {
                 var (x, y, z) = item;
@@ -417,7 +428,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            var (X, Y, Z) = GetVerifiedCoord();
+            var (X, Y, Z) = GetValidCoordinate();
             if (WorkSameTile && x == X && y == Y && z == Z)
             {
                 return true;
@@ -444,7 +455,7 @@ namespace Hecatomb8
                 return false;
             }
             var (x, y, z) = c;
-            var (X, Y, Z) = GetVerifiedCoord();
+            var (X, Y, Z) = GetValidCoordinate();
             if (WorkSameTile && x == X && y == Y && z == Z)
             {
                 return true;
@@ -492,7 +503,7 @@ namespace Hecatomb8
                 Unassign();
                 return;
             }
-            var (X, Y, Z) = GetVerifiedCoord();
+            var (X, Y, Z) = GetValidCoordinate();
             if (!ValidTile(new Coord(X, Y, Z)))
             {
                 Cancel();
@@ -528,7 +539,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (X, Y, Z) = GetVerifiedCoord();
+            var (X, Y, Z) = GetValidCoordinate();
             Feature? f = Features.GetWithBoundsChecked(X, Y, Z);
             if (f != null)
             {
@@ -622,20 +633,15 @@ namespace Hecatomb8
         //protected ColoredText cachedMenuListing;
         public virtual ColoredText ListOnMenu()
         {
-
-            //if (cachedMenuListing != null)
-            //{
-            //    return cachedMenuListing;
-            //}
             if (Ingredients.Count == 0)
             {
-                return _name!;
+                return getName()!;
             }
             else if (Task.CanFindResources(Ingredients))
             {
-                return (_name + " ($: " + Resource.Format(Ingredients) + ")");
+                return (getName() + " ($: " + Resource.Format(Ingredients) + ")");
             }
-            string ingredients = "{gray}" + _name + " ($: ";
+            string ingredients = "{gray}" + getName() + " ($: ";
             var keys = Ingredients.Keys.ToList();
             for (int i = 0; i < keys.Count; i++)
             {
@@ -655,35 +661,6 @@ namespace Hecatomb8
             }
             ingredients += "{gray})";
             return ingredients;
-            //{
-            //    cachedMenuListing = MenuName;
-            //    return cachedMenuListing;
-            //else if (Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
-            //{
-            //    cachedMenuListing = (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
-            //    return cachedMenuListing;
-            //}
-            //string ingredients = "{gray}" + MenuName + " ($: ";
-            //var keys = Ingredients.Keys.ToList();
-            //for (int i = 0; i < keys.Count; i++)
-            //{
-            //    string resource = keys[i];
-            //    if (Player.GetComponent<Movement>().CanFindResource(resource, Ingredients[resource], useCache: false))
-            //    {
-            //        ingredients += ("{white}" + Resource.Format((resource, Ingredients[resource])));
-            //    }
-            //    else
-            //    {
-            //        ingredients += ("{gray}" + Resource.Format((resource, Ingredients[resource])));
-            //    }
-            //    if (i < keys.Count - 1)
-            //    {
-            //        ingredients += ", ";
-            //    }
-            //}
-            //ingredients += "{gray})";
-            //cachedMenuListing = ingredients;
-            //return cachedMenuListing;
         }
 
         public virtual string GetHighlightColor()
@@ -733,5 +710,44 @@ namespace Hecatomb8
             }
             return (needed <= 0);
         }
+
+        public virtual ColoredText DescribeWithIngredients(bool capitalized = false, bool checkAvailable = false)
+        {
+            var name = getName()!;
+            if (capitalized)
+            {
+                name = char.ToUpper(name[0]) + name.Substring(1);
+            }
+            if (HecatombOptions.NoIngredients || Ingredients.Count == 0)
+            {
+                return name;
+            }
+            if (!checkAvailable || Task.CanFindResources(Ingredients))
+            {
+                return (getName() + " ($: " + Resource.Format(Ingredients) + ")");
+            }
+            string ingredients = "{gray}" + getName() + " ($: ";
+            var keys = Ingredients.Keys.ToList();
+            for (int i = 0; i < keys.Count; i++)
+            {
+                Resource resource = keys[i];
+                if (Task.CanFindResource(resource, Ingredients[resource]))
+                {
+                    ingredients += ("{white}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                else
+                {
+                    ingredients += ("{gray}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                if (i < keys.Count - 1)
+                {
+                    ingredients += ", ";
+                }
+            }
+            ingredients += "{gray})";
+            return name;
+        }
+
+
     }
 }

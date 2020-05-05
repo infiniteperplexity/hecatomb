@@ -65,10 +65,12 @@ namespace Hecatomb8
 
         public override void ChooseFromMenu()
         {
+            Debug.WriteLine("trade 0");
             if (Structure?.UnboxBriefly() is null || !Structure?.UnboxBriefly()!.Placed)
             {
                 return;
             }
+            Debug.WriteLine("trade 1");
             var market = (Structure.UnboxBriefly() as BlackMarket)!;
             var menu = (InterfaceState.Controls as InfoDisplayControls);
             if (menu is null)
@@ -93,7 +95,8 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = market.GetVerifiedCoord();
+            Debug.WriteLine("trade 2");
+            var (x, y, z) = market.GetValidCoordinate();
             if (Tasks.GetWithBoundsChecked(x, y, z) != null)
             {
                 return;
@@ -102,8 +105,11 @@ namespace Hecatomb8
             if (Tasks.GetWithBoundsChecked(x, y, z) is null)
             {
                 market.AvailableTradeIndexes.RemoveAt((int)index);
+                Entity.Spawn(this);
                 PlaceInValidEmptyTile(x, y, z);
             }
+            InterfaceState.DirtifyTextPanels();
+            Debug.WriteLine("trade 3");
             //if (!Game.ReconstructMode)
             //{
             //    var c = new MenuChoiceControls(Structure.Unbox());
@@ -175,6 +181,18 @@ namespace Hecatomb8
             }
             Publish(new AchievementEvent() { Action = "FinishedTrade" });
             Complete();
+        }
+
+        public override ColoredText DescribeWithIngredients(bool capitalized = false, bool checkAvailable = false)
+        {
+            if (Ingredients.Count > 0)
+            {
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable);
+            }
+            else
+            {
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable) + " (" + Labor + " turns.)";
+            }
         }
     }
 }

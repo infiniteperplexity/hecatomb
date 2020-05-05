@@ -60,7 +60,7 @@ namespace Hecatomb8
 
         public virtual void Draw()
         {
-            //Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
             foreach (var line in DrawableLines)
             {
                 Sprites.DrawString(Font, line.text, line.v, line.color);

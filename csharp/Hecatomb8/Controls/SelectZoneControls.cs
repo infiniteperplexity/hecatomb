@@ -8,7 +8,7 @@ using System.Linq;
 namespace Hecatomb8
 {
 	public interface ISelectsZone
-	{
+	{ 
 		void SelectZone(List<Coord> squares);
 		void TileHover(Coord c);
 		void TileHover(Coord c, List<Coord> squares);
@@ -16,6 +16,7 @@ namespace Hecatomb8
 	}
 	public class SelectZoneControls : AbstractCameraControls
 	{
+		public string? Header; // undecided whether to use
 		ISelectsZone Selector;
 		public Coord FirstCorner;
 		List<Coord> Squares;
@@ -34,9 +35,9 @@ namespace Hecatomb8
 			Squares = new List<Coord>();
 			Highlights = new List<Particle>();
 			InfoTop = new List<ColoredText>() {
-				 "{orange}**Esc: Cancel.**",
+				"{orange}**Esc: Cancel.**",
 				" ",
-				  "{yellow}Select first corner with keys or mouse."
+				"{yellow}Select first corner with keys or mouse."
 			};
 		}
 

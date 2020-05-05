@@ -22,7 +22,7 @@ namespace Hecatomb8
 
                 return Visible;
             }
-            var (x, y, z) = Entity.UnboxBriefly()!.GetVerifiedCoord();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
             storedZ = (int)z!;
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting((int)x!, (int)y!, Range, cannotSeeThrough, addToVisible);
             foreach (Coord c in Visible.ToList())
@@ -87,40 +87,49 @@ namespace Hecatomb8
         }
 
         // some callback-heavy code to find nearby, visible things
-        //private Func<int, int, int, bool> storedCallback;
-        //private Coord storedCoord;
-        //private Actor? storedActor;
-        //private Movement? storedMovement;
-        //public Coord FindClosestVisible(Func<int, int, int, bool> where = null)
-        //{
-        //    var (x, y, z) = Entity;
-        //    storedZ = z;
-        //    storedCallback = where;
-        //    storedCoord = new Coord();
-        //    ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, lookAround);
-        //    return storedCoord;
-        //}
-        //private void lookAround(int x, int y)
-        //{
-        //    var c = storedCoord;
-        //    var z = storedZ;
-        //    var (X, Y, Z) = Entity;
-        //    if (!c.Equals(default(Coord)) && Tiles.QuickDistance(c.X, c.Y, c.Z, X, Y, Z) <= Tiles.QuickDistance(x, y, z, X, Y, Z))
-        //    {
-        //        return;
-        //    }
-        //    if (storedCallback(x, y, z))
-        //    {
-        //        storedCoord = new Coord(x, y, z);
-        //    }
-        //    else if (Terrains[x, y, z + 1].ZView == -1 && storedCallback(x, y, z + 1))
-        //    {
-        //        storedCoord = new Coord(x, y, z + 1);
-        //    }
-        //    else if (Terrains[x, y, z].ZView == -1 && storedCallback(x, y, z - 1))
-        //    {
-        //        storedCoord = new Coord(x, y, z - 1);
-        //    }
-        //}
+        [JsonIgnore] private Func<int, int, int, bool>? storedCallback;
+        [JsonIgnore] private Coord? storedCoord;
+        [JsonIgnore] private Actor? storedActor;
+        [JsonIgnore] private Movement? storedMovement;
+        [JsonIgnore] private int storedX;
+        [JsonIgnore] private int storedY;
+        public Coord? FindClosestVisible(Func<int, int, int, bool>? where = null)
+        {
+            if (Entity?.UnboxBriefly() is null)
+            {
+                return null;
+            }
+            var entity = Entity.UnboxBriefly()!;
+            if (!entity.Placed)
+            {
+                return null;
+            }
+            (storedX, storedY, storedZ) = entity.GetValidCoordinate();
+            storedCallback = where;
+            storedCoord = null;
+            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(storedX, storedY, Range, cannotSeeThrough, lookAround);
+            return storedCoord;
+        }
+        private void lookAround(int x, int y)
+        {
+            var c = storedCoord;
+            var z = storedZ;
+            if (c != null && Tiles.Distance(((Coord)c).X, ((Coord)c).Y, ((Coord)c).Z, storedX, storedY, storedZ) <= Tiles.Distance(x, y, z, storedX, storedY, storedZ))
+            {
+                return;
+            }
+            if (storedCallback is null || storedCallback(x, y, z))
+            {
+                storedCoord = new Coord(x, y, z);
+            }
+            else if (Terrains.GetWithBoundsChecked(x, y, z + 1).ZView == -1 && storedCallback(x, y, z + 1))
+            {
+                storedCoord = new Coord(x, y, z + 1);
+            }
+            else if (Terrains.GetWithBoundsChecked(x, y, z).ZView == -1 && storedCallback(x, y, z - 1))
+            {
+                storedCoord = new Coord(x, y, z - 1);
+            }
+        }
     }
 }

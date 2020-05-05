@@ -49,7 +49,7 @@ namespace Hecatomb8
             //MockupName = "workshop";
             _name = "workshop";
             UseHint = "(enables furnish task; research basic tools and weapons.)";
-            Researches = new[] { FlintTools, BoneWeapons, SpearTrap, BronzeTools, SteelTools, AlloyTools };
+            Researches = new[] { FlintTools, BoneWeapons, Research.SpearTrap, BronzeTools, SteelTools, AlloyTools };
         }
     }
 }

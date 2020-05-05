@@ -236,22 +236,20 @@ namespace Hecatomb8
             if (cr != null && visible)
             {
                 InterfaceState.SetControls(new InfoDisplayControls(cr));
-                //Game.Camera.CenterOnSelection();
-                //return;
+                InterfaceState.Camera!.CenterOnSelection();
+                return;
             }
             Feature? fr = GameState.World!.Features.GetWithBoundsChecked(x, y, z);
-            //if (fr?.TryComponent<StructuralComponent>() != null)
-            //{
-            //    if (fr.GetComponent<StructuralComponent>().Structure.Placed)
-            //    {
-            //        var s = fr.GetComponent<StructuralComponent>().Structure.Unbox();
-            //        ControlContext.Set(new MenuCameraControls(s));
-            //        Game.Camera.CenterOnSelection();
-            //        //ControlContext.Set(new MenuChoiceControls(fr.GetComponent<StructuralComponent>().Structure.Unbox()));
-            //    }
-            //    return;
-            //}
-            Debug.WriteLine($"Clicked {c.X} {c.Y} {c.Z}");
+            if (fr is StructuralFeature)
+            {
+                var s = (fr as StructuralFeature)!.Structure?.UnboxBriefly();
+                if (s != null && s.Placed)
+                {
+                    InterfaceState.SetControls(new InfoDisplayControls(s));
+                    InterfaceState.Camera!.CenterOnSelection();
+                }
+                return;
+            }
         }
 
         public virtual void HoverTile(Coord c)

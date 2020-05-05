@@ -20,9 +20,25 @@ namespace Hecatomb8
         }
     }
 
-    public class PlaceEvent : GameEvent
+    public class AfterPlaceEvent : GameEvent
     {
         public TileEntity? Entity;
+        public int X;
+        public int Y;
+        public int Z;
+    }
+
+    public class BeforePlaceEvent : GameEvent
+    {
+        public TileEntity? Entity;
+        public int X;
+        public int Y;
+        public int Z;
+    }
+
+    public class StepEvent : GameEvent
+    {
+        public Creature? Entity;
         public int X;
         public int Y;
         public int Z;

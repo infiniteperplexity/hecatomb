@@ -322,6 +322,7 @@ namespace Hecatomb
             }
             else
             {
+                Debug.WriteLine("got to the stupid empty fallback thing");
                 // otherwise mock up an array with only one row
                 fallbacks = new Coord[][] { new Coord[] { c } };
             }

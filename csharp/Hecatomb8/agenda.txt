@@ -103,3 +103,39 @@ way we do this is as follows:
 5/1/2020
 -I'll need to go through and make sure everyone that has OnDespawn actually subscribes and stuff
 - Fixing all the attacker/defender/team stuff will be a moderate sized task
+
+5/2/2020
+- I have completely and totally ignored lighting so far
+- I'm planning on leaving out vaults and dryads for now, and most other extra stuff but I want to keep sieges
+- the interface has a lot of entity names to get right
+- we need to get the menu color highlights correct
+
+5/3/2020
+* Forbid task is missing a bunch of stuff and so is patrol task
+- Research tasks don't work
+* I should really get the popup working for saved games because that's distracting
+- List of places you can see a task...
+    - Picking it from the menu (not spawned and no properties, shows ingredients but there might be none yet)
+    - Picking it from a submenu (not spawned but has some properties, show ingredients)
+    - Hovering over it (shows ingredients and properties and sometimes turns)
+    - Selecting a zombie that's working it (show coordinates and properties)
+    - Getting a message about it being canceled or whatever (show coordinates and properties)
+    - Selecting a building that's working on it (show properties and turns)
+    - As a header for its own menu (capitalized with maybe some properties selected but no ingredients)
+    - In modified form while hovering to select it (capitalized with coordinates.)
+- What if we just overrode Describe and added options to it?
+    - ingredients
+    - labor as turns? or just skip that because we only need it for two things.
+    - also the fancy colors for dye tasks are special
+    - coordinates can go on the base actually
+- ...oh dear.  So...yeah...that's actually kind of a big problem.  Ummm...shoot.  What can we do?
+    - We could pull the same trick as we did with components.
+    - I mean...like...I can solve this with no big problem.  The problem is that I'm worried about all the other things that might come up?
+    - So...we can have a prespawn list.
+    - wait...I think I'm having a though...okay...so...we can make sure that no Component ever has a default populated list.  We could
+        instead populate the list in the constructor.
+- Hmmmm...okay...goddamit...so...I have to somehow be absolutey sure that I touch all the FlyWeight classes
+
+- We now have potential despawning during parsing...which seems bad for preserving game state
+- Need scrolling on achievement and research views
+- We don't actually order path neighbors by distance, which occasionally creates small oddities, like taking a diagonal step before working

@@ -31,7 +31,7 @@ namespace Hecatomb8
             foreach (Type t in Fixtures)
             {
                 Feature f = (Feature)Entity.Mock(t);
-                Fixture fix = f.GetMockComponent<Fixture>();
+                Fixture fix = f.GetPrespawnComponent<Fixture>();
                 bool valid = true;
 
                 foreach (Research s in fix.RequiresResearch)
@@ -53,15 +53,12 @@ namespace Hecatomb8
                     var task = Entity.Mock<FurnishTask>();
                     task.Ingredients = new JsonArrayDictionary<Resource, int>(fix.Ingredients);
                     task.Makes = t;
-                    //task.MenuName = "furnish " + feat.Name;
-                    //if (task.Makes == "Masonry")
-                    //{
-                    //    task.MenuName = "tiled stone floor";
-                    //}
                     list.Add(task);
                 }
             }
-            //list.Add(Hecatomb.Entity.Mock<RepairTask>());
+            var repair = Entity.Mock<RepairTask>();
+            repair.Makes = typeof(Feature);
+            list.Add(repair);
             menu.Choices = list;
         }
         public void FinishInfoDisplay(InfoDisplayControls menu)
@@ -74,7 +71,12 @@ namespace Hecatomb8
         {
             _name = "build or repair a fixture";
             Priority = 4;
-            Fixtures = new Type[] { typeof(Door), typeof(Ramp) };
+            Fixtures = new Type[] {
+                typeof(Door),
+                typeof(Masonry),
+                typeof(Ramp),
+                typeof(SpearTrap)
+            };
             RequiresStructures = new List<Type> { typeof(Workshop) };
             _bg = "yellow";
         }
@@ -85,7 +87,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
             Feature? incomplete = Features.GetWithBoundsChecked(x, y, z);
             incomplete?.Despawn();
@@ -105,13 +107,15 @@ namespace Hecatomb8
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
                 InterfaceState.SetControls(c);
-  
+
             }
             else
             {
                 var c = new SelectTileControls(this);
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
+                Feature f = (Feature)Entity.Mock(Makes);
+                c.InfoMiddle = new List<ColoredText>() {"{green}Furnish " + f.Name};
                 InterfaceState.SetControls(c);
             }
         }
@@ -120,7 +124,7 @@ namespace Hecatomb8
         {
             var co = InterfaceState.Controls;
             co.InfoMiddle.Clear();
-            co.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {3} at {0} {1} {2}", c.X, c.Y, c.Z, ((Feature)Entity.Mock(Makes!)).Name) };
+            co.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Furnish {3} at {0} {1} {2}", c.X, c.Y, c.Z, ((Feature)Entity.Mock(Makes!)).Name) };
         }
 
         public override void SelectTile(Coord c)
@@ -129,43 +133,40 @@ namespace Hecatomb8
             if (Tasks.GetWithBoundsChecked(c.X, c.Y, c.Z) is null && ValidTile(c))
             {
                 Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
-                if (f != null)
+                Defender? d = null;
+                if (f != null && f.HasComponent<Defender>())
                 {
-                    return;
+                    d = f.GetComponent<Defender>();
                 }
-                //Defender d = f?.TryComponent<Defender>();
-                //if (f != null && d != null && f.TypeName == Makes && d.Wounds > 0)
-                //{
-                //    Task task = Entity.Spawn<RepairTask>();
-                //    string json = EntityType.Types[Makes].Components["Fixture"];
-                //    JObject obj = JObject.Parse(json);
-                //    var ingredients = obj["Ingredients"];
-                //    task.Ingredients = (ingredients == null) ? new Dictionary<string, int>() : ingredients.ToObject<Dictionary<string, int>>();
-                //    task.Place(c.X, c.Y, c.Z);
-                //}
-                //else
-                //{
+                if (f != null && f.HasComponent<Fixture>() && d != null && f.GetType() == Makes && d.Wounds > 0)
+                {
+                    Task task = Entity.Spawn<RepairTask>();
+                    task.Makes = typeof(Feature);
+                    task.Ingredients = new JsonArrayDictionary<Resource, int>(f.GetComponent<Fixture>().Ingredients);
+                    task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                }
+                else
+                {
                     Task task = Entity.Spawn<FurnishTask>();
                     Feature feat = (Feature)Entity.Mock(Makes);
-                    Fixture fix = feat.GetMockComponent<Fixture>();
-
+                    Fixture fix = feat.GetPrespawnComponent<Fixture>();
                     task.Ingredients = new JsonArrayDictionary<Resource, int>(fix.Ingredients);
                     task.LaborCost = fix.Labor;
                     task.Labor = fix.Labor;
                     task.Makes = Makes;
                     task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
-                //}
+                }
             }
         }
 
         public override bool ValidTile(Coord c)
         {
-            //Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
-            //Defender d = f?.TryComponent<Defender>();
-            //if (f != null && d != null && f.TypeName == Makes && d.Wounds > 0)
-            //{
-            //    return true;
-            //}
+            Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            Defender? d = f?.TryComponent<Defender>();
+            if (f != null && f.HasComponent<Fixture>() && d != null && f.GetType() == Makes && d.Wounds > 0)
+            {
+                return true;
+            }
             return base.ValidTile(c);
         }
     }

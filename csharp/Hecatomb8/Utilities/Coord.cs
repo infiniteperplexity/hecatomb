@@ -40,6 +40,28 @@ namespace Hecatomb8
             Y = m;
         }
 
+        // these are used to generate the movement fallbacks and could be used for other purposes as well I guess
+        public Coord Rotate(int n)
+        {
+            if (n == 0)
+            {
+                return this;
+            }
+            else
+            {
+                Coord c = new Coord(-Y, X, Z);
+                return c.Rotate(n - 1);
+            }
+        }
+        public Coord Rotate()
+        {
+            return this.Rotate(1);
+        }
+        public Coord Flip()
+        {
+            return new Coord(X, Y, -Z);
+        }
+
         public void Deconstruct(out int x, out int y, out int z)
         {
             x = X;

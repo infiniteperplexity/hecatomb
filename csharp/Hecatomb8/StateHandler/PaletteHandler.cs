@@ -60,7 +60,7 @@ namespace Hecatomb8
                 }
             }
             var colors = new Dictionary<string, string>();
-            for (int i = 0; i < Resource.Flowers.Count; i++)
+            for (int i = 0; i < picks.Count; i++)
             {
                 colors[Resource.Flowers[i].TypeName] = "#" + picks[i].ToString("X6");
             }

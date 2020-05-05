@@ -27,11 +27,12 @@ namespace Hecatomb8
         {
             CommandLogger.LogCommand(command: "CondenseEctoplasm");
             Cast();
-            var (x, y, z) = Caster!.GetVerifiedCoord()!;
+            var (x, y, z) = Caster!.GetValidCoordinate()!;
             ParticleEmitter emitter = new ParticleEmitter();
             emitter.Place(x, y, z);
             Item ecto = Item.SpawnNewResource(Resource.Ectoplasm, 1);
             ecto.DropOnValidTile(x, y, z);
+            InterfaceState.ResetControls();
         }
     }
 }

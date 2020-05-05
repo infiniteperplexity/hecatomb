@@ -16,10 +16,16 @@ namespace Hecatomb8
             Components.Add(new SpellCaster()
                 {
                     Spells = new List<Type>() {
-                        typeof(RaiseZombieSpell)
+                        typeof(RaiseZombieSpell),
+                        typeof(SacrificeMinionSpell),
+                        typeof(CondenseEctoplasmSpell),
+                        typeof(SiphonFleshSpell),
+                        typeof(ShadowHopSpell),
+                        typeof(DebugSpell)
                     }
                 }
             );
+            GetPrespawnComponent<Actor>().Team = Team.Friendly;
         }
     }
 }

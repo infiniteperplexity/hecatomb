@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 
 namespace Hecatomb8
 {
     using static Research;
-    public class ResearchHandler : StateHandler /*, IListPopulater*/
+    public class ResearchHandler : StateHandler, IDisplayInfo
 
     {
         public List<Research> Researched;
@@ -17,14 +20,22 @@ namespace Hecatomb8
             Researched = new List<Research>();
         }
 
-        public List<ColoredText> GetLines()
+        public void BuildInfoDisplay(InfoDisplayControls info)
         {
-            var list = new List<ColoredText> { "Researched:" };
+            var Commands = InterfaceState.Commands!;
+            info.KeyMap[Keys.Z] = Commands.ChooseSpell;
+            info.KeyMap[Keys.J] = Commands.ChooseTask;
+            info.KeyMap[Keys.L] = Commands.ShowLog;
+            info.KeyMap[Keys.V] = Commands.ShowAchievements;
+        }
+
+        public void FinishInfoDisplay(InfoDisplayControls info)
+        {
+            info.InfoTop.Add("Researched:");
             foreach (var research in Researched)
             {
-                list.Add("- " + research.Name);
+                info.InfoTop.Add("- " + research.Name);
             }
-            return list;
         }
         public int GetToolHardness()
         {
@@ -68,10 +79,10 @@ namespace Hecatomb8
         public int GetMinionEvasion()
         {
             int modifier = 0;
-            //if (Structure.ListStructureTypes().Contains(GuardPost))
-            //{
-            //    modifier += 2;
-            //}
+            if (Structure.ListStructureTypes().Contains(typeof(GuardPost)))
+            {
+                modifier += 2;
+            }
             return modifier;
         }
 

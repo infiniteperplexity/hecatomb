@@ -24,7 +24,7 @@ namespace Hecatomb8
         {
             var c = new SelectTileControls(this);
             c.SelectedMenuCommand = "Jobs";
-            c.MenuCommandsSelectable = false;
+            c.InfoMiddle = new List<ColoredText>() { "{green}Mend zombie at chirurgeon." };
             InterfaceState.SetControls(c);
         }
 
@@ -74,7 +74,7 @@ namespace Hecatomb8
                 }
                 if (ch != null && ch.Placed)
                 {
-                    var (x, y, z) = ch.GetVerifiedCoord();
+                    var (x, y, z) = ch.GetValidCoordinate();
                     var t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t == null)
                     {

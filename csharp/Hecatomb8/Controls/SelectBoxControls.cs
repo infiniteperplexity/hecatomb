@@ -17,6 +17,7 @@ namespace Hecatomb8
 
 	public class SelectBoxControls : AbstractCameraControls
 	{
+		public string Header; // undecided whether to use
 		ISelectsBox Selector;
 		List<Coord> Squares;
 		List<Particle> Highlights;

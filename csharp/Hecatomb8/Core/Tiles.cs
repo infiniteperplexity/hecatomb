@@ -129,7 +129,7 @@ namespace Hecatomb8
 
         public static LinkedList<Coord> FindPath(
             Movement m, TileEntity t, bool useLast = true,
-            //Func<int, int, int, int, int, int, float> cost = null,
+            Func<int, int, int, int, int, int, float>? cost = null,
             int maxTries = 25000,
             int cacheMissesFor = 10,
             bool useCache = true,
@@ -139,14 +139,18 @@ namespace Hecatomb8
             Func<int, int, int, int, int, int, bool>? movable = null
             )
         {
-
-            //var misses = Game.World.GetState<PathHandler>().PathMisses;
-            //var hits = Game.World.GetState<PathHandler>().PathHits;
-            //if (useCache && misses.ContainsKey(m.Entity.EID) && misses[m.Entity.EID].ContainsKey(t.EID))
-            //{
-            //    Debug.WriteLine("respected cached pathfinding failure");
-            //    return new LinkedList<Coord>();
-            //}
+            if (m.Entity?.UnboxBriefly() is null || !t.Spawned)
+            {
+                return new LinkedList<Coord>();
+            }
+            int eid = (int)m.Entity.UnboxBriefly()!.EID!;
+            var misses = GetState<PathHandler>().PathMisses;
+            var hits = GetState<PathHandler>().PathHits;
+            if (useCache && misses.ContainsKey(eid) && misses[eid].ContainsKey((int)t.EID!))
+            {
+                Debug.WriteLine("respected cached pathfinding failure");
+                return new LinkedList<Coord>();
+            }
             if (!t.Placed)
             {
                 return new LinkedList<Coord>();
@@ -178,7 +182,7 @@ namespace Hecatomb8
                 };
             }
             // where does this come from now?
-            //cost = cost ?? m.MovementCost;
+            cost = cost ?? m.MovementCost;
             var path = FindPath(
                 x0, y0, z0, x1, y1, z1,
                 condition: condition,
@@ -187,18 +191,19 @@ namespace Hecatomb8
                 useLast: useLast,
                 fromEntity: m.Entity!.UnboxBriefly()!,
                 toEntity: t,
-                //cost: cost,
+                cost: cost,
                 maxTries: maxTries
             );
-            //if (path.Count == 0 && cacheMissesFor > 0 && useCache)
-            //{
-            //    Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.Entity.Describe(), t.Describe(), t.X, t.Y, t.Z);
-            //    if (!misses.ContainsKey(m.Entity.EID))
-            //    {
-            //        misses[m.Entity.EID] = new Dictionary<int, int>();
-            //    }
-            //    misses[m.Entity.EID][t.EID] = cacheMissesFor;
-            //}
+            if (path.Count == 0 && cacheMissesFor > 0 && useCache)
+            {
+                Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.UnboxBriefly()!.Describe(), t.Describe(), t.X, t.Y, t.Z);
+                if (!misses.ContainsKey((int)entity.EID!))
+                {
+                    misses[(int)entity.EID!] = new Dictionary<int, int>();
+                }
+                misses[(int)entity.EID!][(int)t.EID!] = cacheMissesFor;
+            }
+            // I don't recall if I ever used cached hits...but it's not nearly as important as cacheing misses
             //else if (useCache && path.Count > 0 && cacheHitsFor > 0 && Tiles.QuickDistance(m.Entity, t) > cacheHitDistance)
             //{
             //    if (!hits.ContainsKey(m.Entity.EID))
@@ -301,7 +306,6 @@ namespace Hecatomb8
             bool accessible = false;
             foreach (Coord dir in dirs)
             {
-                // can I factor out useLast?
                 if (useLast && movable(x1 + dir.X, y1 + dir.Y, z1 + dir.Z, x1, y1, z1))
                 {
                     accessible = true;
@@ -330,7 +334,6 @@ namespace Hecatomb8
                 current = queue.First!.Value;
                 queue.RemoveFirst();
                 // ***** if we found the goal, retrace our steps ****
-                //if (condition(current.X, current.Y, current.Z, x1, y1, z1))
                 var (X, Y, Z) = new Coord(current);
                 if (condition(X, Y, Z, x1, y1, z1))
                 {
@@ -341,7 +344,6 @@ namespace Hecatomb8
                     LinkedList<Coord> path = new LinkedList<Coord> { };
                     path.AddFirst(new Coord(current));
                     // ***trace backwards
-                    //Coord previous = current;
                     int previous = current;
                     while (retrace.ContainsKey(current))
                     {
@@ -353,41 +355,36 @@ namespace Hecatomb8
                         }
                         else
                         {
-                            //							if (useFirst) return previous
-                            //return current;
                             return path;
                         }
                         path.AddFirst(new Coord(current));
                     }
-                    //					return current;
                     return path;
                 }
                 // ***************************************************
-                //Coord neighbor;
                 int neighbor;
-                //LinkedListNode<Coord> node;
                 LinkedListNode<int>? node;
                 // ***** check passability and scores for neighbors **
                 foreach (Coord dir in dirs)
                 {
-                    //neighbor = new Coord(current.X+dir.X, current.Y + dir.Y, current.Z + dir.Z);
+
                     int Xn = X + dir.X;
                     int Yn = Y + dir.Y;
                     int Zn = Z + dir.Z;
+                    // So...the tricky thing here is we don't necessarily add this in the order you'd want
+                    // you could, right before the loop, do the math and then order them by distance
                     neighbor = Coord.Numberize(Xn, Yn, Zn);
 
                     if (!closedSet.Contains(neighbor))
                     {
                         // !!!! I think there's a performance bottleneck here, specifically when getting the Movement component.
-                        //if (movable(current.X, current.Y, current.Z, neighbor.X, neighbor.Y, neighbor.Z))
                         if (movable(X, Y, Z, Xn, Yn, Zn))
                         {
                             // cost of taking this step
                             //stepCost = 1;
                             // this seems to have absolutely no effect
                             stepCost = cost(X, Y, Z, Xn, Yn, Zn);
-                            // actual score along this path	
-                            // !!! somehow I ran into a situation where this key was missing?							
+                            // actual score along this path							
                             newScore = gscores[current] + stepCost;
                             // if this is the best known path to the cell...
                             // !!! I've seen hints that this is a potential place for optimization

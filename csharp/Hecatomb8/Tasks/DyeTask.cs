@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace Hecatomb8
 {
     using static HecatombAliases;
+
     public class DyeTask : Task, IDisplayInfo, IMenuListable
     {
         public bool? Background;
@@ -17,7 +18,18 @@ namespace Hecatomb8
             var handler = GetState<PaletteHandler>();
             if (Dye is null)
             {
-                return "undye";
+                return _name!;
+            }
+            else if (Dye == Resource.Undye)
+            {
+                if (Placed)
+                {
+                    return "undye";
+                }
+                else
+                {
+                    return "undye tile or feature";
+                }
             }
             else if (Background is null)
             {
@@ -39,15 +51,19 @@ namespace Hecatomb8
             {
                 return base.ListOnMenu();
             }
+            else if (Dye == Resource.Undye)
+            {
+                return "undye a tile or feature";
+            }
             if (Ingredients.Count != 0 && CanFindResources(Ingredients))
             {
                 if (HecatombOptions.NoIngredients)
                 {
-                    return ("{" + Dye!.Name + "}" + _name);
+                    return ("{" + Dye!.FG + "}" + Name);
                 }
                 else
                 {
-                    return ("{" + Dye!.Name + "}" + _name + " ($: " + Resource.Format(Ingredients) + ")");
+                    return ("{" + Dye!.FG + "}" + Name + " ($: " + Resource.Format(Ingredients) + ")");
                 }
             }
             else
@@ -71,7 +87,14 @@ namespace Hecatomb8
                     list.Add(task);
                 }
                 var undye = Entity.Mock<DyeTask>();
+                undye.Dye = Resource.Undye;
                 list.Add(undye);
+            }
+            else if (Dye == Resource.Undye)
+            {
+                var task = Entity.Mock<DyeTask>();
+                task.Dye = Resource.Undye;
+                list.Add(task);
             }
             else
             {
@@ -79,14 +102,12 @@ namespace Hecatomb8
                 task.Ingredients = new JsonArrayDictionary<Resource, int>() { [Dye] = 1 };
                 task.Makes = Makes;
                 task.Dye = Dye;
-                list.Add(task);
                 task.Background = false;
                 list.Add(task);
                 task = Entity.Mock<DyeTask>();
                 task.Ingredients = new JsonArrayDictionary<Resource, int>() { [Dye] = 1 };
                 task.Makes = Makes;
                 task.Dye = Dye;
-                list.Add(task);
                 task.Background = true;
                 list.Add(task);
             }
@@ -118,10 +139,15 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             var handler = GetState<PaletteHandler>();
             if (Dye is null)
+            {
+                Cancel();
+                return;
+            }
+            if (Dye == Resource.Undye)
             {
                 if (f != null && f.HasComponent<CosmeticComponent>())
                 {
@@ -162,7 +188,7 @@ namespace Hecatomb8
                 }
                 else
                 {
-                    dyed.FG = dyed.BG = Dye.FG;
+                    dyed.FG = Dye.FG;
                 }
             }
             Publish(new AchievementEvent() { Action = "FinishDyeTask" });
@@ -179,7 +205,7 @@ namespace Hecatomb8
                 c.SelectedMenuCommand = "Jobs";
                 InterfaceState.SetControls(c);
             }
-            else if (Background == false && Makes != null)
+            else if (Background is null && Dye != Resource.Undye)
             {
                 var c = new InfoDisplayControls(this);
                 c.MenuCommandsSelectable = false;
@@ -191,6 +217,7 @@ namespace Hecatomb8
                 var c = new SelectZoneControls(this);
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
+                c.InfoMiddle = new List<ColoredText>() { (Dye == Resource.Undye) ? "{green}Undye" : ("{" + Dye.FG + "}" + "Dye") };
                 InterfaceState.SetControls(c);
             }
         }
@@ -203,12 +230,12 @@ namespace Hecatomb8
             string txt;
             if (!ValidTile(c))
             {
-                txt = (Dye is null) ? "undye" : "dye";
+                txt = (Dye == Resource.Undye) ? "undye" : "dye";
                 co.InfoMiddle = new List<ColoredText>() { "{orange}Can't " + txt + " here." };
             }
             else
             {
-                txt = (Dye is null) ? "Undye" : ("{" + Dye.FG + "}" + "Dye");
+                txt = (Dye == Resource.Undye) ? "{green}Undye" : ("{" + Dye!.FG + "}" + "Dye");
                 co.InfoMiddle = new List<ColoredText>() { txt + String.Format(" from {0} {1} {2}.", c.X, c.Y, c.Z) };
             }
         }
@@ -223,11 +250,12 @@ namespace Hecatomb8
                 {
                     Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
                     var task = Entity.Spawn<DyeTask>();
-                    if (Dye != null)
+                    if (Dye != null && Dye != Resource.Undye)
                     {
                         task.Ingredients = new JsonArrayDictionary<Resource, int>() { { Dye, 1 } };
                     }
                     task.Makes = Makes;
+                    task.Dye = Dye;
                     task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                     task.Background = Background;
                 }

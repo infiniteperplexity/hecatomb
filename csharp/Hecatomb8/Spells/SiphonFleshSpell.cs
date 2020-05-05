@@ -34,6 +34,7 @@ namespace Hecatomb8
                 var c = new SelectTileControls(this);
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Spells";
+                c.InfoMiddle = new List<ColoredText>() { "{green}Siphon flesh." };
                 InterfaceState.SetControls(c);
             }
         }

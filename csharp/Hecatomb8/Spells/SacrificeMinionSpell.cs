@@ -33,6 +33,7 @@ namespace Hecatomb8
                 var c = new SelectTileControls(this);
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Spells";
+                c.InfoMiddle = new List<ColoredText>() { "{green}Sacrifice a minion." };
                 InterfaceState.SetControls(c);
             }
         }

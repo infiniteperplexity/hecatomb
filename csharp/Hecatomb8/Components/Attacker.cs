@@ -44,7 +44,7 @@ namespace Hecatomb8
                 // defender switches targets if the attacker is closer
                 if (t is Creature && Entity.UnboxBriefly() is Creature)
                 {
-                    //t.GetComponent<Actor>().Provoke((Creature)Entity);
+                    t.GetComponent<Actor>().ProvokeAgainst((Creature)Entity.UnboxBriefly()!);
                 }
                 defender.Defend(attack);
             }

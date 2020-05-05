@@ -16,8 +16,8 @@ namespace Hecatomb8
 		{
 			Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
 			var c = new SelectZoneControls(this);
-			//c.SelectedMenuCommand = "Jobs";
-			//c.MenuSelectable = false;
+			c.SelectedMenuCommand = "Jobs";
+			c.InfoMiddle = new List<ColoredText>() { "{green}Undesignate." };
 			InterfaceState.SetControls(c);
 		}
 

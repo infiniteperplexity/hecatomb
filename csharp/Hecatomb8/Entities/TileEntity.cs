@@ -10,12 +10,13 @@ namespace Hecatomb8
     // A TileEntity is any entity, like a creature, item, or task, that resides in one tile.  Generally you can only have one entity of each type in a tile.
     public abstract class TileEntity : Entity
     {
-        protected char _symbol = ' ';
-        protected string? _fg;
-        protected string? _bg;
-        protected string? _name;
+        [JsonIgnore] protected char _symbol = ' ';
+        [JsonIgnore] protected string? _fg;
+        [JsonIgnore] protected string? _bg;
+        [JsonIgnore] protected string? _name;
         public Coord? _coord;
-        [JsonIgnore]protected bool Plural = false;
+        [JsonIgnore] protected bool alwaysPlural = false;
+        [JsonIgnore] protected string? specialPlural;
 
         protected virtual char getSymbol() => _symbol;
         protected virtual string? getFG() => _fg;
@@ -36,8 +37,18 @@ namespace Hecatomb8
         // do I need this in order to appease the warning
         public virtual void PlaceInValidEmptyTile(int x, int y, int z)
         {
-            _coord = new Coord(x, y, z);
+            if (Placed)
+            {
+                Remove();
+            }
+            if (!Spawned)
+            {
+                return;
+            }
+            Publish(new BeforePlaceEvent() { Entity = this, X = x, Y = y, Z = z });
+            _coord = new Coord(x, y, z);   
         }
+
 
         public virtual void Remove()
         {
@@ -52,17 +63,20 @@ namespace Hecatomb8
             z = Z;
         }
 
-        public Coord GetVerifiedCoord()
+        public Coord GetValidCoordinate()
         {
             return new Coord((int)X!, (int)Y!, (int)Z!);
         }
 
+        // ignoring special plurals for now
         public virtual string Describe(
-            bool article = true,
+            bool? article = null,
             bool definite = false,
             bool capitalized = false
         )
         {
+            // this allows subclasses to override defaults
+            bool Article = article ?? true;
             string name = Name ?? "nameless";
             bool vowel = false;
             if (name == null)
@@ -73,13 +87,13 @@ namespace Hecatomb8
             {
                 vowel = true;
             }
-            if (article || definite)
+            if (Article || definite)
             {
                 if (definite)
                 {
                     name = "the " + name;
                 }
-                else if (!Plural)
+                else if (!alwaysPlural)
                 {
                     if (vowel)
                     {

@@ -149,7 +149,12 @@ namespace Hecatomb
                 }
                 else
                 {
+                    if (f is null || !f.HasComponent<Fixture>())
+                    {
+                        return;
+                    }
                     Task task = Entity.Spawn<FurnishTask>();
+
                     string json = EntityType.Types[Makes].Components["Fixture"];
                     JObject obj = JObject.Parse(json);
                     var ingredients = obj["Ingredients"];

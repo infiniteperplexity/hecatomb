@@ -24,7 +24,7 @@ namespace Hecatomb8
             Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
             c.SelectedMenuCommand = "Jobs";
-            c.MenuCommandsSelectable = false;
+            c.InfoMiddle = new List<ColoredText>() { "{green}Patrol area."};
             InterfaceState.SetControls(c);
         }
 
@@ -32,6 +32,20 @@ namespace Hecatomb8
         {
             CommandLogger.LogCommand(command: "PatrolTask", x: c.X, y: c.Y, z: c.Z);
             base.SelectTile(c);
+        }
+
+        public override void TileHover(Coord c)
+        {
+            var co = InterfaceState.Controls;
+            co.InfoMiddle.Clear();
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
+            {
+                co.InfoMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+            }
+            else if (ValidTile(c))
+            {
+                co.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Patrol area around {0} {1} {2}.", c.X, c.Y, c.Z) };
+            }
         }
 
         public override bool ValidTile(Coord c)

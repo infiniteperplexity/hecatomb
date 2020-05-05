@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Hecatomb8
 {
@@ -12,13 +13,14 @@ namespace Hecatomb8
         public Resource? Resource;
         public int N;
         public int Claimed;
-        public int Unclaimed { get => N - Claimed;}
+        public int Unclaimed { get => N - Claimed; }
         public bool Disowned;
         public int StackSize;
 
         protected override string? getName()
         {
-            return Resource!.Name;
+            var unowned = (Disowned) ? " (unclaimed)" : "";
+            return $"{N} {Resource!.Name}{unowned}";
         }
         protected override string? getFG()
         {
@@ -38,15 +40,21 @@ namespace Hecatomb8
         {
             if (GameState.World!.Items.GetWithBoundsChecked(x, y, z) != null)
             {
-                throw new InvalidOperationException($"Can't place {Describe()} at {x} {y} {z} because {GameState.World!.Items.GetWithBoundsChecked(x, y, z)!.Describe()} is already there.");
+                if (HecatombOptions.NoisyErrors)
+                {
+                    throw new InvalidOperationException($"Can't place {Describe()} at {x} {y} {z} because {GameState.World!.Items.GetWithBoundsChecked(x, y, z)!.Describe()} is already there.");
+                }
+                else
+                {
+                    GameState.World!.Items.GetWithBoundsChecked(x, y, z)!.Despawn();
+                }
             }
-            var (_x, _y, _z) = this;
-            if (Placed)
-            {
-                GameState.World!.Items.SetWithBoundsChecked((int)_x!, (int)_y!, (int)_z!, null);
-            }
-            GameState.World!.Items.SetWithBoundsChecked(x, y, z, this);
             base.PlaceInValidEmptyTile(x, y, z);
+            if (Spawned)
+            {
+                GameState.World!.Items.SetWithBoundsChecked(x, y, z, this);
+                Publish(new AfterPlaceEvent() { Entity = this, X = x, Y = y, Z = z });
+            }
         }
 
         public override void Remove()
@@ -170,6 +178,7 @@ namespace Hecatomb8
             return item;
         }
 
+        // note that this always despawns the old item
         public Item Take(int n)
         {
             N -= n;
@@ -214,18 +223,46 @@ namespace Hecatomb8
             Feature? f = Features.GetWithBoundsChecked((int)X!, (int)Y!, (int)Z!);
             if (f is StructuralFeature)
             {
-                var sf = (f as StructuralFeature);
-
-            }
-            var sc = (f as StructuralFeature)!.Structure?.UnboxBriefly();
-            if (sc != null)
-            {
-                if (sc.StoresResources.Contains(Resource))
+                var sc = (f as StructuralFeature)!.Structure?.UnboxBriefly();
+                if (sc != null)
                 {
-                    return true;
+                    if (sc.StoresResources.Contains(Resource))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        public static Dictionary<Resource, int> CombineResources(List<Dictionary<Resource, int>> list)
+        {
+            var total = new Dictionary<Resource, int>();
+            foreach (var resources in list)
+            {
+                if (resources != null)
+                {
+                    foreach (Resource resource in resources.Keys)
+                    {
+                        if (!total.ContainsKey(resource))
+                        {
+                            total[resource] = 0;
+                        }
+                        total[resource] += resources[resource];
+                    }
+                }
+            }
+            return total;
+        }
+
+        public override string Describe(
+            bool? article = null,
+            bool definite = false,
+            bool capitalized = false
+        )
+        {
+            bool Article = article ?? false;
+            return base.Describe(article: Article, definite: definite, capitalized: capitalized);
         }
     }
 }

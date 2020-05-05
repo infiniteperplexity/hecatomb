@@ -35,7 +35,7 @@ namespace Hecatomb8
             return ge;
         }
 
-        public T GetMockComponent<T>() where T: Component
+        public T GetPrespawnComponent<T>() where T: Component
         {
             foreach (var c in Components)
             {
@@ -66,6 +66,22 @@ namespace Hecatomb8
             if (!GameState.World!.Entities.ContainsKey(eid))
             {
                 throw new InvalidOperationException($"{this} has no component of type {t}");
+            }
+            // let's not update nullity here; this could easily get called by the interface
+            return (T)GameState.World!.Entities[eid];
+        }
+
+        public T? TryComponent<T>() where T : Component
+        {
+            string t = typeof(T).Name;
+            if (_components is null || !_components.ContainsKey(t))
+            {
+                return null;
+            }
+            int eid = _components[t];
+            if (!GameState.World!.Entities.ContainsKey(eid))
+            {
+                return null;
             }
             // let's not update nullity here; this could easily get called by the interface
             return (T)GameState.World!.Entities[eid];

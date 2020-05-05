@@ -14,7 +14,7 @@ namespace Hecatomb8
         [JsonIgnore] public char Symbol;
         [JsonIgnore] public string FG;
         [JsonIgnore] public string? BG;
-        [JsonIgnore] public string ListColor;
+        [JsonIgnore] public string TextColor;
         [JsonIgnore] public int StackSize;
 
         public Resource(
@@ -24,7 +24,7 @@ namespace Hecatomb8
             string fg = "white",
             int stack = 5,
             string? bg = null,
-            string? listColor = null
+            string? textColor = null
         ) : base(type)
         {
             Name = name;
@@ -32,7 +32,7 @@ namespace Hecatomb8
             FG = fg;
             BG = bg;
             StackSize = stack;
-            ListColor = (listColor == null) ? fg : listColor;
+            TextColor = (textColor == null) ? fg : textColor;
         }
 
 
@@ -75,7 +75,7 @@ namespace Hecatomb8
             name: "coal",
             symbol: '\u2022',
             fg: "#222222",
-            listColor: "#666666"
+            textColor: "#666666"
         );
 
         public static readonly Resource Wood = new Resource(
@@ -187,18 +187,11 @@ namespace Hecatomb8
             fg: "#FF00FF"
         );
 
-        public static List<Resource> Flowers = new List<Resource>
-        {
-            BloodWort,
-            Hyacinth,
-            Nightshade,
-            Asphodel,
-            Wolfsbane,
-            WitchHazel,
-            SpiderLily,
-            GhostOrchid,
-            MorningGlory
-        };
+
+        public static readonly Resource Undye = new Resource(
+            type: "Undye",
+            name: "undye"
+        );
         public static readonly Resource BloodWort = new Resource(
             type: "BloodWort",
             name: "bloodwort",
@@ -253,5 +246,17 @@ namespace Hecatomb8
             fg: "MorningGlory",
             symbol: '\u2698'
         );
+        public static List<Resource> Flowers = new List<Resource>
+        {
+            BloodWort,
+            Hyacinth,
+            Nightshade,
+            Asphodel,
+            Wolfsbane,
+            WitchHazel,
+            SpiderLily,
+            GhostOrchid,
+            MorningGlory
+        };
     }
 }

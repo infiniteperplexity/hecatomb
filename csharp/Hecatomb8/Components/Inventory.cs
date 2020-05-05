@@ -44,7 +44,7 @@ namespace Hecatomb8
                 {
                     Publish(new AchievementEvent() { Action = "FoundGold" });
                 }
-                var (x, y, z) = Entity.UnboxBriefly()!.GetVerifiedCoord();
+                var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
                 item.DropOnValidTile((int)x!, (int)y!, (int)z!);
                 Item = null;
             }

@@ -12,7 +12,7 @@ namespace Hecatomb8
     {
         public string MenuName;
         protected int _cost;
-        public int Cost { get => getCost(); }
+        public int Cost { get => (HecatombOptions.NoManaCost) ? 0 : getCost(); }
         public SpellCaster? Component;
         public Creature? Caster;
         public bool DebugginSpell;

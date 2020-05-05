@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace Hecatomb8
 {
+    using static HecatombAliases;
     public static partial class Tiles
     {
 
@@ -287,15 +288,22 @@ namespace Hecatomb8
             {
                 fg = "red";
             }
-            //if (useLighting)
-            //{
-            //    int lighting = Game.World.GetLighting(x, y, z);
-            //    if (!visible)
-            //    {
-            //        return (sym, fg);
-            //    }
-            //    return (sym, Game.Colors.Shade(fg, lighting));
-            //}
+            if (visible && cr != null || fr != null)
+            {
+                if (fr is StructuralFeature || (cr != null && (cr == Player || cr.HasComponent<Minion>())))
+                {
+                    return (sym, fg);
+                }
+            }
+            if (useLighting)
+            {
+                int lighting = GameState.World!.GetLighting(x, y, z);
+                if (!visible)
+                {
+                    return (sym, fg);
+                }
+                return (sym, InterfaceState.Colors.Shade(fg, lighting));
+            }
             return (sym, fg);
         }
 
@@ -313,7 +321,22 @@ namespace Hecatomb8
             Cover cva = GameState.World!.Covers.GetWithBoundsChecked(x, y, z);
             Cover cvb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
 
-            
+            TileEntity? selected = InterfaceState.Controls.SelectedEntity;
+            if (selected != null && selected.Placed)
+            {
+                if ((int)selected.X! == x && (int)selected.Y! == y && (int)selected.Z! == z)
+                {
+                    return "lime green";
+                }
+                else if (selected is Structure && fr is StructuralFeature)
+                {
+                    var s = (Structure)selected;
+                    if (s.Features.Contains(fr.EID))
+                    {
+                        return "lime green";
+                    }
+                }
+            }
             var explored = GameState.World.Explored.Contains(c) || HecatombOptions.Explored;
 
             Task? task = GameState.World!.Tasks.GetWithBoundsChecked(x, y, z);

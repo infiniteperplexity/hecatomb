@@ -25,6 +25,7 @@ namespace Hecatomb8
             var c = new SelectTileControls(this);
             c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
+            c.InfoMiddle = new List<ColoredText>() { "{green}Declare hostile." };
             InterfaceState.SetControls(c);
         }
 

@@ -51,6 +51,7 @@ namespace Hecatomb8
                 var c = new SelectTileControls(this);
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Spells";
+                c.InfoMiddle = new List<ColoredText>() { "{green}Raise a zombie." };
                 InterfaceState.SetControls(c);
             }
         }
@@ -76,10 +77,12 @@ namespace Hecatomb8
                     Cast();
                     ParticleEmitter emitter = new ParticleEmitter();
                     emitter.Place(c.X, c.Y, c.Z);
+                    var zombie = Zombie.SpawnZombieMinion();
+                    zombie.CorpseSpecies = (i as Corpse)!.Species;
                     i.Despawn();
                     Senses.Announce(c.X, c.Y, c.Z, sight: "The zombie rises to obey your commands.");
-                    var zombie = Entity.Spawn<Zombie>();
-                    GetState<TaskHandler>().AddMinion(zombie);
+                    
+
                     zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                     InterfaceState.Commands!.Act();
                 }
@@ -94,11 +97,19 @@ namespace Hecatomb8
                     Cast();
                     ParticleEmitter emitter = new ParticleEmitter();
                     emitter.Place(c.X, c.Y, c.Z);
-                    var zombie = Entity.Spawn<Zombie>();
-                    GetState<TaskHandler>().AddMinion(zombie);
+                    var zombie = Zombie.SpawnZombieMinion();
                     zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z - 1);
                     if (!Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z - 1).Solid && (Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)) || HecatombOptions.Explored))
                     {
+                        if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z - 1) == Terrain.UpSlopeTile)
+                        {
+                            Terrains.SetWithBoundsChecked(c.X, c.Y, c.Z, Terrain.DownSlopeTile);
+                        }
+                        else
+                        {
+                            Terrains.SetWithBoundsChecked(c.X, c.Y, c.Z, Terrain.EmptyTile);
+                        }
+                        Cover.ClearGroundCover(c.X, c.Y, c.Z);
                         (f as Grave)!.Shatter();
                         Senses.Announce(c.X, c.Y, c.Z, sight: "The zombie emerges into the tunnel below.");
                     }
@@ -171,7 +182,7 @@ namespace Hecatomb8
                 Unassign();
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Senses.Announce(x, y, z, sight: "You hear an ominous stirring from under the ground...");
             // this code would place an incomplete fixture if there is no grave, but...Makes is null...I don't think that's safe
             //Feature? f = Features.GetWithBoundsChecked(x, y, z);
@@ -194,7 +205,7 @@ namespace Hecatomb8
             {
                 base.Finish();
             }
-            var (X, Y, Z) = GetVerifiedCoord();
+            var (X, Y, Z) = GetValidCoordinate();
             Publish(new TutorialEvent() { Action = "ZombieEmerges" });
             Senses.Announce(X, Y, Z, sight: "A zombie bursts forth from the ground!");
             Feature? f = Features.GetWithBoundsChecked(X, Y, Z);
@@ -212,7 +223,7 @@ namespace Hecatomb8
             Cover.ClearGroundCover(X, Y, Z);
             Cover.ClearGroundCover(X, Y, Z - 1);
             base.Finish();
-            //Game.World.ValidateOutdoors();
+            GameState.World!.ValidateOutdoors();
         }
     }
 }

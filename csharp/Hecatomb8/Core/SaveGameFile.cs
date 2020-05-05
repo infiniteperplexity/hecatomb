@@ -73,11 +73,14 @@ namespace Hecatomb8
         public void RestoreGame()
         {
             GameManager.GameName = Name!;
+            
             InterfaceState.Splash(new List<ColoredText>() {
                     $"Restoring {Name}..."
                 },
-                fullScreen: true
+                fullScreen: false
             );
+            //InterfaceState.DirtifyTextPanels();
+            InterfaceState.InfoPanel.Prepare();
             HecatombGame.DeferUntilAfterDraw(GameManager.RestoreGameProcess);
         }
 

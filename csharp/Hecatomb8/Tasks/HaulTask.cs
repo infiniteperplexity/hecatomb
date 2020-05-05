@@ -80,7 +80,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Coord crd = new Coord(x, y, z);
             if (!Explored.Contains(crd) && !HecatombOptions.Explored)
             {
@@ -151,7 +151,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = worker.GetVerifiedCoord();
+            var (x, y, z) = worker.GetValidCoordinate();
             worker.GetComponent<Inventory>().Drop();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             if (f != null)
@@ -192,7 +192,8 @@ namespace Hecatomb8
                 else
                 {
                     Item item = (Item)Entities[eid];
-                    if (!item.Placed)
+                    // if the item has been moved or disowned
+                    if (!item.Placed || item.Disowned)
                     {
                         Claims.Remove(eid);
                     }
@@ -213,7 +214,7 @@ namespace Hecatomb8
             //}
             //else
             //{
-                Claims.Clear();
+            Claims.Clear();
             //}
         }
 
@@ -225,8 +226,19 @@ namespace Hecatomb8
             //}
             //else
             //{
-                return item.Take(Claims[eid]);
+            return item.Take(Claims[eid]);
             //}
+        }
+
+        // haul tasks do not display their ingredients even when asked to
+        public override ColoredText DescribeWithIngredients(bool capitalized = false, bool checkAvailable = false)
+        {
+            var name = getName()!;
+            if (capitalized)
+            {
+                name = char.ToUpper(name[0]) + name.Substring(1);
+            }
+            return name;
         }
     }
 }

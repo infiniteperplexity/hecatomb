@@ -72,61 +72,199 @@ namespace Hecatomb8
             }}
         };
 
+        static Movement()
+        {
+            // Use the pattern templates in Fallback to populate fallbacks for all directions
+            foreach (Coord dir in Directions26)
+            {
+                if (Fallbacks.ContainsKey(dir))
+                {
+                    continue;
+                }
+                else
+                {
+                    Coord c = dir;
+                    int rotate = 0;
+                    bool flip = false;
+                    bool z = (c.Z != 0);
+                    bool diag = (Math.Abs(c.X) + Math.Abs(c.Y) == 2);
+                    if (!z && !diag)
+                    {
+                        while (!c.Equals(North))
+                        {
+                            rotate += 1;
+                            c = c.Rotate();
+                        }
+                        rotate = 4 - rotate;
+                    }
+                    else if (!z && diag)
+                    {
+                        while (!c.Equals(NorthEast))
+                        {
+                            rotate += 1;
+                            c = c.Rotate();
+                        }
+                        rotate = 4 - rotate;
+                    }
+                    else if (dir.Equals(Down))
+                    {
+                        flip = true;
+                        c = Up;
+                    }
+                    else if (z && !diag)
+                    {
+                        if (c.Z != UpNorth.Z)
+                        {
+                            c.Z = UpNorth.Z;
+                            flip = true;
+                        }
+                        while (!c.Equals(UpNorth))
+                        {
+                            rotate += 1;
+                            c = c.Rotate();
+                        }
+                        rotate = 4 - rotate;
+                    }
+                    else if (z && diag)
+                    {
+                        if (c.Z != UpNorthEast.Z)
+                        {
+                            c.Z = UpNorthEast.Z;
+                            flip = true;
+                        }
+                        while (!c.Equals(UpNorthEast))
+                        {
+                            rotate += 1;
+                            c = c.Rotate();
+                        }
+                        rotate = 4 - rotate;
+                    }
+                    var f = Fallbacks[c];
+                    var g = new Coord[f.Length][];
+                    for (int i = 0; i < f.Length; i++)
+                    {
+                        g[i] = new Coord[f[i].Length];
+                        for (int j = 0; j < f[i].Length; j++)
+                        {
+                            g[i][j] = (flip) ? f[i][j].Rotate(rotate).Flip() : f[i][j].Rotate(rotate);
+                        }
+                    }
+                    Fallbacks[dir] = g;
+                }
+            }
+        }
+
         public Movement()
         {
             Walks = true;
         }
-        // used to avoid performance bottlenecks
-        //[JsonIgnore]
-        //Actor cachedActor;
-        //[JsonIgnore]
-        //Actor CachedActor
-        //{
-        //    get
-        //    {
-        //        if (cachedActor == null)
-        //        {
-        //            cachedActor = Entity.Unbox().GetComponent<Actor>();
-        //        }
-        //        return cachedActor;
-        //    }
-        //}
 
-        // was there a version of this that can push the creature?
-        //public void Displace(Creature c)
-        //{
-        //    var e = Entity.UnboxBriefly()!;
-        //    if (c == e)
-        //    {
-        //        throw new InvalidOperationException("We're trying to displace ourselves, that's totally illegal.");
-        //    }
-        //    Displace(c, e.X, e.Y, e.Z);
-        //}
-        //public void Displace(Creature cr, int x, int y, int z)
-        //{
-        //    int x1 = cr.X;
-        //    int y1 = cr.Y;
-        //    int z1 = cr.Z;
-        //    cr.Remove();
-        //    if (Game.World.Creatures[x1, y1, z1] != null)
-        //    {
-        //        Debug.WriteLine("how on earth did this happen?");
-        //    }
-        //    StepTo(x1, y1, z1);
-        //    Movement m = cr.TryComponent<Movement>();
-        //    if (m != null)
-        //    {
-        //        m.StepTo(x, y, z);
-        //    }
-        //    else
-        //    {
-        //        cr.Place(x, y, z);
-        //    }
-        //}
+        //used to avoid performance bottlenecks
+        [JsonIgnore] Actor? cachedActor;
+        Actor? Actor
+        {
+            get
+            {
+                if (cachedActor != null && cachedActor.Spawned)
+                {
+                    return cachedActor;
+                }
+                else
+                {
+                    if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Spawned)
+                    {
+                        return null;
+                    }
+                    cachedActor = Entity.UnboxBriefly()!.GetComponent<Actor>();
+                    return cachedActor;
+                }
+            }
+            set{ }
+        }
 
+
+        public float MovementCost(int x0, int y0, int z0, int x1, int y1, int z1)
+        {
+            //Feature f = Game.World.Features[x1, y1, z1];
+            //if (f != null && f.Solid && CachedActor.Team != Teams.Friendly)
+            //{
+            //    return 12;
+            //}
+            Cover cv = Covers.GetWithBoundsChecked(x1, y1, z1);
+            if (cv.Liquid)
+            {
+                return 2;
+            }
+            Terrain t = Terrains.GetWithBoundsChecked(x1, y1, z1);
+            if (t == Terrain.UpSlopeTile || t == Terrain.DownSlopeTile)
+            {
+                return 2;
+            }
+            if (z1 > z0)
+            {
+                return 3;
+            }
+            return 1;
+        }
+
+        // this version swaps places with the target creature
+        public void Displace(Creature c)
+        {
+            var cr = Entity?.UnboxBriefly();
+            {
+                if (cr is null || !cr.Placed || cr == c)
+                {
+                    return;
+                }
+            }
+            Displace(c, (int)cr.X!, (int)cr.Y!, (int)cr.Z!);
+        }
+        // this version pushes the target creature to the target square
+        // I think the algorithm is now absolutely bulletproof
+        public void Displace(Creature cr, int x, int y, int z)
+        {
+            if (!cr.Spawned || !cr.Placed || Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return;
+            }
+            if (!cr.HasComponent<Movement>() || cr == Entity.UnboxBriefly())
+            {
+                return;
+            }
+            Movement m = cr.GetComponent<Movement>();
+            var (x1, y1, z1) = cr.GetValidCoordinate();
+            if (x1 == x && y1 == y && z1 == z)
+            {
+                return;
+            }
+            Creature me = (Creature)Entity.UnboxBriefly()!;
+            var (x0, y0, z0) = me.GetValidCoordinate();
+            // alright here comes the delicate swap
+            // first, could I theoretically move to the targeted creature's square if it weren't there?
+            if (!CanMoveBounded(x1, y1, z1))
+            {
+                // if not, bail
+                return;
+            }
+            // otherwise, pull me out of the world temporarily
+            me.Remove();
+            // is there anything stopping the target creature from passing into the targeted square?
+            if (!m.CanPassBounded(x, y, z))
+            {
+                // if so, place me back in the world and bail
+                me.PlaceInValidEmptyTile(x0, y0, z0);
+                return;
+            }
+            // otherwise, the target creature steps to the targeted square
+            m.StepToValidEmptyTile(x, y, z);
+            // then I step to the target creature's old square
+            StepToValidEmptyTile(x1, y1, z1);
+        }
+
+        // CanStand tells you actually if you "could" stand there if there were no creature there
         public bool CanStandBounded(int x1, int y1, int z1)
         {
-            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            if (Actor is null || Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
                 return false;
             }
@@ -145,24 +283,24 @@ namespace Hecatomb8
             {
                 return false;
             }
-            //if (CachedActor.Team == Teams.Friendly)
-            //{
-            //    Task t = Game.World.Tasks[x1, y1, z1];
-            //    if (t != null && t is ForbidTask)
-            //    {
-            //        return false;
-            //    }
-            //}
-            //if (CachedActor.Team != Teams.Friendly)
-            //{
-            //    // doors block non-allied creatures
-            //    Feature f = Game.World.Features[x1, y1, z1];
-            //    if (f != null && f.Solid && !Phases)
-            //    {
-            //        return false;
-            //    }
-            //}
             var e = Entity.UnboxBriefly()!;
+            if (Actor.Team == Team.Friendly && e != Player)
+            {
+                Task? t = Tasks.GetWithBoundsChecked(x1, y1, z1);
+                if (t is ForbidTask)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // doors block non-allied creatures
+                Feature? f = Features.GetWithBoundsChecked(x1, y1, z1);
+                if (f != null && f.Solid && !Phases)
+                {
+                    return false;
+                }
+            }
             int dx = x1 - (int)e!.X!;
             int dy = y1 - (int)e!.Y!;
             int dz = z1 - (int)e!.Z!;
@@ -188,6 +326,7 @@ namespace Hecatomb8
             return false;
         }
 
+        // could move tells you if you CouldMove from a certain square
         public bool CouldMoveBounded(int x0, int y0, int z0, int x1, int y1, int z1)
         {
             if (!CanStandBounded(x1, y1, z1))
@@ -228,7 +367,7 @@ namespace Hecatomb8
             }
             return true;
         }
-
+        // can move tells you whether you could move regardless of a creature in the way
         public bool CanMoveBounded(int x1, int y1, int z1)
         {
             if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
@@ -239,6 +378,7 @@ namespace Hecatomb8
             return CouldMoveBounded((int)e.X!, (int)e.Y!, (int)e.Z!, x1, y1, z1);
         }
 
+        // can pass warns you if there's a creature in the way
         public bool CanPassBounded(int x1, int y1, int z1)
         {
             if (!CanMoveBounded(x1, y1, z1))
@@ -273,15 +413,15 @@ namespace Hecatomb8
 
         public void StepToValidEmptyTile(int x1, int y1, int z1)
         {
-            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            // we need to allow this to happen even if the entity is not placed, for displacement and maybe other occasions
+            if (Actor is null || Entity?.UnboxBriefly() is null)
             {
                 return;
             }
             // this is where you'd fire some kind of event
             Entity.UnboxBriefly()!.PlaceInValidEmptyTile(x1, y1, z1);
-            Actor a = Entity.UnboxBriefly()!.GetComponent<Actor>();
-            a.Spend(16);
-            //CachedActor.Spend(16);
+            Actor.Spend(16);
+            Publish(new StepEvent() { Entity = (Creature)Entity.UnboxBriefly()!, X = x1, Y = y1, Z = z1 });
         }
 
         // tentative...this does not allow (1) diagonal work/attacks or (2) digging upward...could handle the latter with ramps
@@ -318,16 +458,6 @@ namespace Hecatomb8
             return CouldTouchBounded((int)x!, (int)y!, (int)z!, x1, y1, z1);
         }
 
-
-
-        //public Func<int, int, int, bool> DelegateCanMove()
-        //{
-        //    return (int x, int y, int z) => { return CanMove(x, y, z); };
-        //}
-        //public Func<int, int, int, bool> DelegateCanStand()
-        //{
-        //    return (int x, int y, int z) => { return CanStand(x, y, z); };
-        //}
 
         public bool CanReachBounded(int x1, int y1, int z1, bool useLast = true)
         {

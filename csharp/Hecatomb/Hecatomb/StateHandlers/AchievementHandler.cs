@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
-    public class AchievementHandler : StateHandler, IListPopulater
+    public class AchievementHandler : StateHandler, IDisplaysInfo
     {
 
         public List<string> Achieved = new List<string>();

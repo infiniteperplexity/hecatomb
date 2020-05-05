@@ -24,7 +24,7 @@ namespace Hecatomb8
         {
             var controls = InterfaceState.Controls;
             var lines = new List<ColoredText>();
-            if (GameState.World != null && GetState<TutorialHandler>().Visible)
+            if (GameState.World != null && GetState<TutorialHandler>().Visible && !HecatombOptions.NoTutorial)
             {
                 lines = lines.Concat(GetState<TutorialHandler>().GetText()).ToList();
             }

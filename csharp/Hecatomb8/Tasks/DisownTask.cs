@@ -19,6 +19,7 @@ namespace Hecatomb8
         {
             var c = new SelectZoneControls(this);
             c.SelectedMenuCommand = "Jobs";
+            c.InfoMiddle = new List<ColoredText>() { "{green}Toggle item claims." };
             InterfaceState.SetControls(c);
         }
 
@@ -50,6 +51,7 @@ namespace Hecatomb8
                     if (!item.Disowned)
                     {
                         item.Disowned = true;
+                        // this will miss HaulTasks
                         if (item.Claimed > 0)
                         {
                             foreach (var task in Tasks.ToList())

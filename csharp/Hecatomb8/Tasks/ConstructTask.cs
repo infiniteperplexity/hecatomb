@@ -34,7 +34,7 @@ namespace Hecatomb8
         public ListenerHandledEntityHandle<Structure> Structure;
         public static Type[] Structures = new Type[] { typeof(Workshop)};
 
-        protected List<IMenuListable> cachedChoices;
+        [JsonIgnore] protected List<IMenuListable>? cachedChoices;
         public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             if (cachedChoices != null)
@@ -71,9 +71,9 @@ namespace Hecatomb8
                     list.Add(task);
                 }
             }
-            //var repair = Hecatomb.Entity.Mock<RepairTask>();
-            //repair.MenuName = "repair or complete structure";
-            //list.Add(repair);
+            var repair = Entity.Mock<RepairTask>();
+            repair.Makes = typeof(Structure);
+            list.Add(repair);
             cachedChoices = list;
             menu.Choices = list;
         }
@@ -84,8 +84,20 @@ namespace Hecatomb8
 
         public ConstructTask() : base()
         {
-            //Structure = new TileEntityField<Structure>();
-            //Structures = new string[] { "GuardPost", "Workshop", "Stockpile", "Slaughterhouse", "Sanctum", "BlackMarket", "StoneMason", "Forge", "Chirurgeon", "Apothecary", "Library", "Treasury" };
+            Structures = new Type[] { 
+                typeof(GuardPost),
+                typeof(Workshop),
+                typeof(Stockpile),
+                typeof(Slaughterhouse),
+                typeof(Sanctum),
+                typeof(BlackMarket),
+                //typeof(StoneMason),
+                typeof(Forge),
+                typeof(Chirurgeon),
+                typeof(Apothecary),
+                typeof(Library),
+                typeof(Treasury)
+            };
             _name = "construct or repair a structure";
             Harvests = new JsonArrayDictionary<Resource, float>();
             Priority = 4;
@@ -96,11 +108,12 @@ namespace Hecatomb8
 
         protected override string getName()
         {
-            if (Structure?.UnboxBriefly() is null)
+            if (Makes is null)
             {
                 return _name!;
             }
-            return $"construct {Structure.UnboxBriefly()!.Name}";
+            Structure s = (Structure)Entity.Mock(Makes);
+            return $"construct {s.Name}";
         }
 
         private Structure Mock()
@@ -156,7 +169,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
             Structure s = Structure!.UnboxBriefly()!;
             if (s.Features.Count == 0)
@@ -207,13 +220,7 @@ namespace Hecatomb8
                 {
                     fr = GetEntity<Feature>(Structure!.UnboxBriefly()!.Features[5])!;
                 }
-                Structure!.UnboxBriefly()!.PlaceInValidEmptyTile((int)fr.X!,(int)fr.Y!, (int)fr.Z!);
-                //foreach (Feature feat in s.Features)
-                //{
-                //   StructuralComponent st = Spawn<StructuralComponent>();
-                //   st.Structure = Structure;
-                //   st.AddToEntity(feat);
-                //}
+                Structure!.UnboxBriefly()!.PlaceInValidEmptyTile((int)fr.X!, (int)fr.Y!, (int)fr.Z!);
             }
             base.Finish();
         }
@@ -232,8 +239,10 @@ namespace Hecatomb8
             else
             {
                 var c = new SelectBoxControls(this);
+                c.Header = "Construct a structure:";
                 c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
+                c.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {0}.", Mock().Name) };
                 InterfaceState.SetControls(c);
             }
         }

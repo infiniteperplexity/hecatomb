@@ -27,15 +27,14 @@ namespace Hecatomb8
 
         protected override string getName()
         {
-            // **** Okay we get out of range errors here ****
             if (Claims.Count == 0)
             {
-                return "butcher task";
+                return _name!;
             }
             Item? item = Entity.GetEntity<Item>(Claims.Keys.ToList()[0]);
             if (item is null || !item.Placed || !item.Spawned)
             {
-                return "butcher task";
+                return _name!;
             }
             return $"butcher {item.Describe()}";
         }
@@ -86,6 +85,7 @@ namespace Hecatomb8
             var c = new SelectZoneControls(this);
             c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
+            c.InfoMiddle = new List<ColoredText>() { "{green}Butcher corpse."};
             InterfaceState.SetControls(c);
         }
 
@@ -117,7 +117,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            Coord crd = GetVerifiedCoord();
+            Coord crd = GetValidCoordinate();
             if (!Explored.Contains(crd) && !HecatombOptions.Explored)
             {
                 return false;
@@ -170,7 +170,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Item? corpse = Items.GetWithBoundsChecked(x, y, z);
             if (corpse is null)
             {

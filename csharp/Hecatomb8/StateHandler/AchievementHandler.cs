@@ -78,20 +78,24 @@ namespace Hecatomb8
         {
             menu.KeyMap[Keys.Z] = Commands.ChooseSpell;
             menu.KeyMap[Keys.J] = Commands.ChooseTask;
+            menu.KeyMap[Keys.R] = Commands.ShowResearch;
+            menu.KeyMap[Keys.L] = Commands.ShowLog;
+            menu.KeyMap[Keys.V] = Commands.ShowAchievements;
         }
         public void FinishInfoDisplay(InfoDisplayControls menu)
         {
-            var list = new List<ColoredText>() { "{magenta}Achievements:" };
+            //var list = new List<ColoredText>() { "{magenta}Achievements:" };
+            menu.InfoTop.Add("{magenta}Achievements:");
             foreach (var achieve in Achievements)
             {
                 if (Achieved.Contains(achieve.Name))
                 //if (achieve.Unlocked)
                 {
-                    list.Add("{magenta}- " + achieve.Name + ": " + achieve.Description);
+                    menu.InfoTop.Add("{magenta}- " + achieve.Name + ": " + achieve.Description);
                 }
                 else
                 {
-                    list.Add("- " + achieve.Name + ": " + achieve.Description);
+                    menu.InfoTop.Add("- " + achieve.Name + ": " + achieve.Description);
                 }
             }
             //return list;
@@ -101,7 +105,6 @@ namespace Hecatomb8
             AchievementEvent ae = (AchievementEvent)g;
             foreach (Achievement achievement in Achievements)
             {
-                Debug.WriteLine(ae.Action);
                 if (achievement.Condition(ae) && !Achieved.Contains(achievement.Name))
                 //if (achievement.Condition(ae) && !achievement.Unlocked)
                 {

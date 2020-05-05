@@ -11,7 +11,7 @@ namespace Hecatomb8
     {
         public RepairTask() : base()
         {
-            _name = "repair or complete fixture";
+            _name = "repair";
             Priority = 4;
             RequiresStructures = new List<Type> { typeof(Workshop) };
             _bg = "yellow";
@@ -21,13 +21,21 @@ namespace Hecatomb8
         {
             if (!Placed)
             {
-                return _name!;
+                if (Makes == typeof(Structure))
+                {
+                    return "repair or complete structure";
+                }
+                else if (Makes == typeof(Feature))
+                {
+                    return "repair or complete fixture";
+                }
             }
             Feature? f = Features.GetWithBoundsChecked((int)X!, (int)Y!, (int)Z!);
             if (f is null)
             {
                 return _name!;
             }
+            else 
             return "repair " + f.Describe();
         }
 
@@ -53,7 +61,7 @@ namespace Hecatomb8
         {
             var c = new SelectTileControls(this);
             c.SelectedMenuCommand = "Jobs";
-            c.MenuCommandsSelectable = false;
+            c.InfoMiddle = new List<ColoredText>() { "{green}Repair or complete " + ((Makes == typeof(Structure)) ? "structure." : "fixture.") };
             InterfaceState.SetControls(c);
         }
 
@@ -103,7 +111,7 @@ namespace Hecatomb8
             }
             else
             {
-                co.InfoMiddle = new List<ColoredText>() { "{orange} Nothing to repair or complete here." };
+                co.InfoMiddle = new List<ColoredText>() { "{orange}Nothing to repair or complete here." };
             }
         }
 

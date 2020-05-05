@@ -75,7 +75,7 @@ namespace Hecatomb8
             {
                 Despawn();
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Publish(new TutorialEvent() { Action = "DigTaskComplete" });
             Features.GetWithBoundsChecked(x, y, z)?.Despawn();
             Terrain t = Terrains.GetWithBoundsChecked(x, y, z);
@@ -170,7 +170,7 @@ namespace Hecatomb8
             }
             Publish(new DigEvent() { X = x, Y = y, Z = z, EventType = evnt });
             base.Finish();
-            //Game.World.ValidateOutdoors();
+            GameState.World!.ValidateOutdoors();
         }
 
         public override void ChooseFromMenu()
@@ -179,6 +179,7 @@ namespace Hecatomb8
             var c = new SelectZoneControls(this);
             c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
+            c.InfoMiddle = new List<ColoredText>() { "{green}Dig, harvest, or deconstruct." };
             InterfaceState.SetControls(c);
         }
 
@@ -461,11 +462,10 @@ namespace Hecatomb8
             {
                 hardness = Covers.GetWithBoundsChecked(c.X, c.Y, c.Z - 1).Hardness;
             }
-            return false;
-            //if (Game.Options.IgnoreHardness || Game.World.GetState<ResearchHandler>().GetToolHardness() >= hardness)
-            //{
-            //    return false;
-            //}
+            if (HecatombOptions.IgnoreHardness || GetState<ResearchHandler>().GetToolHardness() >= hardness)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -475,7 +475,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Coord crd = new Coord(x, y, z);
             if (!Explored.Contains(crd) && !HecatombOptions.Explored)
             {
@@ -501,13 +501,12 @@ namespace Hecatomb8
                 Feature f = Features.GetWithBoundsChecked(x, y, z)!;
                 if (!(f is IncompleteFixture) || (f as IncompleteFixture)!.Makes != typeof(Excavation))
                 {
-                    PushMessage("Canceling invalid dig  task.");
+                    PushMessage("Canceling invalid dig task.");
                     Cancel();
                     return false;
                 }
             }
             Movement m = c.GetComponent<Movement>();
-            Debug.WriteLine("going to test reachability");
             return m.CanReachBounded(this, useLast: (WorkSameTile)) && m.CanReachResources(Ingredients);
         }
     }

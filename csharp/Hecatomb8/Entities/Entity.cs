@@ -22,7 +22,7 @@ namespace Hecatomb8
             Listeners = new Dictionary<Type, Func<GameEvent, GameEvent>>();
         }
 
-        public bool Spawned
+        [JsonIgnore] public bool Spawned
         {
             get => !(EID is null);
         }
@@ -119,6 +119,7 @@ namespace Hecatomb8
             if (EID != null)
             {
                 Publish(new DespawnEvent() { Entity = this });
+                GameState.World!.Events.UnsubscribeAll(this);
                 if (GameState.World!.Entities.ContainsKey((int)EID))
                 {
                     GameState.World!.Entities.Remove((int)EID);

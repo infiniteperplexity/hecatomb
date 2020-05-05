@@ -24,7 +24,7 @@ namespace Hecatomb8
             {
                 return _name!;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             if (f is null)
             {
@@ -77,7 +77,7 @@ namespace Hecatomb8
             {
                 Despawn();
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             if (f != null && f.HasComponent<Harvestable>())
             {

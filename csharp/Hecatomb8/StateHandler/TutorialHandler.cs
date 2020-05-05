@@ -304,7 +304,6 @@ namespace Hecatomb8
                         }
                     },
                 },
-                // let's skip over this step for now...it's a little hairy
                 new TutorialState("Achievements")
                 {
                     MenuCommands = new List<ColoredText>()

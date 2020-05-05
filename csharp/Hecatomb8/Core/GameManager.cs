@@ -24,19 +24,26 @@ namespace Hecatomb8
 
         public static void StartGame()
         {
-            InterfaceState.Splash(new List<ColoredText>() {
-                "{yellow}Welcome to Hecatomb!",
-                " ",
-                "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
-                " ",
-                "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
-                " ",
-                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
-                " ",
-                "(Building world...please wait.)",
-                },
-                fullScreen: true
-            );
+            if (!HecatombOptions.NoStartupScreen)
+            {
+                InterfaceState.Splash(new List<ColoredText>() {
+                    "{yellow}Welcome to Hecatomb!",
+                    " ",
+                    "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                    " ",
+                    "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                    " ",
+                    "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
+                    " ",
+                    "(Building world...please wait.)",
+                    },
+                    fullScreen: true
+                );
+            }
+            else
+            {
+                InterfaceState.SetControls(new NoControls());
+            }
             HecatombGame.DeferUntilAfterDraw(StartGameProcess);
         }
 
@@ -50,22 +57,30 @@ namespace Hecatomb8
             {
                 succeeded = ws.Generate();
             }
-            InterfaceState.Splash(new List<ColoredText>() {
-                "{yellow}Welcome to Hecatomb!",
-                " ",
-                "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
-                " ",
-                "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
-                " ",
-                "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
-                " ",
-                "{orange}(Press Space Bar to continue.)",
-                },
-                fullScreen: true,
-                callback: InterfaceState.ResetControls
-            );
-            //InterfaceState.SetControls(InterfaceState.DefaultControls!);
+            if (!HecatombOptions.NoStartupScreen)
+            {
+                InterfaceState.Splash(new List<ColoredText>() {
+                    "{yellow}Welcome to Hecatomb!",
+                    " ",
+                    "You are a necromancer: A despised sorcerer who reanimates the dead to do your bidding.  Cast out from society, you flee to the wild hills to plot your revenge and purse the forbidden secrets of immortality.",
+                    " ",
+                    "{lime green}Cast spells, raise zombies from their graves, and command them to harvest resources and build you a fortress.  But beware: The forces of good will not long stand for your vile ways.",
+                    " ",
+                    "{cyan}Once the game begins, follow the in-game tutorial instructions on the right hand panel, or press \"/\" to turn off the messages.",
+                    " ",
+                    "{orange}(Press Space Bar to continue.)",
+                    },
+                    fullScreen: true,
+                    callback: InterfaceState.ResetControls
+                );
+            }
+            
+            
             InterfaceState.PlayerIsReady();
+            if (HecatombOptions.NoStartupScreen)
+            {
+                InterfaceState.ResetControls();
+            }
         }
 
         public static void SaveGameCheckFileName()
@@ -83,11 +98,10 @@ namespace Hecatomb8
         }
         public static void SaveGame()
         {
-            //Game.SplashPanel.Splash(new List<ColoredText>()
-            //{
-            //    $"Saving {Game.GameName}..."
-            //}, frozen: true);
-            Debug.WriteLine("saving the game");
+            InterfaceState.Splash(new List<ColoredText>()
+            {
+                $"Saving {GameName}..."
+            });
             HecatombGame.DeferUntilAfterDraw(SaveGameProcess);
             //Thread thread = new Thread(SaveGameProcess);
             //thread.Start();
@@ -115,11 +129,7 @@ namespace Hecatomb8
         {
             try
             {
-                //string json = System.IO.File.ReadAllText(@"..\" + Game.GameName + ".json");
-                if (GameState.World == null)
-                {
-                    GameState.World = new World(256, 256, 64);
-                }
+                GameState.World = new World(256, 256, 64);
                 var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
                 System.IO.Directory.CreateDirectory(path + @"\saves");
                 // we need some kind of failure handling...
@@ -147,7 +157,6 @@ namespace Hecatomb8
                 GameName = name;
                 SaveGameCheckFileName();
             };
-            Debug.WriteLine("flag 0");
             InterfaceState.SetControls(new TextEntryControls("Type a name for your saved game.", saveGameAs));
             (Controls as TextEntryControls)!.CurrentText = GameName;
         }
@@ -161,6 +170,7 @@ namespace Hecatomb8
         {
             //SplashPanel.Active = false;
             GameState.World = null;
+            GameName = "NewGame";
             InterfaceState.MainPanel.ClearGlyphs();
             SetUpTitle();
         }

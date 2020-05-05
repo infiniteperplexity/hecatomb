@@ -33,7 +33,7 @@ namespace Hecatomb8
             {
                 return _name!;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Terrain t = Terrains.GetWithBoundsChecked(x, y, z);
             Terrain floor = Terrain.FloorTile;
             Terrain wall = Terrain.WallTile;
@@ -52,7 +52,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             base.Start();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             if (f is IncompleteFixture)
@@ -69,7 +69,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             Publish(new TutorialEvent() { Action = "BuildTaskComplete" });
             Features.GetWithBoundsChecked(x, y, z)?.Despawn();
             Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
@@ -95,7 +95,7 @@ namespace Hecatomb8
                 Terrains.SetWithBoundsChecked(x, y, z, floor);
             }
             base.Finish();
-            //Game.World.ValidateOutdoors();
+            GameState.World!.ValidateOutdoors();
         }
 
         public override void TileHover(Coord c)
@@ -226,6 +226,7 @@ namespace Hecatomb8
             var c = new SelectZoneControls(this);
             c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
+            c.InfoMiddle = new List<ColoredText>() { "{green}Build walls or floors." };
             InterfaceState.SetControls(c);
         }
 

@@ -19,14 +19,13 @@ namespace Hecatomb8
 
         public void Act()
         {
-            Player.GetComponent<Actor>().Spend();
             GameState.World!.GetState<TurnHandler>().AfterPlayerActed();
         }
 
         public void Wait()
         {
             CommandLogger.LogCommand(command: "Wait");
-            // hmmmm a little weird to not call wait...am I double-deducting action points for the player?
+            Player.GetComponent<Actor>().Wait();
             Act();
         }
 
@@ -92,6 +91,17 @@ namespace Hecatomb8
                 new Coord(x, y, z+1),
                 new Coord(x, y, z-1)
             };
+            //foreach (Coord c in moves)
+            //{
+            //    if (m.CanPassBounded(c.X, c.Y, c.Z))
+            //    {
+            //        Publish(new TutorialEvent() { Action = (c.Z == p.Z) ? "Move" : "Climb" });
+            //        m.StepToValidEmptyTile(c.X, c.Y, c.Z);
+            //        Act();
+            //        return;
+            //    }
+            //}
+
             foreach (Coord c in moves)
             {
                 if (m.CanPassBounded(c.X, c.Y, c.Z))
@@ -101,81 +111,54 @@ namespace Hecatomb8
                     Act();
                     return;
                 }
+                Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
+                if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
+                {
+                    Publish(new TutorialEvent() { Action = (c.Z == p.Z) ? "Move" : "Climb" });
+                    m.Displace(cr);
+                    Act();
+                    return;
+                }
+                else if (cr != null && p.GetComponent<Actor>().IsHostile(cr))
+                {
+                    p.GetComponent<Attacker>().Attack(cr);
+                    Act();
+                    return;
+                }
             }
-            
-            //{
-            //    return;
-            //}
-            //Coord[] moves = new Coord[]
-            //{
-            //    new Coord(x1, y1, z1),
-            //    new Coord(p.X, p.Y, z1+1),
-            //    new Coord(p.X, p.Y, z1-1)
-            //};
-            //foreach (Coord c in moves)
-            //{
-            //    Dictionary<string, object> details = new Dictionary<string, object>();
-            //    if (m.CanPass(c.X, c.Y, c.Z))
-            //    {
-            //        Game.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
-            //        m.StepTo(c.X, c.Y, c.Z);
-            //        Act();
-            //        return;
-            //    }
-            //    Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
-            //    if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
-            //    {
-            //        Game.World.Events.Publish(new TutorialEvent() { Action = (c.Z == z1) ? "Move" : "Climb" });
-            //        m.Displace(cr);
-            //        Act();
-            //        return;
-            //    }
-            //    else if (cr != null && p.GetComponent<Actor>().IsHostile(cr))
-            //    {
-            //        p.GetComponent<Attacker>().Attack(cr);
-            //        Act();
-            //        return;
-            //    }
-            //}
         }
 
         public void moveVerticalCommand(int dz)
         {
             CommandLogger.LogCommand(command: "MoveVertical", z: dz);
-            //Creature p = Game.World!.Player!;
-            //int x1 = p.X;
-            //int y1 = p.Y;
-            //int z1 = p.Z + dz;
-            //var m = p.TryComponent<Movement>();
-            //if (m == null)
-            //{
-            //    return;
-            //}
-            //if (!m.CanPass(x1, y1, z1))
-            //{
-            //    Creature cr = Game.World.Creatures[x1, y1, z1];
-            //    if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
-            //    {
-            //        Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
-            //        m.Displace(cr);
-            //        Act();
-            //    }
-            //    else if (cr != null && p.GetComponent<Actor>().IsHostile(cr))
-            //    {
-            //        p.GetComponent<Attacker>().Attack(cr);
-            //        Act();
-            //    }
+            Creature p = Player;
+            var (x1, y1, z1) = p.GetValidCoordinate();
+            var m = p.GetComponent<Movement>();
+            if (!m.CanPassBounded(x1, y1, z1))
+            {
+                Creature? cr = Creatures.GetWithBoundsChecked(x1, y1, z1);
+                if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
+                {
+                    Publish(new TutorialEvent() { Action = "Climb" });
+                    m.Displace(cr);
+                    Act();
+                }
+                else if (cr != null && p.GetComponent<Actor>().IsHostile(cr))
+                {
+                    p.GetComponent<Attacker>().Attack(cr);
+                    Act();
+                }
 
-            //    return;
+                return;
 
-            //}
-            //else
-            //{
-            //    Game.World.Events.Publish(new TutorialEvent() { Action = "Climb" });
-            //    m.StepTo(x1, y1, z1);
-            //    Act();
-            //    return;
-            //}
+            }
+            else
+            {
+                Publish(new TutorialEvent() { Action = "Climb" });
+                m.StepToValidEmptyTile(x1, y1, z1 + dz);
+                Act();
+                return;
+            }
         }
 
         public void MoveCameraNorth()
@@ -317,32 +300,50 @@ namespace Hecatomb8
 
         public void ShowStructures()
         {
-            //var structures = Structure.ListStructures();
-            //if (structures.Count > 0)
-            //{
-                //ControlContext.Set(new MenuCameraControls(structures[0]));
-                //Game.Camera.CenterOnSelection();
-                //ControlContext.Set(new MenuChoiceControls(structures[0]));
-            //}
+            var structures = Structure.ListStructures();
+            if (structures.Count > 0)
+            {
+                InterfaceState.SetControls(new InfoDisplayControls(structures[0]));
+                InterfaceState.Camera!.CenterOnSelection();
+            }
         }
 
         public void ShowMinions()
         {
+            var minions = GetState<TaskHandler>().GetMinions();
+            if (minions.Count > 0)
+            {
+                InterfaceState.SetControls(new InfoDisplayControls((Creature)minions[0]));
+                InterfaceState.Camera!.CenterOnSelection();
+            }
             InterfaceState.SetControls(new InfoDisplayControls(Player));
-            //var minions = GetState<TaskHandler>().Minions;
-            //if (minions.Count > 0)
-            //{
-            //    ControlContext.Set(new MenuCameraControls((Creature)minions[0]));
-            //    Game.Camera.CenterOnSelection();
-            //    //ControlContext.Set(new MenuChoiceControls((Creature)minions[0]));
-            //}
         }
+
+        public void ShowAchievements()
+        {
+            Publish(new TutorialEvent() { Action = "ShowAchievements" });
+            var controls = new InfoDisplayControls(GetState<AchievementHandler>());
+            controls.MenuCommandsSelectable = true;
+            controls.SelectedMenuCommand = "Achievements";
+            InterfaceState.SetControls(controls);
+            InterfaceState.DirtifyTextPanels();
+        }
+
+        public void ShowResearch()
+        {
+            var controls = new InfoDisplayControls(GetState<ResearchHandler>());
+            controls.MenuCommandsSelectable = true;
+            controls.SelectedMenuCommand = "Research";
+            InterfaceState.SetControls(controls);
+            InterfaceState.DirtifyTextPanels();
+        }
+
 
         public void ShowLog()
         {
             GameState.World!.Events.Publish(new TutorialEvent() { Action = "ShowLog" });
             InterfaceState.SetControls(new InfoDisplayControls(GetState<GameLog>()));
-            //Game.Controls.MenuSelectable = false;
+            InterfaceState.Controls.MenuCommandsSelectable = true;
             InterfaceState.Controls.SelectedMenuCommand = "Log";
             GetState<GameLog>().MarkAsRead();
             InterfaceState.DirtifyTextPanels();

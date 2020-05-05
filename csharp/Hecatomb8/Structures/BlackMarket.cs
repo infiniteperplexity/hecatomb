@@ -93,14 +93,14 @@ namespace Hecatomb8
             };
             _name = "black market";
             UseHint = "(trade goods for gold or vice versa.)";
-            AddListener<PlaceEvent>(OnPlace);
+            AddListener<BeforePlaceEvent>(OnPlace);
 
 
         }
 
         public GameEvent OnPlace(GameEvent ge)
         {
-            PlaceEvent pe = (PlaceEvent)ge;
+            BeforePlaceEvent pe = (BeforePlaceEvent)ge;
             if (pe.Entity == this)
             {
                 AddTrade();
@@ -125,7 +125,7 @@ namespace Hecatomb8
                     {
                         continue;
                     }
-                    var (x, y, z) = f.GetVerifiedCoord();
+                    var (x, y, z) = f.GetValidCoordinate();
                     Task? t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t is TradeTask)
                     {
@@ -159,6 +159,8 @@ namespace Hecatomb8
                     TradeTask t = Entity.Mock<TradeTask>();
                     t.Ingredients[tuple.r1] = tuple.n1;
                     t.Trading[tuple.r2] = tuple.n2;
+                    // I'm suspicious of this...o
+                    t.Structure = GetHandle<Structure>(ge=>ge);
                     list.Add(t);
                 }
                 menu.Choices = list;
@@ -176,8 +178,11 @@ namespace Hecatomb8
             if (Trading != null)
             {
                 TradeTask t = Trading;
-                var txt = t.Name!;
-                txt = "T" + txt.Substring(1);
+                var txt = t.DescribeWithIngredients(capitalized: true);
+                if (t.Ingredients.Count == 0)
+                {
+                    txt = txt + " (" + t.Labor + " turns.)";
+                }
                 menu.InfoTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     " ",
@@ -187,12 +192,13 @@ namespace Hecatomb8
                     "{light cyan}" + UseHint,
                     " ",
                     txt,
-                    "(Backspace/Del to Cancel)"
+                    " ",
+                    "Bksp/Del) Cancel trade."
                 };
             }
             menu.KeyMap[Keys.Tab] = NextStructure;
-            menu.KeyMap[Keys.Delete] = CancelTrade;
-            menu.KeyMap[Keys.Back] = CancelTrade;
+            //menu.KeyMap[Keys.Delete] = CancelTrade;
+            //menu.KeyMap[Keys.Back] = CancelTrade;
         }
 
         public void CancelTrade()

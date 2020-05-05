@@ -43,6 +43,7 @@ namespace Hecatomb8
             {
                 task = Entity.Mock<FarmTask>();
                 task.Flower = flower;
+                task.Makes = typeof(Hecatomb8.Flower);
                 task.Ingredients = new JsonArrayDictionary<Resource, int>() { { flower, 1 } };
                 list.Add(task);
             }
@@ -73,7 +74,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetVerifiedCoord();
+            var (x, y, z) = GetValidCoordinate();
             var f = Features.GetWithBoundsChecked(x, y, z);
             if (f != null)
             {
@@ -104,8 +105,8 @@ namespace Hecatomb8
             else
             {
                 var c = new SelectTileControls(this);
-                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
+                c.InfoMiddle = new List<ColoredText>() { "{green}Plant " + ((Flower is null) ? "a sapling" : Flower.Name) + "." };
                 InterfaceState.SetControls(c);
             }
         }
@@ -114,7 +115,7 @@ namespace Hecatomb8
         {
             var co = InterfaceState.Controls;
             co.InfoMiddle.Clear();
-            co.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Plant seedling at {0} {1} {2}", c.X, c.Y, c.Z) };
+            co.InfoMiddle = new List<ColoredText>() { "{green}Plant " + ((Flower is null) ? "a sapling" : Flower.Name) + String.Format(" at {0} {1} {2}", c.X, c.Y, c.Z) };
         }
 
         public override void SelectTile(Coord c)
@@ -128,7 +129,7 @@ namespace Hecatomb8
                 if (Flower != null)
                 {
                     task.Flower = Flower;
-                    Ingredients[Flower] = 1;
+                    task.Ingredients[Flower] = 1;
                 }
                 task.Makes = Makes;
                 task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);

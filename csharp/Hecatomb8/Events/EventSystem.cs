@@ -9,6 +9,7 @@ namespace Hecatomb8
     public class EventSystem
     {
         public Dictionary<string, Dictionary<int, Func<GameEvent, GameEvent>>> ListenerTypes;
+        public bool Suppressed;
 
         public EventSystem()
         {
@@ -73,6 +74,10 @@ namespace Hecatomb8
 
         public void Publish(GameEvent g)
         {
+            if (Suppressed)
+            {
+                return;
+            }
             var listeners = ListenerTypes[g.GetType().Name];
             foreach (var listener in listeners.Values.ToList())
             {
