@@ -9,6 +9,7 @@ namespace Hecatomb8
     {
         public ListenerHandledEntityHandle<Item>? Item;
 
+        // I actually haven't come up with how to put items in here...how do I do it for tasks?
         public Inventory()
         {
             AddListener<DespawnEvent>(OnDespawn);

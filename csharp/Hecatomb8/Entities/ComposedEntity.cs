@@ -131,5 +131,26 @@ namespace Hecatomb8
             }
             return base.getBG();
         }
+
+        protected override string? getName()
+        {
+            if (TryComponent<Defender>() != null)
+            {
+                int Wounds = GetComponent<Defender>().Wounds;
+                if (Wounds >= 6)
+                {
+                    return "severely wounded " + base.getName();
+                }
+                else if (Wounds >= 4)
+                {
+                    return "wounded " + base.getName();
+                }
+                else if (Wounds >= 2)
+                {
+                    return "slight wounded " + base.getName();
+                }
+            }
+            return base.getBG();
+        }
     }
 }

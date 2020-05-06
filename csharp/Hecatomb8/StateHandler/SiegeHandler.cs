@@ -75,20 +75,18 @@ namespace Hecatomb8
                 {
                     actor.Target = Player.GetHandle<TileEntity>(actor.OnDespawn);
                 }
-            }
-        }
-
-        public static void _targetDoors(Actor actor, Creature cr)
-        {
-            List<Feature> doors = Features.Where<Feature>((f) => (f is Door)).ToList();
-            doors = doors.OrderBy((f) => Tiles.Distance((int)f.X!, (int)f.Y!, (int)f.Z!, (int)Player.X!, (int)Player.Y!, (int)Player.Z!)).ToList();
-            Movement m = cr.GetComponent<Movement>();
-            foreach (var f in doors)
-            {
-                if (m.CanReachBounded(f, useLast: false))
+                else
                 {
-                    actor.Target = f.GetHandle<TileEntity>(actor.OnDespawn);
-                    return;
+                    List<Feature> doors = Features.Where<Feature>((f) => (f is Door)).ToList();
+                    doors = doors.OrderBy((f) => Tiles.Distance((int)f.X!, (int)f.Y!, (int)f.Z!, (int)Player.X!, (int)Player.Y!, (int)Player.Z!)).ToList();
+                    foreach (var f in doors)
+                    {
+                        if (m.CanReachBounded(f, useLast: false))
+                        {
+                            actor.Target = f.GetHandle<TileEntity>(actor.OnDespawn);
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -146,7 +144,7 @@ namespace Hecatomb8
             //{
             //    return ge;
             //}
-            //if (TurnsSince > 1500 && Game.World.Random.Next(100) == 0)
+            if (TurnsSince > 1500 && GameState.World!.Random.Next(100) == 0)
             {
                 BanditAttack();
             }
@@ -155,82 +153,80 @@ namespace Hecatomb8
 
         public void BanditAttack(bool debugCloser = false)
         {
-            //    FrustrationAnnounced = false;
-            //    Frustration = 0;
-            //    TurnsSince = 0;
-            //    MyCreatures.Clear();
-            //    bool xwall = (Game.World.Random.Arbitrary(2, OwnSeed()) == 0);
-            //    bool zero = (Game.World.Random.Arbitrary(2, OwnSeed() + 1) == 0);
-            //    //bool xwall = (Game.World.Random.Next(2)==0);
-            //    //bool zero = (Game.World.Random.Next(2) == 0);
-            //    string dir = "";
-            //    if (xwall)
-            //    {
-            //        dir = (zero) ? "western" : "eastern";
-            //    }
-            //    else
-            //    {
-            //        dir = (zero) ? "northern" : "southern";
-            //    }
-            //    Game.SplashPanel.Splash(new List<ColoredText> {
-            //       "A gang of bandits has been spotted near the " + dir + " border of your domain.",
-            //       " ",
-            //        "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
-            //    },
-            //    logText: "{red}A gang of bandits approaches from the " + dir + " border!");
-            //    int x0, y0;
-            //    if (xwall)
-            //    {
-            //        x0 = (zero) ? 1 : Game.World.Width - 2;
-            //        y0 = Game.World.Random.Arbitrary((Game.World.Height - 2), OwnSeed()) + 1;
-            //        //y0 = Game.World.Random.Next(Game.World.Height - 2) + 1;
-            //        if (debugCloser)
-            //        {
-            //            x0 = (zero) ? 75 : 180;
-            //            y0 = Game.World.Random.Next(Game.World.Height - 75) + 75;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        y0 = (zero) ? 1 : Game.World.Height - 2;
-            //        x0 = Game.World.Random.Arbitrary(Game.World.Width - 2, OwnSeed() + 1) + 1;
-            //        //x0 = Game.World.Random.Next(Game.World.Width - 2) + 1;
-            //        if (debugCloser)
-            //        {
-            //            y0 = (zero) ? 75 : 180;
-            //            x0 = Game.World.Random.Next(Game.World.Width - 75) + 75;
-            //        }
-            //    }
-            //    // for repeatable testing
-            //    //x0 = 12;
-            //    //y0 = 12;
+            var world = GameState.World!;
+            FrustrationAnnounced = false;
+            Frustration = 0;
+            TurnsSince = 0;
+            Creatures.Clear();
+            bool xwall = (world.Random.Next(2) == 0);
+            bool zero = (world.Random.Next(2) == 0);
+            string dir = "";
+            if (xwall)
+            {
+                dir = (zero) ? "western" : "eastern";
+            }
+            else
+            {
+                dir = (zero) ? "northern" : "southern";
+            }
+            InterfaceState.Splash(new List<ColoredText> {
+                   "A gang of bandits has been spotted near the " + dir + " border of your domain.",
+                   " ",
+                    "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
+                },
+                sleep: 5000,
+                callback: InterfaceState.ResetControls,
+                logText: "{red}A gang of bandits approaches from the " + dir + " border!"
+            );
+            int x0, y0;
+            if (xwall)
+            {
+                x0 = (zero) ? 1 : world.Width - 2;
+                y0 = world.Random.Next(world.Height - 2) + 1;
+                if (debugCloser)
+                {
+                    x0 = (zero) ? 75 : 180;
+                    y0 = world.Random.Next(world.Height - 75) + 75;
+                }
+            }
+            else
+            {
+                y0 = (zero) ? 1 : world.Height - 2;
+                x0 = world.Random.Next(world.Width - 2) + 1;
+                if (debugCloser)
+                {
+                    y0 = (zero) ? 75 : 180;
+                    x0 = world.Random.Next(world.Width - 75) + 75;
+                }
+            }
+            // for repeatable testing
+            //x0 = 12;
+            //y0 = 12;
 
-            //    EntryTile = new Coord(x0, y0, Game.World.GetGroundLevel(x0, y0));
-            //    for (int i = 0; i < PastEncounters + 1; i++)
-            //    {
-            //        //string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
-            //        string creature = "HumanBandit";
+            EntryTile = new Coord(x0, y0, world.GetBoundedGroundLevel(x0, y0));
+            for (int i = 0; i < PastSieges + 1; i++)
+            {
+                //string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
+                Coord? cc = Creature.FindPlace(x0, y0, 0);
+                if (cc != null)
+                {
+                    Coord c = (Coord)cc;
+                    var bandit = Entity.Spawn<Bandit>();
+                    bandit.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                    SiegeCreatures.Add((int)bandit.EID!);
+                    Activity.TargetPlayer.Act(bandit.GetComponent<Actor>(), bandit);
+                    // do they occasionally get placed one step underground?
+                    Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
+                    if (i == 0)
+                    {
+                        Item loot = Item.SpawnNewResource(Resource.Gold, 1);
+                        var inventory = bandit.GetComponent<Inventory>();
+                        inventory.Item = loot.GetHandle<Item>(inventory.OnDespawn);
+                    }
+                }
 
-            //        Coord? cc = Creature.FindPlace(x0, y0, 0);
-            //        if (cc != null)
-            //        {
-            //            Coord c = (Coord)cc;
-            //            var bandit = Entity.Spawn<Creature>(creature);
-            //            bandit.Place(c.X, c.Y, c.Z);
-            //            MyCreatures.Add(bandit);
-            //            TargetPlayer(bandit);
-            //            // do they occasionally get placed one step underground?
-            //            Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
-            //            if (i == 0)
-            //            {
-            //                Item loot = Item.SpawnNewResource("Gold", 1);
-            //                bandit.GetComponent<Inventory>().Item = loot;
-            //            }
-            //        }
-
-            //    }
-            //    PastEncounters += 1;
-            //}
+            }
+            PastSieges += 1;
         }
     }
 }

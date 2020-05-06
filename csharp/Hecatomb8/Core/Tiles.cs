@@ -442,8 +442,7 @@ namespace Hecatomb8
         public static Coord? NearbyTile(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true, Func<int, int, int, bool>? valid = null, int maxTries = 500, int expand = 0)
         {
             valid = valid ?? ((int x1, int y1, int z1) => true);
-            int tries = 0;
-            Coord c = new Coord(x, y, z);
+            int tries = 0;;
             while (tries < maxTries)
             {
                 tries += 1;

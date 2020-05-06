@@ -74,14 +74,38 @@ namespace Hecatomb8
 
         protected override string? getName()
         {
-            if (CorpseSpecies == Species.Human)
+            var name = _name;
+            if (CorpseSpecies != Species.Human)
             {
-                return _name;
+                name = $"{ CorpseSpecies.Name} {name}";
             }
-            else
+            int wounds = GetComponent<Defender>().Wounds;
+            double rotten = (double)Decay / (double)MaxDecay;
+            if (wounds >= 6)
             {
-                return $"{ CorpseSpecies.Name} {_name}";
+                return ("severely wounded " + name);
             }
+            else if (rotten < 0.25)
+            {
+                return ("severely rotted " + name);
+            }
+            else if (wounds >= 4)
+            {
+                return ("wounded " + name);
+            }
+            else if (rotten < 0.5)
+            {
+                return ("rotted " + name);
+            }
+            else if (wounds >= 2)
+            {
+                return ("slightly wounded " + name);
+            }
+            else if (rotten < 0.75)
+            {
+                return ("slightly rotted " + name);
+            }
+            return name;
         }
 
         public static Zombie SpawnZombieMinion()

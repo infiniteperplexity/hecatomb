@@ -185,5 +185,10 @@ namespace Hecatomb8
             }
             base.Destroy(cause);
         }
+
+        public static Coord? FindPlace(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true)
+        {
+            return Tiles.NearbyTile(x, y, z, max: max, min: min, valid: (fx, fy, fz) => { return (Creatures.GetWithBoundsChecked(fx, fy, fz) is null); });
+        }
     }
 }

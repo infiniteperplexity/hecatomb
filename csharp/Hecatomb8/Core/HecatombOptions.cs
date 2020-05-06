@@ -19,6 +19,7 @@ namespace Hecatomb8
         public static bool NoSpiders;
         public static bool NoManaCost;
         public static bool NoisyErrors;
+        public static bool NoSieges;
 
 
         static HecatombOptions()
@@ -35,11 +36,22 @@ namespace Hecatomb8
             NoIngredients = true;
             WorkBonus = 0;
             WorkBonus = 2;
+            IgnoreHardness = false;
+            //IgnoreHardness = true;
+            //ShowDebugSpells = false;
+            ShowDebugSpells = true;
+            ShowAllSpells = false;
+            //ShowallSpells = true;
+            NoSpiders = false;
+            //NoSpiders = true;
             NoManaCost = false;
             NoManaCost = true;
             Invincible = false;
-            NoisyErrors = true;
+            //Invincible = true;
             //NoisyErrors = false;
+            NoisyErrors = true;
+            NoSieges = false;
+            //NoSieges = true;
         }
     }
 }
