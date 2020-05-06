@@ -21,7 +21,7 @@ namespace Hecatomb8
 
         public override void Prepare()
         {
-            if (Active)
+            if (Active && InterfaceState.Controls is SplashControls)
             { 
                 var splash = (SplashControls)InterfaceState.Controls;
                 PrepareLines(splash.SplashText);

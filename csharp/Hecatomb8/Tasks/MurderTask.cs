@@ -74,16 +74,16 @@ namespace Hecatomb8
             Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
             if (cr != null && cr != Player)
             {
-                //Actor actor = cr.GetComponent<Actor>();
-                //if (actor.Team == Teams.Friendly)
-                //{
-                //    actor.Team = Teams.Berserk;
-                //}
-                //else if (actor.Team == Teams.Neutral)
-                //{
-                //    // arguably all nearby neutrals should turn hostile?
-                //    actor.Team = Teams.Hostile;
-                //}
+                Actor actor = cr.GetComponent<Actor>();
+                if (actor.Team == Team.Friendly)
+                {
+                    actor.Team = Team.Berserk;
+                }
+                else if (actor.Team == Team.Neutral)
+                {
+                    // arguably all nearby neutrals should turn hostile?
+                    actor.Team = Team.Hostile;
+                }
             }
         }
     }

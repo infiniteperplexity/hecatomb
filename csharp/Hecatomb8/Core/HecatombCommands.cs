@@ -13,7 +13,6 @@ using Newtonsoft.Json.Serialization;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-
     public class HecatombCommands
     {
 
@@ -91,16 +90,6 @@ namespace Hecatomb8
                 new Coord(x, y, z+1),
                 new Coord(x, y, z-1)
             };
-            //foreach (Coord c in moves)
-            //{
-            //    if (m.CanPassBounded(c.X, c.Y, c.Z))
-            //    {
-            //        Publish(new TutorialEvent() { Action = (c.Z == p.Z) ? "Move" : "Climb" });
-            //        m.StepToValidEmptyTile(c.X, c.Y, c.Z);
-            //        Act();
-            //        return;
-            //    }
-            //}
 
             foreach (Coord c in moves)
             {
@@ -388,6 +377,28 @@ namespace Hecatomb8
         {
             Time.SlowDown();
         }
+        public void PlayerDies()
+        {
+            // I don't really like doing this but it's just for debugging so it's probably okay
+            HecatombOptions.NoStartupScreen = false;
+            if (HecatombOptions.Invincible)
+            {
+                InterfaceState.Splash(new List<ColoredText> {
+                    "The spark of life fades from your fallen corpse and your soul slips away to darker realms.",
+                    " ",
+                    "Your depraved ambition has come to an end...or it would have, if you weren't invincible for debugging purposes.",
+                }, sleep: 5000);
+                Player.GetComponent<Defender>().Wounds = 0;
+            }
+            else
+            {
+                InterfaceState.Splash(new List<ColoredText> {
+                    "The spark of life fades from your fallen corpse and your soul slips away to darker realms.",
+                    " ",
+                    "Your depraved ambition has come to an end."
+                }, sleep: 5000, callback: GameManager.BackToTitle);
+            }
 
+        }
     }
 }

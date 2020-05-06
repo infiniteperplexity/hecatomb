@@ -16,28 +16,6 @@ namespace Hecatomb8
                 return InterfaceState.MainPanel;
             }
         }
-        //public static CommandsPanel Menu
-        //{
-        //    get
-        //    {
-        //        return Game.MenuPanel;
-        //    }
-        //}
-        //public static InformationPanel Status
-        //{
-        //    get
-        //    {
-        //        return Game.InfoPanel;
-        //    }
-        //}
-
-        //public static SplashPanel Foreground
-        //{
-        //    get
-        //    {
-        //        return Game.SplashPanel;
-        //    }
-        //}
 
         public static ControlContext Controls
         {
@@ -60,15 +38,6 @@ namespace Hecatomb8
                 return InterfaceState.Colors!;
             }
         }
-
-        // World state
-        //public static HecatombOptions Options
-        //{
-        //    get
-        //    {
-        //        return Game.Options;
-        //    }
-        //}
 
         public static World World
         {
@@ -133,20 +102,7 @@ namespace Hecatomb8
                 return GameState.World!.Items;
             }
         }
-        //public static SparseJaggedArray3D<Particle> Particles
-        //{
-        //    get
-        //    {
-        //        return Game.World.Particles;
-        //    }
-        //}
-        //public static AchievementHandler Achievements
-        //{
-        //    get
-        //    {
-        //        return Game.World.GetState<AchievementHandler>();
-        //    }
-        //}
+
         public static Dictionary<int, Entity> Entities
         {
             get
@@ -154,34 +110,6 @@ namespace Hecatomb8
                 return GameState.World!.Entities;
             }
         }
-        //public static ResearchHandler Research
-        //{
-        //    get
-        //    {
-        //        return Game.World.GetState<ResearchHandler>();
-        //    }
-        //}
-        //public static TutorialHandler Tutorial
-        //{
-        //    get
-        //    {
-        //        return Game.World.GetState<TutorialHandler>();
-        //    }
-        //}
-        //public static TurnHandler Turns
-        //{
-        //    get
-        //    {
-        //        return GameState.World!.Turns;
-        //    }
-        //}
-        //public static TimeHandler Time
-        //{
-        //    get
-        //    {
-        //        return Game.Time;
-        //    }
-        //}
 
         public static void Publish(GameEvent ge)
         {

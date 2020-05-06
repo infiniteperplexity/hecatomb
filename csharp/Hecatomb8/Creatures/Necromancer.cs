@@ -6,8 +6,6 @@ namespace Hecatomb8
 {
     class Necromancer : Creature
     {
-        public Cover coverTest = Cover.Water;
-
         public Necromancer()
         {
             _name = "necromancer";
@@ -26,6 +24,7 @@ namespace Hecatomb8
                 }
             );
             GetPrespawnComponent<Actor>().Team = Team.Friendly;
+            GetPrespawnComponent<Defender>().Evasion = 1;
         }
     }
 }

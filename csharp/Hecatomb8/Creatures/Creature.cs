@@ -4,19 +4,24 @@ using System.Text;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
     using static HecatombAliases;
     public class Creature : ComposedEntity, IDisplayInfo
     {
-        Species Species;
+        [JsonIgnore] public Species Species;
+        [JsonIgnore] public bool LeavesCorpse;
         protected Creature()
         {
-            Species = Species.NoSpecies;
+            Species = Species.Human;
+            LeavesCorpse = true;
             Components.Add(new Movement());
             Components.Add(new Actor() { Activities = new List<Activity>() { Activity.Default} });
             Components.Add(new Senses());
+            Components.Add(new Attacker());
+            Components.Add(new Defender());
         }
         public override void PlaceInValidEmptyTile(int x, int y, int z)
         {
@@ -128,51 +133,57 @@ namespace Hecatomb8
 
         public void NextMinion()
         {
-            //ControlContext.Selection = null;
-            //var minions = GetState<TaskHandler>().Minions;
-            //if (this == Player)
-            //{
-            //    if (minions.Count > 0)
-            //    {
-            //        ControlContext.Set(new MenuCameraControls((Creature)minions[0]));
-            //        Game.Camera.CenterOnSelection();
-            //    }
-            //    else
-            //    {
-            //        ControlContext.Set(new MenuCameraControls(Player));
-            //        Game.Camera.CenterOnSelection();
-            //    }
-            //}
-            //else if (TryComponent<Minion>() == null)
-            //{
-            //    ControlContext.Set(new MenuCameraControls(Player));
-            //    Game.Camera.CenterOnSelection();
-            //}
-            //else
-            //{
-            //    int n = -1;
+            var minions = GetState<TaskHandler>().GetMinions();
+            if (this == Player)
+            {
+                if (minions.Count > 0)
+                {
+                    InterfaceState.SetControls(new InfoDisplayControls((Creature)minions[0]));
+                    InterfaceState.Camera!.CenterOnSelection();
+                }
+                else
+                {
+                    InterfaceState.SetControls(new InfoDisplayControls(Player!));
+                    InterfaceState.Camera!.CenterOnSelection();
+                }
+            }
+            else if (TryComponent<Minion>() == null)
+            {
+                InterfaceState.SetControls(new InfoDisplayControls(Player!));
+                InterfaceState.Camera!.CenterOnSelection();
+            }
+            else
+            {
+                int n = -1;
 
-            //    for (int i = 0; i < minions.Count; i++)
-            //    {
-            //        if (minions[i] == this)
-            //        {
-            //            n = i;
-            //        }
-            //    }
-            //    if (n == -1 || n == minions.Count - 1)
-            //    {
-            //        //ControlContext.Set(new MenuChoiceControls(Player));
-            //        ControlContext.Set(new MenuCameraControls(Player));
-            //        Game.Camera.CenterOnSelection();
-            //    }
-            //    else
-            //    {
-            //        //ControlContext.Set(new MenuChoiceControls((Creature)minions[n+1]));
+                for (int i = 0; i < minions.Count; i++)
+                {
+                    if (minions[i] == this)
+                    {
+                        n = i;
+                    }
+                }
+                if (n == -1 || n == minions.Count - 1)
+                {
+                    InterfaceState.SetControls(new InfoDisplayControls(Player!));
+                    InterfaceState.Camera!.CenterOnSelection();
+                }
+                else
+                {
+                    InterfaceState.SetControls(new InfoDisplayControls((Creature)minions[n + 1]));
+                    InterfaceState.Camera!.CenterOnSelection();
+                }
+            }
+        }
 
-            //        ControlContext.Set(new MenuCameraControls((Creature)minions[n + 1]));
-            //        Game.Camera.CenterOnSelection();
-            //    }
-            //}
+        public override void Destroy(string? cause = null)
+        {
+            if (LeavesCorpse && Placed && Spawned)
+            {
+                var (x, y, z) = GetValidCoordinate();
+                Corpse.SpawnNewCorpse(Species).PlaceInValidEmptyTile(x, y, z);
+            }
+            base.Destroy(cause);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Hecatomb8
             //NoTutorial = false;
             NoTutorial = true;
             NoIngredients = false;
-            //NoIngredients = true;
+            NoIngredients = true;
             WorkBonus = 0;
             WorkBonus = 2;
             NoManaCost = false;

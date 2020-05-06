@@ -22,10 +22,10 @@ namespace Hecatomb8
     */
     public class Team : FlyWeight<Team>
     {
-        public Team[] Enemies;
-        public Team(string type = "", Team[]? enemies = null) : base(type)
+        public List<Team> Enemies;
+        public Team(string type = "") : base(type)
         {
-            Enemies = enemies ?? new Team[0];
+            Enemies = new List<Team>();
         }
 
         public bool IsHostile(Team t)
@@ -46,28 +46,45 @@ namespace Hecatomb8
 
 
         public static readonly Team Friendly = new Team(
-            type: "Friendly",
-            enemies: new Team[] { Berserk, Hostile, Good, Evil }
+            type: "Friendly"
         );
         public static readonly Team Neutral = new Team(
-            type: "Neutral",
-            enemies: new Team[] { Berserk }
+            type: "Neutral"
         );
         public static readonly Team Hostile = new Team(
-            type: "Hostile",
-            enemies: new Team[] { Berserk, Friendly }
+            type: "Hostile"
         );
         public static readonly Team Good = new Team(
-            type: "Good",
-            enemies: new Team[] { Berserk, Friendly, Evil }
+            type: "Good"
         );
         public static readonly Team Evil = new Team(
-            type: "Evil",
-            enemies: new Team[] { Berserk, Friendly, Good }
+            type: "Evil"
         );
         public static readonly Team Berserk = new Team(
-            type: "Berserk",
-            enemies: new Team[] { Berserk, Hostile, Good, Evil, Neutral }
+            type: "Berserk"
         );
+
+        static Team()
+        {
+            Friendly.Enemies.Add(Berserk);
+            Friendly.Enemies.Add(Hostile);
+            Friendly.Enemies.Add(Good);
+            Friendly.Enemies.Add(Evil);
+            Neutral.Enemies.Add(Berserk);
+            Hostile.Enemies.Add(Berserk);
+            Hostile.Enemies.Add(Friendly);
+            Good.Enemies.Add(Berserk);
+            Good.Enemies.Add(Friendly);
+            Good.Enemies.Add(Evil);
+            Evil.Enemies.Add(Berserk);
+            Evil.Enemies.Add(Friendly);
+            Evil.Enemies.Add(Good);
+            Berserk.Enemies.Add(Berserk);
+            Berserk.Enemies.Add(Friendly);
+            Berserk.Enemies.Add(Hostile);
+            Berserk.Enemies.Add(Good);
+            Berserk.Enemies.Add(Evil);
+            Berserk.Enemies.Add(Neutral);
+        }
     }
 }

@@ -110,6 +110,26 @@ namespace Hecatomb8
             _components[c.GetType().Name] = (int)c.EID!;
             c.AddToEntity(this);
         }
-    }
 
+        protected override string? getBG()
+        {
+            if (TryComponent<Defender>() != null)
+            {
+                int Wounds = GetComponent<Defender>().Wounds;
+                if (Wounds >= 6)
+                {
+                    return "red";
+                }
+                else if (Wounds >= 4)
+                {
+                    return "orange";
+                }
+                else if (Wounds >= 2)
+                {
+                    return "yellow";
+                }
+            }
+            return base.getBG();
+        }
+    }
 }

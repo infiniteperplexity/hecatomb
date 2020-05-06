@@ -101,7 +101,7 @@ namespace Hecatomb8
             return base.OnDespawn(ge);
         }
 
-        private void SetTarget(TileEntity t)
+        public void SetTarget(TileEntity t)
         {
             if (Entity?.UnboxBriefly() == t)
             {
@@ -154,50 +154,6 @@ namespace Hecatomb8
             if (!Acted)
             {
                 Wait();
-            }
-        }
-        public void OldAct()
-        {
-            if (!Active)
-            {
-                Spend();
-                return;
-            }
-            var entity = Entity?.UnboxBriefly();
-            if (entity is null || !entity.Spawned || !entity.Placed)
-            {
-                return;
-            }
-            Creature cr = (Creature)entity;
-            if (cr == Player)
-            {
-                return;
-            }
-            if (cr.HasComponent<Minion>())
-            {
-                cr.GetComponent<Minion>().Act();
-            }
-
-            //Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeAlert" });
-
-            //if (!Acted)
-            //{
-            //    Alert();
-            //}
-
-            //Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeVandalism" });
-
-            //if (!Acted)
-            //{
-            //    Vandalize();
-            //}
-
-
-            //Game.World.Events.Publish(new ActEvent() { Actor = this, Entity = Entity, Step = "BeforeWander" });
-
-            if (!Acted)
-            {
-                Wander();
             }
         }
 
@@ -593,7 +549,6 @@ namespace Hecatomb8
                 c = cr.GetComponent<Senses>().FindClosestVisible(where: a.reachableHostileCreature);
                 if (c != null)
                 {
-                    Debug.WriteLine("we reached hostility");
                     Coord C = (Coord)c;
                     a.SetTarget(Creatures.GetWithBoundsChecked(C.X, C.Y, C.Z)!);
                 }
@@ -601,118 +556,43 @@ namespace Hecatomb8
         }
 
         public static void _seek(Actor a, Creature cr)
-        { 
+        {
             // this was a discrete chunk of logic that acquires targets
-            if (a.Target != null && a.Target?.UnboxBriefly() is Creature && a.IsHostile((Creature)a.Target.UnboxBriefly()!))
+            var target = a.Target?.UnboxBriefly();
+            if (target != null && target is Creature && target.Placed && a.IsHostile((Creature)target))
             {
-                Creature target = (Creature)a.Target.UnboxBriefly()!;
+                ComposedEntity crt = (ComposedEntity)target;
                 Movement m = cr.GetComponent<Movement>();
                 Attacker attacker = cr.GetComponent<Attacker>();
-                if (!m.CanReachBounded(cr))
+                if (!m.CanReachBounded(crt))
                 {
                     a.Target = null;
                 }
-                // this is poorly thought out
-                else if (m.CanTouchBounded((int)cr.X!, (int)cr.Y!, (int)cr.Z!) && a != null)
+                else if (m.CanTouchBounded((int)crt.X!, (int)crt.Y!, (int)crt.Z!) && a != null)
                 {
-                    attacker.Attack(target);
+                    attacker.Attack(crt);
                 }
                 else
                 {
-                    Debug.WriteLine("we're talking towards our target");
-                    // doesn't matter that this can't cache misses; a miss at this point would throw and error
-                    // why the hell does it think this coudl be null?
-                    a!.WalkToward(target);
+                    a!.WalkToward(crt);
                 }
             }
         }
 
-        public void OldAlert()
+        public static void _vandalize(Actor a, Creature cr)
         {
-            if (Acted)
-            {
-                return;
-            }
-            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
-            {
-                return;
-            }
-            // we have no handling for being unable to reach the target!
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
-            if (Team != Team.Neutral && (Target?.UnboxBriefly() is null || Target.UnboxBriefly() is Feature))
+            var (x, y, z) = cr.GetValidCoordinate();
+            if (a.Team != Team.Neutral && (a.Target?.UnboxBriefly() is null || a.Target.UnboxBriefly() is Feature))
             {
                 Coord? c;
-                c = Entity.UnboxBriefly()!.GetComponent<Senses>().FindClosestVisible(where: reachableHostileCreature);
+                c = cr.GetComponent<Senses>().FindClosestVisible(where: a.reachableEnemyFeature);
                 if (c != null)
                 {
                     Coord C = (Coord)c;
-                    SetTarget(Creatures.GetWithBoundsChecked(C.X, C.Y, C.Z)!);
-                }
-            }
-            // we don't verify that we can reach it before trying
-            // So...there's currently duplicate code for creatures and features...could be generalized
-            if (Target != null && Target?.UnboxBriefly() is Creature && IsHostile((Creature)Target.UnboxBriefly()!))
-            {
-                Creature cr = (Creature)Target.UnboxBriefly()!;
-                Movement m = Entity.UnboxBriefly()!.GetComponent<Movement>();
-                Attacker a = Entity.UnboxBriefly()!.GetComponent<Attacker>();
-                if (!m.CanReachBounded(cr))
-                {
-                    Target = null;
-                }
-                // this is poorly thought out
-                else if (m.CanTouchBounded((int)cr.X!, (int)cr.Y!, (int)cr.Z!) && a != null)
-                {
-                    a.Attack(cr);
-                }
-                else
-                {
-                    // doesn't matter that this can't cache misses; a miss at this point would throw and error
-                    WalkToward(cr);
+                    a.SetTarget(Features.GetWithBoundsChecked(C.X, C.Y, C.Z)!);
                 }
             }
         }
-
-        //public void Vandalize()
-        //{
-        //    if (Acted)
-        //    {
-        //        return;
-        //    }
-        //    // we have no handling for being unable to reach the target!
-        //    var (x, y, z) = Entity;
-        //    if (Target == null && Team != Teams.Neutral)
-        //    {
-        //        Coord c;
-        //        c = Entity.GetComponent<Senses>().FindClosestVisible(where: reachableEnemyFeature);
-        //        if (!c.Equals(default(Coord)))
-        //        {
-        //            Target = Features[c];
-        //        }
-        //    }
-        //    // we don't verify that we can reach it before trying
-        //    // So...there's currently duplicate code for creatures and features...could be generalized
-        //    if (Target != null && Target.Entity is Feature && IsHostile((Feature)Target.Entity))
-        //    {
-        //        Feature fr = (Feature)Target;
-        //        Movement m = Entity.GetComponent<Movement>();
-        //        Attacker a = Entity.TryComponent<Attacker>();
-        //        // this is poorly thought out
-        //        if (!m.CanReach(Target, useLast: false))
-        //        {
-        //            Target = null;
-        //        }
-        //        else if (m.CanTouch(Target.X, Target.Y, Target.Z) && a != null)
-        //        {
-        //            a.Attack(fr);
-        //        }
-        //        else
-        //        {
-        //            // doesn't matter that this can't cache misses; a miss at this point would throw and error
-        //            WalkToward(Target, useLast: false);
-        //        }
-        //    }
-        //}
 
         public void ProvokeAgainst(Creature c)
         {

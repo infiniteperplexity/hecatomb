@@ -12,6 +12,7 @@ namespace Hecatomb8
             _name = "spider";
             _fg = "white";
             _symbol = 's';
+            Species = Species.Spider;
             GetPrespawnComponent<Actor>().Activities = new List<Activity>() { Activity.Spider };
         }
 

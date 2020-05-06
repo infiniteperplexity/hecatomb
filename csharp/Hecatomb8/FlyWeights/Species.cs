@@ -5,18 +5,18 @@ using Newtonsoft.Json;
 
 namespace Hecatomb8
 {
-    class Species : FlyWeight<Species>
+    public class Species : FlyWeight<Species>
     {
-        [JsonIgnore] public readonly string Name;
-        [JsonIgnore] public readonly char Symbol;
-        [JsonIgnore] public readonly string FG;
-        [JsonIgnore] public readonly string BG;
+        [JsonIgnore] public readonly string? Name;
+        [JsonIgnore] public readonly char? Symbol;
+        [JsonIgnore] public readonly string? FG;
+        [JsonIgnore] public readonly string? BG;
 
         public Species(
            string type,
            string name = "",
            string fg = "white",
-           string bg = "black",
+           string bg = "",
            char symbol = ' '
         ) : base(type)
         {
@@ -34,7 +34,21 @@ namespace Hecatomb8
             type: "Human",
             name: "human",
             fg: "white",
-            bg: "black"
+            symbol: '@'
+        );
+
+        public static readonly Species Zombie = new Species(
+            type: "Zombie",
+            name: "zombie",
+            fg: "lime green",
+            symbol: 'z'
+        );
+
+        public static readonly Species Spider = new Species(
+            type: "Spider",
+            name: "spider",
+            fg: "white",
+            symbol: 's'
         );
     }
 }

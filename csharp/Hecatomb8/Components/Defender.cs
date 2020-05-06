@@ -129,7 +129,7 @@ namespace Hecatomb8
             {
                 if (Entity.UnboxBriefly() == Player)
                 {
-                    //Commands.PlayerDies();
+                    Commands.PlayerDies();
                 }
                 else
                 {

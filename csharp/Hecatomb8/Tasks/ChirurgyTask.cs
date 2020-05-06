@@ -6,9 +6,6 @@ using System.Diagnostics;
 namespace Hecatomb8
 {
     using static HecatombAliases;
-    /// <summary>
-    /// Stupid name, this actually means declare ownership
-    /// </summary>
     public class ChirurgyTask : Task, ISelectsTile, IMenuListable
     {
         public ChirurgyTask() : base()
@@ -109,8 +106,13 @@ namespace Hecatomb8
             {
                 return;
             }
-            Defender d = Worker.UnboxBriefly()!.GetComponent<Defender>();
+            var cr = Worker.UnboxBriefly()!;
+            Defender d =cr.GetComponent<Defender>();
             d.Wounds = 0;
+            if (cr is Zombie)
+            {
+                (cr as Zombie)!.Decay = (cr as Zombie)!.MaxDecay;
+            }
             base.Finish();
         }
 

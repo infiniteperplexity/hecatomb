@@ -168,7 +168,8 @@ namespace Hecatomb8
 
         public static void BackToTitle()
         {
-            //SplashPanel.Active = false;
+            InterfaceState.ForegroundPanel.Active = false;
+            InterfaceState.PopupPanel.Active = false;
             GameState.World = null;
             GameName = "NewGame";
             InterfaceState.MainPanel.ClearGlyphs();
