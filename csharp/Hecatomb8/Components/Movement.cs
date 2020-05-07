@@ -284,12 +284,16 @@ namespace Hecatomb8
                 return false;
             }
             var e = Entity.UnboxBriefly()!;
-            if (Actor.Team == Team.Friendly && e != Player)
+            // forbid tasks block friendlies
+            if (Actor.Team == Team.Friendly)
             {
-                Task? t = Tasks.GetWithBoundsChecked(x1, y1, z1);
-                if (t is ForbidTask)
+                if (e != Player)
                 {
-                    return false;
+                    Task? t = Tasks.GetWithBoundsChecked(x1, y1, z1);
+                    if (t is ForbidTask)
+                    {
+                        return false;
+                    }
                 }
             }
             else

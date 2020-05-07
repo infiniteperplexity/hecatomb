@@ -13,9 +13,9 @@ namespace Hecatomb8
 
     public partial class Activity
     {
-        public static readonly Activity TargetPlayer = new Activity(
-            type: "TargetPlayer",
-            act: SiegeHandler._targetPlayer
+        public static readonly Activity BesiegePlayer = new Activity(
+            type: "BesiegePlayer",
+            act: SiegeHandler._besiegePlayer
         );
         public static readonly Activity Frustrated = new Activity(
             type: "Frustrated",
@@ -65,12 +65,19 @@ namespace Hecatomb8
             return ge;
         }
 
-        // okay, so now this can no longer be just the player, it needs to be able to target doors
-        public static void _targetPlayer(Actor actor, Creature cr)
+        // like targetPlayer, but checks frustration first and also targets doors as a fallback
+        public static void _besiegePlayer(Actor actor, Creature cr)
         {
+            // this logic makes it only
             if (actor.Target is null)
             {
+                var siege = GetState<SiegeHandler>();
+                if (siege.Frustration > siege.FrustrationLimit)
+                {
+                    return;
+                }
                 Movement m = cr.GetComponent<Movement>();
+                
                 if (m.CanReachBounded(Player))
                 {
                     actor.Target = Player.GetHandle<TileEntity>(actor.OnDespawn);
@@ -94,7 +101,12 @@ namespace Hecatomb8
         public static void _frustrated(Actor actor, Creature cr)
         {
             var siege = GetState<SiegeHandler>();
-            if (siege.Frustration <= siege.FrustrationLimit && siege.EntryTile is null || !cr.Spawned || !cr.Placed)
+            if (siege.Frustration <= siege.FrustrationLimit || siege.EntryTile is null || !cr.Spawned || !cr.Placed)
+            {
+                return;
+            }
+            var target = actor.Target?.UnboxBriefly();
+            if (target is Creature && target.Placed && target.Spawned)
             {
                 return;
             }
@@ -202,7 +214,6 @@ namespace Hecatomb8
             //x0 = 12;
             //y0 = 12;
 
-            EntryTile = new Coord(x0, y0, world.GetBoundedGroundLevel(x0, y0));
             for (int i = 0; i < PastSieges + 2; i++)
             {
                 //string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
@@ -210,14 +221,17 @@ namespace Hecatomb8
                 if (cc != null)
                 {
                     Coord c = (Coord)cc;
-                    var bandit = Entity.Spawn<Bandit>();
+                    var bandit = Bandit.SpawnSiegeBandit();
+                    //var bandit = Entity.Spawn<Bandit>();
                     bandit.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                     SiegeCreatures.Add((int)bandit.EID!);
-                    Activity.TargetPlayer.Act(bandit.GetComponent<Actor>(), bandit);
+                    Activity.BesiegePlayer.Act(bandit.GetComponent<Actor>(), bandit);
                     // do they occasionally get placed one step underground?
                     Debug.WriteLine($"{bandit.Describe()} placed at {bandit.X} {bandit.Y}");
                     if (i == 0)
                     {
+                        // setting it here shoudl make sure it's walkable
+                        EntryTile = c;
                         Item loot = Item.SpawnNewResource(Resource.Gold, 1);
                         bandit.GetComponent<Inventory>().GrantItem(loot);
                     }

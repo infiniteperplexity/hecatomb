@@ -44,6 +44,11 @@ namespace Hecatomb8
                 }
             }
         );
+
+        public static readonly Activity TargetPlayer = new Activity(
+            type: "TargetPlayer",
+            act: Actor._targetPlayer
+        );
     }
 
 
@@ -189,19 +194,23 @@ namespace Hecatomb8
 
         public void Wander() => WalkRandom();
 
-        public bool IsHostile(Creature c)
-        {
-            return Team.Enemies.Contains(c.GetComponent<Actor>().Team);
-        }
         public bool IsHostile(Team team)
         {
             return Team.Enemies.Contains(team);
         }
-        public bool IsHostile(Feature f)
+
+        public bool IsHostile(ComposedEntity ce)
         {
-            if (/*f.Owned && */f.HasComponent<Defender>() && IsHostile(Player))
+            if (ce is Creature)
             {
-                return true;
+                return Team.Enemies.Contains((ce as Creature)!.GetComponent<Actor>().Team);
+            }
+            else if (ce is Feature)
+            {
+                if (/*f.Owned && */(ce as Feature)!.HasComponent<Defender>() && IsHostile(Player))
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -500,10 +509,6 @@ namespace Hecatomb8
             return false;
         }
 
-        public void SeekTarget()
-        {
-
-        }
         public void Wait() => Spend(ActionPoints);
 
 
@@ -542,7 +547,9 @@ namespace Hecatomb8
         public static void _alert(Actor a, Creature cr)
         {
             var (x, y, z) = cr.GetPlacedCoordinate();
-            if (a.Team != Team.Neutral && (a.Target?.UnboxBriefly() is null || a.Target.UnboxBriefly() is Feature))
+            // let's try not prioritizing creature targets unless they attack us
+            if (a.Team != Team.Neutral && a.Target?.UnboxBriefly() is null )
+            //if (a.Team != Team.Neutral && (a.Target?.UnboxBriefly() is null || a.Target.UnboxBriefly() is Feature))
             {
                 Coord? c;
                 c = cr.GetComponent<Senses>().FindClosestVisible(where: a.reachableHostileCreature);
@@ -556,18 +563,19 @@ namespace Hecatomb8
 
         public static void _seek(Actor a, Creature cr)
         {
+            
             // this was a discrete chunk of logic that acquires targets
             var target = a.Target?.UnboxBriefly();
-            if (target != null && target is Creature && target.Placed && a.IsHostile((Creature)target))
+            if (target != null && target.Placed && a.IsHostile((ComposedEntity)target))
             {
                 ComposedEntity crt = (ComposedEntity)target;
                 Movement m = cr.GetComponent<Movement>();
                 Attacker attacker = cr.GetComponent<Attacker>();
-                if (!m.CanReachBounded(crt))
+                if (!m.CanReachBounded(crt, useLast: false))
                 {
                     a.Target = null;
                 }
-                else if (m.CanTouchBounded((int)crt.X!, (int)crt.Y!, (int)crt.Z!) && a != null)
+                else if (m.CanTouchBounded((int)crt.X!, (int)crt.Y!, (int)crt.Z!))
                 {
                     attacker.Attack(crt);
                 }
@@ -581,7 +589,9 @@ namespace Hecatomb8
         public static void _vandalize(Actor a, Creature cr)
         {
             var (x, y, z) = cr.GetPlacedCoordinate();
-            if (a.Team != Team.Neutral && (a.Target?.UnboxBriefly() is null || a.Target.UnboxBriefly() is Feature))
+            // definitely don't untarget features to prioritize other features
+            
+            if (a.Team != Team.Neutral && a.Target?.UnboxBriefly() is null)
             {
                 Coord? c;
                 c = cr.GetComponent<Senses>().FindClosestVisible(where: a.reachableEnemyFeature);
@@ -590,6 +600,32 @@ namespace Hecatomb8
                     Coord C = (Coord)c;
                     a.SetTarget(Features.GetWithBoundsChecked(C.X, C.Y, C.Z)!);
                 }
+            }
+        }
+
+        public static void _targetPlayer(Actor actor, Creature cr)
+        {
+            if (actor.Target is null)
+            {
+                Movement m = cr.GetComponent<Movement>();
+
+                if (m.CanReachBounded(Player))
+                {
+                    actor.Target = Player.GetHandle<TileEntity>(actor.OnDespawn);
+                }
+                //else
+                //{
+                //    List<Feature> doors = Features.Where<Feature>((f) => (f is Door)).ToList();
+                //    doors = doors.OrderBy((f) => Tiles.Distance((int)f.X!, (int)f.Y!, (int)f.Z!, (int)Player.X!, (int)Player.Y!, (int)Player.Z!)).ToList();
+                //    foreach (var f in doors)
+                //    {
+                //        if (m.CanReachBounded(f, useLast: false))
+                //        {
+                //            actor.Target = f.GetHandle<TileEntity>(actor.OnDespawn);
+                //            return;
+                //        }
+                //    }
+                //}
             }
         }
 

@@ -49,7 +49,7 @@ namespace Hecatomb8
 
         public static void StartGameProcess()
         {
-            var world = new World(256, 256, 64);
+            var world = new World(256, 256, 64, seed: (HecatombOptions.ZeroSeed) ? 0 : StatefulRandom.GetTimeSeed());
             GameState.World = world;
             var ws = new BuildWorldStrategy();
             bool succeeded = false;
@@ -99,15 +99,12 @@ namespace Hecatomb8
         public static void SaveGame()
         {
             InterfaceState.SetControls(new NoControls());
-            //InterfaceState.DirtifyTextPanels();
             InterfaceState.PreparePanels();
             InterfaceState.Splash(new List<ColoredText>()
             {
                 $"Saving {GameName}..."
             });
             HecatombGame.DeferUntilAfterDraw(SaveGameProcess);
-            //Thread thread = new Thread(SaveGameProcess);
-            //thread.Start();
         }
 
         public static void SaveGameProcess()

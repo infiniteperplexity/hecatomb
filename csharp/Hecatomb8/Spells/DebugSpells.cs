@@ -185,7 +185,7 @@ namespace Hecatomb8
 
             public void SelectTile(Coord c)
             {
-                Creature bandit = Entity.Spawn<Bandit>();
+                Creature bandit = Bandit.SpawnSiegeBandit();
                 bandit.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
             }
 

@@ -15,9 +15,6 @@ using System.Runtime.ExceptionServices;
 
 namespace Hecatomb8
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class HecatombGame : Microsoft.Xna.Framework.Game
     {
         public static Action? QuitHook;

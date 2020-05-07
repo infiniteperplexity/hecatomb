@@ -145,10 +145,13 @@ namespace Hecatomb8
             }
             int eid = (int)m.Entity.UnboxBriefly()!.EID!;
             var misses = GetState<PathHandler>().PathMisses;
-            var hits = GetState<PathHandler>().PathHits;
+            //var hits = GetState<PathHandler>().PathHits;
             if (useCache && misses.ContainsKey(eid) && misses[eid].ContainsKey((int)t.EID!))
             {
-                Debug.WriteLine("respected cached pathfinding failure");
+                if (HecatombOptions.ShowPathfindingNotes)
+                {
+                    Debug.WriteLine("respected cached pathfinding failure");
+                }
                 return new LinkedList<Coord>();
             }
             if (!t.Placed)
@@ -196,7 +199,10 @@ namespace Hecatomb8
             );
             if (path.Count == 0 && cacheMissesFor > 0 && useCache)
             {
-                Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.UnboxBriefly()!.Describe(), t.Describe(), t.X, t.Y, t.Z);
+                if (HecatombOptions.ShowPathfindingNotes)
+                {
+                    Debug.Print("{0} failed to find a path to {1} at {2} {3} {4}", m.Entity.UnboxBriefly()!.Describe(), t.Describe(), t.X, t.Y, t.Z);
+                }
                 if (!misses.ContainsKey((int)entity.EID!))
                 {
                     misses[(int)entity.EID!] = new Dictionary<int, int>();
@@ -317,7 +323,10 @@ namespace Hecatomb8
             }
             if (!accessible)
             {
-                Debug.WriteLine("Due to accessibility, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1);
+                if (HecatombOptions.ShowPathfindingNotes)
+                {
+                    Debug.WriteLine("Due to accessibility, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1);
+                }
                 return new LinkedList<Coord>();
             }
             //
@@ -328,7 +337,10 @@ namespace Hecatomb8
                 tally += 1;
                 if (tally >= maxTries)
                 {
-                    Debug.WriteLine("After {6} tries, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1, tally);
+                    if (HecatombOptions.ShowPathfindingNotes)
+                    {
+                        Debug.WriteLine("After {6} tries, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1, tally);
+                    }
                     return new LinkedList<Coord>();
                 }
                 current = queue.First!.Value;
@@ -434,7 +446,10 @@ namespace Hecatomb8
                 // ***************************************************
             }
             // ***** failed to find a path ***************************
-            Debug.WriteLine("failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1);
+            if (HecatombOptions.ShowPathfindingNotes)
+            {
+                Debug.WriteLine("failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1);
+            }
             //			return null;
             return new LinkedList<Coord>();
         }

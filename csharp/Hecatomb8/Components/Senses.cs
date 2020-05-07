@@ -93,6 +93,8 @@ namespace Hecatomb8
         [JsonIgnore] private Movement? storedMovement;
         [JsonIgnore] private int storedX;
         [JsonIgnore] private int storedY;
+        // storedX, storedY, and storedZ are the coordinates of the entity that's doing the finding
+        // storedCoord is the best coordinate yet found
         public Coord? FindClosestVisible(Func<int, int, int, bool>? where = null)
         {
             if (Entity?.UnboxBriefly() is null)
@@ -110,11 +112,12 @@ namespace Hecatomb8
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(storedX, storedY, Range, cannotSeeThrough, lookAround);
             return storedCoord;
         }
+
         private void lookAround(int x, int y)
         {
-            var c = storedCoord;
             var z = storedZ;
-            if (c != null && Tiles.Distance(((Coord)c).X, ((Coord)c).Y, ((Coord)c).Z, storedX, storedY, storedZ) <= Tiles.Distance(x, y, z, storedX, storedY, storedZ))
+            // if there's already a stored coordinate, and this coordinate is further away, bail
+            if (storedCoord != null && Tiles.Distance(x, y, z, storedX, storedY, storedZ) >= Tiles.Distance(((Coord)storedCoord).X, ((Coord)storedCoord).Y, ((Coord)storedCoord).Z, storedX, storedY, storedZ))
             {
                 return;
             }

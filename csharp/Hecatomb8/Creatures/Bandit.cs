@@ -21,7 +21,8 @@ namespace Hecatomb8
             var bandit = Entity.Spawn<Bandit>();
             bandit.GetPrespawnComponent<Actor>().Activities = new List<Activity>()
             {
-                Activity.TargetPlayer,
+                Activity.BesiegePlayer,
+                Activity.Frustrated,
                 Activity.Alert,
                 Activity.Seek,
                 Activity.Vandalize,

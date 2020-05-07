@@ -8,7 +8,9 @@ namespace Hecatomb8
     {
         public static bool Visible;
         public static bool Explored;
+        public static bool ZeroSeed;
         public static bool NoErrorLog;
+        public static bool ShowPathfindingNotes;
         public static bool NoBuildWarnings;
         public static bool NoStartupScreen;
         public static bool NoTutorial;
@@ -31,6 +33,7 @@ namespace Hecatomb8
             Visible = false;
             //Visible = true;
             Explored = false;
+            ZeroSeed = false;
             //Explored = true;
             NoErrorLog = false;
             //NoErrorLog = true;
