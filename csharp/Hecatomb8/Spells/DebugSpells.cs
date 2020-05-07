@@ -15,9 +15,12 @@ namespace Hecatomb8
             MenuName = "(debugging spells)";
             Spells = new List<Type>()
             {
+                typeof(DebugHealSpell),
+                typeof(ParticleTestDebugSpell),
+                typeof(DebugFlowerSpell),
+                typeof(DebugBanditSpell),
                 typeof(SummonBanditsDebugSpell),
-                typeof(CrashDebugSpell),
-                typeof(ParticleTestDebugSpell)
+                typeof(CrashDebugSpell)  
             };
             _cost = 0;
         }
@@ -91,7 +94,7 @@ namespace Hecatomb8
         {
             public ParticleTestDebugSpell()
             {
-                MenuName = "particle test (debug)";
+                MenuName = "particle test";
                 _cost = 0;
             }
 
@@ -109,6 +112,81 @@ namespace Hecatomb8
                 ParticleEmitter emitter = new ParticleEmitter();
                 Debug.WriteLine($"Emitting particles at Z={z}");
                 emitter.Place(c.X, c.Y, z);
+            }
+
+            public void TileHover(Coord c)
+            {
+            }
+        }
+
+        public class DebugFlowerSpell : Spell, ISelectsTile
+        {
+            public DebugFlowerSpell() : base()
+            {
+                MenuName = "spawn flower";
+                _cost = 0;
+            }
+
+            public override void ChooseFromMenu()
+            {
+                var c = new SelectTileControls(this);
+                c.SelectedMenuCommand = "Spells";
+                c.MenuCommandsSelectable = false;
+                InterfaceState.SetControls(c);
+            }
+
+            static int NextFlower = 0;
+            public void SelectTile(Coord c)
+            {
+                Feature f = Flower.Spawn(Resource.Flowers[NextFlower]);
+                f.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                NextFlower = (NextFlower + 1) % Resource.Flowers.Count;
+            }
+
+            public void TileHover(Coord c)
+            {
+
+            }
+        }
+
+        public class DebugHealSpell : Spell
+        {
+            public DebugHealSpell()
+            {
+                MenuName = "self heal";
+                _cost = 0;
+            }
+
+            public override void ChooseFromMenu()
+            {
+                Cast();
+            }
+            public override void Cast()
+            {
+                Caster!.GetComponent<Defender>().Wounds = 0;
+            }
+        }
+
+        public class DebugBanditSpell : Spell, ISelectsTile
+        {
+            public DebugBanditSpell() : base()
+            {
+                MenuName = "spawn bandit";
+                _cost = 0;
+            }
+
+            public override void ChooseFromMenu()
+            {
+                var c = new SelectTileControls(this);
+                c.SelectedMenuCommand = "Spells";
+                c.MenuCommandsSelectable = false;
+                InterfaceState.SetControls(c);
+            }
+
+            public void SelectTile(Coord c)
+            {
+                Creature bandit = Entity.Spawn<Bandit>();
+                bandit.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
             }
 
             public void TileHover(Coord c)

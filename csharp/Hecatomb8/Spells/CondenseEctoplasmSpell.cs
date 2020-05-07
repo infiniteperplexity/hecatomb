@@ -27,7 +27,7 @@ namespace Hecatomb8
         {
             CommandLogger.LogCommand(command: "CondenseEctoplasm");
             Cast();
-            var (x, y, z) = Caster!.GetValidCoordinate()!;
+            var (x, y, z) = Caster!.GetPlacedCoordinate()!;
             ParticleEmitter emitter = new ParticleEmitter();
             emitter.Place(x, y, z);
             Item ecto = Item.SpawnNewResource(Resource.Ectoplasm, 1);

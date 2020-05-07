@@ -29,6 +29,7 @@ namespace Hecatomb8
             KeyMap[Keys.OemMinus] = Commands.SlowDown;
             KeyMap[Keys.OemPlus] = Commands.SpeedUp;
             KeyMap[Keys.Space] = SelectOrWait;
+            KeyMap[Keys.NumPad5] = Commands.Wait;
             RefreshContent();
         }
 
@@ -66,9 +67,16 @@ namespace Hecatomb8
                     }
                     foreach (var type in types.Keys)
                     {
-                        var mock = (Creature)Entity.Mock(type);
+                        // handle this manually so we're not constructing a million zombies a minute
+                        var name = "Zombie";
+                        var fg = "lime green";
+                        if (type == typeof(Zombie))
+                        {
+                            name = "Zombie";
+                            fg = "lime green";
+                        }
                         // might need better handling for when we have multiple zombie types that still share a TypeName?
-                        InfoTop.Add("{" + mock.FG + "}" + mock.Describe(article: false, capitalized: true) + ": " + types[type]);
+                        InfoTop.Add("{" + fg + "}" + name + ": " + types[type]);
                     }
                 }
 

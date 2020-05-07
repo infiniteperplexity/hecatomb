@@ -139,7 +139,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             var handler = GetState<PaletteHandler>();
             if (Dye is null)

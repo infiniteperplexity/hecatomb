@@ -8,6 +8,8 @@ namespace Hecatomb8
     {
         public static bool Visible;
         public static bool Explored;
+        public static bool NoErrorLog;
+        public static bool NoBuildWarnings;
         public static bool NoStartupScreen;
         public static bool NoTutorial;
         public static bool NoIngredients;
@@ -20,6 +22,8 @@ namespace Hecatomb8
         public static bool NoManaCost;
         public static bool NoisyErrors;
         public static bool NoSieges;
+        public static bool NoGhouls;
+        public static bool NoDryads;
 
 
         static HecatombOptions()
@@ -28,6 +32,10 @@ namespace Hecatomb8
             //Visible = true;
             Explored = false;
             //Explored = true;
+            NoErrorLog = false;
+            //NoErrorLog = true;
+            NoBuildWarnings = false;
+            NoBuildWarnings = true;
             NoStartupScreen = false;
             //NoStartupScreen = true;
             //NoTutorial = false;
@@ -41,7 +49,7 @@ namespace Hecatomb8
             //ShowDebugSpells = false;
             ShowDebugSpells = true;
             ShowAllSpells = false;
-            //ShowallSpells = true;
+            ShowAllSpells = true;
             NoSpiders = false;
             //NoSpiders = true;
             NoManaCost = false;
@@ -52,6 +60,10 @@ namespace Hecatomb8
             NoisyErrors = true;
             NoSieges = false;
             //NoSieges = true;
+            NoGhouls = false;
+            //NoGhouls = true;
+            NoDryads = false;
+            //NoDryads = true;
         }
     }
 }

@@ -44,7 +44,6 @@ namespace Hecatomb8
             var explored = GameState.World!.Explored.Contains(c) || HecatombOptions.Explored;
             var exa = GameState.World.Explored.Contains(ca) || HecatombOptions.Explored;
             var exb = GameState.World.Explored.Contains(cb) || HecatombOptions.Explored;
-
             if (!explored)
             { 
                 // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles

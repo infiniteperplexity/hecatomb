@@ -104,13 +104,13 @@ namespace Hecatomb8
             {
                 InterfaceState.Splash(
                     new List<ColoredText> { "Unable to penetrate your defenses, the bandits grow frustrated and break off the siege." },
-                    sleep: 5000,
+                    sleep: 2500,
                     callback: InterfaceState.ResetControls
                 );
                 siege.FrustrationAnnounced = true;
             }
             var (x, y, z) = (Coord)siege.EntryTile!;
-            var (X, Y, Z) = cr.GetValidCoordinate();
+            var (X, Y, Z) = cr.GetPlacedCoordinate();
             // if you're right near where you entered the map, despawn
             if (Tiles.Distance(X, Y, Z, x, y, z) <= 1)
             {
@@ -138,7 +138,6 @@ namespace Hecatomb8
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
-            Debug.WriteLine($"We've had {PastSieges} bandit attacks so far.");
             TurnsSince += 1;
             //if (Options.NoHumanAttacks)
             //{
@@ -157,7 +156,7 @@ namespace Hecatomb8
             FrustrationAnnounced = false;
             Frustration = 0;
             TurnsSince = 0;
-            Creatures.Clear();
+            SiegeCreatures.Clear();
             bool xwall = (world.Random.Next(2) == 0);
             bool zero = (world.Random.Next(2) == 0);
             string dir = "";
@@ -174,7 +173,7 @@ namespace Hecatomb8
                    " ",
                     "They must be coming to loot your supplies.  You should either hide behind sturdy doors, or kill them and take their ill-gotten loot for your own."
                 },
-                sleep: 5000,
+                sleep: 2500,
                 callback: InterfaceState.ResetControls,
                 logText: "{red}A gang of bandits approaches from the " + dir + " border!"
             );
@@ -204,7 +203,7 @@ namespace Hecatomb8
             //y0 = 12;
 
             EntryTile = new Coord(x0, y0, world.GetBoundedGroundLevel(x0, y0));
-            for (int i = 0; i < PastSieges + 1; i++)
+            for (int i = 0; i < PastSieges + 2; i++)
             {
                 //string creature = (i % 3 == 2) ? "WolfHound" : "HumanBandit";
                 Coord? cc = Creature.FindPlace(x0, y0, 0);
@@ -220,8 +219,7 @@ namespace Hecatomb8
                     if (i == 0)
                     {
                         Item loot = Item.SpawnNewResource(Resource.Gold, 1);
-                        var inventory = bandit.GetComponent<Inventory>();
-                        inventory.Item = loot.GetHandle<Item>(inventory.OnDespawn);
+                        bandit.GetComponent<Inventory>().GrantItem(loot);
                     }
                 }
 

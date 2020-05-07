@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,9 +20,10 @@ namespace Hecatomb8
             _name = "zombie";
             _symbol = 'z';
             _fg = "lime green";
-            Species = Species.Zombie;
+            Species = Species.Undead;
             CorpseSpecies = Species.Human;
-            LeavesCorpse = false;
+            MaxDecay = 2500;
+            Decay = MaxDecay;
             AddListener<TurnBeginEvent>(OnTurnBegin);
         }
 
@@ -79,6 +81,10 @@ namespace Hecatomb8
             {
                 name = $"{ CorpseSpecies.Name} {name}";
             }
+            if (!HasComponent<Defender>())
+            {
+                return _name;
+            }
             int wounds = GetComponent<Defender>().Wounds;
             double rotten = (double)Decay / (double)MaxDecay;
             if (wounds >= 6)
@@ -123,22 +129,9 @@ namespace Hecatomb8
             return zombie;
         }
 
-        public override void Destroy(string? cause = null)
+        public override void Despawn()
         {
-            if (LeavesCorpse && Placed && Spawned)
-            {
-                var (x, y, z) = GetValidCoordinate();
-                if (GameState.World!.Random.Next(2)==0)
-                {
-                    Item.SpawnNewResource(Resource.Bone, 1).PlaceInValidEmptyTile(x, y, z);
-                }
-                else
-                {
-                    Item.SpawnNewResource(Resource.Flesh, 1).PlaceInValidEmptyTile(x, y, z);
-                }
-                
-            }
-            base.Destroy(cause);
+            base.Despawn();
         }
     }
 }

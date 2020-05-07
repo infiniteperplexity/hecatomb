@@ -171,7 +171,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             int d = (int)Tiles.Distance((int)x!, (int)y!, (int)z!, x1, y1, z1);
             if (d >= 5)
             {
@@ -239,7 +239,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             if (Tiles.Distance(x, y, z, x1, y1, z1) > vagueDistance)
             {
 
@@ -309,7 +309,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x0, y0, z0) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x0, y0, z0) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             List<Coord> line = Tiles.GetLine(x0, y0, x1, y1);
             if (line.Count <= 1)
             {
@@ -336,7 +336,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x0, y0, z0) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x0, y0, z0) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             List<Coord> line = Tiles.GetLine((int)x0!, (int)y0!, x1, y1);
             if (line.Count <= 1)
             {
@@ -367,7 +367,7 @@ namespace Hecatomb8
 
             Coord d = Coord.Directions4[r];
             bool acted = false;
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             int x1 = (int)x! + d.X;
             int y1 = (int)y! + d.Y;
             int z1 = (int)z! + d.Z;
@@ -385,7 +385,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            var (_x, _y, _z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (_x, _y, _z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             int x = x1 - (int)_x!;
             int y = y1 - (int)_y!;
             int z = z1 - (int)_z!;
@@ -471,8 +471,7 @@ namespace Hecatomb8
                             }
                             // wait...why do we only do it 50% of the time?  can we get loops othewise?
                             // let's try 100% to see what happens
-                            //if (GameState.World!.Random.Next(2) == 0)
-                            if (true)
+                            if (GameState.World!.Random.Next(4) == 0)
                             {
                                 Movement.Displace(cr);
                                 return true;
@@ -542,7 +541,7 @@ namespace Hecatomb8
 
         public static void _alert(Actor a, Creature cr)
         {
-            var (x, y, z) = cr.GetValidCoordinate();
+            var (x, y, z) = cr.GetPlacedCoordinate();
             if (a.Team != Team.Neutral && (a.Target?.UnboxBriefly() is null || a.Target.UnboxBriefly() is Feature))
             {
                 Coord? c;
@@ -581,7 +580,7 @@ namespace Hecatomb8
 
         public static void _vandalize(Actor a, Creature cr)
         {
-            var (x, y, z) = cr.GetValidCoordinate();
+            var (x, y, z) = cr.GetPlacedCoordinate();
             if (a.Team != Team.Neutral && (a.Target?.UnboxBriefly() is null || a.Target.UnboxBriefly() is Feature))
             {
                 Coord? c;
@@ -596,11 +595,11 @@ namespace Hecatomb8
 
         public void ProvokeAgainst(Creature c)
         {
-            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed || !c.Spawned || !c.Placed)
             {
                 return;
             }
-            if (c.GetComponent<Actor>().Team == Team.Friendly)
+            if ((Team == Team.Friendly || Team == Team.Neutral) && c.GetComponent<Actor>().Team == Team.Friendly)
             {
                 Team = Team.Hostile;
             }

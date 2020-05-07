@@ -11,7 +11,8 @@ namespace Hecatomb8
             _name = "bandit";
             _fg = "brown";
             _symbol = '@';
-            AddComponent(new Inventory());
+            Species = Species.Human;
+            Components.Add(new Inventory());
             GetPrespawnComponent<Actor>().Team = Team.Evil;
         }
 

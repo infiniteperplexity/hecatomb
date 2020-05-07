@@ -232,13 +232,13 @@ namespace Hecatomb8
                 return;
             }
             Movement m = cr.GetComponent<Movement>();
-            var (x1, y1, z1) = cr.GetValidCoordinate();
+            var (x1, y1, z1) = cr.GetPlacedCoordinate();
             if (x1 == x && y1 == y && z1 == z)
             {
                 return;
             }
             Creature me = (Creature)Entity.UnboxBriefly()!;
-            var (x0, y0, z0) = me.GetValidCoordinate();
+            var (x0, y0, z0) = me.GetPlacedCoordinate();
             // alright here comes the delicate swap
             // first, could I theoretically move to the targeted creature's square if it weren't there?
             if (!CanMoveBounded(x1, y1, z1))

@@ -139,3 +139,9 @@ way we do this is as follows:
 - We now have potential despawning during parsing...which seems bad for preserving game state
 - Need scrolling on achievement and research views
 - We don't actually order path neighbors by distance, which occasionally creates small oddities, like taking a diagonal step before working
+
+5/6/2020
+Oh wow...what a weird case...so...there are two ways we can handle this.  either program defensively around it...or have it default to GetSpawn if not spawned
+- I'm briefly invisible right after splash controls for some reason
+- zombie dealt damage to nameless
+- need to do wounded/damaged for creatures/features

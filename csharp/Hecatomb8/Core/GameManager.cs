@@ -98,6 +98,9 @@ namespace Hecatomb8
         }
         public static void SaveGame()
         {
+            InterfaceState.SetControls(new NoControls());
+            //InterfaceState.DirtifyTextPanels();
+            InterfaceState.PreparePanels();
             InterfaceState.Splash(new List<ColoredText>()
             {
                 $"Saving {GameName}..."

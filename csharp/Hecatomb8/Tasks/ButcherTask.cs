@@ -117,7 +117,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            Coord crd = GetValidCoordinate();
+            Coord crd = GetPlacedCoordinate();
             if (!Explored.Contains(crd) && !HecatombOptions.Explored)
             {
                 return false;
@@ -170,7 +170,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Item? corpse = Items.GetWithBoundsChecked(x, y, z);
             if (corpse is null)
             {

@@ -63,7 +63,7 @@ namespace Hecatomb8
             z = Z;
         }
 
-        public Coord GetValidCoordinate()
+        public Coord GetPlacedCoordinate()
         {
             return new Coord((int)X!, (int)Y!, (int)Z!);
         }

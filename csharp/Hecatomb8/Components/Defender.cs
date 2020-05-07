@@ -59,7 +59,7 @@ namespace Hecatomb8
                 return;
             }
             TileEntity cd = (TileEntity)Entity.UnboxBriefly()!;
-            var (x, y, z) = cd.GetValidCoordinate();
+            var (x, y, z) = cd.GetPlacedCoordinate();
             if (damage >= 20)
             {
                 Senses.Announce(x, y, z, sight: "{red}" + $"{ca.Describe(capitalized: true)} deals critical damage to {cd.Describe()}.");
@@ -124,7 +124,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             if (Wounds >= 8)
             {
                 if (Entity.UnboxBriefly() == Player)

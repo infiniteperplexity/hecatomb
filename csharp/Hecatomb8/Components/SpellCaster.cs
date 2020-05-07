@@ -40,7 +40,7 @@ namespace Hecatomb8
             {
                 chance = 5;
             }
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             var f = Features.GetWithBoundsChecked(x, y, z);
             if (f is StructuralFeature)
             {

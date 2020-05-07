@@ -11,6 +11,7 @@ namespace Hecatomb8
             _name = "necromancer";
             _symbol = '@';
             _fg = "magenta";
+            Species = Species.Human;
             Components.Add(new SpellCaster()
                 {
                     Spells = new List<Type>() {

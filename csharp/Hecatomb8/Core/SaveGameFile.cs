@@ -47,18 +47,13 @@ namespace Hecatomb8
 
         public void CheckBuildDate()
         {
-
-
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
             System.IO.StreamReader file = new System.IO.StreamReader(path + @"\saves\" + Name + ".json");
             string line = file.ReadLine()!;
             line = file.ReadLine()!;
             MatchCollection col = Regex.Matches(line, "\\\"(.*?)\\\"");
-            //Debug.WriteLine(col[0].ToString());
-            //Debug.WriteLine(col[1].ToString());
-            //Debug.WriteLine(Game.BuildDate.ToString());
-            if (col.Count == 0 || col[0].ToString() != "\"buildDate\"" || col[1].ToString() != '"' + GameManager.BuildDate.ToString() + '"')
+            if (!HecatombOptions.NoBuildWarnings && (col.Count == 0 || col[0].ToString() != "\"buildDate\"" || col[1].ToString() != '"' + GameManager.BuildDate.ToString() + '"'))
             {
                 InterfaceState.SetControls(new ConfirmationControls(
                     "Warning: This save file was created under a different build of Hecatomb and restoring it may cause unexpected results.  Really restore the game?"

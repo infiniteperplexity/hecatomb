@@ -70,6 +70,12 @@ namespace Hecatomb8
                     Description = "(build an apothecary, find flowers, and dye a fixture.)",
                     Condition = (AchievementEvent a) => {return a.Action=="FinishedDyeTask"; }
                 },
+                new Achievement()
+                {
+                    Name = "That That, Nature!",
+                    Description = "(kill an angry dryad.)",
+                    Condition = (AchievementEvent a) => {return a.Action=="KilledDryad"; }
+                },
             };
         }
 

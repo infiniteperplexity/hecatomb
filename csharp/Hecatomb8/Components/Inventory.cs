@@ -45,10 +45,19 @@ namespace Hecatomb8
                 {
                     Publish(new AchievementEvent() { Action = "FoundGold" });
                 }
-                var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+                var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
                 item.DropOnValidTile((int)x!, (int)y!, (int)z!);
                 Item = null;
             }
+        }
+
+        public void GrantItem(Item item)
+        {
+            if (Item?.UnboxBriefly() != null)
+            {
+                Item.UnboxBriefly()!.Despawn();
+            }
+            Item = item.GetHandle<Item>(OnDespawn);
         }
     }
 }

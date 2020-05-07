@@ -20,7 +20,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             Dictionary<Resource, int> resources = new Dictionary<Resource, int>();
             foreach (var key in Yields.Keys)
             {

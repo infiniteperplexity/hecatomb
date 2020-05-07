@@ -71,7 +71,7 @@ namespace Hecatomb8
                 }
                 if (ch != null && ch.Placed)
                 {
-                    var (x, y, z) = ch.GetValidCoordinate();
+                    var (x, y, z) = ch.GetPlacedCoordinate();
                     var t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t == null)
                     {

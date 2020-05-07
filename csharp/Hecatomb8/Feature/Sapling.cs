@@ -25,7 +25,7 @@ namespace Hecatomb8
                 Turns -= 1;
                 if (Turns <= 0)
                 {
-                    var (x, y, z) = GetValidCoordinate();
+                    var (x, y, z) = GetPlacedCoordinate();
                     Despawn();
                     if (GameState.World!.Random.Next(2)==0)
                     {

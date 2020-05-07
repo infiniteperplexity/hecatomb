@@ -169,7 +169,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
             Structure s = Structure!.UnboxBriefly()!;
             if (s.Features.Count == 0)

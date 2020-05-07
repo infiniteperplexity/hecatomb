@@ -33,7 +33,7 @@ namespace Hecatomb8
             {
                 return _name!;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Terrain t = Terrains.GetWithBoundsChecked(x, y, z);
             Terrain floor = Terrain.FloorTile;
             Terrain wall = Terrain.WallTile;
@@ -52,7 +52,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             base.Start();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             if (f is IncompleteFixture)
@@ -69,7 +69,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Publish(new TutorialEvent() { Action = "BuildTaskComplete" });
             Features.GetWithBoundsChecked(x, y, z)?.Despawn();
             Publish(new TutorialEvent() { Action = "AnyBuildComplete" });

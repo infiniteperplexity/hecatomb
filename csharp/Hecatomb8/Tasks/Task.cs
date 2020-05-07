@@ -247,7 +247,7 @@ namespace Hecatomb8
 
             Movement m = Worker.UnboxBriefly()!.GetComponent<Movement>();
             owned = owned.Where(it => m.CanReachBounded(it)).ToList();
-            var (X, Y, Z) = Worker.UnboxBriefly()!.GetValidCoordinate();
+            var (X, Y, Z) = Worker.UnboxBriefly()!.GetPlacedCoordinate();
             owned = owned.OrderBy(it => { return Tiles.Distance(X, Y, Z, (int)it.X!, (int)it.Y!, (int)it.Z!); }).ToList();
             foreach (Item item in owned)
             {
@@ -340,7 +340,7 @@ namespace Hecatomb8
                 Claims.Remove(eid);
                 return;
             }
-            var (X, Y, Z) = Worker.UnboxBriefly()!.GetValidCoordinate();
+            var (X, Y, Z) = Worker.UnboxBriefly()!.GetPlacedCoordinate();
             if (item.X == X && item.Y == Y && item.Z == Z && !HasIngredient())
             {
                 var (x, y, z) = item;
@@ -428,7 +428,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            var (X, Y, Z) = GetValidCoordinate();
+            var (X, Y, Z) = GetPlacedCoordinate();
             if (WorkSameTile && x == X && y == Y && z == Z)
             {
                 return true;
@@ -455,7 +455,7 @@ namespace Hecatomb8
                 return false;
             }
             var (x, y, z) = c;
-            var (X, Y, Z) = GetValidCoordinate();
+            var (X, Y, Z) = GetPlacedCoordinate();
             if (WorkSameTile && x == X && y == Y && z == Z)
             {
                 return true;
@@ -503,7 +503,7 @@ namespace Hecatomb8
                 Unassign();
                 return;
             }
-            var (X, Y, Z) = GetValidCoordinate();
+            var (X, Y, Z) = GetPlacedCoordinate();
             if (!ValidTile(new Coord(X, Y, Z)))
             {
                 Cancel();
@@ -539,7 +539,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (X, Y, Z) = GetValidCoordinate();
+            var (X, Y, Z) = GetPlacedCoordinate();
             Feature? f = Features.GetWithBoundsChecked(X, Y, Z);
             if (f != null)
             {

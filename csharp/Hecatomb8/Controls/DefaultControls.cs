@@ -20,6 +20,10 @@ namespace Hecatomb8
                 [Keys.A] = commands!.MoveWestCommand,
                 [Keys.S] = commands!.MoveSouthCommand,
                 [Keys.D] = commands!.MoveEastCommand,
+                [Keys.E] = commands!.MoveNorthEastCommand,
+                [Keys.Q] = commands!.MoveNorthWestCommand,
+                [Keys.X] = commands!.MoveSouthWestCommand,
+                [Keys.C] = commands!.MoveSouthEastCommand,
                 [Keys.Up] = commands!.MoveNorthCommand,
                 [Keys.Left] = commands!.MoveWestCommand,
                 [Keys.Down] = commands!.MoveSouthCommand,
@@ -27,6 +31,15 @@ namespace Hecatomb8
                 [Keys.OemPeriod] = commands!.MoveDownCommand,
                 [Keys.OemComma] = commands!.MoveUpCommand,
                 [Keys.Space] = commands!.Wait,
+                [Keys.NumPad5] = commands!.Wait,
+                [Keys.NumPad2] = commands.MoveNorthCommand,
+                [Keys.NumPad8] = commands.MoveSouthCommand,
+                [Keys.NumPad4] = commands.MoveWestCommand,
+                [Keys.NumPad6] = commands.MoveEastCommand,
+                [Keys.NumPad1] = commands.MoveNorthEastCommand,
+                [Keys.NumPad3] = commands.MoveNorthWestCommand,
+                [Keys.NumPad7] = commands.MoveSouthWestCommand,
+                [Keys.NumPad9] = commands.MoveSouthEastCommand,
                 [Keys.J] = commands!.ChooseTask,
                 [Keys.Z] = commands!.ChooseSpell,
                 [Keys.U] = commands!.ShowStructures,
@@ -78,9 +91,16 @@ namespace Hecatomb8
                     }
                     foreach (var type in types.Keys)
                     {
-                        var mock = (Creature)Entity.Mock(type);
+                        // handle this manually so we're not constructing a million zombies a minute
+                        var name = "Zombie";
+                        var fg = "lime green";
+                        if (type == typeof(Zombie))
+                        {
+                            name = "Zombie";
+                            fg = "lime green";
+                        }
                         // might need better handling for when we have multiple zombie types that still share a TypeName?
-                        InfoTop.Add("{" + mock.FG + "}" + mock.Describe(article: false, capitalized: true) + ": " + types[type]);
+                        InfoTop.Add("{" + fg + "}" + name + ": " + types[type]);
                     }
                 }
 

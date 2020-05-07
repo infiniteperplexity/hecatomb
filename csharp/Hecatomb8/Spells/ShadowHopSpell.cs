@@ -36,7 +36,7 @@ namespace Hecatomb8
         public override void Cast()
         {
             CommandLogger.LogCommand(command: "ShadowHop");
-            var (x, y, z) = Caster!.GetValidCoordinate();
+            var (x, y, z) = Caster!.GetPlacedCoordinate();
             ParticleEmitter emitter1 = new ParticleEmitter();
             emitter1.Place(x, y, z);
             var m = Caster.GetComponent<Movement>();

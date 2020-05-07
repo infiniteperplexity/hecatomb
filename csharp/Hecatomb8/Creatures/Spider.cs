@@ -20,7 +20,7 @@ namespace Hecatomb8
         {
             if (GameState.World!.Random.Next(250) == 0)
             {
-                var (x, y, z) = cr.GetValidCoordinate();
+                var (x, y, z) = cr.GetPlacedCoordinate();
                 if (Features.GetWithBoundsChecked(x, y, z) is null && Tasks.GetWithBoundsChecked(x, y, z) is null && Terrains.GetWithBoundsChecked(x, y, z) == Terrain.FloorTile)
                 {
                     Entity.Spawn<SpiderWeb>().PlaceInValidEmptyTile(x, y, z);

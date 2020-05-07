@@ -42,7 +42,7 @@ namespace Hecatomb8
                     {
                         continue;
                     }
-                    var (x, y, z) = f.GetValidCoordinate() ;
+                    var (x, y, z) = f.GetPlacedCoordinate() ;
                     Task? t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t is ResearchTask)
                     {
@@ -182,7 +182,7 @@ namespace Hecatomb8
                 {
                     continue;
                 }
-                var (x, y, z) = f.GetValidCoordinate();
+                var (x, y, z) = f.GetPlacedCoordinate();
                 HaulTask? ht = Tasks.GetWithBoundsChecked(x, y, z) as HaulTask;
                 if (ht != null && ht.Ingredients.ContainsKey(resource))
                 {
@@ -213,7 +213,7 @@ namespace Hecatomb8
                 {
                     continue;
                 }
-                var (x, y, z) = f.GetValidCoordinate();
+                var (x, y, z) = f.GetPlacedCoordinate();
                 Item? pile = Items.GetWithBoundsChecked(x, y, z);
                 Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
                 if (pile != null && pile.Resource == resource && pile.N < pile.StackSize && task == null)
@@ -242,7 +242,7 @@ namespace Hecatomb8
                 {
                     return;
                 }
-                var (x, y, z) = f.GetValidCoordinate();
+                var (x, y, z) = f.GetPlacedCoordinate();
                 Item? pile = Items.GetWithBoundsChecked(x, y, z);
                 Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
                 if (pile == null && task == null)
@@ -380,7 +380,7 @@ namespace Hecatomb8
                     {
                         continue;
                     }
-                    var (x, y, z) = f.GetValidCoordinate();
+                    var (x, y, z) = f.GetPlacedCoordinate();
                     Item? item = Items.GetWithBoundsChecked(x, y, z);
                     if (item != null && StoresResources.Contains(item.Resource))
                     {

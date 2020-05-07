@@ -96,7 +96,7 @@ namespace Hecatomb8
                 return;
             }
             Debug.WriteLine("trade 2");
-            var (x, y, z) = market.GetValidCoordinate();
+            var (x, y, z) = market.GetPlacedCoordinate();
             if (Tasks.GetWithBoundsChecked(x, y, z) != null)
             {
                 return;

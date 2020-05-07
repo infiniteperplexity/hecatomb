@@ -147,8 +147,6 @@ namespace Hecatomb8
                 var m = Mouse.GetState();
                 Controls?.HandleHover(m.X, m.Y);
             }
-            //TheFixer.CheckStates();
-            //Game.World.ValidateLighting();
             if (Controls?.SelectedEntity is Creature && Controls.SelectedEntity.Placed)
             {
                 Creature c = (Creature)Controls.SelectedEntity;

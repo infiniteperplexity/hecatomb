@@ -112,68 +112,6 @@ namespace Hecatomb8
 
     }
 
-    //public class SensoryEvent : GameEvents
-    //{
-    //    public int X;
-    //    public int Y;
-    //    public int Z;
-    //    public ColoredText Sight;
-    //    public ColoredText Sound;
-    //    public int SoundRange;
-
-    //    public SensoryEvent()
-    //    {
-    //        X = -1;
-    //        Y = -1;
-    //        Z = -1;
-    //    }
-    //    public SensoryEvent(ColoredText sight, int x, int y, int z)
-    //    {
-    //        Sight = sight;
-    //        X = x;
-    //        Y = y;
-    //        Z = z;
-    //    }
-    //    // ist honestly a good idea to implement that stuff this way?
-    //    public override void Fire()
-    //    {
-    //        if (X == -1 && Y == -1 && Z == -1)
-    //        {
-    //            Debug.WriteLine(Sight);
-    //            Debug.WriteLine(Sound);
-    //            throw new InvalidOperationException("We shouldn't have sensory events without locations.");
-    //        }
-    //        Coord c = new Coord(X, Y, Z);
-    //        // should make this an actual event
-    //        if (Game.Visible.Contains(c))
-    //        {
-    //            Game.InfoPanel.PushMessage(Sight);
-    //        }
-    //        else
-    //        {
-    //            if (Sound != null)
-    //            {
-    //                bool audible = false;
-    //                if (Tiles.QuickDistance(Player.X, Player.Y, Player.Z, X, Y, Z) < SoundRange)
-    //                {
-    //                    audible = true;
-    //                }
-    //                foreach (Creature cr in GetState<TaskHandler>().Minions)
-    //                {
-    //                    if (Tiles.QuickDistance(cr.X, cr.Y, cr.Z, X, Y, Z) < SoundRange)
-    //                    {
-    //                        audible = true;
-    //                    }
-    //                }
-    //                if (audible)
-    //                {
-    //                    //Game.InfoPanel.PushMessage(Sound);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-
     public class ActEvent : GameEvent
     {
         public Actor? Actor;

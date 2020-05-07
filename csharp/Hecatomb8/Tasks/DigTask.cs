@@ -75,7 +75,7 @@ namespace Hecatomb8
             {
                 Despawn();
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Publish(new TutorialEvent() { Action = "DigTaskComplete" });
             Features.GetWithBoundsChecked(x, y, z)?.Despawn();
             Terrain t = Terrains.GetWithBoundsChecked(x, y, z);
@@ -475,7 +475,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Coord crd = new Coord(x, y, z);
             if (!Explored.Contains(crd) && !HecatombOptions.Explored)
             {

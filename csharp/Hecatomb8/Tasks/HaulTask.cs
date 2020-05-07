@@ -80,7 +80,7 @@ namespace Hecatomb8
             {
                 return false;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Coord crd = new Coord(x, y, z);
             if (!Explored.Contains(crd) && !HecatombOptions.Explored)
             {
@@ -151,7 +151,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = worker.GetValidCoordinate();
+            var (x, y, z) = worker.GetPlacedCoordinate();
             worker.GetComponent<Inventory>().Drop();
             Feature? f = Features.GetWithBoundsChecked(x, y, z);
             if (f != null)

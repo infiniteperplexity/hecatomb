@@ -121,7 +121,7 @@ namespace Hecatomb8
         {
             CommandLogger.LogCommand(command: "MoveVertical", z: dz);
             Creature p = Player;
-            var (x1, y1, z1) = p.GetValidCoordinate();
+            var (x1, y1, z1) = p.GetPlacedCoordinate();
             var m = p.GetComponent<Movement>();
             if (!m.CanPassBounded(x1, y1, z1))
             {

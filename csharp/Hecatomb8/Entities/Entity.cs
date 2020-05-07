@@ -48,6 +48,7 @@ namespace Hecatomb8
         // until an Entity is "Spawned", it doesn't really exist in the game world
         public static T Spawn<T>() where T : Entity, new()
         {
+            
             T t = new T();
             int n = MaxEID + 1;
             t.EID = n;

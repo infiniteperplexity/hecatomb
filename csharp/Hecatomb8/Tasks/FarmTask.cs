@@ -74,7 +74,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             var f = Features.GetWithBoundsChecked(x, y, z);
             if (f != null)
             {

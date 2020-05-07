@@ -22,7 +22,7 @@ namespace Hecatomb8
 
                 return Visible;
             }
-            var (x, y, z) = Entity.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             storedZ = (int)z!;
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting((int)x!, (int)y!, Range, cannotSeeThrough, addToVisible);
             foreach (Coord c in Visible.ToList())
@@ -104,7 +104,7 @@ namespace Hecatomb8
             {
                 return null;
             }
-            (storedX, storedY, storedZ) = entity.GetValidCoordinate();
+            (storedX, storedY, storedZ) = entity.GetPlacedCoordinate();
             storedCallback = where;
             storedCoord = null;
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(storedX, storedY, Range, cannotSeeThrough, lookAround);

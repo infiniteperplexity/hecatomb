@@ -80,6 +80,7 @@ namespace Hecatomb8
 			Chooser.BuildInfoDisplay(this);
 			var Commands = InterfaceState.Commands!;
 			KeyMap[Keys.Space] = SelectOrWait;
+			KeyMap[Keys.NumPad5] = Commands.Wait;
 			KeyMap[Keys.Escape] = InterfaceState.ResetControls;
 			InfoTop = new List<ColoredText>() {
 				"{orange}**Esc: Cancel**.",

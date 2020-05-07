@@ -37,6 +37,14 @@ namespace Hecatomb8
             KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
             KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
             KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
+            KeyMap[Keys.NumPad2] = Commands.MoveCameraNorth;
+            KeyMap[Keys.NumPad8] = Commands.MoveCameraSouth;
+            KeyMap[Keys.NumPad4] = Commands.MoveCameraWest;
+            KeyMap[Keys.NumPad6] = Commands.MoveCameraEast;
+            KeyMap[Keys.NumPad1] = Commands.MoveCameraNorthWest;
+            KeyMap[Keys.NumPad3] = Commands.MoveCameraNorthEast;
+            KeyMap[Keys.NumPad7] = Commands.MoveCameraSouthWest;
+            KeyMap[Keys.NumPad9] = Commands.MoveCameraSouthEast;
             KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
             KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
         }

@@ -58,7 +58,7 @@ namespace Hecatomb8
                         if (list.Count > 0 && list.Count <= 24)
                         {
                             Feature f = list[0];
-                            var (X, Y, Z) = f.GetValidCoordinate();
+                            var (X, Y, Z) = f.GetPlacedCoordinate();
                             Coord? c = Tiles.NearbyTile(X, Y, Z, max: 2, min: 1, valid: (x, y, z) =>
                             {
                                 return (

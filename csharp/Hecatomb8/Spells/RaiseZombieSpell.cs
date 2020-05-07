@@ -119,8 +119,6 @@ namespace Hecatomb8
                         emerge.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                         emerge.AssignTo(zombie);    
                     }
-     
-                    InterfaceState.Commands!.Act();
                 }
             }
         }
@@ -182,7 +180,7 @@ namespace Hecatomb8
                 Unassign();
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Senses.Announce(x, y, z, sight: "You hear an ominous stirring from under the ground...");
             // this code would place an incomplete fixture if there is no grave, but...Makes is null...I don't think that's safe
             //Feature? f = Features.GetWithBoundsChecked(x, y, z);
@@ -205,7 +203,7 @@ namespace Hecatomb8
             {
                 base.Finish();
             }
-            var (X, Y, Z) = GetValidCoordinate();
+            var (X, Y, Z) = GetPlacedCoordinate();
             Publish(new TutorialEvent() { Action = "ZombieEmerges" });
             Senses.Announce(X, Y, Z, sight: "A zombie bursts forth from the ground!");
             Feature? f = Features.GetWithBoundsChecked(X, Y, Z);

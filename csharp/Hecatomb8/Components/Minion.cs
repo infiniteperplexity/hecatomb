@@ -81,7 +81,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = cr.GetValidCoordinate();
+            var (x, y, z) = cr.GetPlacedCoordinate();
             Task? existing = minion.Task?.UnboxBriefly();
             // a zombie encased in solid rock, a grave on top, and no zombie emerge task...poor guy needs a zombie emerge task!
             if (Terrains.GetWithBoundsChecked(x, y, z).Solid && !(existing is ZombieEmergeTask) && Features.GetWithBoundsChecked(x, y, z + 1) is Grave)
@@ -124,7 +124,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = Player.GetValidCoordinate();
+            var (x, y, z) = Player.GetPlacedCoordinate();
             a.Patrol(x, y, z);
         }
         public void Act()

@@ -125,7 +125,7 @@ namespace Hecatomb8
                     {
                         continue;
                     }
-                    var (x, y, z) = f.GetValidCoordinate();
+                    var (x, y, z) = f.GetPlacedCoordinate();
                     Task? t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t is TradeTask)
                     {

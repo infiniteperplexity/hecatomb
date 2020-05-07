@@ -106,6 +106,7 @@ namespace Hecatomb8
             {
                 int x = i + camera.XOffset;
                 int y = j + camera.YOffset;
+                
                 var (sym, fg, bg) = Tiles.GetGlyphWithBoundsChecked(x, y, z);
                 var str = sym.ToString();
                 var (measure, font) = resolveFont(sym);

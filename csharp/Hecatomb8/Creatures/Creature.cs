@@ -12,11 +12,11 @@ namespace Hecatomb8
     public class Creature : ComposedEntity, IDisplayInfo
     {
         [JsonIgnore] public Species Species;
-        [JsonIgnore] public bool LeavesCorpse;
+        //[JsonIgnore] public bool LeavesCorpse;
         protected Creature()
         {
-            Species = Species.Human;
-            LeavesCorpse = true;
+            Species = Species.NoSpecies;
+            //LeavesCorpse = true;
             Components.Add(new Movement());
             Components.Add(new Actor() { Activities = new List<Activity>() { Activity.Default} });
             Components.Add(new Senses());
@@ -178,10 +178,9 @@ namespace Hecatomb8
 
         public override void Destroy(string? cause = null)
         {
-            if (LeavesCorpse && Placed && Spawned)
+            if (Spawned && Placed)
             {
-                var (x, y, z) = GetValidCoordinate();
-                Corpse.SpawnNewCorpse(Species).PlaceInValidEmptyTile(x, y, z);
+                Species.Remains(this, cause);
             }
             base.Destroy(cause);
         }
@@ -189,6 +188,27 @@ namespace Hecatomb8
         public static Coord? FindPlace(int x, int y, int z, int max = 5, int min = 0, bool groundLevel = true)
         {
             return Tiles.NearbyTile(x, y, z, max: max, min: min, valid: (fx, fy, fz) => { return (Creatures.GetWithBoundsChecked(fx, fy, fz) is null); });
+        }
+
+        protected override string? getName()
+        {
+            if (HasComponent<Defender>())
+            {
+                int Wounds = GetComponent<Defender>().Wounds;
+                if (Wounds >= 6)
+                {
+                    return "severely wounded " + base.getName();
+                }
+                else if (Wounds >= 4)
+                {
+                    return "wounded " + base.getName();
+                }
+                else if (Wounds >= 2)
+                {
+                    return "slightly wounded " + base.getName();
+                }
+            }
+            return base.getName();
         }
     }
 }

@@ -57,6 +57,11 @@ namespace Hecatomb8
         }
         public T GetComponent<T>() where T : Component
         {
+            // is this even a good idea?  it seems like it could cause problems down the line
+            if (!Spawned)
+            {
+                return GetPrespawnComponent<T>();
+            }
             string t = typeof(T).Name;
             if (_components is null || !_components.ContainsKey(t))
             {
@@ -113,7 +118,7 @@ namespace Hecatomb8
 
         protected override string? getBG()
         {
-            if (TryComponent<Defender>() != null)
+            if (HasComponent<Defender>())
             {
                 int Wounds = GetComponent<Defender>().Wounds;
                 if (Wounds >= 6)
@@ -127,27 +132,6 @@ namespace Hecatomb8
                 else if (Wounds >= 2)
                 {
                     return "yellow";
-                }
-            }
-            return base.getBG();
-        }
-
-        protected override string? getName()
-        {
-            if (TryComponent<Defender>() != null)
-            {
-                int Wounds = GetComponent<Defender>().Wounds;
-                if (Wounds >= 6)
-                {
-                    return "severely wounded " + base.getName();
-                }
-                else if (Wounds >= 4)
-                {
-                    return "wounded " + base.getName();
-                }
-                else if (Wounds >= 2)
-                {
-                    return "slight wounded " + base.getName();
                 }
             }
             return base.getBG();

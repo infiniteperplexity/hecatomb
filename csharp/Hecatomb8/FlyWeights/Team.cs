@@ -22,7 +22,7 @@ namespace Hecatomb8
     */
     public class Team : FlyWeight<Team>
     {
-        public List<Team> Enemies;
+        [JsonIgnore] public List<Team> Enemies;
         public Team(string type = "") : base(type)
         {
             Enemies = new List<Team>();

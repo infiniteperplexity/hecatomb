@@ -49,7 +49,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = Structure.UnboxBriefly()!.GetValidCoordinate();
+            var (x, y, z) = Structure.UnboxBriefly()!.GetPlacedCoordinate();
             if (Tasks.GetWithBoundsChecked(x, y, z) != null)
             {
                 return;

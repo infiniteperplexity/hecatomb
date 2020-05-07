@@ -87,7 +87,7 @@ namespace Hecatomb8
             {
                 return;
             }
-            var (x, y, z) = GetValidCoordinate();
+            var (x, y, z) = GetPlacedCoordinate();
             Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
             Feature? incomplete = Features.GetWithBoundsChecked(x, y, z);
             incomplete?.Despawn();
