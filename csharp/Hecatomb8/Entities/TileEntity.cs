@@ -114,11 +114,12 @@ namespace Hecatomb8
 
         public override void Despawn()
         {
+            // oh this is tricky...this way, the OnDespawn event can't access the location...
+            base.Despawn();
             if (Placed)
             {
                 Remove();
             }
-            base.Despawn();
         }
 
         public virtual void Destroy(string? cause = null)

@@ -24,6 +24,8 @@ namespace Hecatomb8
         public readonly SparseArray3D<Feature> Features;
         public readonly SparseArray3D<Item> Items;
         public readonly SparseArray3D<Task> Tasks;
+        // not super necessary but probably helps performance
+        public HashSet<Structure> Structures;
         public Dictionary<string, int> StateHandlers;
         public StatefulRandom Random;
         public EventSystem Events;
@@ -44,6 +46,8 @@ namespace Hecatomb8
             Items = new SparseArray3D<Item>(width, height, depth);
             Tasks = new SparseArray3D<Task>(width, height, depth);
             StateHandlers = new Dictionary<string, int>();
+            Structures = new HashSet<Structure>();
+            
             Events = new EventSystem();
 
             Random = new StatefulRandom(seed);

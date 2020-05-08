@@ -123,9 +123,9 @@ namespace Hecatomb8
             Creature p = Player;
             var (x1, y1, z1) = p.GetPlacedCoordinate();
             var m = p.GetComponent<Movement>();
-            if (!m.CanPassBounded(x1, y1, z1))
+            if (!m.CanPassBounded(x1, y1, z1 + dz))
             {
-                Creature? cr = Creatures.GetWithBoundsChecked(x1, y1, z1);
+                Creature? cr = Creatures.GetWithBoundsChecked(x1, y1, z1 + dz);
                 if (cr != null && p.GetComponent<Actor>().IsFriendly(cr))
                 {
                     Publish(new TutorialEvent() { Action = "Climb" });

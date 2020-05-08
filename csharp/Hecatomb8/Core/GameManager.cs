@@ -87,9 +87,9 @@ namespace Hecatomb8
         {
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            if (File.Exists(path + @"\saves\" + GameName + ".json"))
+            if (File.Exists(path + @"\saves\" + GameName + ".zip"))
             {
-                InterfaceState.SetControls(new ConfirmationControls("Really overwrite " + GameName + ".json?", SaveGame));
+                InterfaceState.SetControls(new ConfirmationControls("Really overwrite " + GameName + "?", SaveGame));
             }
             else
             {
@@ -127,13 +127,27 @@ namespace Hecatomb8
 
         public static void RestoreGameProcess()
         {
+            //var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
+            //System.IO.Directory.CreateDirectory(path + @"\saves");
+            //System.IO.StreamReader file = new System.IO.StreamReader(path + @"\saves\" + Name + ".json");
+            //string line = file.ReadLine()!;
+            //line = file.ReadLine()!;
+            //MatchCollection col = Regex.Matches(line, "\\\"(.*?)\\\"");
+            //if (!HecatombOptions.NoBuildWarnings && (col.Count == 0 || col[0].ToString() != "\"buildDate\"" || col[1].ToString() != '"' + GameManager.BuildDate.ToString() + '"'))
+            //{
+            //    InterfaceState.SetControls(new ConfirmationControls(
+            //        "Warning: This save file was created under a different build of Hecatomb and restoring it may cause unexpected results.  Really restore the game?"
+            //    , RestoreGame));
+            //}
+            //else
+            //{
             try
             {
                 GameState.World = new World(256, 256, 64);
-                var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
-                System.IO.Directory.CreateDirectory(path + @"\saves");
+                //var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
+                //System.IO.Directory.CreateDirectory(path + @"\saves");
                 // we need some kind of failure handling...
-                GameState.World!.Parse(path + @"\saves\" + GameName + ".json");
+                GameState.World!.Parse();
                 InterfaceState.ResetControls();
             }
             catch (Exception e)

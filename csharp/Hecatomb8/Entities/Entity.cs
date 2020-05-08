@@ -126,6 +126,7 @@ namespace Hecatomb8
                     GameState.World!.Entities.Remove((int)EID);
                 }
             }
+            EID = null;
         }
 
         public void AddListener<T>(Func<GameEvent, GameEvent> f)

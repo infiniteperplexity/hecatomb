@@ -41,28 +41,13 @@ namespace Hecatomb8
             }
             else
             {
-                CheckBuildDate();
+                RestoreGame();
             }
         }
 
         public void CheckBuildDate()
         {
-            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
-            System.IO.Directory.CreateDirectory(path + @"\saves");
-            System.IO.StreamReader file = new System.IO.StreamReader(path + @"\saves\" + Name + ".json");
-            string line = file.ReadLine()!;
-            line = file.ReadLine()!;
-            MatchCollection col = Regex.Matches(line, "\\\"(.*?)\\\"");
-            if (!HecatombOptions.NoBuildWarnings && (col.Count == 0 || col[0].ToString() != "\"buildDate\"" || col[1].ToString() != '"' + GameManager.BuildDate.ToString() + '"'))
-            {
-                InterfaceState.SetControls(new ConfirmationControls(
-                    "Warning: This save file was created under a different build of Hecatomb and restoring it may cause unexpected results.  Really restore the game?"
-                , RestoreGame));
-            }
-            else
-            {
-                RestoreGame();
-            }
+            RestoreGame();
         }
 
         public void RestoreGame()
@@ -70,7 +55,7 @@ namespace Hecatomb8
             GameManager.GameName = Name!;
             
             InterfaceState.Splash(new List<ColoredText>() {
-                    $"Restoring {Name}..."
+                    $"Restoring {Name}...this should take less than a minute."
                 },
                 fullScreen: false
             );
@@ -85,7 +70,7 @@ namespace Hecatomb8
             menu.Header = "Choose a saved game:";
             menu.Choices = new List<IMenuListable>();
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            string[] filePaths = Directory.GetFiles(path + @"\saves", "*.json");
+            string[] filePaths = Directory.GetFiles(path + @"\saves", "*.zip");
             foreach (string paths in filePaths)
             {
                 string[] split = paths.Split('\\');

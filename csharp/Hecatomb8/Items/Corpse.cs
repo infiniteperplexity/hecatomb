@@ -54,12 +54,29 @@ namespace Hecatomb8
         }
         protected override string? getName()
         {
-            var unowned = (Disowned) ? " (unclaimed)" : "";
-            if (Species == Species.Human)
+            var name = "corpse";
+            if (Disowned)
             {
-                return $"corpse {unowned}";
+                name = name + " (unclaimed)";
             }
-            return $"{Species.Name} corpse{unowned}";
+            if (Species != Species.Human)
+            {
+                name = Species.Name + " " + name;
+            }
+            double frac = (double)Decay / (double)MaxDecay;
+            if (frac < 0.25)
+            {
+                name = "severely rotted " + name;
+            }
+            else if (frac < 0.5)
+            {
+                name = "rotted " + name;
+            }
+            else if (frac < 0.75)
+            {
+                name = "slightly rotted " + name;
+            }
+            return name;
         }
         public override string Describe(
             bool? article = null,

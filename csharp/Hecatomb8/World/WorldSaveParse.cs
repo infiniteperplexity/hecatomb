@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 using System.IO;
+using System.IO.Compression;
 
 namespace Hecatomb8
 {
@@ -203,15 +204,79 @@ namespace Hecatomb8
 
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            using (TextWriter writer = File.CreateText(path + @"\saves\" + GameManager.GameName + ".json"))
+            //using (TextWriter writer = File.CreateText(path + @"\saves\" + GameManager.GameName + ".json"))
+            //{
+            //    var serializer = JsonSerializer.Create(settings);
+            //    serializer.Serialize(writer, jsonready);
+            //}
+
+            if (File.Exists(path + @"\saves\" + GameManager.GameName + ".zip"))
             {
-                var serializer = JsonSerializer.Create(settings);
-                serializer.Serialize(writer, jsonready);
+                File.Move(path + @"\saves\" + GameManager.GameName + ".zip", path + @"\saves\" + GameManager.GameName + "_temp");
             }
+            try
+            {
+                using (FileStream zipToOpen = new FileStream(path + @"\saves\" + GameManager.GameName + ".zip", FileMode.Create))
+                {
+                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                    {
+                        ZipArchiveEntry save = archive.CreateEntry("save.json");
+                        using (StreamWriter writer = new StreamWriter(save.Open()))
+                        {
+                            var serializer = JsonSerializer.Create(settings);
+                            serializer.Serialize(writer, jsonready);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp"))
+                {
+                    File.Move(path + @"\saves\" + GameManager.GameName + "_temp", path + @"\saves\" + GameManager.GameName + ".zip");
+                }
+            }
+            if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp"))
+            {
+                File.Delete(path + @"\saves\" + GameManager.GameName + "_temp");
+            }
+            //using (TextWriter writer = File.CreateText(path + @"\saves\" + GameManager.GameName + @"\save.json"))
+            //{
+            //    var serializer = JsonSerializer.Create(settings);
+            //    serializer.Serialize(writer, jsonready);  
+            //}
+            //// if the zipped saved game already exists, moved it out of the way
+            //if (File.Exists(path + @"\saves\" + GameManager.GameName + ".zip"))
+            //{
+            //    File.Move(path + @"\saves\" + GameManager.GameName + ".zip", path + @"\saves\" + GameManager.GameName + "_temp.zip");
+            //}
+            //try
+            //{
+            //    ZipFile.CreateFromDirectory(path + @"\saves\" + GameManager.GameName, path + @"\saves\" + GameManager.GameName + ".zip");
+
+            //}
+            //catch(Exception e)
+            //{
+            //    // if we failed, try to bring the old one back
+            //    if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp.zip"))
+            //    {
+            //        File.Move(path + @"\saves\" + GameManager.GameName + "_temp.zip", path + @"\saves\" + GameManager.GameName + ".zip");
+            //    }
+            //    ExceptionHandling.Handle(e);
+            //}
+            //// get rid of the old zipped directory
+            //if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp.zip"))
+            //{
+            //    File.Delete(path + @"\saves\" + GameManager.GameName + "_temp.zip");
+            //}
+            //// get rid of the unzipped directory
+            //Directory.Delete(path + @"\saves\" + GameManager.GameName, true);
+
         }
 
-        public void Parse(string filename)
+        public void Parse()
         {
+            var name = GameManager.GameName;
             Activity.Touch();
             Cover.Touch();
             Research.Touch();
@@ -224,14 +289,27 @@ namespace Hecatomb8
             settings.Converters.Add(new HecatombConverter());
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            string json = System.IO.File.ReadAllText(path + @"\saves\" + GameManager.GameName + ".json");
             JObject parsed;
-            using (StreamReader stream = File.OpenText(filename))
-            using (JsonTextReader reader = new JsonTextReader(stream))
+            using (FileStream zipToOpen = new FileStream(path + @"\saves\" + GameManager.GameName + ".zip", FileMode.Open))
             {
-                JsonSerializer serializer = JsonSerializer.Create(settings);
-                parsed = (JObject)serializer.Deserialize(reader)!;
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read))
+                {
+                    ZipArchiveEntry save = archive.GetEntry("save.json");
+                    using (var stream = new StreamReader(save.Open()))
+                    {
+                        using (JsonTextReader reader = new JsonTextReader(stream))
+                        {
+                            JsonSerializer serializer = JsonSerializer.Create(settings);
+                            parsed = (JObject)serializer.Deserialize(reader)!;
+                        }
+                    }
+                }
             }
+            //ZipFile.ExtractToDirectory(path + @"\saves\" + name + ".zip", path + @"\saves\" + name);       
+            //JObject parsed;
+            //using (StreamReader stream = File.OpenText(path + @"\saves\" + name + @"\save.json"))
+            
+            //Directory.Delete(path + @"\saves\" + name, true);
             // *** Random Seed ***
             Random = parsed["random"]!.ToObject<StatefulRandom>()!;
             Random.Reinitialize();

@@ -199,7 +199,7 @@ namespace Hecatomb8
             f.Structure = Structure.UnboxBriefly()!.GetHandle<Structure>(f.OnDespawn);
             Harvestable h = Spawn<Harvestable>();
             h.Yields = new JsonArrayDictionary<Resource, float>(Harvests);
-            h.AddToEntity(f);
+            f.AddComponent(h);
             bool finished = true;
             foreach (int? eid in s.Features)
             {

@@ -15,7 +15,7 @@ namespace Hecatomb8
         {
         }
 
-        public void AddToEntity(ComposedEntity t)
+        public void _addToEntity(ComposedEntity t)
         {
             Entity = t.GetHandle<ComposedEntity>(OnDespawn);
         }

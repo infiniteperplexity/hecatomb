@@ -145,3 +145,7 @@ Oh wow...what a weird case...so...there are two ways we can handle this.  either
 - I'm briefly invisible right after splash controls for some reason
 - zombie dealt damage to nameless
 - need to do wounded/damaged for creatures/features
+
+5/7/2020
+- So...we can speed up long-distance successes by decreasing "vagueDistance"...but that solves only half the problem.
+- The other problem is CanReachBounded.  Now, one decent approach here would be to do the same thing...start genuinely searching only when you're close.

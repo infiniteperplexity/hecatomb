@@ -63,6 +63,11 @@ namespace Hecatomb8
                         d1.Wounds -= siphon;
                         d2.Wounds += (int)Math.Ceiling(((double)siphon) / 2.0);
                     }
+                    if (cr is Zombie)
+                    {
+                        var zombie = (Zombie)cr;
+                        zombie.Decay = Math.Min(zombie.MaxDecay, zombie.Decay + 500);
+                    }
                     //else if (decay != null)
                     //{
                     //    // I think let's hold off on this for now
@@ -86,7 +91,7 @@ namespace Hecatomb8
 
                     if (d2.Wounds > 0)
                     {
-                        //cr.GetComponent<Actor>().Provoke(Caster);
+                        cr.GetComponent<Actor>().ProvokeAgainst(Caster);
                         int heal = Math.Min(d2.Wounds, 20 - d1.Wounds);
                         d1.Wounds += heal;
                         d2.Wounds -= heal;

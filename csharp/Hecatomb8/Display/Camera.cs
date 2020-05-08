@@ -30,12 +30,13 @@ namespace Hecatomb8
 
 		public void CenterOnSelection()
 		{
-			//if (ControlContext.Selection != null && ControlContext.Selection.Placed)
-			//{
-			//	var (x, y, z) = ControlContext.Selection;
-			//	Game.Camera.Center(x, y, z);
-			//	ControlContext.Cursor.Place(x, y, z);
-			//}
+			var selected = InterfaceState.Controls.SelectedEntity;
+			if (selected != null && selected!.Placed)
+			{
+				var (x, y, z) = selected!.GetPlacedCoordinate();
+				InterfaceState.Camera!.Center(x, y, z);
+				InterfaceState.Cursor = new Coord(x, y, z);
+			}
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace Hecatomb8
         public static void LeaveCorpse(Creature cr, string? cause)
         {
             var (x, y, z) = cr.GetPlacedCoordinate();
-            Corpse.SpawnNewCorpse(cr.Species).PlaceInValidEmptyTile(x, y, z);
+            Corpse.SpawnNewCorpse(cr.Species).DropOnValidTile(x, y, z);
         }
 
         public static void NoCorpse(Creature cr, string? cause)
@@ -30,11 +30,11 @@ namespace Hecatomb8
             var (x, y, z) = cr.GetPlacedCoordinate();
             if (GameState.World!.Random.Next(2) == 0)
             {
-                Item.SpawnNewResource(Resource.Bone, 1).PlaceInValidEmptyTile(x, y, z);
+                Item.SpawnNewResource(Resource.Bone, 1).DropOnValidTile(x, y, z);
             }
             else
             {
-                Item.SpawnNewResource(Resource.Flesh, 1).PlaceInValidEmptyTile(x, y, z);
+                Item.SpawnNewResource(Resource.Flesh, 1).DropOnValidTile(x, y, z);
             }
         }
 

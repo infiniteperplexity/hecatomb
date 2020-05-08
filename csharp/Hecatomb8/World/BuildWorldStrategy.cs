@@ -332,7 +332,7 @@ namespace Hecatomb8
                             if (x0 > 2 && y0 > 2 && x0 < world.Width - 3 && y0 < world.Width - 3)
                             {
                                 // don't put mausoleums close to the center
-                                if (Tiles.Distance(x0, y0, 0, world.Width / 2, world.Height / 2, 0) < 25)
+                                if (Tiles.Distance(x0, y0, 0, world.Width / 2, world.Height / 2, 0) < 30)
                                 {
                                     break;
                                 }

@@ -242,7 +242,7 @@ namespace Hecatomb8
             }
         }
 
-        public void WalkToward(int x1, int y1, int z1, bool useLast = false, TileEntity? targetEntity = null, int vagueDistance = 50)
+        public void WalkToward(int x1, int y1, int z1, bool useLast = false, TileEntity? targetEntity = null, int vagueDistance = 25)
         {
             if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
@@ -563,6 +563,7 @@ namespace Hecatomb8
 
         public static void _seek(Actor a, Creature cr)
         {
+            //
             
             // this was a discrete chunk of logic that acquires targets
             var target = a.Target?.UnboxBriefly();
@@ -571,7 +572,8 @@ namespace Hecatomb8
                 ComposedEntity crt = (ComposedEntity)target;
                 Movement m = cr.GetComponent<Movement>();
                 Attacker attacker = cr.GetComponent<Attacker>();
-                if (!m.CanReachBounded(crt, useLast: false))
+                var distance = Tiles.Distance(cr, target);
+                if (distance < 25 && !m.CanReachBounded(crt, useLast: false))
                 {
                     a.Target = null;
                 }

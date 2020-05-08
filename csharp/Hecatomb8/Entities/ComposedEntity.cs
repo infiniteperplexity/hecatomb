@@ -113,7 +113,7 @@ namespace Hecatomb8
                 _components = new Dictionary<string, int>();
             }
             _components[c.GetType().Name] = (int)c.EID!;
-            c.AddToEntity(this);
+            c._addToEntity(this);
         }
 
         protected override string? getBG()

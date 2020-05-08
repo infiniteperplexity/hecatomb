@@ -69,7 +69,7 @@ namespace Hecatomb8
 
         public FurnishTask() : base()
         {
-            _name = "build or repair a fixture";
+            _name = "furnish or repair a fixture";
             Priority = 4;
             Fixtures = new Type[] {
                 typeof(Door),

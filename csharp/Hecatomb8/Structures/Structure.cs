@@ -79,46 +79,48 @@ namespace Hecatomb8
 
         public static List<Type> ListStructureTypes()
         {
-            List<Entity> list = Entities.Values.Where(((Entity e) =>
-            {
-                if (!(e is Structure))
-                {
-                    return false;
-                }
-                else
-                {
-                    var se = (Structure)e;
-                    if (se.Placed)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-            })).ToList();
+            //List<Entity> list = Entities.Values.Where(((Entity e) =>
+            //{
+            //    if (!(e is Structure))
+            //    {
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        var se = (Structure)e;
+            //        if (se.Placed)
+            //        {
+            //            return true;
+            //        }
+            //        return false;
+            //    }
+            //})).ToList();
+            List<Structure> list = ListStructures();
             List<Type> s = list.Select(e => e.GetType()).ToList();
             return s;
         }
 
         public static List<Structure> ListStructures()
         {
-            List<Entity> list = Entities.Values.Where(((Entity e) =>
-            {
-                if (!(e is Structure))
-                {
-                    return false;
-                }
-                else
-                {
-                    var se = (Structure)e;
-                    if (se.Placed)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-            })).ToList();
-            List<Structure> s = list.Select(e => (Structure)e).ToList();
-            return s;
+            return GameState.World!.Structures.ToList();
+            //List<Entity> list = Entities.Values.Where(((Entity e) =>
+            //{
+            //    if (!(e is Structure))
+            //    {
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        var se = (Structure)e;
+            //        if (se.Placed)
+            //        {
+            //            return true;
+            //        }
+            //        return false;
+            //    }
+            //})).ToList();
+            //List<Structure> s = list.Select(e => (Structure)e).ToList();
+            //return s;
         }
 
         public Dictionary<Resource, int> GetIngredients()
@@ -195,6 +197,10 @@ namespace Hecatomb8
         public void TryToSpawnHaulTask(Item item)
         {
             if (!item.Placed || !item.Spawned)
+            {
+                return;
+            }
+            if (GetState<TaskHandler>().GetMinions().Count == 0)
             {
                 return;
             }
@@ -487,13 +493,13 @@ namespace Hecatomb8
                         }
                         else
                         {
-                            //Defender d = f.GetComponent<Defender>();
-                            //if (d.Wounds > 0)
-                            //{
-                            //    RepairTask rt = Entity.Spawn<RepairTask>();
-                            //    rt.Ingredients = Ingredients[i] ?? new Dictionary<string, int>();
-                            //    rt.Place(s.X, s.Y, s.Z);
-                            //}
+                            Defender d = f.GetComponent<Defender>();
+                            if (d.Wounds > 0)
+                            {
+                                RepairTask rt = Entity.Spawn<RepairTask>();
+                                rt.Ingredients = new JsonArrayDictionary<Resource, int>(Ingredients?[i] ?? new Dictionary<Resource, int>());
+                                rt.PlaceInValidEmptyTile(s.X, s.Y, s.Z);
+                            }
                         }
                     }
                 }
@@ -587,8 +593,15 @@ namespace Hecatomb8
             base.PlaceInValidEmptyTile(x, y, z);
             if (Spawned)
             {
+                GameState.World!.Structures.Add(this);
                 Publish(new AfterPlaceEvent() { Entity = this, X = x, Y = y, Z = z });
             }
+        }
+
+        public override void Remove()
+        {
+            GameState.World!.Structures.Remove(this);
+            base.Remove();
         }
     }
 }
