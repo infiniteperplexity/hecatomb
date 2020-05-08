@@ -77,8 +77,8 @@ namespace Hecatomb8
                     return;
                 }
                 Movement m = cr.GetComponent<Movement>();
-                
-                if (m.CanReachBounded(Player))
+                // avoid pathfinding if the distance is long; just head generally there
+                if (Tiles.Distance(cr, Player) > 30 || m.CanReachBounded(Player))
                 {
                     actor.Target = Player.GetHandle<TileEntity>(actor.OnDespawn);
                 }

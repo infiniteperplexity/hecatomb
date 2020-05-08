@@ -15,6 +15,7 @@ namespace Hecatomb8
 		[JsonIgnore] public readonly bool Fallable;
 		[JsonIgnore] public readonly bool Mutable;
 		[JsonIgnore] public readonly int ZView;
+		[JsonIgnore] public readonly bool Floor;
 		[JsonIgnore] public readonly int Slope;
 
 
@@ -29,7 +30,7 @@ namespace Hecatomb8
 			bool solid = false,
 			bool fallable = false,
 			bool mutable = true,
-			int zview = 0,
+			bool floor = true,
 			int slope = 0
 		) : base(type)
 		{
@@ -41,7 +42,7 @@ namespace Hecatomb8
 			Solid = solid;
 			Fallable = fallable;
 			Mutable = mutable;
-			ZView = zview;
+			Floor = floor;
 			Slope = slope;
 		}
 
@@ -62,7 +63,7 @@ namespace Hecatomb8
 			fg: "BELOWFG",
 			bg: "BELOWBG",
 			fallable: true,
-			zview: -1
+			floor: false
 		);
 
 		// A FloorTile should always have a wall or void tile underneath
@@ -91,7 +92,6 @@ namespace Hecatomb8
 			symbol: '^',
 			fg: "FLOORFG",
 			bg: "FLOORBG",
-			zview: +1,
 			slope: +1
 		);
 
@@ -102,7 +102,7 @@ namespace Hecatomb8
 			symbol: '\u02C7',
 			fg: "BELOWFG",
 			bg: "BELOWBG",
-			zview: -1,
+			floor: false,
 			slope: -1
 		);
 
@@ -113,7 +113,6 @@ namespace Hecatomb8
 			symbol: ' ',
 			fg: "black",
 			bg: "black",
-			zview: 0,
 			slope: 0,
 			mutable: false
 		);

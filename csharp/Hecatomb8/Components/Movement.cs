@@ -441,11 +441,11 @@ namespace Hecatomb8
                     return true;
                 }
             }
-            else if (dz == +1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x1, y1, z1).ZView == -1)
+            else if (dz == +1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x1, y1, z1).Floor == false)
             {
                 return true;
             }
-            else if (dz == -1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x0, y0, z0).ZView == -1)
+            else if (dz == -1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x0, y0, z0).Floor == false)
             {
                 return true;
             }

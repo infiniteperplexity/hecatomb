@@ -446,8 +446,15 @@ namespace Hecatomb8
                 }
                 x += world.Random.Next(-5, 5);
                 y += world.Random.Next(-5, 5);
+                if (x <= 0 || x >= world.Width - 1 || y <= 0 || y >= world.Height - 1)
+                {
+                    x = world.Width / 2;
+                    y = world.Height / 2;
+                    continue;
+                }
                 z = world.GetBoundedGroundLevel(x, y);
                 valid = true;
+                
                 if (Covers.GetWithBoundsChecked(x, y, z).Liquid)
                 {
                     valid = false;

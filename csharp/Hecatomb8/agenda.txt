@@ -149,3 +149,16 @@ Oh wow...what a weird case...so...there are two ways we can handle this.  either
 5/7/2020
 - So...we can speed up long-distance successes by decreasing "vagueDistance"...but that solves only half the problem.
 - The other problem is CanReachBounded.  Now, one decent approach here would be to do the same thing...start genuinely searching only when you're close.
+- We've got a weird visual thing where an upslope with a floor above it can be seen through.  So...maybe we should only
+every care if certain tiles can look down? e.g. have transparent floors?  yeah, that makes sense.  "Floored" maybe?  Although
+there's a slight quirk to this...I don't think we show potential flyers by default from z one below.  But...probably we should, eh?
+In which case "floor" makes perfect sense.
+
+5/8/2020
+- Can I build a ramp from diagonally above?
+- Is bronzeworks the same as bronze tools?
+- Is tin rarer than copper?
+- Do bandits come a little too often?
+- We need to bail better for failed searches.
+- Let's give a really good write-up of the Pathfinding logic.
+    - Cached Misses are handled in the variations that use entities.

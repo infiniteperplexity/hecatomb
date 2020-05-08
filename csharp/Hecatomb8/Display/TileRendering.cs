@@ -376,7 +376,7 @@ namespace Hecatomb8
             {
                 return cva.BG;
             }
-            else if (terrain.ZView == -1)
+            else if (terrain.Floor == false)
             {
                 if (cvb.Liquid)
                 {
@@ -389,7 +389,7 @@ namespace Hecatomb8
                 else
                 {
                     Cover cb2 = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 2);
-                    if (tb.ZView == -1 && cb2.Liquid)
+                    if (tb.Floor == false && cb2.Liquid)
                     {
                         return cb2.DarkBG;
                     }

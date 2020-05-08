@@ -27,11 +27,11 @@ namespace Hecatomb8
             ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting((int)x!, (int)y!, Range, cannotSeeThrough, addToVisible);
             foreach (Coord c in Visible.ToList())
             {
-                if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z + 1).ZView == -1)
+                if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z + 1).Floor == false)
                 {
                     Visible.Add(new Coord(c.X, c.Y, c.Z + 1));
                 }
-                if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z).ZView == -1)
+                if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z).Floor == false)
                 {
                     Visible.Add(new Coord(c.X, c.Y, c.Z - 1));
                 }
@@ -125,11 +125,11 @@ namespace Hecatomb8
             {
                 storedCoord = new Coord(x, y, z);
             }
-            else if (Terrains.GetWithBoundsChecked(x, y, z + 1).ZView == -1 && storedCallback(x, y, z + 1))
+            else if (Terrains.GetWithBoundsChecked(x, y, z + 1).Floor == false && storedCallback(x, y, z + 1))
             {
                 storedCoord = new Coord(x, y, z + 1);
             }
-            else if (Terrains.GetWithBoundsChecked(x, y, z).ZView == -1 && storedCallback(x, y, z - 1))
+            else if (Terrains.GetWithBoundsChecked(x, y, z).Floor == false && storedCallback(x, y, z - 1))
             {
                 storedCoord = new Coord(x, y, z - 1);
             }

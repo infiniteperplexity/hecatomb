@@ -85,7 +85,7 @@ namespace Hecatomb8
             int elev = Depth - 1;
             for (int i = Depth - 1; i > 0; i--)
             {
-                if (Terrains.GetWithBoundsChecked(x, y, i) == Terrain.FloorTile || Terrains.GetWithBoundsChecked(x, y, i) == Terrain.UpSlopeTile)
+                if (Terrains.GetWithBoundsChecked(x, y, i).Floor)
                 {
                     return i;
                 }
@@ -119,7 +119,7 @@ namespace Hecatomb8
                                 Outdoors[x + dx, y + dy, z] = 1;
                             }
                         }
-                        if (Terrains.GetWithBoundsChecked(x, y, z).ZView != -1)
+                        if (Terrains.GetWithBoundsChecked(x, y, z).Floor)
                         {
                             //Debug.WriteLine("breaking off at " + z);
                             //Debug.WriteLine(Outdoors[x, y, z]);

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
+using Priority_Queue;
 
 namespace Hecatomb8
 {
@@ -9,22 +10,22 @@ namespace Hecatomb8
     // Tiles is a grouping of convenience, for static methods involving grid geometry
     public static partial class Tiles
     {
-        public static double Distance(int x0, int y0, int z0, int x1, int y1, int z1)
+        public static float Distance(int x0, int y0, int z0, int x1, int y1, int z1)
         {
-            return Math.Sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1) + (z0 - z1) * (z0 - z1));
+            return (float)Math.Sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1) + (z0 - z1) * (z0 - z1));
         }
 
-        public static double Distance(TileEntity t, int x1, int y1, int z1)
+        public static float Distance(TileEntity t, int x1, int y1, int z1)
         {
             return Distance((int)t.X!, (int)t.Y!, (int)t.Z!, x1, y1, z1);
         }
 
-        public static double Distance(int x0, int y0, int z0, TileEntity t)
+        public static float Distance(int x0, int y0, int z0, TileEntity t)
         {
             return Distance(x0, y0, z0, (int)t.X!, (int)t.Y!, (int)t.Z!);
         }
 
-        public static double Distance(TileEntity t0, TileEntity t1)
+        public static float Distance(TileEntity t0, TileEntity t1)
         {
             return Distance((int)t0.X!, (int)t0.Y!, (int)t0.Z!, (int)t1.X!, (int)t1.Y!, (int)t1.Z!);
         }
@@ -207,7 +208,7 @@ namespace Hecatomb8
                 {
                     misses[(int)entity.EID!] = new Dictionary<int, int>();
                 }
-                misses[(int)entity.EID!][(int)t.EID!] = cacheMissesFor;
+                misses[(int)entity.EID!][(int)t.EID!] = GameState.World!.Random.Perturb(cacheMissesFor);
             }
             // I don't recall if I ever used cached hits...but it's not nearly as important as cacheing misses
             //else if (useCache && path.Count > 0 && cacheHitsFor > 0 && Tiles.QuickDistance(m.Entity, t) > cacheHitDistance)
@@ -267,12 +268,12 @@ namespace Hecatomb8
             int x0, int y0, int z0, int x1, int y1, int z1,
             bool useFirst = false,
             bool useLast = true,
-            Func<int, int, int, int, int, int, double>? heuristic = null,
+            Func<int, int, int, int, int, int, float>? heuristic = null,
             Func<int, int, int, int, int, int, bool>? condition = null,
             Func<int, int, int, int, int, int, bool>? movable = null,
             Func<int, int, int, int, int, int, float>? cost = null,
             Func<int, int, int, bool>? standable = null,
-            int maxTries = 25000,
+            int maxTries = 5000,
             TileEntity? fromEntity = null,
             TileEntity? toEntity = null
         )
@@ -287,11 +288,9 @@ namespace Hecatomb8
             movable = movable ?? defaultMovable;
             standable = standable ?? defaultStandable;
             cost = cost ?? uniformCost;
-            // !should check enclosed right up front
-            // should this be dirs10 or dirs26?
-            //Coord[] dirs = Movement.Directions10.OrderBy((Coord c)=>Game.World.Random.NextDouble()).ToArray();
+            // should this be dirs10 or dirs26? order probably doesn't matter
+            Coord[] dirs = Coord.Directions10;
             // this always gets the same result doofus
-            Coord[] dirs = Coord.Directions10.OrderBy((Coord c) => r.Arbitrary(c.OwnSeed() + seedEID)).ToArray();
             //Coord current = new Coord(x0, y0, z0);
             int current = Coord.Numberize(x0, y0, z0);
             // cost for the best known path to each cell
@@ -303,8 +302,9 @@ namespace Hecatomb8
             // trace for the best known path to each cell
             Dictionary<int, int> retrace = new Dictionary<int, int>();
             // queue sorted by fscore of coordinates that need checking
-            LinkedList<int> queue = new LinkedList<int>();
-            queue.AddFirst(current);
+            SimplePriorityQueue<int> queue = new SimplePriorityQueue<int>();
+            float initial = heuristic(x0, y0, z0, x1, y1, z1);
+            queue.Enqueue(current, initial);
             // next coordinate to check
             float newScore, stepCost, fscore;
             bool success = false;
@@ -343,8 +343,7 @@ namespace Hecatomb8
                     }
                     return new LinkedList<Coord>();
                 }
-                current = queue.First!.Value;
-                queue.RemoveFirst();
+                current = queue.Dequeue();
                 // ***** if we found the goal, retrace our steps ****
                 var (X, Y, Z) = new Coord(current);
                 if (condition(X, Y, Z, x1, y1, z1))
@@ -375,11 +374,9 @@ namespace Hecatomb8
                 }
                 // ***************************************************
                 int neighbor;
-                LinkedListNode<int>? node;
                 // ***** check passability and scores for neighbors **
                 foreach (Coord dir in dirs)
                 {
-
                     int Xn = X + dir.X;
                     int Yn = Y + dir.Y;
                     int Zn = Z + dir.Z;
@@ -389,12 +386,12 @@ namespace Hecatomb8
 
                     if (!closedSet.Contains(neighbor))
                     {
-                        // !!!! I think there's a performance bottleneck here, specifically when getting the Movement component.
+                        // There was a note saying I thought there was a bottleneck getting the component here, but that's probably out of date since I don't get the component
                         if (movable(X, Y, Z, Xn, Yn, Zn))
                         {
                             // cost of taking this step
                             //stepCost = 1;
-                            // this seems to have absolutely no effect
+                            // I had a note that I was skeptical that this was working, but I think I remember it working
                             stepCost = cost(X, Y, Z, Xn, Yn, Zn);
                             // actual score along this path							
                             newScore = gscores[current] + stepCost;
@@ -402,35 +399,16 @@ namespace Hecatomb8
                             // !!! I've seen hints that this is a potential place for optimization
                             if (!gscores.ContainsKey(neighbor) || gscores[neighbor] > newScore)
                             {
-                                //fscore = newScore + (int) Math.Ceiling(heuristic(neighbor.X, neighbor.Y, neighbor.Z, x1, y1, z1));
-                                fscore = newScore + (int)Math.Ceiling(heuristic(Xn, Yn, Zn, x1, y1, z1));
+                                fscore = newScore + heuristic(Xn, Yn, Zn, x1, y1, z1);
+                                // this check should avoid expensive misses when the entities are close to each other
+                                if (fscore > 3 * initial)
+                                {
+                                    continue;
+                                }
+                                // what about when they are far away?
                                 fscores[neighbor] = fscore;
                                 // loop through the queue to insert in sorted order
-                                node = queue.First;
-
-                                // somehow in here it's possible to add the node without setting the gscore?
-                                if (node == null)
-                                {
-                                    queue.AddFirst(neighbor);
-                                }
-                                else while (node != null)
-                                    {
-                                        if (fscores[node.Value] > fscore)
-                                        {
-                                            queue.AddBefore(node, neighbor);
-                                            node = null;
-                                        }
-                                        else
-                                        {
-                                            node = node.Next;
-                                            // if we made it all the way to the end, insert it there
-                                            if (node == null)
-                                            {
-                                                queue.AddLast(neighbor);
-                                            }
-                                        }
-
-                                    }
+                                queue.Enqueue(neighbor, fscore);
                                 retrace[neighbor] = current;
                                 gscores[neighbor] = newScore;
                             }

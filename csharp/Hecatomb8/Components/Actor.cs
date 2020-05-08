@@ -223,7 +223,7 @@ namespace Hecatomb8
             return (Team == team);
         }
 
-        public void WalkToward(TileEntity t, bool useLast = false)
+        public void WalkToward(TileEntity t, bool useLast = false, int vagueDistance = 25)
         {
             if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed || !t.Placed)
             {
@@ -611,7 +611,7 @@ namespace Hecatomb8
             {
                 Movement m = cr.GetComponent<Movement>();
 
-                if (m.CanReachBounded(Player))
+                if (Tiles.Distance(cr, Player) > 30 || m.CanReachBounded(Player))
                 {
                     actor.Target = Player.GetHandle<TileEntity>(actor.OnDespawn);
                 }
