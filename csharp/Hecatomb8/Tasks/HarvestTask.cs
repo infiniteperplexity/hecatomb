@@ -3,38 +3,46 @@
  * User: Glenn Wright
  * Date: 10/8/2018
  * Time: 12:50 PM
- */
-using System;
+ */using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
     public class HarvestTask : Task
     {
         public HarvestTask() : base()
         {
-            MenuName = "dig or harvest";
-            BG = "orange";
+            _name = "dig or harvest";
+            _bg = "orange";
         }
 
-        public override string GetDisplayName()
+        protected override string getName()
         {
-            Feature f = Game.World.Features[X, Y, Z];
-            if (f?.TryComponent<Harvestable>() != null)
+            if (!Placed || !Spawned)
+            {
+                return _name!;
+            }
+            var (x, y, z) = GetPlacedCoordinate();
+            Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            if (f is null)
+            {
+                return _name!;
+            }
+            if (f.HasComponent<Harvestable>())
             {
                 return $"harvest {f.Name}";
             }
-            else if (f?.TypeName=="IncompleteFeature")
+            else if (f is IncompleteFixture)
             {
                 return $"remove {f.Name}";
             }
-            else if (f?.TryComponent<Fixture>()!=null)
+            else if (f.HasComponent<Fixture>())
             {
                 return $"remove {f.Name}";
             }
-            else if (f?.TryComponent<StructuralComponent>() != null)
+            else if (f is StructuralFeature)
             {
                 return $"remove {f.Name}";
             }
@@ -43,11 +51,12 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            if (!Explored.Contains(c) && !Options.Explored)
+            var (x, y, z) = c;
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
             {
                 return false;
             }
-            if (Features[c] == null)
+            if (Features.GetWithBoundsChecked(x, y, z) is null)
             {
                 return false;
             }
@@ -64,30 +73,32 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            Feature f = Game.World.Features[X, Y, Z];
-            Harvestable h = f.TryComponent<Harvestable>();
-            if (h!=null)
+            if (!Spawned || !Placed)
             {
-                
-
-                h.Harvest();
-                // there is some special handling for harvesting graves
-                if (f.TypeName=="Grave")
+                Despawn();
+            }
+            var (x, y, z) = GetPlacedCoordinate();
+            Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            if (f != null && f.HasComponent<Harvestable>())
+            {
+                f.GetComponent<Harvestable>().Harvest();
+                // it would be more graceful to do this with inheritance or event listeners
+                if (f is Grave)
                 {
                     // basically, if there's an explored tunnel underneath, it's more convenient if we don't dig a hole
-                    if (Game.World.Terrains[X, Y, Z - 1] == Terrain.WallTile || !Game.World.Explored.Contains(new Coord(X, Y, Z)))
+                    if (Terrains.GetWithBoundsChecked(x, y, z - 1) == Terrain.WallTile || !Explored.Contains(new Coord(x, y, z)))
                     {
-                        Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
-                        Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
-                        Cover.ClearCover(X, Y, Z);
-                        Cover.ClearCover(X, Y, Z - 1);
-                        Game.World.ValidateOutdoors();
+                        Terrains.SetWithBoundsChecked(x, y, z, Terrain.DownSlopeTile);
+                        Terrains.SetWithBoundsChecked(x, y, z - 1, Terrain.UpSlopeTile);
+                        Cover.ClearGroundCover(x, y, z);
+                        Cover.Mine(x, y, z - 1);
+                        //Game.World.ValidateOutdoors();
                     }
                 }
             }
             else
             {
-                f.Remove();
+                f?.Destroy();
             }
             base.Finish();
         }

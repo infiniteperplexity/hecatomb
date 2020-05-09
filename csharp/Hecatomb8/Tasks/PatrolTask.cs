@@ -7,24 +7,25 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
+    using static HecatombAliases;
     class PatrolTask : Task
     {
         public PatrolTask() : base()
         {
-            MenuName = "patrol area";
-            PrereqStructures = new List<string>() { "GuardPost" };
-            BG = "#009999";
+            _name = "patrol area";
+            RequiresStructures = new List<Type>() { typeof(GuardPost) };
+            _bg = "#009999";
         }
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
             c.SelectedMenuCommand = "Jobs";
-            c.MenuSelectable = false;
-            ControlContext.Set(c);
+            c.InfoMiddle = new List<ColoredText>() { "{green}Patrol area."};
+            InterfaceState.SetControls(c);
         }
 
         public override void SelectTile(Coord c)
@@ -33,14 +34,32 @@ namespace Hecatomb
             base.SelectTile(c);
         }
 
+        public override void TileHover(Coord c)
+        {
+            var co = InterfaceState.Controls;
+            co.InfoMiddle.Clear();
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
+            {
+                co.InfoMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+            }
+            else if (ValidTile(c))
+            {
+                co.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Patrol area around {0} {1} {2}.", c.X, c.Y, c.Z) };
+            }
+        }
+
         public override bool ValidTile(Coord c)
         {
             return true;
         }
         public override void Act()
         {
-            Actor a = Worker.GetComponent<Actor>();
-            a.Patrol(X, Y, Z);
+            if (!Spawned || !Placed || Worker?.UnboxBriefly() is null)
+            {
+                return;
+            }
+            Actor a = Worker.UnboxBriefly()!.GetComponent<Actor>();
+            a.Patrol((int)X!, (int)Y!, (int)Z!);
         }
     }
 }

@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hecatomb8", "Hecatomb8.csproj", "{5FC2EB12-7E8A-43BD-9D4B-39822B5E00B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hecatomb8", "Hecatomb8.csproj", "{5FC2EB12-7E8A-43BD-9D4B-39822B5E00B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{03582FCE-99E8-46DA-BB64-A1EFC219799C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,9 +18,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5FC2EB12-7E8A-43BD-9D4B-39822B5E00B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -30,5 +32,11 @@ Global
 		{5FC2EB12-7E8A-43BD-9D4B-39822B5E00B6}.Release|x64.Build.0 = Release|Any CPU
 		{5FC2EB12-7E8A-43BD-9D4B-39822B5E00B6}.Release|x86.ActiveCfg = Release|Any CPU
 		{5FC2EB12-7E8A-43BD-9D4B-39822B5E00B6}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E879E56D-2D14-451E-A080-D8E021BD0BEB}
 	EndGlobalSection
 EndGlobal

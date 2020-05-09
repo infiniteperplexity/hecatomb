@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     public class Resource : FlyWeight<Resource>
     {
-        public string Name;
-        public char Symbol;
-        public string FG;
-        public string BG;
-        public string ListColor;
-        public int StackSize;
+        [JsonIgnore] public string Name;
+        [JsonIgnore] public char Symbol;
+        [JsonIgnore] public string FG;
+        [JsonIgnore] public string? BG;
+        [JsonIgnore] public string TextColor;
+        [JsonIgnore] public int StackSize;
 
         public Resource(
             string type = "",
@@ -22,8 +23,8 @@ namespace Hecatomb
             char symbol = ' ',
             string fg = "white",
             int stack = 5,
-            string bg = null,
-            string listColor = null
+            string? bg = null,
+            string? textColor = null
         ) : base(type)
         {
             Name = name;
@@ -31,68 +32,22 @@ namespace Hecatomb
             FG = fg;
             BG = bg;
             StackSize = stack;
-            ListColor = (listColor == null) ? fg : listColor;
+            TextColor = (textColor == null) ? fg : textColor;
         }
 
-        public static string GetListColor(string resource)
-        {
-            if (RandomPaletteHandler.FlowerDictionary.ContainsKey(resource))
-            {
-                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
-            }
-            return Types[resource].ListColor;
-        }
-        public static string GetResourceColor(string resource)
-        {
-            if (RandomPaletteHandler.FlowerDictionary.ContainsKey(resource))
-            {
-                return Game.World.GetState<RandomPaletteHandler>().GetFlowerColor(resource);
-            }
-            return Types[resource].FG;
-        }
 
-        public static string Format(ValueTuple<string, int> vt)
+        public static string Format((Resource, int) vt)
         {
-            var (s, i) = vt;
-            if (!Resource.Types.ContainsKey(s))
-            {
-                throw new InvalidOperationException($"No such resource type as {s}");
-            }
-            return (i + " " + Resource.Types[s].Name);
+            var (r, i) = vt;
+            return (i + " " + r.Name);
         }
-        public static string Format(ValueTuple<string, int>[] vts)
+        public static string Format(Dictionary<Resource, int> d)
         {
-            if (vts.Length==0)
+            if (d.Count == 0)
             {
                 return "";
             }
-            string s = Format(vts[0]);
-            for(int i=1; i<vts.Length; i++)
-            {
-                s += (", " + Format(vts[i]));
-            }
-            return s;
-        }
-        public static string Format(List<ValueTuple<string, int>> vts)
-        {
-            if (vts.Count==0)
-            {
-                return "";
-            }
-            string s = Format(vts[0]);
-            for (int i = 1; i < vts.Count; i++)
-            {
-                s += (", " + Format(vts[i]));
-            }
-            return s;
-        }
-        public static string Format(Dictionary<string, int> d)
-        {
-            if (d.Count==0)
-            {
-                return "";
-            }
-            List<string> list = d.Keys.ToList();
+            List<Resource> list = d.Keys.ToList();
             string s = Format((list[0], d[list[0]]));
             for (int i = 1; i < list.Count; i++)
             {
@@ -120,7 +75,7 @@ namespace Hecatomb
             name: "coal",
             symbol: '\u2022',
             fg: "#222222",
-            listColor: "#666666"
+            textColor: "#666666"
         );
 
         public static readonly Resource Wood = new Resource(
@@ -231,5 +186,77 @@ namespace Hecatomb
             symbol: '\u2022',
             fg: "#FF00FF"
         );
+
+
+        public static readonly Resource Undye = new Resource(
+            type: "Undye",
+            name: "undye"
+        );
+        public static readonly Resource BloodWort = new Resource(
+            type: "BloodWort",
+            name: "bloodwort",
+            fg: "BloodWort",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Hyacinth = new Resource(
+            type: "Hyacinth",
+            name: "hyacinth",
+            fg: "Hyacinth",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Nightshade = new Resource(
+            type: "Nightshade",
+            name: "nightshade",
+            fg: "Nightshade",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Asphodel = new Resource(
+            type: "Asphodel",
+            name: "asphodel",
+            fg: "Asphodel",
+            symbol: '\u2698'
+        );
+        public static readonly Resource Wolfsbane = new Resource(
+            type: "Wolfsbane",
+            name: "wolfsbane",
+            fg: "Wolfsbane",
+            symbol: '\u2698'
+        );
+        public static readonly Resource WitchHazel = new Resource(
+            type: "WitchHazel",
+            name: "witch hazel",
+            fg: "WitchHazel",
+            symbol: '\u2698'
+        );
+        public static readonly Resource SpiderLily = new Resource(
+            type: "SpiderLily",
+            name: "spider lily",
+            fg: "SpiderLily",
+            symbol: '\u2698'
+        );
+        public static readonly Resource GhostOrchid = new Resource(
+            type: "GhostOrchid",
+            name: "ghost orchid",
+            fg: "GhostOrchid",
+            symbol: '\u2698'
+        );
+        public static readonly Resource MorningGlory = new Resource(
+            type: "MorningGlory",
+            name: "morning glory",
+            fg: "MorningGlory",
+            symbol: '\u2698'
+        );
+        public static List<Resource> Flowers = new List<Resource>
+        {
+            BloodWort,
+            Hyacinth,
+            Nightshade,
+            Asphodel,
+            Wolfsbane,
+            WitchHazel,
+            SpiderLily,
+            GhostOrchid,
+            MorningGlory
+        };
     }
 }

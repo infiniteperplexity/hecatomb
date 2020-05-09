@@ -7,115 +7,143 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
     public class ResearchTask : Task
     {
-        public TileEntityField<Structure> Structure;
+        public ListenerHandledEntityHandle<Structure>? Structure;
+        public Research Researching;
 
         public ResearchTask() : base()
         {
+            _name = "research";
             Priority = 3;
-            BG = "magenta";
+            _bg = "magenta";
+            AddListener<TurnBeginEvent>(OnTurnBegin);
         }
-        public override string GetDisplayName()
+
+        public override GameEvent OnDespawn(GameEvent ge)
         {
-            return $"researching {Research.Types[Makes].Name}";
+            DespawnEvent de = (DespawnEvent)ge;
+            if (de.Entity! == Structure?.UnboxBriefly())
+            {
+                Despawn();
+            }
+            return base.OnDespawn(ge);
+        }
+
+        protected override string getName()
+        {
+            if (Researching is null)
+            {
+                return _name!;
+            }
+            return $"research {Researching.Name}";
         }
 
 
         public override void ChooseFromMenu()
         {
-            
-            
-            int x = Structure.X;
-            int y = Structure.Y;
-            int z = Structure.Z;
-            CommandLogger.LogCommand(command: "ResearchTask", x: x, y: y, z: z, makes: Makes);
-            Research research = Hecatomb.Research.Types[Makes];
-            // could I forceably spawn this rather than just copying it?
+            if (Structure?.UnboxBriefly() is null || !Structure.UnboxBriefly()!.Placed)
+            {
+                return;
+            }
+            var (x, y, z) = Structure.UnboxBriefly()!.GetPlacedCoordinate();
+            if (Tasks.GetWithBoundsChecked(x, y, z) != null)
+            {
+                return;
+            }
+            CommandLogger.LogCommand(command: "ResearchTask", x: x, y: y, z: z, makes: Researching!.Name);
+            //Research research = Hecatomb.Research.Types[Makes];
             ResearchTask rt = Entity.Spawn<ResearchTask>();
             rt.Structure = Structure;
-            rt.Makes = Makes;
+            rt.Researching = Researching;
             rt.Labor = LaborCost;
             rt.LaborCost = LaborCost;
-            rt.Ingredients = new Dictionary<string, int>(Ingredients);
-            rt.Place(x, y, z);
-            if (!Game.ReconstructMode)
-            {
-                var c = new MenuChoiceControls(Structure.Unbox());
-                c.SelectedMenuCommand = "Jobs";
-                ControlContext.Set(c);
-            }
+            rt.Ingredients = new JsonArrayDictionary<Resource, int>(Ingredients);
+            rt.PlaceInValidEmptyTile(x, y, z);
+            InterfaceState.DirtifyMainPanel();
+            InterfaceState.DirtifyTextPanels();
+            //if (!Game.ReconstructMode)
+            //{
+            //    var c = new MenuChoiceControls(Structure.Unbox());
+            //    c.SelectedMenuCommand = "Jobs";
+            //    ControlContext.Set(c);
+            //}
         }
 
         public override bool ValidTile(Coord c)
         {
-            if (Structure.Placed)
+            if (Structure?.UnboxBriefly() is null || !Structure.UnboxBriefly()!.Placed)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         public override bool CanAssign(Creature c)
         {
-            if (Labor<LaborCost)
+            if (Labor < LaborCost)
             {
                 return false;
-            }          
+            }
             return base.CanAssign(c);
         }
         public override void Work()
         {
-            Labor -= (1 + Options.WorkBonus);
+            Labor -= (1 + HecatombOptions.WorkBonus);
             Unassign();
-            Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);  
+            Subscribe<TurnBeginEvent>(this, OnTurnBegin);
         }
 
         public override void Cancel()
         {
-            Structure.Unbox().Researching = null;
+            if (Structure?.UnboxBriefly() != null)
+            {
+                Structure.UnboxBriefly()!.ResearchTask = null;
+            }
             base.Cancel();
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnBeginEvent t = (TurnBeginEvent)ge;
-            if (Labor>=LaborCost)
+            if (Labor < LaborCost)
             {
-                return ge;
-            }
-            Labor -= (1+Options.WorkBonus);
-            if (Labor<=0)
-            {
-                Finish();
+                Labor -= (1 + HecatombOptions.WorkBonus);
+                if (Labor <= 0)
+                {
+                    Finish();
+                }
             }
             return ge;
         }
         public override void Finish()
         {
-            var researched = Game.World.GetState<ResearchHandler>().Researched;
-            if (!researched.Contains(Makes))
+            var researched = GetState<ResearchHandler>().Researched;
+            if (!researched.Contains(Researching))
             {
-                researched.Add(Makes);
+                researched.Add(Researching);
             }
-            Game.InfoPanel.PushMessage("{magenta}Research on " + Research.Types[Makes].Name + " complete!");
-            if (Makes == "FlintTools")
+            PushMessage("{magenta}Research on " + Researching.Name + " complete!");
+            if (Researching == Research.FlintTools)
             {
-                Game.World.Events.Publish(new AchievementEvent() { Action = "ResearchFlintTools" });
+                Publish(new AchievementEvent() { Action = "ResearchFlintTools" });
             }
             Complete();
         }
 
-        public override string GetHoverName()
+        public override ColoredText DescribeWithIngredients(bool capitalized = false, bool checkAvailable = false)
         {
-            if (Ingredients.Count == 0 || Options.NoIngredients)
+            if (Ingredients.Count > 0)
             {
-                return Describe(article: false) + " (" + Labor + " turns)";
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable);
             }
-            return (Describe(article: false) + " ($: " + Resource.Format(Ingredients) + ")");
+            else
+            {
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable) + " (" + Labor + " turns.)";
+            }
         }
     }
 }

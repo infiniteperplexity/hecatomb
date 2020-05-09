@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     public class ColoredText
     {
@@ -26,11 +26,11 @@ namespace Hecatomb
         {
             Colors = new SortedList<int, string>();
             string txt = s;
-            Match m = null;
+            Match? m = null;
             while (true)
             {
                 //Random r = new Random();
-                //if (r.Next(1000)==0)
+                //if (r.Next(1000) == 0)
                 //{
                 //    throw new Exception("grab a stack trace");
                 //}

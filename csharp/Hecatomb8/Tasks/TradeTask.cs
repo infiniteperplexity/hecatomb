@@ -7,24 +7,35 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
     public class TradeTask : Task
     {
-        public TileEntityField<Structure> Structure;
-        public Dictionary<string, int> Trading;
+        public ListenerHandledEntityHandle<Structure>? Structure;
+        public Dictionary<Resource, int> Trading;
 
         public TradeTask() : base()
         {
             Priority = 3;
             Labor = 50;
             LaborCost = 50;
-            Trading = new Dictionary<string, int>();
-            BG = "#FFFF88";
+            Trading = new JsonArrayDictionary<Resource, int>();
+            _bg = "#FFFF88";
 
         }
-        public override string GetDisplayName()
+
+        public override GameEvent OnDespawn(GameEvent ge)
+        {
+            var de = (DespawnEvent)ge;
+            if (de.Entity == Structure?.UnboxBriefly())
+            {
+                Cancel();
+                Despawn();
+            }
+            return ge;
+        }
+        protected override string getName()
         {
             return $"trading for {Resource.Format(Trading) }";
         }
@@ -35,65 +46,82 @@ namespace Hecatomb
         }
 
 
-        private new ColoredText cachedMenuListing;
-        private int cachedTurn;
         public override ColoredText ListOnMenu()
         {
-            if (cachedMenuListing != null && cachedTurn == Game.World.Turns.Turn)
-            {
-                return cachedMenuListing;
-            }
             if (Ingredients.Count == 0)
             {
-                cachedMenuListing = $"Trade for {Resource.Format(Trading)}";
-                cachedTurn = Game.World.Turns.Turn;
-                return cachedMenuListing;
+                return $"Trade for {Resource.Format(Trading)}";
             }
             else
             {
                 bool available = false;
-                if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
+                if (CanFindResources(Ingredients))
                 {
                     available = true;
                 }
-                cachedMenuListing = (((available) ? "{white}" : "{gray}") + Resource.Format(Trading) + " for " + " ($: " + Resource.Format(Ingredients) + ")");
-                cachedTurn = Game.World.Turns.Turn;
-                return cachedMenuListing;
+                return (((available) ? "{white}" : "{gray}") + Resource.Format(Trading) + " for " + " ($: " + Resource.Format(Ingredients) + ")");
             }
         }
 
         public override void ChooseFromMenu()
         {
-            int menuIndex = (Structure.Unbox() as BlackMarket).AvailableTrades.IndexOf(this);    
-            // wait is this actually a condition we want?
-            if (Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
+            Debug.WriteLine("trade 0");
+            if (Structure?.UnboxBriefly() is null || !Structure?.UnboxBriefly()!.Placed)
             {
-                int x = Structure.X;
-                int y = Structure.Y;
-                int z = Structure.Z;
-                CommandLogger.LogCommand(command: "TradeTask", x: x, y: y, z: z, n: menuIndex);
-                (Structure.Unbox() as BlackMarket).AvailableTrades.Remove(this);
-                // could I forceably spawn this rather than just copying it?
-                TradeTask t = Entity.Spawn<TradeTask>();
-                t.Structure = Structure;
-                t.Ingredients = new Dictionary<string, int>(Ingredients);
-                t.Trading = Trading;
-                t.Labor = Labor;
-                t.LaborCost = LaborCost;
-                t.Place(x, y, z);
+                return;
             }
-            if (!Game.ReconstructMode)
+            Debug.WriteLine("trade 1");
+            var market = (Structure.UnboxBriefly() as BlackMarket)!;
+            var menu = (InterfaceState.Controls as InfoDisplayControls);
+            if (menu is null)
             {
-                var c = new MenuChoiceControls(Structure.Unbox());
-                c.SelectedMenuCommand = "Jobs";
-                c.MenuSelectable = false;
-                ControlContext.Set(c);
+                return;
             }
+            // this...is a little crazy.  but it should work
+            int? index = null;
+            for (int i = 0; i < menu.Choices.Count; i++)
+            {
+                var choice = (menu.Choices[i] as TradeTask);
+                if (choice is null)
+                {
+                    return;
+                }
+                if (this == choice)
+                {
+                    index = i;
+                }
+            }
+            if (index is null)
+            {
+                return;
+            }
+            Debug.WriteLine("trade 2");
+            var (x, y, z) = market.GetPlacedCoordinate();
+            if (Tasks.GetWithBoundsChecked(x, y, z) != null)
+            {
+                return;
+            }
+            CommandLogger.LogCommand(command: "TradeTask", x: x, y: y, z: z, n: (int)index);
+            if (Tasks.GetWithBoundsChecked(x, y, z) is null)
+            {
+                market.AvailableTradeIndexes.RemoveAt((int)index);
+                Entity.Spawn(this);
+                PlaceInValidEmptyTile(x, y, z);
+            }
+            InterfaceState.DirtifyTextPanels();
+            Debug.WriteLine("trade 3");
+            //if (!Game.ReconstructMode)
+            //{
+            //    var c = new MenuChoiceControls(Structure.Unbox());
+            //    c.SelectedMenuCommand = "Jobs";
+            //    c.MenuCommandsSelectable = false;
+            //    ControlContext.Set(c);
+            //}
         }
 
         public override bool ValidTile(Coord c)
         {
-            if (Structure.Placed)
+            if (Structure?.UnboxBriefly() != null && Structure.UnboxBriefly()!.Placed)
             {
                 return true;
             }
@@ -102,7 +130,10 @@ namespace Hecatomb
 
         public override void Cancel()
         {
-            (Structure.Unbox() as BlackMarket).Trading = null;
+            if (Structure?.UnboxBriefly() != null)
+            {
+                (Structure.UnboxBriefly() as BlackMarket)!.Trading = null;
+            }
             base.Cancel();
         }
 
@@ -117,9 +148,9 @@ namespace Hecatomb
         }
         public override void Work()
         {
-            Labor -= (1 + Options.WorkBonus);
+            Labor -= (1 + HecatombOptions.WorkBonus);
             Unassign();
-            Game.World.Events.Subscribe<TurnBeginEvent>(this, OnTurnBegin);
+            Subscribe<TurnBeginEvent>(this, OnTurnBegin);
         }
 
         public GameEvent OnTurnBegin(GameEvent ge)
@@ -129,7 +160,7 @@ namespace Hecatomb
             {
                 return ge;
             }
-            Labor -= (1 + Options.WorkBonus);
+            Labor -= (1 + HecatombOptions.WorkBonus);
             if (Labor <= 0)
             {
                 Finish();
@@ -138,22 +169,30 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            foreach (string resource in Trading.Keys)
+            if (!Spawned || !Placed)
+            {
+                return;
+            }
+            foreach (Resource resource in Trading.Keys)
             {
                 int n = Trading[resource];
-                Item.PlaceNewResource(resource, n, X, Y, Z);
+                var item = Item.SpawnNewResource(resource, n);
+                item.DropOnValidTile((int)X!, (int)Y!, (int)Z!);
             }
-            Game.World.Events.Publish(new AchievementEvent() { Action = "FinishedTrade" });
+            Publish(new AchievementEvent() { Action = "FinishedTrade" });
             Complete();
         }
 
-        public override string GetHoverName()
+        public override ColoredText DescribeWithIngredients(bool capitalized = false, bool checkAvailable = false)
         {
-            if (Ingredients.Count == 0)
+            if (Ingredients.Count > 0)
             {
-                return Describe(article: false) + " (" + Labor + " turns)";
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable);
             }
-            return (Describe(article: false) + " ($: " + Resource.Format(Ingredients) + ")");
+            else
+            {
+                return base.DescribeWithIngredients(capitalized: capitalized, checkAvailable: checkAvailable) + " (" + Labor + " turns.)";
+            }
         }
     }
 }

@@ -1,46 +1,41 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/17/2018
- * Time: 12:40 PM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    public class ConstructTask : Task, IChoiceMenu, ISelectsBox
-	{
-		public int FeatureIndex;
-        public Dictionary<string, float> Harvests;
-		[JsonIgnore] public new int BoxWidth
-		{
-			get
-			{
-				return Mock().Width;
-			}
-			set {}
-		}
+    public class ConstructTask : Task, IDisplayInfo, ISelectsBox
+    {
+        public int FeatureIndex;
+        public JsonArrayDictionary<Resource, float> Harvests;
+        [JsonIgnore]
+        public new int BoxWidth
+        {
+            get
+            {
+                return Mock().Width;
+            }
+            set { }
+        }
 
         [JsonIgnore]
         public new int BoxHeight
-		{
-			get
-			{
-				return Mock().Height;
-			}
-			set {}
-		}
-        public TileEntityField<Structure> Structure;
-		public string[] Structures;
+        {
+            get
+            {
+                return Mock().Height;
+            }
+            set { }
+        }
+        public ListenerHandledEntityHandle<Structure> Structure;
+        public static Type[] Structures = new Type[] { typeof(Workshop)};
 
-        protected List<IMenuListable> cachedChoices;
-        public void BuildMenu(MenuChoiceControls menu)
+        [JsonIgnore] protected List<IMenuListable>? cachedChoices;
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             if (cachedChoices != null)
             {
@@ -48,67 +43,88 @@ namespace Hecatomb
                 return;
             }
             var list = new List<IMenuListable>();
-            var structures = Hecatomb.Structure.ListAsStrings();
-            var researched = Game.World.GetState<ResearchHandler>().Researched;
-            foreach (string st in Structures)
+            var structures = Hecatomb8.Structure.ListStructureTypes();
+            var researched = GetState<ResearchHandler>().Researched;
+            foreach (Type st in Structures)
             {
-                var structure = (Structure)Hecatomb.Entity.Mock(Type.GetType("Hecatomb." + st));
+                var structure = (Structure)Hecatomb8.Entity.Mock(st);
                 bool valid = true;
-                foreach (string s in structure.ResearchPrereqs)
+                foreach (Research r in structure.RequiresResearch)
                 {
-                    if (!Options.NoIngredients && !researched.Contains(s))
+                    if (!HecatombOptions.NoIngredients && !researched.Contains(r))
                     {
                         valid = false;
                     }
                 }
-                foreach (string s in structure.StructurePrereqs)
+                foreach (Type s in structure.RequiresStructures)
                 {
-                    if (!Options.NoIngredients && !structures.Contains(s))
+                    if (!HecatombOptions.NoIngredients && !structures.Contains(s))
                     {
                         valid = false;
                     }
                 }
                 if (valid)
                 {
-                    var task = Hecatomb.Entity.Mock<ConstructTask>();
+                    var task = Hecatomb8.Entity.Mock<ConstructTask>();
                     task.Makes = st;
-                    task.MenuName = structure.Describe(article: false);
-                    task.Ingredients = structure.GetIngredients();
+                    task.Ingredients = new JsonArrayDictionary<Resource, int>(structure.GetIngredients());
                     list.Add(task);
                 }
             }
-            //var repair = Hecatomb.Entity.Mock<RepairTask>();
-            //repair.MenuName = "repair or complete structure";
-            //list.Add(repair);
+            var repair = Entity.Mock<RepairTask>();
+            repair.Makes = typeof(Structure);
+            list.Add(repair);
             cachedChoices = list;
             menu.Choices = list;
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
 
         }
 
-        public ConstructTask(): base()
-		{
-            Structure = new TileEntityField<Structure>();
-			Structures = new string[]{"GuardPost", "Workshop","Stockpile","Slaughterhouse","Sanctum", "BlackMarket", "StoneMason", "Forge", "Chirurgeon", "Apothecary", "Library", "Treasury"};
-			MenuName = "construct or repair a structure";
-            Harvests = new Dictionary<string, float>();
+        public ConstructTask() : base()
+        {
+            Structures = new Type[] { 
+                typeof(GuardPost),
+                typeof(Workshop),
+                typeof(Stockpile),
+                typeof(Slaughterhouse),
+                typeof(Sanctum),
+                typeof(BlackMarket),
+                //typeof(StoneMason),
+                typeof(Forge),
+                typeof(Chirurgeon),
+                typeof(Apothecary),
+                typeof(Library),
+                typeof(Treasury)
+            };
+            _name = "construct or repair a structure";
+            Harvests = new JsonArrayDictionary<Resource, float>();
             Priority = 4;
             LaborCost = 5;
             Labor = 5;
-            BG = "yellow";
-		}
+            _bg = "yellow";
+        }
 
-        public override string GetDisplayName()
+        protected override string getName()
         {
-            return $"construct {Structure.Name}";
+            if (Makes is null)
+            {
+                return _name!;
+            }
+            Structure s = (Structure)Entity.Mock(Makes);
+            return $"construct {s.Name}";
         }
 
         private Structure Mock()
-		{
-			return (Structure) Hecatomb.Entity.Mock(Type.GetType("Hecatomb."+Makes));
-		}
+        {   
+            // we pretty much have to assume this isn't null; I can't think of any fallback
+            if (Makes is null)
+            {
+                return (Structure)Hecatomb8.Entity.Mock(typeof(Workshop));
+            }
+            return (Structure)Hecatomb8.Entity.Mock(Makes!);
+        }
 
         public override bool CanAssign(Creature c)
         {
@@ -131,125 +147,143 @@ namespace Hecatomb
         }
 
         public override void Start()
-		{
-			base.Start();
-            Feature f = Game.World.Features[X, Y, Z];
-			f.FG = Structure.Entity.FGs[FeatureIndex];
-            f.Name = "incomplete " + Structure.Name;
-            f.GetComponent<IncompleteFixtureComponent>().Structure = Structure;
+        {
+            base.Start();
+            if (!Placed || !Spawned | Structure?.UnboxBriefly() is null)
+            {
+                return;
+            }
+            Feature? f = Features.GetWithBoundsChecked((int)X!, (int)Y!, (int)Z!);
+            if (f is IncompleteFixture)
+            {
+                var ifx = (IncompleteFixture)f;
+                ifx.IncompleteFG = Structure!.UnboxBriefly()!.FGs[FeatureIndex];
+                ifx.Makes = Makes;
+                // pass it a fake handler...hmmm...what would happen if part of the completed structure got destroyed before all of it was built?
+                ifx.Structure = this.Structure.UnboxBriefly()!.GetHandle<Structure>(ifx.OnDespawn);
+            }
         }
-		public override void Finish()
-		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
-            Structure s = Structure.Entity;
-            if (s.Features.Count==0)
+        public override void Finish()
+        {
+            if (!Placed || !Spawned || Structure?.UnboxBriefly() is null)
+            {
+                return;
+            }
+            var (x, y, z) = GetPlacedCoordinate();
+            Publish(new TutorialEvent() { Action = "AnyBuildComplete" });
+            Structure s = Structure!.UnboxBriefly()!;
+            if (s.Features.Count == 0)
             {
                 for (int i = 0; i < s.Width * s.Height; i++)
                 {
                     s.Features.Add(null);
                 }
             }
-			Feature incomplete = Game.World.Features[X, Y, Z];
-            var x = incomplete.GetComponent<IncompleteFixtureComponent>();
-            incomplete.Despawn();
-			Feature f = Entity.Spawn<Feature>("StructureFeature");
-            f.Place(X, Y, Z);
-            Cover.ClearCover(X, Y, Z);
-            f.Symbol = s.Symbols[FeatureIndex];
-            f.Name = Structure.Name;
-			f.FG = s.FGs[FeatureIndex];
-            //f.BG = sc.BGs[FeatureIndex];
-            f.BG = s.BG;
-			s.Features[FeatureIndex] = f;
-            // this is weird, shouldn't they just be a default part of it?
-            StructuralComponent st = Spawn<StructuralComponent>();
-            st.Structure = Structure;
-            st.AddToEntity(f);
-            Harvestable h = Spawn<Harvestable>();
-            h.Yields = (Harvests != null) ? new Dictionary<string, float>(Harvests) : new Dictionary<string, float>();
-            h.AddToEntity(f);
-            bool finished = true;
-			foreach (Feature fr in s.Features)
-			{
-				if (fr==null)
-				{
-					finished = false;
-				}
-			}
-			if (finished)
-			{
-                Feature fr = s.Features[0];
-                if (s.Width==3 && s.Height==3)
-                {
-                    fr = Structure.Entity.Features[4];
-                }
-                else if (s.Width==4 && s.Height==4)
-                {
-                    fr = Structure.Entity.Features[5];
-                }
-				Structure.Entity.Place(fr.X, fr.Y, fr.Z);
-                //foreach (Feature feat in s.Features)
-                //{
-                 //   StructuralComponent st = Spawn<StructuralComponent>();
-                 //   st.Structure = Structure;
-                 //   st.AddToEntity(feat);
-                //}
-			}
-			base.Finish();
-		}
-		
-		public override void ChooseFromMenu()
-		{
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
-            if (Makes==null)
-			{
-                var menu = new MenuChoiceControls(this);
-                menu.Header = "Construct a structure:";
-                menu.MenuSelectable = false;
-                menu.SelectedMenuCommand = "Jobs";
-                ControlContext.Set(menu);
+            Feature? inf = Features.GetWithBoundsChecked(x, y, z);
+            var ifx = (inf as IncompleteFixture);
+            if (inf is null || ifx is null)
+            {
+                return;
             }
-			else
-			{
+            inf!.Despawn();
+            StructuralFeature f = Spawn<StructuralFeature>();
+            f.PlaceInValidEmptyTile(x, y, z);
+            Cover.ClearGroundCover(x, y, z);
+            f.StructuralSymbol = s.Symbols[FeatureIndex];
+            f.StructuralName = Structure.UnboxBriefly()!.Name;
+            f.StructuralFG = s.FGs[FeatureIndex];
+            //f.BG = sc.BGs[FeatureIndex];
+            f.StructuralBG = s.BG;
+            s.Features[FeatureIndex] = f.EID;
+            // this is weird, shouldn't they just be a default part of it?
+            f.Structure = Structure.UnboxBriefly()!.GetHandle<Structure>(f.OnDespawn);
+            Harvestable h = Spawn<Harvestable>();
+            h.Yields = new JsonArrayDictionary<Resource, float>(Harvests);
+            f.AddComponent(h);
+            bool finished = true;
+            foreach (int? eid in s.Features)
+            {
+                Feature? fr = GetEntity<Feature>(eid);
+                if (fr == null)
+                {
+                    finished = false;
+                }
+            }
+            if (finished)
+            {
+                Feature fr = GetEntity<Feature>(s.Features[0])!;
+                if (s.Width == 3 && s.Height == 3)
+                {
+                    fr = GetEntity<Feature>(Structure!.UnboxBriefly()!.Features[4])!;
+                }
+                else if (s.Width == 4 && s.Height == 4)
+                {
+                    fr = GetEntity<Feature>(Structure!.UnboxBriefly()!.Features[5])!;
+                }
+                Structure!.UnboxBriefly()!.PlaceInValidEmptyTile((int)fr.X!, (int)fr.Y!, (int)fr.Z!);
+            }
+            base.Finish();
+        }
+
+        public override void ChooseFromMenu()
+        {
+            Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            if (Makes == null)
+            {
+                var menu = new InfoDisplayControls(this);
+                menu.Header = "Construct a structure:";
+                menu.MenuCommandsSelectable = false;
+                menu.SelectedMenuCommand = "Jobs";
+                InterfaceState.SetControls(menu);
+            }
+            else
+            {
                 var c = new SelectBoxControls(this);
-                c.MenuSelectable = false;
+                c.Header = "Construct a structure:";
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
-                ControlContext.Set(c);
-			}
-		}
+                c.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {0}.", Mock().Name) };
+                InterfaceState.SetControls(c);
+            }
+        }
 
         public override void BoxHover(Coord c, List<Coord> squares)
         {
             base.BoxHover(c, squares);
-            var co = Game.Controls;
-            co.MenuMiddle.Clear();
-            co.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {0} in this area.", Mock().Name) };
+            var co = InterfaceState.Controls;
+            co.InfoMiddle.Clear();
+            co.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Build {0} in this area.", Mock().Name) };
         }
 
         public override void SelectBox(List<Coord> squares)
-		{
-            CommandLogger.LogCommand(command: "ConstructTask", squares: squares, makes: Makes);
+        {
+            CommandLogger.LogCommand(command: "ConstructTask", squares: squares, makes: Makes!.Name);
             foreach (Coord s in squares)
             {
-                Feature f = Game.World.Features[s.X, s.Y, s.Z];
-                Task t = Game.World.Tasks[s.X, s.Y, s.Z];
+                Feature? f = Features.GetWithBoundsChecked(s.X, s.Y, s.Z);
+                Task? t = Tasks.GetWithBoundsChecked(s.X, s.Y, s.Z);
                 if (t == null && f != null)
                 {
-                    if (f.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Makes == Makes)
+                    if (f is IncompleteFixture && (f as IncompleteFixture)!.Makes == Makes)
                     {
-                        Structure st = f.GetComponent<IncompleteFixtureComponent>().Structure;
+                        var ifx = (IncompleteFixture)f;
+                        if (ifx.Structure?.UnboxBriefly() is null)
+                        {
+                            return;
+                        }
+                        Structure st = ifx.Structure!.UnboxBriefly()!;
                         st.BuildInSquares(st.Squares);
                         return;
                     }
-                    else if (f.TryComponent<StructuralComponent>() != null)
+                    else if (f is StructuralFeature)
                     {
-                        Structure st = f.GetComponent<StructuralComponent>().Structure;
-                        if (st.GetType().Name == Makes && !st.Placed)
+                        Structure st = (f as StructuralFeature)!.Structure!.UnboxBriefly()!;
+                        if (st.GetType() == Makes && !st.Placed)
                         {
                             st.BuildInSquares(st.Squares);
                             return;
                         }
-                        if (st.Placed && st.GetType().Name == Makes)
+                        if (st.Placed && st.GetType() == Makes)
                         {
                             // call up repairs if need be
                             st.BuildInSquares(st.Squares);
@@ -262,9 +296,9 @@ namespace Hecatomb
                     return;
                 }
             }
-			Structure str = Spawn<Structure>(Type.GetType("Hecatomb."+Makes));
+            Structure str = Spawn<Structure>(Makes);
             str.BuildInSquares(squares);
-		}
-	}
+        }
+    }
 
 }

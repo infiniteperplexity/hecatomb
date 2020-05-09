@@ -6,56 +6,46 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
+    using static HecatombAliases;
     public class Harvestable : Component
     {
-        public Dictionary<string, float> Yields = new Dictionary<string, float>();
+        public JsonArrayDictionary<Resource, float> Yields = new JsonArrayDictionary<Resource, float>();
         public int Labor = 10;
 
         public void Harvest()
         {
-            var (x, y, z) = Entity;
-            Dictionary<string, int> resources = new Dictionary<string, int>();
-            foreach (string key in Yields.Keys)
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
-                int n = 0;
-                if (Yields[key] < 1)
+                return;
+            }
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
+            Dictionary<Resource, int> resources = new Dictionary<Resource, int>();
+            foreach (var key in Yields.Keys)
+            {
+                int n = (int)Yields[key];
+                float remainder = Yields[key] - n;
+                if (GameState.World!.Random.NextDouble()<remainder)
                 {
-                    if (Game.World.Random.Arbitrary(OwnSeed()) < Yields[key])
-                    //if (Game.World.Random.NextDouble() < Yields[key])
-                    {
-                        n = 1;
-                    }
+                    n += 1;
+                }
+                if (key == Resource.Gold)
+                {
+                    Publish(new AchievementEvent() { Action = "FoundGold" });
+                }
+                if (key == Resource.Corpse)
+                {
+                    var item = Corpse.SpawnNewCorpse();
+                    item.DropOnValidTile((int)x!, (int)y!, (int)z!);
                 }
                 else
                 {
-                    n = (int) Yields[key];
-                }
-                if (n > 0)
-                {
-                    if (key == "Gold")
-                    {
-                        Game.World.Events.Publish(new AchievementEvent() { Action = "FoundGold" });
-                    }
-                    if (key == "Corpse")
-                    {
-                        Item.SpawnCorpse().Place(Entity.X, Entity.Y, Entity.Z);
-                    }
-                    else
-                    {
-                        Item.PlaceNewResource(key, n, Entity.X, Entity.Y, Entity.Z);
-                    }
+                    var item = Item.SpawnNewResource(key, n);
+                    item.DropOnValidTile((int)x!, (int)y!, (int)z!);
                 }
             }
-            Entity.Unbox().Destroy();
-        }
-
-        public override void InterpretJSON(string json)
-        {
-            JObject obj = JObject.Parse(json);
-            var yield = obj["Yields"];
-            Yields = yield.ToObject<Dictionary<string, float>>();
+            Entity.UnboxBriefly()!.Destroy();
         }
     }
 }

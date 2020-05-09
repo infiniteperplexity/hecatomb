@@ -1,115 +1,83 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/5/2018
- * Time: 9:57 AM
- */
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Threading;
+using Microsoft.Xna.Framework.Content;
+using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-
     public class InterfacePanel
     {
-        public static List<List<InterfacePanel>> Panels = new List<List<InterfacePanel>>();
         public bool Dirty;
-        public bool Active;
-        // basic stuff
-        protected Texture2D BG;
+        protected SpriteBatch Sprites;
+        protected GraphicsDevice Graphics;
         public int X0;
         public int Y0;
-        public int Zindex;
+        public int CharWidth;
+        public int CharHeight;
         public int XPad;
         public int YPad;
+        protected Texture2D BG;
+        public int Zindex;
         public int PixelWidth;
         public int PixelHeight;
         // text stuff
         public SpriteFont Font;
-        public int CharWidth;
-        public int CharHeight;
         public int LeftMargin;
         public int TopMargin;
         public int RightMargin;
         public int BottomMargin;
-        // should we have a textbuffer by default?
+        public bool Active;
+        public List<(string text, Vector2 v, Color color)> DrawableLines;
 
-
-        public InterfacePanel(int x, int y, int w, int h)
+        public InterfacePanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y, int w, int h)
         {
-            Active = true;
             Dirty = true;
+            Font = c.Load<SpriteFont>("PTMono");
+            Graphics = g;
+            Sprites = sb;
             X0 = x;
             Y0 = y;
-            Zindex = 0;
             PixelWidth = w;
             PixelHeight = h;
-            Font = Game.MyContentManager.Load<SpriteFont>("PTMono");
             CharHeight = 16;
             CharWidth = 9;
-            XPad = 0;
-            YPad = 0;
-            RightMargin = 1;
-            LeftMargin = 1;
-            BG = new Texture2D(Game.Graphics.GraphicsDevice, w, h);
-            Color[] bgdata = new Color[w * h];
+            XPad = 3;
+            YPad = 3;
+            BG = new Texture2D(g, w, h);
+            Color[] bgdata = new Color[PixelWidth * PixelHeight];
             for (int i = 0; i < bgdata.Length; ++i)
             {
                 bgdata[i] = Color.White;
             }
             BG.SetData(bgdata);
+            DrawableLines = new List<(string, Vector2, Color)>();
+            Active = true;
         }
 
-        public static void AddPanel(InterfacePanel ip)
-        {
-            int z = ip.Zindex;           
-            while (Panels.Count < z + 1)
-            {
-                Panels.Add(new List<InterfacePanel>());
-            }
-            Panels[z].Add(ip);
-        }
-
-        public static void DrawPanels()
-        {
-            foreach (var list in Panels)
-            {
-                foreach (var panel in list)
-                {
-                    if (panel.Active)
-                  //      if (panel.Dirty && panel.Active)
-                    {
-                        panel.Draw();
-                        panel.Dirty = false;
-                    }
-                }
-            }
-        }
-
-        // draw a blank panel
         public virtual void Draw()
         {
-            var bg = new Texture2D(Game.Graphics.GraphicsDevice, PixelWidth - 2, PixelHeight - 2);
-            Color cbg = Color.DarkGray;
-            Color[] bgdata = new Color[(PixelWidth - 2) * (PixelHeight - 2)];
-            for (int i = 0; i < bgdata.Length; ++i)
+            Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
+            foreach (var line in DrawableLines)
             {
-                bgdata[i] = Color.White;
+                Sprites.DrawString(Font, line.text, line.v, line.color);
             }
-            bg.SetData(bgdata);
-            var vbg = new Vector2(X0 + 1, Y0 + 1);
-            Game.Sprites.Draw(bg, vbg, cbg);
         }
 
-
-        public void DrawLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
+        public virtual void Prepare()
         {
+
+        }
+        public virtual void PrepareLines(List<ColoredText> lines, int leftMargin = 0, int topMargin = 0)
+        {
+            if (!Dirty)
+            {
+                return;
+            }
+            DrawableLines.Clear();
             Vector2 v;
             // ouput column
             int x = 0;
@@ -123,8 +91,6 @@ namespace Hecatomb
             {
                 text = lines[i].Text;
                 colors = lines[i].Colors;
-                // advance by one line for every new line of input
-                //y++;
                 // return to left margin
                 x = 0;
                 // initialize to white
@@ -139,9 +105,8 @@ namespace Hecatomb
                         {
                             if (text.Substring(j + k, 1) != " ")
                             {
-                                // I have no idea if this spacing is even right
+                                // this spacing seems to generally work but I wouldn't be surprised if it doesn't always
                                 if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 13))
-                                //if (x >= (((leftMargin + PixelWidth - CharWidth * LeftMargin - CharWidth * RightMargin) / CharWidth) - 0 /* - 8 */))
                                 {
                                     j += k;
                                     x = 0;
@@ -154,85 +119,16 @@ namespace Hecatomb
                     {
                         fg = colors[j];
                     }
-                    if ((y+1) * CharHeight < PixelHeight)
+                    if ((y + 1) * CharHeight < PixelHeight)
                     {
                         v = new Vector2(leftMargin + X0 + CharWidth * LeftMargin + x * CharWidth, topMargin + TopMargin * CharHeight + Y0 + y * CharHeight);
-                        Game.Sprites.DrawString(Font, text.Substring(j, 1), v, Game.Colors[fg]);
+                        DrawableLines.Add((text.Substring(j, 1), v, InterfaceState.Colors![fg]));
                     }
                     x += 1;
                 }
                 y++;
             }
-            
-        }
-
-
-            public static InterfacePanel GetPanel(int x, int y)
-        {
-            for (int i = Panels.Count - 1; i >= 0; i--)
-            {
-                var list = Panels[i];
-                foreach (var panel in list)
-                {
-                    if (panel.Active && panel.X0 <= x && panel.Y0 <= y && panel.X0 + panel.PixelWidth > x && panel.Y0 + panel.PixelHeight > y)
-                    {
-                        return panel;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public static void DirtifySidePanels()
-        {
-            if (Panels.Count > 0)
-            {
-                Game.Controls?.RefreshContent();
-                foreach (var panel in Panels[0])
-                {
-                    if (!(panel is MainPanel))
-                    {
-                        panel.Dirty = true;
-                    }
-                }
-            }
-        }
-
-        public static void DirtifyUsualPanels()
-        {
-
-            if (Panels.Count > 0)
-            {
-                Game.Controls?.RefreshContent();
-                foreach (var panel in Panels[0])
-                {
-                    panel.Dirty = true;
-                }
-            }
-        }
-
-        public static void DirtifyMainPanel()
-        {
-            if (Panels.Count > 0)
-            {
-                foreach (var panel in Panels[0])
-                {
-                    if (panel is MainPanel)
-                    {
-                        panel.Dirty = true;
-                    }
-                }
-            }
+            Dirty = false;
         }
     }
-
-    
-
-    
-
-    
-
-    
-
-    
 }

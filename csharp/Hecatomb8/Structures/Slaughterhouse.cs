@@ -1,20 +1,13 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 10:24 AM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static HecatombAliases;
+    using static Resource;
     public class Slaughterhouse : Structure
-    {
+    {    
         public Slaughterhouse() : base()
         {
 
@@ -30,23 +23,22 @@ namespace Hecatomb
                 "#BB9922","FLOORFG", "FLOORFG",
                 "FLOORFG","FLOORFG","#BB9922"
             };
-            BG = "#444455";
+            _bg = "#444455";
             BGs = new string[]
             {
                 "#BB1100","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","#BB1100",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Flint", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
-                null, null, null,
-                new Dictionary<string, int>() {{"Coal", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
+                new Dictionary<Resource, int>() {{Flint, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>(){{Wood, 1}},
+                new Dictionary<Resource, int>(), new Dictionary<Resource, int>(), new Dictionary<Resource, int>(),
+                new Dictionary<Resource, int>(){{Coal, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Rock, 1}}
             };
-            MenuName = "slaughterhouse";
-            Name = "slaughterhouse";
+            _name = "slaughterhouse";
             UseHint = "(enables butcher task and stores flesh and bone.)";
-            Stores = new string[] { "Flesh", "Bone" };
+            StoresResources = new Resource[] { Flesh, Bone };
         }
     }
 }

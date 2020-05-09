@@ -8,38 +8,42 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Xna.Framework.Input;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    public abstract class Structure : TileEntity, IChoiceMenu
+    public abstract class Structure : TileEntity, IDisplayInfo
     {
-        public string MenuName;
-        public int Width;
-        public int Height;
-        public char[] Symbols;
-        public string[] FGs;
-        public string[] BGs;
-        // problem!
-        public List<TileEntityField<Feature>> Features;
-        public Dictionary<string, int>[] Ingredients;
-        public Dictionary<string, float>[] Harvests;
-        public string[] Researches;
-        public string[] ResearchPrereqs;
-        public string[] StructurePrereqs;
-        public string[] Stores;
+        [JsonIgnore] public string MockUpName;
+        [JsonIgnore] public int Width;
+        [JsonIgnore] public int Height;
+        [JsonIgnore] public char[] Symbols;
+        [JsonIgnore] public string[] FGs;
+        [JsonIgnore] public string[] BGs;
+        public List<int?> Features;
+        [JsonIgnore] public Dictionary<Resource, int>[]? Ingredients;
+        [JsonIgnore] public Dictionary<Resource, float>[]? Harvests;
+        [JsonIgnore] public Research[] Researches;
+        [JsonIgnore] public Research[] RequiresResearch;
+        [JsonIgnore] public Type[] RequiresStructures;
+        [JsonIgnore] public Resource[] StoresResources;
         public List<Coord> Squares;
-        public string UseHint;
+        [JsonIgnore] public string UseHint;
 
         [JsonIgnore]
-        public ResearchTask Researching
+        public ResearchTask? ResearchTask
         {
             get
             {
-                foreach (Feature f in Features)
+                foreach (int? eid in Features)
                 {
-                    var (x, y, z) = f;
-                    Task t = Game.World.Tasks[x, y, z];
+                    Feature? f = GetEntity<Feature>(eid);
+                    if (f is null)
+                    {
+                        continue;
+                    }
+                    var (x, y, z) = f.GetPlacedCoordinate() ;
+                    Task? t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t is ResearchTask)
                     {
                         return (ResearchTask)t;
@@ -56,15 +60,13 @@ namespace Hecatomb
         {
             Width = 3;
             Height = 3;
-            Features = new List<TileEntityField<Feature>>();
-            Ingredients = new Dictionary<string, int>[Width * Height];
-            Harvests = new Dictionary<string, float>[Width * Height];
+            Features = new List<int?>();
             AddListener<TurnBeginEvent>(OnTurnBegin);
             AddListener<DespawnEvent>(OnDespawn);
-            ResearchPrereqs = new string[0];
-            StructurePrereqs = new string[0];
-            Stores = new string[0];
-            Researches = new string[0];
+            RequiresResearch = new Research[0];
+            RequiresStructures = new Type[0];
+            StoresResources = new Resource[0];
+            Researches = new Research[0];
         }
 
         public void InitializeFeatures()
@@ -75,58 +77,60 @@ namespace Hecatomb
             }
         }
 
-        public static List<string> ListAsStrings()
+        public static List<Type> ListStructureTypes()
         {
-            List<Entity> list = Entities.Values.Where(((Entity e) =>
-            {
-                if (!(e is Structure))
-                {
-                    return false;
-                }
-                else
-                {
-                    var se = (Structure)e;
-                    if (se.Placed)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-            })).ToList();
-            List<string> s = list.Select(e => e.ClassName).ToList();
+            //List<Entity> list = Entities.Values.Where(((Entity e) =>
+            //{
+            //    if (!(e is Structure))
+            //    {
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        var se = (Structure)e;
+            //        if (se.Placed)
+            //        {
+            //            return true;
+            //        }
+            //        return false;
+            //    }
+            //})).ToList();
+            List<Structure> list = ListStructures();
+            List<Type> s = list.Select(e => e.GetType()).ToList();
             return s;
         }
 
         public static List<Structure> ListStructures()
         {
-            List<Entity> list = Entities.Values.Where(((Entity e) =>
-            {
-                if (!(e is Structure))
-                {
-                    return false;
-                }
-                else
-                {
-                    var se = (Structure)e;
-                    if (se.Placed)
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-            })).ToList();
-            List<Structure> s = list.Select(e => (Structure) e).ToList();
-            return s;
+            return GameState.World!.Structures.ToList();
+            //List<Entity> list = Entities.Values.Where(((Entity e) =>
+            //{
+            //    if (!(e is Structure))
+            //    {
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        var se = (Structure)e;
+            //        if (se.Placed)
+            //        {
+            //            return true;
+            //        }
+            //        return false;
+            //    }
+            //})).ToList();
+            //List<Structure> s = list.Select(e => (Structure)e).ToList();
+            //return s;
         }
 
-        public Dictionary<string, int> GetIngredients()
+        public Dictionary<Resource, int> GetIngredients()
         {
-            var ingredients = new Dictionary<string, int>();
-            foreach (var resources in Ingredients)
+            var ingredients = new Dictionary<Resource, int>();
+            foreach (var resources in Ingredients ?? new Dictionary<Resource, int>[0])
             {
                 if (resources != null)
                 {
-                    foreach (string resource in resources.Keys)
+                    foreach (Resource resource in resources.Keys)
                     {
                         if (!ingredients.ContainsKey(resource))
                         {
@@ -139,7 +143,7 @@ namespace Hecatomb
             return ingredients;
         }
 
-        
+
 
         public virtual GameEvent OnTurnBegin(GameEvent ge)
         {
@@ -147,37 +151,42 @@ namespace Hecatomb
             {
                 return ge;
             }
-            
-            if (Stores.Length > 0)
+
+            if (StoresResources.Length > 0)
             {
-                List<Item> items = Items.OrderBy((Item item) => (Tiles.QuickDistance(item.X, item.Y, item.Z, X, Y, Z))).ToList();
-                foreach (string resource in Stores)
+                List<Item> items = Items.OrderBy((Item item) => (Tiles.Distance((int)item.X!, (int)item.Y!, (int)item.Z!, (int)X!, (int)Y!, (int)Z!))).ToList();
+                foreach (Resource resource in StoresResources)
                 {
-                    // if there is no current haul task for that resource (fetch them one at a time)
-                    if (GetHaulTask(resource)==null)
-                    {
-                        // loop through available items in order of distance
-                        foreach (Item item in items)
+                    //if there is no current haul task for that resource (fetch them one at a time)
+                    if (GetHaulTask(resource) == null)
                         {
-                            if (item.Resource==resource && !item.IsStored() && item.Owned && item.Unclaimed>0 && !item.IsHauled())
+                            // loop through available items in order of distance
+                            foreach (Item item in items)
                             {
-                                TryToSpawnHaulTask(item);
-                                // go to next resource
-                                break;
+                                if (item.Resource == resource && !item.IsStored() && !item.Disowned && item.Unclaimed > 0 && !item.IsHauled())
+                                {
+                                    TryToSpawnHaulTask(item);
+                                    // go to next resource
+                                    break;
+                                }
                             }
                         }
-                    }
                 }
             }
             return ge;
         }
-        public HaulTask GetHaulTask(string resource)
+        public HaulTask? GetHaulTask(Resource resource)
         {
-            foreach (Feature f in Features)
+            foreach (int? eid in Features)
             {
-                var (x, y, z) = f;
-                HaulTask ht = Tasks[x, y, z] as HaulTask;
-                if (ht!=null && ht.Ingredients.ContainsKey(resource))
+                var f = GetEntity<Feature>(eid);
+                if (f is null)
+                {
+                    continue;
+                }
+                var (x, y, z) = f.GetPlacedCoordinate();
+                HaulTask? ht = Tasks.GetWithBoundsChecked(x, y, z) as HaulTask;
+                if (ht != null && ht.Ingredients.ContainsKey(resource))
                 {
                     return ht;
                 }
@@ -187,70 +196,89 @@ namespace Hecatomb
 
         public void TryToSpawnHaulTask(Item item)
         {
-            string resource = item.Resource;
+            if (!item.Placed || !item.Spawned)
+            {
+                return;
+            }
+            if (GetState<TaskHandler>().GetMinions().Count == 0)
+            {
+                return;
+            }
+            Resource resource = item.Resource!;
             List<int> order = new List<int>();
-            for (int i=0; i<Width*Height; i++)
+            for (int i = 0; i < Width * Height; i++)
             {
                 order.Add(i);
             }
-            order = order.OrderBy(s => Game.World.Random.Arbitrary(OwnSeed())).ToList();
-            //order = order.OrderBy(s => Game.World.Random.NextDouble()).ToList();
+            order = order.OrderBy(s => GameState.World!.Random.NextDouble()).ToList();
             // if there is an existing pile
             foreach (int i in order)
             {
-                Feature f = Features[i];
-                var (x, y, z) = f;
-                Item pile = Items[x, y, z];
-                Task task = Tasks[x, y, z]; //unlikely to be a haul task, should be some incidental task
-                if (pile != null && pile.Resource == resource && pile.Quantity < pile.StackSize && task == null)
+                Feature? f = GetEntity<Feature>(Features[i]);
+                if (f is null || !f.Spawned || !f.Placed)
+                {
+                    continue;
+                }
+                var (x, y, z) = f.GetPlacedCoordinate();
+                Item? pile = Items.GetWithBoundsChecked(x, y, z);
+                Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
+                if (pile != null && pile.Resource == resource && pile.N < pile.StackSize && task == null)
                 {
                     HaulTask ht = Entity.Spawn<HaulTask>();
-                    ht.Structure = this;
-                    ht.Place(x, y, z);
+                    ht.Structure = this.GetHandle<Structure>(ht.OnDespawn);
+                    ht.PlaceInValidEmptyTile(x, y, z);
                     // this logic seems correct
-                    int claim = Math.Min(item.Unclaimed, pile.StackSize-pile.Quantity);
+                    int claim = Math.Min(item.Unclaimed, pile.StackSize - pile.N);
                     ht.Ingredients[resource] = claim;
                     ht.Resource = resource;
-                    ht.Claims[item.EID] = claim;
+                    ht.Claims[(int)item.EID!] = claim;
                     // experimental code (the experiment is to set this to false)
-                    if (Options.HaulTaskClaims)
-                    {
-                        item.Claimed += claim;
-                    }
+                    //if (Options.HaulTaskClaims)
+                    //{
+                    //    item.Claimed += claim;
+                    //}
                     return;
                 }
             }
             // if there's no existing pile, repeat almost the same loop
             foreach (int i in order)
             {
-                Feature f = Features[i];
-                var (x, y, z) = f;
-                Item pile = Items[x, y, z];
-                Task task = Tasks[x, y, z]; //unlikely to be a haul task, should be some incidental task
+                Feature? f = GetEntity<Feature>(Features[i]);
+                if (f is null || !f.Placed)
+                {
+                    return;
+                }
+                var (x, y, z) = f.GetPlacedCoordinate();
+                Item? pile = Items.GetWithBoundsChecked(x, y, z);
+                Task? task = Tasks.GetWithBoundsChecked(x, y, z); //unlikely to be a haul task, should be some incidental task
                 if (pile == null && task == null)
                 {
                     HaulTask ht = Entity.Spawn<HaulTask>();
-                    ht.Structure = this;
-                    ht.Place(x, y, z);
+                    ht.Structure = this.GetHandle<Structure>(ht.OnDespawn);
+                    ht.PlaceInValidEmptyTile(x, y, z);
                     // this logic seems correct
                     int claim = item.Unclaimed; ;
                     ht.Ingredients[resource] = claim;
                     ht.Resource = resource;
-                    ht.Claims[item.EID] = claim;
-                    if (Options.HaulTaskClaims)
-                    {
-                        item.Claimed += claim;
-                    }
+                    ht.Claims[(int)item.EID!] = claim;
+                    //if (Options.HaulTaskClaims)
+                    //{
+                    //    item.Claimed += claim;
+                    //}
                     return;
                 }
             }
         }
 
-        public virtual void BuildMenu(MenuChoiceControls menu)
-        {         
-            ControlContext.Selection = this;
+        public virtual void BuildInfoDisplay(InfoDisplayControls menu)
+        {
+            if (!Placed || !Spawned)
+            {
+                return;
+            }
+            menu.SelectedEntity = this;
             // this is kind of weird...in BuildMenu we check for a task, in FinishMenu we instead check for Researching
-            if (Tasks[X, Y, Z] != null)
+            if (Tasks.GetWithBoundsChecked((int)X!, (int)Y!, (int)Z!) != null)
             {
                 // ideally this should have the option to cancel research
                 menu.Choices = new List<IMenuListable>();
@@ -258,27 +286,25 @@ namespace Hecatomb
             else
             {
                 var list = new List<IMenuListable>();
-                var researched = Game.World.GetState<ResearchHandler>().Researched;
-                foreach (string s in Researches)
+                var researched = GetState<ResearchHandler>().Researched;
+                foreach (Research res in Researches)
                 {
                     bool valid = true;
-                    var res = Research.Types[s];
-                    foreach (string pre in res.Prerequisites)
+                    foreach (Research pre in res.RequiresResearch)
                     {
                         if (!researched.Contains(pre))
                         {
                             valid = false;
                         }
                     }
-                    if (valid && !researched.Contains(s))
+                    if (valid && !researched.Contains(res))
                     {
-                        Research research = Hecatomb.Research.Types[s];
                         ResearchTask rt = Entity.Mock<ResearchTask>();
-                        rt.Makes = research.TypeName;
-                        rt.MenuName = "research " + research.Name;
-                        rt.LaborCost = research.Turns;
-                        rt.Ingredients = research.Ingredients;
-                        rt.Structure = this;
+                        rt.Researching = res;
+                        //rt.MenuName = "research " + research.Name;
+                        rt.LaborCost = res.Turns;
+                        rt.Ingredients = new JsonArrayDictionary<Resource, int>(res.Ingredients);
+                        rt.Structure = this.GetHandle<Structure>(rt.OnDespawn);
                         list.Add(rt);
                     }
                 }
@@ -287,16 +313,16 @@ namespace Hecatomb
         }
 
         // we are passed Cancel, , (blank header), (choices)
-        public virtual void FinishMenu(MenuChoiceControls menu)
+        public virtual void FinishInfoDisplay(InfoDisplayControls menu)
         {
-            menu.MenuTop.Insert(2, "Tab) Next structure.");
-            menu.MenuTop.Insert(3, " ");
-            menu.MenuTop.Insert(4, "{yellow}" + Describe(capitalized: true));
-            menu.MenuTop.Insert(5, "{light cyan}" + UseHint);
-            if (Researching != null)
+            menu.InfoTop.Insert(2, "Tab) Next structure.");
+            menu.InfoTop.Insert(3, " ");
+            menu.InfoTop.Insert(4, "{yellow}" + Describe(capitalized: true));
+            menu.InfoTop.Insert(5, "{light cyan}" + UseHint);
+            if (ResearchTask != null)
             {
-                ResearchTask rt = Researching;
-                menu.MenuTop = new List<ColoredText>() {
+                ResearchTask rt = ResearchTask;
+                menu.InfoTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     " ",
                     "Tab) Next structure.",
@@ -304,37 +330,29 @@ namespace Hecatomb
                     "{yellow}" + Describe(capitalized: true),
                     "{light cyan}" + UseHint,
                     " ",
-                    "Researching " + Research.Types[rt.Makes].Name + " (" + rt.Labor + " turns.)",
-                    "(Backspace/Del to Cancel)"
+                    "Researching " + rt.Researching.Name + " (" + rt.Labor + " turns.)",
+                    " ",
+                    "Bksp/Del) Cancel research."
                 };
-                if (rt.Ingredients.Count > 0 && !Options.NoIngredients)
+                if (rt.Ingredients.Count > 0 && !HecatombOptions.NoIngredients)
                 {
-                    menu.MenuTop[7] = "Researching " + Research.Types[rt.Makes].Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
+                    menu.InfoTop[7] = "Researching " + rt.Researching.Name + " ($: " + Resource.Format(rt.Ingredients) + ")";
                 }
             }
-            if (Stores.Length > 0)
+            if (StoresResources.Length > 0)
             {
                 var stored = GetStored();
                 if (stored.Count > 0)
                 {
-                    menu.MenuTop.Add(" ");
-                    menu.MenuTop.Add("Stored:");
+                    menu.InfoTop.Add(" ");
+                    menu.InfoTop.Add("Stored:");
                 }
-                foreach (string res in stored.Keys)
+                foreach (Resource r in stored.Keys)
                 {
-                    var r = Resource.Types[res];
-                    menu.MenuTop.Add("{" + Resource.GetListColor(res) + "}- " + Resource.Format((res, stored[res])));
+                    menu.InfoTop.Add("{" + r.TextColor + "}- " + Resource.Format((r, stored[r])));
                 }
             }
-            Game.InfoPanel.Dirty = true;
-            //InterfacePanel.DirtifySidePanels();
-            menu.KeyMap[Keys.Escape] =
-                () =>
-                {
-                    ControlContext.Selection = null;
-                    ControlContext.Reset();
-                    ControlContext.Cursor.Remove();
-                };
+            menu.KeyMap[Keys.Escape] = InterfaceState.ResetControls;
             menu.KeyMap[Keys.Tab] = NextStructure;
             menu.KeyMap[Keys.Delete] = CancelResearch;
             menu.KeyMap[Keys.Back] = CancelResearch;
@@ -344,33 +362,41 @@ namespace Hecatomb
 
         public void CancelResearch()
         {
-            if (Researching != null)
+            if (ResearchTask != null)
             {
-                Task t = Tasks[X, Y, Z];
-                t?.Cancel();
-                Researching = null;
+                if (Placed && Spawned)
+                {
+                    Task? t = Tasks.GetWithBoundsChecked((int)X!, (int)Y!, (int)Z!);
+                    t?.Cancel();
+                    ResearchTask = null;
+                } 
             }
-            InterfacePanel.DirtifyUsualPanels();
+            InterfaceState.DirtifyTextPanels();
         }
 
-        public Dictionary<string, int> GetStored()
+        public Dictionary<Resource, int> GetStored()
         {
-            var stored = new Dictionary<string, int>();
-            if (Stores.Length > 0)
+            var stored = new Dictionary<Resource, int>();
+            if (StoresResources.Length > 0)
             {
-                foreach (Feature f in Features)
+                foreach (int? eid in Features)
                 {
-                    var (x, y, z) = f;
-                    Item item = Items[x, y, z];
-                    if (item != null && Stores.Contains(item.Resource))
+                    Feature? f = GetEntity<Feature>(eid);
+                    if (f is null)
                     {
-                        if (stored.ContainsKey(item.Resource))
+                        continue;
+                    }
+                    var (x, y, z) = f.GetPlacedCoordinate();
+                    Item? item = Items.GetWithBoundsChecked(x, y, z);
+                    if (item != null && StoresResources.Contains(item.Resource))
+                    {
+                        if (stored.ContainsKey(item.Resource!))
                         {
-                            stored[item.Resource] += item.Quantity;
+                            stored[item.Resource!] += item.N;
                         }
                         else
                         {
-                            stored[item.Resource] = item.Quantity;
+                            stored[item.Resource!] = item.N;
                         }
                     }
                 }
@@ -381,32 +407,32 @@ namespace Hecatomb
         public void NextStructure()
         {
             var structures = ListStructures();
-            if (structures.Count>0)
+            if (structures.Count > 0)
             {
                 int n = -1;
-                for (int i=0; i<structures.Count; i++)
+                for (int i = 0; i < structures.Count; i++)
                 {
-                    if (structures[i]==this)
+                    if (structures[i] == this)
                     {
                         n = i;
                     }
                 }
-                if (n==-1 || n==structures.Count-1)
+                if (n == -1 || n == structures.Count - 1)
                 {
                     //ControlContext.Set(new MenuChoiceControls((Structure)structures[0]));
-                    ControlContext.Set(new MenuCameraControls((Structure)structures[0]));
-                    Game.Camera.CenterOnSelection(); ;
+                    InterfaceState.SetControls(new InfoDisplayControls((Structure)structures[0]));
+                    InterfaceState.Camera!.CenterOnSelection();
                 }
                 else
                 {
                     //ControlContext.Set(new MenuChoiceControls((Structure)structures[n+1]));
-                    ControlContext.Set(new MenuCameraControls((Structure)structures[n + 1]));
-                    Game.Camera.CenterOnSelection();
+                    InterfaceState.SetControls(new InfoDisplayControls((Structure)structures[n + 1]));
+                    InterfaceState.Camera!.CenterOnSelection();
                 }
             }
             else
             {
-                Game.Camera.CenterOnSelection();
+                InterfaceState.Camera!.CenterOnSelection();
             }
         }
         public void BuildInSquares(List<Coord> squares)
@@ -418,20 +444,20 @@ namespace Hecatomb
         {
             //Structure existingStructure;
             for (int i = 0; i < Squares.Count; i++)
-            { 
+            {
                 Coord s = Squares[i];
-                Feature f = Game.World.Features[s.X, s.Y, s.Z];
-                if (Game.World.Tasks[s.X, s.Y, s.Z] != null)
+                Feature? f = GameState.World!.Features.GetWithBoundsChecked(s.X, s.Y, s.Z);
+                if (Tasks.GetWithBoundsChecked(s.X, s.Y, s.Z) != null)
                 {
                     return;
                 }
                 else if (f != null)
                 {
-                    if (f.TryComponent<IncompleteFixtureComponent>() != null && f.GetComponent<IncompleteFixtureComponent>().Structure == this)
+                    if (f is IncompleteFixture && (f as IncompleteFixture)!.Structure?.UnboxBriefly() == this)
                     {
                         // this is okay, go ahead
                     }
-                    else if (f.TryComponent<StructuralComponent>() != null && f.GetComponent<StructuralComponent>().Structure == this)
+                    else if (f is StructuralFeature && (f as StructuralFeature)!.Structure?.UnboxBriefly() == this)
                     {
                         // this is okay, go ahead
                     }
@@ -445,34 +471,34 @@ namespace Hecatomb
             for (int i = 0; i < Squares.Count; i++)
             {
                 Coord s = Squares[i];
-                if (Game.World.Tasks[s.X, s.Y, s.Z] == null)
+                if (Tasks.GetWithBoundsChecked(s.X, s.Y, s.Z) is null)
                 {
-                    Feature f = Game.World.Features[s.X, s.Y, s.Z];
-                    if (f == null || f.TypeName=="IncompleteFeature")
+                    Feature? f = GameState.World!.Features.GetWithBoundsChecked(s.X, s.Y, s.Z);
+                    if (f is null || f is IncompleteFixture)
                     {
                         ConstructTask tc = Entity.Spawn<ConstructTask>();
-                        tc.Makes = ClassName;
-                        tc.Structure = this;
+                        tc.Makes = this.GetType();
+                        tc.Structure = this.GetHandle<Structure>(tc.OnDespawn);
                         tc.FeatureIndex = i;
-                        tc.Ingredients = Ingredients[i] ?? new Dictionary<string, int>();
-                        tc.Harvests = (Harvests.Length> i) ? Harvests[i] : new Dictionary<string, float>();
-                        tc.Place(s.X, s.Y, s.Z);
+                        tc.Ingredients =  new JsonArrayDictionary<Resource, int>(Ingredients?[i] ?? new Dictionary<Resource, int>());
+                        tc.Harvests = new JsonArrayDictionary<Resource, float>(Harvests?[i] ?? new Dictionary<Resource, float>());
+                        tc.PlaceInValidEmptyTile(s.X, s.Y, s.Z);
                     }
-                    else if (f.TryComponent<StructuralComponent>()!=null)
+                    else if (f is StructuralFeature)
                     {
-                        StructuralComponent sc = f.GetComponent<StructuralComponent>();
-                        if (sc.Structure!=this)
+                        var sf = (StructuralFeature)f;
+                        if (sf.Structure?.UnboxBriefly() != this)
                         {
                             throw (new InvalidOperationException("You're trying to build one structure on top of another!"));
                         }
                         else
                         {
-                            Defender d = f.GetComponent<Defender>();
-                            if (d.Wounds > 0)
+                            Defender? d = f.TryComponent<Defender>();
+                            if (d != null && d.Wounds > 0)
                             {
                                 RepairTask rt = Entity.Spawn<RepairTask>();
-                                rt.Ingredients = Ingredients[i] ?? new Dictionary<string, int>();
-                                rt.Place(s.X, s.Y, s.Z);
+                                rt.Ingredients = new JsonArrayDictionary<Resource, int>(Ingredients?[i] ?? new Dictionary<Resource, int>());
+                                rt.PlaceInValidEmptyTile(s.X, s.Y, s.Z);
                             }
                         }
                     }
@@ -492,30 +518,22 @@ namespace Hecatomb
                 bool exists = false;
                 foreach (Coord s in Squares)
                 {
-                    Feature f = Game.World.Features[s.X, s.Y, s.Z];
+                    Feature? f = GameState.World!.Features.GetWithBoundsChecked(s.X, s.Y, s.Z);
                     if (f != null && f != despawning)
                     {
-                        var sc = f.TryComponent<StructuralComponent>();
-                        if (sc != null)
+                        if (f is StructuralFeature && (f as StructuralFeature)!.Structure?.UnboxBriefly() == this) 
                         {
-                            if (sc.Structure == this)
-                            {
-                                exists = true;
-                            }
+                            exists = true;
                         }
-                        var ifc = f.TryComponent<IncompleteFixtureComponent>();
-                        if (ifc != null)
+                        else if (f is IncompleteFixture && (f as IncompleteFixture)!.Structure?.UnboxBriefly() == this)
                         {
-                            if (ifc.Structure == this)
-                            {
-                                exists = true;
-                            }
+                            exists = true;
                         }
                     }
-                    Task t = Game.World.Tasks[s.X, s.Y, s.Z];
-                    if (t!=null && t!=despawning && t is ConstructTask)
+                    Task? t = Tasks.GetWithBoundsChecked(s.X, s.Y, s.Z);
+                    if (t != null && t != despawning && t is ConstructTask)
                     {
-                        if (t.Makes==this.ClassName)
+                        if (t.Makes == this.GetType())
                         {
                             exists = true;
                         }
@@ -526,17 +544,21 @@ namespace Hecatomb
         }
         public virtual GameEvent OnDespawn(GameEvent ge)
         {
-            
+
             DespawnEvent de = (DespawnEvent)ge;
             if (de.Entity is Feature)
             {
                 Feature f = (Feature)de.Entity;
-                if (Placed && Features.Contains(f))
+                if (!f.Spawned)
+                {
+                    return ge;
+                }
+                if (Placed && Features.Contains(f.EID))
                 {
                     CancelResearch();
-                    Remove();                 
+                    Remove();
                     // This code is kind of experimental, but it seems to work
-                    Features[Features.IndexOf(f)] = null;
+                    Features[Features.IndexOf(f.EID)] = null;
                     if (!AtLeastPartiallyExists(f))
                     {
                         Despawn();
@@ -544,13 +566,13 @@ namespace Hecatomb
                 }
                 if (!Placed)
                 {
-                    var ifc = f.TryComponent<IncompleteFixtureComponent>();
-                    if (ifc!=null && ifc.Structure==this && !AtLeastPartiallyExists(f))
+                    var ifc = (f as IncompleteFixture);
+                    if (ifc != null && ifc.Structure?.UnboxBriefly() == this && !AtLeastPartiallyExists(f))
                     {
                         Despawn();
                     }
-                    var sc = f.TryComponent<StructuralComponent>();
-                    if (sc != null && sc.Structure == this && !AtLeastPartiallyExists(f))
+                    var sc = (f as StructuralFeature);
+                    if (sc != null && sc.Structure?.UnboxBriefly() == this && !AtLeastPartiallyExists(f))
                     {
                         Despawn();
                     }
@@ -558,12 +580,28 @@ namespace Hecatomb
             }
             if (de.Entity is ConstructTask)
             {
-                if (!AtLeastPartiallyExists((ConstructTask) de.Entity))
+                if (!AtLeastPartiallyExists((ConstructTask)de.Entity))
                 {
                     Despawn();
                 }
             }
             return ge;
+        }
+
+        public override void PlaceInValidEmptyTile(int x, int y, int z)
+        {
+            base.PlaceInValidEmptyTile(x, y, z);
+            if (Spawned)
+            {
+                GameState.World!.Structures.Add(this);
+                Publish(new AfterPlaceEvent() { Entity = this, X = x, Y = y, Z = z });
+            }
+        }
+
+        public override void Remove()
+        {
+            GameState.World!.Structures.Remove(this);
+            base.Remove();
         }
     }
 }

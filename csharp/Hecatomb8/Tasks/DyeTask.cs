@@ -1,60 +1,70 @@
-﻿
-/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 12:50 PM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    public class DyeTask : Task, IChoiceMenu, IMenuListable
+    using static HecatombAliases;
+
+    public class DyeTask : Task, IDisplayInfo, IMenuListable
     {
         public bool? Background;
-        // so...not being able to dye walls and floors is actually an extreme limitation
-        // what do we need in order to make it okay?  
-        // basically we need a lot of changes to the dig task, and perhaps to a few related methods (e.g. mine, tile validation.)
-        // I briefly thought of doing it with Cover, which lines up well with how ores work...but ores have fixed backgrounds (and symbols, for that matter)
-        public override string GetDisplayName()
+        public Resource? Dye;
+        protected override string getName()
         {
-            var handler = Game.World.GetState<RandomPaletteHandler>();
-            if (Makes == "Undye")
+            var handler = GetState<PaletteHandler>();
+            if (Dye is null)
             {
-                return "undye";
+                return _name!;
             }
-            return "dye with " + handler.GetFlowerName(Makes);
-        }
-
-        public override string GetHoverName()
-        {
-            var handler = Game.World.GetState<RandomPaletteHandler>();
-            if (Makes == "Undye")
+            else if (Dye == Resource.Undye)
             {
-                return "undye";
+                if (Placed)
+                {
+                    return "undye";
+                }
+                else
+                {
+                    return "undye tile or feature";
+                }
             }
-            return "dye with " + handler.GetFlowerName(Makes);
+            else if (Background is null)
+            {
+                return "dye with " + Dye.Name;
+            }
+            else if (Background == true)
+            {
+                return "dye background with " + Dye.Name;
+            }
+            else
+            {
+                return "dye foreground with " + Dye.Name;
+            }
         }
 
         public override ColoredText ListOnMenu()
         {
-            if (cachedMenuListing == null && Ingredients.Count != 0 && Game.World.Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
+            if (Dye is null)
             {
-                var handler = Game.World.GetState<RandomPaletteHandler>();
-                if (Game.Options.NoIngredients)
+                return base.ListOnMenu();
+            }
+            else if (Dye == Resource.Undye)
+            {
+                return "undye a tile or feature";
+            }
+            if (Ingredients.Count != 0 && CanFindResources(Ingredients))
+            {
+                if (HecatombOptions.NoIngredients)
                 {
-                    cachedMenuListing = ("{" + handler.GetFlowerColor(Makes) + "}" + MenuName);
+                    return ("{" + Dye!.FG + "}" + Name);
                 }
                 else
                 {
-                    cachedMenuListing = ("{" + handler.GetFlowerColor(Makes) + "}" + MenuName + " ($: " + Resource.Format(Ingredients) + ")");
+                    return ("{" + Dye!.FG + "}" + Name + " ($: " + Resource.Format(Ingredients) + ")");
                 }
-                return cachedMenuListing;
             }
             else
             {
@@ -62,55 +72,48 @@ namespace Hecatomb
             }
         }
 
-        protected List<IMenuListable> cachedChoices;
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
-            if (cachedChoices != null)
-            {
-                menu.Choices = cachedChoices;
-                return;
-            }
             menu.Header = "Dye a tile or feature:";
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var handler = GetState<PaletteHandler>();
             var list = new List<IMenuListable>();
-            if (Makes == null)
+            if (Dye is null)
             {
-                foreach (var tuple in RandomPaletteHandler.FlowerNames)
+                foreach (var flower in Resource.Flowers)
                 {
-                    var task = Hecatomb.Entity.Mock<DyeTask>();
-                    task.Ingredients = new Dictionary<string, int>() { };
-                    task.Makes = tuple.Item1;
-                    task.MenuName = handler.GetFlowerName(task.Makes);
-                    task.Ingredients[task.Makes] = 1;
+                    var task = Entity.Mock<DyeTask>();
+                    task.Ingredients = new JsonArrayDictionary<Resource, int>() { [flower] = 1 };
+                    task.Dye = flower;
                     list.Add(task);
                 }
-                var undye = Hecatomb.Entity.Mock<DyeTask>();
-                undye.Makes = "Undye";
-                undye.MenuName = "remove dye";
+                var undye = Entity.Mock<DyeTask>();
+                undye.Dye = Resource.Undye;
                 list.Add(undye);
+            }
+            else if (Dye == Resource.Undye)
+            {
+                var task = Entity.Mock<DyeTask>();
+                task.Dye = Resource.Undye;
+                list.Add(task);
             }
             else
             {
-                var task = Hecatomb.Entity.Mock<DyeTask>();
-                task.Ingredients = new Dictionary<string, int>() { };
+                var task = Entity.Mock<DyeTask>();
+                task.Ingredients = new JsonArrayDictionary<Resource, int>() { [Dye] = 1 };
                 task.Makes = Makes;
-                task.MenuName = "foreground with " + handler.GetFlowerName(task.Makes);
-                task.Ingredients[task.Makes] = 1;
+                task.Dye = Dye;
                 task.Background = false;
                 list.Add(task);
-                task = Hecatomb.Entity.Mock<DyeTask>();
-                task.Ingredients = new Dictionary<string, int>() { };
+                task = Entity.Mock<DyeTask>();
+                task.Ingredients = new JsonArrayDictionary<Resource, int>() { [Dye] = 1 };
                 task.Makes = Makes;
-                task.MenuName = "background with " + handler.GetFlowerName(task.Makes);
-                task.Ingredients[task.Makes] = 1;
+                task.Dye = Dye;
                 task.Background = true;
                 list.Add(task);
             }
-            
-            cachedChoices = list;
             menu.Choices = list;
         }
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
 
         }
@@ -119,11 +122,11 @@ namespace Hecatomb
         public DyeTask() : base()
         {
             // I'd love to be able to dye tiles but currently that's hard
-            MenuName = "dye a tile or feature";
+            _name = "dye a tile or feature";
             Priority = 4;
             // just keep this on Black Market for now
-            PrereqStructures = new List<string> { "Apothecary" };
-            BG = "#0088BB";
+            RequiresStructures = new List<Type> { typeof(Apothecary) };
+            _bg = "#0088BB";
         }
 
         public override void Start()
@@ -132,19 +135,29 @@ namespace Hecatomb
         }
         public override void Finish()
         {
-            Feature f = Game.World.Features[X, Y, Z];
-            var handler = Game.World.GetState<RandomPaletteHandler>();
-            if (Makes == "Undye")
+            if (!Placed || !Spawned)
             {
-                if (f!=null && f.TryComponent<DyedComponent>()!=null)
+                return;
+            }
+            var (x, y, z) = GetPlacedCoordinate();
+            Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            var handler = GetState<PaletteHandler>();
+            if (Dye is null)
+            {
+                Cancel();
+                return;
+            }
+            if (Dye == Resource.Undye)
+            {
+                if (f != null && f.HasComponent<CosmeticComponent>())
                 {
-                    if (f.TypeName == "Masonry")
+                    if (f is Masonry)
                     {
                         f.Despawn();
                     }
                     else
                     {
-                        var c = f.GetComponent<DyedComponent>();
+                        var c = f.GetComponent<CosmeticComponent>();
                         c.RemoveFromEntity();
                         c.Despawn();
                     }
@@ -154,87 +167,96 @@ namespace Hecatomb
             {
                 if (f == null)
                 {
-                    var masonry = Entity.Spawn<Feature>("Masonry");
-                    masonry.Place(X, Y, Z);
-                    Cover.ClearCover(X, Y, Z);
+                    var masonry = Entity.Spawn<Masonry>();
+                    masonry.PlaceInValidEmptyTile(x, y, z);
+                    Cover.ClearGroundCover(x, y, z);
                     f = masonry;
                 }
-                var dyed = f.TryComponent<DyedComponent>();
-                if (dyed==null)
+                CosmeticComponent dyed;
+                if (!f.HasComponent<CosmeticComponent>())
                 {
-                    dyed = Entity.Spawn<DyedComponent>();
+                    dyed = Entity.Spawn<CosmeticComponent>();
                     f.AddComponent(dyed);
-                }
-                if ((bool) Background)
-                {
-                    dyed.BG = handler.FlowerColors[Makes];
                 }
                 else
                 {
-                    dyed.FG = handler.FlowerColors[Makes];
+                    dyed = f.GetComponent<CosmeticComponent>();
+                }
+                if ((bool)Background!)
+                {
+                    dyed.BG = Dye.FG;
+                }
+                else
+                {
+                    dyed.FG = Dye.FG;
                 }
             }
-            Game.World.Events.Publish(new AchievementEvent() { Action = "FinishDyeTask" });
+            Publish(new AchievementEvent() { Action = "FinishDyeTask" });
             Complete();
         }
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
-            if (Makes == null)
+            Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            if (Dye is null)
             {
-                var c = new MenuChoiceControls(this);
-                c.MenuSelectable = false;
+                var c = new InfoDisplayControls(this);
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
-                ControlContext.Set(c);
+                InterfaceState.SetControls(c);
             }
-            else if (Background == null && Makes != "Undye")
+            else if (Background is null && Dye != Resource.Undye)
             {
-                var c = new MenuChoiceControls(this);
-                c.MenuSelectable = false;
+                var c = new InfoDisplayControls(this);
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
-                ControlContext.Set(c);
+                InterfaceState.SetControls(c);
             }
             else
             {
                 var c = new SelectZoneControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Jobs";
-                ControlContext.Set(c);
+                c.InfoMiddle = new List<ColoredText>() { (Dye == Resource.Undye) ? "{green}Undye" : ("{" + Dye.FG + "}" + "Dye") };
+                InterfaceState.SetControls(c);
             }
         }
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
-            co.MenuMiddle.Clear();
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            var co = InterfaceState.Controls;
+            co.InfoMiddle.Clear();
+            var handler = GetState<PaletteHandler>();
             string txt;
             if (!ValidTile(c))
             {
-                txt = (Makes == "Undye") ? "undye" : "dye";
-                co.MenuMiddle = new List<ColoredText>() { "{orange}Can't " + txt + " here." };
+                txt = (Dye == Resource.Undye) ? "undye" : "dye";
+                co.InfoMiddle = new List<ColoredText>() { "{orange}Can't " + txt + " here." };
             }
             else
             {
-                txt = (Makes == "Undye") ? "Undye" : ("{" + handler.FlowerColors[Makes] + "}" + "Dye");
-                co.MenuMiddle = new List<ColoredText>() {txt +  String.Format(" from {0} {1} {2}.", c.X, c.Y, c.Z) };
+                txt = (Dye == Resource.Undye) ? "{green}Undye" : ("{" + Dye!.FG + "}" + "Dye");
+                co.InfoMiddle = new List<ColoredText>() { txt + String.Format(" from {0} {1} {2}.", c.X, c.Y, c.Z) };
             }
         }
 
         public override void SelectZone(List<Coord> squares)
         {
-            CommandLogger.LogCommand(command: "DyeTask", makes: Makes, squares: squares, n: (Background == true) ? 1 : 0);
-            var handler = Game.World.GetState<RandomPaletteHandler>();
+            CommandLogger.LogCommand(command: "DyeTask", makes: (Dye is null) ? null : Dye.TypeName, squares: squares, n: (Background == true) ? 1 : 0);
+            var handler = GetState<PaletteHandler>();
             foreach (Coord c in squares)
             {
-                if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+                if (Tasks.GetWithBoundsChecked(c.X, c.Y, c.Z) == null && ValidTile(c))
                 {
-                    Feature f = Game.World.Features[c];
-                    var task = Hecatomb.Entity.Spawn<DyeTask>();
-                    task.Ingredients = new Dictionary<string, int>() { { Makes, 1 } };
+                    Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+                    var task = Entity.Spawn<DyeTask>();
+                    if (Dye != null && Dye != Resource.Undye)
+                    {
+                        task.Ingredients = new JsonArrayDictionary<Resource, int>() { { Dye, 1 } };
+                    }
                     task.Makes = Makes;
-                    task.Place(c.X, c.Y, c.Z);
+                    task.Dye = Dye;
+                    task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                     task.Background = Background;
                 }
             }
@@ -242,13 +264,13 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
             {
                 return false;
             }
-            Feature f = Game.World.Features[c];
-            Terrain t = Game.World.Terrains[c.X, c.Y, c.Z];
-            if (Makes == "Undye" && (f == null || f.TryComponent<DyedComponent>()==null))
+            Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            Terrain t = Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            if (Dye is null && (f is null || !f.HasComponent<CosmeticComponent>()))
             {
                 return false;
             }

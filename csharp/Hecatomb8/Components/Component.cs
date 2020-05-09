@@ -1,76 +1,53 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 9/18/2018
- * Time: 11:39 AM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-	public abstract class Component : Entity
-	{
-        public TypedEntityField<TypedEntity> Entity = new TypedEntityField<TypedEntity>();
-        [JsonIgnore] public string[] Required = new string[0];
-		
-		public void AddToEntity(TypedEntity e)
-		{
-			if (!Spawned)
-			{
-				throw new InvalidOperationException(String.Format("Cannot add {0} that has not been spawned.",this));
-			}
-            if (EID==-1)
-            {
-                Debug.WriteLine("This should not be happening!");
-            }
-			// if it's a plain old Component subclass, use its own type as the key
-			if (this.GetType().BaseType==typeof(Component))
-			{
-				e.Components[this.GetType().Name] = this.EID;
-			} else {
-				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
-				e.Components[this.GetType().BaseType.Name] = this.EID;
-			}
-            Entity = e;
+    // A component is an entity, attached to a creature or feature, that provides a chunk of interrelated functionality, such as movement, decision-making, et cetera
+    public class Component : Entity
+    {
+        public ListenerHandledEntityHandle<ComposedEntity>? Entity;
+
+        // So...there's an important to remember you can't populate any list in the constructor if it might get replaced or depopulated
+        // I can't think of any way to enforce that though
+        protected Component()
+        {
         }
 
-        // this method is kind of a disaster and doesn't work at all...what to do???
-        public void AddToMockEntity(TypedEntity e)
+        public void _addToEntity(ComposedEntity t)
         {
-            // if it's a plain old Component subclass, use its own type as the key
-            if (this.GetType().BaseType == typeof(Component))
+            Entity = t.GetHandle<ComposedEntity>(OnDespawn);
+        }
+
+        public virtual GameEvent OnDespawn(GameEvent ge)
+        {
+            if (ge is DespawnEvent)
             {
-                //e.Components[this.GetType().Name] = this.EID;
+                var de = (DespawnEvent)ge;
+                if (Entity != null && de.Entity == Entity.UnboxBriefly())
+                {
+                    Entity = null;
+                }
             }
-            else
-            {
-                // if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
-                //e.Components[this.GetType().BaseType.Name] = this.EID;
-            }
-            //Entity = e;
+            return ge;
         }
 
         public void RemoveFromEntity()
-		{
-			// if it's a plain old Component subclass, use its own type as the key
-			if (this.GetType().BaseType==typeof(Component))
-			{
-				Entity.Components.Remove(this.GetType().Name);
-			} else {
-				// if it's a subclass of a Component subclass (e.g. Task), use the base type as the key
-				Entity.Components.Remove(this.GetType().BaseType.Name);
-			}
-			Entity.EID = -1;
-		}
-
-        public virtual void OnAddToEntity() {}
-        public virtual void InterpretJSON(string json) {}
-        public virtual void AfterSelfPlace(int x, int y, int z) {}
-	}
+        {
+            if (Entity?.UnboxBriefly() is null)
+            {
+                return;
+            }
+            // if it's a plain old Component subclass, use its own type as the key
+            if (this.GetType().BaseType == typeof(Component))
+            {
+                var components = Entity.UnboxBriefly()!._components;
+                if (components != null && components.ContainsKey(this.GetType().Name))
+                {
+                    components.Remove(this.GetType().Name);
+                }
+            }
+        }
+    }
 }

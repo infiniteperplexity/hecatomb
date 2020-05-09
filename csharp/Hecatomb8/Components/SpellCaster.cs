@@ -1,158 +1,127 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn
- * Date: 10/7/2018
- * Time: 12:08 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
-
-using System.Diagnostics;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Newtonsoft.Json;
+using System.Text;
+using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
+    public class SpellCaster : Component, IDisplayInfo
+    {
+        public List<Type> Spells;
+        public int Sanity = 20;
+        private int _maxSanity = 20;
+        public int MaxSanity { get => _getMaxSanity(); }
 
-	public class SpellCaster : Component, IChoiceMenu
-	{
-		List<string> Spells;
-        public int MaxSanity;
-        public int Sanity;
-        public void BuildMenu(MenuChoiceControls menu)
+        public SpellCaster()
+        {
+            Spells = new List<Type>();
+            AddListener<TurnBeginEvent>(OnTurnBegin);
+        }
+
+        private int _getMaxSanity()
+        {
+            int calculated = _maxSanity;
+            if (Structure.ListStructureTypes().Contains(typeof(Sanctum)))
+            {
+                calculated += 5;
+            }
+            return calculated;
+        }
+
+        public GameEvent OnTurnBegin(GameEvent ge)
+        {
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return ge;
+            }
+            int chance = 9;
+            if (MaxSanity > 20)
+            {
+                chance = 5;
+            }
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
+            var f = Features.GetWithBoundsChecked(x, y, z);
+            if (f is StructuralFeature)
+            {
+                if ((f as StructuralFeature)!.Structure?.UnboxBriefly() is Sanctum)
+                {
+                    chance /= 2;
+                }
+            }
+            int r = GameState.World!.Random.Next(chance);
+            if (r==0)
+            {
+                Sanity = Math.Min(MaxSanity, Sanity + 1);
+            }
+
+            return ge;
+        }
+
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
             menu.Header = "Choose a spell:";
             List<IMenuListable> spells = new List<IMenuListable>();
             // only if we have the prerequisite structures / technologies...
-            var structures = Structure.ListAsStrings();
+            var structures = Structure.ListStructureTypes();
             var researched = GetState<ResearchHandler>().Researched;
-            foreach (string sp in Spells)
+            var caster = Player.GetComponent<SpellCaster>();
+            foreach (Type sp in Spells)
             {
-                var spell = GetSpell(sp);
+                var spell = (Spell)Activator.CreateInstance(sp)!;
                 bool valid = true;
-                if (spell.ForDebugging && !Options.ShowDebugSpells)
+                if (spell is DebugSpell && !HecatombOptions.ShowDebugSpells)
                 {
                     valid = false;
                 }
-                foreach (string s in spell.Researches)
+                foreach (Research r in spell.RequiresResearch)
                 {
-                    if (!researched.Contains(s) && !Options.AllSpells)
+                    if (!researched.Contains(r) && !HecatombOptions.ShowAllSpells)
                     {
                         valid = false;
                     }
                 }
-                foreach (string s in spell.Structures)
+                foreach (Type t in spell.RequiresStructures)
                 {
-                    if (!structures.Contains(s) && !Options.AllSpells)
+                    if (!structures.Contains(t) && !HecatombOptions.ShowAllSpells)
                     {
                         valid = false;
                     }
                 }
                 if (valid)
                 {
+                    spell.Caster = Player;
+                    spell.Component = caster;
                     spells.Add(spell);
                 }
             }
             menu.Choices = spells;
         }
-        public void FinishMenu(MenuChoiceControls menu)
-        {
-            menu.MenuTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());
-            menu.MenuTop.Insert(1, " ");
-        }
 
-        public GameEvent OnTurnBegin(GameEvent ge)
+        public T? GetSpell<T>() where T : Spell
         {
-            int max = GetCalculatedMaxSanity();
-            int chance = 10;
-            if (max > 20)
+            foreach (Type t in Spells)
             {
-                chance = 7;
-            }
-            var (x, y, z) = Entity;
-            var f = Features[x, y, z];
-            if (f != null && f.TryComponent<StructuralComponent>() != null)
-            {
-                if (f.GetComponent<StructuralComponent>().Structure.Unbox() is Sanctum)
+                if (t == typeof(T))
                 {
-                    chance /= 2;
+                    var spell = (T)Activator.CreateInstance(t)!;
+                    spell.Caster = Player;
+                    spell.Component = Player.GetComponent<SpellCaster>();
+                    return spell;
                 }
             }
-            if (Game.World.Random.Arbitrary(chance, OwnSeed())==0)
-            //if (Game.World.Random.Next(chance)==0)
-            {
-                Sanity = Math.Min(max, Sanity + 1);
-            }
-            
-            return ge;
+            return null;
         }
-        
-		public SpellCaster() : base()
-		{
-            MaxSanity = 20;
-            Sanity = 20;
-			Spells = new List<string>() {
-                "RaiseZombieSpell",
-                "SacrificeMinionSpell",
-                "CondenseEctoplasmSpell",
-                "SiphonFleshSpell",
-                "ShadowHopSpell",
-                "DebugZombieSpell",
-                "DebugBanditSpell",
-                "DebugItemSpell",
-                "SummonBanditsDebugSpell",
-                "RemoveCreatureDebugSpell",
-                "SevereDamageDebugSpell",
-                "DebugHealSpell",
-                "ParticleTestDebugSpell",
-                "DebugFlowerSpell",
-                "CrashDebugSpell"
-            };
-            AddListener<TurnBeginEvent>(OnTurnBegin);
-		}
 
-        public int GetCalculatedMaxSanity()
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
-            int calcMax = MaxSanity;
-            if (Structure.ListAsStrings().Contains("Sanctum"))
-            {
-                calcMax += 5;
-            }
-            return calcMax;
+            menu.InfoTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());
+            menu.InfoTop.Insert(1, " ");
         }
-		
-		public Spell GetSpell(Type t)
-		{
-            
-            Spell spell = (Spell)Activator.CreateInstance(t);
-            spell.Component = this;
-            spell.Caster = (Creature) Entity;
-            return spell;
-		}
-		
-		public Spell GetSpell(String s)
-		{
-            Type t = Type.GetType("Hecatomb."+s);
-            Spell spell = (Spell) Activator.CreateInstance(t);
-            spell.Component = this;
-            spell.Caster = (Creature) Entity;
-            return spell;
-        }
-
-		public T GetSpell<T>() where T : Spell, new()
-		{
-			T s = new T();
-			s.Component = this;
-			s.Caster = (Creature) this.Entity;
-			return s;
-		}
 
         public ColoredText GetSanityText()
         {
-            return $"Sanity: {Sanity}/{GetCalculatedMaxSanity()}";
+            return $"Sanity: {Sanity}/{MaxSanity}";
         }
-	}
+    }
 }

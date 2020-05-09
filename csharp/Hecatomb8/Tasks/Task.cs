@@ -8,76 +8,102 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
     public abstract class Task : TileEntity, IMenuListable, ISelectsBox, ISelectsTile, ISelectsZone
     {
         // subclass properties
-        [JsonIgnore] public int WorkRange;
-        public int LaborCost;
-        [JsonIgnore] public string MenuName;
-        [JsonIgnore] public List<string> PrereqStructures;
-        [JsonIgnore] public bool ShowIngredients;
-        public Dictionary<string, int> Ingredients;
+        [JsonIgnore] public bool WorkSameTile;
+        public int LaborCost; // do not JsonIgnore, this can vary for some subtypes
+        public int Labor;
+        // probably don't want strings here...should be types, which is awkward
+        [JsonIgnore] public List<Type> RequiresStructures;
+        //[JsonIgnore] public bool ShowIngredients;
+        public JsonArrayDictionary<Resource, int> Ingredients; // do not JsonIgnore; this can vary
         // ISelectsBox properties
         [JsonIgnore] public int BoxWidth { get { return 1; } set { } }
         [JsonIgnore] public int BoxHeight { get { return 1; } set { } }
         [JsonIgnore] public int Priority;
         // instance properties
-        public TypedEntityField<Creature> Worker;
+        public ListenerHandledEntityHandle<Creature>? Worker;
         public Dictionary<int, int> Claims;
-        public string Makes;
-        public int Labor;
+        // this maybe should always be a Type?...but it should be a string for serialization?
+        public Type? Makes;
+        [JsonIgnore] protected bool ShowIngredients;
+
 
         // constructor
         public Task() : base()
         {
-            MenuName = "default task name";
-            Name = "task";
-            Worker = new TypedEntityField<Creature>();
-            WorkRange = 1;
+            _name = "task";
+            WorkSameTile = false;
             LaborCost = 10;
             Labor = LaborCost;
             Priority = 5;
-            Ingredients = new Dictionary<string, int>();
-            Claims = new Dictionary<int,int>();
-            PrereqStructures = new List<string>();
-            BG = "red";
+            Ingredients = new JsonArrayDictionary<Resource, int>();
+            Claims = new Dictionary<int, int>();
+            RequiresStructures = new List<Type>();
+            _bg = "red";
             ShowIngredients = true;
         }
 
-
-        public virtual string GetHoverName()
+        public virtual GameEvent OnDespawn(GameEvent ge)
         {
-            if (Ingredients.Count == 0 || !ShowIngredients)
+            if (ge is DespawnEvent)
             {
-                return Describe(article: false);
+                var de = (DespawnEvent)ge;
+                if (Worker != null && de.Entity == Worker.UnboxBriefly())
+                {
+                    Unassign();
+                }
+                else if (de.Entity is Item && de.Entity.EID != null && Claims.ContainsKey((int)de.Entity.EID))
+                {
+                    Claims.Remove((int)de.Entity.EID);
+                }
             }
-            return (Describe(article: false) + " ($: " + Resource.Format(Ingredients) + ")");
+            return ge;
         }
+
+        //public virtual string GetHoverName()
+        //{
+        //    if (Ingredients.Count == 0 || !ShowIngredients)
+        //    {
+        //        return Describe(article: false);
+        //    }
+        //    return (Describe(article: false) + " ($: " + Resource.Format(Ingredients) + ")");
+        //}
         // override Place from TileEntity
-        public override void Place(int x1, int y1, int z1, bool fireEvent = true)
+        public override void PlaceInValidEmptyTile(int x1, int y1, int z1)
         {
-            if (x1==-1)
+            if (Tasks.GetWithBoundsChecked(x1, y1, z1) != null)
             {
-                Debug.WriteLine("what on earth is going on here?");
-                Debug.WriteLine(this);
+                if (HecatombOptions.NoisyErrors)
+                {
+                    throw new InvalidOperationException($"Task placement conflict at {x1} {y1} {z1}");
+                }
+                else
+                {
+                    Tasks.GetWithBoundsChecked(x1, y1, z1)!.Despawn();
+                }
             }
-            if (Tasks[x1, y1, z1]!=null)
+            base.PlaceInValidEmptyTile(x1, y1, z1);
+            if (Spawned)
             {
-                throw new InvalidOperationException($"Task placement conflict at {x1} {y1} {z1}");
+                Tasks.SetWithBoundsChecked(x1, y1, z1, this);
+                Publish(new AfterPlaceEvent() { Entity = this, X = x1, Y = y1, Z = z1 });
             }
-            Tasks[x1, y1, z1] = this;
-            base.Place(x1, y1, z1, fireEvent);
         }
         // override Remove from TileEntity
         public override void Remove()
         {
-            int x = X, y = Y, z = Z;
+            var (_x, _y, _z) = this;
+            if (Placed)
+            {
+                GameState.World!.Tasks.SetWithBoundsChecked((int)_x!, (int)_y!, (int)_z!, null);
+            }
             base.Remove();
-            Tasks[x, y, z] = null;
         }
         // override Despawn from TileEntity
         public override void Despawn()
@@ -86,55 +112,63 @@ namespace Hecatomb
             base.Despawn();
         }
 
-        // designation...by default, allow it only for explored floor tiles
+        // ValidTile is a bit of a problem child, because it pulls double duty...it checks where a new task can be assigned, and where an existing one should be canceled
+        // just keep an eye out for that
         public virtual bool ValidTile(Coord c)
         {
-            if (!Explored.Contains(c) && !Options.Explored)
+            var (x, y, z) = c;
+            Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            // can't do most tasks where you haven't explored   
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
             {
                 return false;
             }
-            if (Features[c] != null && Features[c].TryComponent<IncompleteFixtureComponent>() != null) //is this okay or does it need to be more specific?
+            // can restart tasks with the same incomplete fixture
+            if (f is IncompleteFixture)
             {
-                return Features[c].GetComponent<IncompleteFixtureComponent>().Makes == Makes;
-                //return false;
+                return ((f as IncompleteFixture)!.Makes == this.Makes);
             }
-            else if (Features[c] != null)
+            // can't do most tasks on a feature
+            else if (f != null)
             {
                 return false;
             }
-            if (Terrains[c.X, c.Y, c.Z]==Terrain.FloorTile)
+            // many tasks can only be done on the floor
+            if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z) == Terrain.FloorTile)
             {
                 return true;
             }
             return false;
         }
-        public virtual void Designate() {}
 
         // assignment
         public virtual bool CanAssign(Creature c)
         {
-            Coord crd = new Coord(X, Y, Z);
-            if (!Explored.Contains(crd) && !Options.Explored)
+            // just to be safe
+            if (!Spawned || !Placed || !c.Spawned || !c.Placed)
             {
                 return false;
             }
-            if (!Placed)
+            Coord crd = new Coord((int)X!, (int)Y!, (int)Z!);
+            // is this even worth checking?  normally you can't even assign it there
+            if (!Explored.Contains(crd) && !HecatombOptions.Explored)
             {
                 return false;
             }
             if (!ValidTile(crd))
             {
-                Status.PushMessage("Canceling invalid task.");
+                Debug.WriteLine("canceling invalid task");
+                PushMessage("Canceling invalid task.");
                 Cancel();
                 return false;
             }
             Movement m = c.GetComponent<Movement>();
-            return m.CanReach(this, useLast: (WorkRange == 0)) && m.CanFindResources(Ingredients, alwaysNeedsIngredients: NeedsIngredients());
+            return m.CanReachBounded(this, useLast: WorkSameTile) && m.CanReachResources(Ingredients, alwaysNeedsIngredients: NeedsIngredients());
         }
         public virtual void AssignTo(Creature c)
         {
-            c.GetComponent<Minion>().Task = this;
-            Worker = c;
+            c.GetComponent<Minion>().Task = GetHandle<Task>(c.GetComponent<Minion>().OnDespawn);
+            Worker = c.GetHandle<Creature>(OnDespawn);
             ClaimIngredients();
         }
         public virtual void Cancel()
@@ -144,17 +178,19 @@ namespace Hecatomb
         }
         public void Unassign()
         {
-            if (Worker!=null)
+            if (Worker?.UnboxBriefly() != null)
             {
-                Worker.GetComponent<Minion>().Task = null;
+                Worker.UnboxBriefly()!.GetComponent<Minion>().Task = null;
             }
             Worker = null;
             UnclaimIngredients();
         }
+        // certain tasks, like hauling and such, should require ingredients even if the debug options are set to ignore ingredients
         public virtual bool NeedsIngredients()
         {
-            return !Options.NoIngredients;
+            return !HecatombOptions.NoIngredients;
         }
+
         // ingredients
         public bool HasIngredient()
         {
@@ -166,66 +202,72 @@ namespace Hecatomb
             {
                 return true;
             }
-            Inventory inv = Worker.GetComponent<Inventory>();
-            if (inv.Item == null)
+            if (Worker?.UnboxBriefly() is null)
+            {
+                return false;
+            }
+            Inventory inv = Worker.UnboxBriefly()!.GetComponent<Inventory>();
+            if (inv.Item?.UnboxBriefly() == null)
             {
                 return false;
             }
             else
             {
-                if (inv.Item!=null && inv.Item.Unbox()==null)
-                {
-                    Debug.WriteLine("This wasn't supposed to happen");
-                    Debug.WriteLine(inv.Item.EID);
-                    Debug.WriteLine(inv.Item.Entity);
-                }
-                return Ingredients.ContainsKey(inv.Item.Unbox().Resource);
+                return Ingredients.ContainsKey(inv.Item!.UnboxBriefly()!.Resource!);
             }
         }
         public virtual void ClaimIngredients()
         {
+            if (Worker?.UnboxBriefly() is null || !Worker.UnboxBriefly()!.Placed)
+            {
+                Unassign();
+                return;
+            }
             if (!NeedsIngredients())
             {
                 return;
             }
-            Dictionary<string, int> needed = new Dictionary<string, int>(Ingredients);
+            var needed = new Dictionary<Resource, int>(Ingredients);
             // if there are already existing claims
             foreach (int eid in Claims.Keys)
             {
                 // this should always have been validated by now
                 //if (Entities.ContainsKey(eid))
                 Item item = (Item)Entities[eid];
-                if (needed.ContainsKey(item.Resource))
+                if (needed.ContainsKey(item.Resource!))
                 {
-                    needed[item.Resource] -= Claims[eid];
-                    if (needed[item.Resource] <=0 )
+                    needed[item.Resource!] -= Claims[eid];
+                    if (needed[item.Resource!] <= 0)
                     {
-                        needed.Remove(item.Resource);
+                        needed.Remove(item.Resource!);
                     }
                 }
             }
-            List<Item> owned = Game.World.Items.Where(i => i.Owned).ToList();
-            Movement m = Worker.GetComponent<Movement>();
-            owned = owned.Where(it => m.CanReach(it)).ToList();
-            owned = owned.OrderBy(it => { return Tiles.QuickDistance(X, Y, Z, it.X, it.Y, it.Z); }).ToList();
+            List<Item> owned = Items.Where(i => !i.Disowned).ToList();
+
+            Movement m = Worker.UnboxBriefly()!.GetComponent<Movement>();
+            owned = owned.Where(it => m.CanReachBounded(it)).ToList();
+            var (X, Y, Z) = Worker.UnboxBriefly()!.GetPlacedCoordinate();
+            owned = owned.OrderBy(it => { return Tiles.Distance(X, Y, Z, (int)it.X!, (int)it.Y!, (int)it.Z!); }).ToList();
             foreach (Item item in owned)
             {
                 // ideally sort this by distance first
-                if (needed.ContainsKey(item.Resource))
+                if (needed.ContainsKey(item.Resource!))
                 {
-                    int needs = needed[item.Resource];
+                    int needs = needed[item.Resource!];
                     int claiming = Math.Min(needs, item.Unclaimed);
-                    if (claiming<=0)
+                    if (claiming <= 0)
                     {
                         continue;
                     }
                     item.Claimed += claiming;
-                    needed[item.Resource] -= claiming;
-                    if (needed[item.Resource]<=0)
+                    needed[item.Resource!] -= claiming;
+                    if (needed[item.Resource!] <= 0)
                     {
-                        needed.Remove(item.Resource);
+                        needed.Remove(item.Resource!);
                     }
-                    Claims[item.EID] = claiming;
+                    //Owned should never return items without EIDs
+                    Claims[(int)item.EID!] = claiming;
                 }
                 if (needed.Keys.Count == 0)
                 {
@@ -263,7 +305,7 @@ namespace Hecatomb
                 }
             }
             // if any were removed, look for new ingredients
-            if (Claims.Keys.Count<claims)
+            if (Claims.Keys.Count < claims)
             {
                 ClaimIngredients();
             }
@@ -275,76 +317,61 @@ namespace Hecatomb
         }
         public void FetchIngredient()
         {
+            if (Worker?.UnboxBriefly() is null || !Worker.UnboxBriefly()!.Placed)
+            {
+                Unassign();
+                return;
+            }
             // make sure the claims are still valid
             ValidateClaims();
             if (Claims.Count == 0)
             {
                 return;
             }
-            // this will throw an error if the item has despawned
             int eid = Claims.Keys.ToList()[0];
-            Item item = (Item)Entities[eid];
-            // now need to do some validation
-            if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z && !HasIngredient())
+            if (!Entity.Exists(eid))
             {
-                var (x, y, z) = item;
-                Inventory inv = Worker.GetComponent<Inventory>();
-                Item swap = null;
-                if (inv.Item!=null)
-                {
-                    swap = inv.Item; 
-                }
-                //inv.Item = item.TakeClaimed(Claims[eid]);
-                inv.Item = PickUpIngredient(eid, item);
-                
-                // this is a weird way to drop it...
-                swap?.Place(x, y, z);
                 Claims.Remove(eid);
-                Worker.GetComponent<Actor>().Spend();
-            }
-            else
-            {
-                Worker.GetComponent<Actor>().WalkToward(item, useLast: true);
-            }
-        }
-
-
-        public void FetchIngredientWithPriority()
-        {
-            // make sure the claims are still valid
-            ValidateClaims();
-            if (Claims.Count == 0)
-            {
                 return;
             }
-            // this will throw an error if the item has despawned
-            int eid = Claims.Keys.ToList()[0];
-            Item item = (Item)Entities[eid];
-            // now need to do some validation
-            if (item.X == Worker.X && item.Y == Worker.Y && item.Z == Worker.Z && !HasIngredient())
+            Item item = (Item)Entity.GetEntity<Item>(eid)!;
+            if (!item.Placed)
+            {
+                Claims.Remove(eid);
+                return;
+            }
+            var (X, Y, Z) = Worker.UnboxBriefly()!.GetPlacedCoordinate();
+            if (item.X == X && item.Y == Y && item.Z == Z && !HasIngredient())
             {
                 var (x, y, z) = item;
-                Inventory inv = Worker.GetComponent<Inventory>();
-                Item swap = null;
-                if (inv.Item != null)
+                Inventory inv = Worker.UnboxBriefly()!.GetComponent<Inventory>();
+                Item? swap = null;
+                if (inv.Item?.UnboxBriefly() != null)
                 {
-                    swap = inv.Item;
+                    swap = inv.Item.UnboxBriefly();
                 }
                 //inv.Item = item.TakeClaimed(Claims[eid]);
-                inv.Item = PickUpIngredient(eid, item);
-
+                var it = PickUpIngredient(eid, item);
+                inv.Item = it.GetHandle<Item>(OnDespawn);
                 // this is a weird way to drop it...
-                swap?.Place(x, y, z);
+                swap?.DropOnValidTile(X, Y, Z);
                 Claims.Remove(eid);
-                Worker.GetComponent<Actor>().Spend();
+                Worker.UnboxBriefly()!.GetComponent<Actor>().Spend();
             }
             else
             {
-                Worker.GetComponent<Actor>().WalkToward(item, useLast: true);
+                Worker.UnboxBriefly()!.GetComponent<Actor>().WalkToward(item, useLast: true);
             }
         }
+
+
         public virtual void SpendIngredient()
         {
+            if (Worker?.UnboxBriefly() is null || !Worker.UnboxBriefly()!.Placed)
+            {
+                Unassign();
+                return;
+            }
             if (!NeedsIngredients())
             {
                 return;
@@ -353,19 +380,20 @@ namespace Hecatomb
             {
                 return;
             }
-            Item item = (Item)Worker.GetComponent<Inventory>().Item;
-            if (item==null)
+            Item? item = Worker.UnboxBriefly()!.GetComponent<Inventory>().Item?.UnboxBriefly();
+            if (item is null)
             {
-                Debug.WriteLine("this happened for...");
-                Debug.WriteLine(this.Describe());
+                Unassign();
+                return;
             }
-            Ingredients[item.Resource] -= item.Quantity;
-            if (Ingredients[item.Resource]<=0)
+            Ingredients[item.Resource!] -= item.N;
+            if (Ingredients[item.Resource!] <= 0)
             {
-                Ingredients.Remove(item.Resource);
+                Ingredients.Remove(item.Resource!);
             }
             item.Despawn();
         }
+
         public virtual void UnclaimIngredients()
         {
             foreach (int eid in Claims.Keys)
@@ -388,15 +416,24 @@ namespace Hecatomb
 
         public bool CouldWorkFrom(int x, int y, int z)
         {
-            return CouldWorkFrom(Worker, x, y, z);
+            if (Worker?.UnboxBriefly() is null)
+            {
+                return false;
+            }
+            return CouldWorkFrom(Worker.UnboxBriefly()!, x, y, z);
         }
         public bool CouldWorkFrom(Creature c, int x, int y, int z)
         {
-            if (WorkRange == 0 && x == X && y == Y && z == Z)
+            if (!Placed || !c.Placed)
+            {
+                return false;
+            }
+            var (X, Y, Z) = GetPlacedCoordinate();
+            if (WorkSameTile && x == X && y == Y && z == Z)
             {
                 return true;
             }
-            else if (WorkRange == 1 && c.GetComponent<Movement>().CouldTouch(x, y, z, X, Y, Z))
+            else if (!WorkSameTile && c.GetComponent<Movement>().CouldTouchBounded(x, y, z, X, Y, Z))
             {
                 return true;
             }
@@ -405,16 +442,25 @@ namespace Hecatomb
 
         public bool CanWork()
         {
-            return CanWork(Worker);
+            if (Worker?.UnboxBriefly() is null)
+            {
+                return false;
+            }    
+            return CanWork(Worker.UnboxBriefly()!);
         }
         public bool CanWork(Creature c)
         {
+            if (!Placed)
+            {
+                return false;
+            }
             var (x, y, z) = c;
-            if (WorkRange == 0 && x == X && y == Y && z == Z)
+            var (X, Y, Z) = GetPlacedCoordinate();
+            if (WorkSameTile && x == X && y == Y && z == Z)
             {
                 return true;
             }
-            else if (WorkRange == 1 && c.GetComponent<Movement>().CanTouch(X, Y, Z))
+            else if (!WorkSameTile && c.GetComponent<Movement>().CanTouchBounded(X, Y, Z))
             {
                 return true;
             }
@@ -424,9 +470,10 @@ namespace Hecatomb
 
         public virtual void Act()
         {
-            if (!Spawned)
+            if (!Spawned || !Placed || Worker?.UnboxBriefly() is null || !Worker.UnboxBriefly()!.Placed)
             {
-                Debug.WriteLine("Why are we trying to act with a despawned task");
+                Unassign();
+                return;
             }
             // changed this to >= to protect against certain bugs that are probably fixed already
             if (!HasIngredient() && Labor >= LaborCost)
@@ -437,19 +484,26 @@ namespace Hecatomb
             if (CanWork())
             {
                 SpendIngredient();
-                if (Ingredients.Keys.Count == 0 || (Options.NoIngredients && !NeedsIngredients()))
+                if (Ingredients.Keys.Count == 0 || (HecatombOptions.NoIngredients && !NeedsIngredients()))
                 {
                     Work();
                 }
             }
             else
             {
-                Worker.GetComponent<Actor>().WalkToward(this, useLast: (WorkRange == 0));
+                Worker.UnboxBriefly()!.GetComponent<Actor>().WalkToward(this, useLast: (WorkSameTile));
             }
         }
 
+        // why do we check repeatedly whether it's valid?
         public virtual void Work()
         {
+            if (!Spawned || !Placed || Worker?.UnboxBriefly() is null || !Worker.UnboxBriefly()!.Placed)
+            {
+                Unassign();
+                return;
+            }
+            var (X, Y, Z) = GetPlacedCoordinate();
             if (!ValidTile(new Coord(X, Y, Z)))
             {
                 Cancel();
@@ -465,8 +519,9 @@ namespace Hecatomb
                 Cancel();
                 return;
             }
-            Labor -= (1 + Options.WorkBonus);
-            Worker.GetComponent<Actor>().Spend();
+            Labor -= (1 + HecatombOptions.WorkBonus);
+            // this is slightly odd timing...spend the action points before the task gets completely finished
+            Worker.UnboxBriefly()!.GetComponent<Actor>().Spend();
             if (!ValidTile(new Coord(X, Y, Z)))
             {
                 Cancel();
@@ -480,30 +535,28 @@ namespace Hecatomb
 
         public virtual void Start()
         {
-            Feature f = Game.World.Features[X, Y, Z];
+            if (!Spawned || !Placed)
+            {
+                return;
+            }
+            var (X, Y, Z) = GetPlacedCoordinate();
+            Feature? f = Features.GetWithBoundsChecked(X, Y, Z);
             if (f != null)
             {
-                if (f.TryComponent<IncompleteFixtureComponent>() != null)
+                if (f is IncompleteFixture)
                 {
-                    var ifc = f.GetComponent<IncompleteFixtureComponent>();
+                    var ifc = (IncompleteFixture)f;
                     if (ifc.Makes == Makes)
                     {
                         return;
                     }
-                    Debug.WriteLine($"But it makes {ifc.Makes} instead of {Makes}");
                 }
-                Debug.WriteLine("somehow trying to start building where a feature already exists");
                 Cancel();
                 return;
             }
-            f = Spawn<Feature>("IncompleteFeature");
-            if (Makes != null && EntityType.Types.ContainsKey(Makes))
-            {
-                Feature mock = Entity.Mock<Feature>(Makes);
-                f.Name = "incomplete " + mock.Name;
-            }
-            f.GetComponent<IncompleteFixtureComponent>().Makes = Makes;
-            f.Place(X, Y, Z);
+            var ifx = Spawn<IncompleteFixture>();
+            ifx.Makes = Makes;
+            ifx.PlaceInValidEmptyTile(X, Y, Z);
         }
 
         public virtual void Finish()
@@ -518,86 +571,82 @@ namespace Hecatomb
         }
 
         // *** interface methods
-        // ISelectsTile
+        // ISelectsTile (I don't think we need to remind myself to check bounds, since this is only called from a few places)
         public virtual void SelectTile(Coord c)
         {
-            if (Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+            if (Tasks.GetWithBoundsChecked(c.X, c.Y, c.Z) is null)
+            //if (Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
             {
                 Task task = Spawn<Task>(this.GetType());
                 task.Makes = Makes;
-                task.Place(c.X, c.Y, c.Z);
+                task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
             }
         }
-        public virtual void TileHover(Coord c) {}
+        public virtual void TileHover(Coord c) { }
         // ISelectsZone
         public virtual void SelectZone(List<Coord> squares)
         {
             foreach (Coord c in squares)
             {
-                if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
+                if (Tasks.GetWithBoundsChecked(c.X, c.Y, c.Z) == null)
+                //if (Game.World.Tasks[c.X, c.Y, c.Z] == null && ValidTile(c))
                 {
                     Task task = Spawn<Task>(this.GetType());
                     task.Makes = Makes;
-                    task.Place(c.X, c.Y, c.Z);
+                    task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                 }
             }
         }
-        public virtual void TileHover(Coord c, List<Coord> squares) {}
+        public virtual void TileHover(Coord c, List<Coord> squares) { }
         // ISelectsBox
         public virtual void SelectBox(List<Coord> squares)
         {
             foreach (Coord s in squares)
             {
-                if (!ValidTile(s))
-                {
-                    return;
-                }
+                //if (!ValidTile(s))
+                //{
+                //    return;
+                //}
             }
             foreach (Coord s in squares)
             {
-                if (Tasks[s.X, s.Y, s.Z] == null)
+                if (Tasks.GetWithBoundsChecked(s.X, s.Y, s.Z) == null)
                 {
                     Task task = (Task)Spawn(this.GetType());
                     task.Makes = Makes;
-                    task.Place(s.X, s.Y, s.Z);
+                    task.PlaceInValidEmptyTile(s.X, s.Y, s.Z);
                 }
             }
         }
-        public virtual void BoxHover(Coord c, List<Coord> squares) {}
+        public virtual void BoxHover(Coord c, List<Coord> squares) { }
         // IMenuListable
         public virtual void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectZoneControls(this);
-            c.MenuSelectable = false;
+            c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
-            ControlContext.Set(c);
+            InterfaceState.SetControls(c);
         }
 
 
-        protected ColoredText cachedMenuListing;
+        //protected ColoredText cachedMenuListing;
         public virtual ColoredText ListOnMenu()
         {
-            if (cachedMenuListing != null)
-            {
-                return cachedMenuListing;
-            }
             if (Ingredients.Count == 0)
             {
-                cachedMenuListing = MenuName;
-                return cachedMenuListing;
+                return getName()!;
             }
-            else if (Player.GetComponent<Movement>().CanFindResources(Ingredients, useCache: false))
+            else if (Task.CanFindResources(Ingredients))
             {
-                cachedMenuListing = (MenuName + " ($: " + Resource.Format(Ingredients) + ")");
-                return cachedMenuListing;
+                return (getName() + " ($: " + Resource.Format(Ingredients) + ")");
             }
-            string ingredients = "{gray}" + MenuName + " ($: ";
+            string ingredients = "{gray}" + getName() + " ($: ";
             var keys = Ingredients.Keys.ToList();
-            for (int i=0; i<keys.Count; i++)
+            for (int i = 0; i < keys.Count; i++)
             {
-                string resource = keys[i];
-                if (Player.GetComponent<Movement>().CanFindResource(resource, Ingredients[resource], useCache: false))
+                Resource resource = keys[i];
+                if (Task.CanFindResource(resource, Ingredients[resource]))
                 {
                     ingredients += ("{white}" + Resource.Format((resource, Ingredients[resource])));
                 }
@@ -611,13 +660,94 @@ namespace Hecatomb
                 }
             }
             ingredients += "{gray})";
-            cachedMenuListing = ingredients;
-            return cachedMenuListing;
+            return ingredients;
         }
 
         public virtual string GetHighlightColor()
         {
-            return BG;
+            return BG!;
         }
+
+        public static bool CanFindResources(Dictionary<Resource, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false)
+        {
+            if (HecatombOptions.NoIngredients && !alwaysNeedsIngredients)
+            {
+                return true;
+            }
+            var needed = new Dictionary<Resource, int>(resources);
+            List<Item> items = Items.Where(
+                it => { return (needed.ContainsKey(it.Resource!) && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0)); }
+            ).ToList();
+            foreach (Item item in items)
+            {
+                if (needed.ContainsKey(item.Resource!))
+                {
+                    int n = (respectClaims) ? item.Unclaimed : item.N;
+                    needed[item.Resource!] -= n;
+                    if (needed[item.Resource!] <= 0)
+                    {
+                        needed.Remove(item.Resource!);
+                    }
+                }
+            }
+            return (needed.Count == 0);
+        }
+
+        public static bool CanFindResource(Resource resource, int need, bool respectClaims = true, bool ownedOnly = true)
+        {
+            if (HecatombOptions.NoIngredients)
+            {
+                return true;
+            }
+            List<Item> items = Items.Where(
+                it => { return (it.Resource == resource && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0)); }
+            ).ToList();
+            int needed = need;
+            foreach (Item item in items)
+            {
+                int n = (respectClaims) ? item.Unclaimed : item.N;
+                needed -= n;
+            }
+            return (needed <= 0);
+        }
+
+        public virtual ColoredText DescribeWithIngredients(bool capitalized = false, bool checkAvailable = false)
+        {
+            var name = getName()!;
+            if (capitalized)
+            {
+                name = char.ToUpper(name[0]) + name.Substring(1);
+            }
+            if (HecatombOptions.NoIngredients || Ingredients.Count == 0)
+            {
+                return name;
+            }
+            if (!checkAvailable || Task.CanFindResources(Ingredients))
+            {
+                return (getName() + " ($: " + Resource.Format(Ingredients) + ")");
+            }
+            string ingredients = "{gray}" + getName() + " ($: ";
+            var keys = Ingredients.Keys.ToList();
+            for (int i = 0; i < keys.Count; i++)
+            {
+                Resource resource = keys[i];
+                if (Task.CanFindResource(resource, Ingredients[resource]))
+                {
+                    ingredients += ("{white}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                else
+                {
+                    ingredients += ("{gray}" + Resource.Format((resource, Ingredients[resource])));
+                }
+                if (i < keys.Count - 1)
+                {
+                    ingredients += ", ";
+                }
+            }
+            ingredients += "{gray})";
+            return name;
+        }
+
+
     }
 }

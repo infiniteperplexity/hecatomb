@@ -1,220 +1,243 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
-
-    public class DebugZombieSpell : Spell, ISelectsTile
+    class DebugSpell : Spell, IDisplayInfo
     {
-        public DebugZombieSpell() : base()
+        public List<Type> Spells;
+
+        public DebugSpell()
         {
-            MenuName = "spawn zombie (debug)";
-            cost = 0;
-            ForDebugging = true;
+            MenuName = "(debugging spells)";
+            Spells = new List<Type>()
+            {
+                typeof(DebugHealSpell),
+                typeof(ParticleTestDebugSpell),
+                typeof(SevereDamageDebugSpell),
+                typeof(DebugFlowerSpell),
+                typeof(DebugBanditSpell),
+                typeof(SummonBanditsDebugSpell),
+                typeof(CrashDebugSpell)
+            };
+            _cost = 0;
         }
 
+        public override ColoredText ListOnMenu()
+        {
+            return MenuName;
+        }
         public override void ChooseFromMenu()
         {
-            if (GetCost() > Component.Sanity)
+            var c = new InfoDisplayControls(this);
+            c.MenuCommandsSelectable = false;
+            InterfaceState.SetControls(c);
+        }
+
+        public void BuildInfoDisplay(InfoDisplayControls info)
+        {
+            info.Header = "Choose a spell:";
+            List<IMenuListable> spells = new List<IMenuListable>();
+            // only if we have the prerequisite structures / technologies...
+            var structures = Structure.ListStructureTypes();
+            var researched = GetState<ResearchHandler>().Researched;
+            var caster = Player.GetComponent<SpellCaster>();
+            foreach (Type sp in Spells)
             {
-                Debug.WriteLine("cannot cast spell");
+                var spell = (Spell)Activator.CreateInstance(sp)!;
+                spell.Caster = Player;
+                spell.Component = caster;
+                spells.Add(spell);
             }
-            else
+            info.Choices = spells;
+        }
+
+        public void FinishInfoDisplay(InfoDisplayControls info)
+        {
+            info.InfoTop.Insert(1, Player.GetComponent<SpellCaster>().GetSanityText());
+            info.InfoTop.Insert(1, " ");
+        }
+
+        public class SummonBanditsDebugSpell : Spell
+        {
+            public SummonBanditsDebugSpell()
+            {
+                MenuName = "summon bandits";
+                _cost = 0;
+            }
+
+            public override void ChooseFromMenu()
+            {
+                GetState<SiegeHandler>().BanditAttack(debugCloser: false);
+                //GetState<SiegeHandler>().BanditAttack(debugCloser: true);
+
+            }
+        }
+
+        public class CrashDebugSpell : Spell
+        {
+            public CrashDebugSpell()
+            {
+                MenuName = "throw an exception";
+                _cost = 0;
+            }
+
+            public override void ChooseFromMenu()
+            {
+                throw new Exception("debugging exception");
+            }
+        }
+
+        public class ParticleTestDebugSpell : Spell, ISelectsTile
+        {
+            public ParticleTestDebugSpell()
+            {
+                MenuName = "particle test";
+                _cost = 0;
+            }
+
+            public override void ChooseFromMenu()
             {
                 var c = new SelectTileControls(this);
                 c.SelectedMenuCommand = "Spells";
-                c.MenuSelectable = false;
-                ControlContext.Set(c);
+                c.MenuCommandsSelectable = false;
+                InterfaceState.SetControls(c);
+            }
+
+            public void SelectTile(Coord c)
+            {
+                int z = GameState.World!.GetBoundedGroundLevel(c.X, c.Y);
+                ParticleEmitter emitter = new ParticleEmitter();
+                Debug.WriteLine($"Emitting particles at Z={z}");
+                emitter.Place(c.X, c.Y, z);
+            }
+
+            public void TileHover(Coord c)
+            {
             }
         }
 
-        public void SelectTile(Coord c)
+        public class DebugFlowerSpell : Spell, ISelectsTile
         {
-            Creature zombie = Entity.Spawn<Creature>("Zombie");
-            zombie.GetComponent<Actor>().Team = Teams.Friendly;
-            zombie.Place(c.X, c.Y, c.Z);
-            int randomDecay = Game.World.Random.Next(500);
-            zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
-            zombie.GetComponent<Decaying>().Decay += randomDecay;
-            GetState<TaskHandler>().Minions.Add(zombie);
-        }
-
-        public void TileHover(Coord c)
-        {
-            int x = c.X;
-            int y = c.Y;
-            int z = c.Z;
-            Feature f = Game.World.Features[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            public DebugFlowerSpell() : base()
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                MenuName = "spawn flower";
+                _cost = 0;
             }
-            else if (f != null && f.TypeName == "Grave")
+
+            public override void ChooseFromMenu()
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
+                var c = new SelectTileControls(this);
+                c.SelectedMenuCommand = "Spells";
+                c.MenuCommandsSelectable = false;
+                InterfaceState.SetControls(c);
             }
-            else
+
+            static int NextFlower = 0;
+            public void SelectTile(Coord c)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
+                Feature f = Flower.Spawn(Resource.Flowers[NextFlower]);
+                f.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                NextFlower = (NextFlower + 1) % Resource.Flowers.Count;
             }
-        }
-    }
 
-
-
-    public class DebugBanditSpell : Spell, ISelectsTile
-    {
-        public DebugBanditSpell() : base()
-        {
-            MenuName = "spawn bandit (debug)";
-            cost = 0;
-            ForDebugging = true;
-        }
-
-        public override void ChooseFromMenu()
-        {
-            if (GetCost() > Component.Sanity)
+            public void TileHover(Coord c)
             {
-                Debug.WriteLine("cannot cast spell");
-            }
-            else
-            {
-                ControlContext.Set(new SelectTileControls(this));
+
             }
         }
 
-        public void SelectTile(Coord c)
+        public class DebugHealSpell : Spell
         {
-            Creature bandit = Entity.Spawn<Creature>("RagingDryad");
-            bandit.Place(c.X, c.Y, c.Z);
-        }
+            public DebugHealSpell()
+            {
+                MenuName = "self heal";
+                _cost = 0;
+            }
 
-        public void TileHover(Coord c)
-        {
-            int x = c.X;
-            int y = c.Y;
-            int z = c.Z;
-            Feature f = Game.World.Features[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
-            {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
-            }
-            else if (f != null && f.TypeName == "Grave")
-            {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
-            }
-            else
-            {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
-            }
-        }
-    }
-
-    public class DebugHealSpell : Spell
-    {
-        public DebugHealSpell()
-        {
-            MenuName = "self heal (debug)";
-            cost = 0;
-            ForDebugging = true;
-        }
-
-        public override void ChooseFromMenu()
-        {
-            base.ChooseFromMenu();
-            if (GetCost() > Component.Sanity)
-            {
-                Debug.WriteLine("cannot cast spell");
-            }
-            else
+            public override void ChooseFromMenu()
             {
                 Cast();
             }
+            public override void Cast()
+            {
+                Caster!.GetComponent<Defender>().Wounds = 0;
+            }
         }
-        public override void Cast()
+
+        public class DebugBanditSpell : Spell, ISelectsTile
         {
-            Caster.GetComponent<Defender>().Wounds = 0;
+            public DebugBanditSpell() : base()
+            {
+                MenuName = "spawn bandit";
+                _cost = 0;
+            }
+
+            public override void ChooseFromMenu()
+            {
+                var c = new SelectTileControls(this);
+                c.SelectedMenuCommand = "Spells";
+                c.MenuCommandsSelectable = false;
+                InterfaceState.SetControls(c);
+            }
+
+            public void SelectTile(Coord c)
+            {
+                Creature bandit = Bandit.SpawnSiegeBandit();
+                bandit.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+            }
+
+            public void TileHover(Coord c)
+            {
+            }
         }
     }
 
-    public class DebugItemSpell : Spell, ISelectsTile
+    public class SevereDamageDebugSpell : Spell, ISelectsTile
     {
-        public DebugItemSpell() : base()
+        public SevereDamageDebugSpell()
         {
-            MenuName = "spawn item (debug)";
-            cost = 0;
-            ForDebugging = true;
+            MenuName = "damage or destroy";
+            _cost = 0;
         }
 
         public override void ChooseFromMenu()
         {
-            if (GetCost() > Component.Sanity)
-            {
-                Debug.WriteLine("cannot cast spell");
-            }
-            else
-            {
-                ControlContext.Set(new SelectTileControls(this));
-            }
+            var c = new SelectTileControls(this);
+            c.SelectedMenuCommand = "Spells";
+            c.MenuCommandsSelectable = false;
+            InterfaceState.SetControls(c);
         }
 
         public void SelectTile(Coord c)
         {
-            //Item.SpawnCorpse().Place(c.X, c.Y, c.Z);
-            string item = "Rock";
-            if (Game.World.Random.Next(2) == 0)
+            ComposedEntity? ce = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            ce = ce ?? Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            Defender? d = ce?.GetComponent<Defender>();
+            if (d != null)
             {
-                item = "Wood";
-            }
-            Item.PlaceNewResource(item, 1, c.X, c.Y, c.Z);
-        }
-
-        public void TileHover(Coord c)
-        {
-        }
-    }
-
-    public class DebugFlowerSpell : Spell, ISelectsTile
-    {
-        public DebugFlowerSpell() : base()
-        {
-            MenuName = "spawn flower (debug)";
-            cost = 0;
-            ForDebugging = true;
-        }
-
-        public override void ChooseFromMenu()
-        {
-            if (GetCost() > Component.Sanity)
-            {
-                Debug.WriteLine("cannot cast spell");
+                if (d.Wounds == 0)
+                {
+                    d.Wounds = 6;
+                    Cast();
+                }
+                else
+                {
+                    ce!.Destroy();
+                }
             }
             else
             {
-                ControlContext.Set(new SelectTileControls(this));
+                ce!.Destroy();
             }
-        }
-
-        static int NextFlower = 0;
-        public void SelectTile(Coord c)
-        {
-            var handler = Game.World.GetState<RandomPaletteHandler>();
-            var s = RandomPaletteHandler.FlowerNames[NextFlower].Item1;
-            Feature f = RandomPaletteHandler.SpawnFlower(s);
-            f.Place(c.X, c.Y, c.Z);  
-            NextFlower = (NextFlower + 1) % RandomPaletteHandler.FlowerNames.Count;
         }
 
         public void TileHover(Coord c)
         {
+
         }
     }
 }

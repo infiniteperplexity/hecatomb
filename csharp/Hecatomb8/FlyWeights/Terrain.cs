@@ -1,34 +1,27 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 9/18/2018
- * Time: 12:41 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
+using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-	/// <summary>
-	/// Description of Terrain.
-	/// </summary>
+	// Terrain flyweights represent the topology of a single tile - flat, a slope, et cetera.
 	public class Terrain : FlyWeight<Terrain>
 	{
-        public readonly string Name;
-		public readonly char Symbol;
-		public readonly string FG;
-		public readonly	string BG;
-		public readonly bool Opaque;
-		public readonly bool Solid;
-		public readonly bool Fallable;
-		public readonly bool Mutable;
-		public readonly int ZView;
-		public readonly int ZWalk;
+		[JsonIgnore] public readonly string Name;
+		[JsonIgnore] public readonly char Symbol;
+		[JsonIgnore] public readonly string FG;
+		[JsonIgnore] public readonly string BG;
+		[JsonIgnore] public readonly bool Opaque;
+		[JsonIgnore] public readonly bool Solid;
+		[JsonIgnore] public readonly bool Fallable;
+		[JsonIgnore] public readonly bool Mutable;
+		[JsonIgnore] public readonly int ZView;
+		[JsonIgnore] public readonly bool Floor;
+		[JsonIgnore] public readonly int Slope;
 
-		
+
+
 		public Terrain(
-            string type = "",
+			string type = "",
 			string name = "",
 			string fg = "white",
 			string bg = "black",
@@ -37,11 +30,11 @@ namespace Hecatomb
 			bool solid = false,
 			bool fallable = false,
 			bool mutable = true,
-			int zview = 0,
-			int zwalk = 0
+			bool floor = true,
+			int slope = 0
 		) : base(type)
 		{
-            Name = name;
+			Name = name;
 			FG = fg;
 			BG = bg;
 			Symbol = symbol;
@@ -49,12 +42,12 @@ namespace Hecatomb
 			Solid = solid;
 			Fallable = fallable;
 			Mutable = mutable;
-			ZView = zview;
-			ZWalk = zwalk;
+			Floor = floor;
+			Slope = slope;
 		}
-		
+
 		public static readonly Terrain VoidTile = new Terrain(
-            type: "VoidTile",
+			type: "VoidTile",
 			name: "boundary",
 			fg: "black",
 			bg: "black",
@@ -62,67 +55,67 @@ namespace Hecatomb
 			solid: true,
 			mutable: false
 		);
-		
+
 		public static readonly Terrain EmptyTile = new Terrain(
-            type: "EmptyTile",
-            name: "empty",
-			//symbol: '.',
-            symbol: '\u22C5',
+			type: "EmptyTile",
+			name: "empty",
+			symbol: '\u22C5',
 			fg: "BELOWFG",
-		    bg: "BELOWBG", 
+			bg: "BELOWBG",
 			fallable: true,
-			zview: -1
+			floor: false
 		);
-		
+
+		// A FloorTile should always have a wall or void tile underneath
 		public static readonly Terrain FloorTile = new Terrain(
-            type: "FloorTile",
-            name: "floor",
+			type: "FloorTile",
+			name: "floor",
 			symbol: '.',
 			fg: "FLOORFG",
 			bg: "FLOORBG"
 		);
-		
+
 		public static readonly Terrain WallTile = new Terrain(
-            type: "WallTile",
-            name: "wall",
+			type: "WallTile",
+			name: "wall",
 			symbol: '#',
 			fg: "WALLFG",
 			bg: "WALLBG",
 			opaque: true,
 			solid: true
 		);
-		
+
+		// An UpSlopeTile will usually have a DownSlopeTile above it and can never have an EmptyTile above it
 		public static readonly Terrain UpSlopeTile = new Terrain(
-            type: "UpSlopeTile",
-            name: "upward slope",
+			type: "UpSlopeTile",
+			name: "upward slope",
 			symbol: '^',
 			fg: "FLOORFG",
 			bg: "FLOORBG",
-			zview: +1,
-			zwalk: +1	
+			slope: +1
 		);
-		
+
+		// A DownSlopeTile will always have an UpSlopeTile beneath it
 		public static readonly Terrain DownSlopeTile = new Terrain(
-            type: "DownSlopeTile",
-            name: "downward slope",
+			type: "DownSlopeTile",
+			name: "downward slope",
 			symbol: '\u02C7',
-            //symbol: '\u2228',
 			fg: "BELOWFG",
 			bg: "BELOWBG",
-			zview: -1,
-			zwalk: -1
-		);	
-		
+			floor: false,
+			slope: -1
+		);
+
+		// I could use this as a placeholder in certain circumstances but it's a bad idea
 		public static readonly Terrain OutOfBoundsTile = new Terrain(
-            type: "OutOfBoundsTile",
-            name: "out of bounds",
+			type: "OutOfBoundsTile",
+			name: "out of bounds",
 			symbol: ' ',
 			fg: "black",
 			bg: "black",
-			zview: 0,
-			zwalk: 0,
+			slope: 0,
 			mutable: false
-		);	
-		
+		);
+
 	}
 }

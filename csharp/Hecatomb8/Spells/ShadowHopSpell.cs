@@ -8,24 +8,23 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
-
     public class ShadowHopSpell : Spell
     {
         public ShadowHopSpell()
         {
             MenuName = "shadow hop";
-            cost = 10;
-            Researches = new[] { "ShadowHop" };
-            Structures = new[] { "Sanctum" };
+            _cost = 10;
+            RequiresResearch = new[] { Research.ShadowHop };
+            RequiresStructures = new[] { typeof(Sanctum) };
         }
 
         public override void ChooseFromMenu()
         {
             base.ChooseFromMenu();
-            if (GetCost() > Component.Sanity)
+            if (Cost > Component!.Sanity)
             {
                 Debug.WriteLine("cannot cast spell");
             }
@@ -37,26 +36,27 @@ namespace Hecatomb
         public override void Cast()
         {
             CommandLogger.LogCommand(command: "ShadowHop");
-            var (x, y, z) = Caster;
+            var (x, y, z) = Caster!.GetPlacedCoordinate();
             ParticleEmitter emitter1 = new ParticleEmitter();
             emitter1.Place(x, y, z);
             var m = Caster.GetComponent<Movement>();
-            Coord? cc = Tiles.NearbyTile(x, y, z, max: 8, min: 3, valid: (int x1, int y1, int z1) => (m.CanStand(x1, y1, z1)));
-            if (cc != null)
+            Coord? cc = Tiles.NearbyTile(x, y, z, max: 8, min: 3, valid: (int x1, int y1, int z1) => (m.CanStandBounded(x1, y1, z1)));
+            if (cc != null && Creatures.GetWithBoundsChecked(((Coord)cc).X, ((Coord)cc).Y, ((Coord)cc).Z) is null)
             {
-                Coord c = (Coord)cc;
-                Caster.GetComponent<Movement>().StepTo(c.X, c.Y, c.Z);
+                Coord c = (Coord)cc!;
+                Caster.GetComponent<Movement>().StepToValidEmptyTile(c.X, c.Y, c.Z);
                 Caster.GetComponent<Actor>().Spend();
-                Game.Camera.Center(c.X, c.Y, c.Z);
-                ControlContext.Reset();
+                InterfaceState.Camera!.Center(c.X, c.Y, c.Z);
+                InterfaceState.HandlePlayerVisibility();
+                InterfaceState.ResetControls();
                 ParticleEmitter emitter2 = new ParticleEmitter();
                 emitter2.Place(c.X, c.Y, c.Z);
                 base.Cast();
-                Game.InfoPanel.PushMessage("You vanish and reappear nearby.");
+                PushMessage("You vanish and reappear nearby.");
             }
             else
             {
-                Game.InfoPanel.PushMessage("The spell fizzles.");
+                PushMessage("The spell fizzles.");
             }
         }
     }

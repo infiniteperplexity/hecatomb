@@ -1,19 +1,13 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 10:24 AM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static Resource;
+    using static Research;
     public class Forge : Structure
     {
+        
         public Forge() : base()
         {
             Symbols = new char[]
@@ -28,26 +22,23 @@ namespace Hecatomb
                 "#FF5500", "FLOORFG","#BB9922",
                 "WALLFG","#FF9933","FLOORFG"
             };
-            BG = "#554488";
+            _bg = "#554488";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","FLOORBG",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"TinOre", 1}},
-                new Dictionary<string, int>() {{"Wood", 1}}, new Dictionary<string, int>() {{"Coal", 2}}, new Dictionary<string, int>() {{"Wood", 1}},
-                new Dictionary<string, int>() {{"CopperOre", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
+                new Dictionary<Resource, int>() {{Rock, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{TinOre, 1}},
+                new Dictionary<Resource, int>() {{Wood, 1}}, new Dictionary<Resource, int>() {{Coal, 2}}, new Dictionary<Resource, int>() {{Wood, 1}},
+                new Dictionary<Resource, int>() {{CopperOre, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Rock, 1}}
             };
-            MenuName = "forge";
-            Name = "forge";
+            _name = "forge";
             UseHint = "(research metal tools and weapons.)";
-            //Researches = new[] { "Bronze };
-            Researches = new[] { "Bronzeworking" };
-            //ResearchPrereqs = new[] { "Bronzeworking"};
-            StructurePrereqs = new[] { "Workshop" };
+            Researches = new[] { BronzeWorking };
+            RequiresStructures = new[] { typeof(Workshop) };
         }
     }
 }

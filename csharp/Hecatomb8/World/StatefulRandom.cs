@@ -1,121 +1,79 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/10/2018
- * Time: 11:00 AM
- */
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-	public class StatefulRandom
-	{
-		public int Seed;
-		public long Calls;
-        public int Last;
-		private Random random;
-        private Random stateless;
-		
+    public class StatefulRandom
+    {
+        public int Seed;
+        public long Calls;
+        private Random? random;
+        private Random? stateless;
+
 
         public static int GetTimeSeed()
         {
-            return 
+            return
                 System.DateTime.Now.Millisecond
                 + 1000 * System.DateTime.Now.Second
                 + 60 * 1000 * System.DateTime.Now.Minute
                 + 60 * 60 * 1000 * System.DateTime.Now.Hour;
         }
-		public StatefulRandom(int seed, int calls=0)
-		{
-			Seed = seed;
-			Calls = calls;
-			Initialize();
-		}
-		
-		public void Initialize()
-		{
-			random = new Random(Seed);
-			for (int i=0; i<Calls; i++)
-			{
-				random.Next();
-			}
-            stateless = new Random();
-		}
-		
-        public void Poll()
+        public StatefulRandom(int seed, int calls = 0)
         {
-            Debug.WriteLine($"Turn: {Game.World.Turns.Turn}, Last: {Game.World.Random.Last}, Calls: {Game.World.Random.Calls}, Seed: {Game.World.Random.Seed}");
+            Seed = seed;
+            Calls = calls;
+            random = new Random(Seed);
+            stateless = new Random();
         }
 
-        [JsonIgnore] TurnHandler _cached;
-        [JsonIgnore] TurnHandler cachedTurns
+        public void Reinitialize()
         {
-            get
+            random = new Random(Seed);
+            for (int i = 0; i < Calls; i++)
             {
-                if (_cached != null)
-                {
-                    return _cached;
-                }
-                else
-                {
-                    _cached = Game.World.GetState<TurnHandler>();
-                    return _cached;
-                }
+                random.Next();
             }
         }
-		public int Next(int i)
-		{
-            Calls +=1;
-            int next = random.Next(i);
-            if (cachedTurns.Turn > 0)
-            {
-                PrintTrace();
-            }
-            Last = next;
+
+        public int Next(int i)
+        {
+            Calls += 1;
+            int next = random!.Next(i);
             return next;
-		}
+        }
 
         public int Next(int i, int j)
         {
             Calls += 1;
-            int next = random.Next(i, j);
-            if (cachedTurns.Turn > 0)
-            {
-                PrintTrace();
-            }
-            Last = next;
+            int next = random!.Next(i, j);
             return next;
         }
 
         public int StatelessNext(int i)
         {
-            int next = stateless.Next(i);
+            int next = stateless!.Next(i);
             return next;
         }
 
         public int StatelessNext(int i, int j)
         {
-            int next = stateless.Next(i, j);
+            int next = stateless!.Next(i, j);
             return next;
         }
 
         public double NextDouble()
-		{
+        {
             Calls += 1;
-            if (cachedTurns.Turn > 0)
-            {
-                PrintTrace();
-            }
-            return random.NextDouble();
-		}
+            return random!.NextDouble();
+        }
 
         public double StatelessDouble()
         {
-            return stateless.NextDouble();
+            return stateless!.NextDouble();
         }
 
         public double NextNormal(float u, float std)
@@ -133,8 +91,8 @@ namespace Hecatomb
 
         public double StatelessNormal(float u, float std)
         {
-            double u1 = 1.0 - stateless.NextDouble();
-            double u2 = 1.0 - stateless.NextDouble();
+            double u1 = 1.0 - stateless!.NextDouble();
+            double u2 = 1.0 - stateless!.NextDouble();
             double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
             return (u + std * randStdNormal);
         }
@@ -165,8 +123,8 @@ namespace Hecatomb
         {
             long a = 1103515245;
             long c = 12345;
-            double m = Math.Pow(2,31);
-            long n = (a * seed + c) % (long) m;
+            double m = Math.Pow(2, 31);
+            long n = (a * seed + c) % (long)m;
             double f = (double)n;
             f /= (double)2147473647.0;
             return f;
@@ -175,14 +133,14 @@ namespace Hecatomb
         public int Arbitrary(int i, int seed)
         {
             // somehow this occasionally escapes the bounds
-            int n = (int) Math.Floor(Arbitrary(seed) * i);
+            int n = (int)Math.Floor(Arbitrary(seed) * i);
             if (n < 0)
             {
                 n = 0;
             }
             else if (n >= i)
             {
-                n = i-1;
+                n = i - 1;
             }
             return n;
         }
@@ -196,21 +154,9 @@ namespace Hecatomb
             }
             else if (n >= j)
             {
-                n = j-1;
+                n = j - 1;
             }
             return n;
-        }
-
-        public void PrintTrace()
-        {
-            //return;
-            StackTrace s = new StackTrace();
-            if (s.GetFrame(2).GetMethod().Name == "WalkRandom")
-            {
-                return;
-            }
-            Debug.WriteLine(
-                $"{s.GetFrame(1).GetMethod().Name} called by {s.GetFrame(2).GetMethod().Name}, {s.GetFrame(2).GetMethod().ReflectedType.Name}");
         }
     }
 }

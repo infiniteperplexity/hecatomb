@@ -1,93 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    public class HecatombOptions
+    class HecatombOptions
     {
-        public bool NoErrorLog;
-        public bool Explored;
-        public bool Visible;
-        public bool NoIngredients;
-        public bool NoTutorial;
-        public bool NoStartupScreen;
-        public bool NoHumanAttacks;
-        public bool NoNatureAttacks;
-        public int WorkBonus;
-        public bool AllSpells;
-        public bool NoManaCost;
-        public bool NoSpiders;
-        public bool NoGhouls;
-        public bool NoBatCaves;
-        public bool NoLairs;
-        public bool NoCaverns;
-        public bool IgnoreHardness;
-        public bool Invincible;
-        public bool ReseedRandom;
-        public bool FullScreen;
-        public bool ShowDebugSpells;
-        public bool HaulTaskClaims;
-        public bool ReconstructGames;
-        public List<(string, int)> FreeStuff;
+        public static bool Visible;
+        public static bool Explored;
+        public static bool ZeroSeed;
+        public static bool NoErrorLog;
+        public static bool ShowPathfindingNotes;
+        public static bool NoBuildWarnings;
+        public static bool NoStartupScreen;
+        public static bool NoTutorial;
+        public static bool NoIngredients;
+        public static int WorkBonus;
+        public static bool Invincible;
+        public static bool ShowDebugSpells;
+        public static bool ShowAllSpells;
+        public static bool IgnoreHardness;
+        public static bool NoSpiders;
+        public static bool NoManaCost;
+        public static bool NoisyErrors;
+        public static bool NoSieges;
+        public static bool NoGhouls;
+        public static bool NoDryads;
 
-        public HecatombOptions()
+
+        static HecatombOptions()
         {
+            Visible = false;
+            Visible = true;
+            Explored = false;
+            Explored = true;
+            ZeroSeed = false;
+            
             NoErrorLog = false;
             //NoErrorLog = true;
-            ReconstructGames = false;
-            //ReconstructGames = true;
-            FullScreen = false;
-            //FullScreen = true;
-            Explored = false;
-            //Explored = true;
-            Visible = false;
-            //Visible = true;
-            NoIngredients = false;
-            //NoIngredients = true;
-            NoTutorial = false;
-            //NoTutorial = true;
+            NoBuildWarnings = false;
+            //NoBuildWarnings = true;
             NoStartupScreen = false;
             //NoStartupScreen = true;
-            NoHumanAttacks = false;
-            //NoHumanAttacks = true;
-            NoNatureAttacks = false;
-            //NoNatureAttacks = true;
-            AllSpells = false;
-            //AllSpells = true;
-            ShowDebugSpells = false;
-            //ShowDebugSpells = true;
-            NoManaCost = false;
-            //NoManaCost = true;
+            NoTutorial = false;
+            //NoTutorial = true;
+            NoIngredients = false;
+            //NoIngredients = true;
             WorkBonus = 0;
-            //WorkBonus = 5;
-            NoSpiders = false;
-            //NoSpiders = true;
-            NoGhouls = false;
-            //NoGhouls = true;
-            NoBatCaves = false;
-            NoBatCaves = true;
-            NoLairs = false;
-            NoLairs = true;
-            NoCaverns = false;
-            //NoCaverns = true;
+            //WorkBonus = 2;
             IgnoreHardness = false;
             //IgnoreHardness = true;
+            ShowDebugSpells = false;
+            //ShowDebugSpells = true;
+            ShowAllSpells = false;
+            //ShowAllSpells = true;
+            NoSpiders = false;
+            //NoSpiders = true;
+            NoManaCost = false;
+            //NoManaCost = true;
             Invincible = false;
             //Invincible = true;
-            ReseedRandom = false;
-            //ReseedRandom = true;
-            HaulTaskClaims = false;
-            //HaulTaskClaims = true;
-            FreeStuff = new List<(string, int)>();
-            //FreeStuff.Add(("TradeGoods", 4));
-            //FreeStuff.Add(("Wood", 4));
-            //FreeStuff.Add(("Rock", 4));
-            //FreeStuff.Add(("Coal", 4));
-            //FreeStuff.Add(("Flint", 4));
+            NoisyErrors = false;
+            //NoisyErrors = true;
+            NoSieges = false;
+            //NoSieges = true;
+            NoGhouls = false;
+            //NoGhouls = true;
+            NoDryads = false;
+            //NoDryads = true;
         }
     }
-    
 }

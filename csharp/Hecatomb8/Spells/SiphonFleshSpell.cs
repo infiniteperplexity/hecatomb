@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
@@ -17,62 +17,68 @@ namespace Hecatomb
         public SiphonFleshSpell()
         {
             MenuName = "siphon flesh";
-            cost = 5;
-            Researches = new[] { "SiphonFlesh" };
-            Structures = new[] { "Sanctum" };
+            _cost = 5;
+            RequiresResearch = new[] { Research.SiphonFlesh };
+            RequiresStructures = new[] { typeof(Sanctum) };
         }
 
         public override void ChooseFromMenu()
         {
             base.ChooseFromMenu();
-            if (GetCost() > Component.Sanity)
+            if (Cost > Component!.Sanity)
             {
                 Debug.WriteLine("cannot cast spell");
             }
             else
             {
                 var c = new SelectTileControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Spells";
-                ControlContext.Set(c);
+                c.InfoMiddle = new List<ColoredText>() { "{green}Siphon flesh." };
+                InterfaceState.SetControls(c);
             }
         }
 
         public void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "SiphonFlesh", x: c.X, y: c.Y, z: c.Z);
-            Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
+            Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
 
-            if (cr!=null && (Game.World.Explored.Contains(c) || Options.Explored))
+            if (cr != null && (Explored.Contains(c) || HecatombOptions.Explored))
             {
                 if (cr == Caster)
                 {
                     // can't target caster
                 }
-                else if (cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
+                else if (cr.GetComponent<Actor>().Team == Caster!.GetComponent<Actor>().Team)
                 {
                     // heal ally at expense of caster
                     // can we make this heal two points of damage and 200 points of rot for life?
                     Defender d1 = cr.GetComponent<Defender>();
                     Defender d2 = Caster.GetComponent<Defender>();
-                    Decaying decay = cr.TryComponent<Decaying>();
-                    int siphon = Math.Min(d1.Wounds, (14 - d2.Wounds)*2);
+                    //Decaying decay = cr.TryComponent<Decaying>();
+                    int siphon = Math.Min(d1.Wounds, (14 - d2.Wounds) * 2);
                     if (siphon > 0)
                     {
                         d1.Wounds -= siphon;
                         d2.Wounds += (int)Math.Ceiling(((double)siphon) / 2.0);
                     }
-                    else if (decay != null)
+                    if (cr is Zombie)
                     {
-                        // I think let's hold off on this for now
+                        var zombie = (Zombie)cr;
+                        zombie.Decay = Math.Min(zombie.MaxDecay, zombie.Decay + 500);
                     }
+                    //else if (decay != null)
+                    //{
+                    //    // I think let's hold off on this for now
+                    //}
                     if (siphon > 0)
                     {
-                        Game.InfoPanel.PushMessage("You siphon your own flesh and blood to heal your minion.");
+                        PushMessage("You siphon your own flesh and blood to heal your minion.");
                         ParticleEmitter emitter1 = new ParticleEmitter();
-                        emitter1.Place(Caster.X, Caster.Y, Caster.Z);
+                        emitter1.Place((int)Caster.X!, (int)Caster.Y!, (int)Caster.Z!);
                         ParticleEmitter emitter2 = new ParticleEmitter();
-                        emitter2.Place(cr.X, cr.Y, cr.Z);
+                        emitter2.Place(c.X, c.Y, c.Z);
                         base.Cast();
                         d2.ResolveWounds();
                     }
@@ -82,22 +88,22 @@ namespace Hecatomb
                     // heal caster at expense of target
                     Defender d1 = cr.GetComponent<Defender>();
                     Defender d2 = Caster.GetComponent<Defender>();
-                 
+
                     if (d2.Wounds > 0)
                     {
-                        cr.GetComponent<Actor>().Provoke(Caster);
+                        cr.GetComponent<Actor>().ProvokeAgainst(Caster);
                         int heal = Math.Min(d2.Wounds, 20 - d1.Wounds);
                         d1.Wounds += heal;
                         d2.Wounds -= heal;
-                        Game.InfoPanel.PushMessage($"You siphon flesh and blood from {cr.Describe()} to mend your wounds.");
+                        PushMessage($"You siphon flesh and blood from {cr.Describe()} to mend your wounds.");
                         ParticleEmitter emitter1 = new ParticleEmitter();
-                        emitter1.Place(Caster.X, Caster.Y, Caster.Z);
+                        emitter1.Place((int)Caster!.X!, (int)Caster.Y!, (int)Caster.Z!);
                         ParticleEmitter emitter2 = new ParticleEmitter();
-                        emitter2.Place(cr.X, cr.Y, cr.Z);
+                        emitter2.Place(c.X, c.Y, c.Z);
                         base.Cast();
                         d1.ResolveWounds();
-                        
-                    }   
+
+                    }
                 }
             }
             else
@@ -111,24 +117,43 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Creature cr = Creatures[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            Defender d1 = Player.GetComponent<Defender>();
+            Creature? cr = Creatures.GetWithBoundsChecked(x, y, z);
+            Defender? d2 = cr?.GetComponent<Defender>();
+            var controls = InterfaceState.Controls;
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                controls.InfoMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (cr != null)
             {
-                if (cr==Caster)
+                if (cr == Caster)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target yourself") };
+                    controls.InfoMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target yourself") };
                 }
-                else if (cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
+                else if (cr.GetComponent<Actor>().Team == Caster!.GetComponent<Actor>().Team)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
+                    if (d2!.Wounds == 0)
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target an unwounded minion.") };
+                    }
+                    else
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
+                    }
+                    
                 }
                 else
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
+                    if (d1.Wounds == 0)
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot siphon from an enemy unless you are wounded.") };
+                    }
+                    else
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
+                    }
+                    
                 }
             }
         }

@@ -1,39 +1,36 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/23/2018
- * Time: 12:43 PM
- */
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-	public class Inventory : Component
-	{
-        public TileEntityField<Item> Item = new TileEntityField<Item>();
-		
+    using static HecatombAliases;
+    public class Inventory : Component
+    {
+        public ListenerHandledEntityHandle<Item>? Item;
+
+        // I actually haven't come up with how to put items in here...how do I do it for tasks?
         public Inventory()
         {
             AddListener<DespawnEvent>(OnDespawn);
             AddListener<DestroyEvent>(OnDestroy);
         }
 
-        public GameEvent OnDespawn(GameEvent ge)
+        public override GameEvent OnDespawn(GameEvent ge)
         {
             DespawnEvent de = (DespawnEvent)ge;
-            if (de.Entity==this && Item!=null)
+            if (Item != null && de.Entity == Item.UnboxBriefly())
             {
-                Item.Despawn();
+                Item = null;
             }
+            base.OnDespawn(ge);
             return ge;
         }
 
         public GameEvent OnDestroy(GameEvent ge)
         {
             DestroyEvent de = (DestroyEvent)ge;
-            if (de.Entity == this.Entity.Unbox())
+            if (Entity != null && de.Entity == Entity.UnboxBriefly())
             {
                 Drop();
             }
@@ -41,16 +38,26 @@ namespace Hecatomb
         }
         public void Drop()
         {
-            var (x, y, z) = Entity;
-            if (Item != null)
+            if (Entity?.UnboxBriefly() != null && Entity.UnboxBriefly()!.Placed && Item?.UnboxBriefly() != null)
             {
-                if (Item.Unbox().Resource == "Gold")
+                var item = Item.UnboxBriefly()!;
+                if (item.Resource == Resource.Gold)
                 {
-                    Game.World.Events.Publish(new AchievementEvent() { Action = "FoundGold" });
+                    Publish(new AchievementEvent() { Action = "FoundGold" });
                 }
-                Item.Place(x, y, z);
+                var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
+                item.DropOnValidTile((int)x!, (int)y!, (int)z!);
                 Item = null;
             }
+        }
+
+        public void GrantItem(Item item)
+        {
+            if (Item?.UnboxBriefly() != null)
+            {
+                Item.UnboxBriefly()!.Despawn();
+            }
+            Item = item.GetHandle<Item>(OnDespawn);
         }
     }
 }

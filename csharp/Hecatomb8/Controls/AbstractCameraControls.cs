@@ -1,18 +1,11 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/8/2018
- * Time: 1:08 PM
- */
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    // Note that if I update this functionality, I should consider updating MenuCameraControls as well
     public abstract class AbstractCameraControls : ControlContext
     {
         public static int Z;
@@ -22,7 +15,7 @@ namespace Hecatomb
         public override void HandleKeyDown(Keys key)
         {
             base.HandleKeyDown(key);
-            Camera c = Game.Camera;
+            Camera c = InterfaceState.Camera!;
             Z = c.Z;
             XOffset = c.XOffset;
             YOffset = c.YOffset;
@@ -31,7 +24,7 @@ namespace Hecatomb
 
         public AbstractCameraControls() : base()
         {
-            var Commands = Game.Commands;
+            var Commands = InterfaceState.Commands!;
             KeyMap[Keys.Up] = Commands.MoveCameraNorth;
             KeyMap[Keys.Down] = Commands.MoveCameraSouth;
             KeyMap[Keys.Left] = Commands.MoveCameraWest;
@@ -44,16 +37,43 @@ namespace Hecatomb
             KeyMap[Keys.E] = Commands.MoveCameraNorthEast;
             KeyMap[Keys.X] = Commands.MoveCameraSouthWest;
             KeyMap[Keys.C] = Commands.MoveCameraSouthEast;
-
+            KeyMap[Keys.NumPad2] = Commands.MoveCameraNorth;
+            KeyMap[Keys.NumPad8] = Commands.MoveCameraSouth;
+            KeyMap[Keys.NumPad4] = Commands.MoveCameraWest;
+            KeyMap[Keys.NumPad6] = Commands.MoveCameraEast;
+            KeyMap[Keys.NumPad1] = Commands.MoveCameraNorthWest;
+            KeyMap[Keys.NumPad3] = Commands.MoveCameraNorthEast;
+            KeyMap[Keys.NumPad7] = Commands.MoveCameraSouthWest;
+            KeyMap[Keys.NumPad9] = Commands.MoveCameraSouthEast;
             KeyMap[Keys.OemComma] = Commands.MoveCameraUp;
             KeyMap[Keys.OemPeriod] = Commands.MoveCameraDown;
         }
+
         public override void CameraHover()
         {
-            if (Cursor.X > -1)
+            var c = InterfaceState.Cursor;
+            if (c != null)
             {
-                Coord tile = new Coord(Cursor.X, Cursor.Y, Game.Camera.Z);
-                OnTileHover(tile);
+                Coord tile = new Coord(((Coord)c)!.X, ((Coord)c)!.Y, InterfaceState.Camera!.Z);
+                HoverTile(tile);
+            }
+        }
+
+        public void SelectOrWait()
+        {
+            var Commands = InterfaceState.Commands!;
+            if (ControlDown)
+            {
+                Commands.Wait();
+            }
+            else
+            {
+                SelectTile();
+                // unless we selected something, wait anyway
+                if (InterfaceState.Controls == this)
+                {
+                    Commands.Wait();
+                }
             }
         }
     }

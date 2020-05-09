@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
@@ -17,42 +17,43 @@ namespace Hecatomb
         public SacrificeMinionSpell()
         {
             MenuName = "sacrifice minion";
-            cost = 1;
-            Structures = new[] { "Sanctum" };
+            _cost = 1;
+            RequiresStructures = new[] { typeof(Sanctum) };
         }
 
         public override void ChooseFromMenu()
         {
             base.ChooseFromMenu();
-            if (GetCost() > Component.Sanity)
+            if (Cost > Component!.Sanity)
             {
                 Debug.WriteLine("cannot cast spell");
             }
             else
             {
                 var c = new SelectTileControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Spells";
-                ControlContext.Set(c);
+                c.InfoMiddle = new List<ColoredText>() { "{green}Sacrifice a minion." };
+                InterfaceState.SetControls(c);
             }
         }
 
         public void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "SacrificeMinion", x: c.X, y: c.Y, z: c.Z);
-            Creature cr = Game.World.Creatures[c.X, c.Y, c.Z];
+            Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
 
-            if (cr != null && (Game.World.Explored.Contains(c) || Options.Explored))
+            if (cr != null && (Explored.Contains(c) || HecatombOptions.Explored))
             {
-                if (cr != Caster && cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
+                if (cr != Caster && cr.GetComponent<Actor>().Team == Caster!.GetComponent<Actor>().Team)
                 {
-                    Game.InfoPanel.PushMessage("You withdraw magical power from the minion.");
+                    PushMessage("You withdraw magical power from the minion.");
                     ParticleEmitter emitter1 = new ParticleEmitter();
-                    emitter1.Place(Caster.X, Caster.Y, Caster.Z);
+                    emitter1.Place((int)Caster!.X!, (int)Caster!.Y!, (int)Caster!.Z!);
                     ParticleEmitter emitter2 = new ParticleEmitter();
-                    emitter2.Place(cr.X, cr.Y, cr.Z);
+                    emitter2.Place((int)cr.X!, (int)cr.Y!, (int)cr.Z!);
                     cr.Destroy();
-                    Caster.GetComponent<SpellCaster>().Sanity = Caster.GetComponent<SpellCaster>().GetCalculatedMaxSanity();
+                    Caster.GetComponent<SpellCaster>().Sanity = Caster.GetComponent<SpellCaster>().MaxSanity;
                 }
             }
         }
@@ -62,16 +63,16 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Creature cr = Creatures[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            Creature? cr = Creatures.GetWithBoundsChecked(x, y, z);
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                InterfaceState.Controls.InfoMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
             else if (cr != null)
             {
-                if (cr != Caster && cr.GetComponent<Actor>().Team == Caster.GetComponent<Actor>().Team)
+                if (cr != Caster && cr.GetComponent<Actor>().Team == Caster!.GetComponent<Actor>().Team)
                 {
-                    Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Sacrifice {0} to restore sanity.", cr.Describe()) };
+                    InterfaceState.Controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Sacrifice {0} to restore sanity.", cr.Describe()) };
                 }
             }
         }

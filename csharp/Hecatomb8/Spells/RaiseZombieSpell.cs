@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
-
     public class RaiseZombieSpell : Spell, ISelectsTile
     {
         public RaiseZombieSpell() : base()
         {
             MenuName = "raise zombie";
+            _cost = 0;
         }
 
-        public override int GetCost()
+        protected override int getCost()
         {
             var minions = GetState<TaskHandler>().Minions;
             if (minions.Count == 0)
@@ -46,83 +41,86 @@ namespace Hecatomb
 
         public override void ChooseFromMenu()
         {
-            if (GetCost() > Component.Sanity)
+            if (Cost > Component!.Sanity)
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "Cancel" });
-                Debug.WriteLine("cannot cast spell");
+                Publish(new TutorialEvent() { Action = "Cancel" });
             }
             else
             {
-                Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
+                Publish(new TutorialEvent() { Action = "ChooseRaiseZombie" });
                 var c = new SelectTileControls(this);
-                c.MenuSelectable = false;
+                c.MenuCommandsSelectable = false;
                 c.SelectedMenuCommand = "Spells";
-                ControlContext.Set(c);
+                c.InfoMiddle = new List<ColoredText>() { "{green}Raise a zombie." };
+                InterfaceState.SetControls(c);
             }
         }
 
         public void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "RaiseZombie", x: c.X, y: c.Y, z: c.Z);
-            Feature f = Game.World.Features[c.X, c.Y, c.Z];
-            if ((Game.World.Explored.Contains(c) || Options.Explored) && f != null && f.TypeName == "Grave")
-            { 
-                Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
-                Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
-                if (Game.World.GetState<TaskHandler>().Minions.Count >= 3)
+            
+            Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            if (GameState.World!.Explored.Contains(c) || HecatombOptions.Explored)
+            {
+                Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+                Item? i = Items.GetWithBoundsChecked(c.X, c.Y, c.Z);
+
+                if (i is Corpse && Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z) is null)
                 {
-                    Game.World.Events.Publish(new AchievementEvent() { Action = "RaiseFourthZombie" });
+                    Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
+                    Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
+                    if (GetState<TaskHandler>().Minions.Count >= 3)
+                    {
+                        Publish(new AchievementEvent() { Action = "RaiseFourthZombie" });
+                    }
+                    Cast();
+                    ParticleEmitter emitter = new ParticleEmitter();
+                    emitter.Place(c.X, c.Y, c.Z);
+                    var zombie = Zombie.SpawnZombieMinion();
+                    zombie.CorpseSpecies = (i as Corpse)!.Species;
+                    i.Despawn();
+                    Senses.Announce(c.X, c.Y, c.Z, sight: "The zombie rises to obey your commands.");
+                    
+
+                    zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                    InterfaceState.Commands!.Act();
                 }
-                Cast();
-                ParticleEmitter emitter = new ParticleEmitter();
-                emitter.Place(c.X, c.Y, c.Z);
-                Creature zombie = Entity.Spawn<Creature>("Zombie");
-                // some chance of non-human zombie?
-                zombie.Species = "Human";
-                zombie.GetComponent<Actor>().Team = Teams.Friendly;
-                zombie.Place(c.X, c.Y, c.Z - 1);
-                int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
-                //int randomDecay = Game.World.Random.Next(500);
-                zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
-                zombie.GetComponent<Decaying>().Decay += randomDecay;
-                if (!Game.World.Terrains[c.X, c.Y, c.Z - 1].Solid && Game.World.Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)))
+                else if (f is Grave && Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z - 1) is null && Tasks.GetWithBoundsChecked(c.X, c.Y, c.Z) is null)
                 {
-                    Status.PushMessage("The zombie burrows downward into the space below.");
-                    BreakTombstone(f);
+                    Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
+                    Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
+                    if (GetState<TaskHandler>().Minions.Count >= 3)
+                    {
+                        Publish(new AchievementEvent() { Action = "RaiseFourthZombie" });
+                    }
+                    Cast();
+                    ParticleEmitter emitter = new ParticleEmitter();
+                    emitter.Place(c.X, c.Y, c.Z);
+                    var zombie = Zombie.SpawnZombieMinion();
+                    zombie.PlaceInValidEmptyTile(c.X, c.Y, c.Z - 1);
+                    if (!Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z - 1).Solid && (Explored.Contains(new Coord(c.X, c.Y, c.Z - 1)) || HecatombOptions.Explored))
+                    {
+                        if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z - 1) == Terrain.UpSlopeTile)
+                        {
+                            Terrains.SetWithBoundsChecked(c.X, c.Y, c.Z, Terrain.DownSlopeTile);
+                        }
+                        else
+                        {
+                            Terrains.SetWithBoundsChecked(c.X, c.Y, c.Z, Terrain.EmptyTile);
+                        }
+                        Cover.ClearGroundCover(c.X, c.Y, c.Z);
+                        (f as Grave)!.Shatter();
+                        Senses.Announce(c.X, c.Y, c.Z, sight: "The zombie emerges into the tunnel below.");
+                    }
+                    else
+                    {
+                        Task emerge = Entity.Spawn<ZombieEmergeTask>();
+                        emerge.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                        emerge.AssignTo(zombie);    
+                    }
                 }
-                else
-                {
-                    Task emerge = Entity.Spawn<ZombieEmergeTask>();
-                    emerge.AssignTo(zombie);
-                    emerge.Place(c.X, c.Y, c.Z);
-                }
-                GetState<TaskHandler>().Minions.Add(zombie);
-                return;
             }
-            Item i = Items[c.X, c.Y, c.Z];
-            if ((Game.World.Explored.Contains(c) || Options.Explored) && i != null && i.Resource=="Corpse")
-            {   
-                Game.World.Events.Publish(new TutorialEvent() { Action = "CastRaiseZombie" });
-                Game.World.Events.Publish(new AchievementEvent() { Action = "CastRaiseZombie" });
-                Cast();
-                ParticleEmitter emitter = new ParticleEmitter();
-                emitter.Place(c.X, c.Y, c.Z);
-                Creature zombie = Entity.Spawn<Creature>("Zombie");
-                zombie.Species = i.CorpseSpecies;
-                zombie.GetComponent<Actor>().Team = Teams.Friendly;
-                zombie.Place(c.X, c.Y, c.Z);
-                int randomDecay = Game.World.Random.Arbitrary(500, c.OwnSeed());
-                //int randomDecay = Game.World.Random.Next(500);
-                zombie.GetComponent<Decaying>().TotalDecay += randomDecay;
-                // need to keep an eye on how this mapping works
-                zombie.GetComponent<Decaying>().Decay = 10*i.Decay + randomDecay;
-                i.Despawn();
-                Status.PushMessage("The corpse stirs to obey your commands.");
-                GetState<TaskHandler>().Minions.Add(zombie);
-                
-                return;
-            }
-            // some notification of failure?
         }
 
         public void TileHover(Coord c)
@@ -130,50 +128,36 @@ namespace Hecatomb
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
-            Feature f = Game.World.Features[x, y, z];
-            if (!Game.World.Explored.Contains(c) && !Options.Explored)
+            Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            Item? i = Items.GetWithBoundsChecked(x, y, z);
+            var controls = InterfaceState.Controls;
+            // I need to look for a corpse as well
+            if (!GameState.World!.Explored.Contains(c) && !HecatombOptions.Explored)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                controls.InfoMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
             }
-            else if (f != null && f.TypeName == "Grave")
+            else if (f is Grave || i is Corpse)
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
+                controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Raise a zombie at {0} {1} {2}", x, y, z) };
             }
             else
             {
-                Game.Controls.MenuMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
+                controls.InfoMiddle = new List<ColoredText>() { "{orange}Select a tile with a tombstone or corpse." };
             }
         }
 
-        public static void BreakTombstone(Feature f)
-        {
-            var (x, y, z) = f;
-            int seed = f.OwnSeed();
-            f.Destroy();
-            foreach (Coord c in Tiles.GetNeighbors8(x, y, z))
-            {
-                int x1 = c.X;
-                int y1 = c.Y;
-                int z1 = c.Z;
-                f = Game.World.Features[x1, y1, z1];
-                if (Game.World.Features[x1, y1, z1] == null && !Game.World.Terrains[x1, y1, z1].Solid && !Game.World.Terrains[x1, y1, z1].Fallable)
-                {
-                    if (Game.World.Random.Arbitrary(2, seed) == 0)
-                    //if (Game.World.Random.Next(2) == 0)
-                    {
-                        Item.PlaceNewResource("Rock", 1, x1, y1, z1);
-                    }
-                }
-            }
-        }
+        
+
+
+        
     }
 
     public class ZombieEmergeTask : Task
     {
         public ZombieEmergeTask() : base()
         {
-            Name = "zombie emerging";
-            BG = "orange";
+            _name = "zombie emerging";
+            _bg = "orange";
         }
         public override void Act()
         {
@@ -182,43 +166,62 @@ namespace Hecatomb
 
         public override bool ValidTile(Coord c)
         {
-            Feature f = Game.World.Features[c];
-            if (f == null)
+            Feature? f = Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            if (f is Grave)
             {
-                return false;
+                return true;
             }
-            if (f.TypeName != "Grave")
-            {
-                return false;
-            }
-            return true;
+            return false;
         }
         public override void Start()
         {
-            Game.World.Events.Publish(new SensoryEvent() { X = X, Y = Y, Z = Z, Sight = "You hear an ominous stirring from under the ground..." });
-            Feature f = Game.World.Features[X, Y, Z];
-            if (f == null)
+            if (!Placed)
             {
-                base.Start();
-                f = Game.World.Features[X, Y, Z];
-                f.Symbol = '\u2717';
-                f.FG = "white";
+                Unassign();
+                return;
             }
+            var (x, y, z) = GetPlacedCoordinate();
+            Senses.Announce(x, y, z, sight: "You hear an ominous stirring from under the ground...");
+            // this code would place an incomplete fixture if there is no grave, but...Makes is null...I don't think that's safe
+            //Feature? f = Features.GetWithBoundsChecked(x, y, z);
+            //if (f is null)
+            //{
+            //    base.Start();
+            //    f = Features.GetWithBoundsChecked(x, y, z);
+                //if (f is IncompleteFixture)
+                //{
+                //    var ifx = (IncompleteFixture)f;
+                //    ifx.IncompleteSymbol = '\u2717';
+                //    ifx.IncompleteFG = "white";
+                //    // it doesn't have a "makes"...
+                //}
+            //}
         }
         public override void Finish()
         {
-
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ZombieEmerges" });
-            Game.World.Events.Publish(new SensoryEvent() { Sight = "A zombie bursts forth from the ground!", X = X, Y = Y, Z = Z });
-            Feature f = Game.World.Features[X, Y, Z];
-            RaiseZombieSpell.BreakTombstone(f);    
-            Game.World.Terrains[X, Y, Z] = Terrain.DownSlopeTile;
-            Game.World.Terrains[X, Y, Z - 1] = Terrain.UpSlopeTile;
-            Cover.ClearCover(X, Y, Z);
-            Cover.ClearCover(X, Y, Z - 1);
+            if (!Placed)
+            {
+                base.Finish();
+            }
+            var (X, Y, Z) = GetPlacedCoordinate();
+            Publish(new TutorialEvent() { Action = "ZombieEmerges" });
+            Senses.Announce(X, Y, Z, sight: "A zombie bursts forth from the ground!");
+            Feature? f = Features.GetWithBoundsChecked(X, Y, Z);
+            if (f is Grave)
+            {
+                var grave = (Grave)f;
+                grave.Shatter();
+            }    
+            else if (f != null)
+            {
+                f.Destroy();
+            }
+            Terrains.SetWithBoundsChecked(X, Y, Z, Terrain.DownSlopeTile);
+            Terrains.SetWithBoundsChecked(X, Y, Z - 1, Terrain.UpSlopeTile);
+            Cover.ClearGroundCover(X, Y, Z);
+            Cover.ClearGroundCover(X, Y, Z - 1);
             base.Finish();
-            Game.World.ValidateOutdoors();
-        } 
+            GameState.World!.ValidateOutdoors();
+        }
     }
-  
 }

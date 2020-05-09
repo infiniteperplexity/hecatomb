@@ -1,210 +1,168 @@
 ﻿
-What does a thorough test look like?
-- Max out the tech tree and build all the things.
-- Fight the bandits, cast spells at them, and use traps.
+cd C:\Users\infin\OneDrive\Documents\GitHub\hecatomb\csharp\Hecatomb8
+gci . *.cs -Recurse | select-string . | Group Filename | Measure-Object Count -Sum -Min -Max -Average
 
 
-
-Hecatomb brainstorm: The game isn't very fun once you reach the "waiting for bandit siege" stage.
-1) I could just make the bandit siege much easier.  Make it so there's only one bandit, for example.
-2) I could replace the bandit siege with an expedition...to hunt spider nests?  We already have wandering spiders.  One issue is that there is no early-game use for spider silk or anything like that so far.  Maybe to make trade goods?
-3) I mean, in theory you can go dig up graves and risk getting attacked by ghouls.  Maybe make the ghouls pop up only when the graves are disturbed?
-4) Could make it so you can dig for caves or something.
-5) Could make it so there are multiple places you can go for trade goods.
-6) Could make it so the market requires copper instead?
-7) Could make it so there are random wandering hunters or hermits.
-8) Revamp things so gold is a currency, and all black market transactions either give or require gold.
-9) Also, call it a trading post instead of a black market.
-10) Have there be small villages nearby.
-11) Have there be special tombs pre-gens you can rob.
-12) Make scattered rocks like gold in Don't Starve Together.
-13) Special crops to garden
-14) Sunken treasure chests.
-15) Add an herb garden structure, grows random plants?
-16) Require additional kinds of corpses for advancement.
-17) Require a magical ore for advancement.
-18) Hunt down slimes...might sort of overlap with ectoplasm though.
-19) Hunt aquatic creatures, like fish.
-20) Needing to gather charcoal or some kind of lava thing.
-Of these, what I really like are:
-	- Making the first bandit attack be only one.
-	- Make gold the universal currency.
-	- Pregen tombs.
+So what would our approach be to refactoring the game?  Let's make this a wishlist.
+- I think you basically just start by backing up Game.cs, start that again from scratch, and go from there.
+- Let's take a look at this example code.  So, they've got a Global object.
+- So what is it I'm actually looking to improve on here?
+	- I want to take full advantage of the new null protections.
+	- I want to totally shut down race conditions.
+	- In my dreams, I log all game and interface events.
+		- It's clear what a game event is.  An interface event is a little less clear.
+	- I could try improve on some of the more intricate systems, like spawning, serializing, events, and so on.
+	- I have some specific things I want to change, like getting rid of the JSON-loading text-key nonsnese.
 
 
-Fresh issues list starting on 2/14/2020:
-- the pathfinding issue for vaults is more serious than we're allowing for, honestly...actually it's the visibility computation!
-	- maybe vaults are just a fundamentally horrible idea and we should never populate them until they're actually breached?
-- should we make our own creatures avoid pathfinding *to* asleep creatures? we're getting bad performance when vaults are opened
-- okay...so...there's some issues with exploration and digging...you want to be able to see the ore below...maybe only explore the ore?
-- there's kind of a clusterfuck when you get near a vault...you can see unexplored stuff, stuff slows down, et cetera.
-* weird-ish stuff happens when a minion working on a haul task dies...I think it's okay to leave though
-* we had something placed on top of something else while generating vaults...or was that while digging down into a vault?
-- alright, so I realized the displacement-upon-fall thing is actually reasonably likely to hit those fallback conditions when something falls into a narrow hole
-- some kind of crash happened when i cast siphon flesh in the middle of a fight with dryads
-- somehow a weird task got assign on the sanctum...lie
-- does zombies dying unassign their tasks?
-- we get out of memory errors when saving or restoring sometimes
-- somehow I got stuck ina  weird UI trap where I seemed to have the default controls but still have a miion selected and be centering on the minions.
-* I think spiders still don't attack when you cast a spell at them?
-- messages should probably age off the main screen
-- the ad hoc solution for making zombie species work after restoring a game is an abortion and must be killed with fire for the next release
-- the system for deciding whether to leave a corpse is stupid
-- make bandits into grave robbers?
-* there's no way to refresh a rotten zombie, nor to slaughter one you don't want any more
-* zombies made from corpses start out rotten
-* game crashes if the selected creature dies.
-* Saplings will never become trees
-* Should we allow pageUp to scroll through messages?
-- Possibly should add the text alerts to the tutorial
-* Building fixtures under water removes water, even though that logic is meant to remove grass
-* Show the latest message on default screens, not just message log.
-- AddToMockEntity is a dummy method that totally doesn't work
-* add flower growth to growth handler
-* does the hover for furnish fixture format the names wrong...yes, fixed
-* Okay...cautiously going back to a normal PRNG for choosing randomized trades, because the non-randomness of the other one was extremely obvious
-- go back and put more restrictions on random colors at some point
-- try to get rid of the triple initiation for state handlers
-* dye colors get reinitialized between items and features
-* add planting tasks for trees and flowers
-- some dye colors are hard to read on the menu
-* how shall we handle background dyes
-* how are we going to dye plain tiles with no features?
-- Is it risky to double up names of flowers with resources?
-- add dyes to Black Market potential trades
-* add an apothecary to support dyeing
-* Should we highlight achievements in magenta when there is a new one?
-* Deep water uses the wrong glyph
-* Did a zombie stepto an air space to harvest a web, when the slope got dug out from under it?
-* Add in a bunch of achievements
+4/14/2020
 
-- We don't actually allow for the possibility, currently, that a fixture may require other than 10 labor
-* It's easy to get a stuck in a key-board only mode where you keep clicking on minions after exiting minion selection mode.	
-- Does the mending task auto-cancel because the zombie isn't injured?
-- Some issues with dig tasks, some of which are shared with build tasks:
-	- Canceled incomplete tasks have absolute priority; do we want that or should they use the priority of their terrain?
-	- Or maybe I should just get rid of incomplete excavations?
-	- I'm not sure how I deal with features that can't be harvested.
-- Slaughterhouse should be able to disassemble zombies.
-* Should we be able to fight in message mode?  The whole idea of that doesn't really work unless we track whether we're in camera mode, and maybe have the message thing as an overlay?
-- Give a message for defeating bandits, dryads, et cetera?
-- want some use for spider corpses
-- Should rotting be a little slower?
-- Is there some kind of race condition in saved games?
-* Should we regenerate mana faster on a sanctum?
-- Should grass grow under spear traps?
-- Should traps be able to go on slopes?
-- I didn't see dryads after a pop-up warning
-- Ideally, invalid tasks would be caught and canceled when you're trying to walk toward them, not just when you try to work them.
-- Can't duplicate the issue of research menu not showing how to exit
-- Message to tell how you died.  That guy got killed by an angry nymph.  Shouldn't it have raised a blurb about that?
-- Should I catch Exception in the minor asynchronous threads, like SplashControls and such?
-- I think I'm making a mistake by having the bandit attack be the first "event"
-- Is escape a good way to get to the system menu?  I feel like I back out one too many steps more than I'd like.
-- Some people have had trouble finding the deeper ores.
-- I got a very strange error while trying to quit?  Like...it tried to accept a "wait" command after the world had been torn down? 
-- Bandits show up around 1:11:45
-- I'm not crazy about the mana cap approach to limiting zombies; it makes new zombies very expensive.
+So we have the "minimal MCV" thing down now.  So what's next?
+- We want to generate the world
+- We want to implement the normal controls
+
+4/18/2020
+
+Things are kind of a little bit recognizable, in that we have a panel handling the drawing, the ability to run around on the surface, and glyphs that look kind of okay.
+So what are some upcoming chunks of functionality to add?
+- I think I want to start by - instead of adding fun stuff - set up the general "game" structure.
+- Then work on the turn structure.
+- I think we want to save Tasks and Components as long as possible.  Those are by far where the most screw-ups happen.  Hopefully that's where all the groundwork
+I'm laying pays off.
+
+4/19/2020
+
+Okay, I schlepped for a bit.  I really actually kind of want to go outside.
+Alright, what's next?  Let's toss some ideas out there...
+ - Camera mode.
+ - Get trees and graves up in there.
+ - Cast spells to summon zombies.
+ - Zombies wander around and pathfind.
+ - Set up the "new game" framework.  Yeah...let's get that going.
+
+ 4/20/2020
+ Alright, so I have time passing...but I think I may have noticed a weakness in the system...
+ ...ready for input can be triggered by input, but it can also be triggered by time passing...is that a real issue?
+ ...I think maybe not, because I doubt the update loops can overlap, and the time passing portion of the loop always completes before the input portion of the loop, right?
 
 
+ 4/23/2020
+ - Particles are buggy in some weird way, but I bet I can fix that later.  Right now they work kinda, and I want to get Save and Restore Game imeplemented.
+ - Alright, so in theory I've implemented saving and restoring games.  But we all know in practice when I run this, a bunch of stuff is going to go wrong.
+    - First off, there will probably be at least a few straight-up crashes, some related to null references and others related to...well...Json null references.
+    - Second, there definitely be serialization problems, were the state doesn't get serialized the way you'd hope it would.  In fact, I realized I totally don't parse Entities correctly; they need to pick class based on a field.
+ - But I don't know that I want to tackle all that tonight.  It's already eight and there's a couple of other projects I'm thinking of tackling.
+ - Lets talk about some other pockets of functionality:
+    - Serialization.
+    - Fleshing out the interface.
+    - Tasks and Actors
+    - Tutorial
+    - Restoring content
+    - Structures
+- Maybe tonight let's try to hunt down the particles issue
 
-New features:
-- Add pregen tombs to rob.
+4/26/2020
+- Okay, so we've got a good portion of the interface stuff done.  Ummm....MessageHandler next?
+- Alright, the tutorial and the messagehandler are working.
+- I'm worried that we're double deducting action points for the player
 
-Playtest issues:
-- In the long term we might want to make CanFindResources see carried items
-- Spiders should eventually respawn
-- It's possible that I missed one or more bugs related to hauling/ingredients/claims/priority, but I did test as much chaos as possible.
-- Rally tasks for minions would require an event priority system...I know I need that eventually...disable rally task for now
-- Feature ownership is not implemented, right now we just use Defender presence or absence
+4/27/2020
+- So...we're going to need to reall go through the player action point stuff and make sure we do it right.  The main thing I'm worried about is that "step to"
+is going to double-deduct action points
+- Oof.  I can feel things building toward a breaking point here.
+
+Okay...take a deep breath...let's talk about...shall we call it...the "cleanup problem."  The cleanup problem, briefly stated, is that when a game entity enters an invalid state - either just not on the map, or
+more commonly, despawned - other objects might be clinging to a reference to it.  Then if they later try to use that reference, it might be unexpectedly null.  So, the current
+way we do this is as follows:
+- For some major purposes, we use the Event system.  But it's hard to catch all of these; that requires signing tons of things up for listeners, and if you miss even a single one it fucks things up.
+- For general use, we have the EntityField system.  That, incidentally, also fixes the circular serialization problem at the same time.
+    - This creates an opportunity to update while unboxing, but that's a bit dangerous, because it's a potential state change based on something that's only supposed to read state.
+    - There's also a lot of temptation to just flatly assume it's spawned, which can be dangerous if you assume wrong.
+    
+    Can we brainstorm any alternatives?
+    - What if we tried to invert all the references; make it so the refered-to items tracked the references?  that sounds like a huge hassle, but it's leading me toward another idea...
+    - What if every entity had a singleton "PointToMe" object associated with it, and we could handle stuff through there?  Hey this is really fucking promising.  Yeah, this is going somewhere.
+    - Then at least, you don't have to worry about the timing of the updates; that will all get handled by the object itself.
+    - You do still have to do a lot of unboxing.  But I guess maybe we can deal.  Now here's a thought...we could call it a ListenedEntityPointer or something, to remind us that we should be listening to it.
+    - Now...yeah...you do still kind of have that same problem...egghh...well...maybe we can make this a multi-part thing.  The ideal thing would be that we can check its nullity really fast...
+    - Well okay...we can make the EntityField thing into singletons really easily, and that at least takes the weird update timing thing off the table.
+    - Now what happens if we call it a ListenerHandleEntityReference instead of an EntityField?  What does that imply our responsibilities are?  We sign up on the listener list for Despawn events?  Are those the only dangerous ones?  I think so.
+    - So...let's think about some kind of three-way handling here.  The only way you could populate the Pointer field is to call upon a third object, which would take that pointing field and the target as its arguments.  Then you would have
+    the ability, via reflection, to automagically nullify the field via reflection whenever the target changes.  That's very much against how this is supposed to work but there you ware.
+    - But...you can kinda sorta reach the same kinda situation by calling it a ListenerHandledEntityField...and handling it.  So...is it *just* despawning we're worried about?
+
+4/28/2020
+- Okay...so we completed the day's goal of making it all the way through the tutorial.  And we wrote the first supposedly robust "reference web" code.
+- But there are plenty of little bugs even in the tutorial.
+    - But I just fixed several of them.
+    - One issue that's been with us for a while is that tasks get different name formatting under different circumstances and it's hard to keep one's head straight.
+        - We've got the name when it's listed on the menu, which could also be called "StaticName" if we wanted to.
+        - We've got HoverName, which is the actual name plus the formatted ingredients.
+    - Okay got all that cleaned up.
+
+5/1/2020
+-I'll need to go through and make sure everyone that has OnDespawn actually subscribes and stuff
+- Fixing all the attacker/defender/team stuff will be a moderate sized task
+
+5/2/2020
+- I have completely and totally ignored lighting so far
+- I'm planning on leaving out vaults and dryads for now, and most other extra stuff but I want to keep sieges
+- the interface has a lot of entity names to get right
+- we need to get the menu color highlights correct
+
+5/3/2020
+* Forbid task is missing a bunch of stuff and so is patrol task
+- Research tasks don't work
+* I should really get the popup working for saved games because that's distracting
+- List of places you can see a task...
+    - Picking it from the menu (not spawned and no properties, shows ingredients but there might be none yet)
+    - Picking it from a submenu (not spawned but has some properties, show ingredients)
+    - Hovering over it (shows ingredients and properties and sometimes turns)
+    - Selecting a zombie that's working it (show coordinates and properties)
+    - Getting a message about it being canceled or whatever (show coordinates and properties)
+    - Selecting a building that's working on it (show properties and turns)
+    - As a header for its own menu (capitalized with maybe some properties selected but no ingredients)
+    - In modified form while hovering to select it (capitalized with coordinates.)
+- What if we just overrode Describe and added options to it?
+    - ingredients
+    - labor as turns? or just skip that because we only need it for two things.
+    - also the fancy colors for dye tasks are special
+    - coordinates can go on the base actually
+- ...oh dear.  So...yeah...that's actually kind of a big problem.  Ummm...shoot.  What can we do?
+    - We could pull the same trick as we did with components.
+    - I mean...like...I can solve this with no big problem.  The problem is that I'm worried about all the other things that might come up?
+    - So...we can have a prespawn list.
+    - wait...I think I'm having a though...okay...so...we can make sure that no Component ever has a default populated list.  We could
+        instead populate the list in the constructor.
+- Hmmmm...okay...goddamit...so...I have to somehow be absolutey sure that I touch all the FlyWeight classes
+
+- We now have potential despawning during parsing...which seems bad for preserving game state
+- Need scrolling on achievement and research views
+- We don't actually order path neighbors by distance, which occasionally creates small oddities, like taking a diagonal step before working
+
+5/6/2020
+Oh wow...what a weird case...so...there are two ways we can handle this.  either program defensively around it...or have it default to GetSpawn if not spawned
+- I'm briefly invisible right after splash controls for some reason
+- zombie dealt damage to nameless
+- need to do wounded/damaged for creatures/features
+
+5/7/2020
+- So...we can speed up long-distance successes by decreasing "vagueDistance"...but that solves only half the problem.
+- The other problem is CanReachBounded.  Now, one decent approach here would be to do the same thing...start genuinely searching only when you're close.
+- We've got a weird visual thing where an upslope with a floor above it can be seen through.  So...maybe we should only
+every care if certain tiles can look down? e.g. have transparent floors?  yeah, that makes sense.  "Floored" maybe?  Although
+there's a slight quirk to this...I don't think we show potential flyers by default from z one below.  But...probably we should, eh?
+In which case "floor" makes perfect sense.
+
+5/8/2020
+- Can I build a ramp from diagonally above?
+- Is bronzeworks the same as bronze tools?
+- Is tin rarer than copper?
+- Do bandits come a little too often?
+- We need to bail better for failed searches.
+- Let's give a really good write-up of the Pathfinding logic.
+    - Cached Misses are handled in the variations that use entities.
 
 
-Interface issues:
-- menu items wrapping because it's narrow looks kind of ugly.
-- Still got a tombstone next to the edge somehow...this is very rare and hard to duplicate.
-- Is "Avatar" a good name, or should it be "Control", "Pilot", "Incarnate"?
-- tombstones adjacenet sometimes?  is that a problem?
-- should have fixed order for listing minion types and resources.
-- Should tabbing to a minion snap the cursor to that square?
-- Construct task shows ingredients when NoIngredients is true
-- Pushmessage goes through some weird hoops.
-- Should we put timestamps on messages?
-
-
-Design issues:
-- Probably want some sort of busywork task
-- Should there be a furnace that can bake coal?
-- need a way to send messages along with destroying something; e.g. this is how it died.
-* these spells should actually do stuff
-- Add some techs to the library
-* orcs or something in warrens
-* make sieges progress
-- maybe I should move the research bonus checker to a global bonus checker
-* maybe delay bandits a bit?
-- how did that goblin end up here?
-- you often move a bit to start, which sort of defeats the purpose of the "distance from start" checks
-* get spurious "Can't butcher corpse" thing.
-* the bandits attacked their own wolfhound...but they don't normally do that...well...this happened twice through normal generation, but none with debugging
-- "Your severely wounded zombie has perished" is maybe a bit wordy
-* higher mana totals should regenerate faster
-* butcher corpse should select an area
-* we have too many trade goods, or they are too close
-* tell what direction the bandits are coming from
-* test second bandit attack?
-* we got a pile of 0 trade goods
-- still very rarely get graves next to down slopes
-- for once we're getting slogged by successful searches 
-- various display issues with status panel...text not wrapping, need to show day info and stuff (target 1280x720px)
-- better spell names
-- was water supposed to flicker when the mouse moved?
-- need some way to keep your zombies indoors
-
-
-combat testing:
-- So...remind myself what their stats are?  So currently nothing has any stats whatsoever.
-- Attacker has Accuracy and Damage
-- Defender has Armor, Evasion, and Toughness, plus Wounds which is always fixed.
-- implement player death
-- Can double increase with guardpost
-	- also it has infinite range...do we want that?
-
-
-finalizing
-- set all options correctly
-- remove debugger spells
-- Make sure all the documentation and tutorials are correct.
-
-Progression Tree:
-1)
-	a) Raise three zombies.
-	b) Dig out some rooms.
-	c) Cut down some trees.
-	d) Built a guard post.
-	e) Build a workshop.
-	f) Find some flint.
-	g) Research flint tools.
-
-2)
-	a) Build a stockpile.
-	b) Find some coal.
-	c) Build a slaughterhouse (note this isn't actually what a "slaughterhouse" does...more like a meat locker?)
-	d) Kill bandits or dig up graves to butcher corpses.
-	e) Build a sanctum.
-	f) Find trade goods.
-	g) Build black market.
-	h) Condense ectoplasm.
-	i) Build chirurgeon.
-
-3) 
-	a) Find copper and tin.
-	b) Build forge.
-
-
-
-
-
-
-
-
-
-Does the new interface account for pause and speed?
+5/9/2020
+- Maybe a static constructor can guard against null research prerequisites?

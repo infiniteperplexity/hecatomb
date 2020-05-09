@@ -7,59 +7,59 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
     class MurderTask : Task
     {
         public MurderTask() : base()
         {
-            MenuName = "declare hostile";
-            // should a guard post be required to declare things hostile?
-            //PrereqStructures = new List<string>() { "GuardPost" };
-            BG = "red";
+            _name = "declare hostile";
+            RequiresStructures = new List<Type>() { typeof(GuardPost) };
+            _bg = "red";
         }
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
-            c.MenuSelectable = false;
+            c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
-            ControlContext.Set(c);
+            c.InfoMiddle = new List<ColoredText>() { "{green}Declare hostile." };
+            InterfaceState.SetControls(c);
         }
 
         public override void TileHover(Coord c)
         {
-            var co = Game.Controls;
-            co.MenuMiddle.Clear();
-            if (!Explored.Contains(c) && !Options.Explored)
+            var co = InterfaceState.Controls;
+            co.InfoMiddle.Clear();
+            if (!Explored.Contains(c) && !HecatombOptions.Explored)
             {
-                co.MenuMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
+                co.InfoMiddle = new List<ColoredText>() { "{orange}Unexplored tile." };
                 return;
             }
-            Creature cr = Creatures[c];
-            if (cr==null || cr==Player)
+            Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            if (cr == null || cr == Player)
             {
-                co.MenuMiddle = new List<ColoredText>() { "{yellow}Not a valid target." };
+                co.InfoMiddle = new List<ColoredText>() { "{yellow}Not a valid target." };
                 return;
             }
             else
             {
-                co.MenuMiddle = new List<ColoredText>() { "{green}"+$"Declare hostility to {cr.Describe()}." };
+                co.InfoMiddle = new List<ColoredText>() { "{green}" + $"Declare hostility to {cr.Describe()}." };
                 return;
             }
-            
-            
+
+
         }
 
         public override bool ValidTile(Coord c)
         {
-            if (!Explored.Contains(c) || !Options.Explored)
+            if (!Explored.Contains(c) || !HecatombOptions.Explored)
             {
                 return false;
             }
-            Creature cr = Creatures[c];
+            Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
             if (cr != null && cr != Player)
             {
                 return true;
@@ -71,18 +71,18 @@ namespace Hecatomb
         {
             CommandLogger.LogCommand(command: "MurderTask", x: c.X, y: c.Y, z: c.Z);
 
-            Creature cr = Creatures[c];
+            Creature? cr = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
             if (cr != null && cr != Player)
             {
                 Actor actor = cr.GetComponent<Actor>();
-                if (actor.Team == Teams.Friendly)
+                if (actor.Team == Team.Friendly)
                 {
-                    actor.Team = Teams.Berserk;
+                    actor.Team = Team.Berserk;
                 }
-                else if (actor.Team == Teams.Neutral)
+                else if (actor.Team == Team.Neutral)
                 {
                     // arguably all nearby neutrals should turn hostile?
-                    actor.Team = Teams.Hostile;
+                    actor.Team = Team.Hostile;
                 }
             }
         }

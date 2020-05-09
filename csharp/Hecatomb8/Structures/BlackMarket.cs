@@ -9,45 +9,30 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Xna.Framework.Input;
 
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static HecatombAliases;
+    using static Resource; 
     public class BlackMarket : Structure
     {
-        public static List<TradeTask> PotentialTrades;
-
-        public List<TradeTask> AvailableTrades;
+        public static List<(Resource r1, int n1, Resource r2, int n2)> PotentialTrades;
+        // wow this is really weird...we serialize non-spawned entities here?  that sound like a terrible idea
+        public List<int> AvailableTradeIndexes;
 
 
         public void AddTrade()
         {
-            // should I call this several times upon Placement?
             int MaxTrades = 4;
-            //int extraSeed = 1;
-            //if (AvailableTrades.Count > 0)
-            //{
-            //    extraSeed = AvailableTrades[0].OwnSeed();
-            //}
-            //int r = Game.World.Random.Arbitrary(PotentialTrades.Count, (OwnSeed() + extraSeed));
-            int r = Game.World.Random.Next(PotentialTrades.Count);
-            TradeTask newTrade = Entity.Mock<TradeTask>();
-            newTrade.Ingredients = PotentialTrades[r].Ingredients;
-            newTrade.Trading = PotentialTrades[r].Trading;
-            newTrade.Structure = this;
-
-            if (AvailableTrades.Count >= MaxTrades)
+            int r = GameState.World!.Random.Next(PotentialTrades.Count);
+            if (AvailableTradeIndexes.Count >= MaxTrades)
             {
-                AvailableTrades.RemoveAt(MaxTrades-1);
+                AvailableTradeIndexes.RemoveAt(MaxTrades - 1);
             }
-            AvailableTrades.Insert(0,newTrade);
+            AvailableTradeIndexes.Insert(0, r);
         }
         public override GameEvent OnTurnBegin(GameEvent ge)
         {
-            TurnBeginEvent turn = (TurnBeginEvent)ge;
-            if (Game.World.Random.Arbitrary(100,OwnSeed())==0)
-            //if (Game.World.Random.Next(100)==0)
+            if (GameState.World!.Random.Next(100)==0)
             {
                 AddTrade();
             }
@@ -56,35 +41,25 @@ namespace Hecatomb
 
         static BlackMarket()
         {
-            PotentialTrades = new List<TradeTask>();
-            TradeTask t;
-            var potential = new List<(string, int, string, int)>()
+            PotentialTrades = new List<(Resource r1, int n1, Resource r2, int n2)>()
             {
-                ("Gold", 1, "Flint", 2),
-                ("Gold", 1, "Coal", 2),
-                ("Gold", 1, "Bone", 2),
-                ("Gold", 1, "TinOre", 1),
-                ("Gold", 1, "CopperOre", 1),
-                ("Gold", 1, "Silk", 2),
-                ("Flint", 3, "Gold", 1),
-                ("Coal", 3, "Gold", 1),
-                ("Silk", 3, "Gold", 1),
-                ("TinOre", 2, "Gold", 1),
-                ("CopperOre", 2, "Gold", 1)
+                (Gold, 1, Flint, 2),
+                (Gold, 1, Coal, 2),
+                (Gold, 1, Bone, 2),
+                (Gold, 1, TinOre, 1),
+                (Gold, 1, CopperOre, 1),
+                (Gold, 1, Silk, 2),
+                (Flint, 3, Gold, 1),
+                (Coal, 3, Gold, 1),
+                (Silk, 3, Gold, 1),
+                (TinOre, 2, Gold, 1),
+                (CopperOre, 2, Gold, 1)
             };
-
-            foreach (var tuple in potential)
-            {
-                t = Entity.Mock<TradeTask>();
-                t.Ingredients[tuple.Item1] = tuple.Item2;
-                t.Trading[tuple.Item3] = tuple.Item4;
-                PotentialTrades.Add(t);
-            }
             // maybe add dyes here as well?
         }
         public BlackMarket() : base()
         {
-            AvailableTrades = new List<TradeTask>();
+            AvailableTradeIndexes = new List<int>();
             Symbols = new char[]
             {
                 '\u00A3','.','\u20AA',
@@ -97,37 +72,36 @@ namespace Hecatomb
                 "FLOORFG", "#888844","#888844",
                 "#225522","FLOORFG","#222266"
             };
-            BG = "#555544";
+            _bg = "#555544";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","FLOORBG",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
-                null, new Dictionary<string, int>() {{"Gold", 1}}, null,
-                new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
+                new Dictionary<Resource, int>() {{Rock, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Wood, 1}},
+                new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Gold, 1}}, new Dictionary<Resource, int>(),
+                new Dictionary<Resource, int>() {{Wood, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Rock, 1}}
             };
-            Harvests = new Dictionary<string, float>[]
+            Harvests = new Dictionary<Resource, float>[]
             {
-                null, null, null,
-                null, new Dictionary<string, float>() {{"Gold", 1}}, null,
-                null, null, null
+                new Dictionary<Resource, float>(), new Dictionary<Resource, float>(), new Dictionary<Resource, float>(),
+                new Dictionary<Resource, float>(), new Dictionary<Resource, float>() {{Gold, 1}}, new Dictionary<Resource, float>(),
+                new Dictionary<Resource, float>(), new Dictionary<Resource, float>(), new Dictionary<Resource, float>()
             };
-            MenuName = "black market";
-            Name = "black market";
+            _name = "black market";
             UseHint = "(trade goods for gold or vice versa.)";
-            AddListener<PlaceEvent>(OnPlace);
+            AddListener<BeforePlaceEvent>(OnPlace);
 
 
         }
 
         public GameEvent OnPlace(GameEvent ge)
         {
-            PlaceEvent pe = (PlaceEvent)ge;
-            if (pe.Entity==this)
+            BeforePlaceEvent pe = (BeforePlaceEvent)ge;
+            if (pe.Entity == this)
             {
                 AddTrade();
                 AddTrade();
@@ -136,14 +110,23 @@ namespace Hecatomb
         }
 
         [JsonIgnore]
-        public TradeTask Trading
+        public TradeTask? Trading
         {
             get
             {
-                foreach (Feature f in Features)
+                if (!Placed || !Spawned)
                 {
-                    var (x, y, z) = f;
-                    Task t = Game.World.Tasks[x, y, z];
+                    return null;
+                }
+                foreach (int? eid in Features)
+                {
+                    Feature? f = GetEntity<Feature>(eid);
+                    if (f is null || !f.Spawned || !f.Placed)
+                    {
+                        continue;
+                    }
+                    var (x, y, z) = f.GetPlacedCoordinate();
+                    Task? t = Tasks.GetWithBoundsChecked(x, y, z);
                     if (t is TradeTask)
                     {
                         return (TradeTask)t;
@@ -157,10 +140,10 @@ namespace Hecatomb
             }
         }
 
-        public override void BuildMenu(MenuChoiceControls menu)
+        public override void BuildInfoDisplay(InfoDisplayControls menu)
         {
             // might want to format htis guy a bit...like add coordinates?
-            ControlContext.Selection = this;
+            menu.SelectedEntity = this;
             if (Trading != null)
             {
                 // maybe give the option to cancel the trade?
@@ -170,8 +153,14 @@ namespace Hecatomb
             {
                 var list = new List<IMenuListable>();
                 // somehow we need to decide what trades are on offer
-                foreach (TradeTask t in AvailableTrades)
+                foreach (int i in AvailableTradeIndexes)
                 {
+                    var tuple = PotentialTrades[i];
+                    TradeTask t = Entity.Mock<TradeTask>();
+                    t.Ingredients[tuple.r1] = tuple.n1;
+                    t.Trading[tuple.r2] = tuple.n2;
+                    // I'm suspicious of this...o
+                    t.Structure = GetHandle<Structure>(ge=>ge);
                     list.Add(t);
                 }
                 menu.Choices = list;
@@ -179,19 +168,22 @@ namespace Hecatomb
             }
         }
 
-        public override void FinishMenu(MenuChoiceControls menu)
+        public override void FinishInfoDisplay(InfoDisplayControls menu)
         {
-            menu.MenuTop.Insert(2, "Tab) Next structure.");
-            menu.MenuTop.Insert(3, " ");
-            menu.MenuTop.Insert(4, "{yellow}" + Describe(capitalized: true));
-            menu.MenuTop.Insert(5, "{light cyan}" + UseHint);
-            
+            menu.InfoTop.Insert(2, "Tab) Next structure.");
+            menu.InfoTop.Insert(3, " ");
+            menu.InfoTop.Insert(4, "{yellow}" + Describe(capitalized: true));
+            menu.InfoTop.Insert(5, "{light cyan}" + UseHint);
+
             if (Trading != null)
             {
                 TradeTask t = Trading;
-                var txt = t.GetHoverName();
-                txt = "T" + txt.Substring(1);
-                menu.MenuTop = new List<ColoredText>() {
+                var txt = t.DescribeWithIngredients(capitalized: true);
+                if (t.Ingredients.Count == 0)
+                {
+                    txt = txt + " (" + t.Labor + " turns.)";
+                }
+                menu.InfoTop = new List<ColoredText>() {
                     "{orange}**Esc: Cancel**.",
                     " ",
                     "Tab) Next structure.",
@@ -200,39 +192,33 @@ namespace Hecatomb
                     "{light cyan}" + UseHint,
                     " ",
                     txt,
-                    "(Backspace/Del to Cancel)"
+                    " ",
+                    "Bksp/Del) Cancel trade."
                 };
             }
-            Game.InfoPanel.Dirty = true;
-            menu.KeyMap[Keys.Escape] =
-               () =>
-               {
-                   ControlContext.Selection = null;
-                    ControlContext.Reset();
-                };
             menu.KeyMap[Keys.Tab] = NextStructure;
-            menu.KeyMap[Keys.Delete] = CancelTrade;
-            menu.KeyMap[Keys.Back] = CancelTrade;
+            //menu.KeyMap[Keys.Delete] = CancelTrade;
+            //menu.KeyMap[Keys.Back] = CancelTrade;
         }
 
         public void CancelTrade()
         {
             if (Trading != null)
             {
-                Task t = Game.World.Tasks[X, Y, Z];
-                t?.Cancel();
+                Trading.Cancel();
                 Trading = null;
             }
-            InterfacePanel.DirtifyUsualPanels();
+            InterfaceState.DirtifyMainPanel();
+            InterfaceState.DirtifyTextPanels();
         }
 
-        public override GameEvent OnDespawn(GameEvent ge) 
+        public override GameEvent OnDespawn(GameEvent ge)
         {
             DespawnEvent de = (DespawnEvent)ge;
             if (de.Entity is Feature)
             {
                 Feature f = (Feature)de.Entity;
-                if (Placed && Features.Contains(f))
+                if (Placed && Features.Contains(f.EID))
                 {
                     CancelResearch();
                 }

@@ -1,137 +1,112 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/8/2018
- * Time: 1:08 PM
- */
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-	/// <summary>
-	/// Description of NavigationControlContext.
-	/// </summary>
-	public class CameraControls : AbstractCameraControls
-	{
-		public CameraControls() : base()
-		{
-			var Commands = Game.Commands;
+    using static HecatombAliases;
+    public class CameraControls : AbstractCameraControls
+    {
+        public CameraControls() : base()
+        {
+            MenuCommandsSelectable = true;
+            var Commands = InterfaceState.Commands!;
             KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
-            KeyMap[Keys.J] = Commands.ChooseTask;
             KeyMap[Keys.Z] = Commands.ChooseSpell;
             KeyMap[Keys.J] = Commands.ChooseTask;
-            KeyMap[Keys.Z] = Commands.ChooseSpell;
+            KeyMap[Keys.R] = Commands.ShowResearch;
             KeyMap[Keys.L] = Commands.ShowLog;
             KeyMap[Keys.V] = Commands.ShowAchievements;
-            KeyMap[Keys.R] = Commands.ShowResearch;
+            KeyMap[Keys.Escape] = Commands.SystemMenuCommand;
             KeyMap[Keys.U] = Commands.ShowStructures;
             KeyMap[Keys.M] = Commands.ShowMinions;
-
-            KeyMap[Keys.Enter] = Commands.TogglePause;
-            KeyMap[Keys.Tab] = Commands.ToggleMovingCamera;
-            KeyMap[Keys.OemPipe] = Commands.ShowConsole;
             KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
-            KeyMap[Keys.PageUp] = Commands.ScrollUpCommand;
-            KeyMap[Keys.PageDown] = Commands.ScrollDownCommand;
+            KeyMap[Keys.Enter] = Commands.TogglePause;
+            KeyMap[Keys.OemQuestion] = Commands.ToggleTutorial;
             KeyMap[Keys.OemMinus] = Commands.SlowDown;
             KeyMap[Keys.OemPlus] = Commands.SpeedUp;
-
             KeyMap[Keys.Space] = SelectOrWait;
+            KeyMap[Keys.NumPad5] = Commands.Wait;
             RefreshContent();
-		}
-
-        public void SelectOrWait()
-        {
-            if (ControlDown)
-            {
-                Game.Commands.Wait();
-            }
-            else
-            {
-                //var m = Mouse.GetState();
-                //HandleClick(m.X, m.Y);
-                SelectTile();
-                // unless we selected something, wait anyway
-                if (Game.Controls is CameraControls)
-                {
-                    Game.Commands.Wait();
-                }
-            }
         }
 
         public override void RefreshContent()
         {
-             MenuTop = new List<ColoredText>() {
+            InfoTop = new List<ColoredText>() {
                 "Esc: Game menu.",
                 " ",
                 "{yellow}Navigate (Tab: Avatar)",
                 " "
              };
-            if (Game.World != null && Game.World.Player != null)
+            if (GameState.World != null && Player != null)
             {
-                var p = Game.World.Player;
-                var time = Game.Time.GetTimeText();
-                MenuTop.Add(time[0]);
-                MenuTop.Add(time[1]);
-                MenuTop.Add(" ");
-                MenuTop.Add(p.GetComponent<SpellCaster>().GetSanityText());
-                if (Game.World.GetState<TaskHandler>().Minions.Count > 0)
+                var time = Time.GetTimeText();
+                InfoTop.Add(time[0]);
+                InfoTop.Add(time[1]);
+                InfoTop.Add(" ");
+                InfoTop.Add(Player.GetComponent<SpellCaster>().GetSanityText());
+                if (GetState<TaskHandler>().Minions.Count > 0)
                 {
-                    MenuTop.Add(" ");
-                    MenuTop.Add("Minions:");
-                    var types = new Dictionary<string, int>();
-                    foreach (var minion in Game.World.GetState<TaskHandler>().Minions)
+                    InfoTop.Add(" ");
+                    InfoTop.Add("Minions:");
+                    var types = new Dictionary<Type, int>();
+                    foreach (var minion in GetState<TaskHandler>().GetMinions())
                     {
                         Creature c = (Creature)minion;
-                        if (!types.ContainsKey(c.TypeName))
+                        if (!types.ContainsKey(c.GetType()))
                         {
-                            types[c.TypeName] = 1;
+                            types[c.GetType()] = 1;
                         }
                         else
                         {
-                            types[c.TypeName] += 1;
+                            types[c.GetType()] += 1;
                         }
                     }
                     foreach (var type in types.Keys)
                     {
-                        var mock = Entity.Mock<Creature>(type);
+                        // handle this manually so we're not constructing a million zombies a minute
+                        var name = "Zombie";
+                        var fg = "lime green";
+                        if (type == typeof(Zombie))
+                        {
+                            name = "Zombie";
+                            fg = "lime green";
+                        }
                         // might need better handling for when we have multiple zombie types that still share a TypeName?
-                        MenuTop.Add("{" + mock.FG + "}" + type + ": " + types[type]);
+                        InfoTop.Add("{" + fg + "}" + name + ": " + types[type]);
                     }
                 }
 
-                var stored = new List<Dictionary<string, int>>();
+                var stored = new List<Dictionary<Resource, int>>();
                 var structures = Structure.ListStructures();
                 foreach (Structure s in structures)
                 {
                     stored.Add(s.GetStored());
                 }
-                var total = Item.CombinedResources(stored);
+                var total = Item.CombineResources(stored);
                 if (total.Count > 0)
                 {
-                    MenuTop.Add(" ");
-                    MenuTop.Add("Stored resources:");
+                    InfoTop.Add(" ");
+                    InfoTop.Add("Stored resources:");
                     foreach (var res in total.Keys)
                     {
-                        var r = Resource.Types[res];
-                        MenuTop.Add("{" + Resource.GetListColor(res) + "} - " + Resource.Format((res, total[res])));
+                        InfoTop.Add("{" + res.TextColor + "} - " + Resource.Format((res, total[res])));
                     }
                 }
-                var messages = Game.World.GetState<MessageHandler>().MessageHistory;
+
+                var messages = GetState<GameLog>().MessageHistory;
                 if (messages.Count > 0)
                 {
-                    MenuTop.Add(" ");
+                    InfoTop.Add(" ");
                     var txt = messages[0];
                     if (!txt.Colors.ContainsKey(0))
                     {
                         txt = new ColoredText("{cyan}" + txt.Text);
                     }
-                    MenuTop.Add(txt);
+                    InfoTop.Add(txt);
                 }
             }
         }

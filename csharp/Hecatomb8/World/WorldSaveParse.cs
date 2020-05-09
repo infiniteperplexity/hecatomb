@@ -1,299 +1,366 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/9/2018
- * Time: 2:27 PM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Text;
 using System.Diagnostics;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Reflection;
-using System.Text;
+using System.IO;
+using System.IO.Compression;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    public struct GlyphFields
-    {
-        public char Symbol;
-        public string FG;
-        public string BG;
-    }
+    using static HecatombAliases;
     public class HecatombConverter : JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        static JsonSerializer SubSerializer;
+        static HecatombConverter()
         {
-            if (value is TypedEntity /*&& (value as TileEntity).Distinctive*/)
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new SubConverter());
+            SubSerializer = JsonSerializer.Create(settings);
+        }
+        public static void Test()
+        {
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new HecatombConverter());
+            var j = JsonConvert.SerializeObject(Player.GetComponent<SpellCaster>(), settings);
+            Debug.WriteLine(j);
+            var c = JsonConvert.DeserializeObject<SpellCaster>(j.ToString(), settings)!;
+            //var p = JsonConvert.DeserializeObject<Necromancer>(j.ToString(), settings)!;
+            //Debug.WriteLine(p.GetComponent<SpellCaster>().EID);
+        }
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            if (value is List<Type>)
             {
-                TypedEntity te = (TypedEntity)value;
-                EntityType et = EntityType.Types[te.TypeName];
-                JObject o = JObject.FromObject(value);
-                if (te.Symbol!=et.Symbol)
+                var list = new List<string>();
+                foreach (Type t in (value as List<Type>)!)
                 {
-                    o.Add("Symbol", te.Symbol);
+                    list.Add(t.Name);
                 }
-                if (te.FG != et.FG)
-                {
-                    o.Add("FG", te.FG);
-                }
-                if (te.BG != et.BG)
-                {
-                    o.Add("BG", te.BG);
-                }
-                o.WriteTo(writer);
+                serializer.Serialize(writer, list);
             }
             else
             {
-                JObject.FromObject(value).WriteTo(writer);
+                JObject.FromObject(value!, SubSerializer).WriteTo(writer);
             }
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            // Load JObject from stream
-            JObject job = JObject.Load(reader);
-            string t = (string)job["ClassName"];
-            Type T = Type.GetType("Hecatomb." + t);
-            Entity ge = (Entity)job.ToObject(T);
-            if (ge is TypedEntity)
+            if (reader.TokenType == JsonToken.Null)
             {
-                TypedEntity te = (TypedEntity)ge;
-                EntityType.Types[te.TypeName].Standardize(te);
-                GlyphFields gf = job.ToObject<GlyphFields>();
-                if (gf.Symbol!=default(char))
-                {
-                    te.Symbol = gf.Symbol;
-                }
-                if (gf.FG!=null)
-                {
-                    te.FG = gf.FG;
-                }
-                if (gf.BG != null)
-                {
-                    te.BG = gf.BG;
-                }
+                return null;
             }
-            return ge;
+            else if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                int fid = (int)job["FID"]!;
+                return FlyWeightParent.LookupTable[objectType][fid];
+            }
+            else if (typeof(Entity).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                string s = (string)job["Class"]!;
+                //Debug.WriteLine(s);
+                Type t = Type.GetType("Hecatomb8." + s)!;
+                object ent = SubSerializer.Deserialize(new JTokenReader(job), t)!;
+                return ent;
+            }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                List<string> slist = JsonConvert.DeserializeObject<List<string>>(job.ToString());
+                var tlist = new List<Type>();
+                foreach (string s in slist)
+                {
+                    tlist.Add(Type.GetType("Hecatomb8." + s)!);
+                }
+                return tlist;
+            }
+            else
+            {
+                return existingValue!;
+            }
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(Entity).IsAssignableFrom(objectType);
+            if (typeof(Entity).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            else if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            return false;
         }
     }
 
-    public partial class World
-	{
+    public class SubConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            if (value is List<Type>)
+            {
+                var list = new List<string>();
+                foreach (Type t in (value as List<Type>)!)
+                {
+                    list.Add(t.Name);
+                }
+                serializer.Serialize(writer, list);
+            }
+            else
+            {
+                JObject.FromObject(value!).WriteTo(writer);
+            }
+        }
 
-        //https://blog.maskalik.com/asp-net/json-net-implement-custom-serialization/
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+            else if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
+            {
+                JObject job = JObject.Load(reader);
+                int fid = (int)job["FID"]!;
+                return FlyWeightParent.LookupTable[objectType][fid];
+            }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
+            {
+                JToken job = JToken.Load(reader);
+                List<string> slist = JsonConvert.DeserializeObject<List<string>>(job.ToString());
+                var tlist = new List<Type>();
+                foreach (string s in slist)
+                {
+                    tlist.Add(Type.GetType("Hecatomb8." + s)!);
+                }
+                return tlist;
+            }
+            else
+            {
+                return existingValue!;
+            }
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            if (typeof(FlyWeightParent).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            else if (typeof(List<Type>).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+    public partial class World
+    {
         public void Stringify()
-		{
+        {
+            //FlyWeightParent.Touch();
             int[,,] terrainFIDs = new int[Width, Height, Depth];
             int[,,] coverFIDs = new int[Width, Height, Depth];
-			for (int i=0; i<Width; i++)
-			{
-				for (int j=0; j<Height; j++)
-				{
-					for (int k=0; k<Depth; k++)
-					{
-						terrainFIDs[i,j,k] = Terrains[i,j,k].FID;
-                        coverFIDs[i, j, k] = Covers[i, j, k].FID;
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    for (int k = 0; k < Depth; k++)
+                    {
+                        terrainFIDs[i, j, k] = Terrains.GetWithBoundsChecked(i, j, k).FID;
+                        coverFIDs[i, j, k] = Covers.GetWithBoundsChecked(i, j, k).FID;
                     }
-				}
-			}
+                }
+            }
             var turns = GetState<TurnHandler>();
             var jsonready = new
             {
-                buildDate = Game.BuildDate.ToString(),
+                buildDate = GameManager.BuildDate.ToString(),
                 random = Random,
-                player = Player.EID,
-                turnQueue = turns.QueueAsIDs(turns.Queue),
-                turnDeck = turns.QueueAsIDs(turns.Deck),
+                player = Player!.EID,
+                handlers = StateHandlers,
                 entities = Entities,
                 explored = Explored,
                 events = Events.StringifyListeners(),
                 tiles = terrainFIDs,
                 covers = coverFIDs
-				
-			};
-            //foreach (GameEntity ge in Entities.Spawned.Values)
-            //{
-            //    Debug.Print("Trying to convert a {0}", ge.GetType());
-            //    var j = JsonConvert.SerializeObject(ge, Formatting.Indented, new JsonSerializerSettings
-            //    { NullValueHandling = NullValueHandling.Ignore });
-            //}
+
+            };
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
             settings.Formatting = Formatting.Indented;
             settings.NullValueHandling = NullValueHandling.Ignore;
 
-            // okay...this could be a circular reference or else a string that's just too big
-            //var json = JsonConvert.SerializeObject(jsonready, settings);
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
+            System.IO.Directory.CreateDirectory(path + @"\saves");
+            //using (TextWriter writer = File.CreateText(path + @"\saves\" + GameManager.GameName + ".json"))
+            //{
+            //    var serializer = JsonSerializer.Create(settings);
+            //    serializer.Serialize(writer, jsonready);
+            //}
 
-            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            System.IO.Directory.CreateDirectory(path + @"\saves");           
-            using (TextWriter writer = File.CreateText(path + @"\saves\" + Game.GameName + ".json"))
+            if (File.Exists(path + @"\saves\" + GameManager.GameName + ".zip"))
             {
-                var serializer = JsonSerializer.Create(settings);
-                serializer.Serialize(writer, jsonready);
+                File.Move(path + @"\saves\" + GameManager.GameName + ".zip", path + @"\saves\" + GameManager.GameName + "_temp");
             }
+            try
+            {
+                using (FileStream zipToOpen = new FileStream(path + @"\saves\" + GameManager.GameName + ".zip", FileMode.Create))
+                {
+                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                    {
+                        ZipArchiveEntry save = archive.CreateEntry("save.json");
+                        using (StreamWriter writer = new StreamWriter(save.Open()))
+                        {
+                            var serializer = JsonSerializer.Create(settings);
+                            serializer.Serialize(writer, jsonready);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp"))
+                {
+                    File.Move(path + @"\saves\" + GameManager.GameName + "_temp", path + @"\saves\" + GameManager.GameName + ".zip");
+                }
+            }
+            if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp"))
+            {
+                File.Delete(path + @"\saves\" + GameManager.GameName + "_temp");
+            }
+            //using (TextWriter writer = File.CreateText(path + @"\saves\" + GameManager.GameName + @"\save.json"))
+            //{
+            //    var serializer = JsonSerializer.Create(settings);
+            //    serializer.Serialize(writer, jsonready);  
+            //}
+            //// if the zipped saved game already exists, moved it out of the way
+            //if (File.Exists(path + @"\saves\" + GameManager.GameName + ".zip"))
+            //{
+            //    File.Move(path + @"\saves\" + GameManager.GameName + ".zip", path + @"\saves\" + GameManager.GameName + "_temp.zip");
+            //}
+            //try
+            //{
+            //    ZipFile.CreateFromDirectory(path + @"\saves\" + GameManager.GameName, path + @"\saves\" + GameManager.GameName + ".zip");
 
-            //System.IO.File.WriteAllText(path + @"\saves\" + Game.GameName + ".json", json);
-            //return json;
-		}
+            //}
+            //catch(Exception e)
+            //{
+            //    // if we failed, try to bring the old one back
+            //    if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp.zip"))
+            //    {
+            //        File.Move(path + @"\saves\" + GameManager.GameName + "_temp.zip", path + @"\saves\" + GameManager.GameName + ".zip");
+            //    }
+            //    ExceptionHandling.Handle(e);
+            //}
+            //// get rid of the old zipped directory
+            //if (File.Exists(path + @"\saves\" + GameManager.GameName + "_temp.zip"))
+            //{
+            //    File.Delete(path + @"\saves\" + GameManager.GameName + "_temp.zip");
+            //}
+            //// get rid of the unzipped directory
+            //Directory.Delete(path + @"\saves\" + GameManager.GameName, true);
 
-    //public void Parse(string json)
-    public void Parse(string filename)	
-		{
-            Reset();
-            TheFixer.Purge();
+        }
+
+        public void Parse()
+        {
+            var name = GameManager.GameName;
+            Activity.Touch();
+            Cover.Touch();
+            Research.Touch();
+            Resource.Touch();
+            Species.Touch();
+            Team.Touch();
+            Terrain.Touch();
+            //Reset();
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new HecatombConverter());
-            //JObject parsed;
-            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            string json = System.IO.File.ReadAllText(path + @"\saves\" + Game.GameName + ".json");
-            //JObject parsed = (JObject) JsonConvert.DeserializeObject(json, settings);
             JObject parsed;
-            using (StreamReader stream = File.OpenText(filename))
-            using (JsonTextReader reader = new JsonTextReader(stream))
+            using (FileStream zipToOpen = new FileStream(path + @"\saves\" + GameManager.GameName + ".zip", FileMode.Open))
             {
-                JsonSerializer serializer = JsonSerializer.Create(settings);
-                parsed = (JObject)serializer.Deserialize(reader);
-            }
-            //var serializer = new JsonSerializer();
-            // *** Random Seed ***
-            Random = parsed["random"].ToObject<StatefulRandom>();
-			Random.Initialize();
-            // *** Terrains and Covers ***
-            int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
-            //int[,,] covers = parsed["covers"].ToObject<int[,,]>();
-            for (int i=0; i<tiles.GetLength(0); i++)
-			{
-				for (int j=0; j<tiles.GetLength(1); j++)
-				{
-					for (int k=0; k<tiles.GetLength(2); k++)
-					{
-						Terrains[i,j,k] = Terrain.Enumerated[tiles[i,j,k]];
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read))
+                {
+                    ZipArchiveEntry save = archive.GetEntry("save.json");
+                    using (var stream = new StreamReader(save.Open()))
+                    {
+                        using (JsonTextReader reader = new JsonTextReader(stream))
+                        {
+                            JsonSerializer serializer = JsonSerializer.Create(settings);
+                            parsed = (JObject)serializer.Deserialize(reader)!;
+                        }
                     }
-				}
-			}
-            //int[,,] tiles = parsed["tiles"].ToObject<int[,,]>();
-            int[,,] covers = parsed["covers"].ToObject<int[,,]>();
+                }
+            }
+            //ZipFile.ExtractToDirectory(path + @"\saves\" + name + ".zip", path + @"\saves\" + name);       
+            //JObject parsed;
+            //using (StreamReader stream = File.OpenText(path + @"\saves\" + name + @"\save.json"))
+            
+            //Directory.Delete(path + @"\saves\" + name, true);
+            // *** Random Seed ***
+            Random = parsed["random"]!.ToObject<StatefulRandom>()!;
+            Random.Reinitialize();
+            StateHandlers = parsed["handlers"]!.ToObject<Dictionary<string, int>>()!;
+            // *** Terrains and Covers ***
+            int[,,] tiles = parsed["tiles"]!.ToObject<int[,,]>()!;
+            for (int i = 0; i < tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < tiles.GetLength(1); j++)
+                {
+                    for (int k = 0; k < tiles.GetLength(2); k++)
+                    {
+                        Terrains.SetWithBoundsChecked(i, j, k, Terrain.Enumerated[tiles[i, j, k]]!);
+                    }
+                }
+            }
+            int[,,] covers = parsed["covers"]!.ToObject<int[,,]>()!;
             for (int i = 0; i < covers.GetLength(0); i++)
             {
                 for (int j = 0; j < covers.GetLength(1); j++)
                 {
                     for (int k = 0; k < covers.GetLength(2); k++)
                     {
-                        Covers[i, j, k] = Cover.Enumerated[covers[i, j, k]];
+                        Covers.SetWithBoundsChecked(i, j, k, Cover.Enumerated[covers[i, j, k]]!);
                     }
                 }
             }
             // *** Entities ***
             int tally = 0;
             foreach (int eid in Entities.Keys.ToList())
-			{
+            {
                 // this process can trigger recursive despawning
                 if (Entities.ContainsKey(eid))
                 {
                     tally += 1;
                     Entities[eid].Despawn();
                 }
-			}
+            }
+            Entity.MaxEID = -1;
             // may want to double check that everything has been cleared?
-			int pid = (int) parsed["player"];
-			Entity.MaxEID = -1;
-            Dictionary<int, Coord> Placements = new Dictionary<int, Coord>();
-            Dictionary<int, GlyphFields> Glyphs = new Dictionary<int, GlyphFields>();
-            foreach (var child in parsed["entities"].Values())
-			{
-                // will this handle Player?  It's such a terrible way I do that...
-				string t = (string) child["ClassName"];
-				Type T = Type.GetType("Hecatomb." + t);
-				Entity ge = (Entity) child.ToObject(T);
-                if (ge is TileEntity)
-                {
-                    Coord c = (Coord) child.ToObject(typeof(Coord));
-                    Placements[ge.EID] = c;
-                    Glyphs[ge.EID] = child.ToObject<GlyphFields>();
-                }
-				Entities[ge.EID] = ge;
-				Entity.MaxEID = Math.Max(Entity.MaxEID, ge.EID);
-				ge.Spawned = true;
-
-                if (ge is StateHandler)
-                {
-                    if (ge is TurnHandler)
-                    {
-                        var th = (TurnHandler)ge;
-                        th.Queue = th.QueueAsActors(parsed["turnQueue"].ToObject<Queue<int>>());
-                        th.Deck = th.QueueAsActors(parsed["turnDeck"].ToObject<Queue<int>>());
-                    }
-                    (ge as StateHandler).Activate();
-                }
-            }
-            // okay, this gets weird...so...
-            foreach (int eid in Placements.Keys.ToList())
+            int pid = (int)parsed["player"]!;
+            Dictionary<int, Entity> entities = new Dictionary<int, Entity>();
+            foreach (var child in parsed["entities"]!.Values())
             {
-                Entity e = Entities[eid];
-                if (e is TileEntity)
-                {
-                    TileEntity te = (TileEntity)e;
-                    
-                    var (x, y, z) = Placements[eid];
-                    if (te is TypedEntity)
-                    {
-                        TypedEntity tye = (TypedEntity)te;
-                        // will this sometimes do the wrong thing?
-                        EntityType.Types[tye.TypeName].Standardize(tye);
-                        GlyphFields gf = Glyphs[eid];
-                        if (gf.Symbol!=default(char))
-                        {
-                            tye.Symbol = gf.Symbol;
-                        }
-                        if (gf.FG != null)
-                        {
-                            tye.FG = gf.FG;
-                        }
-                        if (gf.BG != null)
-                        {
-                            tye.BG = gf.BG;
-                        }
-                    }
-                    //if (te is Structure)
-                    //{
-                        // structures need some cleaning up
-                        //Structure s = (Structure)te;
-                        // why did I do this again?
-                        //int size = s.Width * s.Height;
-                        //s.Features = s.Features.Skip(size).ToList();
-                    //}
-                    // don't place it unless it is placed!
-                    if (x != -1 && y != -1 && z != -1)
-                    {
-                        te.Place(x, y, z, fireEvent: false);
-                    }
-                }
+                var e = JsonConvert.DeserializeObject<Entity>(child.ToString(), settings)!;
+                Entities[(int)e!.EID!] = e;
             }
-            ValidateOutdoors();
-			// *** Player ***
-			
-			Player = (Creature) Entities[pid];
-			Explored = parsed.GetValue("explored").ToObject<HashSet<Coord>>();
-
-            
-    
-            // *** Event Listeners ***
-            var	events = parsed.GetValue("events").ToObject<Dictionary<string,Dictionary<int, string>>>();
-			foreach (string type in events.Keys)
-			{
+            var events = parsed.GetValue("events")!.ToObject<Dictionary<string, Dictionary<int, string>>>();
+            foreach (string type in events!.Keys)
+            {
                 var listeners = events[type];
-                //listeners.Clear();
                 if (Events.ListenerTypes.ContainsKey(type))
                 {
                     Events.ListenerTypes[type].Clear();
@@ -302,20 +369,44 @@ namespace Hecatomb
                 {
                     Events.ListenerTypes[type] = new Dictionary<int, Func<GameEvent, GameEvent>>();
                 }
-				foreach (int eid in listeners.Keys)
-				{
-                    Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>) Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
-				}
-			}
-            TurnHandler.HandleVisibility();
-            InterfacePanel.DirtifyUsualPanels();
-            World.WorldSafeToDraw = true;
-            if (Game.Options.ReseedRandom)
-            {
-                int r = System.DateTime.Now.Millisecond;
-                Game.World.Random = new StatefulRandom(r);
-                Debug.WriteLine($"Changed random seed to {r}");
+                foreach (int eid in listeners.Keys)
+                {
+                    Events.ListenerTypes[type][eid] = (Func<GameEvent, GameEvent>)Delegate.CreateDelegate(typeof(Func<GameEvent, GameEvent>), Entities[eid], listeners[eid]);
+                }
             }
+            Events.Suppressed = true;
+            foreach (var e in Entities.Values)
+            { 
+                if (e is TileEntity)
+                {
+                    TileEntity te = (TileEntity)e;
+                    // Items in particular are not always placed
+                    Coord? c = te._coord;
+                    if (c != null)
+                    {
+                        //Debug.WriteLine("placing " + e.Class);
+                        te.PlaceInValidEmptyTile(((Coord)c).X, ((Coord)c).Y, ((Coord)c).Z);
+                    }
+                }
+                Entity.MaxEID = Math.Max(Entity.MaxEID, (int)e.EID!);
+                // we might have to do some sort of reactivation for statehandlers but I hope not
+            }
+            Events.Suppressed = false;
+            //ValidateOutdoors();
+            // *** Player ***
+            Player = (Creature)Entities[pid];
+            Explored = parsed.GetValue("explored")!.ToObject<HashSet<Coord>>()!;
+            // *** Event Listeners ***
+
+            ValidateOutdoors();
+            InterfaceState.PlayerIsReady();
+            //if (Game.Options.ReseedRandom)
+            //{
+            //    int r = System.DateTime.Now.Millisecond;
+            //    Game.World.Random = new StatefulRandom(r);
+            //    Debug.WriteLine($"Changed random seed to {r}");
+            //}
         }
-	}
+    }
 }
+

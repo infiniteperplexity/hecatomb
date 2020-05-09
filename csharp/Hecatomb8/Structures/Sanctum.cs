@@ -1,17 +1,10 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 10:24 AM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static Resource;
+    using static Research;
     public class Sanctum : Structure
     {
         public Sanctum() : base()
@@ -28,24 +21,23 @@ namespace Hecatomb
                 "FLOORFG", "green","FLOORFG",
                 "yellow","red","orange"
             };
-            BG = "#222244";
+            _bg = "#222244";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","FLOORBG",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Bone", 1}},
-                new Dictionary<string, int>() {{"Wood", 1}}, new Dictionary<string, int>() {{"Coal", 2}}, new Dictionary<string, int>() {{"Wood", 1}},
-                new Dictionary<string, int>() {{"Flesh", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
+                new Dictionary<Resource, int>() {{Rock, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Bone, 1}},
+                new Dictionary<Resource, int>() {{Wood, 1}}, new Dictionary<Resource, int>() {{Coal, 2}}, new Dictionary<Resource, int>() {{Wood, 1}},
+                new Dictionary<Resource, int>() {{Flesh, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Rock, 1}}
             };
-            MenuName = "sanctum";
-            Name = "sanctum";
+            _name = "sanctum";
             UseHint = "(research new spells and increase max sanity; stay in the sanctum to regenerate sanity faster)";
-            Researches = new[] { "CondenseEctoplasm", "ShadowHop", "SiphonFlesh", "Chirurgy" };
-            Stores = new[] { "Ectoplasm" };
+            Researches = new[] { CondenseEctoplasm, ShadowHop, SiphonFlesh, Chirurgy };
+            StoresResources = new[] { Ectoplasm };
         }
     }
 }

@@ -1,89 +1,182 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 9/25/2018
- * Time: 12:06 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
-    public class Minion : Component
+    public partial class Activity
     {
+        public static readonly Activity Assign = new Activity(
+            type: "Assign",
+            act: Hecatomb8.Minion._assign
+        );
+        public static readonly Activity Serve = new Activity(
+            type: "Serve",
+            act: Hecatomb8.Minion._serve
+        );
+        public static readonly Activity Guard = new Activity(
+            type: "Guard",
+            act: Hecatomb8.Minion._guard
+        );
+        public static readonly Activity Minion = new Activity(
+            type: "Minion",
+            act: (a, cr)=>
+            {
+                if (!a.Acted)
+                {
+                    Assign.Act(a, cr);
+                }
+                if (!a.Acted)
+                {
+                    Serve.Act(a, cr);
+                }
+                if (!a.Acted)
+                {
+                    Guard.Act(a, cr);
+                }
+            }
+        );
 
-        public TaskField Task = new TaskField();
-        new string[] Required = new string[] {"Actor"};
+    }
+        public class Minion : Component
+    {
+        // should maybe make this private?  dangerous to assign directly to it
+        public ListenerHandledEntityHandle<Task>? Task;
 
         public Minion()
         {
-            AddListener<ActEvent>(OnAct);
+            //AddListener<ActEvent>(OnAct);
+        }
+
+        public override GameEvent OnDespawn(GameEvent ge)
+        {
+            var de = (DespawnEvent)ge;
+            if (Task != null && de.Entity == Task.UnboxBriefly())
+            {
+                Task = null;
+            }
+            base.OnDespawn(ge);
+            return ge;
         }
 
         public GameEvent OnAct(GameEvent ge)
         {
-            ActEvent ae = (ActEvent)ge;
-            if (ae.Entity == Entity.Unbox() && ae.Step == "BeforeWander")
-            {
-                if (!ae.Actor.Acted)
-                {
-                    Act();
-                }
-            }
+            //ActEvent ae = (ActEvent)ge;
+            //if (ae.Entity == Entity.Unbox() && ae.Step == "BeforeWander")
+            //{
+            //    if (!ae.Actor.Acted)
+            //    {
+            //        Act();
+            //    }
+            //}
             return ge;
         }
-		
-        public void Act()
+
+        public static void _assign(Actor a, Creature cr)
         {
-            var (x, y, z) = Entity;
-            Creature cr = (Creature)Entity;
-            if (Terrains[x, y, z].Solid && Task?.ClassName != "ZombieEmergeTask")
+            var minion = cr.TryComponent<Minion>();
+            if (minion is null)
             {
-                if (Features[x, y, z + 1]?.TypeName == "Grave")
-                {
-                    Tasks[x, y, z + 1]?.Cancel();
-                    var task = Spawn<ZombieEmergeTask>();
-                    task.Place(x, y, z + 1);
-                    task.AssignTo(cr);
-                }
+                return;
             }
-            if (Task==null)
+            var (x, y, z) = cr.GetPlacedCoordinate();
+            Task? existing = minion.Task?.UnboxBriefly();
+            // a zombie encased in solid rock, a grave on top, and no zombie emerge task...poor guy needs a zombie emerge task!
+            if (Terrains.GetWithBoundsChecked(x, y, z).Solid && !(existing is ZombieEmergeTask) && Features.GetWithBoundsChecked(x, y, z + 1) is Grave)
             {
-                foreach (Task task in Tasks.OrderBy(t=> t.Priority).ThenBy(t => Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
-                //    foreach (Task task in Tasks.OrderBy(t=>Tiles.QuickDistance(x, y, z, t.X, t.Y, t.Z)).ToList())
+                Tasks.GetWithBoundsChecked(x, y, z + 1)?.Cancel();
+                var t = Spawn<ZombieEmergeTask>();
+                t.PlaceInValidEmptyTile(x, y, z + 1);
+                t.AssignTo(cr);
+            }
+            existing = minion.Task?.UnboxBriefly();
+            // if we have no task, find a suitable one to assign
+            if (existing is null)
+            {
+                // should be safely placed and non-null, if they're in the list in the first place
+                foreach (Task task in Tasks.OrderBy(t => t.Priority).ThenBy(t => Tiles.Distance(x, y, z, (int)t.X!, (int)t.Y!, (int)t.Z!)).ToList())
                 {
-                    if (task.Worker==null && task.CanAssign(cr))
+                    if (task.Worker?.UnboxBriefly() is null && task.CanAssign(cr))
                     {
                         task.AssignTo(cr);
                         break;
                     }
                 }
             }
-            if (Task!=null)
+        }
+        public static void _serve(Actor a, Creature cr)
+        {
+            var minion = cr.TryComponent<Minion>();
+            if (minion is null)
             {
-                Task.Act();
+                return;
             }
-            //Task?.Act();
-            Actor actor = Entity.GetComponent<Actor>();
+            if (minion.Task?.UnboxBriefly() != null)
+            {
+                minion.Task.UnboxBriefly()!.Act();
+            }
+        }
+        public static void _guard(Actor a, Creature cr)
+        {
+            if (!Player.Placed)
+            {
+                return;
+            }
+            var (x, y, z) = Player.GetPlacedCoordinate();
+            a.Patrol(x, y, z);
+        }
+        public void Act()
+        {
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return;
+            }
+            Creature cr = (Creature)Entity.UnboxBriefly()!;
+            var (x, y, z) = ((int)cr.X!, (int)cr.Y!, (int)cr.Z!);
+            Task? existing = Task?.UnboxBriefly();
+            // a zombie encased in solid rock, a grave on top, and no zombie emerge task...poor guy needs a zombie emerge task!
+            if (Terrains.GetWithBoundsChecked(x, y, z).Solid && !(existing is ZombieEmergeTask) && Features.GetWithBoundsChecked(x, y, z + 1) is Grave)
+            {
+                Tasks.GetWithBoundsChecked(x, y, z + 1)?.Cancel();
+                var t = Spawn<ZombieEmergeTask>();
+                t.PlaceInValidEmptyTile(x, y, z + 1);
+                t.AssignTo(cr);
+            }
+            existing = Task?.UnboxBriefly();
+            // if we have no task, find a suitable one to assign
+            if (existing is null)
+            {
+                // should be safely placed and non-null, if they're in the list in the first place
+                foreach (Task task in Tasks.OrderBy(t => t.Priority).ThenBy(t => Tiles.Distance(x, y, z, (int)t.X!, (int)t.Y!, (int)t.Z!)).ToList())
+                {
+                    if (task.Worker?.UnboxBriefly() is null && task.CanAssign(cr))
+                    {
+                        task.AssignTo(cr);
+                        break;
+                    }
+                }
+            }
+            if (Task?.UnboxBriefly() != null)
+            {
+                Task.UnboxBriefly()!.Act();
+            }
+            Actor actor = cr.GetComponent<Actor>();
             if (!actor.Acted)
             {
-                var p = Game.World.Player;
-                actor.Patrol(p.X, p.Y, p.Z);
-            }         
+                var p = Player;
+                actor.Patrol((int)p.X!, (int)p.Y!, (int)p.Z!);
+            }
         }
 
         public override void Despawn()
         {
-            if (Task?.Unbox() != null)
+            if (Task?.UnboxBriefly() != null)
             {
-                Task.Unbox().Unassign();
+                Task.UnboxBriefly()!.Unassign();
             }
             base.Despawn();
         }
-	}
+    }
 }

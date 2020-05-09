@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     public static class HecatombAliases
     {
@@ -13,29 +13,7 @@ namespace Hecatomb
         {
             get
             {
-                return Game.MainPanel;
-            }
-        }
-        public static CommandsPanel Menu
-        {
-            get
-            {
-                return Game.MenuPanel;
-            }
-        }
-        public static InformationPanel Status
-        {
-            get
-            {
-                return Game.InfoPanel;
-            }
-        }
-
-        public static SplashPanel Foreground
-        {
-            get
-            {
-                return Game.SplashPanel;
+                return InterfaceState.MainPanel;
             }
         }
 
@@ -43,30 +21,21 @@ namespace Hecatomb
         {
             get
             {
-                return Game.Controls;
+                return InterfaceState.Controls;
             }
         }
-        public static HecatombCommmands Commands
+        public static HecatombCommands Commands
         {
             get
             {
-                return Game.Commands;
+                return InterfaceState.Commands!;
             }
         }
         public static Colors Colors
         {
             get
             {
-                return Game.Colors;
-            }
-        }
-
-        // World state
-        public static HecatombOptions Options
-        {
-            get
-            {
-                return Game.Options;
+                return InterfaceState.Colors!;
             }
         }
 
@@ -74,156 +43,98 @@ namespace Hecatomb
         {
             get
             {
-                return Game.World;
+                return GameState.World!;
             }
         }
         public static Creature Player
         {
             get
             {
-                return Game.World.Player;
+                return GameState.World!.Player!;
             }
         }
         public static HashSet<Coord> Explored
         {
             get
             {
-                return Game.World.Explored;
+                return GameState.World!.Explored;
             }
         }
-        public static Terrain[,,] Terrains
+        public static Grid3D<Terrain> Terrains
         {
             get
             {
-                return Game.World.Terrains;
+                return GameState.World!.Terrains;
             }
         }
-        public static Cover[,,] Covers
+        public static Grid3D<Cover> Covers
         {
             get
             {
-                return Game.World.Covers;
+                return GameState.World!.Covers;
             }
         }
         public static SparseArray3D<Creature> Creatures
         {
             get
             {
-                return Game.World.Creatures;
+                return GameState.World!.Creatures;
             }
         }
         public static SparseArray3D<Feature> Features
         {
             get
             {
-                return Game.World.Features;
+                return GameState.World!.Features;
             }
         }
         public static SparseArray3D<Task> Tasks
         {
             get
             {
-                return Game.World.Tasks;
+                return GameState.World!.Tasks;
             }
         }
         public static SparseArray3D<Item> Items
         {
             get
             {
-                return Game.World.Items;
+                return GameState.World!.Items;
             }
         }
-        public static SparseJaggedArray3D<Particle> Particles
-        {
-            get
-            {
-                return Game.World.Particles;
-            }
-        }
-        public static AchievementHandler Achievements
-        {
-            get
-            {
-                return Game.World.GetState<AchievementHandler>();
-            }
-        }
+
         public static Dictionary<int, Entity> Entities
         {
             get
             {
-                return Entity.Entities;
-            }
-        }
-        public static ResearchHandler Research
-        {
-            get
-            {
-                return Game.World.GetState<ResearchHandler>();
-            }
-        }
-        public static TutorialHandler Tutorial
-        {
-            get
-            {
-                return Game.World.GetState<TutorialHandler>();
-            }
-        }
-        public static TurnHandler Turns
-        {
-            get
-            {
-                return Game.World.Turns;
-            }
-        }
-        public static TimeHandler Time
-        {
-            get
-            {
-                return Game.Time;
+                return GameState.World!.Entities;
             }
         }
 
-        // spawning methods
-        public static Entity Spawn(Type t)
+        public static void Publish(GameEvent ge)
         {
-            return Entity.Spawn(t);
-        }
-        public static T Spawn<T>() where T : Entity, new()
-        {
-            return Entity.Spawn<T>();
-        }
-        public static T Spawn<T>(Type t) where T : Entity
-        {
-            return Entity.Spawn<T>(t);
-        }
-        public static T Spawn<T>(string s) where T : TypedEntity, new()
-        {
-            return Entity.Spawn<T>(s);
+            GameState.World!.Events.Publish(ge);
         }
 
-        public static T Mock<T>() where T : Entity, new()
+        public static void Subscribe(Type t, Entity g, Func<GameEvent, GameEvent> f, float priority = 0)
         {
-            return Entity.Mock<T>();
+            GameState.World!.Events.Subscribe(t, g, f, priority: priority);
         }
 
-        public static T Mock<T>(string s) where T : TypedEntity, new()
+        public static void Subscribe<T>(Entity g, Func<GameEvent, GameEvent> f, float priority = 0) where T : GameEvent
         {
-            return Entity.Mock<T>(s);
+            GameState.World!.Events.Subscribe<T>(g, f, priority: priority);
         }
 
-        public static Entity Mock(Type t)
-        {
-            return Entity.Mock(t);
-        }
 
-        public static T Mock<T>(Type t) where T : Entity
+        public static void PushMessage(ColoredText ct)
         {
-            return Entity.Mock<T>(t);
+            GameState.World!.GetState<GameLog>().PushMessage(ct);
         }
 
         public static T GetState<T>() where T : StateHandler, new()
         {
-            return Game.World.GetState<T>();
+            return GameState.World!.GetState<T>();
         }
     }
 }

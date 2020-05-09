@@ -5,47 +5,27 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using System.Threading;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     public class FullScreenPanel : InterfacePanel
     {
-        List<ColoredText> CurrentText;
-        public FullScreenPanel(int x, int y, int w, int h) : base(x, y, w, h)
+        public FullScreenPanel(GraphicsDevice g, SpriteBatch sb, ContentManager c, int x, int y, int w, int h) : base(g, sb, c, x, y, w, h)
         {
-            Zindex = 1;
             LeftMargin = 3;
             TopMargin = 3;
             Active = false;
         }
 
-        public override void Draw()
+        public override void Prepare()
         {
-            // eventually want some kind of brief freeze to keep from instantly closing this
-            Game.Sprites.Draw(BG, new Vector2(X0, Y0), Color.Black);
-            DrawLines(CurrentText);
-        }
-        public void Splash(List<ColoredText> lines, bool frozen = false)
-        {
-            Active = true;
-            Dirty = true;
-            if (!frozen)
-            {
-                ControlContext.Set(new SplashControls());
+            if (Active && InterfaceState.Controls is SplashControls)
+            { 
+                var splash = (SplashControls)InterfaceState.Controls;
+                PrepareLines(splash.SplashText);
             }
-            else
-            {
-                ControlContext.Set(new FrozenControls());
-            }
-            CurrentText = lines;
-        }
-
-        public void Reset()
-        {
-            Active = false;
-            Debug.WriteLine("flag 2");
-            InterfacePanel.DirtifyUsualPanels();
         }
     }
 }

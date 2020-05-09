@@ -7,53 +7,59 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
+    using static HecatombAliases;
     class RallyTask : Task
     {
         public RallyTask() : base()
         {
-            MenuName = "rally all minions";
-            PrereqStructures = new List<string>() { "GuardPost" };
+            _name = "rally all minions";
+            RequiresStructures = new List<Type>() { typeof(GuardPost) };
         }
 
         public override void ChooseFromMenu()
         {
-            Game.World.Events.Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
+            Publish(new TutorialEvent() { Action = "ChooseAnotherTask" });
             var c = new SelectTileControls(this);
-            c.MenuSelectable = false;
+            c.MenuCommandsSelectable = false;
             c.SelectedMenuCommand = "Jobs";
-            ControlContext.Set(c);
+            InterfaceState.SetControls(c);
         }
 
         public override void SelectTile(Coord c)
         {
             CommandLogger.LogCommand(command: "RallyTask", x: c.X, y: c.Y, z: c.Z);
-            if (Game.World.Tasks[c.X, c.Y, c.Z] == null)
+            if (Tasks.GetWithBoundsChecked(c.X, c.Y, c.Z) is null)
             {
-                var rallies = Game.World.Tasks.Where((Task t) => t is RallyTask).ToList();
-                foreach(var rally in rallies)
+                var rallies = Tasks.Where((Task t) => t is RallyTask).ToList();
+                foreach (var rally in rallies)
                 {
                     rally.Cancel();
                 }
                 RallyTask task = Spawn<RallyTask>();
-                task.Place(c.X, c.Y, c.Z);
-                Game.World.Events.Subscribe<ActEvent>(task, task.OnAct);
-                
+                task.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
+                Subscribe<ActEvent>(task, task.OnAct);
+
             }
         }
 
+        // wait...why do we do it this way?  there must be some reason
         public GameEvent OnAct(GameEvent ge)
         {
+            if (!Placed || !Spawned)
+            {
+                return ge;
+            }
             ActEvent ae = (ActEvent)ge;
             if (ae.Entity is Creature && ae.Step == "BeforeAlert")
-            {   
+            {
                 // we need some kind of sensible priority system here, to avoid conflicts between this and Minion.OnAct
                 Creature cr = (Creature)ae.Entity;
-                if (cr.TryComponent<Minion>()!=null)
+                if (cr.HasComponent<Minion>())
                 {
                     Actor actor = cr.GetComponent<Actor>();
-                    actor.Patrol(X, Y, Z);
+                    actor.Patrol((int)X!, (int)Y!, (int)Z!);
                 }
             }
             return ge;

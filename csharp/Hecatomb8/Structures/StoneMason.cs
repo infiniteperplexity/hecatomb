@@ -1,17 +1,10 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 10:24 AM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static Resource;
+    using static Research;
     public class StoneMason : Structure
     {
         public StoneMason() : base()
@@ -28,24 +21,23 @@ namespace Hecatomb
                 "FLOORFG", "green","FLOORFG",
                 "yellow","red","orange"
             };
-            BG = "#222244";
+            _bg = "#222244";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","FLOORBG",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}},
-                new Dictionary<string, int>() {{"Wood", 1}}, new Dictionary<string, int>() {{"Coal", 2}}, new Dictionary<string, int>() {{"Wood", 1}},
-                new Dictionary<string, int>() {{"Rock", 1}}, null, new Dictionary<string, int>() {{"Rock", 1}}
+                new Dictionary<Resource, int>() {{Rock, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Rock, 1}},
+                new Dictionary<Resource, int>() {{Wood, 1}}, new Dictionary<Resource, int>() {{Coal, 2}}, new Dictionary<Resource, int>() {{Wood, 1}},
+                new Dictionary<Resource, int>() {{Rock, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Rock, 1}}
             };
-            MenuName = "stonemason";
-            Name = "stonemason";
+            _name = "stonemason";
             UseHint = "(currently does nothing.)";
-            StructurePrereqs = new[] { "Workshop", "Stockpile" };
-            ResearchPrereqs = new[] { "Masonry" };
+            RequiresStructures = new[] { typeof(Workshop), typeof(Stockpile) };
+            RequiresResearch = new Research[] { /*Masonry*/ };
         }
     }
 }

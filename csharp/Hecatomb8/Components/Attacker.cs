@@ -1,69 +1,50 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn
- * Date: 10/29/2018
- * Time: 10:10 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of Combat.
-    /// </summary>
+    using static HecatombAliases;
     public class Attacker : Component
     {
         public int Accuracy;
         public int Damage;
 
-        public void Attack(TypedEntity t)
+        public void Attack(ComposedEntity t)
         {
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return;
+            }
             AttackEvent attack = new AttackEvent()
             {
                 Attacker = this,
-                Defender = t.TryComponent<Defender>(),
-                Roll = Game.World.Random.Arbitrary(20, OwnSeed()) + 1,
-                //Roll = Game.World.Random.Next(20)+1,
+                Defender = t.GetComponent<Defender>(),
+                Roll = GameState.World!.Random.Next(20)+1,
             };
             Defender defender = attack.Defender;
 
-            if (Entity.TryComponent<Minion>() != null)
+            if (Entity.UnboxBriefly()!.HasComponent<Minion>())
             {
-                attack.AccuracyModifier += Game.World.GetState<ResearchHandler>().GetMinionAccuracy();
-                attack.DamageModifier += Game.World.GetState<ResearchHandler>().GetMinionDamage();
+                attack.AccuracyModifier += GetState<ResearchHandler>().GetMinionAccuracy();
+                attack.DamageModifier += GetState<ResearchHandler>().GetMinionDamage();
             }
-            if (defender.Entity.TryComponent<Minion>() != null)
+            if (t.HasComponent<Minion>())
             {
-                attack.EvasionModifier += Game.World.GetState<ResearchHandler>().GetMinionEvasion();
-                attack.ToughnessModifier += Game.World.GetState<ResearchHandler>().GetMinionToughness();
-                attack.ArmorModifier += Game.World.GetState<ResearchHandler>().GetMinionArmor();
+                attack.EvasionModifier += GetState<ResearchHandler>().GetMinionEvasion();
+                attack.ToughnessModifier += GetState<ResearchHandler>().GetMinionToughness();
+                attack.ArmorModifier += GetState<ResearchHandler>().GetMinionArmor();
             }
-
-
-
-            Game.World.Events.Publish(attack);
+            Publish(attack);
             int evade = defender.Evasion - defender.Wounds + attack.EvasionModifier;
-            // at this point in the JS code, we aggro the defender in most cases
-            //            Debug.WriteLine(
-            //$@"
-            //roll: {attack.Roll}
-            //roll+accuracy: {attack.Roll+Accuracy}
-            //11+evade: {11+evade}
-            //"
-            //            );
             if (attack.Roll + Accuracy + attack.AccuracyModifier >= 11 + evade)
             {
-                //Debug.WriteLine("hit");
                 // defender switches targets if the attacker is closer
-                if (t is Creature && Entity.Unbox() is Creature)
+                if (t is Creature && Entity.UnboxBriefly() is Creature)
                 {
-                    t.GetComponent<Actor>().Provoke((Creature)Entity);
+                    t.GetComponent<Actor>().ProvokeAgainst((Creature)Entity.UnboxBriefly()!);
                 }
                 defender.Defend(attack);
             }
@@ -71,23 +52,9 @@ namespace Hecatomb
             {
                 //Debug.WriteLine("Miss");
             }
-            if (Entity.Unbox() is Creature)
+            if (Entity.UnboxBriefly() is Creature)
             {
-                Entity.GetComponent<Actor>().Spend();
-            }
-        }
-
-
-        public override void InterpretJSON(string json)
-        {
-            JObject obj = JObject.Parse(json);
-            if (obj["Accuracy"] != null)
-            {
-                Accuracy = (int)obj["Accuracy"];
-            }
-            if (obj["Damage"] != null)
-            {
-                Damage = (int)obj["Damage"];
+                Entity.UnboxBriefly()!.GetComponent<Actor>().Spend();
             }
         }
     }

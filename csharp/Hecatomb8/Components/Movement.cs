@@ -1,226 +1,21 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 9/21/2018
- * Time: 11:33 AM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-	/// <summary>
-	/// Description of Movement.
-	/// </summary>
-	/// 
-	public struct Coord {
-		public int X;
-		public int Y;
-		public int Z;
-		
-		public Coord(int _x, int _y, int _z)
-		{
-			X = _x;
-			Y = _y;
-			Z = _z;
-		}
-
-        public Coord(int n)
-        {
-            int m = n;
-            int w = Game.World.Width;
-            int h = Game.World.Height;
-            X = 0;
-            Y = 0;
-            Z = 0;
-            while (m - w * h >= 0)
-            {
-                m -= w * h;
-                Z += 1;
-            }
-            while (m - h >= 0)
-            {
-                m -= h;
-                X += 1;
-            }
-            Y = m;
-        }
- 
-        public Coord Rotate(int n)
-		{
-			if (n==0)
-			{
-				return this;
-			}
-			else
-			{
-				Coord c = new Coord(-Y, X, Z);
-				return c.Rotate(n-1);
-			}
-		}
-		
-		public Coord Rotate()
-		{
-			return this.Rotate(1);
-		}
-		
-		public Coord Flip()
-		{
-			return new Coord(X, Y, -Z);
-		}
-
-        public void Deconstruct(out int x, out int y, out int z)
-        {
-            x = X;
-            y = Y;
-            z = Z;
-        }
-
-        public static int Numberize(int x, int y, int z)
-        {
-            int w = Game.World.Width;
-            int h = Game.World.Height;
-            return h * w * z + h * x + y;
-        }
-
-        public int Numberize()
-        {
-            return Numberize(X, Y, Z);
-        }
-
-        public int OwnSeed()
-        {
-            return X * Game.World.Width * Game.World.Height + Y * Game.World.Height + Z + Game.World.Turns.Turn;
-        }
-
-        public bool Equals(Coord c)
-            => X == c.X && Y == c.Y && Z == c.Z;
-    }
-
+    using static Coord;
+    using static HecatombAliases;
     public class Movement : Component
     {
         public bool Walks;
-        public bool Climbs;
         public bool Flies;
         public bool Swims;
         public bool Phases;
-        // used to avoid performance bottlenecks
-        [JsonIgnore]
-        Actor cachedActor;
-        [JsonIgnore]
-        Actor CachedActor
-        {
-            get
-            {
-                if (cachedActor == null)
-                {
-                    cachedActor = Entity.Unbox().GetComponent<Actor>();
-                }
-                return cachedActor;
-            }
-        }
 
-        public readonly static Coord North = new Coord(+0, -1, +0);
-        public readonly static Coord South = new Coord(+0, +1, +0);
-        public readonly static Coord East = new Coord(+1, +0, +0);
-        public readonly static Coord West = new Coord(-1, +0, +0);
-        public readonly static Coord NorthEast = new Coord(+1, -1, +0);
-        public readonly static Coord SouthEast = new Coord(+1, +1, +0);
-        public readonly static Coord NorthWest = new Coord(-1, -1, +0);
-        public readonly static Coord SouthWest = new Coord(-1, +1, +0);
-        public readonly static Coord UpNorth = new Coord(+0, +1, +1);
-        public readonly static Coord UpSouth = new Coord(+0, -1, +1);
-        public readonly static Coord UpEast = new Coord(+1, +0, +1);
-        public readonly static Coord UpWest = new Coord(-1, +0, +1);
-        public readonly static Coord UpNorthEast = new Coord(+1, -1, +1);
-        public readonly static Coord UpSouthEast = new Coord(+1, +1, +1);
-        public readonly static Coord UpNorthWest = new Coord(-1, -1, +1);
-        public readonly static Coord UpSouthWest = new Coord(-1, +1, +1);
-        public readonly static Coord DownNorth = new Coord(+0, -1, -1);
-        public readonly static Coord DownSouth = new Coord(+0, +1, -1);
-        public readonly static Coord DownEast = new Coord(+1, +0, -1);
-        public readonly static Coord DownWest = new Coord(-1, +0, -1);
-        public readonly static Coord DownNorthEast = new Coord(+1, -1, -1);
-        public readonly static Coord DownSouthEast = new Coord(+1, +1, -1);
-        public readonly static Coord DownNorthWest = new Coord(-1, -1, -1);
-        public readonly static Coord DownSouthWest = new Coord(-1, +1, -1);
-        public readonly static Coord Up = new Coord(+0, +0, +1);
-        public readonly static Coord Down = new Coord(+0, +0, -1);
-
-        public static Coord[] Directions4 = new Coord[] {
-            North,
-            South,
-            East,
-            West
-        };
-
-        public static Coord[] Directions6 = new Coord[] {
-            North,
-            South,
-            East,
-            West,
-            Up,
-            Down
-        };
-
-        public static Coord[] Directions8 = new Coord[] {
-            North,
-            South,
-            East,
-            West,
-            NorthEast,
-            SouthEast,
-            NorthWest,
-            SouthWest
-        };
-
-        public static Coord[] Directions10 = new Coord[] {
-            North,
-            South,
-            East,
-            West,
-            NorthEast,
-            SouthEast,
-            NorthWest,
-            SouthWest,
-            Up,
-            Down
-        };
-
-        public static Coord[] Directions26 = new Coord[] {
-            North,
-            East,
-            South,
-            West,
-            NorthEast,
-            SouthEast,
-            SouthWest,
-            NorthWest,
-            UpNorth,
-            UpEast,
-            UpSouth,
-            UpWest,
-            DownNorth,
-            DownEast,
-            DownSouth,
-            DownWest,
-            Up,
-            Down,
-            UpNorthEast,
-            UpSouthEast,
-            UpSouthWest,
-            UpNorthWest,
-            DownNorthEast,
-            DownSouthEast,
-            DownSouthWest,
-            DownNorthWest
-        };
-
+        // this next structure describes the "fallback" directions for movement when a creature tries and fails to move in a certain direction
         public static Dictionary<Coord, Coord[][]> Fallbacks = new Dictionary<Coord, Coord[][]> {
             {North, new Coord[][]
             {
@@ -276,6 +71,7 @@ namespace Hecatomb
                 new [] {DownSouthWest}
             }}
         };
+
         static Movement()
         {
             // Use the pattern templates in Fallback to populate fallbacks for all directions
@@ -358,81 +154,160 @@ namespace Hecatomb
             }
         }
 
-        public Movement() : base()
+        public Movement()
         {
             Walks = true;
-            Climbs = true;
-            Flies = false;
-            Swims = true;
-            Phases = false;
-            Required = new string[] { "Actor" };
         }
 
-        // was there a version of this that can push the creature?
+        //used to avoid performance bottlenecks
+        [JsonIgnore] Actor? cachedActor;
+        Actor? Actor
+        {
+            get
+            {
+                if (cachedActor != null && cachedActor.Spawned)
+                {
+                    return cachedActor;
+                }
+                else
+                {
+                    if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Spawned)
+                    {
+                        return null;
+                    }
+                    cachedActor = Entity.UnboxBriefly()!.GetComponent<Actor>();
+                    return cachedActor;
+                }
+            }
+            set{ }
+        }
+
+
+        public float MovementCost(int x0, int y0, int z0, int x1, int y1, int z1)
+        {
+            //Feature f = Game.World.Features[x1, y1, z1];
+            //if (f != null && f.Solid && CachedActor.Team != Teams.Friendly)
+            //{
+            //    return 12;
+            //}
+            Cover cv = Covers.GetWithBoundsChecked(x1, y1, z1);
+            if (cv.Liquid)
+            {
+                return 2;
+            }
+            Terrain t = Terrains.GetWithBoundsChecked(x1, y1, z1);
+            if (t == Terrain.UpSlopeTile || t == Terrain.DownSlopeTile)
+            {
+                return 2;
+            }
+            if (z1 > z0)
+            {
+                return 3;
+            }
+            return 1;
+        }
+
+        // this version swaps places with the target creature
         public void Displace(Creature c)
         {
-            if (c == this.Entity)
+            var cr = Entity?.UnboxBriefly();
             {
-                 throw new InvalidOperationException("We're trying to displace ourselves, that's totally illegal.");
+                if (cr is null || !cr.Placed || cr == c)
+                {
+                    return;
+                }
             }
-            Displace(c, Entity.X, Entity.Y, Entity.Z);
+            Displace(c, (int)cr.X!, (int)cr.Y!, (int)cr.Z!);
         }
+        // this version pushes the target creature to the target square
+        // I think the algorithm is now absolutely bulletproof
         public void Displace(Creature cr, int x, int y, int z)
         {
-            int x1 = cr.X;
-            int y1 = cr.Y;
-            int z1 = cr.Z;
-            cr.Remove();
-            if (Game.World.Creatures[x1, y1, z1] != null)
+            if (!cr.Spawned || !cr.Placed || Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
-                Debug.WriteLine("how on earth did this happen?");
+                return;
             }
-            StepTo(x1, y1, z1);
-            Movement m = cr.TryComponent<Movement>();
-            if (m != null)
+            if (!cr.HasComponent<Movement>() || cr == Entity.UnboxBriefly())
             {
-                m.StepTo(x, y, z);
+                return;
             }
-            else
+            Movement m = cr.GetComponent<Movement>();
+            var (x1, y1, z1) = cr.GetPlacedCoordinate();
+            if (x1 == x && y1 == y && z1 == z)
             {
-                cr.Place(x, y, z);
+                return;
             }
+            Creature me = (Creature)Entity.UnboxBriefly()!;
+            var (x0, y0, z0) = me.GetPlacedCoordinate();
+            // alright here comes the delicate swap
+            // first, could I theoretically move to the targeted creature's square if it weren't there?
+            if (!CanMoveBounded(x1, y1, z1))
+            {
+                // if not, bail
+                return;
+            }
+            // otherwise, pull me out of the world temporarily
+            me.Remove();
+            // is there anything stopping the target creature from passing into the targeted square?
+            if (!m.CanPassBounded(x, y, z))
+            {
+                // if so, place me back in the world and bail
+                me.PlaceInValidEmptyTile(x0, y0, z0);
+                return;
+            }
+            // otherwise, the target creature steps to the targeted square
+            m.StepToValidEmptyTile(x, y, z);
+            // then I step to the target creature's old square
+            StepToValidEmptyTile(x1, y1, z1);
         }
 
-        public bool CanStand(int x1, int y1, int z1)
+        // CanStand tells you actually if you "could" stand there if there were no creature there
+        public bool CanStandBounded(int x1, int y1, int z1)
         {
-            if (x1 < 0 || x1 >= Game.World.Width || y1 < 0 || y1 >= Game.World.Height || z1 < 0 || z1 >= Game.World.Depth) {
+            if (Actor is null || Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
                 return false;
             }
-            Terrain tile = Game.World.Terrains[x1, y1, z1];
+            if (x1 < 0 || x1 >= GameState.World!.Width || y1 < 0 || y1 >= GameState.World!.Height || z1 < 0 || z1 >= GameState.World!.Depth)
+            {
+                return false;
+            }
+            Terrain tile = GameState.World!.Terrains.GetWithBoundsChecked(x1, y1, z1);
             // non-phasers can't go through a solid wall
-            if (!Phases && tile.Solid) {
+            if (!Phases && tile.Solid)
+            {
                 return false;
             }
             // non-flyers can't cross a pit
-            if (tile.Fallable && Flies == false) {
+            if (tile.Fallable && Flies == false)
+            {
                 return false;
             }
-            if (CachedActor.Team == Teams.Friendly)
+            var e = Entity.UnboxBriefly()!;
+            // forbid tasks block friendlies
+            if (Actor.Team == Team.Friendly)
             {
-                Task t = Game.World.Tasks[x1, y1, z1];
-                if (t != null && t is ForbidTask)
+                if (e != Player)
                 {
-                    return false;
+                    Task? t = Tasks.GetWithBoundsChecked(x1, y1, z1);
+                    if (t is ForbidTask)
+                    {
+                        return false;
+                    }
                 }
             }
-            if (CachedActor.Team != Teams.Friendly)
+            else
             {
                 // doors block non-allied creatures
-                Feature f = Game.World.Features[x1, y1, z1];
+                Feature? f = Features.GetWithBoundsChecked(x1, y1, z1);
                 if (f != null && f.Solid && !Phases)
                 {
                     return false;
                 }
             }
-            int dx = x1 - Entity.X;
-            int dy = y1 - Entity.Y;
-            int dz = z1 - Entity.Z;
+            int dx = x1 - (int)e!.X!;
+            int dy = y1 - (int)e!.Y!;
+            int dz = z1 - (int)e!.Z!;
             // rare: check whether the square itself is allowed
             if (dx == 0 && dy == 0 && dz == 0)
             {
@@ -455,9 +330,10 @@ namespace Hecatomb
             return false;
         }
 
-        public bool CouldMove(int x0, int y0, int z0, int x1, int y1, int z1)
+        // could move tells you if you CouldMove from a certain square
+        public bool CouldMoveBounded(int x0, int y0, int z0, int x1, int y1, int z1)
         {
-            if (!CanStand(x1, y1, z1))
+            if (!CanStandBounded(x1, y1, z1))
             {
                 return false;
             }
@@ -475,58 +351,59 @@ namespace Hecatomb
                 return false;
             }
             // non-flyers need a slope in order to go up
-            Terrain t0 = Game.World.Terrains[x0, y0, z0];
-            if (dz == +1 && !Flies && t0.ZWalk != +1)
+            Terrain t0 = GameState.World!.Terrains.GetWithBoundsChecked(x0, y0, z0);
+            if (dz == +1 && !Flies && t0.Slope != +1)
             {
                 return false;
             }
-            Terrain tile = Game.World.Terrains[x1, y1, z1];
+            Terrain tile = GameState.World.Terrains.GetWithBoundsChecked(x1, y1, z1);
             // non-phasers can't go through a ceiling
             if (!Phases)
             {
-                if (dz == +1 && !tile.Fallable && tile.ZWalk != -1)
+                if (dz == +1 && !tile.Fallable && tile.Slope != -1)
                 {
                     return false;
                 }
-                else if (dz == -1 && t0.ZWalk != -1 && !t0.Fallable)
+                else if (dz == -1 && t0.Slope != -1 && !t0.Fallable)
                 {
                     return false;
                 }
             }
             return true;
         }
-
-        public bool CanMove(int x1, int y1, int z1)
+        // can move tells you whether you could move regardless of a creature in the way
+        public bool CanMoveBounded(int x1, int y1, int z1)
         {
-            return CouldMove(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
-        }
-
-        public bool CanPass(int x1, int y1, int z1)
-        {
-            if (!CanMove(x1, y1, z1))
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
                 return false;
             }
-            if (Game.World.Creatures[x1, y1, z1] != null)
+            var e = Entity.UnboxBriefly()!;
+            return CouldMoveBounded((int)e.X!, (int)e.Y!, (int)e.Z!, x1, y1, z1);
+        }
+
+        // can pass warns you if there's a creature in the way
+        public bool CanPassBounded(int x1, int y1, int z1)
+        {
+            if (!CanMoveBounded(x1, y1, z1))
+            {
+                return false;
+            }
+            if (GameState.World!.Creatures.GetWithBoundsChecked(x1, y1, z1) != null)
             {
                 return false;
             }
             return true;
         }
 
-        public float MovementCost(int x0, int y0, int z0, int x1, int y1, int z1)
+        public float GetMoveCostBounded(int x0, int y0, int z0, int x1, int y1, int z1)
         {
-            //Feature f = Game.World.Features[x1, y1, z1];
-            //if (f != null && f.Solid && CachedActor.Team != Teams.Friendly)
-            //{
-            //    return 12;
-            //}
-            Cover cv = Game.World.Covers[x1, y1, z1];
+            Cover cv = GameState.World!.Covers.GetWithBoundsChecked(x1, y1, z1);
             if (cv.Liquid)
             {
                 return 2;
             }
-            Terrain t = Game.World.Terrains[x1, y1, z1];
+            Terrain t = GameState.World!.Terrains.GetWithBoundsChecked(x1, y1, z1);
             if (t == Terrain.UpSlopeTile || t == Terrain.DownSlopeTile)
             {
                 return 2;
@@ -537,119 +414,128 @@ namespace Hecatomb
             }
             return 1;
         }
-				
-		public void StepTo(int x1, int y1, int z1)
-		{
-			Entity.Entity.Place(x1, y1, z1);
-            //Actor a = Entity.GetComponent<Actor>();
-            //a.Spend(16);
-            CachedActor.Spend(16);
-		}
+
+        public void StepToValidEmptyTile(int x1, int y1, int z1)
+        {
+            // we need to allow this to happen even if the entity is not placed, for displacement and maybe other occasions
+            if (Actor is null || Entity?.UnboxBriefly() is null)
+            {
+                return;
+            }
+            // this is where you'd fire some kind of event
+            Entity.UnboxBriefly()!.PlaceInValidEmptyTile(x1, y1, z1);
+            Actor.Spend(16);
+            Publish(new StepEvent() { Entity = (Creature)Entity.UnboxBriefly()!, X = x1, Y = y1, Z = z1 });
+        }
 
         // tentative...this does not allow (1) diagonal work/attacks or (2) digging upward...could handle the latter with ramps
-        public bool CouldTouch(int x0, int y0, int z0, int x1, int y1, int z1)
+        public bool CouldTouchBounded(int x0, int y0, int z0, int x1, int y1, int z1)
         {
             int dz = z1 - z0;
             int dx = x1 - x0;
             int dy = y1 - y0;
-            if (dz==0)
+            if (dz == 0)
             {
-               if (Math.Abs(dx)<=1 && Math.Abs(dy)<=1)
+                if (Math.Abs(dx) <= 1 && Math.Abs(dy) <= 1)
                 {
                     return true;
                 }
             }
-            else if (dz==+1 && dx==0 && dy==0 && Game.World.Terrains[x1, y1, z1].ZView == -1)
+            else if (dz == +1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x1, y1, z1).Floor == false)
             {
                 return true;
             }
-            else if (dz==-1 && dx == 0 && dy == 0 && Game.World.Terrains[x0, y0, z0].ZView == -1)
+            else if (dz == -1 && dx == 0 && dy == 0 && GameState.World!.Terrains.GetWithBoundsChecked(x0, y0, z0).Floor == false)
             {
                 return true;
             }
             return false;
         }
 
-        public bool CanTouch(int x1, int y1, int z1)
+        public bool CanTouchBounded(int x1, int y1, int z1)
         {
-            return CouldTouch(Entity.X, Entity.Y, Entity.Z, x1, y1, z1);
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return false;
+            }
+            var (x, y, z) = Entity.UnboxBriefly()!;
+            return CouldTouchBounded((int)x!, (int)y!, (int)z!, x1, y1, z1);
         }
-		
-		
-		
-		public Func<int, int, int, bool> DelegateCanMove()
-		{
-			return (int x, int y, int z)=>{return CanMove(x, y, z);};
-		}
-		public Func<int, int, int, bool> DelegateCanStand()
-		{
-			return (int x, int y, int z)=>{return CanStand(x, y, z);};
-		}
-		
-		public bool CanReach(int x1, int y1, int z1, bool useLast=true)
-		{
-			int x0 = Entity.X;
-			int y0 = Entity.Y;
-			int z0 = Entity.Z;
-            Func<int, int, int, int, int, int, bool> movable;
-            Func<int, int, int, bool> standable;
-            movable = CouldMove;
-            standable = CanStand;
-			var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast, movable: movable, standable: standable);
-			Coord? c = (path.Count>0) ? path.First.Value : (Coord?) null;		
-			return (c==null) ? false : true;
-		}
 
 
-        public bool CanReach(TileEntity t, bool useLast = true, bool useCache = true)
+        public bool CanReachBounded(int x1, int y1, int z1, bool useLast = true)
         {
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+                return false;
+            }
+            var e = Entity.UnboxBriefly()!;
+            int x0 = (int)e.X!;
+            int y0 = (int)e.Y!;
+            int z0 = (int)e.Z!;
             Func<int, int, int, int, int, int, bool> movable;
             Func<int, int, int, bool> standable;
-            movable = CouldMove;
-            standable = CanStand;
-            var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable, useCache: useCache);
-            Coord? c = (path.Count > 0) ? path.First.Value : (Coord?)null;
+            movable = CouldMoveBounded;
+            standable = CanStandBounded;
+            var path = Tiles.FindPath(this, x1, y1, z1, useLast: useLast, movable: movable, standable: standable);
+            Coord? c = (path.Count > 0) ? path.First!.Value : (Coord?)null;
             return (c == null) ? false : true;
         }
 
-        public bool CanFindResources(Dictionary<string, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
+
+        public bool CanReachBounded(TileEntity t, bool useLast = true, bool useCache = true)
         {
-            if (Game.Options.NoIngredients && !alwaysNeedsIngredients)
+            if (!t.Placed)
+            {
+                return false;
+            }    
+            Func<int, int, int, int, int, int, bool> movable;
+            Func<int, int, int, bool> standable;
+            movable = CouldMoveBounded;
+            standable = CanStandBounded;
+            var path = Tiles.FindPath(this, t, useLast: useLast, movable: movable, standable: standable, useCache: useCache);
+            Coord? c = (path.Count > 0) ? path.First!.Value : (Coord?)null;
+            return (c == null) ? false : true;
+        }
+
+        public bool CanReachResources(Dictionary<Resource, int> resources, bool respectClaims = true, bool ownedOnly = true, bool alwaysNeedsIngredients = false, bool useCache = true)
+        {
+            if (HecatombOptions.NoIngredients && !alwaysNeedsIngredients)
             {
                 return true;
             }
-            Dictionary<string, int> needed = new Dictionary<string, int>(resources);
-            List<Item> items = Game.World.Items.Where(
-                it => { return (needed.ContainsKey(it.Resource) && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
+            var needed = new Dictionary<Resource, int>(resources);
+            List<Item> items = Items.Where(
+                it => { return (needed.ContainsKey(it.Resource!) && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0) && CanReachBounded(it, useCache: useCache)); }
             ).ToList();
             foreach (Item item in items)
             {
-                if (needed.ContainsKey(item.Resource))
+                if (needed.ContainsKey(item.Resource!))
                 {
-                    int n = (respectClaims) ? item.Unclaimed : item.Quantity;
-                    needed[item.Resource] -= n;
-                    if (needed[item.Resource] <= 0)
+                    int n = (respectClaims) ? item.Unclaimed : item.N;
+                    needed[item.Resource!] -= n;
+                    if (needed[item.Resource!] <= 0)
                     {
-                        needed.Remove(item.Resource);
+                        needed.Remove(item.Resource!);
                     }
                 }
             }
             return (needed.Count == 0);
         }
 
-        public bool CanFindResource(string resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
+        public bool CanReachResource(Resource resource, int need, bool respectClaims = true, bool ownedOnly = true, bool useCache = true)
         {
-            if (Game.Options.NoIngredients)
+            if (HecatombOptions.NoIngredients)
             {
                 return true;
             }
-            List<Item> items = Game.World.Items.Where(
-                it => { return (it.Resource == resource && (ownedOnly == false || it.Owned) && (!respectClaims || it.Unclaimed > 0) && CanReach(it, useCache: useCache)); }
+            List<Item> items = Items.Where(
+                it => { return (it.Resource == resource && (ownedOnly == false || !it.Disowned) && (!respectClaims || it.Unclaimed > 0) && CanReachBounded(it, useCache: useCache)); }
             ).ToList();
             int needed = need;
             foreach (Item item in items)
             {
-                int n = (respectClaims) ? item.Unclaimed : item.Quantity;
+                int n = (respectClaims) ? item.Unclaimed : item.N;
                 needed -= n;
             }
             return (needed <= 0);

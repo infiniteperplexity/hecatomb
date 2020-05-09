@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
@@ -18,19 +18,21 @@ namespace Hecatomb
         {
             // maybe have costs descend by number on the map that are owned?
             MenuName = "condense ectoplasm";
-            cost = 15;
-            Researches = new[] { "CondenseEctoplasm" };
-            Structures = new[] { "Sanctum"};
+            _cost = 15;
+            RequiresResearch = new[] { Research.CondenseEctoplasm };
+            RequiresStructures = new[] { typeof(Sanctum) };
         }
 
         public override void ChooseFromMenu()
         {
             CommandLogger.LogCommand(command: "CondenseEctoplasm");
             Cast();
-            var (x, y, z) = Caster;
+            var (x, y, z) = Caster!.GetPlacedCoordinate()!;
             ParticleEmitter emitter = new ParticleEmitter();
             emitter.Place(x, y, z);
-            Item.PlaceNewResource("Ectoplasm", 1, x, y, z);
+            Item ecto = Item.SpawnNewResource(Resource.Ectoplasm, 1);
+            ecto.DropOnValidTile(x, y, z);
+            InterfaceState.ResetControls();
         }
     }
 }

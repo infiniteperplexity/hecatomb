@@ -1,40 +1,37 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 9/21/2018
- * Time: 11:35 AM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
     public class Senses : Component
     {
         public int Range = 15;
-        [JsonIgnore] public HashSet<Coord> Visible;
+        [JsonIgnore] public HashSet<Coord> Visible = new HashSet<Coord>();
         [JsonIgnore] private int storedZ;
 
         public HashSet<Coord> GetFOV()
         {
             resetVisible();
-            var (x, y, z) = Entity;
-            storedZ = z;
-            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, addToVisible);
+            if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
+            {
+
+                return Visible;
+            }
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
+            storedZ = (int)z!;
+            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting((int)x!, (int)y!, Range, cannotSeeThrough, addToVisible);
             foreach (Coord c in Visible.ToList())
             {
-                if (Terrains[c.X, c.Y, c.Z + 1].ZView == -1)
+                if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z + 1).Floor == false)
                 {
                     Visible.Add(new Coord(c.X, c.Y, c.Z + 1));
                 }
-                if (Terrains[c.X, c.Y, c.Z].ZView == -1)
+                if (Terrains.GetWithBoundsChecked(c.X, c.Y, c.Z).Floor == false)
                 {
                     Visible.Add(new Coord(c.X, c.Y, c.Z - 1));
                 }
@@ -42,27 +39,14 @@ namespace Hecatomb
             return Visible;
         }
 
-        public void Explore()
-        {
-            Actor a = Entity.GetComponent<Actor>();
-            if (a.Team == Teams.Friendly)
-            {
-                var visible = GetFOV();
-                foreach (Coord c in visible)
-                {
-                    Explored.Add(c);
-                }
-            }
-        }
-
         public bool CanSeeThrough(int x, int y)
         {
-            return cannotSeeThrough(x, y);
+            return !cannotSeeThrough(x, y);
         }
 
         private bool cannotSeeThrough(int x, int y)
         {
-            return Game.World.GetTile(x, y, storedZ).Opaque;
+            return GameState.World!.Terrains.GetWithBoundsChecked(x, y, storedZ).Opaque;
         }
         private void resetVisible()
         {
@@ -74,38 +58,78 @@ namespace Hecatomb
             Visible.Add(new Coord(x, y, storedZ));
         }
 
-        // some callback-heavy code to find nearby, visible things
-        private Func<int, int, int, bool> storedCallback;
-        private Coord storedCoord;
-        private Actor storedActor;
-        private Movement storedMovement;
-        public Coord FindClosestVisible(Func<int, int, int, bool> where = null)
+        public static void Announce(int x, int y, int z, ColoredText? sight = null, ColoredText? sound = null, int soundRange = 12)
         {
-            var (x, y, z) = Entity;
-            storedZ = z;
+            Coord c = new Coord(x, y, z);
+            if (InterfaceState.PlayerVisible.Contains(c) && sight != null)
+            {
+                PushMessage(sight);
+            }
+            else if (sound != null)
+            {
+                if (Tiles.Distance(x, y, z, (int)Player.X!, (int)Player.Y!, (int)Player.Z!)<=soundRange)
+                {
+                    PushMessage(sound);
+                    return;
+                }
+                foreach (var cr in GetState<TaskHandler>().GetMinions())
+                {
+                    if (Tiles.Distance(x, y, z, (int)cr.X!, (int)cr.Y!, (int)cr.Z!) <= soundRange)
+                    {
+                        if (Tiles.Distance(x, y, z, (int)Player.X!, (int)Player.Y!, (int)Player.Z!) <= soundRange)
+                        {
+                            PushMessage(sound);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        // some callback-heavy code to find nearby, visible things
+        [JsonIgnore] private Func<int, int, int, bool>? storedCallback;
+        [JsonIgnore] private Coord? storedCoord;
+        [JsonIgnore] private Actor? storedActor;
+        [JsonIgnore] private Movement? storedMovement;
+        [JsonIgnore] private int storedX;
+        [JsonIgnore] private int storedY;
+        // storedX, storedY, and storedZ are the coordinates of the entity that's doing the finding
+        // storedCoord is the best coordinate yet found
+        public Coord? FindClosestVisible(Func<int, int, int, bool>? where = null)
+        {
+            if (Entity?.UnboxBriefly() is null)
+            {
+                return null;
+            }
+            var entity = Entity.UnboxBriefly()!;
+            if (!entity.Placed)
+            {
+                return null;
+            }
+            (storedX, storedY, storedZ) = entity.GetPlacedCoordinate();
             storedCallback = where;
-            storedCoord = new Coord();
-            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(x, y, Range, cannotSeeThrough, lookAround);
+            storedCoord = null;
+            ShadowCaster.ShadowCaster.ComputeFieldOfViewWithShadowCasting(storedX, storedY, Range, cannotSeeThrough, lookAround);
             return storedCoord;
         }
+
         private void lookAround(int x, int y)
         {
-            var c = storedCoord;
             var z = storedZ;
-            var (X, Y, Z) = Entity;
-            if (!c.Equals(default(Coord)) && Tiles.QuickDistance(c.X, c.Y, c.Z, X, Y, Z) <= Tiles.QuickDistance(x, y, z, X, Y, Z))
+            // if there's already a stored coordinate, and this coordinate is further away, bail
+            if (storedCoord != null && Tiles.Distance(x, y, z, storedX, storedY, storedZ) >= Tiles.Distance(((Coord)storedCoord).X, ((Coord)storedCoord).Y, ((Coord)storedCoord).Z, storedX, storedY, storedZ))
             {
                 return;
             }
-            if (storedCallback(x, y, z))
+            if (storedCallback is null || storedCallback(x, y, z))
             {
                 storedCoord = new Coord(x, y, z);
             }
-            else if (Terrains[x, y, z + 1].ZView == -1 && storedCallback(x, y, z + 1))
+            else if (Terrains.GetWithBoundsChecked(x, y, z + 1).Floor == false && storedCallback(x, y, z + 1))
             {
                 storedCoord = new Coord(x, y, z + 1);
             }
-            else if (Terrains[x, y, z].ZView == -1 && storedCallback(x, y, z - 1))
+            else if (Terrains.GetWithBoundsChecked(x, y, z).Floor == false && storedCallback(x, y, z - 1))
             {
                 storedCoord = new Coord(x, y, z - 1);
             }

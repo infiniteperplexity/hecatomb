@@ -1,29 +1,21 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 9/18/2018
- * Time: 12:41 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of Terrain.
-    /// </summary>
+    using static HecatombAliases;
     public class Cover : FlyWeight<Cover>
     {
-        public readonly string Name;
-        public readonly char Symbol;
-        public readonly string FG;
-        public readonly string BG;
-        public readonly string DarkBG;
-        public readonly bool Solid;
-        public readonly bool Liquid;
-        public readonly int Hardness;
-        public readonly string Mineral;
+        [JsonIgnore] public readonly string Name;
+        [JsonIgnore] public readonly char Symbol;
+        [JsonIgnore] public readonly string FG;
+        [JsonIgnore] public readonly string BG;
+        [JsonIgnore] public readonly string DarkBG;
+        [JsonIgnore] public readonly bool Solid;
+        [JsonIgnore] public readonly bool Liquid;
+        [JsonIgnore] public readonly int Hardness;
+        [JsonIgnore] public readonly Resource? Resource;
 
 
         public Cover(
@@ -31,12 +23,12 @@ namespace Hecatomb
             string name = "",
             string fg = "white",
             string bg = "black",
-            string darkbg = null,
+            string? darkbg = null,
             char symbol = ' ',
             bool liquid = false,
             bool solid = false,
             int hardness = 0,
-            string mineral = null
+            Resource? resource = null
         ) : base(type)
         {
             Name = name;
@@ -47,18 +39,18 @@ namespace Hecatomb
             Liquid = liquid;
             Solid = solid;
             Hardness = hardness;
-            Mineral = mineral;
+            Resource = resource;
         }
 
         public string Shimmer()
         {
-            var c = Game.Colors[BG];
+            var c = InterfaceState.Colors![BG];
             int r = c.R;
             int g = c.G;
             int b = c.B;
-            r = (int)Game.World.Random.StatelessNormal(r, r / 16f);
-            g = (int)Game.World.Random.StatelessNormal(g, g / 16f);
-            b = (int)Game.World.Random.StatelessNormal(b, b / 16f);
+            r = (int)GameState.World!.Random.StatelessNormal(r, r / 16f);
+            g = (int)GameState.World!.Random.StatelessNormal(g, g / 16f);
+            b = (int)GameState.World!.Random.StatelessNormal(b, b / 16f);
             return ("#" + r.ToString("X2") + g.ToString("X2") + b.ToString("X2"));
         }
         public static readonly Cover NoCover = new Cover(
@@ -145,7 +137,7 @@ namespace Hecatomb
             fg: "#222222",
             bg: Soil.BG,
             solid: true,
-            mineral: "Coal",
+            resource: Resource.Coal,
             hardness: 0
         );
 
@@ -157,7 +149,7 @@ namespace Hecatomb
             fg: "#DDDDDD",
             bg: Soil.BG,
             solid: true,
-            mineral: "Flint",
+            resource: Resource.Flint,
             hardness: 0
         );
 
@@ -168,7 +160,7 @@ namespace Hecatomb
             fg: "#FF9900",
             bg: Limestone.BG,
             solid: true,
-            mineral: "CopperOre",
+            resource: Resource.CopperOre,
             hardness: 1
         );
 
@@ -179,7 +171,7 @@ namespace Hecatomb
             fg: "#99FF00",
             bg: Limestone.BG,
             solid: true,
-            mineral: "TinOre",
+            resource: Resource.TinOre,
             hardness: 1
         );
 
@@ -190,7 +182,7 @@ namespace Hecatomb
             fg: "#FF3300",
             bg: Basalt.BG,
             solid: true,
-            mineral: "IronOre",
+            resource: Resource.IronOre,
             hardness: 2
         );
 
@@ -201,7 +193,7 @@ namespace Hecatomb
             fg: "#99BBFF",
             bg: Basalt.BG,
             solid: true,
-            mineral: "SilverOre",
+            resource: Resource.SilverOre,
             hardness: 2
         );
 
@@ -212,7 +204,7 @@ namespace Hecatomb
             fg: "#EEDD00",
             bg: Granite.BG,
             solid: true,
-            mineral: "GoldOre",
+            resource: Resource.GoldOre,
             hardness: 3
         );
 
@@ -223,7 +215,7 @@ namespace Hecatomb
             fg: "#00BB66",
             bg: Granite.BG,
             solid: true,
-            mineral: "TitaniumOre",
+            resource: Resource.TitaniumOre,
             hardness: 3
         );
 
@@ -234,7 +226,7 @@ namespace Hecatomb
             fg: "#4444FF",
             bg: Granite.BG,
             solid: true,
-            mineral: "CobaltOre",
+            resource: Resource.CobaltOre,
             hardness: 3
         );
 
@@ -245,7 +237,7 @@ namespace Hecatomb
             fg: "#FF00FF",
             bg: Bedrock.BG,
             solid: true,
-            mineral: "AdamantOre",
+            resource: Resource.AdamantOre,
             hardness: 4
         );
 
@@ -256,7 +248,7 @@ namespace Hecatomb
             fg: "#FFFFFF",
             bg: Bedrock.BG,
             solid: true,
-            mineral: "ThoriumOre",
+            resource: Resource.ThoriumOre,
             hardness: 4
         );
 
@@ -268,29 +260,34 @@ namespace Hecatomb
             bg: "FLOORBG",
             darkbg: "BELOWFG"
         );
-        public void Mine(int x, int y, int z)
+        
+        public static void Mine(int x, int y, int z)
         {
-            if (this.Mineral!=null)
+            Cover c = Covers.GetWithBoundsChecked(x, y, z);
+            if (c.Resource != null)
             {
-                Item.PlaceNewResource(this.Mineral, 1, x, y, z);
+                var item = Item.SpawnNewResource(c.Resource, 1);
+                item.DropOnValidTile(x, y, z);
             }
-            else if (this.Solid)
+            else if (c.Solid)
             {
-                if (Game.World.Random.Arbitrary(4, new Coord(x, y, z).OwnSeed())==0)
-                //if (Game.World.Random.Next(4)==0)
+                if (GameState.World!.Random.Next(4)==0)
                 {
-                    Item.PlaceNewResource("Rock", 1, x, y, z);
+                    var item = Item.SpawnNewResource(Resource.Rock, 1);
+                    item.DropOnValidTile(x, y, z);
                 }
             }
-            ClearCover(x, y, z);
+            ClearGroundCover(x, y, z);
         }
 
-        public static void ClearCover(int x, int y, int z)
+        public static void ClearGroundCover(int x, int y, int z)
         {
-            if (!Game.World.Covers[x, y, z].Liquid) // not sure how to deal with liquids here
+            if (!Covers.GetWithBoundsChecked(x, y, z).Liquid) // I guess liquids should not get cleared?
             {
-                Game.World.Covers[x, y, z] = Cover.NoCover;
+                Covers.SetWithBoundsChecked(x, y, z, Cover.NoCover);
             }
         }
     }
+
+    
 }

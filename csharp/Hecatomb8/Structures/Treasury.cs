@@ -8,11 +8,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static Resource;
     public class Treasury : Structure
     {
         public Treasury() : base()
@@ -25,14 +23,6 @@ namespace Hecatomb
                 '|','.','.','|',
                 '|','.','.','|',
                 '#','-','-','#'
-
-                //'\u2554','\u2550','\u2550','\u2557',
-                //'\u2551','.','.','\u2551',
-                //'\u2551','.','.','\u2551',
-                //'\u255A','\u2550','\u2550','\u255D'
-                //'.','.','\u25AD',
-                //'\u2234','#','\u2630',
-                //'\u25A7','.','\u25AF'
             };
             FGs = new string[]
             {
@@ -40,29 +30,25 @@ namespace Hecatomb
                 "FLOORFG","FLOORFG","FLOORFG","FLOORFG",
                 "FLOORFG","FLOORFG","FLOORFG","FLOORFG",
                 "FLOORFG","FLOORFG","FLOORFG","FLOORFG"
-                //"#BB9922", "FLOORFG","FLOORFG",
-                //"#BB9922","FLOORFG", "#BB9922",
-                //"FLOORFG","FLOORFG","#BB9922"
             };
-            BG = "#555544";
+            _bg = "#555544";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","FLOORBG",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"CopperOre", 1}}, null, null, new Dictionary<string, int>() {{"Flint", 1}},
-                null,new Dictionary<string, int>() {{"Wood", 1}},new Dictionary<string, int>() {{"Rock", 1}},null,
-                null,new Dictionary<string, int>() {{"Rock", 1}},new Dictionary<string, int>() {{"Wood", 1}},null,
-                new Dictionary<string, int>() {{"Flint", 1}},null,null,new Dictionary<string, int>() {{"TinOre", 1}}
+                new Dictionary<Resource, int>() {{CopperOre, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>(),new Dictionary<Resource, int>() {{Flint, 1}},
+                new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Wood, 1}},new Dictionary<Resource, int>() {{Rock, 1}},new Dictionary<Resource, int>(),
+                new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Rock, 1}},new Dictionary<Resource, int>() {{Wood, 1}},new Dictionary<Resource, int>(),
+                new Dictionary<Resource, int>() {{Flint, 1}},new Dictionary<Resource, int>(),new Dictionary<Resource, int>(),new Dictionary<Resource, int>() {{TinOre, 1}}
             };
-            MenuName = "treasury";
-            Name = "treasury";
+            _name = "treasury";
             UseHint = "(store valuable resources.)";
-            Stores = new string[] { "Gold", "BronzeIngots", "Silk", "SteelIngots", "AlloyIngots", "ThoriumIngots", "AdamantIngots"};
-            StructurePrereqs = new[] { "Stockpile", "BlackMarket" };
+            StoresResources = new Resource[] { Gold, Silk/*, BronzeIngots, SteelIngots, AlloyIngots, ThoriumIngots, AdamantIngots*/ };
+            RequiresStructures = new[] { typeof(Stockpile), typeof(BlackMarket) };
         }
     }
 }

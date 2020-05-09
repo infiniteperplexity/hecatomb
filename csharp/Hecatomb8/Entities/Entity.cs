@@ -1,172 +1,170 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 9:42 AM
- */
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
 using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    //[JsonConverter(typeof(HecatombSerializer))]
-    public abstract class Entity
-	{
-        [JsonIgnore] public static int MaxEID;
-        [JsonIgnore]public static Dictionary<int, Entity> Entities;
-		public int EID;
-		public string ClassName;
-		[JsonIgnore] public bool Spawned;
-        [JsonIgnore] public Dictionary<Type, Func<GameEvent, GameEvent>> Listeners;
-	
-        static Entity()
+    using static HecatombAliases;
+    public class Entity
+    {
+        public static int MaxEID = -1;
+        public int? EID;
+        public string Class;
+        [JsonIgnore] Dictionary<Type, Func<GameEvent, GameEvent>> Listeners;
+
+        //public bool Exists;
+
+        protected Entity()
         {
-            Reset();
+            Class = this.GetType().Name;
+            Listeners = new Dictionary<Type, Func<GameEvent, GameEvent>>();
         }
 
-        public static Entity FromEID(int eid)
+        [JsonIgnore] public bool Spawned
         {
-            if (Entities.ContainsKey(eid))
+            get => !(EID is null);
+        }
+
+
+        public static T Mock<T>() where T: Entity, new()
+        {
+            T t = new T();
+            return t;
+        }
+
+
+        public static Entity Mock(Type type)
+        {
+            var maybe = Activator.CreateInstance(type);
+            if (maybe == null)
             {
-                return Entities[eid];
+                throw new InvalidOperationException($"Couldn't spawn entity of type {type}, is usually caused by a problem in the constructor.");
             }
-            return null;
+            var t = (Entity)maybe;
+            return t;
         }
-        public static void Reset()
+        // until an Entity is "Spawned", it doesn't really exist in the game world
+        public static T Spawn<T>() where T : Entity, new()
         {
-            MaxEID = -1;
-            Entities = new Dictionary<int, Entity>();
+            
+            T t = new T();
+            int n = MaxEID + 1;
+            t.EID = n;
+            MaxEID = n;
+            GameState.World!.Entities[n] = t;
+            if (t is ComposedEntity)
+            {
+                var ce = (ComposedEntity) (Object) t;
+                ce.SpawnComponents();
+            }
+            foreach (Type type in t.Listeners.Keys)
+            {
+                Subscribe(type, t, t.Listeners[type]);
+            }
+            return t;
         }
-		protected Entity()
-		{
-            Listeners = new Dictionary<Type, Func<GameEvent, GameEvent>>();
-			ClassName = this.GetType().Name;
-			EID = -1;
-			Spawned = false;
-		}
+
+        // take an existing Entity that doesn't yet "exist" in the world, and spawn it
+        public static T Spawn<T>(T t) where T : Entity
+        {
+            int n = MaxEID + 1;
+            t.EID = n;
+            MaxEID = n;
+            GameState.World!.Entities[n] = t;
+            if (t is ComposedEntity)
+            {
+                var ce = (ComposedEntity)(Object)t;
+                ce.SpawnComponents();
+            }
+            foreach (Type type in t.Listeners.Keys)
+            {
+                Subscribe(type, t, t.Listeners[type]);
+            }
+            return t;
+        }
+
+
+        public static Entity Spawn(Type type)
+        {
+            var maybe = Activator.CreateInstance(type);
+            if (maybe == null)
+            {
+                throw new InvalidOperationException($"Couldn't spawn entity of type {type}, is usually caused by a problem in the constructor.");
+            }
+            var t = (Entity)maybe;
+            int n = MaxEID + 1;
+            t!.EID = n;
+            MaxEID = n;
+            GameState.World!.Entities[n] = t;
+            if (t is ComposedEntity)
+            {
+                var ce = (ComposedEntity)(Object)t;
+                ce.SpawnComponents();
+            }
+            foreach (Type lt in t.Listeners.Keys)
+            {
+                Subscribe(lt, t, t.Listeners[lt]);
+            }
+            return t;
+        }
+
+        public static T Spawn<T>(Type t) where T : Entity
+        {
+            return (T)Spawn(t);
+        }
+
+        public virtual void Despawn()
+        {
+            if (EID != null)
+            {
+                Publish(new DespawnEvent() { Entity = this });
+                GameState.World!.Events.UnsubscribeAll(this);
+                if (GameState.World!.Entities.ContainsKey((int)EID))
+                {
+                    GameState.World!.Entities.Remove((int)EID);
+                }
+            }
+            EID = null;
+        }
 
         public void AddListener<T>(Func<GameEvent, GameEvent> f)
         {
             Listeners[typeof(T)] = f;
         }
-			
-		public void Publish(GameEvent g)
-		{
-				
-		}
-
-        public static Entity Spawn(Type t)
+        // request a pointer to this entity, by submitting a listener method you're promising handles this entity despawning
+        public ListenerHandledEntityHandle<T> GetHandle<T>(Func<GameEvent, GameEvent> ge) where T : Entity
         {
-            var catchNull = Activator.CreateInstance(t);
-            if (catchNull==null)
-            {
-                Debug.WriteLine($"Spawning an entity of type {t} failed");
-                Debug.WriteLine("This usually produces cryptic error messages, and the problem is usually in the constructor.");
-            }
-            Entity ge = (Entity) catchNull;
-            ge.EID = MaxEID + 1;
-            MaxEID = ge.EID;
-            Entities[ge.EID] = ge;
-            ge.Spawned = true;
-            foreach (Type type in ge.Listeners.Keys)
-            {
-                Game.World.Events.Subscribe(type, ge, ge.Listeners[type]);
-            }
-            return ge;
+              return ListenerHandledEntityHandle<T>.CreateHandle((T)this);
         }
 
-        public static T Spawn<T>(Type t) where T : Entity
+        public static T? GetEntity<T>(int? eid) where T: Entity
         {
-            return (T) Spawn(t);
-        }
-        public static T Spawn<T>() where T : Entity, new()
-        {   
-            T t = new T();
-            t.EID = MaxEID + 1;
-            MaxEID = t.EID;
-            Entities[t.EID] = t;
-            t.Spawned = true;
-            foreach (Type type in t.Listeners.Keys)
+            if (eid is null)
             {
-                Game.World.Events.Subscribe(type, t, t.Listeners[type]);
+                return null;
             }
-            return t;
-        }
-
-        public static T Spawn<T>(string s) where T : TypedEntity, new()
-        {
-            T t = Spawn<T>();
-            t.Symbol = default(char);
-            t.FG = "white";
-            t.TypeName = s;
-            t.Components = new Dictionary<string, EntityField<Component>>();
-            if (EntityType.Types.ContainsKey(s))
+            else if (!Entities.ContainsKey((int)eid))
             {
-                EntityType et = EntityType.Types[s];
-                et.Typify(t);
+                return null;
             }
             else
             {
-                throw new InvalidOperationException(String.Format("EntityType {0} does not exist.", s));
+                return (T)Entities[(int)eid];
             }
-            return t;
         }
 
-        public static T Mock<T>() where T : Entity, new()
+        public static bool Exists(int? eid)
         {
-            T t = new T();
-            return t;
-        }
-
-        public static T Mock<T>(string s) where T : TypedEntity, new()
-        {
-            T t = Mock<T>();
-            t.Symbol = default(char);
-            t.FG = "white";
-            t.TypeName = s;
-            t.Components = new Dictionary<string, EntityField<Component>>();
-            if (EntityType.Types.ContainsKey(s))
+            if (eid is null)
             {
-                EntityType et = EntityType.Types[s];
-                et.MockTypify(t);
+                return false;
             }
             else
             {
-                throw new InvalidOperationException(String.Format("EntityType {0} does not exist.", s));
-            }
-            return t;
-        }
-
-        public static Entity Mock(Type t)
-        {
-            Entity ge = (Entity)Activator.CreateInstance(t);
-            return ge;
-        }
-
-        public static T Mock<T>(Type t) where T : Entity
-        {
-            return (T)Mock(t);
-        }
-
-        public virtual void Despawn()
-		{
-			Game.World.Events.Publish(new DespawnEvent {Entity = this});
-			Spawned = false;
-			Game.World.Events.UnsubscribeAll(this);
-            Entities.Remove(EID);
-            EID = -1;
-            if (ControlContext.Selection == this)
-            {
-                ControlContext.Selection = null;
-                ControlContext.Reset();
+                return Entities.ContainsKey((int)eid);
             }
         }
-
-        public virtual int OwnSeed()
-        {
-            return EID + Game.World.Turns.Turn;
-        }
-	}
+    }
 }

@@ -1,168 +1,133 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 9/18/2018
- * Time: 11:35 AM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
+using System.Diagnostics;
 using Newtonsoft.Json;
-using System.Reflection;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-	/// <summary>
-	/// Description of Entity.
-	/// </summary>
-	///
-	public abstract class TileEntity : Entity
-	{
-		
-		[JsonIgnore] public string Name;
-		// might remove this...but for testing...
-		[JsonIgnore] public char Symbol;
-		[JsonIgnore] public string FG;
-		[JsonIgnore] public string BG;
-		[JsonIgnore] public bool Plural;
-		public int X {get; private set;}
-		public int Y {get; private set;}
-		public int Z {get; private set;}
-		[JsonIgnore] public bool Placed {get; private set;}
+    using static HecatombAliases;
+    // A TileEntity is any entity, like a creature, item, or task, that resides in one tile.  Generally you can only have one entity of each type in a tile.
+    public abstract class TileEntity : Entity
+    {
+        [JsonIgnore] protected char _symbol = ' ';
+        [JsonIgnore] protected string? _fg;
+        [JsonIgnore] protected string? _bg;
+        [JsonIgnore] protected string? _name;
+        public Coord? _coord;
+        [JsonIgnore] protected bool alwaysPlural = false;
+        [JsonIgnore] protected string? specialPlural;
 
+        protected virtual char getSymbol() => _symbol;
+        protected virtual string? getFG() => _fg;
+        protected virtual string? getBG() => _bg;
+        protected virtual string? getName() => _name;
+        // this needs to be accessible for serialization
         
-        //public Dictionary<string, int> Components;
-		
-		public TileEntity() : base()
-		{
-            //Components = new Dictionary<string, int>();
-            
-			X = -1;
-			Y = -1;
-			Z = -1;
-			Placed = false;
-		}
+        [JsonIgnore] public string? Name { get => getName(); }
+        [JsonIgnore] public char Symbol { get => getSymbol(); }
+        [JsonIgnore] public string? FG { get => getFG(); }
+        [JsonIgnore] public string? BG { get => getBG(); }
+        [JsonIgnore] public int? X { get => _coord?.X; }
+        [JsonIgnore] public int? Y { get => _coord?.Y; }
+        [JsonIgnore] public int? Z { get => _coord?.Z; }
+        [JsonIgnore] public virtual bool Placed { get => !(_coord is null); }
 
-        public void Deconstruct(out int x, out int y, out int z)
+
+        // do I need this in order to appease the warning
+        public virtual void PlaceInValidEmptyTile(int x, int y, int z)
+        {
+            if (Placed)
+            {
+                Remove();
+            }
+            if (!Spawned)
+            {
+                return;
+            }
+            Publish(new BeforePlaceEvent() { Entity = this, X = x, Y = y, Z = z });
+            _coord = new Coord(x, y, z);   
+        }
+
+
+        public virtual void Remove()
+        {
+            _coord = null;
+        }
+
+
+        public void Deconstruct(out int? x, out int? y, out int? z)
         {
             x = X;
             y = Y;
             z = Z;
         }
 
-
-        public virtual void Place(int x1, int y1, int z1, bool fireEvent=true)
-		{
-			if (!Spawned)
-			{
-				throw new InvalidOperationException(String.Format("Cannot place {0} that hasn't been spawned yet.",this));
-			}
-			if (Placed)
-			{
-				this.Remove();
-			}
-			X = x1;
-			Y = y1;
-			Z = z1;
-			Placed = true;
-			if (fireEvent)
-			{
-				Game.World.Events.Publish(new PlaceEvent() {Entity = this, X = x1, Y = y1, Z = z1});
-			}
-            if (Game.World.Terrains[X, Y, Z].Fallable)
-            {
-                Fall();
-            }
-            // I could take out one line each time I use this, if I created that IdCollection thing I was thinking about 
-        }
-
-        public virtual void Fall()
+        public Coord GetPlacedCoordinate()
         {
-
+            return new Coord((int)X!, (int)Y!, (int)Z!);
         }
-		
-		public virtual void Remove()
-		{
-			Game.World.Events.Publish(new RemoveEvent() {Entity = this, X = X, Y = Y, Z = Z});
-			X = -1;
-			Y = -1;
-			Z = -1;
-			Placed = false;
-		}
-		
-		public virtual void Destroy(string cause = null)
-		{
-            Game.World.Events.Publish(new DestroyEvent() { Entity = this, Cause = cause});
-            Remove();
-			Despawn();
 
-		}
+        // ignoring special plurals for now
+        public virtual string Describe(
+            bool? article = null,
+            bool definite = false,
+            bool capitalized = false
+        )
+        {
+            // this allows subclasses to override defaults
+            bool Article = article ?? true;
+            string name = Name ?? "nameless";
+            bool vowel = false;
+            if (name == null)
+            {
+                return "";
+            }
+            if ("aeiou".Contains(char.ToLower(name[0]).ToString()))
+            {
+                vowel = true;
+            }
+            if (Article || definite)
+            {
+                if (definite)
+                {
+                    name = "the " + name;
+                }
+                else if (!alwaysPlural)
+                {
+                    if (vowel)
+                    {
+                        name = "an " + name;
+                    }
+                    else
+                    {
+                        name = "a " + name;
+                    }
+                }
+            }
+            if (capitalized)
+            {
+                name = char.ToUpper(name[0]) + name.Substring(1);
+            }
+            return name;
+        }
 
         public override void Despawn()
         {
+            // oh this is tricky...this way, the OnDespawn event can't access the location...
+            base.Despawn();
             if (Placed)
             {
                 Remove();
             }
-            base.Despawn();
         }
-		
-        public virtual void Leave()
+
+        public virtual void Destroy(string? cause = null)
         {
+            Publish(new DestroyEvent() { Entity = this, Cause = cause });
             Despawn();
-        }
-        public virtual string GetDisplayName()
-        {
-            return Name;
-        }
 
-		public virtual string Describe(
-			bool article=true,
-			bool definite=false,
-			bool capitalized=false
-		)
-		{
-			string name = GetDisplayName();
-			bool vowel = false;
-			if (name==null)
-			{
-				return "";
-			}
-			if ("aeiou".Contains(char.ToLower(name[0]).ToString()))
-			{
-				vowel = true;
-			}
-			if (article || definite)
-			{
-				if (definite)
-				{
-					name = "the " + name;
-				}
-				else if (!Plural)
-				{
-					if (vowel)
-					{
-						name = "an " + name;
-					}
-					else
-					{
-						name = "a " + name;
-					}
-				}
-			}
-			if (capitalized)
-			{
-				name = char.ToUpper(name[0]) + name.Substring(1);
-			}
-			return name;
-		}
+        }
+    }
 
-		public override int OwnSeed()
-		{
-			return EID + X * Game.World.Width * Game.World.Height + Y * Game.World.Height + Z + Game.World.Turns.Turn;
-		}
-	}
 }

@@ -1,20 +1,14 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 10:24 AM
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static HecatombAliases;
+    using static Resource;
+    using static Research;
     public class Workshop : Structure
     {
-        
+
         public Workshop() : base()
         {
             Width = 2;
@@ -35,33 +29,27 @@ namespace Hecatomb
                 //"#BB9922", "#BB9922","FLOORFG",
                 //"#CCCCCC","FLOORFG","#BB9922"
             };
-            BG = "#665555";
+            _bg = "#665555";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","FLOORBG",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Rock", 1}}, new Dictionary<string, int>() {{"Flint", 1}},
-                new Dictionary<string, int>() {{"Rock", 1}, {"Wood", 2}}, new Dictionary<string, int>() {{"Wood", 2}}
-                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
-                //null, new Dictionary<string, int>() {{"Rock", 1},{"Flint", 1}}, null,
-                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}}
+                new Dictionary<Resource, int>() {{Rock, 1}}, new Dictionary<Resource, int>() {{Flint, 1}},
+                new Dictionary<Resource, int>() {{Rock, 1}, {Wood, 2}}, new Dictionary<Resource, int>() {{Wood, 2}}
             };
-            Harvests = new Dictionary<string, float>[]
+            Harvests = new Dictionary<Resource, float>[]
             {
-                new Dictionary<string, float>() , new Dictionary<string, float>() {{"Flint", 1}},
-                new Dictionary<string, float>() , new Dictionary<string, float>()
-                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
-                //null, new Dictionary<string, int>() {{"Rock", 1},{"Flint", 1}}, null,
-                //new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}}
+                new Dictionary<Resource, float>() , new Dictionary<Resource, float>() {{Flint, 1}},
+                new Dictionary<Resource, float>() , new Dictionary<Resource, float>()
             };
-            MenuName = "workshop";
-            Name = "workshop";
+            //MockupName = "workshop";
+            _name = "workshop";
             UseHint = "(enables furnish task; research basic tools and weapons.)";
-            Researches = new[] { "FlintTools", "BoneWeapons", "SpearTrap", "BronzeTools", "SteelTools", "AlloyTools" };
+            Researches = new[] { FlintTools, BoneWeapons, Research.SpearTrap, BronzeTools, SteelTools, AlloyTools };
         }
     }
 }

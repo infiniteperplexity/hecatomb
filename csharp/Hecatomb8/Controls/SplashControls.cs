@@ -11,20 +11,17 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of MenuChoiceContext.
-    /// </summary>
-    /// 
-   
     public class SplashControls : ControlContext
     {
-        public Action MyCallback;
+        public Action? MyCallback;
+        public List<ColoredText> SplashText = new List<ColoredText>();
+        public bool IsFullScreen;
         public SplashControls()
         {
-            MenuSelectable = false;
-            UseKeyFallback = true;
+            //MenuSelectable = false;
+            HasKeyDefault = true;
         }
         public override void HandleClick(int x, int y)
         {
@@ -32,24 +29,16 @@ namespace Hecatomb
             {
                 MyCallback();
             }
-            else
-            {
-                Reset();
-            }
         }
 
         public override void HandleHover(int x, int y)
         {
         }
-        public override void HandleKeyFallback()
+        public override void HandleKeyDefault()
         {
             if (MyCallback != null)
             {
                 MyCallback();
-            }
-            else
-            {
-                Reset();
             }
         }
 

@@ -1,17 +1,10 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn Wright
- * Date: 10/18/2018
- * Time: 10:24 AM
- */
+﻿
 using System;
 using System.Collections.Generic;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static Resource;
     public class Chirurgeon : Structure
     {
         public Chirurgeon() : base()
@@ -28,22 +21,21 @@ namespace Hecatomb
                 "white", "pink",
                 "FLOORFG", "#444499"
             };
-            BG = "#777799";
+            _bg = "#777799";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG",
                 "FLOORBG","FLOORBG"
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Gold", 1}}, new Dictionary<string, int>() {{"Bone", 2}},
-                new Dictionary<string, int>() {{"Flesh", 2}}, new Dictionary<string, int>() {{"Ectoplasm", 1}}
+                new Dictionary<Resource, int>() {{Gold, 1}}, new Dictionary<Resource, int>() {{Bone, 2}},
+                new Dictionary<Resource, int>() {{Flesh, 2}}, new Dictionary<Resource, int>() {{Ectoplasm, 1}}
             };
-            MenuName = "chirurgeon";
-            Name = "chirurgeon";
+            _name = "chirurgeon";
             UseHint = "(repair injured minions)";
-            StructurePrereqs = new[] { "Slaughterhouse" };
-            ResearchPrereqs = new[] { "Chirurgy" };
+            RequiresStructures = new[] { typeof(Slaughterhouse) };
+            RequiresResearch = new[] { Research.Chirurgy };
         }
     }
 }

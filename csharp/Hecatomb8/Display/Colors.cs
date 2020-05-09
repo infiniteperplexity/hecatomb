@@ -1,23 +1,14 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Glenn
- * Date: 9/18/2018
- * Time: 9:04 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using System.Diagnostics;
 using System;
+using System.Linq;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Descripti
-    /// </summary>
+    using static HecatombAliases;
     public class Colors
     {
 
@@ -81,6 +72,7 @@ namespace Hecatomb
             get
             {
                 Color result;
+
                 if (colors.TryGetValue(s, out result))
                 {
                     return result;
@@ -92,10 +84,15 @@ namespace Hecatomb
                     int b = Int32.Parse(s.Substring(5, 2), NumberStyles.HexNumber);
                     return new Color(r, g, b);
                 }
-                else
+                else if (GameState.World != null)
                 {
-                    return Color.Red;
+                    var flowers = Resource.Flowers.Select(f => f.TypeName);
+                    if (Resource.Flowers.Select(f => f.TypeName).Contains(s))
+                    {
+                        return this[GetState<PaletteHandler>().FlowerColors[s]];
+                    }
                 }
+                return Color.Red;
             }
             set { colors[s] = value; }
         }
@@ -104,15 +101,15 @@ namespace Hecatomb
         {
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
-        public string Interpolate(string s1, string s2, double r=0.5)
+        public string Interpolate(string s1, string s2, double r = 0.5)
         {
             Color c1 = this[s1];
             Color c2 = this[s2];
             Color c = new Color();
             double r1 = 1 - r;
-            c.R = (byte) (r1 * c1.R + r * c2.R);
-            c.G = (byte) (r1 * c1.G + r * c2.G);
-            c.B = (byte) (r1 * c1.B + r * c2.B);
+            c.R = (byte)(r1 * c1.R + r * c2.R);
+            c.G = (byte)(r1 * c1.G + r * c2.G);
+            c.B = (byte)(r1 * c1.B + r * c2.B);
             return Stringify(c);
         }
         public string Shade(string s, int light)
@@ -134,7 +131,7 @@ namespace Hecatomb
 
         public static (int, int, int) SplitRGB(string s)
         {
-            Color c = Game.Colors[s];
+            Color c = InterfaceState.Colors![s];
             return (c.R, c.G, c.B);
         }
 

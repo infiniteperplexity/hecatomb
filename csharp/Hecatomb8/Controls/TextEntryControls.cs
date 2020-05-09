@@ -11,13 +11,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of MenuChoiceContext.
-    /// </summary>
-    /// 
-
     public class TextEntryControls : ControlContext
     {
         public string Header;
@@ -77,15 +72,15 @@ namespace Hecatomb
 
         public TextEntryControls(ColoredText header, Action<string> submit) : base()
         {
-            AlwaysPaused = true;
-            MenuSelectable = false;
-            CurrentText = Game.GameName;
+            AllowsUnpause = false;
+            //MenuSelectable = false;
+            CurrentText = GameManager.GameName;
             Header = header;
             MaxTextLength = 25;
             Throttle = 250;
-            var Commands = Game.Commands;
-            KeyMap[Keys.Escape] = Reset;
-            KeyMap[Keys.Enter] = ()=> { submit(CurrentText); };
+            var Commands = InterfaceState.Commands;
+            KeyMap[Keys.Escape] = InterfaceState.ResetControls;
+            KeyMap[Keys.Enter] = () => { submit(CurrentText); };
             KeyMap[Keys.Back] = Backspace;
             foreach (Keys key in Alphabet)
             {
@@ -98,13 +93,13 @@ namespace Hecatomb
         {
             // this guy doesn't throttle very well
             return () => {
-                if (CurrentText.Length>=MaxTextLength)
+                if (CurrentText.Length >= MaxTextLength)
                 {
                     return;
                 }
                 //string s = Enum.GetName(typeof(Keys), key);
                 char s = alphabet[Alphabet.IndexOf(key)];
-                if (Char.IsDigit(s) && CurrentText.Length==0)
+                if (Char.IsDigit(s) && CurrentText.Length == 0)
                 {
                     return;
                 }
@@ -118,35 +113,36 @@ namespace Hecatomb
                     CurrentText += s;
                 }
                 RefreshContent();
+                InterfaceState.DirtifyTextPanels();
                 // do I need to make the panel dirty?
             };
         }
 
         public void Backspace()
         {
-            if (CurrentText.Length==0)
+            if (CurrentText.Length == 0)
             {
                 return;
             }
             CurrentText = CurrentText.Substring(0, CurrentText.Length - 1);
             RefreshContent();
+            InterfaceState.DirtifyTextPanels();
         }
 
         public override void RefreshContent()
         {
-            MenuTop = new List<ColoredText>() {
+            InfoTop = new List<ColoredText>() {
                 "{orange}**Esc: Cancel**.",
                 " ",
                 ("{yellow}"+Header),
                 (CurrentText+"_"),
                 "{cyan}Press Enter when finished."
             };
-            Game.InfoPanel.Dirty = true;
         }
 
         public override void HandleClick(int x, int y)
         {
-           
+
         }
         public override void HandleHover(int x, int y)
         {

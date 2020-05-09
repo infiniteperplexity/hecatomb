@@ -8,11 +8,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 
-namespace Hecatomb
+namespace Hecatomb8
 {
-    /// <summary>
-    /// Description of GuardPost.
-    /// </summary>
+    using static Research;
+    using static Resource;
     public class Apothecary : Structure
     {
         public Apothecary() : base()
@@ -29,28 +28,23 @@ namespace Hecatomb
                 "#BBBB44", "FLOORFG","#9999DD",
                 "FLOORFG", "#44BB44","#44BBBB"
             };
-            BG = "#335511";
+            _bg = "#335511";
             BGs = new string[]
             {
                 "WALLBG","FLOORBG","WALLBG",
                 "FLOORBG","FLOORBG","FLOORBG",
                 "WALLBG","FLOORBG","WALLBG",
             };
-            Ingredients = new Dictionary<string, int>[]
+            Ingredients = new Dictionary<Resource, int>[]
             {
-                new Dictionary<string, int>() {{"Ectoplasm", 1}}, null, new Dictionary<string, int>() {{"Wood", 1}},
-                null, new Dictionary<string, int>() {{"Gold", 1}}, null,
-                new Dictionary<string, int>() {{"Wood", 1}}, null, new Dictionary<string, int>() {{"Ectoplasm", 1}}
+                new Dictionary<Resource, int>() {{Ectoplasm, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Wood, 1}},
+                new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Gold, 1}}, new Dictionary<Resource, int>(),
+                new Dictionary<Resource, int>() {{Wood, 1}}, new Dictionary<Resource, int>(), new Dictionary<Resource, int>() {{Ectoplasm, 1}}
             };
-            MenuName = "apothecary";
-            Name = "apothecary";
+            _name = "apothecary";
             UseHint = "(stores dyes and enables dyeing)";
-            StructurePrereqs = new[] { "BlackMarket" };
-            Stores = new string[RandomPaletteHandler.FlowerNames.Count];
-            for (var i = 0; i < RandomPaletteHandler.FlowerNames.Count; i++)
-            {
-                Stores[i] = RandomPaletteHandler.FlowerNames[i].Item1;
-            }
+            RequiresStructures = new[] { typeof(BlackMarket) };
+            StoresResources = Resource.Flowers.ToArray();
         }
     }
 }

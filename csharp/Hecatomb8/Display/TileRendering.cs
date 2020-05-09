@@ -1,44 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
-    public partial class Tiles
+    public static partial class Tiles
     {
-        
-        public static (char, string) GetColoredSymbol(int x, int y, int z, bool useLighting = true)
+
+        public static (char, string) GetSymbolWithBoundsChecked(int x, int y, int z, bool useLighting = true)
         {
-            if (!World.WorldSafeToDraw)
-            {
-                return (' ', "black");
-            }
-            var Creatures = Game.World.Creatures;
-            var Items = Game.World.Items;
-            var Features = Game.World.Features;
-            var Tiles = Game.World.Terrains;
-            Terrain terrain = Tiles[x, y, z];
-            Cover cover = Game.World.Covers[x, y, z];
-            Cover coverb = Game.World.Covers[x, y, z - 1];
-            List<Particle> pl = Game.World.Particles[x, y, z];
-            Particle particle = (pl.Count > 0) ? pl[0] : null;
+            var cr = GameState.World!.Creatures.GetWithBoundsChecked(x, y, z);
+            var cra = GameState.World!.Creatures.GetWithBoundsChecked(x, y, z + 1);
+            var crb = GameState.World!.Creatures.GetWithBoundsChecked(x, y, z - 1);
+            var fr = GameState.World!.Features.GetWithBoundsChecked(x, y, z);
+            var fra = GameState.World!.Features.GetWithBoundsChecked(x, y, z + 1);
+            var frb = GameState.World!.Features.GetWithBoundsChecked(x, y, z - 1);
+            var it = GameState.World!.Items.GetWithBoundsChecked(x, y, z);
+            var ita = GameState.World!.Items.GetWithBoundsChecked(x, y, z + 1);
+            var itb = GameState.World!.Items.GetWithBoundsChecked(x, y, z - 1);
+            Terrain terrain = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z);
+            Terrain ta = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z + 1);
+            Terrain tb = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z - 1);
+            Cover cover = GameState.World!.Covers.GetWithBoundsChecked(x, y, z);
+            Cover coverb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
+            //List<Particle> pl = Game.World.Particles[x, y, z];
+            //Particle particle = (pl.Count > 0) ? pl[0] : null;
             Coord c = new Coord(x, y, z);
             Coord ca = new Coord(x, y, z + 1);
             Coord cb = new Coord(x, y, z - 1);
-            bool visible = Game.Visible.Contains(c) || Game.Options.Visible;
-            bool va = Game.Visible.Contains(ca) || Game.Options.Visible;
-            bool vb = Game.Visible.Contains(cb) || Game.Options.Visible;
+            bool visible = InterfaceState.PlayerVisible.Contains(c) || HecatombOptions.Visible;
+            bool va = InterfaceState.PlayerVisible.Contains(ca) || HecatombOptions.Visible;
+            bool vb = InterfaceState.PlayerVisible.Contains(cb) || HecatombOptions.Visible;
             int zview = terrain.ZView;
             char sym;
-            string fg = null;
-            if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
-            {
+            string? fg = null;
+
+            //var explored = true;
+            //var exa = true;
+            //var exb = true;
+
+            var explored = GameState.World!.Explored.Contains(c) || HecatombOptions.Explored;
+            var exa = GameState.World.Explored.Contains(ca) || HecatombOptions.Explored;
+            var exb = GameState.World.Explored.Contains(cb) || HecatombOptions.Explored;
+            if (!explored)
+            { 
                 // unexplored tiles with an explored floor tile above are rendered as unexplored wall tiles
-                if (Game.World.Terrains[x, y, z + 1] == Terrain.FloorTile && Game.World.Explored.Contains(new Coord(x, y, z + 1)))
+                if (ta == Terrain.FloorTile && exa)
                 {
                     return (Terrain.WallTile.Symbol, "SHADOWFG");
                 }
@@ -48,31 +57,36 @@ namespace Hecatomb
                     return (' ', "black");
                 }
             }
+
+            List<Particle> pl = InterfaceState.Particles![x, y, z];
+            
+            Particle? particle = (pl.Count > 0) ? pl[0] : null;
             if (particle != null && particle.Symbol != default(char))
             {
-                return (particle.Symbol, particle.FG);
+                return (particle!.Symbol!, particle!.FG!);
             }
             // if the tile is not visible, the foreground will be in shadow
             if (!visible)
             {
                 fg = "SHADOWFG";
             }
+
             // a visible creature
-            if (Creatures[c] != null && Creatures[c].GetCalculatedSymbol() != ' ' && visible)
+            if (cr != null && cr.Symbol != ' ' && visible)
             {
-                sym = Creatures[c].GetCalculatedSymbol();
-                fg = fg ?? Creatures[c].GetCalculatedFG();
+                sym = cr.Symbol;
+                fg = fg ?? cr.FG;
             }
             // a visible creature above
-            else if (zview == +1 && Creatures[ca] != null && Creatures[ca].GetCalculatedSymbol() != ' ' && (visible || va))
+            else if (zview == +1 && cra != null && cra.Symbol != ' ' && (visible || va))
             {
-                sym = Creatures[ca].GetCalculatedSymbol();
+                sym = cra.Symbol;
                 fg = fg ?? "WALLFG";
             }
             // a visible creature below
-            else if (zview == -1 && Creatures[cb] != null && Creatures[cb].GetCalculatedSymbol() != ' ' && (visible || vb))
+            else if (zview == -1 && crb != null &&crb.Symbol != ' ' && (visible || vb))
             {
-                sym = Creatures[cb].GetCalculatedSymbol();
+                sym = crb.Symbol;
                 // a submerged creature below
                 if (coverb.Liquid)
                 {
@@ -84,22 +98,21 @@ namespace Hecatomb
                 }
             }
             // items
-            else if (Items[c] != null)
+            else if (it != null)
             {
-                Resource r = Resource.Types[Items[c].Resource];
-                sym = r.Symbol;
-                fg = Items[c].GetCalculatedFG();
+                sym = it.Symbol;
+                fg = it.FG;
             }
             // features
-            else if (Features[c] != null && Features[c].GetCalculatedSymbol() != ' ' && Features[c].GetCalculatedFG() != null)
+            else if (fr != null && fr.Symbol != ' ' && fr.FG != null)
             {
-                sym = Features[c].GetCalculatedSymbol();
-                fg = fg ?? Features[c].GetCalculatedFG();
+                sym = fr.Symbol;
+                fg = fg ?? fr.FG;
             }
             // used mostly for masonry
-            else if (Features[c] != null && Features[c].GetCalculatedSymbol() != ' ' && Features[c].GetCalculatedFG() == null)
+            else if (fr != null && fr.Symbol != ' ' && fr.FG == null)
             {
-                sym = Features[c].GetCalculatedSymbol();
+                sym = fr.Symbol;
                 if (cover.Liquid)
                 {
                     fg = cover.FG;
@@ -110,9 +123,9 @@ namespace Hecatomb
                 }
             }
             // used mostly for masonry
-            else if (Features[c] != null && Features[c].GetCalculatedSymbol() == ' ' && Features[c].GetCalculatedFG() != null)
+            else if (fr != null && fr.Symbol == ' ' && fr.FG != null)
             {
-                fg = Features[c].GetCalculatedFG();
+                fg = fr.FG;
                 if (cover.Liquid)
                 {
                     sym = cover.Symbol;
@@ -123,17 +136,15 @@ namespace Hecatomb
                 }
             }
             // items above
-            else if (zview == +1 && Items[ca] != null)
+            else if (zview == +1 && ita != null)
             {
-                Resource r = Resource.Types[Items[ca].Resource];
-                sym = r.Symbol;
+                sym = ita.Symbol;
                 fg = fg ?? "WALLFG";
             }
             // items below
-            else if (zview == -1 && Items[cb] != null)
+            else if (zview == -1 && itb != null)
             {
-                Resource r = Resource.Types[Items[cb].Resource];
-                sym = r.Symbol;
+                sym = itb.Symbol;
                 // submerged item
                 if (coverb.Liquid)
                 {
@@ -145,15 +156,15 @@ namespace Hecatomb
                 }
             }
             // feature above
-            else if (zview == +1 && Features[ca] != null && Features[ca].GetCalculatedSymbol() != ' ')
+            else if (zview == +1 && fra != null && fra.Symbol != ' ')
             {
-                sym = Features[ca].GetCalculatedSymbol();
+                sym = fra.Symbol;
                 fg = fg ?? "WALLFG";
             }
             // feature belowb
-            else if (zview == -1 && Features[cb] != null && Features[cb].GetCalculatedSymbol() != ' ')
+            else if (zview == -1 && frb != null && frb.Symbol != ' ')
             {
-                sym = Features[cb].GetCalculatedSymbol();
+                sym = frb.Symbol;
                 // submerged feature
                 if (coverb.Liquid)
                 {
@@ -170,12 +181,12 @@ namespace Hecatomb
                 // *** Symbol ***
 
                 // explored tunnel below a floor
-                if (terrain == Terrain.FloorTile && (Game.World.Explored.Contains(cb) || Options.Explored) && !Tiles[x, y, z - 1].Solid)
+                if (terrain == Terrain.FloorTile && exb && !tb.Solid)
                 {
                     sym = '\u25E6';
                 }
                 // roof above floor or empty tile
-                else if ((terrain == Terrain.FloorTile || terrain == Terrain.EmptyTile) && Tiles[x, y, z + 1] != Terrain.EmptyTile)
+                else if ((terrain == Terrain.FloorTile || terrain == Terrain.EmptyTile) && ta != Terrain.EmptyTile)
                 {
                     sym = '\'';
                 }
@@ -183,7 +194,7 @@ namespace Hecatomb
                 else if (cover.Liquid)
                 {
                     // deeper liquid
-                    if (zview == -1 && coverb == cover && Tiles[x, y, z - 1] != Terrain.UpSlopeTile)
+                    if (zview == -1 && coverb == cover && tb != Terrain.UpSlopeTile)
                     {
                         //sym = '\u2235';
                         sym = '.';
@@ -227,7 +238,7 @@ namespace Hecatomb
                     if (terrain == Terrain.FloorTile || terrain == Terrain.DownSlopeTile)
                     {
                         // waterlogged ground or mineral-laden ground
-                        if (coverb.Liquid || coverb.Mineral != null)
+                        if (coverb.Liquid || (coverb.Solid && coverb.Resource != null))
                         {
                             fg = fg ?? coverb.FG;
                         }
@@ -268,128 +279,137 @@ namespace Hecatomb
                     fg = fg ?? terrain.FG;
                 }
             }
-            if (sym == default(char) || fg == null)
+            if (sym == default(char))
             {
-                throw new InvalidOperationException("Got an invalid glyph");
+                sym = 'X';
+            }
+            if (fg is null)
+            {
+                fg = "red";
+            }
+            if (visible && cr != null || fr != null)
+            {
+                if (fr is StructuralFeature || (cr != null && (cr == Player || cr.HasComponent<Minion>())))
+                {
+                    return (sym, fg);
+                }
             }
             if (useLighting)
             {
-                int lighting = Game.World.GetLighting(x, y, z);
+                int lighting = GameState.World!.GetLighting(x, y, z);
                 if (!visible)
                 {
                     return (sym, fg);
                 }
-                return (sym, Game.Colors.Shade(fg, lighting));
+                return (sym, InterfaceState.Colors.Shade(fg, lighting));
             }
             return (sym, fg);
         }
 
-        public static string GetBackground(int x, int y, int z)
+        public static string GetBackgroundWithBoundsChecked(int x, int y, int z)
         {
-            List<Particle> pl = Game.World.Particles[x, y, z];
-            Particle p = (pl.Count > 0) ? pl[0] : null;
-            Terrain t = Game.World.Terrains[x, y, z];
-            Terrain tb = Game.World.Terrains[x, y, z - 1];
-            Cover cv = Game.World.Covers[x, y, z];
-            Cover cb = Game.World.Covers[x, y, z - 1];
-            Creature cr = Game.World.Creatures[x, y, z];
-            Feature f = Game.World.Features[x, y, z];
-            Item it = Game.World.Items[x, y, z];
-            var c = new Coord(x, y, z);
-            Resource res = (it==null) ? null : res = Resource.Types[Game.World.Items[c].Resource];
-            Task task = Game.World.Tasks[x, y, z];
+            List<Particle> pl = InterfaceState.Particles![x, y, z];
+            Particle? p = (pl.Count > 0) ? pl[0] : null;
+            Coord c = new Coord(x, y, z);
+            var cr = GameState.World!.Creatures.GetWithBoundsChecked(x, y, z);
+            var fr = GameState.World!.Features.GetWithBoundsChecked(x, y, z);
+            var it = GameState.World!.Items.GetWithBoundsChecked(x, y, z);
+            Terrain terrain = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z);
+            Terrain ta = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z + 1);
+            Terrain tb = GameState.World!.Terrains.GetWithBoundsChecked(x, y, z - 1);
+            Cover cva = GameState.World!.Covers.GetWithBoundsChecked(x, y, z);
+            Cover cvb = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 1);
+
+            TileEntity? selected = InterfaceState.Controls.SelectedEntity;
+            if (selected != null && selected.Placed)
+            {
+                if ((int)selected.X! == x && (int)selected.Y! == y && (int)selected.Z! == z)
+                {
+                    return "lime green";
+                }
+                else if (selected is Structure && fr is StructuralFeature)
+                {
+                    var s = (Structure)selected;
+                    if (s.Features.Contains(fr.EID))
+                    {
+                        return "lime green";
+                    }
+                }
+            }
+            var explored = GameState.World.Explored.Contains(c) || HecatombOptions.Explored;
+
+            Task? task = GameState.World!.Tasks.GetWithBoundsChecked(x, y, z);
             // particle
             if (p != null && p.BG != null)
             {
                 return p.BG;
             }
-            // this should event
+            else if (c == InterfaceState.Cursor)
+            {
+                return "cyan";
+            }
             else if (task != null)
             {
-                return (task.BG ?? task.BG);
+                return task!.BG!;
             }
-            else if (!Game.World.Explored.Contains(c) && !Game.Options.Explored)
+            else if (!explored)
             {
                 return "black";
             }
-            //else if (!Game.Visible.Contains(c) && !Game.Options.Visible)
-            //{
-            //    return "black";
-            //}
-            else if (cr != null && (cr.GetCalculatedBG() != null))
+            else if (cr != null && (cr.BG != null))
             {
-                return cr.GetCalculatedBG();
+                return cr.BG;
             }
             else if (it != null && it.Claimed > 0)
             {
                 return "white";
             }
-            else if (f != null && (f.GetCalculatedBG() != null))
+            else if (fr != null && (fr.BG != null))
             {
-                return f.GetCalculatedBG();
+                return fr.BG;
             }
-            else if (it != null && res.BG != null)
+            else if (it != null && it.BG != null)
             {
-                return res.BG;
+                return it.BG;
             }
-            else if (cv != Cover.NoCover)
+            else if (cva != Cover.NoCover)
             {
-                return cv.BG;
+                return cva.BG;
             }
-            else if (t.ZView == -1)
+            else if (terrain.Floor == false)
             {
-                if (cb.Liquid)
+                if (cvb.Liquid)
                 {
-                    return cb.Shimmer();
+                    return cvb.Shimmer();
                 }
-                else if (cb != Cover.NoCover)
+                else if (cvb != Cover.NoCover)
                 {
-                    return cb.DarkBG;
+                    return cvb.DarkBG;
                 }
                 else
                 {
-                    Cover cb2 = Game.World.Covers[x, y, z - 2];
-                    if (Game.World.Terrains[x, y, z - 1].ZView ==-1 && cb2.Liquid)
+                    Cover cb2 = GameState.World!.Covers.GetWithBoundsChecked(x, y, z - 2);
+                    if (tb.Floor == false && cb2.Liquid)
                     {
                         return cb2.DarkBG;
                     }
                     else
                     {
-                        return t.BG;
+                        return terrain.BG;
                     }
                 }
             }
             else
             {
-                return t.BG;
+                return terrain.BG;
             }
         }
 
-        //public static Tuple<char, string, string> GetGlyph(int x, int y, int z)
-        //{
-        //	return new Tuple<char, string, string>(GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
-        //}
-
-        public static (char, string, string) GetGlyph(int x, int y, int z)
+        public static (char, string, string) GetGlyphWithBoundsChecked(int x, int y, int z)
         {
-            if (!World.WorldSafeToDraw)
-            {
-                return (' ', "black", "black");
-            }
-            bool useLighting = true;
-            Creature c = Creatures[x, y, z];
-            if (c!=null && (c==Player || c.GetComponent<Actor>().Team == Teams.Friendly))
-            {
-                useLighting = false;
-            }
-            Feature f = Features[x, y, z];
-            if (f!=null && f.TryComponent<StructuralComponent>()!=null)
-            {
-                useLighting = false;
-            }
-            var tuple = GetColoredSymbol(x, y, z, useLighting: useLighting);
-            return (tuple.Item1, tuple.Item2, GetBackground(x, y, z));
-            //return (GetSymbol(x, y, z), GetFG(x, y, z), GetBG(x, y, z));
+            var (sym, fg) = GetSymbolWithBoundsChecked(x, y, z);
+            var bg = GetBackgroundWithBoundsChecked(x, y, z);
+            return (sym, fg, bg);
         }
     }
 }

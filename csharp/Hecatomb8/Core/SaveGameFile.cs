@@ -11,14 +11,18 @@ using System.IO;
 using System.Threading;
 using System.Text.RegularExpressions;
 
-namespace Hecatomb
+namespace Hecatomb8
 {
     using static HecatombAliases;
 
-    class SaveGameFile : IMenuListable
+    class SaveGameFile : IMenuListable, IDisplayInfo
     {
-        public string Name;
+        public string? Name;
 
+        public SaveGameFile()
+        {
+
+        }
         public SaveGameFile(string name)
         {
             Name = name;
@@ -26,33 +30,14 @@ namespace Hecatomb
 
         public ColoredText ListOnMenu()
         {
-            return Name;
+            return Name!;
         }
 
         public void ChooseFromMenu()
         {
-            //RestoreGame();
-            CheckBuildDate();
-        }
-
-        public void CheckBuildDate()
-        {
-            
-
-            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            System.IO.Directory.CreateDirectory(path + @"\saves");
-            System.IO.StreamReader file = new System.IO.StreamReader(path + @"\saves\" + Name + ".json");
-            string line = file.ReadLine();
-            line = file.ReadLine();
-            MatchCollection col = Regex.Matches(line, "\\\"(.*?)\\\"");
-            //Debug.WriteLine(col[0].ToString());
-            //Debug.WriteLine(col[1].ToString());
-            //Debug.WriteLine(Game.BuildDate.ToString());
-            if (col.Count == 0 || col[0].ToString() != "\"buildDate\"" || col[1].ToString() != '"' + Game.BuildDate.ToString() + '"')
+            if (GameState.World != null)
             {
-                ControlContext.Set(new ConfirmationControls(
-                    "Warning: This save file was created under a different build of Hecatomb and restoring it may cause unexpected results.  Really restore the game?"
-                , RestoreGame));
+                InterfaceState.SetControls(new ConfirmationControls("Really quit the current game?", CheckBuildDate));
             }
             else
             {
@@ -60,42 +45,45 @@ namespace Hecatomb
             }
         }
 
+        public void CheckBuildDate()
+        {
+            RestoreGame();
+        }
+
         public void RestoreGame()
         {
-            Game.GameName = Name;
-            Game.SplashPanel.Splash(new List<ColoredText>()
-            {
-                $"Restoring {Name}..."
-            }, frozen: true);
-            Debug.WriteLine("restoring the game");
-            ControlContext.Set(new FrozenControls());
-            Thread thread = new Thread(Commands.RestoreGameProcess);
-            thread.Start();
+            GameManager.GameName = Name!;
+            
+            InterfaceState.Splash(new List<ColoredText>() {
+                    $"Restoring {Name}...this should take less than a minute."
+                },
+                fullScreen: false
+            );
+            //InterfaceState.DirtifyTextPanels();
+            InterfaceState.InfoPanel.Prepare();
+            HecatombGame.DeferUntilAfterDraw(GameManager.RestoreGameProcess);
         }
-    }
 
-    class SaveGameChooser : IChoiceMenu
-    {
-        public void BuildMenu(MenuChoiceControls menu)
+        public void BuildInfoDisplay(InfoDisplayControls menu)
         {
-            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             menu.Header = "Choose a saved game:";
             menu.Choices = new List<IMenuListable>();
             System.IO.Directory.CreateDirectory(path + @"\saves");
-            string[] filePaths = Directory.GetFiles(path + @"\saves", "*.json");
+            string[] filePaths = Directory.GetFiles(path + @"\saves", "*.zip");
             foreach (string paths in filePaths)
             {
                 string[] split = paths.Split('\\');
-                string fname = split[split.Length-1];
+                string fname = split[split.Length - 1];
                 split = fname.Split('.');
                 fname = split[0];
                 menu.Choices.Add(new SaveGameFile(fname));
             }
         }
 
-        public void FinishMenu(MenuChoiceControls menu)
+        public void FinishInfoDisplay(InfoDisplayControls menu)
         {
-            menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = Controls.Back;
+            menu.KeyMap[Microsoft.Xna.Framework.Input.Keys.Escape] = InterfaceState.RewindControls;
         }
     }
 }
