@@ -31,9 +31,9 @@ namespace Hecatomb8
         static HecatombOptions()
         {
             Visible = false;
-            Visible = true;
+            //Visible = true;
             Explored = false;
-            Explored = true;
+            //Explored = true;
             ZeroSeed = false;
             
             NoErrorLog = false;
