@@ -17,13 +17,13 @@ namespace Hecatomb8
         static JsonSerializer SubSerializer;
         static HecatombConverter()
         {
-            var settings = new JsonSerializerSettings();
+            var settings = new JsonSerializerSettings() { ObjectCreationHandling = ObjectCreationHandling.Replace };
             settings.Converters.Add(new SubConverter());
-            SubSerializer = JsonSerializer.Create(settings);
+            SubSerializer = JsonSerializer.Create(settings) ;
         }
         public static void Test()
         {
-            var settings = new JsonSerializerSettings();
+            var settings = new JsonSerializerSettings() { ObjectCreationHandling = ObjectCreationHandling.Replace };
             settings.Converters.Add(new HecatombConverter());
             var j = JsonConvert.SerializeObject(Player.GetComponent<SpellCaster>(), settings);
             Debug.WriteLine(j);
@@ -41,6 +41,10 @@ namespace Hecatomb8
                     list.Add(t.Name);
                 }
                 serializer.Serialize(writer, list);
+            }
+            else if (value is Type)
+            {
+                serializer.Serialize(writer, (value as Type)!.Name);
             }
             else
             {
@@ -66,12 +70,13 @@ namespace Hecatomb8
                 string s = (string)job["Class"]!;
                 //Debug.WriteLine(s);
                 Type t = Type.GetType("Hecatomb8." + s)!;
-                object ent = SubSerializer.Deserialize(new JTokenReader(job), t)!;
+                object ent;
+                ent = SubSerializer.Deserialize(new JTokenReader(job), t)!;
                 return ent;
             }
             else if (typeof(List<Type>).IsAssignableFrom(objectType))
             {
-                JObject job = JObject.Load(reader);
+                JToken job = JToken.Load(reader);
                 List<string> slist = JsonConvert.DeserializeObject<List<string>>(job.ToString());
                 var tlist = new List<Type>();
                 foreach (string s in slist)
@@ -79,6 +84,11 @@ namespace Hecatomb8
                     tlist.Add(Type.GetType("Hecatomb8." + s)!);
                 }
                 return tlist;
+            }
+            else if (typeof(Type).IsAssignableFrom(objectType))
+            {
+                JToken job = JToken.Load(reader);
+                return (Type.GetType("Hecatomb8." + job.ToString()));
             }
             else
             {
@@ -100,6 +110,10 @@ namespace Hecatomb8
             {
                 return true;
             }
+            else if (typeof(Type).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
             return false;
         }
     }
@@ -116,6 +130,10 @@ namespace Hecatomb8
                     list.Add(t.Name);
                 }
                 serializer.Serialize(writer, list);
+            }
+            else if (value is Type)
+            {
+                serializer.Serialize(writer, (value as Type)!.Name);
             }
             else
             {
@@ -146,6 +164,11 @@ namespace Hecatomb8
                 }
                 return tlist;
             }
+            else if (typeof(Type).IsAssignableFrom(objectType))
+            {
+                JToken job = JToken.Load(reader);
+                return (Type.GetType("Hecatomb8." + job.ToString()));
+            }
             else
             {
                 return existingValue!;
@@ -162,6 +185,11 @@ namespace Hecatomb8
             {
                 return true;
             }
+            else if (typeof(Type).IsAssignableFrom(objectType))
+            {
+                return true;
+            }
+
             return false;
         }
     }
@@ -285,7 +313,7 @@ namespace Hecatomb8
             Team.Touch();
             Terrain.Touch();
             //Reset();
-            JsonSerializerSettings settings = new JsonSerializerSettings();
+            JsonSerializerSettings settings = new JsonSerializerSettings() { ObjectCreationHandling = ObjectCreationHandling.Replace };
             settings.Converters.Add(new HecatombConverter());
             var path = (System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location));
             System.IO.Directory.CreateDirectory(path + @"\saves");

@@ -166,3 +166,7 @@ In which case "floor" makes perfect sense.
 
 5/9/2020
 - Maybe a static constructor can guard against null research prerequisites?
+- Okay let's state the problem.  It's basically the same problem as the one before - if we populate a collection in the constructor, then deserializing into that selection duplicates keys.
+- Fixes?
+    - Don't populate in the constructor.
+    - Deserialize the collection instead of the items.

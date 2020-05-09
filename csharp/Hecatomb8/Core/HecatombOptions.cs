@@ -51,7 +51,7 @@ namespace Hecatomb8
             IgnoreHardness = false;
             //IgnoreHardness = true;
             ShowDebugSpells = false;
-            //ShowDebugSpells = true;
+            ShowDebugSpells = true;
             ShowAllSpells = false;
             //ShowAllSpells = true;
             NoSpiders = false;
