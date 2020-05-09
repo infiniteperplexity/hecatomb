@@ -401,10 +401,11 @@ namespace Hecatomb8
                             {
                                 fscore = newScore + heuristic(Xn, Yn, Zn, x1, y1, z1);
                                 // this check should avoid expensive misses when the entities are close to each other
-                                if (fscore > 3 * initial)
-                                {
-                                    continue;
-                                }
+                                // mmmm, this check turns out to be a bad idea...stuff in windy caves can be unfindable
+                                //if (fscore > 3 * initial)
+                                //{
+                                //    continue;
+                                //}
                                 // what about when they are far away?
                                 fscores[neighbor] = fscore;
                                 // loop through the queue to insert in sorted order

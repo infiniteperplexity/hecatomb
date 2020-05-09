@@ -493,8 +493,8 @@ namespace Hecatomb8
                         }
                         else
                         {
-                            Defender d = f.GetComponent<Defender>();
-                            if (d.Wounds > 0)
+                            Defender? d = f.TryComponent<Defender>();
+                            if (d != null && d.Wounds > 0)
                             {
                                 RepairTask rt = Entity.Spawn<RepairTask>();
                                 rt.Ingredients = new JsonArrayDictionary<Resource, int>(Ingredients?[i] ?? new Dictionary<Resource, int>());

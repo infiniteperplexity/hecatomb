@@ -118,12 +118,13 @@ namespace Hecatomb8
             int hchunks = 3;
             int vchunk = world.Height / vchunks;
             int hchunk = world.Width / hchunks;
+            var list = Resource.Flowers.ToList();
+            list = list.OrderBy(f => world.Random.NextDouble()).ToList();
             for (var i = 0; i < hchunks; i++)
             {
                 for (var j = 0; j < vchunks; j++)
                 {
-                    var list = Resource.Flowers.ToList();
-                    list = list.OrderBy(f => world.Random.NextDouble()).ToList();
+                    
                     var flower = list[i * 3 + j];
                     int rx = world.Random.Next(hchunk);
                     int ry = world.Random.Next(vchunk);
@@ -134,7 +135,7 @@ namespace Hecatomb8
                     if (cc != null)
                     {
                         Coord c = (Coord)cc;
-                        Debug.WriteLine("planting " + flower + " at " + c.X + " " + c.Y);
+                        Debug.WriteLine("planting " + flower.Name + " at " + c.X + " " + c.Y);
                         var f = Flower.Spawn(flower);
                         f.PlaceInValidEmptyTile(c.X, c.Y, c.Z);
                     }

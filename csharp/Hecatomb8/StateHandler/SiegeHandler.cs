@@ -151,11 +151,11 @@ namespace Hecatomb8
         public GameEvent OnTurnBegin(GameEvent ge)
         {
             TurnsSince += 1;
-            //if (Options.NoHumanAttacks)
-            //{
-            //    return ge;
-            //}
-            if (TurnsSince > 1500 && GameState.World!.Random.Next(100) == 0)
+            if (HecatombOptions.NoSieges)
+            {
+                return ge;
+            }
+            if (TurnsSince > 1800 && GameState.World!.Random.Next(100) == 0)
             {
                 BanditAttack();
             }

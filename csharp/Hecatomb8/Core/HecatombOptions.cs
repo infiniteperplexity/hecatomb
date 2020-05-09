@@ -31,14 +31,15 @@ namespace Hecatomb8
         static HecatombOptions()
         {
             Visible = false;
-            //Visible = true;
+            Visible = true;
             Explored = false;
+            Explored = true;
             ZeroSeed = false;
-            //Explored = true;
+            
             NoErrorLog = false;
             //NoErrorLog = true;
             NoBuildWarnings = false;
-            NoBuildWarnings = true;
+            //NoBuildWarnings = true;
             NoStartupScreen = false;
             //NoStartupScreen = true;
             NoTutorial = false;
@@ -49,8 +50,8 @@ namespace Hecatomb8
             //WorkBonus = 2;
             IgnoreHardness = false;
             //IgnoreHardness = true;
-            //ShowDebugSpells = false;
-            ShowDebugSpells = true;
+            ShowDebugSpells = false;
+            //ShowDebugSpells = true;
             ShowAllSpells = false;
             //ShowAllSpells = true;
             NoSpiders = false;
@@ -59,8 +60,8 @@ namespace Hecatomb8
             //NoManaCost = true;
             Invincible = false;
             //Invincible = true;
-            //NoisyErrors = false;
-            NoisyErrors = true;
+            NoisyErrors = false;
+            //NoisyErrors = true;
             NoSieges = false;
             //NoSieges = true;
             NoGhouls = false;

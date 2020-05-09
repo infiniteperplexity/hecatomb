@@ -86,8 +86,8 @@ namespace Hecatomb8
                 }
                 else if (GameState.World != null)
                 {
-                    var flowers = Resource.Flowers.Select(f => f.Name);
-                    if (Resource.Flowers.Select(f => f.Name).Contains(s))
+                    var flowers = Resource.Flowers.Select(f => f.TypeName);
+                    if (Resource.Flowers.Select(f => f.TypeName).Contains(s))
                     {
                         return this[GetState<PaletteHandler>().FlowerColors[s]];
                     }

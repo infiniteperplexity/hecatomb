@@ -201,6 +201,10 @@ namespace Hecatomb8
 
         public bool IsHostile(ComposedEntity ce)
         {
+            if (ce == Entity?.UnboxBriefly())
+            {
+                return false;
+            }
             if (ce is Creature)
             {
                 return Team.Enemies.Contains((ce as Creature)!.GetComponent<Actor>().Team);

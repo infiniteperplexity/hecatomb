@@ -12,7 +12,7 @@ namespace Hecatomb8
 			_symbol = '\u2963';
 			_fg = "brown";
 			_name = "spear trap";
-			Components.Add(new Attacker());
+			Components.Add(new Attacker() { Accuracy = 5 });
 			Components.Add(new Fixture()
 			{
 				Ingredients = new JsonArrayDictionary<Resource, int>() { [Wood] = 2, [Flint] = 1},

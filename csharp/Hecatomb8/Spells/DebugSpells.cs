@@ -17,10 +17,11 @@ namespace Hecatomb8
             {
                 typeof(DebugHealSpell),
                 typeof(ParticleTestDebugSpell),
+                typeof(SevereDamageDebugSpell),
                 typeof(DebugFlowerSpell),
                 typeof(DebugBanditSpell),
                 typeof(SummonBanditsDebugSpell),
-                typeof(CrashDebugSpell)  
+                typeof(CrashDebugSpell)
             };
             _cost = 0;
         }
@@ -70,8 +71,8 @@ namespace Hecatomb8
 
             public override void ChooseFromMenu()
             {
-                Cast();
-                GetState<SiegeHandler>().BanditAttack(debugCloser: true);
+                GetState<SiegeHandler>().BanditAttack(debugCloser: false);
+                //GetState<SiegeHandler>().BanditAttack(debugCloser: true);
 
             }
         }
@@ -192,6 +193,51 @@ namespace Hecatomb8
             public void TileHover(Coord c)
             {
             }
+        }
+    }
+
+    public class SevereDamageDebugSpell : Spell, ISelectsTile
+    {
+        public SevereDamageDebugSpell()
+        {
+            MenuName = "damage or destroy";
+            _cost = 0;
+        }
+
+        public override void ChooseFromMenu()
+        {
+            var c = new SelectTileControls(this);
+            c.SelectedMenuCommand = "Spells";
+            c.MenuCommandsSelectable = false;
+            InterfaceState.SetControls(c);
+        }
+
+        public void SelectTile(Coord c)
+        {
+            ComposedEntity? ce = Creatures.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            ce = ce ?? Features.GetWithBoundsChecked(c.X, c.Y, c.Z);
+            Defender? d = ce?.GetComponent<Defender>();
+            if (d != null)
+            {
+                if (d.Wounds == 0)
+                {
+                    d.Wounds = 6;
+                    Cast();
+                }
+                else
+                {
+                    ce!.Destroy();
+                }
+            }
+            else
+            {
+                ce!.Destroy();
+            }
+        }
+
+        public void TileHover(Coord c)
+        {
+
         }
     }
 }

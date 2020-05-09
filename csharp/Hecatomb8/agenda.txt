@@ -162,3 +162,7 @@ In which case "floor" makes perfect sense.
 - We need to bail better for failed searches.
 - Let's give a really good write-up of the Pathfinding logic.
     - Cached Misses are handled in the variations that use entities.
+
+
+5/9/2020
+- Maybe a static constructor can guard against null research prerequisites?
