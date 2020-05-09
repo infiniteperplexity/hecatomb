@@ -117,7 +117,9 @@ namespace Hecatomb8
             int x = c.X;
             int y = c.Y;
             int z = c.Z;
+            Defender d1 = Player.GetComponent<Defender>();
             Creature? cr = Creatures.GetWithBoundsChecked(x, y, z);
+            Defender? d2 = cr?.GetComponent<Defender>();
             var controls = InterfaceState.Controls;
             if (!Explored.Contains(c) && !HecatombOptions.Explored)
             {
@@ -131,11 +133,27 @@ namespace Hecatomb8
                 }
                 else if (cr.GetComponent<Actor>().Team == Caster!.GetComponent<Actor>().Team)
                 {
-                    controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
+                    if (d2!.Wounds == 0)
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot target an unwounded minion.") };
+                    }
+                    else
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel your own flesh to heal {0}", cr.Describe()) };
+                    }
+                    
                 }
                 else
                 {
-                    controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
+                    if (d1.Wounds == 0)
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{orange}" + String.Format("Cannot siphon from an enemy unless you are wounded.") };
+                    }
+                    else
+                    {
+                        controls.InfoMiddle = new List<ColoredText>() { "{green}" + String.Format("Shrivel {0} to heal your own flesh.", cr.Describe()) };
+                    }
+                    
                 }
             }
         }

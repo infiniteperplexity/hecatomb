@@ -35,12 +35,19 @@ namespace Hecatomb8
                 string messageBody = "Oh no!  Hecatomb has crashed!  Please send this crash report to the supplied address.  If possible, please attach the crash log file: " + filePath + "%0A%0A" + String.Join("%0A", body);
                 try
                 {
-                    Process.Start(String.Format(
+
+                    Process.Start(new ProcessStartInfo(String.Format(
                         "mailto:{0}?subject={1}&body={2}",
                         "hecatomb.gamedev@gmail.com",
                         "Hecatomb crash report: " + timestamp,
                         messageBody
-                    ));
+                    )) { UseShellExecute = true });
+                    //Process.Start(String.Format(
+                    //    "mailto:{0}?subject={1}&body={2}",
+                    //    "hecatomb.gamedev@gmail.com",
+                    //    "Hecatomb crash report: " + timestamp,
+                    //    messageBody
+                    //));
                 }
                 catch (Exception e2)
                 {
@@ -50,8 +57,13 @@ namespace Hecatomb8
                 var replaced = (path + @"\logs\").Replace(@"\", "-").Replace(":", "~");
                 try
                 {
-                    Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced);
-                    
+                    ProcessStartInfo psi = new ProcessStartInfo
+                    {
+                        FileName = "https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
+                    //Process.Start("https://infiniteperplexity.github.io/hecatomb/crashReport.html?timestamp=" + timestamp + "&path=" + replaced, UseShellExecute = true);         
                 }
                 catch (Exception e2)
                 {
