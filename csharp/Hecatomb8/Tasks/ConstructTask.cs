@@ -136,7 +136,7 @@ namespace Hecatomb8
                     if (task is ConstructTask)
                     {
                         ConstructTask ct = (ConstructTask)task;
-                        if (ct.Structure == Structure && ct.Worker == null && ct.Ingredients.Count > 0)
+                        if (ct.Structure == Structure && ct.Worker?.UnboxBriefly() is null && ct.Ingredients.Count > 0)
                         {
                             return false;
                         }

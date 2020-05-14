@@ -305,13 +305,7 @@ namespace Hecatomb8
         public void Parse()
         {
             var name = GameManager.GameName;
-            Activity.Touch();
-            Cover.Touch();
-            Research.Touch();
-            Resource.Touch();
-            Species.Touch();
-            Team.Touch();
-            Terrain.Touch();
+            //FlyWeightParent.Touch();
             //Reset();
             JsonSerializerSettings settings = new JsonSerializerSettings() { ObjectCreationHandling = ObjectCreationHandling.Replace };
             settings.Converters.Add(new HecatombConverter());

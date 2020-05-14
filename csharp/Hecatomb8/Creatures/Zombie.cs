@@ -22,7 +22,7 @@ namespace Hecatomb8
             _fg = "lime green";
             Species = Species.Undead;
             CorpseSpecies = Species.Human;
-            MaxDecay = 2500;
+            MaxDecay = 3000;
             Decay = MaxDecay;
             AddListener<TurnBeginEvent>(OnTurnBegin);
         }

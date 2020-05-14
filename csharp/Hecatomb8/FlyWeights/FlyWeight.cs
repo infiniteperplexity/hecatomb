@@ -27,23 +27,16 @@ namespace Hecatomb8
     public class FlyWeightParent
     {
         public static Dictionary<Type, List<FlyWeightParent>> LookupTable = new Dictionary<Type, List<FlyWeightParent>>();
-        //public static void Touch()
-        //{
-        //    foreach (var type in typeof(FlyWeightParent).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(FlyWeightParent))).ToList())
-        //    {
-        //        if (type.IsGenericType)
-        //        {
-        //            continue;
-        //        }
-        //        foreach (FieldInfo f in type.GetFields())
-        //        {
-        //            if (f.IsStatic)
-        //            {
-        //                f.GetValue(null);
-        //            }
-        //        }
-        //    }     
-        //}
+        public static void TouchAll()
+        {
+            Resource.Touch();
+            Activity.Touch();
+            Cover.Touch();
+            Research.Touch();
+            Species.Touch();
+            Team.Touch();
+            Terrain.Touch();
+        }
     }
     // FlyWeights represent game entities for which every "instance" has exactly the same properties
     // A self-referencing generic class allows something resembling static inheritance

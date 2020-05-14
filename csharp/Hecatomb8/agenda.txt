@@ -170,3 +170,9 @@ In which case "floor" makes perfect sense.
 - Fixes?
     - Don't populate in the constructor.
     - Deserialize the collection instead of the items.
+- Done, and that solves a bunch of future problems too!
+- make zombies rot a little slower
+- I don't think task priority is working...well...a direct test seems to show that it is, and the code seems bulletproof.
+- need a log message for bandit attacks
+- I think butcher tasks should select tile, not zone
+

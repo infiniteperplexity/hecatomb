@@ -42,6 +42,8 @@ namespace Hecatomb8
             //NoBuildWarnings = true;
             NoStartupScreen = false;
             //NoStartupScreen = true;
+            ShowPathfindingNotes = false;
+            //ShowPathfindingNotes = true;
             NoTutorial = false;
             //NoTutorial = true;
             NoIngredients = false;

@@ -25,6 +25,7 @@ namespace Hecatomb8
 
         void LoadHecatombContent()
         {
+            FlyWeightParent.TouchAll();
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();

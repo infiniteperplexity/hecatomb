@@ -227,10 +227,17 @@ namespace Hecatomb8
             return (Team == team);
         }
 
-        public void WalkToward(TileEntity t, bool useLast = false, int vagueDistance = 25)
+        public void WalkToward(TileEntity t, bool useLast = false, int vagueDistance = 256)
         {
             if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed || !t.Placed)
             {
+                return;
+            }
+            var (x1, y1, z1) = t.GetPlacedCoordinate();
+            var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
+            if (Tiles.Distance(x, y, z, x1, y1, z1) > vagueDistance)
+            {
+                WalkVaguelyToward(x1, y1, z1);
                 return;
             }
             Movement m = Entity.UnboxBriefly()!.GetComponent<Movement>();
@@ -246,7 +253,7 @@ namespace Hecatomb8
             }
         }
 
-        public void WalkToward(int x1, int y1, int z1, bool useLast = false, TileEntity? targetEntity = null, int vagueDistance = 25)
+        public void WalkToward(int x1, int y1, int z1, bool useLast = false, TileEntity? targetEntity = null, int vagueDistance = 256)
         {
             if (Entity?.UnboxBriefly() is null || !Entity.UnboxBriefly()!.Placed)
             {
@@ -255,7 +262,6 @@ namespace Hecatomb8
             var (x, y, z) = Entity.UnboxBriefly()!.GetPlacedCoordinate();
             if (Tiles.Distance(x, y, z, x1, y1, z1) > vagueDistance)
             {
-
                 WalkVaguelyToward(x1, y1, z1);
                 return;
             }
@@ -277,28 +283,6 @@ namespace Hecatomb8
             }
             else
             {
-                // wait what the crap????
-                // so, I have the following note from some time in the past:
-                // this way of doing it makes it hard to attack things that are in the way...
-                // why on earth would I be doing it this way?
-                // well...if the creature is standing *in* a doorway, this would let us attack
-                // huh
-                // but probably I should have attacked earlier in this process, right?
-                // I'm going to comment this sketchy crap out for now
-                //if (Target?.Entity is Creature && IsHostile((Creature)Target.Entity))
-                //{
-                //    if (m.CanTouch(Target.X, Target.Y, Target.Z))
-                //    {
-                //        Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Creature);
-                //    }
-                //}
-                //else if (Target?.Entity is Feature && IsHostile((Feature)Target.Entity))
-                //{
-                //    if (m.CanTouch(Target.X, Target.Y, Target.Z))
-                //    {
-                //        Entity.TryComponent<Attacker>().Attack(Target.Unbox() as Feature);
-                //    }
-                //}
                 Coord t = (Coord)target;
                 if (!Acted)
                 {
@@ -577,7 +561,9 @@ namespace Hecatomb8
                 Movement m = cr.GetComponent<Movement>();
                 Attacker attacker = cr.GetComponent<Attacker>();
                 var distance = Tiles.Distance(cr, target);
-                if (distance < 25 && !m.CanReachBounded(crt, useLast: false))
+                // this sets the target to null only if it's unreachable *and* close
+                // so otherwise we'll try to walk toward...which could create a loop, right?
+                if (distance < 50 && !m.CanReachBounded(crt, useLast: false))
                 {
                     a.Target = null;
                 }
@@ -615,23 +601,10 @@ namespace Hecatomb8
             {
                 Movement m = cr.GetComponent<Movement>();
 
-                if (Tiles.Distance(cr, Player) > 30 || m.CanReachBounded(Player))
+                if (Tiles.Distance(cr, Player) > 50 || m.CanReachBounded(Player))
                 {
                     actor.Target = Player.GetHandle<TileEntity>(actor.OnDespawn);
                 }
-                //else
-                //{
-                //    List<Feature> doors = Features.Where<Feature>((f) => (f is Door)).ToList();
-                //    doors = doors.OrderBy((f) => Tiles.Distance((int)f.X!, (int)f.Y!, (int)f.Z!, (int)Player.X!, (int)Player.Y!, (int)Player.Z!)).ToList();
-                //    foreach (var f in doors)
-                //    {
-                //        if (m.CanReachBounded(f, useLast: false))
-                //        {
-                //            actor.Target = f.GetHandle<TileEntity>(actor.OnDespawn);
-                //            return;
-                //        }
-                //    }
-                //}
             }
         }
 

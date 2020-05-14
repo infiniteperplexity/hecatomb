@@ -131,7 +131,7 @@ namespace Hecatomb8
         public static LinkedList<Coord> FindPath(
             Movement m, TileEntity t, bool useLast = true,
             Func<int, int, int, int, int, int, float>? cost = null,
-            int maxTries = 25000,
+            int maxTries = 5000,
             int cacheMissesFor = 10,
             bool useCache = true,
             int cacheHitsFor = 10, //need to perturb this to avoid stacked lag hits
@@ -225,7 +225,7 @@ namespace Hecatomb8
         public static LinkedList<Coord> FindPath(
             Movement m, int x1, int y1, int z1, bool useLast = true,
             Func<int, int, int, int, int, int, float>? cost = null,
-            int maxTries = 25000,
+            int maxTries = 5000,
             Func<int, int, int, bool>? standable = null,
             Func<int, int, int, int, int, int, bool>? movable = null)
         {
@@ -278,7 +278,6 @@ namespace Hecatomb8
             TileEntity? toEntity = null
         )
         {
-            StatefulRandom r = GameState.World!.Random;
             int seedEID = (fromEntity == null) ? -1 : (int)fromEntity.EID!;
             //			Debug.WriteLine("Finding path from {0} {1} {2} to {3} {4} {5}",x0,y0,z0,x1,y1,z1);
             // default value for the cost estimation heuristic
@@ -339,6 +338,7 @@ namespace Hecatomb8
                 {
                     if (HecatombOptions.ShowPathfindingNotes)
                     {
+                        //throw new Exception("Let's throw an error and see if we get a full trace");
                         Debug.WriteLine("After {6} tries, failed to find a path from {0} {1} {2} to {3} {4} {5}", x0, y0, z0, x1, y1, z1, tally);
                     }
                     return new LinkedList<Coord>();
@@ -366,10 +366,15 @@ namespace Hecatomb8
                         }
                         else
                         {
+                            if (toEntity is Item)
+                            {
+                                Debug.WriteLine("Found an item after this many tries " + tally);
+                            }
                             return path;
                         }
                         path.AddFirst(new Coord(current));
                     }
+
                     return path;
                 }
                 // ***************************************************
