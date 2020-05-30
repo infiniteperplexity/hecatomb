@@ -20,6 +20,10 @@ namespace Hecatomb8
             placeOres();
             placeGraves();
             plantTrees();
+            if (!HecatombOptions.NoCaverns)
+            {
+                placeCaverns();
+            }
             world.ValidateOutdoors();
             bool succeeded = tryToPlacePlayer();
             placeSpiders();
@@ -142,6 +146,13 @@ namespace Hecatomb8
                 }
             }
 
+        }
+
+        protected void placeCaverns()
+        {
+            GetState<CavernHandler>().DigCaverns(25);
+            GetState<CavernHandler>().DigCaverns(35);
+            GetState<CavernHandler>().DigCaverns(45);
         }
 
         protected void placeSoils()

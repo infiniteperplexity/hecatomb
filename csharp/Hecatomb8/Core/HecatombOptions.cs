@@ -26,14 +26,14 @@ namespace Hecatomb8
         public static bool NoSieges;
         public static bool NoGhouls;
         public static bool NoDryads;
-
+        public static bool NoCaverns;
 
         static HecatombOptions()
         {
             Visible = false;
-            //Visible = true;
+            Visible = true;
             Explored = false;
-            //Explored = true;
+            Explored = true;
             ZeroSeed = false;
             
             NoErrorLog = false;
@@ -70,6 +70,7 @@ namespace Hecatomb8
             //NoGhouls = true;
             NoDryads = false;
             //NoDryads = true;
+            NoCaverns = false;
         }
     }
 }
